@@ -214,7 +214,7 @@ const SingleFileTransferDemo = () => {
                                     </h5>
                                     <p className="text-[10px] text-slate-400 mb-4">{folder.items.length} files stored</p>
 
-                                    <div className="mt-auto h-[40px] flex flex-wrap gap-2 overflow-hidden">
+                                    <div className="mt-auto flex flex-wrap gap-2 overflow-hidden">
                                         <AnimatePresence>
                                             {folder.items.map((item, i) => (
                                                 <motion.div

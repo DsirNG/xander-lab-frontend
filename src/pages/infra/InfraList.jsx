@@ -16,7 +16,7 @@ const SidebarItem = ({ item, active, onClick }) => (
         onClick={onClick}
         className={`w-full text-left p-4 rounded-2xl transition-all duration-300 flex items-center group mb-2
             ${active
-                ? 'bg-primary text-white shadow-lg shadow-primary/20 scale-[1.02]'
+                ? 'bg-primary text-white shadow-xl shadow-primary/30'
                 : 'hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400'}`}
     >
         <div className={`p-2 rounded-xl mr-4 transition-colors ${active ? 'bg-white/20' : 'bg-slate-100 dark:bg-slate-800 group-hover:bg-white/50'}`}>
@@ -62,7 +62,7 @@ const InfraList = () => {
     const activeId = location.pathname.split('/').pop() || 'anchored';
 
     return (
-        <div className="min-h-screen bg-white dark:bg-slate-950 pt-16">
+        <div className="min-h-screen bg-white dark:bg-slate-950">
             <div className="max-w-[1440px] mx-auto flex h-[calc(100vh-64px)] overflow-hidden">
 
                 {/* Left Sidebar */}
@@ -76,7 +76,7 @@ const InfraList = () => {
                         </p>
                     </header>
 
-                    <div className="flex-grow overflow-y-auto pr-2 custom-scrollbar">
+                    <div className="flex-grow overflow-y-auto px-1 custom-scrollbar">
                         {systems.map((system) => (
                             <SidebarItem
                                 key={system.id}

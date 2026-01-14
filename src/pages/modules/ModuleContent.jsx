@@ -20,6 +20,7 @@ import SingleFileTransferDemo from './demos/SingleFileTransferDemo';
 import MultiFileTransferDemo from './demos/MultiFileTransferDemo';
 import SortableListDemo from './demos/SortableListDemo';
 import { SINGLE_FILE_CODE, MULTI_FILE_CODE, SORTABLE_CODE } from './demos/demo-code';
+import { BrowserWindow } from '../../components';
 
 const DemoSection = ({ title, desc, children, code }) => {
     const [showCode, setShowCode] = useState(false);
@@ -64,12 +65,13 @@ const DemoSection = ({ title, desc, children, code }) => {
                 </div>
             </div>
             <p className="text-slate-500 dark:text-slate-400 text-sm mb-6 max-w-2xl">{desc}</p>
-            <div className="bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-[2.5rem] p-10 min-h-[300px] flex items-center justify-center relative overflow-hidden transition-all">
-                <div className="absolute inset-0 opacity-[0.03] dark:opacity-[0.05] pointer-events-none"
-                    style={{ backgroundImage: 'radial-gradient(#000 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
-                <div key={resetKey} className="w-full relative z-10">{children}</div>
-            </div>
-
+            <BrowserWindow>
+                <div className="bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 p-10 min-h-[300px] flex items-center justify-center relative overflow-hidden transition-all">
+                    <div className="absolute inset-0 opacity-[0.03] dark:opacity-[0.05] pointer-events-none"
+                        style={{ backgroundImage: 'radial-gradient(#000 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
+                    <div key={resetKey} className="w-full relative z-10">{children}</div>
+                </div>
+            </BrowserWindow>
             <AnimatePresence>
                 {showCode && (
                     <motion.div

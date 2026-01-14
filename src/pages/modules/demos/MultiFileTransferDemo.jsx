@@ -13,6 +13,7 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { useDragDrop } from '../../../hooks/useDragDrop';
 
+
 const getFileIconSVG = (type) => {
     if (type === 'pdf') return `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f43f5e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>`;
     return `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0ea5e9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>`;
@@ -286,7 +287,7 @@ const MultiFileTransferDemo = () => {
 
                                 <div className="space-y-2 h-[100px] flex flex-col justify-end">
                                     <AnimatePresence>
-                                        {folder.items.slice(-3).map((item, i) => (
+                                        {folder.items.slice(-2).map((item, i) => (
                                             <motion.div
                                                 key={item.id}
                                                 initial={{ x: 20, opacity: 0 }}
@@ -297,9 +298,9 @@ const MultiFileTransferDemo = () => {
                                             </motion.div>
                                         ))}
                                     </AnimatePresence>
-                                    {folder.items.length > 3 && (
+                                    {folder.items.length > 2 && (
                                         <p className="text-[9px] text-center text-slate-400 font-bold uppercase tracking-widest pt-2">
-                                            + {folder.items.length - 3} more items in vault
+                                            + {folder.items.length - 2} more items in vault
                                         </p>
                                     )}
                                 </div>

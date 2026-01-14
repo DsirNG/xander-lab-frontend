@@ -544,7 +544,7 @@ const MultiFileTransferDemo = () => {
                                     </div>
                                 </div>
 
-                                <div className="space-y-2 h-[100px] flex flex-col justify-end">
+                                <div className="space-y-2 h-[100px] overflow-y-auto overflow-x-hidden">
                                     <AnimatePresence>
                                         {folder.items.slice(-3).map((item, i) => (
                                             <motion.div
