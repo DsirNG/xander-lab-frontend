@@ -52,12 +52,12 @@ export interface DragPreviewController {
 export type DragPreviewResult =
   | HTMLElement
   | {
-      el: HTMLElement;
-      offsetX?: number;
-      offsetY?: number;
-      /** 预览控制器（可选，提供时优先使用） */
-      controller?: DragPreviewController;
-    }
+    el: HTMLElement;
+    offsetX?: number;
+    offsetY?: number;
+    /** 预览控制器（可选，提供时优先使用） */
+    controller?: DragPreviewController;
+  }
   | null;
 
 /**
@@ -217,7 +217,7 @@ export function useDragDrop<T = any>({
             offsetX = 12,
             offsetY = 12,
             controller,
-          } = res instanceof HTMLElement ? { el: res } : res;
+          }: { el: HTMLElement; offsetX?: number; offsetY?: number; controller?: DragPreviewController } = res instanceof HTMLElement ? { el: res } : res;
 
           // 保存 controller
           previewCtrlRef.current = controller ?? null;
@@ -273,7 +273,6 @@ export function useDragDrop<T = any>({
   const handleDragOver = useCallback(
     (item: T, e: React.DragEvent) => {
       e.preventDefault();
-      e.stopPropagation();
 
       if (!draggedItem) {
         e.dataTransfer.dropEffect = 'none';

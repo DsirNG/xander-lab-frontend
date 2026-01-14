@@ -1,30 +1,73 @@
 import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { shadesOfPurple } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import {
     Zap,
     MousePointer2,
     ExternalLink,
-    MousePointerClick
+    MousePointerClick,
+    Code,
+    ChevronDown,
+    ChevronUp
 } from 'lucide-react';
-import FileTransferDemo from './demos/FileTransferDemo';
+import SingleFileTransferDemo from './demos/SingleFileTransferDemo';
+import MultiFileTransferDemo from './demos/MultiFileTransferDemo';
 import SortableListDemo from './demos/SortableListDemo';
+import { SINGLE_FILE_CODE, MULTI_FILE_CODE, SORTABLE_CODE } from './demos/demo-code';
 
-const DemoSection = ({ title, desc, children }) => (
-    <div className="mb-12">
-        <div className="flex items-center space-x-3 mb-4">
-            <div className="h-6 w-1 bg-blue-600 rounded-full" />
-            <h3 className="text-lg font-bold text-slate-900 dark:text-white">{title}</h3>
+const DemoSection = ({ title, desc, children, code }) => {
+    const [showCode, setShowCode] = useState(false);
+
+    return (
+        <div className="mb-12">
+            <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center space-x-3">
+                    <div className="h-6 w-1 bg-blue-600 rounded-full" />
+                    <h3 className="text-lg font-bold text-slate-900 dark:text-white">{title}</h3>
+                </div>
+                {code && (
+                    <button
+                        onClick={() => setShowCode(!showCode)}
+                        className="flex items-center space-x-2 px-4 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-xs font-bold hover:bg-blue-600 hover:text-white transition-all shadow-sm"
+                    >
+                        {showCode ? <ChevronUp className="w-3.5 h-3.5" /> : <Code className="w-3.5 h-3.5" />}
+                        <span>{showCode ? 'Hide Code' : 'View Code'}</span>
+                    </button>
+                )}
+            </div>
+            <p className="text-slate-500 dark:text-slate-400 text-sm mb-6 max-w-2xl">{desc}</p>
+            <div className="bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-[2.5rem] p-10 min-h-[300px] flex items-center justify-center relative overflow-hidden transition-all">
+                <div className="absolute inset-0 opacity-[0.03] dark:opacity-[0.05] pointer-events-none"
+                    style={{ backgroundImage: 'radial-gradient(#000 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
+                <div className="w-full relative z-10">{children}</div>
+            </div>
+
+            <AnimatePresence>
+                {showCode && (
+                    <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="overflow-hidden mt-4"
+                    >
+                        <div className="rounded-[2rem] overflow-hidden border border-slate-200 dark:border-slate-800 shadow-2xl">
+                            <SyntaxHighlighter
+                                language="javascript"
+                                style={shadesOfPurple}
+                                customStyle={{ margin: 0, padding: '2rem', fontSize: '0.8rem', background: '#1e1b4b' }}
+                            >
+                                {code}
+                            </SyntaxHighlighter>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
-        <p className="text-slate-500 dark:text-slate-400 text-sm mb-6 max-w-2xl">{desc}</p>
-        <div className="bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-3xl p-10 min-h-[300px] flex items-center justify-center relative overflow-hidden">
-            <div className="absolute inset-0 opacity-[0.03] dark:opacity-[0.05] pointer-events-none"
-                style={{ backgroundImage: 'radial-gradient(#000 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
-            {children}
-        </div>
-    </div>
-);
+    );
+};
 
 const ModuleContent = ({ module }) => {
     const { t } = useTranslation();
@@ -32,6 +75,8 @@ const ModuleContent = ({ module }) => {
 
     // Dynamically inject demos if they match certain IDs
     const scenarios = useMemo(() => {
+        if (!module) return null;
+
         if (module.id === 'popover') {
             return [
                 {
@@ -54,19 +99,27 @@ const ModuleContent = ({ module }) => {
         if (module.id === 'drag-drop') {
             return [
                 {
-                    title: 'Scenario A: Advanced File Transfer',
-                    desc: 'Multi-file dragging with custom stack previews and dynamic instruction hints.',
-                    demo: <FileTransferDemo selectedFiles={selectedFiles} />
+                    title: 'Scenario A-1: Single File Transfer',
+                    desc: 'Clean, focused dragging for individual entities with premium visual feedback.',
+                    demo: <SingleFileTransferDemo />,
+                    code: SINGLE_FILE_CODE
+                },
+                {
+                    title: 'Scenario A-2: Multi-File Batch Operations',
+                    desc: 'Advanced stacking mechanism for multiple items with count indicators and batch processing.',
+                    demo: <MultiFileTransferDemo />,
+                    code: MULTI_FILE_CODE
                 },
                 {
                     title: 'Scenario B: Sortable Core',
                     desc: 'Lightweight list reordering with visual gap detection and ghost states.',
-                    demo: <SortableListDemo />
+                    demo: <SortableListDemo />,
+                    code: SORTABLE_CODE
                 }
             ];
         }
         return null;
-    }, [module.id, selectedFiles]);
+    }, [module, selectedFiles]);
 
     if (!module) return null;
 
@@ -119,6 +172,7 @@ const ModuleContent = ({ module }) => {
                             key={index}
                             title={scenario.title}
                             desc={scenario.desc}
+                            code={scenario.code}
                         >
                             {scenario.demo}
                         </DemoSection>
@@ -130,7 +184,7 @@ const ModuleContent = ({ module }) => {
                     </div>
                 )}
             </div>
-        </motion.div>
+        </motion.div >
     );
 };
 
