@@ -139,7 +139,7 @@ const SingleFileTransferDemo = () => {
     });
 
     return (
-        <div className="w-full max-w-4xl mx-auto p-4">
+        <div className="w-full max-w-4xl mx-auto p-4 h-80">
             <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
                 {/* Left: Source Files */}
                 <div className="lg:col-span-2 space-y-4">
@@ -148,7 +148,7 @@ const SingleFileTransferDemo = () => {
                         <span className="text-[10px] bg-slate-100 dark:bg-slate-800 text-slate-500 px-2 py-0.5 rounded-full font-bold">{files.length}</span>
                     </div>
 
-                    <div className="space-y-3">
+                    <div className="space-y-3 h-[320px] overflow-y-auto pr-2 custom-scrollbar">
                         <AnimatePresence mode="popLayout">
                             {files.map(file => (
                                 <motion.div
@@ -214,7 +214,7 @@ const SingleFileTransferDemo = () => {
                                     </h5>
                                     <p className="text-[10px] text-slate-400 mb-4">{folder.items.length} files stored</p>
 
-                                    <div className="mt-auto flex flex-wrap gap-2">
+                                    <div className="mt-auto h-[40px] flex flex-wrap gap-2 overflow-hidden">
                                         <AnimatePresence>
                                             {folder.items.map((item, i) => (
                                                 <motion.div

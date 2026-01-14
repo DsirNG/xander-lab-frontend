@@ -150,7 +150,7 @@ export function useDragDrop<T = any>({
   const [draggedItem, setDraggedItem] = useState<T | null>(null);
   const [dragOverItem, setDragOverItem] = useState<T | null>(null);
   const [isDragging, setIsDragging] = useState(false);
-  const dragLeaveTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const dragLeaveTimerRef = useRef<number | null>(null);
   const dragPreviewElRef = useRef<HTMLElement | null>(null);
   const previewCtrlRef = useRef<DragPreviewController | null>(null);
   const dragMoveHandlerRef = useRef<((ev: DragEvent) => void) | null>(null);

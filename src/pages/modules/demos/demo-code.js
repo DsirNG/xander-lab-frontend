@@ -149,7 +149,7 @@ const SingleFileTransferDemo = () => {
                         <span className="text-[10px] bg-slate-100 dark:bg-slate-800 text-slate-500 px-2 py-0.5 rounded-full font-bold">{files.length}</span>
                     </div>
 
-                    <div className="space-y-3">
+                    <div className="space-y-3 h-[320px] overflow-y-auto pr-2 custom-scrollbar">
                         <AnimatePresence mode="popLayout">
                             {files.map(file => (
                                 <motion.div
@@ -215,7 +215,7 @@ const SingleFileTransferDemo = () => {
                                     </h5>
                                     <p className="text-[10px] text-slate-400 mb-4">{folder.items.length} files stored</p>
 
-                                    <div className="mt-auto flex flex-wrap gap-2">
+                                    <div className="mt-auto h-[40px] flex flex-wrap gap-2 overflow-hidden">
                                         <AnimatePresence>
                                             {folder.items.map((item, i) => (
                                                 <motion.div
@@ -459,7 +459,7 @@ const MultiFileTransferDemo = () => {
                         </div>
                     </div>
 
-                    <div className="p-6 space-y-2 max-h-[400px] overflow-y-auto">
+                    <div className="p-6 space-y-2 h-[400px] overflow-y-auto">
                         <AnimatePresence mode="popLayout">
                             {files.map(file => {
                                 const isSelected = selectedIds.has(file.id);
@@ -544,7 +544,7 @@ const MultiFileTransferDemo = () => {
                                     </div>
                                 </div>
 
-                                <div className="space-y-2">
+                                <div className="space-y-2 h-[100px] flex flex-col justify-end">
                                     <AnimatePresence>
                                         {folder.items.slice(-3).map((item, i) => (
                                             <motion.div

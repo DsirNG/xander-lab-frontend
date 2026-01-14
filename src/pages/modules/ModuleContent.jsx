@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { shadesOfPurple } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import {
     Zap,
     MousePointer2,
@@ -11,7 +11,10 @@ import {
     MousePointerClick,
     Code,
     ChevronDown,
-    ChevronUp
+    ChevronUp,
+    Copy,
+    Check,
+    RotateCcw
 } from 'lucide-react';
 import SingleFileTransferDemo from './demos/SingleFileTransferDemo';
 import MultiFileTransferDemo from './demos/MultiFileTransferDemo';
@@ -20,6 +23,18 @@ import { SINGLE_FILE_CODE, MULTI_FILE_CODE, SORTABLE_CODE } from './demos/demo-c
 
 const DemoSection = ({ title, desc, children, code }) => {
     const [showCode, setShowCode] = useState(false);
+    const [copied, setCopied] = useState(false);
+    const [resetKey, setResetKey] = useState(0);
+
+    const handleCopy = () => {
+        navigator.clipboard.writeText(code);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+    };
+
+    const handleReset = () => {
+        setResetKey(prev => prev + 1);
+    };
 
     return (
         <div className="mb-12">
@@ -28,21 +43,31 @@ const DemoSection = ({ title, desc, children, code }) => {
                     <div className="h-6 w-1 bg-blue-600 rounded-full" />
                     <h3 className="text-lg font-bold text-slate-900 dark:text-white">{title}</h3>
                 </div>
-                {code && (
+                <div className="flex items-center space-x-2">
                     <button
-                        onClick={() => setShowCode(!showCode)}
-                        className="flex items-center space-x-2 px-4 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-xs font-bold hover:bg-blue-600 hover:text-white transition-all shadow-sm"
+                        onClick={handleReset}
+                        className="flex items-center space-x-2 px-4 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-xs font-bold hover:bg-orange-500 hover:text-white transition-all shadow-sm"
+                        title="Reset Demo"
                     >
-                        {showCode ? <ChevronUp className="w-3.5 h-3.5" /> : <Code className="w-3.5 h-3.5" />}
-                        <span>{showCode ? 'Hide Code' : 'View Code'}</span>
+                        <RotateCcw className="w-3.5 h-3.5" />
+                        <span>Reset</span>
                     </button>
-                )}
+                    {code && (
+                        <button
+                            onClick={() => setShowCode(!showCode)}
+                            className="flex items-center space-x-2 px-4 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-xs font-bold hover:bg-blue-600 hover:text-white transition-all shadow-sm"
+                        >
+                            {showCode ? <ChevronUp className="w-3.5 h-3.5" /> : <Code className="w-3.5 h-3.5" />}
+                            <span>{showCode ? 'Hide Code' : 'View Code'}</span>
+                        </button>
+                    )}
+                </div>
             </div>
             <p className="text-slate-500 dark:text-slate-400 text-sm mb-6 max-w-2xl">{desc}</p>
             <div className="bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-[2.5rem] p-10 min-h-[300px] flex items-center justify-center relative overflow-hidden transition-all">
                 <div className="absolute inset-0 opacity-[0.03] dark:opacity-[0.05] pointer-events-none"
                     style={{ backgroundImage: 'radial-gradient(#000 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
-                <div className="w-full relative z-10">{children}</div>
+                <div key={resetKey} className="w-full relative z-10">{children}</div>
             </div>
 
             <AnimatePresence>
@@ -51,16 +76,35 @@ const DemoSection = ({ title, desc, children, code }) => {
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: 'auto' }}
                         exit={{ opacity: 0, height: 0 }}
-                        className="overflow-hidden mt-4"
+                        className="overflow-hidden mt-4 w-full"
                     >
-                        <div className="rounded-[2rem] overflow-hidden border border-slate-200 dark:border-slate-800 shadow-2xl">
-                            <SyntaxHighlighter
-                                language="javascript"
-                                style={shadesOfPurple}
-                                customStyle={{ margin: 0, padding: '2rem', fontSize: '0.8rem', background: '#1e1b4b' }}
+                        <div className="relative group rounded-[2rem] overflow-hidden border border-slate-200 dark:border-slate-800 shadow-2xl w-full">
+                            {/* Copy Button */}
+                            <button
+                                onClick={handleCopy}
+                                className="absolute right-6 top-6 z-20 p-2.5 rounded-xl bg-slate-800/50 text-slate-400 hover:text-white hover:bg-slate-700 transition-all backdrop-blur-md border border-white/5 opacity-0 group-hover:opacity-100 shadow-xl"
+                                title="Copy code"
                             >
-                                {code}
-                            </SyntaxHighlighter>
+                                {copied ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
+                            </button>
+
+                            <div className="max-h-[500px] overflow-auto scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent w-full">
+                                <SyntaxHighlighter
+                                    language="javascript"
+                                    style={vscDarkPlus}
+                                    customStyle={{
+                                        margin: 0,
+                                        padding: '2.5rem',
+                                        fontSize: '0.85rem',
+                                        background: '#0f172a',
+                                        lineHeight: '1.6',
+                                        width: '100%',
+                                        maxWidth: '100%'
+                                    }}
+                                >
+                                    {code}
+                                </SyntaxHighlighter>
+                            </div>
                         </div>
                     </motion.div>
                 )}

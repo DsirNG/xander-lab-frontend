@@ -199,7 +199,7 @@ const MultiFileTransferDemo = () => {
                         </div>
                     </div>
 
-                    <div className="p-6 space-y-2 max-h-[400px] overflow-y-auto">
+                    <div className="p-6 space-y-2 h-[400px] overflow-y-auto">
                         <AnimatePresence mode="popLayout">
                             {files.map(file => {
                                 const isSelected = selectedIds.has(file.id);
@@ -284,7 +284,7 @@ const MultiFileTransferDemo = () => {
                                     </div>
                                 </div>
 
-                                <div className="space-y-2">
+                                <div className="space-y-2 h-[100px] flex flex-col justify-end">
                                     <AnimatePresence>
                                         {folder.items.slice(-3).map((item, i) => (
                                             <motion.div

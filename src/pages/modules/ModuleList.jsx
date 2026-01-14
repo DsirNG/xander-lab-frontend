@@ -75,7 +75,7 @@ const ModuleList = () => {
             <div className="max-w-[1440px] mx-auto flex h-[calc(100vh-64px)] overflow-hidden">
 
                 {/* Left Sidebar */}
-                <aside className="w-80 border-r border-slate-100 dark:border-slate-800 p-6 flex flex-col h-full bg-slate-50/50 dark:bg-slate-900/20">
+                <aside className="w-[350px] flex-shrink-0 border-r border-slate-100 dark:border-slate-800 p-8 flex flex-col h-full bg-slate-50/50 dark:bg-slate-900/20">
                     <header className="mb-10">
                         <h1 className="text-2xl font-black text-slate-900 dark:text-white mb-2">
                             {t('common.exploreModules')}
