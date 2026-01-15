@@ -19,7 +19,19 @@ import {
 import SingleFileTransferDemo from './demos/SingleFileTransferDemo';
 import MultiFileTransferDemo from './demos/MultiFileTransferDemo';
 import SortableListDemo from './demos/SortableListDemo';
-import { SINGLE_FILE_CODE, MULTI_FILE_CODE, SORTABLE_CODE } from './demos/demo-code';
+import KanbanDemo from './demos/KanbanDemo';
+import LayoutBuilderDemo from './demos/LayoutBuilderDemo';
+import ShoppingDemo from './demos/ShoppingDemo';
+import FlowchartDemo from './demos/FlowchartDemo';
+import {
+    SINGLE_FILE_CODE,
+    MULTI_FILE_CODE,
+    SORTABLE_CODE,
+    KANBAN_CODE,
+    LAYOUT_CODE,
+    SHOPPING_CODE,
+    FLOWCHART_CODE
+} from './demos/demo-code';
 import { BrowserWindow } from '../../components';
 
 const DemoSection = ({ title, desc, children, code }) => {
@@ -157,10 +169,28 @@ const ModuleContent = ({ module }) => {
                     code: MULTI_FILE_CODE
                 },
                 {
-                    title: 'Scenario B: Sortable Core',
-                    desc: 'Lightweight list reordering with visual gap detection and ghost states.',
-                    demo: <SortableListDemo />,
-                    code: SORTABLE_CODE
+                    title: 'Scenario B: Kanban & Sorting',
+                    desc: 'Full-featured Kanban board with column-to-column transfers and refined list reordering animations.',
+                    demo: <KanbanDemo />,
+                    code: KANBAN_CODE
+                },
+                {
+                    title: 'Scenario C: UI Layout Builder',
+                    desc: 'Interactive grid system with sidebar-to-canvas instantiation and dynamic resizing simulation.',
+                    demo: <LayoutBuilderDemo />,
+                    code: LAYOUT_CODE
+                },
+                {
+                    title: 'Scenario D: Shopping & Tagging',
+                    desc: 'Context-aware interactions: Drag products to cart or drag tags onto products to apply metadata.',
+                    demo: <ShoppingDemo />,
+                    code: SHOPPING_CODE
+                },
+                {
+                    title: 'Scenario E: Node-based Connectors',
+                    desc: 'Advanced Bezier curve connections with node dragging, demonstrating custom mouse event handling beyond standard HTML5 DnD.',
+                    demo: <FlowchartDemo />,
+                    code: FLOWCHART_CODE
                 }
             ];
         }
