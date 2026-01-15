@@ -43,32 +43,32 @@ const ModuleList = () => {
             title: t('modules.popover.title'),
             icon: <MessageSquare className="w-5 h-5" />,
         },
-        {
-            id: 'dropdown',
-            title: t('modules.dropdown.title'),
-            icon: <List className="w-5 h-5" />,
-            isComingSoon: true
-        },
-        {
-            id: 'tooltip',
-            title: t('modules.tooltip.title'),
-            icon: <HelpCircle className="w-5 h-5" />,
-            isComingSoon: true
-        },
+        // {
+        //     id: 'dropdown',
+        //     title: t('modules.dropdown.title'),
+        //     icon: <List className="w-5 h-5" />,
+        //     isComingSoon: true
+        // },
+        // {
+        //     id: 'tooltip',
+        //     title: t('modules.tooltip.title'),
+        //     icon: <HelpCircle className="w-5 h-5" />,
+        //     isComingSoon: true
+        // },
         {
             id: 'drag-drop',
             title: t('modules.dragdrop.title'),
             icon: <Move className="w-5 h-5" />,
         },
-        {
-            id: 'context',
-            title: t('modules.context.title'),
-            icon: <MousePointer2 className="w-5 h-5" />,
-            isComingSoon: true
-        }
+        // {
+        //     id: 'context',
+        //     title: t('modules.context.title'),
+        //     icon: <MousePointer2 className="w-5 h-5" />,
+        //     isComingSoon: true
+        // }
     ], [t]);
 
-    const activeId = location.pathname.split('/').pop() || 'popover';
+    const activeId = location.pathname.split('/').pop() || 'drag-drop';
 
     return (
         <div className="bg-white dark:bg-slate-950">

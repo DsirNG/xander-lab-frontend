@@ -1,5 +1,5 @@
 import React from 'react';
-import { Outlet, Link } from 'react-router-dom';
+import { Outlet, Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Layers, Github, Menu, Languages } from 'lucide-react';
 import styles from './MainLayout.module.css';
@@ -70,9 +70,9 @@ const Footer = () => {
                     <div>
                         <h4 className={styles.footerSectionTitle}>{t('footer.resources')}</h4>
                         <ul className={styles.footerList}>
-                            <li><Link to="/modules" className={styles.footerLink}>{t('footer.components')}</Link></li>
-                            <li><Link to="/hooks" className={styles.footerLink}>{t('footer.hooks')}</Link></li>
-                            <li><a href="#" className={styles.footerLink}>{t('footer.docs')}</a></li>
+                            <li><Link to="/modules" className={styles.footerLink}>{t('footer.Infrastructure')}</Link></li>
+                            < li > <Link to="/hooks" className={styles.footerLink}>{t('footer.Modules')}</Link></li>
+                            {/* <li><a href="#" className={styles.footerLink}>{t('footer.docs')}</a></li> */}
                         </ul>
                     </div>
                     <div>
@@ -92,13 +92,16 @@ const Footer = () => {
 };
 
 const MainLayout = () => {
+    const location = useLocation();
+    const isHomePage = location.pathname === '/';
+
     return (
         <div className={styles.layoutContainer}>
             <Navbar />
             <main className={styles.mainContent}>
                 <Outlet />
             </main>
-            {/* <Footer /> */}
+            {isHomePage && <Footer />}
         </div>
     );
 };

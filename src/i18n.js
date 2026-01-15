@@ -31,7 +31,7 @@ const resources = {
                 selectModuleToExplore: 'Select a module to view its patterns and interactions'
             },
             hero: {
-                badge: 'v1.0.0 Now Available',
+                badge: 'v1.0.0 In Development',
                 title: 'Crafted for',
                 gradient: 'Excellence',
                 desc: 'A premium collection of UI patterns and infrastructure, designed to elevate your development workflow. From positioning systems to interaction models.',
@@ -169,7 +169,7 @@ const resources = {
                 selectModuleToExplore: '选择一个模块以查看其交互模式'
             },
             hero: {
-                badge: 'v1.0.0 正式发布',
+                badge: 'v1.0.0 研发中',
                 title: '致敬',
                 gradient: '卓越开发',
                 desc: '从底层基础设施到上层功能模块，深度复盘复杂的 UI 交互实践。',
@@ -272,8 +272,8 @@ const resources = {
             footer: {
                 desc: '为现代 Web 开发打造的 React 组件与 Hooks 深度集合。',
                 resources: '资源',
-                components: '组件',
-                hooks: 'Hooks',
+                Infrastructure: '基础设施',
+                Modules: '模块',
                 docs: '文档',
                 connect: '链接',
                 rights: '保留所有权利。'

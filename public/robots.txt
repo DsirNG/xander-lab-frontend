@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://xander-lab.dsircity.top/sitemap.xml
+
+# Crawl-delay
+Crawl-delay: 1
