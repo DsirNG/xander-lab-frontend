@@ -77,7 +77,7 @@ export interface UseDragDropOptions<T = any> {
   /** 判断是否可以放置到目标 */
   canDrop?: (source: T, target: T) => boolean;
   /**获取拖拽预览*/
-  getDragPreview?: (item: T) => DragPreviewResult;
+  getDragPreview?: (item: T, e: React.DragEvent) => DragPreviewResult;
   /** 获取放置提示文本*/
   getDropHintText?: (source: T, target: T) => string;
 }
@@ -210,7 +210,7 @@ export function useDragDrop<T = any>({
 
       // 自定义拖拽视图
       if (getDragPreview) {
-        const res = getDragPreview(item);
+        const res = getDragPreview(item, e);
         if (res) {
           const {
             el,
