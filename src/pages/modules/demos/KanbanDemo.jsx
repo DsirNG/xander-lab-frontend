@@ -109,11 +109,30 @@ const KanbanDemo = () => {
                 }
             }
         },
+        getDragPreview: (item, event) => {
+            const el = event.currentTarget.cloneNode(true);
+            const rect = event.currentTarget.getBoundingClientRect();
+
+            // Lock dimensions to match original
+            el.style.width = `${rect.width}px`;
+            el.style.height = `${rect.height}px`;
+
+            // Remove transform/layout animations if any (framer-motion might leave inline styles)
+            el.style.transform = 'none';
+            // Ensure background and border are opaque/clean
+            el.style.opacity = '1';
+
+            // Calculate offset to keeping position relative to cursor
+            const offsetX = event.clientX - rect.left;
+            const offsetY = event.clientY - rect.top;
+
+            return { el, offsetX, offsetY };
+        }
     });
 
 
     return (
-        <div className="flex space-x-6 overflow-x-auto pb-4 w-full">
+        <div className="flex space-x-6 overflow-x-auto pb-4 w-full h-[400px]">
             {Object.entries(columns).map(([colId, col]) => (
                 <div
                     key={colId}
@@ -207,7 +226,7 @@ const KanbanDemo = () => {
                                 <div
                                     onDragOver={(e) => {
                                         e.preventDefault();
-                                        e.stopPropagation(); // Stop bubbling to prevent parent interference if any
+                                        // e.stopPropagation(); // Stop bubbling to prevent parent interference if any
                                         // Mocking a drop target for empty list
                                         // This requires 'dragOverItem' to be set to something representing the column or handled specially.
                                         // For now, simple visual cue.
