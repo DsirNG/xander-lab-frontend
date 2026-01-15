@@ -160,8 +160,12 @@ const KanbanDemo = () => {
                     </div>
 
                     {/* Column Items */}
-                    <div className="flex-1 overflow-y-auto p-3 space-y-3 min-h-[100px]">
-                        <AnimatePresence>
+                    <motion.div
+                        layoutScroll
+                        style={{ scrollbarGutter: 'stable' }}
+                        className="flex-1 overflow-y-auto overflow-x-hidden p-3 space-y-3 min-h-[100px] select-none"
+                    >
+                        <AnimatePresence mode="popLayout">
                             {col.items.map((item) => (
                                 <motion.div
                                     layout
@@ -223,28 +227,27 @@ const KanbanDemo = () => {
 
                             {/* Empty PlaceHolder for Dropping into empty column */}
                             {col.items.length === 0 && (
-                                <div
+                                <motion.div
+                                    key="empty-placeholder"
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    exit={{ opacity: 0 }}
                                     onDragOver={(e) => {
                                         e.preventDefault();
-                                        // e.stopPropagation(); // Stop bubbling to prevent parent interference if any
-                                        // Mocking a drop target for empty list
-                                        // This requires 'dragOverItem' to be set to something representing the column or handled specially.
-                                        // For now, simple visual cue.
+                                        // e.stopPropagation(); 
                                     }}
                                     onDrop={(e) => dragDrop.handleDrop(colId, e)}
-                                    // Hack: passing a fake item to indicate column drop. 
-                                    // But canonical 'handleDrop' expects (source, target).
-                                    // Target needs to be identifiable in 'onDrop' at top.
-                                    className="h-24 border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-xl flex items-center justify-center text-slate-400 text-sm font-medium"
+                                    className="h-full border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-xl flex items-center justify-center text-slate-400 text-sm font-medium"
                                 >
                                     Drop here
-                                </div>
+                                </motion.div>
                             )}
                         </AnimatePresence>
-                    </div>
+                    </motion.div>
                 </div>
-            ))}
-        </div>
+            ))
+            }
+        </div >
     );
 };
 
