@@ -71,7 +71,7 @@ const ModuleList = () => {
     const activeId = location.pathname.split('/').pop() || 'popover';
 
     return (
-        <div className="min-h-screen bg-white dark:bg-slate-950">
+        <div className="bg-white dark:bg-slate-950">
             <div className="max-w-[1440px] mx-auto flex h-[calc(100vh-64px)] overflow-hidden">
 
                 {/* Left Sidebar */}
