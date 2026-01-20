@@ -56,9 +56,9 @@ const DragDropSystem = () => {
     ];
 
     return (
-        <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
+        <div className="bg-slate-50 dark:bg-slate-950">
             <div className="max-w-4xl mx-auto pt-12 px-6">
-                <Link to="/modules" className="inline-flex items-center text-blue-600 hover:underline mb-8 group">
+                <Link to="/modules/drag-drop" className="inline-flex items-center text-blue-600 hover:underline mb-8 group">
                     <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
                     Back to Modules
                 </Link>

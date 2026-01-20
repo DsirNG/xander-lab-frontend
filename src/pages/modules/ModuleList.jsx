@@ -68,7 +68,7 @@ const ModuleList = () => {
         // }
     ], [t]);
 
-    const activeId = location.pathname.split('/').pop() || 'drag-drop';
+    const activeId = location.pathname.split('/')[2] || 'popover';
 
     return (
         <div className="bg-white dark:bg-slate-950">

@@ -59,7 +59,7 @@ const InfraList = () => {
         }
     ], [t]);
 
-    const activeId = location.pathname.split('/').pop() || 'anchored';
+    const activeId = location.pathname.split('/')[2] || 'anchored';
 
     return (
         <div className="bg-white dark:bg-slate-950">
