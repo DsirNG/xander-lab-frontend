@@ -1,18 +1,39 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import MainLayout from './layouts/MainLayout';
-import HomePage from './pages/Home';
-import InfraList from './pages/infra/InfraList';
-import InfraContent from './pages/infra/InfraContent';
-import AnchoredOverlay from './pages/infra/AnchoredOverlay';
-import ModuleList from './pages/modules/ModuleList';
-import ModuleContent from './pages/modules/ModuleContent';
-import DragDropSystem from './pages/modules/DragDropSystem';
-import { useTranslation } from 'react-i18next';
-import { Box as BoxIcon, Layout as LayoutIcon, Move as MoveIcon, MessageSquare, List, HelpCircle, MousePointer2 } from 'lucide-react';
+/**
+ * 应用根组件
+ * @module App
+ * @author Xander Lab Team
+ * @created 2026-02-05
+ */
 
+// React 相关
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
+
+// 第三方库
+import { Box as BoxIcon, Layout as LayoutIcon, Move as MoveIcon, MessageSquare, List, HelpCircle, MousePointer2 } from 'lucide-react'
+
+// 内部模块（路径别名）
+import MainLayout from '@components/layouts/MainLayout'
+import HomePage from '@features/home/pages/HomePage'
+import InfraList from '@features/infra/pages/InfraList'
+import InfraContent from '@features/infra/pages/InfraContent'
+import AnchoredOverlay from '@features/infra/pages/AnchoredOverlay'
+import ModuleList from '@features/modules/pages/ModuleList'
+import ModuleContent from '@features/modules/pages/ModuleContent'
+import DragDropSystem from '@features/modules/pages/DragDropSystem'
+import ComponentsPage from '@features/components/pages/ComponentsPage'
+
+/**
+ * App - 应用根组件
+ * 负责配置应用路由结构和全局数据
+ * 
+ * @returns {JSX.Element} 应用根组件
+ */
 function App() {
-  const { t } = useTranslation();
+  // Hooks
+  const { t } = useTranslation()
 
+  // 基础设施系统配置
   const infraSystems = [
     {
       id: 'anchored',
@@ -45,15 +66,16 @@ function App() {
     },
     { id: 'focus', title: 'Focus Trap', tag: 'Accessibility', icon: <LayoutIcon className="w-5 h-5" /> },
     { id: 'scroll', title: 'Scroll Management', tag: 'Interaction Physics', icon: <MoveIcon className="w-5 h-5" /> }
-  ];
+  ]
 
+  // 功能模块配置
   const featureModules = [
     { id: 'popover', title: t('modules.popover.title'), desc: t('modules.popover.desc'), icon: <MessageSquare className="w-5 h-5" /> },
     { id: 'dropdown', title: t('modules.dropdown.title'), desc: t('modules.dropdown.desc'), icon: <List className="w-5 h-5" /> },
     { id: 'tooltip', title: t('modules.tooltip.title'), desc: t('modules.tooltip.desc'), icon: <HelpCircle className="w-5 h-5" /> },
     { id: 'drag-drop', title: t('modules.dragdrop.title'), desc: t('modules.dragdrop.desc'), icon: <MoveIcon className="w-5 h-5" />, path: 'drag-drop', hasCustomRouting: true },
     { id: 'context', title: t('modules.context.title'), desc: t('modules.context.desc'), icon: <MousePointer2 className="w-5 h-5" /> }
-  ];
+  ]
 
   return (
     <BrowserRouter>
@@ -80,11 +102,13 @@ function App() {
             </Route>
           </Route>
 
+          <Route path="components" element={<ComponentsPage />} />
+
           <Route path="*" element={<div className="p-10 text-center">{t('common.notFound')}</div>} />
         </Route>
       </Routes>
     </BrowserRouter>
-  );
+  )
 }
 
-export default App;
+export default App

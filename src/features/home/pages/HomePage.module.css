@@ -1,0 +1,131 @@
+@import "tailwindcss";
+@reference "../../../styles/index.css";
+
+.heroSection {
+    @apply relative overflow-hidden py-20 lg:py-32;
+}
+
+.heroBackground {
+    @apply absolute top-0 right-0 -mr-40 -mt-20 w-[600px] h-[600px];
+    @apply bg-primary/10 rounded-full blur-3xl opacity-50 pointer-events-none;
+}
+
+.container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10;
+}
+
+.heroContent {
+    @apply lg:grid lg:grid-cols-2 lg:gap-16 items-center;
+}
+
+.badge {
+    @apply inline-block px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-semibold tracking-wide mb-6;
+}
+
+.heroTitle {
+    @apply text-5xl sm:text-6xl font-extrabold tracking-tight mb-6 text-gray-900 dark:text-white leading-tight;
+}
+
+.gradientText {
+    @apply text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-600;
+}
+
+.heroDescription {
+    @apply text-lg text-gray-600 dark:text-gray-300 mb-8 leading-relaxed;
+}
+
+.buttonGroup {
+    @apply flex flex-wrap gap-4;
+}
+
+.btnPrimary {
+    @apply flex items-center justify-center px-8 py-3.5 rounded-lg text-base font-medium transition-all;
+    @apply text-white bg-primary hover:bg-primary-dark;
+    @apply shadow-lg shadow-primary/25 hover:shadow-primary/40;
+}
+
+.btnSecondary {
+    @apply flex items-center justify-center px-8 py-3.5 rounded-lg text-base font-medium transition-all;
+    @apply border border-gray-200 dark:border-gray-700 bg-surface-light dark:bg-surface-dark;
+    @apply text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800;
+}
+
+/* Feature Section */
+.featureSection {
+    @apply py-20 bg-surface-light dark:bg-surface-dark border-y border-gray-200 dark:border-gray-700;
+}
+
+.sectionHeader {
+    @apply text-center mb-16;
+}
+
+.sectionTitle {
+    @apply text-3xl font-bold text-gray-900 dark:text-white mb-4;
+}
+
+.sectionDesc {
+    @apply text-gray-600 dark:text-gray-400 max-w-2xl mx-auto;
+}
+
+.featureGrid {
+    @apply grid grid-cols-1 md:grid-cols-3 gap-8;
+}
+
+.featureCard {
+    @apply p-8 rounded-2xl bg-background-light dark:bg-background-dark;
+    @apply border border-gray-200 dark:border-gray-700 shadow-sm cursor-default transition-colors;
+    @apply hover:border-primary/50;
+}
+
+.featureIconBox {
+    @apply w-12 h-12 rounded-lg flex items-center justify-center mb-6 shadow-lg;
+}
+
+.featureTitle {
+    @apply text-xl font-bold text-gray-900 dark:text-white mb-3;
+}
+
+.featureDesc {
+    @apply text-gray-600 dark:text-gray-400 leading-relaxed;
+}
+
+/* Visual Block */
+.visualBlock {
+    @apply relative rounded-2xl bg-surface-light dark:bg-surface-dark;
+    @apply border border-gray-200 dark:border-gray-700 shadow-2xl;
+    @apply p-6 transform rotate-3 hover:rotate-0 transition-transform duration-500 ease-out;
+}
+
+.codeDots {
+    @apply flex space-x-2 mb-4;
+}
+
+.dot {
+    @apply w-3 h-3 rounded-full;
+}
+
+.dotRed {
+    @apply bg-red-500;
+}
+
+.dotYellow {
+    @apply bg-yellow-500;
+}
+
+.dotGreen {
+    @apply bg-green-500;
+}
+
+.codeLines {
+    @apply space-y-3 font-mono text-sm opacity-80;
+}
+
+.line {
+    @apply h-4 bg-gray-200 dark:bg-gray-700 rounded;
+}
+
+.floatingBadge {
+    @apply absolute -right-8 -bottom-8 p-4 rounded-xl shadow-xl;
+    @apply bg-white dark:bg-slate-800 border border-gray-100 dark:border-gray-700;
+}
+
