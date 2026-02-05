@@ -6,13 +6,11 @@ import { useTranslation } from 'react-i18next'
 import { Link, useLocation, Outlet } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
-    ChevronRight,
-    MousePointer2,
-    MessageSquare,
-    List,
-    HelpCircle,
-    Move
+    ChevronRight
 } from 'lucide-react'
+
+// 配置
+import { getFeatureModules } from '@config/routes.config'
 
 const SidebarItem = ({ item, active, onClick }) => (
     <Link
@@ -40,36 +38,12 @@ const ModuleList = () => {
     const { t } = useTranslation()
     const location = useLocation()
 
-    const modules = useMemo(() => [
-        {
-            id: 'popover',
-            title: t('modules.popover.title'),
-            icon: <MessageSquare className="w-5 h-5" />,
-        },
-        // {
-        //     id: 'dropdown',
-        //     title: t('modules.dropdown.title'),
-        //     icon: <List className="w-5 h-5" />,
-        //     isComingSoon: true
-        // },
-        // {
-        //     id: 'tooltip',
-        //     title: t('modules.tooltip.title'),
-        //     icon: <HelpCircle className="w-5 h-5" />,
-        //     isComingSoon: true
-        // },
-        {
-            id: 'drag-drop',
-            title: t('modules.dragdrop.title'),
-            icon: <Move className="w-5 h-5" />,
-        },
-        // {
-        //     id: 'context',
-        //     title: t('modules.context.title'),
-        //     icon: <MousePointer2 className="w-5 h-5" />,
-        //     isComingSoon: true
-        // }
-    ], [t])
+    // 使用共享配置，只显示已启用的模块
+    const modules = useMemo(() => {
+        const allModules = getFeatureModules(t)
+        // 过滤出需要显示在侧边栏的模块
+        return allModules.filter(m => ['popover', 'drag-drop'].includes(m.id))
+    }, [t])
 
     const activeId = location.pathname.split('/')[2] || 'popover'
 

@@ -1,6 +1,9 @@
 /**
  * 路由配置
  * Router Configuration
+ * @module router
+ * @author Xander Lab Team
+ * @created 2026-02-05
  */
 
 import { createBrowserRouter, Navigate } from 'react-router-dom';
@@ -18,70 +21,99 @@ import ModuleContent from '@features/modules/pages/ModuleContent';
 import DragDropSystem from '@features/modules/pages/DragDropSystem';
 import ComponentsPage from '@features/components/pages/ComponentsPage';
 
-// 配置路由数据
-export const routerConfig = [
-  {
-    path: '/',
-    element: <MainLayout />,
-    children: [
-      {
-        index: true,
-        element: <HomePage />,
-      },
-      {
-        path: 'infra',
-        element: <InfraList />,
-        children: [
-          {
-            index: true,
-            element: <Navigate to="anchored" replace />,
-          },
-          {
-            path: ':systemId',
-            element: <InfraContent />,
-          },
-          {
-            path: 'anchored/theory',
-            element: <AnchoredOverlay />,
-          },
-        ],
-      },
-      {
-        path: 'modules',
-        element: <ModuleList />,
-        children: [
-          {
-            index: true,
-            element: <Navigate to="popover" replace />,
-          },
-          {
-            path: ':moduleId',
-            element: <ModuleContent />,
-          },
-          {
-            path: 'drag-drop/deep-dive',
-            element: <DragDropSystem />,
-          },
-        ],
-      },
-      {
-        path: 'components',
-        element: <ComponentsPage />,
-      },
-      {
-        path: '*',
-        element: (
-          <div className="p-10 text-center">
-            <h1 className="text-2xl font-bold">404 - 页面未找到</h1>
-          </div>
-        ),
-      },
-    ],
-  },
-];
+// 配置数据
+import { getInfraSystems, getFeatureModules } from '@config/routes.config';
 
-// 创建路由实例
-const router = createBrowserRouter(routerConfig);
+/**
+ * 创建路由配置
+ * @param {Function} t - i18n 翻译函数
+ * @returns {Object} 路由器实例
+ */
+export const createRouter = (t) => {
+  // 获取业务配置数据
+  const infraSystems = getInfraSystems(t);
+  const featureModules = getFeatureModules(t);
 
-export default router;
+  // 动态生成路由配置
+  const routerConfig = [
+    {
+      path: '/',
+      element: <MainLayout />,
+      children: [
+        {
+          index: true,
+          element: <HomePage />,
+        },
+        {
+          path: 'infra',
+          element: <InfraList />,
+          children: [
+            {
+              index: true,
+              element: <Navigate to="anchored" replace />,
+            },
+            // 动态生成基础设施路由
+            ...infraSystems.map(system => ({
+              path: system.id,
+              element: <InfraContent system={system} />,
+            })),
+            // 特殊路由
+            {
+              path: 'anchored/theory',
+              element: <AnchoredOverlay />,
+            },
+          ],
+        },
+        {
+          path: 'modules',
+          element: <ModuleList />,
+          children: [
+            {
+              index: true,
+              element: <Navigate to="popover" replace />,
+            },
+            // 动态生成模块路由（排除自定义路由）
+            ...featureModules
+              .filter(m => !m.hasCustomRouting)
+              .map(module => ({
+                path: module.id,
+                element: <ModuleContent module={module} />,
+              })),
+            // drag-drop 特殊路由
+            {
+              path: 'drag-drop',
+              children: [
+                {
+                  index: true,
+                  element: <ModuleContent module={featureModules.find(m => m.id === 'drag-drop')} />,
+                },
+                {
+                  path: 'deep-dive',
+                  element: <DragDropSystem />,
+                },
+              ],
+            },
+          ],
+        },
+        {
+          path: 'components',
+          element: <ComponentsPage />,
+        },
+        {
+          path: '*',
+          element: (
+            <div className="p-10 text-center">
+              <h1 className="text-2xl font-bold">404 - 页面未找到</h1>
+            </div>
+          ),
+        },
+      ],
+    },
+  ];
+
+  return createBrowserRouter(routerConfig);
+};
+
+// 默认导出（将在 main.jsx 中初始化）
+export default createRouter;
 

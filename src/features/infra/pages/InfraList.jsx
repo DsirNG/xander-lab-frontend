@@ -6,12 +6,11 @@ import { useTranslation } from 'react-i18next'
 import { Link, useLocation, Outlet } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
-    Box,
-    ChevronRight,
-    Layout,
-    Move,
-    Zap
+    ChevronRight
 } from 'lucide-react'
+
+// 配置
+import { getInfraSystems } from '@config/routes.config'
 
 const SidebarItem = ({ item, active, onClick }) => (
     <Link
@@ -39,28 +38,8 @@ const InfraList = () => {
     const { t } = useTranslation()
     const location = useLocation()
 
-    const systems = useMemo(() => [
-        {
-            id: 'anchored',
-            title: t('infra.anchored.title'),
-            tag: t('infra.anchored.tag'),
-            icon: <Box className="w-5 h-5" />,
-        },
-        {
-            id: 'focus',
-            title: 'Focus Trap',
-            tag: 'Accessibility',
-            icon: <Layout className="w-5 h-5" />,
-            isComingSoon: true
-        },
-        {
-            id: 'scroll',
-            title: 'Scroll Management',
-            tag: 'Interaction Physics',
-            icon: <Move className="w-5 h-5" />,
-            isComingSoon: true
-        }
-    ], [t])
+    // 使用共享配置
+    const systems = useMemo(() => getInfraSystems(t), [t])
 
     const activeId = location.pathname.split('/')[2] || 'anchored'
 
