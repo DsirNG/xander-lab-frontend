@@ -20,9 +20,12 @@ import ModuleList from '@features/modules/pages/ModuleList';
 import ModuleContent from '@features/modules/pages/ModuleContent';
 import DragDropSystem from '@features/modules/pages/DragDropSystem';
 import ComponentsPage from '@features/components/pages/ComponentsPage';
+import ComponentContent from '@features/components/pages/ComponentContent';
 
 // 配置数据
-import { getInfraSystems, getFeatureModules } from '@config/routes.config';
+import { getInfraConfig } from '@features/infra/constants';
+import { getModuleConfig } from '@features/modules/constants';
+import { getComponentConfig } from '@features/components/constants';
 
 /**
  * 创建路由配置
@@ -31,8 +34,9 @@ import { getInfraSystems, getFeatureModules } from '@config/routes.config';
  */
 export const createRouter = (t) => {
   // 获取业务配置数据
-  const infraSystems = getInfraSystems(t);
-  const featureModules = getFeatureModules(t);
+  const infraSystems = getInfraConfig(t);
+  const featureModules = getModuleConfig(t);
+  const components = getComponentConfig(t);
 
   // 动态生成路由配置
   const routerConfig = [
@@ -98,6 +102,17 @@ export const createRouter = (t) => {
         {
           path: 'components',
           element: <ComponentsPage />,
+          children: [
+            {
+              index: true,
+              element: <Navigate to="button" replace />,
+            },
+            // 动态生成组件路由
+            ...components.map(component => ({
+              path: component.id,
+              element: <ComponentContent component={component} />,
+            })),
+          ],
         },
         {
           path: '*',
