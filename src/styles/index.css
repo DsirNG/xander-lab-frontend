@@ -43,16 +43,19 @@
 /* 平滑滚动行为 */
 html {
   scroll-behavior: smooth;
+  scrollbar-gutter: stable;
 }
 
-/* Firefox 滚动条样式 */
-* {
-  scrollbar-width: thin;
-  scrollbar-color: #cbd5e1 transparent;
-}
+/* Firefox 滚动条样式 - 只在不支持 webkit 滚动条的浏览器(如 Firefox)应用 */
+@supports not selector(::-webkit-scrollbar) {
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 transparent;
+  }
 
-.dark * {
-  scrollbar-color: #475569 transparent;
+  .dark * {
+    scrollbar-color: #475569 transparent;
+  }
 }
 
 /* Webkit 浏览器滚动条样式 (Chrome, Safari, Edge) */
@@ -98,4 +101,3 @@ html {
   background: #334155;
   background-clip: padding-box;
 }
-
