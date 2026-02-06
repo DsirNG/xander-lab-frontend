@@ -221,9 +221,9 @@ const ModuleContent = ({ module }) => {
                         <Zap className="w-4 h-4 text-blue-600" />
                         <span>{t('common.implementationDetails')}</span>
                     </div>
-                    {module.path && (
+                    {module.detailPages && module.detailPages.length > 0 && (
                         <Link
-                            to={`/modules/${module.path}/deep-dive`}
+                            to={`/modules/${module.id}/${module.detailPages[0].type}`}
                             className="flex items-center space-x-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-6 py-3 rounded-2xl font-bold text-sm hover:scale-105 transition-transform shadow-xl ml-4"
                         >
                             <ExternalLink className="w-4 h-4" />

@@ -19,6 +19,7 @@ export const getComponentConfig = (t) => [
         title: t('components.customSelect.title', 'Custom Select'),
         desc: t('components.customSelect.desc', 'A customizable dropdown selection component with support for alignment and error states.'),
         icon: <ChevronsUpDown className="w-5 h-5" />,
+        detailPages: [], // 暂无详情页
         scenarios: [
             {
                 title: 'Basic Usage',
@@ -41,6 +42,7 @@ export const getComponentConfig = (t) => [
         id: 'button',
         title: t('components.button.title', 'Button'),
         desc: t('components.button.desc', 'Standard button component'),
-        icon: <MousePointerClick className="w-5 h-5" />
+        icon: <MousePointerClick className="w-5 h-5" />,
+        detailPages: [], // 暂无详情页
     }
 ];

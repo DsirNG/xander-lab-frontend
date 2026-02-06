@@ -45,9 +45,9 @@ const InfraContent = ({ system }) => {
                         {system.id === 'anchored' ? t('infra.anchored.desc') : 'System preview coming soon.'}
                     </p>
                 </div>
-                {system.path && (
+                {system.detailPages && system.detailPages.length > 0 && (
                     <Link
-                        to={`/infra/${system.path}`}
+                        to={`/infra/${system.id}/${system.detailPages[0].type}`}
                         className="flex items-center space-x-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-6 py-3 rounded-2xl font-bold text-sm hover:scale-105 transition-transform shadow-xl"
                     >
                         <ScrollText className="w-4 h-4" />

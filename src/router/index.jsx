@@ -6,6 +6,7 @@
  * @created 2026-02-05
  */
 
+import React, { Suspense } from 'react';
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 
 // Layouts
@@ -15,10 +16,8 @@ import MainLayout from '@components/layouts/MainLayout';
 import HomePage from '@features/home/pages/HomePage';
 import InfraList from '@features/infra/pages/InfraList';
 import InfraContent from '@features/infra/pages/InfraContent';
-import AnchoredOverlay from '@features/infra/pages/AnchoredOverlay';
 import ModuleList from '@features/modules/pages/ModuleList';
 import ModuleContent from '@features/modules/pages/ModuleContent';
-import DragDropSystem from '@features/modules/pages/DragDropSystem';
 import ComponentsPage from '@features/components/pages/ComponentsPage';
 import ComponentContent from '@features/components/pages/ComponentContent';
 
@@ -56,16 +55,30 @@ export const createRouter = (t) => {
               index: true,
               element: <Navigate to="anchored" replace />,
             },
-            // 动态生成基础设施路由
+            // 动态生成基础设施路由（包含详情页子路由）
             ...infraSystems.map(system => ({
               path: system.id,
-              element: <InfraContent system={system} />,
+              children: [
+                // 基础设施概览页面
+                {
+                  index: true,
+                  element: <InfraContent system={system} />,
+                },
+                // 动态生成详情页路由（theory/guide/api等）
+                ...(system.detailPages || []).map(detailPage => ({
+                  path: detailPage.type,
+                  element: (
+                    <Suspense fallback={
+                      <div className="flex items-center justify-center min-h-screen">
+                        <div className="text-slate-500">加载中...</div>
+                      </div>
+                    }>
+                      <detailPage.component />
+                    </Suspense>
+                  ),
+                })),
+              ],
             })),
-            // 特殊路由
-            {
-              path: 'anchored/theory',
-              element: <AnchoredOverlay />,
-            },
           ],
         },
         {
@@ -76,27 +89,30 @@ export const createRouter = (t) => {
               index: true,
               element: <Navigate to="popover" replace />,
             },
-            // 动态生成模块路由（排除自定义路由）
-            ...featureModules
-              .filter(m => !m.hasCustomRouting)
-              .map(module => ({
-                path: module.id,
-                element: <ModuleContent module={module} />,
-              })),
-            // drag-drop 特殊路由
-            {
-              path: 'drag-drop',
+            // 动态生成功能模块路由（包含详情页子路由）
+            ...featureModules.map(module => ({
+              path: module.id,
               children: [
+                // 功能模块概览页面
                 {
                   index: true,
-                  element: <ModuleContent module={featureModules.find(m => m.id === 'drag-drop')} />,
+                  element: <ModuleContent module={module} />,
                 },
-                {
-                  path: 'deep-dive',
-                  element: <DragDropSystem />,
-                },
+                // 动态生成详情页路由（deep-dive/guide/api等）
+                ...(module.detailPages || []).map(detailPage => ({
+                  path: detailPage.type,
+                  element: (
+                    <Suspense fallback={
+                      <div className="flex items-center justify-center min-h-screen">
+                        <div className="text-slate-500">加载中...</div>
+                      </div>
+                    }>
+                      <detailPage.component />
+                    </Suspense>
+                  ),
+                })),
               ],
-            },
+            })),
           ],
         },
         {
@@ -107,10 +123,29 @@ export const createRouter = (t) => {
               index: true,
               element: <Navigate to="button" replace />,
             },
-            // 动态生成组件路由
+            // 动态生成组件路由（包含详情页子路由）
             ...components.map(component => ({
               path: component.id,
-              element: <ComponentContent component={component} />,
+              children: [
+                // 组件概览页面
+                {
+                  index: true,
+                  element: <ComponentContent component={component} />,
+                },
+                // 动态生成详情页路由（guide/api等）
+                ...(component.detailPages || []).map(detailPage => ({
+                  path: detailPage.type,
+                  element: (
+                    <Suspense fallback={
+                      <div className="flex items-center justify-center min-h-screen">
+                        <div className="text-slate-500">加载中...</div>
+                      </div>
+                    }>
+                      <detailPage.component />
+                    </Suspense>
+                  ),
+                })),
+              ],
             })),
           ],
         },
