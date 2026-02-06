@@ -84,10 +84,27 @@
   overflow: hidden;
 }
 
+.selectDropdown.upward {
+  top: auto;
+  bottom: calc(100% + 0.25rem);
+  animation: slideUp 0.2s ease-out;
+}
+
 @keyframes slideDown {
   from {
     opacity: 0;
     transform: translateY(-0.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(0.5rem);
   }
   to {
     opacity: 1;

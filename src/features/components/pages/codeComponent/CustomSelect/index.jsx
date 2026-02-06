@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import styles from './index.module.css';
 
 const DownIcon = () => (
@@ -27,11 +27,43 @@ const CustomSelect = ({
                         error = false
                       }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isUpward, setIsUpward] = useState(false);
   const selectRef = useRef(null);
+  const dropdownRef = useRef(null);
 
   // 获取当前选中项的显示文本
   const selectedOption = options.find(opt => opt.value === value);
   const displayText = selectedOption ? selectedOption.label : placeholder;
+
+  // 检测边界并决定下拉框方向
+  const checkBoundary = useCallback(() => {
+    if (!selectRef.current || !isOpen) return;
+
+    const triggerRect = selectRef.current.getBoundingClientRect();
+    const viewportHeight = window.innerHeight;
+    const spaceBelow = viewportHeight - triggerRect.bottom;
+    const spaceAbove = triggerRect.top;
+    
+    // 估算下拉框高度（最大高度 15rem + padding）
+    const estimatedDropdownHeight = Math.min(
+      options.length * 2.5 + 0.5, // 每个选项约 2.5rem + padding
+      15 + 0.5 // 最大高度 15rem + padding
+    ) * 16; // 转换为像素（假设 1rem = 16px）
+    
+    // 如果下方空间不足，且上方空间足够，则向上展开
+    const shouldUpward = spaceBelow < estimatedDropdownHeight && spaceAbove >= estimatedDropdownHeight;
+    
+    // 如果下拉框已渲染，使用实际高度进行二次检测
+    if (dropdownRef.current) {
+      const dropdownRect = dropdownRef.current.getBoundingClientRect();
+      const actualBottomPosition = triggerRect.bottom + dropdownRect.height;
+      const actualShouldUpward = actualBottomPosition > viewportHeight && spaceAbove >= dropdownRect.height;
+      
+      setIsUpward(actualShouldUpward);
+    } else {
+      setIsUpward(shouldUpward);
+    }
+  }, [isOpen, options.length]);
 
   // 点击外部关闭下拉框
   useEffect(() => {
@@ -46,6 +78,41 @@ const CustomSelect = ({
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
+
+  // 当下拉框打开时检测边界
+  useEffect(() => {
+    if (isOpen) {
+      // 使用 requestAnimationFrame 确保 DOM 已渲染
+      requestAnimationFrame(() => {
+        checkBoundary();
+        // 再次检测，确保使用实际渲染后的尺寸
+        requestAnimationFrame(() => {
+          checkBoundary();
+        });
+      });
+    } else {
+      // 关闭时重置方向
+      setIsUpward(false);
+    }
+  }, [isOpen, checkBoundary]);
+
+  // 监听滚动事件，重新检测边界
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleScroll = () => {
+      checkBoundary();
+    };
+
+    // 监听窗口滚动和容器滚动
+    window.addEventListener('scroll', handleScroll, true);
+    window.addEventListener('resize', handleScroll);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll, true);
+      window.removeEventListener('resize', handleScroll);
+    };
+  }, [isOpen, checkBoundary]);
 
   const handleSelect = (optionValue) => {
     onChange(optionValue);
@@ -68,7 +135,10 @@ const CustomSelect = ({
       </div>
 
       {isOpen && (
-        <div className={styles.selectDropdown}>
+        <div 
+          ref={dropdownRef}
+          className={`${styles.selectDropdown} ${isUpward ? styles.upward : ''}`}
+        >
           <div className={styles.optionsList}>
             {options.map((option) => (
               <div
