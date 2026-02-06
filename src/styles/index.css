@@ -46,6 +46,15 @@ html {
   scrollbar-gutter: stable;
 }
 
+/* 强制所有滚动容器预留滚动条位置，防止布局跳动 */
+.overflow-auto,
+.overflow-y-auto,
+.overflow-scroll,
+.overflow-y-scroll,
+.custom-scrollbar {
+  scrollbar-gutter: stable;
+}
+
 /* Firefox 滚动条样式 - 只在不支持 webkit 滚动条的浏览器(如 Firefox)应用 */
 @supports not selector(::-webkit-scrollbar) {
   * {
