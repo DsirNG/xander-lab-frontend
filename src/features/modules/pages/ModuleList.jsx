@@ -15,9 +15,7 @@ const ModuleList = () => {
 
     // 使用共享配置，只显示已启用的模块
     const modules = useMemo(() => {
-        const allModules = getModuleConfig(t)
-        // 过滤出需要显示在侧边栏的模块
-        return allModules.filter(m => ['popover', 'drag-drop'].includes(m.id))
+      return getModuleConfig(t)
     }, [t])
 
     const activeId = location.pathname.split('/')[2] || 'popover'

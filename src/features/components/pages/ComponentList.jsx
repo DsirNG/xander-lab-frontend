@@ -9,7 +9,7 @@ import SidebarLayout from '@components/layouts/SidebarLayout';
 // 配置
 import { getComponentConfig } from '../constants';
 
-const ComponentsPage = () => {
+const ComponentList = () => {
     const { t } = useTranslation();
     const location = useLocation();
 
@@ -38,5 +38,5 @@ const ComponentsPage = () => {
     );
 };
 
-export default ComponentsPage;
+export default ComponentList;
 

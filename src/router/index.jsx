@@ -18,7 +18,7 @@ import InfraList from '@features/infra/pages/InfraList';
 import InfraContent from '@features/infra/pages/InfraContent';
 import ModuleList from '@features/modules/pages/ModuleList';
 import ModuleContent from '@features/modules/pages/ModuleContent';
-import ComponentsPage from '@features/components/pages/ComponentsPage';
+import ComponentList from '@features/components/pages/ComponentList';
 import ComponentContent from '@features/components/pages/ComponentContent';
 
 // 配置数据
@@ -117,7 +117,7 @@ export const createRouter = (t) => {
         },
         {
           path: 'components',
-          element: <ComponentsPage />,
+          element: <ComponentList />,
           children: [
             {
               index: true,

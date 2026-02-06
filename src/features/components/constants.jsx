@@ -34,7 +34,18 @@ export const getComponentConfig = (t) => [
             {
                 title: 'States',
                 desc: 'Visual feedback for different interaction states including Error.',
-                demo: <StatusDemo />
+                demo: <StatusDemo />,
+                code: `
+                      <CustomSelect
+                          label="Select an option"
+                          options={[
+                              { value: 'option1', label: 'Option 1' },
+                              { value: 'option2', label: 'Option 2' },
+                              { value: 'option3', label: 'Option 3' },
+                          ]}
+                          error="This field is required"
+                      />
+                      `
             }
         ]
     },
