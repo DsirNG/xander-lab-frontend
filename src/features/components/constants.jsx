@@ -6,7 +6,7 @@ import {
 } from 'lucide-react';
 
 // Demos
-import { BasicDemo, AlignmentDemo, StatusDemo } from './pages/codeComponent/CustomSelect/demo';
+import { BasicDemo, AlignmentDemo, StatusDemo } from './pages/codeComponent/demo/demo.jsx';
 
 /**
  * 获取基础组件配置

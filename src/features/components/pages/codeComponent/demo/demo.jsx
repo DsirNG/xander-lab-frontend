@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import CustomSelect from './index';
+import CustomSelect from '../CustomSelect/index.jsx';
 
 export const BasicDemo = () => {
     const [value, setValue] = useState('');
