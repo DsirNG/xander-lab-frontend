@@ -175,3 +175,4 @@ const ModuleContent = ({ module }) => {
 - `renderDemoSection` 函数接收 `(scenario, index)` 两个参数
 - 如果有 `detailPages`，会自动显示详情按钮
 
+

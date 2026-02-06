@@ -33,18 +33,18 @@ const ContentLayout = ({
             transition={{ duration: 0.3 }}
         >
             {/* 头部：标题、描述、操作按钮 */}
-            <div className="flex justify-between items-start mb-12">
-                <div className="max-w-2xl">
-                    <h2 className="text-4xl font-black text-slate-900 dark:text-white mb-4">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-8 sm:mb-12 gap-4 sm:gap-0">
+                <div className="max-w-2xl flex-1">
+                    <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 dark:text-white mb-3 sm:mb-4">
                         {item.title}
                     </h2>
-                    <p className="text-lg text-slate-500 dark:text-slate-400">
+                    <p className="text-base sm:text-lg text-slate-500 dark:text-slate-400">
                         {item.desc || item.description}
                     </p>
                 </div>
 
                 {/* 右侧按钮区域 */}
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-2 flex-shrink-0">
                     {/* 额外的按钮（可选） */}
                     {extraHeaderButtons}
 
@@ -52,10 +52,11 @@ const ContentLayout = ({
                     {item.detailPages && item.detailPages.length > 0 && (
                         <Link
                             to={`${basePath}/${item.id}/${item.detailPages[0].type}`}
-                            className="flex items-center space-x-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-6 py-3 rounded-2xl font-bold text-sm hover:scale-105 transition-transform shadow-xl"
+                            className="flex items-center space-x-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl font-bold text-xs sm:text-sm hover:scale-105 transition-transform shadow-xl whitespace-nowrap"
                         >
-                            {DetailButtonIcon && <DetailButtonIcon className="w-4 h-4" />}
-                            <span>{detailButtonText || t('common.viewDetails')}</span>
+                            {DetailButtonIcon && <DetailButtonIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />}
+                            <span className="hidden sm:inline">{detailButtonText || t('common.viewDetails')}</span>
+                            <span className="sm:hidden">{t('common.viewDetails')}</span>
                         </Link>
                     )}
                 </div>
@@ -125,4 +126,5 @@ ContentLayout.propTypes = {
 };
 
 export default ContentLayout;
+
 

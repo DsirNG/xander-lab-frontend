@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Layers, Github, Menu, Languages } from 'lucide-react';
+import { Layers, Github, Menu, Languages, X } from 'lucide-react';
 import styles from './MainLayout.module.css';
 
 const Navbar = () => {
     const { t, i18n } = useTranslation();
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const location = useLocation();
 
     const toggleLanguage = () => {
         const nextLng = i18n.language.startsWith('zh') ? 'en' : 'zh';
@@ -14,45 +16,155 @@ const Navbar = () => {
 
     const currentLang = i18n.language.startsWith('zh') ? '中文' : 'EN';
 
-    return (
-        <nav className={styles.navbar}>
-            <div className={styles.container}>
-                <div className={styles.navContent}>
-                    <Link to="/" className={styles.logoArea}>
-                        <Layers className="w-8 h-8 text-primary" />
-                        <span className={styles.logoText}>
-                            Xander Lab
-                        </span>
-                    </Link>
+    // 路由变化时关闭移动菜单
+    useEffect(() => {
+        setIsMobileMenuOpen(false);
+    }, [location.pathname]);
 
-                    <div className={styles.desktopNav}>
-                        <div className={styles.navLinks}>
-                            <Link to="/" className={styles.navLink}>{t('nav.home')}</Link>
-                            <Link to="/infra" className={styles.navLink}>{t('nav.infra')}</Link>
-                            <Link to="/modules" className={styles.navLink}>{t('nav.modules')}</Link>
-                            <Link to="/components" className={styles.navLink}>{t('nav.components')}</Link>
+    // 点击外部关闭菜单
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            const mobileMenu = document.querySelector(`.${styles.mobileMenu}`);
+            const menuButton = document.querySelector(`.${styles.menuButton}`);
+            
+            if (isMobileMenuOpen && 
+                mobileMenu && 
+                !mobileMenu.contains(event.target) &&
+                menuButton &&
+                !menuButton.contains(event.target)) {
+                setIsMobileMenuOpen(false);
+            }
+        };
+
+        if (isMobileMenuOpen) {
+            document.addEventListener('mousedown', handleClickOutside);
+            // 防止背景滚动
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+            document.body.style.overflow = '';
+        };
+    }, [isMobileMenuOpen]);
+
+    const navLinks = [
+        { path: '/', label: t('nav.home') },
+        { path: '/infra', label: t('nav.infra') },
+        { path: '/modules', label: t('nav.modules') },
+        { path: '/components', label: t('nav.components') },
+    ];
+
+    return (
+        <>
+            <nav className={styles.navbar}>
+                <div className={styles.container}>
+                    <div className={styles.navContent}>
+                        <Link to="/" className={styles.logoArea} onClick={() => setIsMobileMenuOpen(false)}>
+                            <Layers className="w-8 h-8 text-primary" />
+                            <span className={styles.logoText}>
+                                Xander Lab
+                            </span>
+                        </Link>
+
+                        <div className={styles.desktopNav}>
+                            <div className={styles.navLinks}>
+                                {navLinks.map((link) => (
+                                    <Link 
+                                        key={link.path}
+                                        to={link.path} 
+                                        className={styles.navLink}
+                                    >
+                                        {link.label}
+                                    </Link>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className={styles.actionsArea}>
+                            <button
+                                onClick={toggleLanguage}
+                                className={`${styles.iconButton} hidden sm:flex items-center space-x-1 px-2 sm:px-3`}
+                                title="Toggle Language"
+                            >
+                                <Languages className="w-4 h-4" />
+                                <span className="text-xs font-bold hidden sm:inline">{currentLang}</span>
+                            </button>
+                            <a 
+                                href="https://github.com" 
+                                target="_blank" 
+                                rel="noopener noreferrer" 
+                                className={`${styles.iconButton} hidden sm:flex`}
+                                aria-label="GitHub"
+                            >
+                                <Github className="w-5 h-5" />
+                            </a>
+                            <button 
+                                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                                className={styles.menuButton}
+                                aria-label="菜单"
+                                aria-expanded={isMobileMenuOpen}
+                            >
+                                {isMobileMenuOpen ? (
+                                    <X className="w-5 h-5 sm:w-6 sm:h-6" />
+                                ) : (
+                                    <Menu className="w-5 h-5 sm:w-6 sm:h-6" />
+                                )}
+                            </button>
                         </div>
                     </div>
+                </div>
+            </nav>
 
-                    <div className={styles.actionsArea}>
+            {/* 移动端菜单 */}
+            <div 
+                className={`${styles.mobileMenu} ${isMobileMenuOpen ? styles.mobileMenuOpen : ''}`}
+            >
+                <div className={styles.mobileMenuContent}>
+                    <div className={styles.mobileNavLinks}>
+                        {navLinks.map((link) => (
+                            <Link
+                                key={link.path}
+                                to={link.path}
+                                className={`${styles.mobileNavLink} ${location.pathname === link.path ? styles.mobileNavLinkActive : ''}`}
+                                onClick={() => setIsMobileMenuOpen(false)}
+                            >
+                                {link.label}
+                            </Link>
+                        ))}
+                    </div>
+                    
+                    <div className={styles.mobileMenuActions}>
                         <button
                             onClick={toggleLanguage}
-                            className={`${styles.iconButton} flex items-center space-x-1 px-3`}
-                            title="Toggle Language"
+                            className={`${styles.mobileActionButton} flex items-center space-x-2`}
                         >
                             <Languages className="w-4 h-4" />
-                            <span className="text-xs font-bold">{currentLang}</span>
+                            <span className="text-sm font-medium">{currentLang}</span>
                         </button>
-                        <a href="https://github.com" target="_blank" rel="noopener noreferrer" className={styles.iconButton}>
+                        <a 
+                            href="https://github.com" 
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            className={`${styles.mobileActionButton} flex items-center space-x-2`}
+                        >
                             <Github className="w-5 h-5" />
+                            <span className="text-sm font-medium">GitHub</span>
                         </a>
-                        <button className={styles.menuButton}>
-                            <Menu className="w-6 h-6" />
-                        </button>
                     </div>
                 </div>
             </div>
-        </nav>
+
+            {/* 移动端遮罩层 */}
+            {isMobileMenuOpen && (
+                <div 
+                    className={styles.mobileMenuOverlay}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                />
+            )}
+        </>
     );
 };
 
@@ -108,4 +220,5 @@ const MainLayout = () => {
 };
 
 export default MainLayout;
+
 

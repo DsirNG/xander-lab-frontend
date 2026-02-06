@@ -12,15 +12,15 @@
 }
 
 .navContent {
-    @apply flex items-center justify-center sm:justify-between h-16;
+    @apply flex items-center justify-between h-16 relative;
 }
 
 .logoArea {
-    @apply flex items-center gap-2;
+    @apply flex items-center gap-2 flex-shrink-0;
 }
 
 .logoText {
-    @apply text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary-dark;
+    @apply text-lg sm:text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary-dark;
 }
 
 .desktopNav {
@@ -37,7 +37,7 @@
 }
 
 .actionsArea {
-    @apply flex items-center gap-4 absolute right-4 sm:static;
+    @apply flex items-center gap-2 sm:gap-4 flex-shrink-0;
 }
 
 .iconButton {
@@ -49,6 +49,63 @@
 .menuButton {
     @apply md:hidden p-2 rounded-md text-gray-700 dark:text-gray-300;
     @apply hover:bg-surface-light dark:hover:bg-surface-dark;
+    @apply transition-colors;
+}
+
+/* 移动端菜单 */
+.mobileMenu {
+    @apply fixed top-16 left-0 right-0 z-40;
+    @apply bg-background-light dark:bg-background-dark;
+    @apply border-b border-surface-light dark:border-surface-dark;
+    @apply transform transition-transform duration-300 ease-in-out;
+    @apply max-h-[calc(100vh-64px)] overflow-y-auto;
+    @apply md:hidden;
+    transform: translateY(-100%);
+    opacity: 0;
+    pointer-events: none;
+}
+
+.mobileMenuOpen {
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.mobileMenuContent {
+    @apply px-4 py-6;
+}
+
+.mobileNavLinks {
+    @apply flex flex-col space-y-2 mb-6;
+}
+
+.mobileNavLink {
+    @apply px-4 py-3 rounded-lg text-base font-medium transition-colors;
+    @apply text-gray-700 dark:text-gray-300;
+    @apply hover:bg-surface-light dark:hover:bg-surface-dark;
+    @apply hover:text-primary dark:hover:text-primary;
+}
+
+.mobileNavLinkActive {
+    @apply bg-primary/10 text-primary dark:text-primary;
+    @apply dark:bg-primary/20;
+}
+
+.mobileMenuActions {
+    @apply flex flex-col space-y-2 pt-4 border-t border-surface-light dark:border-surface-dark;
+}
+
+.mobileActionButton {
+    @apply px-4 py-3 rounded-lg text-base font-medium transition-colors;
+    @apply text-gray-700 dark:text-gray-300;
+    @apply hover:bg-surface-light dark:hover:bg-surface-dark;
+    @apply w-full text-left;
+}
+
+.mobileMenuOverlay {
+    @apply fixed inset-0 bg-black/30 z-30;
+    @apply md:hidden;
+    top: 64px;
 }
 
 .footer {
@@ -91,4 +148,5 @@
 .mainContent {
     @apply flex-grow pt-16;
 }
+
 

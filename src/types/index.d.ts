@@ -53,3 +53,4 @@ export interface ModuleConfig {
   hasCustomRouting?: boolean;
 }
 
+
