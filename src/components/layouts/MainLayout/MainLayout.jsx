@@ -26,9 +26,9 @@ const Navbar = () => {
         const handleClickOutside = (event) => {
             const mobileMenu = document.querySelector(`.${styles.mobileMenu}`);
             const menuButton = document.querySelector(`.${styles.menuButton}`);
-            
-            if (isMobileMenuOpen && 
-                mobileMenu && 
+
+            if (isMobileMenuOpen &&
+                mobileMenu &&
                 !mobileMenu.contains(event.target) &&
                 menuButton &&
                 !menuButton.contains(event.target)) {
@@ -72,9 +72,9 @@ const Navbar = () => {
                         <div className={styles.desktopNav}>
                             <div className={styles.navLinks}>
                                 {navLinks.map((link) => (
-                                    <Link 
+                                    <Link
                                         key={link.path}
-                                        to={link.path} 
+                                        to={link.path}
                                         className={styles.navLink}
                                     >
                                         {link.label}
@@ -92,16 +92,16 @@ const Navbar = () => {
                                 <Languages className="w-4 h-4" />
                                 <span className="text-xs font-bold hidden sm:inline">{currentLang}</span>
                             </button>
-                            <a 
-                                href="https://github.com" 
-                                target="_blank" 
-                                rel="noopener noreferrer" 
+                            <a
+                                href="https://github.com/DsirNG/xander-lab-frontend"
+                                target="_blank"
+                                rel="noopener noreferrer"
                                 className={`${styles.iconButton} hidden sm:flex`}
                                 aria-label="GitHub"
                             >
                                 <Github className="w-5 h-5" />
                             </a>
-                            <button 
+                            <button
                                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                                 className={styles.menuButton}
                                 aria-label="菜单"
@@ -119,7 +119,7 @@ const Navbar = () => {
             </nav>
 
             {/* 移动端菜单 */}
-            <div 
+            <div
                 className={`${styles.mobileMenu} ${isMobileMenuOpen ? styles.mobileMenuOpen : ''}`}
             >
                 <div className={styles.mobileMenuContent}>
@@ -135,7 +135,7 @@ const Navbar = () => {
                             </Link>
                         ))}
                     </div>
-                    
+
                     <div className={styles.mobileMenuActions}>
                         <button
                             onClick={toggleLanguage}
@@ -144,10 +144,10 @@ const Navbar = () => {
                             <Languages className="w-4 h-4" />
                             <span className="text-sm font-medium">{currentLang}</span>
                         </button>
-                        <a 
-                            href="https://github.com" 
-                            target="_blank" 
-                            rel="noopener noreferrer" 
+                        <a
+                            href="https://github.com"
+                            target="_blank"
+                            rel="noopener noreferrer"
                             className={`${styles.mobileActionButton} flex items-center space-x-2`}
                         >
                             <Github className="w-5 h-5" />
@@ -159,7 +159,7 @@ const Navbar = () => {
 
             {/* 移动端遮罩层 */}
             {isMobileMenuOpen && (
-                <div 
+                <div
                     className={styles.mobileMenuOverlay}
                     onClick={() => setIsMobileMenuOpen(false)}
                 />
