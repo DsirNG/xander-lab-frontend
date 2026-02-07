@@ -8,7 +8,6 @@ const ComponentContent = ({ component }) => {
 
     if (!component) return null;
 
-    // 渲染简单的演示区域
     const renderDemoSection = (scenario, index) => (
         <EnhancedDemoSection
             key={index}
@@ -27,7 +26,7 @@ const ComponentContent = ({ component }) => {
             scenarios={component.scenarios}
             renderDemoSection={renderDemoSection}
             basePath="/components"
-            detailButtonText={t('common.viewGuide')}
+            detailButtonText={t('common.viewSource')}
             detailButtonIcon={Code}
             themeColor="emerald-600"
         />

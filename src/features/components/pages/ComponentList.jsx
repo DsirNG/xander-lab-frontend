@@ -33,7 +33,7 @@ const ComponentList = () => {
             items={components}
             activeId={activeId}
             bottomCard={bottomCard}
-            subtitleKey="desc"
+            subtitleKey="tag"
         />
     );
 };

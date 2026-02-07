@@ -121,7 +121,7 @@ export const createRouter = (t) => {
           children: [
             {
               index: true,
-              element: <Navigate to="button" replace />,
+              element: <Navigate to="custom-select" replace />,
             },
             // 动态生成组件路由（包含详情页子路由）
             ...components.map(component => ({

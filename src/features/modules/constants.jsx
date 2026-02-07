@@ -46,6 +46,7 @@ export const getModuleConfig = (t) => {
             id: 'popover',
             title: t('modules.popover.title'),
             desc: t('modules.popover.desc'),
+            tag: t('modules.popover.tag'),
             icon: <MessageSquare className="w-5 h-5" />,
             detailPages: [], // 暂无详情页
             scenarios: [
@@ -70,6 +71,7 @@ export const getModuleConfig = (t) => {
             id: 'dropdown',
             title: t('modules.dropdown.title'),
             desc: t('modules.dropdown.desc'),
+            tag: t('modules.dropdown.tag'),
             icon: <List className="w-5 h-5" />,
             detailPages: [], // 暂无详情页
         },
@@ -77,6 +79,7 @@ export const getModuleConfig = (t) => {
             id: 'tooltip',
             title: t('modules.tooltip.title'),
             desc: t('modules.tooltip.desc'),
+            tag: t('modules.tooltip.tag'),
             icon: <HelpCircle className="w-5 h-5" />,
             detailPages: [], // 暂无详情页
         },
@@ -84,6 +87,7 @@ export const getModuleConfig = (t) => {
             id: 'drag-drop',
             title: t('modules.dragdrop.title'),
             desc: t('modules.dragdrop.desc'),
+            tag: t('modules.dragdrop.tag'),
             icon: <MoveIcon className="w-5 h-5" />,
             // 详情页面配置（动态路由用）
             detailPages: [
@@ -136,6 +140,7 @@ export const getModuleConfig = (t) => {
             id: 'context',
             title: t('modules.context.title'),
             desc: t('modules.context.desc'),
+            tag: t('modules.context.tag'),
             icon: <MousePointer2 className="w-5 h-5" />,
             detailPages: [], // 暂无详情页
         }

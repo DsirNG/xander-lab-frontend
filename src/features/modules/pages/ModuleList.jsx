@@ -15,7 +15,7 @@ const ModuleList = () => {
 
     // 使用共享配置，只显示已启用的模块
     const modules = useMemo(() => {
-      return getModuleConfig(t)
+        return getModuleConfig(t)
     }, [t])
 
     const activeId = location.pathname.split('/')[2] || 'popover'
@@ -35,7 +35,7 @@ const ModuleList = () => {
             items={modules}
             activeId={activeId}
             bottomCard={bottomCard}
-            subtitleKey="id"
+            subtitleKey="tag"
         />
     )
 }

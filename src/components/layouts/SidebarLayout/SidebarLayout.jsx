@@ -58,8 +58,8 @@ const SidebarLayout = ({
             <button
                 onClick={() => setIsMobileMenuOpen(true)}
                 className={`lg:hidden fixed top-20 left-0 z-50 p-2 bg-white/10 dark:bg-slate-950/50 backdrop-blur-[2px] rounded-r-lg shadow-md border border-l-0 border-slate-200 dark:border-slate-800 transition-all duration-300 ease-in-out ${
-                    isMobileMenuOpen 
-                        ? '-translate-x-full opacity-0 pointer-events-none' 
+                    isMobileMenuOpen
+                        ? '-translate-x-full opacity-0 pointer-events-none'
                         : 'translate-x-0 opacity-100'
                 }`}
                 aria-label="打开菜单"

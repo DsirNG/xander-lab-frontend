@@ -13,6 +13,7 @@ export default {
   },
   common: {
     backToInfra: 'Back to Infrastructure',
+    backToComponents: 'Back to Components',
     technicalNarrative: 'Technical Narrative',
     codeImplementation: 'Code Implementation',
     involvedFiles: 'Involved Files',
@@ -27,7 +28,13 @@ export default {
     liveScenarios: 'Live Scenarios',
     viewTheory: 'View Implementation',
     exploreModules: 'Feature Explorer',
-    selectModuleToExplore: 'Select a module to view its patterns and interactions'
+    selectModuleToExplore: 'Select a module to view its patterns and interactions',
+    componentSource: 'Component Source',
+    coreFeatures: 'Core Features',
+    logicLayer: 'Logic Layer',
+    logicLayerDesc: 'Main component implementation handling state and interaction.',
+    styleLayer: 'Style Layer',
+    styleLayerDesc: 'CSS Modules for scoped styling and animations.'
   },
   hero: {
     badge: 'v1.0.0 In Development',
@@ -89,22 +96,27 @@ export default {
     subtitle: 'UI Patterns',
     popover: {
       title: 'Popover',
+      tag: 'Basic Interaction',
       desc: 'General floating container with default placements and offsets.'
     },
     dropdown: {
       title: 'Dropdown Menu',
+      tag: 'Menu Interaction',
       desc: 'Menu semantics with keyboard navigation.'
     },
     tooltip: {
       title: 'Tooltip',
+      tag: 'Feedback',
       desc: 'Hover/focus triggered informational overlays.'
     },
     context: {
       title: 'Context Menu',
+      tag: 'Context Interaction',
       desc: 'Pointer-based relative positioning.'
     },
     dragdrop: {
       title: 'Drag & Drop',
+      tag: 'Drag Interaction',
       desc: 'Customizable drag and drop with advanced preview and hint systems.',
       phases: {
         theory: {
@@ -128,6 +140,37 @@ export default {
         { name: 'DragDropSystem.jsx', role: 'Feature Showcase' },
         { name: 'DraggableItem.tsx', role: 'Reusable Component' }
       ]
+    }
+  },
+  components: {
+    customSelect: {
+      title: 'Custom Select',
+      desc: 'A custom dropdown component that supports boundary detection and scroll tracking. Standard dropdowns often fail to handle viewport constraints properly - this component automatically adjusts its position to stay visible and follows scroll events to maintain alignment with its trigger element.',
+      guideTitle: 'Implementation Guide',
+      tag: 'Smart Positioning',
+      phases: {
+        boundary: {
+          title: 'I. Boundary Detection',
+          desc: 'Automatically detects viewport boundaries and adjusts dropdown direction to ensure visibility.',
+          points: ['Upward/Downward positioning logic', 'Real-time viewport space calculation', 'Dual-RAF for accurate measurements']
+        },
+        scroll: {
+          title: 'II. Scroll Tracking',
+          desc: 'Continuously monitors scroll events to maintain alignment with the trigger element.',
+          points: ['Window and container scroll listeners', 'Position recalculation on scroll', 'Resize event handling']
+        },
+        interaction: {
+          title: 'III. User Interaction',
+          desc: 'Provides intuitive interaction patterns with proper state management.',
+          points: ['Click outside to close', 'Keyboard navigation support', 'Error state visualization']
+        }
+      },
+      files: [
+        { name: 'CustomSelect/index.jsx', role: 'Main Component' },
+        { name: 'CustomSelect/index.module.css', role: 'Component Styles' },
+        { name: 'demo/demo.jsx', role: 'Usage Examples' }
+      ],
+      featureList: ['Boundary Detection', 'Scroll Awareness', 'Keyboard Navigation', 'Alignment Control']
     }
   },
   footer: {

@@ -13,6 +13,7 @@ export default {
   },
   common: {
     backToInfra: '返回基础模块',
+    backToComponents: '返回组件库',
     technicalNarrative: '技术叙述',
     codeImplementation: '代码实现',
     involvedFiles: '涉及文件',
@@ -27,7 +28,13 @@ export default {
     liveScenarios: '实时场景演示',
     viewTheory: '查看实现原理',
     exploreModules: '功能探索器',
-    selectModuleToExplore: '选择一个模块以查看其交互模式'
+    selectModuleToExplore: '选择一个模块以查看其交互模式',
+    componentSource: '组件源码',
+    coreFeatures: '核心功能',
+    logicLayer: '逻辑层',
+    logicLayerDesc: '处理状态和交互的主组件实现。',
+    styleLayer: '样式层',
+    styleLayerDesc: '用于作用域样式和动画的CSS Modules。'
   },
   hero: {
     badge: 'v1.0.0 研发中',
@@ -89,22 +96,27 @@ export default {
     subtitle: 'UI 设计模式',
     popover: {
       title: 'Popover (气泡浮层)',
+      tag: '基础交互',
       desc: '通用包装容器，内置默认 Placement 与 Offset 逻辑。'
     },
     dropdown: {
       title: 'Dropdown Menu (下拉菜单)',
+      tag: '菜单交互',
       desc: 'Menu 语义、键盘交互支持（简版）。'
     },
     tooltip: {
       title: 'Tooltip (文字提示)',
+      tag: '提示反馈',
       desc: 'Hover/Focus 触发、延迟策略、交互约束。'
     },
     context: {
       title: 'Context Menu (右键菜单)',
+      tag: '右键交互',
       desc: '基于 Pointer 位置或 Anchor 目标定位。'
     },
     dragdrop: {
       title: 'Drag & Drop (拖拽系统)',
+      tag: '拖拽交互',
       desc: '高度可定制的拖拽交互，支持自定义预览与实时提示。',
       phases: {
         theory: {
@@ -130,6 +142,37 @@ export default {
       ]
     }
   },
+  components: {
+    customSelect: {
+      title: 'customSelect',
+      desc: '一个支持边界检测和滚动跟随的自定义下拉选择组件。常规的下拉框往往无法很好地处理视口边界问题,该组件能够自动调整位置以保持可见性,并且在滚动时持续跟随触发元素,确保下拉框始终对齐。',
+      guideTitle: '实现指南',
+      tag: '智能定位',
+      phases: {
+        boundary: {
+          title: '一、 边界检测',
+          desc: '自动检测视口边界并调整下拉框方向以确保可见性。',
+          points: ['向上/向下定位逻辑', '实时视口空间计算', '双RAF确保精确测量']
+        },
+        scroll: {
+          title: '二、 滚动跟随',
+          desc: '持续监听滚动事件以保持与触发元素的对齐。',
+          points: ['窗口和容器滚动监听', '滚动时重新计算位置', '窗口大小变化处理']
+        },
+        interaction: {
+          title: '三、 用户交互',
+          desc: '提供直观的交互模式和完善的状态管理。',
+          points: ['点击外部关闭', '键盘导航支持', '错误状态可视化']
+        }
+      },
+      files: [
+        { name: 'CustomSelect/index.jsx', role: '主组件' },
+        { name: 'CustomSelect/index.module.css', role: '组件样式' },
+        { name: 'demo/demo.jsx', role: '使用示例' }
+      ],
+      featureList: ['边界检测', '滚动感知', '键盘导航', '对齐控制']
+    }
+  },
   footer: {
     desc: '知识分享与学习平台，记录项目实践经验，提供可复用的组件、Hooks 和学习资源。欢迎指出错误和不足，共同进步！',
     resources: '资源',
@@ -141,4 +184,3 @@ export default {
     feedback: '如有错误或建议，欢迎指正！'
   }
 };
-
