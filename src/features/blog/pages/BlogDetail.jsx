@@ -104,7 +104,7 @@ const BlogDetail = () => {
                     {blog.tags.map(tag => (
                         <Link
                             key={tag}
-                            to={`/blog?search=${tag}`}
+                            to={`/blog/tags?tag=${encodeURIComponent(tag)}`}
                             className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-600 hover:bg-primary hover:text-white dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-primary dark:hover:text-white transition-colors"
                         >
                             <Tag className="w-3 h-3 mr-1.5" />

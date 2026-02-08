@@ -31,7 +31,13 @@ export default {
     noArticlesHint: '试试调整搜索关键词或选择其他分类',
     viewAll: '查看全部文章',
     articleNotFound: '文章不存在或已被删除',
-    backToBlog: '返回博客'
+    backToBlog: '返回博客',
+    tagLabel: '标签',
+    popularTags: '热门标签',
+    viewAllTags: '全部标签',
+    allTags: '全部标签',
+    tagsCount: '共 {{count}} 个标签',
+    tagArticles: '「{{tag}}」相关文章'
   },
   common: {
     backToInfra: '返回基础模块',

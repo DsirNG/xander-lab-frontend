@@ -31,7 +31,13 @@ export default {
     noArticlesHint: 'Try adjusting your search terms or selecting a different category.',
     viewAll: 'View All Posts',
     articleNotFound: 'Article not found or has been removed.',
-    backToBlog: 'Back to Blog'
+    backToBlog: 'Back to Blog',
+    tagLabel: 'Tag',
+    popularTags: 'Popular Tags',
+    viewAllTags: 'All Tags',
+    allTags: 'All Tags',
+    tagsCount: '{{count}} tags in total',
+    tagArticles: 'Articles tagged "{{tag}}"'
   },
   common: {
     backToInfra: 'Back to Infrastructure',

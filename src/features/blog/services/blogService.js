@@ -126,11 +126,11 @@ const MOCK_BLOGS = [
 
 export const blogService = {
   /**
-   * 获取博客列表（支持搜索和分类筛选）
-   * @param {Object} params - 查询参数 { search, category }
+   * 获取博客列表（支持搜索、分类、标签筛选）
+   * @param {Object} params - 查询参数 { search, category, tag }
    * @returns {Promise<Array>}
    */
-  getBlogs: ({ search = '', category = '' } = {}) => {
+  getBlogs: ({ search = '', category = '', tag = '' } = {}) => {
     return new Promise((resolve) => {
       setTimeout(() => {
         let results = [...MOCK_BLOGS];
@@ -140,13 +140,20 @@ export const blogService = {
           results = results.filter(blog => blog.category === category);
         }
 
+        // 标签精确筛选
+        if (tag) {
+          results = results.filter(blog =>
+            blog.tags.some(t => t.toLowerCase() === tag.toLowerCase())
+          );
+        }
+
         // 搜索筛选
         if (search) {
           const lowerSearch = search.toLowerCase();
           results = results.filter(blog => 
             blog.title.toLowerCase().includes(lowerSearch) || 
             blog.summary.toLowerCase().includes(lowerSearch) ||
-            blog.tags.some(tag => tag.toLowerCase().includes(lowerSearch))
+            blog.tags.some(t => t.toLowerCase().includes(lowerSearch))
           );
         }
 
@@ -198,6 +205,50 @@ export const blogService = {
     return new Promise((resolve) => {
       setTimeout(() => {
         resolve(MOCK_CATEGORIES);
+      }, 100);
+    });
+  },
+
+  /**
+   * 获取所有标签（含文章数量）
+   * @returns {Promise<Array<{ name: string, count: number }>>}
+   */
+  getAllTags: () => {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        const tagMap = {};
+        MOCK_BLOGS.forEach(blog => {
+          blog.tags.forEach(tag => {
+            tagMap[tag] = (tagMap[tag] || 0) + 1;
+          });
+        });
+        const tags = Object.entries(tagMap)
+          .map(([name, count]) => ({ name, count }))
+          .sort((a, b) => b.count - a.count);
+        resolve(tags);
+      }, 150);
+    });
+  },
+
+  /**
+   * 获取热门标签（前N个）
+   * @param {number} limit
+   * @returns {Promise<Array<{ name: string, count: number }>>}
+   */
+  getPopularTags: (limit = 8) => {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        const tagMap = {};
+        MOCK_BLOGS.forEach(blog => {
+          blog.tags.forEach(tag => {
+            tagMap[tag] = (tagMap[tag] || 0) + 1;
+          });
+        });
+        const tags = Object.entries(tagMap)
+          .map(([name, count]) => ({ name, count }))
+          .sort((a, b) => b.count - a.count)
+          .slice(0, limit);
+        resolve(tags);
       }, 100);
     });
   }

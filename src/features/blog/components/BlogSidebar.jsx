@@ -1,22 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Search, Tag, BookOpen } from 'lucide-react';
+import { Search, Tag, Hash, BookOpen, ArrowRight } from 'lucide-react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import PropTypes from 'prop-types';
 import { blogService } from '../services/blogService';
 
 /**
  * 博客侧边栏组件
- * 包含搜索、分类筛选、最新发布
+ * 包含搜索、分类筛选、热门标签、最新发布
+ * @param {Function} onNavigate - 导航回调，移动端点击后关闭抽屉
  */
-const BlogSidebar = () => {
+const BlogSidebar = ({ onNavigate }) => {
     const { t } = useTranslation();
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const [categories, setCategories] = useState([]);
     const [recentPosts, setRecentPosts] = useState([]);
+    const [popularTags, setPopularTags] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
 
     const activeCategory = searchParams.get('category') || '';
+    const activeTag = searchParams.get('tag') || '';
 
     // 同步 URL 搜索参数到输入框
     useEffect(() => {
@@ -27,12 +31,14 @@ const BlogSidebar = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const [cats, recent] = await Promise.all([
+                const [cats, recent, tags] = await Promise.all([
                     blogService.getCategories(),
-                    blogService.getRecentBlogs(5)
+                    blogService.getRecentBlogs(5),
+                    blogService.getPopularTags(8)
                 ]);
                 setCategories(cats);
                 setRecentPosts(recent);
+                setPopularTags(tags);
             } catch (error) {
                 console.error('Sidebar data fetch error:', error);
             }
@@ -47,6 +53,7 @@ const BlogSidebar = () => {
         } else {
             navigate('/blog');
         }
+        onNavigate?.();
     };
 
     return (
@@ -78,6 +85,7 @@ const BlogSidebar = () => {
                     <li>
                         <Link
                             to="/blog"
+                            onClick={() => onNavigate?.()}
                             className={`flex items-center justify-between p-2 rounded-lg text-sm transition-colors ${
                                 !activeCategory
                                     ? 'bg-primary/10 text-primary font-medium'
@@ -91,6 +99,7 @@ const BlogSidebar = () => {
                         <li key={cat.id}>
                             <Link
                                 to={`/blog?category=${cat.id}`}
+                                onClick={() => onNavigate?.()}
                                 className={`flex items-center justify-between p-2 rounded-lg text-sm transition-colors ${
                                     activeCategory === cat.id
                                         ? 'bg-primary/10 text-primary font-medium'
@@ -111,6 +120,46 @@ const BlogSidebar = () => {
                 </ul>
             </section>
 
+            {/* 热门标签 */}
+            <section>
+                <div className="flex items-center justify-between mb-3">
+                    <h3 className="text-xs font-bold uppercase tracking-widest text-slate-400 flex items-center">
+                        <Hash className="w-3.5 h-3.5 mr-1.5" />
+                        {t('blog.popularTags')}
+                    </h3>
+                    <Link
+                        to="/blog/tags"
+                        onClick={() => onNavigate?.()}
+                        className="text-[10px] text-slate-400 hover:text-primary transition-colors flex items-center gap-0.5"
+                    >
+                        {t('blog.viewAllTags')}
+                        <ArrowRight className="w-3 h-3" />
+                    </Link>
+                </div>
+                <div className="flex flex-wrap gap-1.5">
+                    {popularTags.map((tag) => {
+                        const isActive = activeTag.toLowerCase() === tag.name.toLowerCase();
+                        return (
+                            <Link
+                                key={tag.name}
+                                to={isActive ? '/blog' : `/blog?tag=${encodeURIComponent(tag.name)}`}
+                                onClick={() => onNavigate?.()}
+                                className={`inline-flex items-center gap-1 text-[11px] px-2 py-1 rounded-full border transition-all ${
+                                    isActive
+                                        ? 'bg-primary text-white border-primary'
+                                        : 'bg-white dark:bg-slate-800/60 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:border-primary/50 hover:text-primary'
+                                }`}
+                            >
+                                <span>{tag.name}</span>
+                                <span className={`text-[9px] ${isActive ? 'text-white/70' : 'text-slate-400'}`}>
+                                    {tag.count}
+                                </span>
+                            </Link>
+                        );
+                    })}
+                </div>
+            </section>
+
             {/* 最新发布 */}
             <section>
                 <h3 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3 flex items-center">
@@ -122,6 +171,7 @@ const BlogSidebar = () => {
                         <Link
                             key={post.id}
                             to={`/blog/${post.id}`}
+                            onClick={() => onNavigate?.()}
                             className="block group"
                         >
                             <h4 className="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-primary transition-colors line-clamp-2 leading-snug mb-1">
@@ -136,6 +186,10 @@ const BlogSidebar = () => {
             </section>
         </div>
     );
+};
+
+BlogSidebar.propTypes = {
+    onNavigate: PropTypes.func,
 };
 
 export default BlogSidebar;

@@ -23,6 +23,7 @@ import ComponentList from '@features/components/pages/ComponentList';
 import ComponentContent from '@features/components/pages/ComponentContent';
 import BlogHome from '@features/blog/pages/BlogHome';
 import BlogDetail from '@features/blog/pages/BlogDetail';
+import BlogTags from '@features/blog/pages/BlogTags';
 
 // 配置数据
 import { getInfraConfig } from '@features/infra/constants';
@@ -139,6 +140,10 @@ export const createRouter = (t) => {
             {
               index: true,
               element: <BlogHome />,
+            },
+            {
+              path: 'tags',
+              element: <BlogTags />,
             },
             {
               path: ':id',

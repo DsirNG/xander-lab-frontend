@@ -18,12 +18,13 @@ const BlogHome = () => {
 
     const search = searchParams.get('search') || '';
     const category = searchParams.get('category') || '';
+    const tag = searchParams.get('tag') || '';
 
     useEffect(() => {
         const fetchBlogs = async () => {
             setLoading(true);
             try {
-                const data = await blogService.getBlogs({ search, category });
+                const data = await blogService.getBlogs({ search, category, tag });
                 setBlogs(data);
             } catch (error) {
                 console.error('Failed to fetch blogs:', error);
@@ -32,18 +33,20 @@ const BlogHome = () => {
             }
         };
         fetchBlogs();
-    }, [search, category]);
+    }, [search, category, tag]);
 
     const clearFilters = () => {
         setSearchParams({});
     };
 
     // 页面标题
-    const pageTitle = category
-        ? `${t('blog.categoryLabel')}: ${category}`
-        : search
-            ? `${t('blog.searchLabel')}: "${search}"`
-            : t('blog.latestPosts');
+    const pageTitle = tag
+        ? `${t('blog.tagLabel')}: ${tag}`
+        : category
+            ? `${t('blog.categoryLabel')}: ${category}`
+            : search
+                ? `${t('blog.searchLabel')}: "${search}"`
+                : t('blog.latestPosts');
 
     return (
         <div className="space-y-6">
@@ -62,7 +65,7 @@ const BlogHome = () => {
                 </div>
 
                 <div className="flex items-center gap-2">
-                    {(search || category) && (
+                    {(search || category || tag) && (
                         <button
                             onClick={clearFilters}
                             className="flex items-center px-2.5 py-1.5 text-xs font-medium text-slate-600 bg-slate-100 rounded-lg hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 transition-colors"
@@ -72,7 +75,8 @@ const BlogHome = () => {
                         </button>
                     )}
 
-                    <div className="flex bg-slate-100 dark:bg-slate-800 p-0.5 rounded-lg">
+                    {/* 视图切换 - 手机端隐藏（手机端始终单列，切换无视觉差异） */}
+                    <div className="hidden md:flex bg-slate-100 dark:bg-slate-800 p-0.5 rounded-lg">
                         <button
                             onClick={() => setViewMode('grid')}
                             className={`p-1.5 rounded-md transition-all ${
@@ -127,7 +131,7 @@ const BlogHome = () => {
                     <p className="text-sm text-slate-500 max-w-sm mx-auto mb-5">
                         {t('blog.noArticlesHint')}
                     </p>
-                    {(search || category) && (
+                    {(search || category || tag) && (
                         <button
                             onClick={clearFilters}
                             className="px-4 py-2 text-sm bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors shadow-sm shadow-primary/20"
