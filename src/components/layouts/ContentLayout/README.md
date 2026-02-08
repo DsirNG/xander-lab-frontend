@@ -176,3 +176,4 @@ const ModuleContent = ({ module }) => {
 - 如果有 `detailPages`，会自动显示详情按钮
 
 
+

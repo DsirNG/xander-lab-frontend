@@ -11,6 +11,7 @@ import { createBrowserRouter, Navigate } from 'react-router-dom';
 
 // Layouts
 import MainLayout from '@components/layouts/MainLayout';
+import BlogLayout from '@features/blog/layouts/BlogLayout';
 
 // Features
 import HomePage from '@features/home/pages/HomePage';
@@ -20,6 +21,8 @@ import ModuleList from '@features/modules/pages/ModuleList';
 import ModuleContent from '@features/modules/pages/ModuleContent';
 import ComponentList from '@features/components/pages/ComponentList';
 import ComponentContent from '@features/components/pages/ComponentContent';
+import BlogHome from '@features/blog/pages/BlogHome';
+import BlogDetail from '@features/blog/pages/BlogDetail';
 
 // 配置数据
 import { getInfraConfig } from '@features/infra/constants';
@@ -55,24 +58,17 @@ export const createRouter = (t) => {
               index: true,
               element: <Navigate to="anchored" replace />,
             },
-            // 动态生成基础设施路由（包含详情页子路由）
             ...infraSystems.map(system => ({
               path: system.id,
               children: [
-                // 基础设施概览页面
                 {
                   index: true,
                   element: <InfraContent system={system} />,
                 },
-                // 动态生成详情页路由（theory/guide/api等）
                 ...(system.detailPages || []).map(detailPage => ({
                   path: detailPage.type,
                   element: (
-                    <Suspense fallback={
-                      <div className="flex items-center justify-center min-h-screen">
-                        <div className="text-slate-500">加载中...</div>
-                      </div>
-                    }>
+                    <Suspense fallback={<div className="flex items-center justify-center min-h-screen">Loading...</div>}>
                       <detailPage.component />
                     </Suspense>
                   ),
@@ -89,24 +85,17 @@ export const createRouter = (t) => {
               index: true,
               element: <Navigate to="popover" replace />,
             },
-            // 动态生成功能模块路由（包含详情页子路由）
             ...featureModules.map(module => ({
               path: module.id,
               children: [
-                // 功能模块概览页面
                 {
                   index: true,
                   element: <ModuleContent module={module} />,
                 },
-                // 动态生成详情页路由（deep-dive/guide/api等）
                 ...(module.detailPages || []).map(detailPage => ({
                   path: detailPage.type,
                   element: (
-                    <Suspense fallback={
-                      <div className="flex items-center justify-center min-h-screen">
-                        <div className="text-slate-500">加载中...</div>
-                      </div>
-                    }>
+                    <Suspense fallback={<div className="flex items-center justify-center min-h-screen">Loading...</div>}>
                       <detailPage.component />
                     </Suspense>
                   ),
@@ -123,30 +112,38 @@ export const createRouter = (t) => {
               index: true,
               element: <Navigate to="custom-select" replace />,
             },
-            // 动态生成组件路由（包含详情页子路由）
             ...components.map(component => ({
               path: component.id,
               children: [
-                // 组件概览页面
                 {
                   index: true,
                   element: <ComponentContent component={component} />,
                 },
-                // 动态生成详情页路由（guide/api等）
                 ...(component.detailPages || []).map(detailPage => ({
                   path: detailPage.type,
                   element: (
-                    <Suspense fallback={
-                      <div className="flex items-center justify-center min-h-screen">
-                        <div className="text-slate-500">加载中...</div>
-                      </div>
-                    }>
+                    <Suspense fallback={<div className="flex items-center justify-center min-h-screen">Loading...</div>}>
                       <detailPage.component />
                     </Suspense>
                   ),
                 })),
               ],
             })),
+          ],
+        },
+        // 博客路由 - 独立 Layout
+        {
+          path: 'blog',
+          element: <BlogLayout />,
+          children: [
+            {
+              index: true,
+              element: <BlogHome />,
+            },
+            {
+              path: ':id',
+              element: <BlogDetail />,
+            },
           ],
         },
         {
@@ -164,6 +161,4 @@ export const createRouter = (t) => {
   return createBrowserRouter(routerConfig);
 };
 
-// 默认导出（将在 main.jsx 中初始化）
 export default createRouter;
-

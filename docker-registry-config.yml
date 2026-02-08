@@ -37,3 +37,4 @@ deployment:
 # - ALIYUN_REGISTRY_USERNAME: 阿里云容器镜像服务用户名
 # - ALIYUN_REGISTRY_PASSWORD: 阿里云容器镜像服务密码（或访问令牌）
 
+

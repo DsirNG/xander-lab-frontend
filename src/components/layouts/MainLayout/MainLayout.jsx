@@ -55,6 +55,7 @@ const Navbar = () => {
         { path: '/infra', label: t('nav.infra') },
         { path: '/modules', label: t('nav.modules') },
         { path: '/components', label: t('nav.components') },
+        { path: '/blog', label: t('nav.blog') },
     ];
 
     return (
