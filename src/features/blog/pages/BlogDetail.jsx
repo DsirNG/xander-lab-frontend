@@ -55,6 +55,7 @@ const CodeBlock = ({ language, children }) => {
                     fontSize: '0.85rem',
                     background: '#0f172a',
                     lineHeight: '1.7',
+                    borderRadius: '0',
                 }}
             >
                 {code}
@@ -193,7 +194,7 @@ const BlogDetail = () => {
 
     return (
         <article className="max-w-3xl">
-            
+
             <Link
                 to="/blog"
                 className="inline-flex items-center text-xs font-medium text-slate-500 hover:text-primary transition-colors mb-6"
