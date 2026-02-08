@@ -5,6 +5,7 @@
 
 @import "tailwindcss";
 @plugin "tailwindcss-animate";
+@plugin "@tailwindcss/typography";
 
 @theme {
   --color-primary: #6366f1;
