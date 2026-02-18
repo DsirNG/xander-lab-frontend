@@ -1,5 +1,5 @@
 /**
- * 企业级 Axios HTTP 封装
+ *  Axios HTTP 封装
  * Enterprise-grade Axios HTTP Client
  *
  * 功能特性 / Features:
@@ -19,19 +19,20 @@
  */
 
 import axios from 'axios';
+import { ENV_CONFIG } from '@config/env';
 
 // ─────────────────────────────────────────────
 // 1. 常量 & 配置
 // ─────────────────────────────────────────────
 
 /** 默认超时（毫秒） */
-const DEFAULT_TIMEOUT = Number(import.meta.env.VITE_REQUEST_TIMEOUT) || 15_000;
+const DEFAULT_TIMEOUT = ENV_CONFIG.TIMEOUT;
 
-/** API 基础路径，优先读取环境变量 */
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
+/** API 基础路径 */
+const BASE_URL = ENV_CONFIG.BASE_URL;
 
 /** 是否开发环境 */
-const IS_DEV = import.meta.env.DEV;
+const IS_DEV = ENV_CONFIG.IS_DEV;
 
 /** Token 存储 key */
 const TOKEN_KEY = 'access_token';
@@ -129,12 +130,16 @@ const pendingRequests = new Map();
  * @returns {string}
  */
 function buildRequestKey(config) {
-    const { method = '', url = '', params, data } = config;
+    let { method = '', url = '', params, data } = config;
+    // 转换 data 为对象以保持 key 的一致性
+    if (typeof data === 'string') {
+        try { data = JSON.parse(data); } catch (e) { /* ignore */ }
+    }
     return [
-        method.toUpperCase(),
+        method.toLowerCase(),
         url,
-        JSON.stringify(params ?? {}),
-        typeof data === 'string' ? data : JSON.stringify(data ?? {}),
+        JSON.stringify(params || {}),
+        JSON.stringify(data || {}),
     ].join('|');
 }
 
@@ -145,8 +150,9 @@ function buildRequestKey(config) {
 function addPendingRequest(config) {
     const key = buildRequestKey(config);
     if (pendingRequests.has(key)) {
-        // 取消上一个相同请求
-        pendingRequests.get(key).abort();
+        const controller = pendingRequests.get(key);
+        controller.abort('Dedupe: 相同的请求已存在，取消前一个');
+        if (IS_DEV) console.debug(`%c[HTTP] ⚡ 重复请求已合并: ${config.url}`, 'color: #fb923c');
     }
     const controller = new AbortController();
     config.signal = controller.signal;
@@ -229,7 +235,11 @@ const instance = axios.create({
 instance.interceptors.request.use(
     (config) => {
         // 8.1 防重复请求（幂等锁）
-        if (config.dedupe !== false) {
+        // 默认行为：(GET, POST, PUT, DELETE, PATCH）防重复
+        const isWrite = ['get', 'post', 'put', 'delete', 'patch'].includes(config.method?.toLowerCase());
+        const shouldDedupe = config.dedupe ?? isWrite;
+
+        if (shouldDedupe) {
             addPendingRequest(config);
         }
 
@@ -296,8 +306,12 @@ instance.interceptors.response.use(
     // ── 9.2 错误响应 ──
     async (error) => {
         if (axios.isCancel(error)) {
-            // 请求被主动取消，静默处理
-            return Promise.reject(error);
+            // 如果是被幂等锁取消的，静默处理（不报错给业务层）
+            if (IS_DEV) {
+                console.log(`%c[HTTP] ⚡ 请求已安全取消: ${error.message}`, 'color: #94a3b8');
+            }
+            // 返回一个永远 pending 的 promise，或者特定的标识，避免业务层进入 catch
+            return new Promise(() => { });
         }
 
         const { config, response } = error;
