@@ -48,11 +48,22 @@ const BlogSidebar = ({ onNavigate }) => {
 
     const handleSearch = (e) => {
         e.preventDefault();
+        const params = new URLSearchParams();
+
         if (searchTerm.trim()) {
-            navigate(`/blog?search=${encodeURIComponent(searchTerm.trim())}`);
-        } else {
-            navigate('/blog');
+            params.set('search', searchTerm.trim());
         }
+
+        // 保留当前已选的分类和标签
+        if (activeCategory) {
+            params.set('category', activeCategory);
+        }
+        if (activeTag) {
+            params.set('tag', activeTag);
+        }
+
+        const queryString = params.toString();
+        navigate(queryString ? `/blog?${queryString}` : '/blog');
         onNavigate?.();
     };
 
@@ -86,11 +97,10 @@ const BlogSidebar = ({ onNavigate }) => {
                         <Link
                             to="/blog"
                             onClick={() => onNavigate?.()}
-                            className={`flex items-center justify-between p-2 rounded-lg text-sm transition-colors ${
-                                !activeCategory
+                            className={`flex items-center justify-between p-2 rounded-lg text-sm transition-colors ${!activeCategory
                                     ? 'bg-primary/10 text-primary font-medium'
                                     : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
-                            }`}
+                                }`}
                         >
                             <span>{t('blog.allCategories')}</span>
                         </Link>
@@ -100,18 +110,16 @@ const BlogSidebar = ({ onNavigate }) => {
                             <Link
                                 to={`/blog?category=${cat.id}`}
                                 onClick={() => onNavigate?.()}
-                                className={`flex items-center justify-between p-2 rounded-lg text-sm transition-colors ${
-                                    activeCategory === cat.id
+                                className={`flex items-center justify-between p-2 rounded-lg text-sm transition-colors ${activeCategory === cat.id
                                         ? 'bg-primary/10 text-primary font-medium'
                                         : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
-                                }`}
+                                    }`}
                             >
                                 <span>{cat.name}</span>
-                                <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded-full transition-colors ${
-                                    activeCategory === cat.id
+                                <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded-full transition-colors ${activeCategory === cat.id
                                         ? 'bg-primary/20 text-primary'
                                         : 'bg-slate-100 dark:bg-slate-800 text-slate-500'
-                                }`}>
+                                    }`}>
                                     {cat.count}
                                 </span>
                             </Link>
@@ -144,11 +152,10 @@ const BlogSidebar = ({ onNavigate }) => {
                                 key={tag.name}
                                 to={isActive ? '/blog' : `/blog?tag=${encodeURIComponent(tag.name)}`}
                                 onClick={() => onNavigate?.()}
-                                className={`inline-flex items-center gap-1 text-[11px] px-2 py-1 rounded-full border transition-all ${
-                                    isActive
+                                className={`inline-flex items-center gap-1 text-[11px] px-2 py-1 rounded-full border transition-all ${isActive
                                         ? 'bg-primary text-white border-primary'
                                         : 'bg-white dark:bg-slate-800/60 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:border-primary/50 hover:text-primary'
-                                }`}
+                                    }`}
                             >
                                 <span>{tag.name}</span>
                                 <span className={`text-[9px] ${isActive ? 'text-white/70' : 'text-slate-400'}`}>

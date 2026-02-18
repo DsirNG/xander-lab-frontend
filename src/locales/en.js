@@ -37,7 +37,8 @@ export default {
     viewAllTags: 'All Tags',
     allTags: 'All Tags',
     tagsCount: '{{count}} tags in total',
-    tagArticles: 'Articles tagged "{{tag}}"'
+    tagArticles: 'Articles tagged "{{tag}}"',
+    noMoreArticles: 'No more articles'
   },
   common: {
     backToInfra: 'Back to Infrastructure',

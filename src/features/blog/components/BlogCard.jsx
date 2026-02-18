@@ -16,7 +16,7 @@ const BlogCard = ({ blog }) => {
             {/* 分类 + 日期 */}
             <div className="flex items-center text-xs text-slate-500 dark:text-slate-400 mb-2.5 gap-3">
                 <span className="bg-primary/5 text-primary dark:bg-primary/10 px-2 py-0.5 rounded-full font-medium">
-                    {blog.category}
+                    {blog.categoryName || blog.category}
                 </span>
                 <span className="flex items-center">
                     <Clock className="w-3 h-3 mr-1" />
@@ -60,7 +60,7 @@ const BlogCard = ({ blog }) => {
 
 BlogCard.propTypes = {
     blog: PropTypes.shape({
-        id: PropTypes.string.isRequired,
+        id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
         title: PropTypes.string.isRequired,
         summary: PropTypes.string.isRequired,
         tags: PropTypes.arrayOf(PropTypes.string).isRequired,

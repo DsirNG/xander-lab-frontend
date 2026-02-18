@@ -37,7 +37,8 @@ export default {
     viewAllTags: '全部标签',
     allTags: '全部标签',
     tagsCount: '共 {{count}} 个标签',
-    tagArticles: '「{{tag}}」相关文章'
+    tagArticles: '「{{tag}}」相关文章',
+    noMoreArticles: '没有更多文章了'
   },
   common: {
     backToInfra: '返回基础模块',
