@@ -29,7 +29,7 @@ REGISTRY_TO_USE=$REGISTRY_VPC
 
 # --- 3. 登录阿里云镜像仓库 ---
 echo "正在登录阿里云镜像仓库..."
-echo "$ALIYUN_REGISTRY_PASSWORD" | docker login "$REGISTRY_TO_USE" -u "$USERNAME" --password-stdin
+echo "$ALIYUN_REGISTRY_PASSWORD" | docker login "$REGISTRY" -u "$USERNAME" --password-stdin
 
 # --- 4. 构建 Docker 镜像 ---
 echo "正在本地构建前端镜像: $IMAGE_NAME:$TAG ..."
@@ -41,17 +41,11 @@ if ! docker build -t "$IMAGE_NAME:$TAG" .; then
 fi
 
 # --- 5. 标记镜像并推送至仓库 ---
-FULL_IMAGE="$REGISTRY_TO_USE/$NAMESPACE/$IMAGE_NAME:$TAG"
+FULL_IMAGE="$REGISTRY/$NAMESPACE/$IMAGE_NAME:$TAG"
 echo "正在推送镜像至阿里云仓库: $FULL_IMAGE ..."
 docker tag "$IMAGE_NAME:$TAG" "$FULL_IMAGE"
-if ! docker push "$FULL_IMAGE"; then
-    echo "推送失败，尝试使用公网地址..."
-    REGISTRY_TO_USE=$REGISTRY
-    FULL_IMAGE="$REGISTRY_TO_USE/$NAMESPACE/$IMAGE_NAME:$TAG"
-    docker tag "$IMAGE_NAME:$TAG" "$FULL_IMAGE"
-    echo "$ALIYUN_REGISTRY_PASSWORD" | docker login "$REGISTRY_TO_USE" -u "$USERNAME" --password-stdin
-    docker push "$FULL_IMAGE"
-fi
+docker push "$FULL_IMAGE"
+
 
 # --- 6. 停止并删除旧容器 ---
 echo "正在清理旧容器..."

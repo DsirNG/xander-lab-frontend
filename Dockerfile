@@ -1,7 +1,5 @@
-# Multi-stage build for optimized production image
-
 # Stage 1: Build the application
-FROM node:18-alpine AS builder
+FROM node:20-alpine AS builder
 
 # Set working directory
 WORKDIR /app
@@ -11,8 +9,9 @@ COPY package*.json ./
 
 # Install dependencies
 RUN npm config set registry https://registry.npmmirror.com && \
-    npm ci && \
+    npm install && \
     npm cache clean --force
+
 
 
 # Copy source code
