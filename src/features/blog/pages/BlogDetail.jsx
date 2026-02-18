@@ -206,7 +206,7 @@ const BlogDetail = () => {
             {/* 文章头部 */}
             <header className="mb-8">
                 <span className="inline-block px-2.5 py-0.5 rounded-full bg-primary/10 text-primary text-[10px] font-bold tracking-wide uppercase mb-4">
-                    {blog.category}
+                    {blog.categoryName || blog.category}
                 </span>
 
                 <h1 className="text-2xl md:text-3xl font-black text-slate-900 dark:text-white mb-4 leading-tight tracking-tight">

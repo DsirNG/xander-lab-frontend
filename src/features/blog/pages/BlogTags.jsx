@@ -43,10 +43,12 @@ const BlogTags = () => {
         const fetchBlogs = async () => {
             setBlogsLoading(true);
             try {
-                const data = await blogService.getBlogs({ tag: activeTag });
-                setFilteredBlogs(data);
+                const data = await blogService.getBlogs({ tag: activeTag, size: 20 });
+                // 此时 data 是 PageData 对象
+                setFilteredBlogs(data.records || []);
             } catch (error) {
                 console.error('Failed to fetch blogs by tag:', error);
+                setFilteredBlogs([]);
             } finally {
                 setBlogsLoading(false);
             }
@@ -56,7 +58,8 @@ const BlogTags = () => {
 
     // 根据文章数量计算标签大小等级 (1-5)
     const getTagLevel = (count) => {
-        const max = Math.max(...allTags.map(t => t.count), 1);
+        const counts = allTags.map(t => t.count);
+        const max = counts.length > 0 ? Math.max(...counts) : 1;
         const ratio = count / max;
         if (ratio >= 0.8) return 5;
         if (ratio >= 0.6) return 4;
@@ -131,11 +134,10 @@ const BlogTags = () => {
                             >
                                 <Tag className="w-3 h-3" />
                                 <span>{tag.name}</span>
-                                <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded-full ${
-                                    isActive
-                                        ? 'bg-white/20 text-white'
-                                        : 'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400'
-                                }`}>
+                                <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded-full ${isActive
+                                    ? 'bg-white/20 text-white'
+                                    : 'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400'
+                                    }`}>
                                     {tag.count}
                                 </span>
                             </Link>
@@ -153,7 +155,7 @@ const BlogTags = () => {
                             {t('blog.tagArticles', { tag: activeTag })}
                         </h2>
                         <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-primary/10 text-primary">
-                            {blogsLoading ? '...' : filteredBlogs.length}
+                            {blogsLoading ? '...' : (filteredBlogs?.length || 0)}
                         </span>
                     </div>
 

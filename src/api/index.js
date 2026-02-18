@@ -1,36 +1,29 @@
 /**
- * API 接口层
- * 统一管理所有 API 请求
+ * API 层统一出口
+ * Unified API Layer Entry Point
+ *
+ * 使用方式 / Usage:
+ *   import http from '@api';
+ *   import { get, post, upload, download } from '@api';
+ *   import { tokenStorage, HttpError } from '@api';
  */
 
-// API 基础配置
-export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
-
-// API 请求封装
-export const request = async (url, options = {}) => {
-  try {
-    const response = await fetch(`${API_BASE_URL}${url}`, {
-      ...options,
-      headers: {
-        'Content-Type': 'application/json',
-        ...options.headers,
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    return await response.json();
-  } catch (error) {
-    console.error('API request failed:', error);
-    throw error;
-  }
-};
-
-export default {
-  request,
-};
-
-
-
+export {
+  default,
+  get,
+  post,
+  put,
+  patch,
+  del as delete,
+  head,
+  options,
+  upload,
+  download,
+  all,
+  race,
+  createCancelToken,
+  cancelAllRequests,
+  axiosInstance,
+  tokenStorage,
+  HttpError,
+} from './http';

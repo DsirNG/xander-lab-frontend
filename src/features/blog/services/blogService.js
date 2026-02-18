@@ -1,33 +1,14 @@
 /**
  * 博客数据服务（对接后端 REST API）
  * Blog Data Service - connects to Spring Boot backend
+ *
+ * 已迁移至企业级 axios 封装 / Migrated to enterprise axios http client
  * @module blog/services
  */
 
-const BASE_URL = '/api/blog';
+import { get } from '@api';
 
-/**
- * 通用请求方法
- * @param {string} url
- * @param {Object} params - URL 查询参数
- * @returns {Promise<any>} 后端 data 字段
- */
-async function request(url, params = {}) {
-  const query = new URLSearchParams(
-    Object.entries(params).filter(([, v]) => v !== '' && v !== undefined && v !== null)
-  ).toString();
-  const fullUrl = query ? `${url}?${query}` : url;
-
-  const res = await fetch(fullUrl);
-  if (!res.ok) {
-    throw new Error(`HTTP error: ${res.status}`);
-  }
-  const json = await res.json();
-  if (json.code !== 200) {
-    throw new Error(json.message || '请求失败');
-  }
-  return json.data;
-}
+const BASE = '/api/blog';
 
 export const blogService = {
   /**
@@ -38,7 +19,13 @@ export const blogService = {
    * @returns {Promise<Object>} 分页对象 { records: [], total: 0, current: 1, ... }
    */
   getBlogs: ({ search = '', category = '', tag = '', page = 1, size = 10 } = {}) => {
-    return request(`${BASE_URL}/posts`, { search, category, tag, page, size });
+    // 过滤空值参数
+    const params = Object.fromEntries(
+      Object.entries({ search, category, tag, page, size }).filter(
+        ([, v]) => v !== '' && v !== undefined && v !== null
+      )
+    );
+    return get(`${BASE}/posts`, params);
   },
 
   /**
@@ -49,7 +36,7 @@ export const blogService = {
    * @returns {Promise<Array>}
    */
   getRecentBlogs: (limit = 5) => {
-    return request(`${BASE_URL}/posts/recent`, { limit });
+    return get(`${BASE}/posts/recent`, { limit });
   },
 
   /**
@@ -60,7 +47,7 @@ export const blogService = {
    * @returns {Promise<Object>}
    */
   getBlogById: (id) => {
-    return request(`${BASE_URL}/posts/${id}`);
+    return get(`${BASE}/posts/${id}`);
   },
 
   /**
@@ -70,7 +57,7 @@ export const blogService = {
    * @returns {Promise<Array>}
    */
   getCategories: () => {
-    return request(`${BASE_URL}/categories`);
+    return get(`${BASE}/categories`);
   },
 
   /**
@@ -80,7 +67,7 @@ export const blogService = {
    * @returns {Promise<Array<{ name: string, count: number }>>}
    */
   getAllTags: () => {
-    return request(`${BASE_URL}/tags`);
+    return get(`${BASE}/tags`);
   },
 
   /**
@@ -91,6 +78,6 @@ export const blogService = {
    * @returns {Promise<Array<{ name: string, count: number }>>}
    */
   getPopularTags: (limit = 8) => {
-    return request(`${BASE_URL}/tags/popular`, { limit });
+    return get(`${BASE}/tags/popular`, { limit });
   },
 };
