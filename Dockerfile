@@ -10,7 +10,10 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install dependencies
-RUN npm ci && npm cache clean --force
+RUN npm config set registry https://registry.npmmirror.com && \
+    npm ci && \
+    npm cache clean --force
+
 
 # Copy source code
 COPY . .
