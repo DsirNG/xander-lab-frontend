@@ -7,14 +7,16 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { authService } from '../services/authService';
+import { useToast } from '../../../hooks/useToast';
 
 /**
  * Xander Lab // Premium Immersive Login (Stable Card Edition)
- * Keeps all the high-tech visual effects but removes 3D tilt to ensure input stability.
+ * Refactored to use custom global Toast system for notifications.
  */
 const LoginPage = () => {
     const navigate = useNavigate();
     const location = useLocation();
+    const toast = useToast();
     const from = location.state?.from?.pathname || '/';
 
     const [loading, setLoading] = useState(false);
@@ -24,7 +26,6 @@ const LoginPage = () => {
         password: '',
         code: ''
     });
-    const [error, setError] = useState('');
     const [countdown, setCountdown] = useState(0);
 
     useEffect(() => {
@@ -37,33 +38,32 @@ const LoginPage = () => {
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
-        setError('');
     };
 
     const handleSendCode = async () => {
         if (!formData.account || !formData.account.includes('@')) {
-            setError('请输入有效的邮箱');
+            toast.warning('请输入有效的邮箱');
             return;
         }
         try {
             await authService.sendCode(formData.account);
             setCountdown(60);
-            setError('');
+            toast.success('验证码指令已发送至您的邮箱');
         } catch (err) {
-            setError(err.message || '指令链路中断');
+            toast.error(err.message || '验证码发送失败，请检查网络链路');
         }
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
-        setError('');
 
         try {
             await authService.login({ ...formData, type: loginType });
+            toast.success('鉴权成功，欢迎通过安全网关');
             navigate(from, { replace: true });
         } catch (err) {
-            setError(err.message || '双重因子校验失败');
+            toast.error(err.message || '身份识别失败，请检查您的凭证');
         } finally {
             setLoading(false);
         }
@@ -109,14 +109,14 @@ const LoginPage = () => {
                 </div>
             </motion.header>
 
-            {/* 3. 主交互卡片：稳态设计 */}
+            {/* 3. 主交互卡片 */}
             <motion.div
                 initial={{ opacity: 0, y: 40, scale: 0.98 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                className="relative z-10 w-full max-w-[480px]"
+                className="relative z-10 w-full max-w-[480px] scale-fix"
             >
-                {/* 背景发光背景 */}
+                {/* 装饰发光背景 */}
                 <div className="absolute -top-20 -right-20 w-64 h-64 bg-primary/10 rounded-full blur-[100px] animate-pulse" />
                 <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-indigo-500/10 rounded-full blur-[100px] animate-pulse delay-700" />
 
@@ -128,7 +128,7 @@ const LoginPage = () => {
                             <Cpu className="w-16 h-16 text-primary" />
                         </div>
 
-                        {/* 登录头描述 */}
+                        {/* 引导标题 */}
                         <div className="mb-12">
                             <div className="flex items-center gap-2 mb-4">
                                 <Sparkles className="w-4 h-4 text-primary animate-bounce" />
@@ -142,7 +142,7 @@ const LoginPage = () => {
                             </p>
                         </div>
 
-                        {/* 模式选择切换 */}
+                        {/* 模式选择 */}
                         <div className="grid grid-cols-2 p-1.5 bg-slate-100/50 dark:bg-slate-800/30 rounded-2xl mb-10 border border-slate-200/50 dark:border-slate-800/50">
                             {[
                                 { id: 'password', label: '密码识别', icon: Fingerprint },
@@ -256,26 +256,11 @@ const LoginPage = () => {
                                 </motion.div>
                             </AnimatePresence>
 
-                            {/* 错误提示 */}
-                            <AnimatePresence>
-                                {error && (
-                                    <motion.div
-                                        initial={{ opacity: 0, height: 0 }}
-                                        animate={{ opacity: 1, height: 'auto' }}
-                                        exit={{ opacity: 0, height: 0 }}
-                                        className="p-4 bg-rose-500/10 border border-rose-500/20 rounded-2xl text-rose-600 dark:text-rose-400 text-xs font-black flex items-center gap-3"
-                                    >
-                                        <div className="w-2 h-2 rounded-full bg-rose-500 animate-ping" />
-                                        {error}
-                                    </motion.div>
-                                )}
-                            </AnimatePresence>
-
-                            {/* 核心动作按钮 */}
+                            {/* 登录按钮 */}
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className="group relative w-full flex items-center justify-center py-5 bg-primary text-white rounded-[1.75rem] font-black text-sm shadow-2xl shadow-primary/30 hover:bg-primary-dark transition-all duration-500 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50"
+                                className="group relative w-full flex items-center justify-center py-5 bg-primary text-white rounded-[1.75rem] font-black text-sm shadow-2xl shadow-primary/30 hover:bg-primary-dark transition-all duration-500 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 scale-fix"
                             >
                                 <span className="relative z-10 flex items-center gap-2">
                                     {loading ? (
@@ -295,7 +280,7 @@ const LoginPage = () => {
                     <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
                 </div>
 
-                {/* 底部链接 */}
+                {/* 底部导航 */}
                 <div className="mt-12 flex flex-col items-center gap-6">
                     <div className="flex items-center gap-8 text-xs font-black text-slate-400">
                         <Link to="/" className="group flex items-center gap-2 hover:text-primary transition-all">
@@ -326,7 +311,7 @@ const LoginPage = () => {
 };
 
 /**
- * 极简数字轨道背景背景
+ * 极简数字轨道背景
  */
 const DigitalOrbit = () => {
     return (
@@ -334,12 +319,12 @@ const DigitalOrbit = () => {
             <motion.div
                 animate={{ rotate: 360 }}
                 transition={{ duration: 100, repeat: Infinity, ease: "linear" }}
-                className="absolute w-[1000px] h-[1000px] border border-slate-100 dark:border-slate-900 rounded-full"
+                className="absolute w-[1000px] h-[1000px] border border-slate-100 dark:border-slate-900 rounded-full [will-change:transform]"
             />
             <motion.div
                 animate={{ rotate: -360 }}
                 transition={{ duration: 80, repeat: Infinity, ease: "linear" }}
-                className="absolute w-[700px] h-[700px] border border-dashed border-slate-100/30 dark:border-slate-900/30 rounded-full"
+                className="absolute w-[700px] h-[700px] border border-dashed border-slate-100/30 dark:border-slate-900/30 rounded-full [will-change:transform]"
             />
             <div className="absolute w-[400px] h-[400px] border border-slate-50 dark:border-slate-950 rounded-full" />
         </div>

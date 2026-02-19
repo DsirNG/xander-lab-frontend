@@ -9,6 +9,7 @@ import { RouterProvider } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useMemo } from 'react'
 import { createRouter } from './router'
+import { ToastProvider, ToastContainer } from './components/common/Toast'
 
 /**
  * App - 应用根组件
@@ -22,7 +23,12 @@ function App() {
   // 使用 t 函数创建路由实例
   const router = useMemo(() => createRouter(t), [t])
 
-  return <RouterProvider router={router} />
+  return (
+    <ToastProvider>
+      <RouterProvider router={router} />
+      <ToastContainer />
+    </ToastProvider>
+  )
 }
 
 export default App

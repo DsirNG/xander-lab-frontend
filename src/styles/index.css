@@ -111,3 +111,98 @@ html {
   background: #334155;
   background-clip: padding-box;
 }
+
+@layer base {
+  :root {
+    --primary: #3b82f6;
+    --primary-dark: #2563eb;
+    --primary-light: #60a5fa;
+  }
+
+  html {
+    -webkit-tap-highlight-color: transparent;
+    scroll-behavior: smooth;
+    /* Windows Chrome 字体模糊修复：使用 subpixel 或让系统决定 */
+    -webkit-font-smoothing: subpixel-antialiased;
+    text-rendering: optimizeSpeed;
+    /* 在动画频繁的项目中，Speed 有时比 Legibility 渲染更清晰 */
+  }
+
+  body {
+    @apply bg-white text-slate-900 dark:bg-slate-950 dark:text-slate-100;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    /* 移除 Body 的全局 translateZ，避免创建不必要的全局堆叠上下文 */
+  }
+
+  /* 核心修复辅助类：针对所有涉及 scale 的元素 */
+  .scale-fix {
+    /* 1. 强制 3D 合成层 */
+    transform: translate3d(0, 0, 0);
+    -webkit-transform: translate3d(0, 0, 0);
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+
+    /* 2. 禁止缩放时的抗锯齿抖动 */
+    perspective: 1000px;
+    -webkit-perspective: 1000px;
+    transform-style: preserve-3d;
+
+    /* 3. 极致修复：微小的文字阴影可以强制 Chrome 以高精度矢量渲染文字，而非缓存位图 */
+    text-shadow: 0 0 1px rgba(0, 0, 0, 0.05);
+
+    /* 4. 滤镜黑科技 */
+    filter: blur(0);
+    -webkit-filter: blur(0);
+  }
+}
+
+/* Toast Animations (C-End Premium Bouncy) */
+@keyframes toast-in-top {
+  0% {
+    transform: translateY(-100%) scale(0.9);
+    opacity: 0;
+  }
+
+  70% {
+    transform: translateY(10%) scale(1.02);
+  }
+
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes toast-out-top {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateY(-150%) scale(0.9);
+    opacity: 0;
+  }
+}
+
+.animate-toast-in {
+  animation: toast-in-top 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.animate-toast-out {
+  animation: toast-out-top 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes progress-linear {
+  from {
+    width: 100%;
+  }
+
+  to {
+    width: 0%;
+  }
+}
+
+.animate-progress {
+  animation: progress-linear linear forwards;
+}
