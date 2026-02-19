@@ -82,9 +82,9 @@ const EnhancedDemoSection = ({ title, desc, children, code, useBrowserWindow = t
                 </BrowserWindow>
             ) : (
 
-              <div key={resetKey}>
-                {children}
-              </div>
+                <div key={resetKey}>
+                    {children}
+                </div>
             )}
 
             {/* 代码展示区域 */}

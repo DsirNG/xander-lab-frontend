@@ -1,55 +1,16 @@
 import React from 'react';
+import { useToast } from '@/hooks/useToast';
 import {
-    ToggleLeft as ToggleIcon,
-    ChevronsUpDown,
-    MousePointerClick,
-    Activity
+    Activity, Clock, X, ExternalLink, Layers,
+    CheckCircle2, XCircle, AlertCircle, Info, Palette
 } from 'lucide-react';
 
-// Demos
-import { BasicDemo, AlignmentDemo, StatusDemo } from './pages/codeComponent/demo/demo.jsx';
-import {
-    ToastBasicDemo,
-    ToastHoverDemo,
-    ToastManualDemo,
-    ToastActionDemo,
-    ToastStackDemo,
-    ToastNoHoverDemo
-} from './pages/codeComponent/demo/ToastDemo.jsx';
-
-// 延迟导入详情页组件（避免循环依赖）
-const getDetailComponents = () => ({
-    CustomSelectGuide: React.lazy(() => import('./pages/CustomSelectGuide')),
-    ToastGuide: React.lazy(() => import('./pages/ToastGuide')),
-});
-
 /**
- * 获取基础组件配置
- * @param {Function} t - i18n 翻译函数
- * @returns {Array} 组件配置数组
+ * Toast 场景演示组件集 - 实时 props 控制版
  */
-export const getComponentConfig = (t) => {
-    const detailComponents = getDetailComponents();
 
-    return [
-        {
-            id: 'toast',
-            title: t('components.toast.title', 'Toast Notifications'),
-            desc: t('components.toast.desc', 'Premium feedback system with physics-based interactions.'),
-            tag: t('components.toast.tag', 'Interaction'),
-            icon: <Activity className="w-5 h-5" />,
-            detailPages: [
-                {
-                    type: 'guide',
-                    component: detailComponents.ToastGuide,
-                }
-            ],
-            scenarios: [
-                {
-                    title: 'Basic Usage (Minimal)',
-                    desc: 'Pure notification state without progress bars or close buttons for a clean, non-intrusive UI.',
-                    demo: <ToastBasicDemo />,
-                    code: `export const ToastBasicDemo = () => {
+// 1. Basic Usage: 纯展示态 (无进度条 / 无叉叉)
+export const ToastBasicDemo = () => {
     const toast = useToast();
 
     const triggerSimple = (type, msg) => {
@@ -103,13 +64,10 @@ export const getComponentConfig = (t) => {
             </div>
         </div>
     );
-};`
-                },
-                {
-                    title: 'Interactive Physics (Pause on Hover)',
-                    desc: 'Real-time temporal locking: hovering freezes the countdown, allowing users infinite reading time.',
-                    demo: <ToastHoverDemo />,
-                    code: `export const ToastHoverDemo = () => {
+};
+
+// 2. Pause on Hover: 物理暂停展示
+export const ToastHoverDemo = () => {
     const toast = useToast();
     return (
         <div className="flex flex-col gap-4">
@@ -132,13 +90,10 @@ export const getComponentConfig = (t) => {
             </button>
         </div>
     );
-};`
-                },
-                {
-                    title: 'Manual Dismissal',
-                    desc: 'Explicit interaction model showing close buttons for alerts that require acknowledgment.',
-                    demo: <ToastManualDemo />,
-                    code: `export const ToastManualDemo = () => {
+};
+
+// 3. Manual Exit: 带叉叉关闭
+export const ToastManualDemo = () => {
     const toast = useToast();
     return (
         <div className="flex flex-col gap-4">
@@ -161,13 +116,10 @@ export const getComponentConfig = (t) => {
             </button>
         </div>
     );
-};`
-                },
-                {
-                    title: 'JSX & Rich Actions',
-                    desc: 'Beyond strings: embed links, buttons, and custom layout logic directly into the feedback stream.',
-                    demo: <ToastActionDemo />,
-                    code: `export const ToastActionDemo = () => {
+};
+
+// 4. Action Links: 带有 A 标签
+export const ToastActionDemo = () => {
     const toast = useToast();
     return (
         <div className="flex flex-col gap-4">
@@ -194,13 +146,10 @@ export const getComponentConfig = (t) => {
             </button>
         </div>
     );
-};`
-                },
-                {
-                    title: 'System Comparison (No Pause)',
-                    desc: 'A benchmark demo where pauseOnHover is disabled, forcing the notification to disappear regardless of focus.',
-                    demo: <ToastNoHoverDemo />,
-                    code: `export const ToastNoHoverDemo = () => {
+};
+
+// 5. No Hover Demo: 强制不暂停样例 (对比项)
+export const ToastNoHoverDemo = () => {
     const toast = useToast();
     return (
         <div className="flex flex-col gap-4">
@@ -218,51 +167,24 @@ export const getComponentConfig = (t) => {
             </button>
         </div>
     );
-};`
-                }
-            ]
-        },
-        {
-            id: 'custom-select',
-            title: t('components.customSelect.title', 'Custom Select'),
-            desc: t('components.customSelect.desc'),
-            tag: t('components.customSelect.tag'),
-            icon: <ChevronsUpDown className="w-5 h-5" />,
-            // 详情页面配置（动态路由用）
-            detailPages: [
-                {
-                    type: 'guide',  // 实现指南
-                    component: detailComponents.CustomSelectGuide,
-                }
-            ],
-            scenarios: [
-                {
-                    title: 'Basic Usage',
-                    desc: 'Standard single selection with custom styling capabilities.',
-                    demo: <BasicDemo />
-                },
-                {
-                    title: 'Text Alignment',
-                    desc: 'Support for Left, Center, and Right text alignment depending on context.',
-                    demo: <AlignmentDemo />
-                },
-                {
-                    title: 'States',
-                    desc: 'Visual feedback for different interaction states including Error.',
-                    demo: <StatusDemo />,
-                    code: `
-                      <CustomSelect
-                          label="Select an option"
-                          options={[
-                              { value: 'option1', label: 'Option 1' },
-                              { value: 'option2', label: 'Option 2' },
-                              { value: 'option3', label: 'Option 3' },
-                          ]}
-                          error="This field is required"
-                      />
-                      `
-                }
-            ]
-        },
-    ];
+};
+// 6. Stack Dynamics: 堆栈序列演示
+export const ToastStackDemo = () => {
+    const toast = useToast();
+    const handleStack = () => {
+        ['success', 'warning', 'info'].forEach((type, i) => {
+            setTimeout(() => {
+                toast[type](`堆栈序列演示消息 #${i + 1}`, { duration: 3000 });
+            }, i * 250);
+        });
+    };
+    return (
+        <button
+            onClick={handleStack}
+            className="flex items-center gap-3 px-8 py-4 bg-primary text-white rounded-[2rem] text-xs font-black shadow-xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all"
+        >
+            <Layers className="w-4 h-4" />
+            触发脉冲堆叠
+        </button>
+    );
 };
