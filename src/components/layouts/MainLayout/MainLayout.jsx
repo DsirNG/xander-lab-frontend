@@ -1,13 +1,39 @@
 import React, { useState, useEffect } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Layers, Github, Menu, Languages, X } from 'lucide-react';
+import { Layers, Github, Menu, Languages, X, User as UserIcon, LogOut } from 'lucide-react';
 import styles from './MainLayout.module.css';
+import { authService } from '@features/auth/services/authService';
 
 const Navbar = () => {
     const { t, i18n } = useTranslation();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [userInfo, setUserInfo] = useState(authService.getLocalUserInfo());
     const location = useLocation();
+
+    const handleLogout = async () => {
+        try {
+            await authService.logout();
+            setUserInfo(null);
+            setIsMobileMenuOpen(false);
+            window.location.href = '/'; // 登出后回首页
+        } catch (err) {
+            console.error('Logout failed', err);
+        }
+    };
+
+    // 监听全局登出事件
+    useEffect(() => {
+        const checkAuth = () => setUserInfo(null);
+        window.addEventListener('auth:logout', checkAuth);
+        return () => window.removeEventListener('auth:logout', checkAuth);
+    }, []);
+
+    // 路由变化时关闭移动菜单并同步用户信息
+    useEffect(() => {
+        setIsMobileMenuOpen(false);
+        setUserInfo(authService.getLocalUserInfo());
+    }, [location.pathname]);
 
     const toggleLanguage = () => {
         const nextLng = i18n.language.startsWith('zh') ? 'en' : 'zh';
@@ -15,11 +41,6 @@ const Navbar = () => {
     };
 
     const currentLang = i18n.language.startsWith('zh') ? '中文' : 'EN';
-
-    // 路由变化时关闭移动菜单
-    useEffect(() => {
-        setIsMobileMenuOpen(false);
-    }, [location.pathname]);
 
     // 点击外部关闭菜单
     useEffect(() => {
@@ -102,6 +123,37 @@ const Navbar = () => {
                             >
                                 <Github className="w-5 h-5" />
                             </a>
+
+                            {/* 用户区域 */}
+                            <div className="hidden sm:flex items-center ml-2 pl-2 border-l border-slate-200 dark:border-slate-800">
+                                {userInfo ? (
+                                    <div className="flex items-center gap-3">
+                                        <div className="flex flex-col items-end">
+                                            <span className="text-[10px] font-bold text-slate-900 dark:text-white leading-tight">
+                                                {userInfo.nickname || userInfo.username}
+                                            </span>
+                                            <span className="text-[9px] text-slate-400 leading-tight">
+                                                {userInfo.role}
+                                            </span>
+                                        </div>
+                                        <button
+                                            onClick={handleLogout}
+                                            className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 hover:text-rose-500 hover:bg-rose-50 transition-all"
+                                            title="退出登录"
+                                        >
+                                            <LogOut className="w-4 h-4" />
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <Link
+                                        to="/login"
+                                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-primary/5 text-primary hover:bg-primary hover:text-white transition-all text-xs font-bold"
+                                    >
+                                        <UserIcon className="w-3.5 h-3.5" />
+                                        <span>登录</span>
+                                    </Link>
+                                )}
+                            </div>
                             <button
                                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                                 className={styles.menuButton}
@@ -154,6 +206,25 @@ const Navbar = () => {
                             <Github className="w-5 h-5" />
                             <span className="text-sm font-medium">GitHub</span>
                         </a>
+
+                        {userInfo ? (
+                            <button
+                                onClick={handleLogout}
+                                className={`${styles.mobileActionButton} flex items-center space-x-2 text-rose-500`}
+                            >
+                                <LogOut className="w-4 h-4" />
+                                <span className="text-sm font-medium">退出登录 ({userInfo.nickname || userInfo.username})</span>
+                            </button>
+                        ) : (
+                            <Link
+                                to="/login"
+                                className={`${styles.mobileActionButton} flex items-center space-x-2 text-primary`}
+                                onClick={() => setIsMobileMenuOpen(false)}
+                            >
+                                <UserIcon className="w-4 h-4" />
+                                <span className="text-sm font-medium">账户登录</span>
+                            </Link>
+                        )}
                     </div>
                 </div>
             </div>

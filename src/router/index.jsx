@@ -24,6 +24,7 @@ import ComponentContent from '@features/components/pages/ComponentContent';
 import BlogHome from '@features/blog/pages/BlogHome';
 import BlogDetail from '@features/blog/pages/BlogDetail';
 import BlogTags from '@features/blog/pages/BlogTags';
+import LoginPage from '@features/auth/pages/LoginPage';
 
 // 配置数据
 import { getInfraConfig } from '@features/infra/constants';
@@ -43,6 +44,10 @@ export const createRouter = (t) => {
 
   // 动态生成路由配置
   const routerConfig = [
+    {
+      path: '/login',
+      element: <LoginPage />,
+    },
     {
       path: '/',
       element: <MainLayout />,
