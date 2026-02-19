@@ -229,6 +229,22 @@ const BlogDetail = () => {
                 </div>
             </header>
 
+            {/* 文章提示 (Tips) */}
+            {blog.tips && (
+                <div className="mb-8 p-4 rounded-xl border border-amber-200 bg-amber-50 dark:bg-amber-900/10 dark:border-amber-900/30">
+                    <div className="flex gap-3">
+                        <div className="flex-shrink-0 mt-0.5">
+                            <div className="w-5 h-5 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
+                                <span className="text-amber-600 dark:text-amber-500 text-xs font-bold font-mono">i</span>
+                            </div>
+                        </div>
+                        <p className="text-sm text-amber-800 dark:text-amber-300/90 leading-relaxed font-medium">
+                            {blog.tips}
+                        </p>
+                    </div>
+                </div>
+            )}
+
             {/* 文章内容 - Markdown 渲染 */}
             <div className="prose prose-slate dark:prose-invert prose-sm sm:prose-base max-w-none mb-10 prose-headings:font-bold prose-headings:tracking-tight prose-h2:text-xl prose-h2:mt-8 prose-h2:mb-4 prose-h3:text-lg prose-h3:mt-6 prose-h3:mb-3 prose-p:leading-relaxed prose-li:leading-relaxed prose-pre:bg-transparent prose-pre:p-0 prose-pre:m-0">
                 <ReactMarkdown
