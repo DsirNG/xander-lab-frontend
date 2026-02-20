@@ -76,8 +76,32 @@ const DynamicComponentGuide = ({ componentId, initialData }) => {
     const [data, setData] = useState(initialData || null);
     const [loading, setLoading] = useState(!initialData);
 
+    // 解析多文件逻辑
+    const parseLibraryFiles = (rawCode) => {
+        if (!rawCode) return [];
+        const fileMarkerRegex = /\/\* === FILE: (.*?) === \*\//g;
+        const files = [];
+        let lastMatch;
+        let lastIndex = 0;
+
+        while ((lastMatch = fileMarkerRegex.exec(rawCode)) !== null) {
+            if (files.length > 0) {
+                files[files.length - 1].content = rawCode.slice(lastIndex, lastMatch.index).trim();
+            }
+            files.push({ name: lastMatch[1], content: '' });
+            lastIndex = fileMarkerRegex.lastIndex;
+        }
+
+        if (files.length > 0) {
+            files[files.length - 1].content = rawCode.slice(lastIndex).trim();
+            return files;
+        }
+
+        // 如果没有标记，返回单一文件
+        return [{ name: 'Implementation.jsx', content: rawCode }];
+    };
+
     useEffect(() => {
-        // 如果已经有 initialData 且 componentId 没变，就不重复拉取
         if (initialData && String(initialData.id) === String(componentId)) {
             return;
         }
@@ -97,6 +121,8 @@ const DynamicComponentGuide = ({ componentId, initialData }) => {
 
     if (loading) return <div className="p-20 text-center text-slate-400 animate-pulse">正在解析架构细节...</div>;
     if (!data) return <div className="p-20 text-center text-rose-500">无法加载组件源码。</div>;
+
+    const libraryFiles = parseLibraryFiles(data.libraryCode);
 
     return (
         <div className="min-h-screen bg-slate-50/50 dark:bg-[#080b14] pb-32">
@@ -125,34 +151,12 @@ const DynamicComponentGuide = ({ componentId, initialData }) => {
                     </div>
 
                     <h1 className="text-5xl md:text-6xl font-black text-slate-900 dark:text-white mb-8 tracking-tighter italic uppercase">
-                        {data.title} <span className="text-indigo-500">Architecture</span>
+                        {data.title} <span className="text-indigo-500">Structure</span>
                     </h1>
 
                     <p className="text-xl text-slate-600 dark:text-slate-400 max-w-3xl leading-relaxed font-medium">
                         {data.desc || "该组件通过动态沙箱引擎实现，包含了完整的组件逻辑层与环境包裹层。"}
                     </p>
-                </div>
-
-                {/* Technical Overview Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-24">
-                    <FeatureCard
-                        title="核心实现 (Lib)"
-                        desc="包含所有的 Hooks、Contexts 和业务组件逻辑，作为底层基础注入沙箱。"
-                        icon={Boxes}
-                        color="bg-indigo-600"
-                    />
-                    <FeatureCard
-                        title="环境包裹 (Env)"
-                        desc="定义了组件运行所需的 Provider 容器或布局结构，确保跨场景的一致性。"
-                        icon={Layout}
-                        color="bg-violet-600"
-                    />
-                    <FeatureCard
-                        title="多场景演示"
-                        desc="通过隔离的沙箱环境展示不同的交互用例，支持实时代码编辑与预览。"
-                        icon={Zap}
-                        color="bg-emerald-600"
-                    />
                 </div>
 
                 {/* Implementation Layers */}
@@ -161,27 +165,25 @@ const DynamicComponentGuide = ({ componentId, initialData }) => {
                     <section>
                         <div className="flex items-center gap-4 mb-10">
                             <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-indigo-500 shadow-inner">
-                                <Cpu className="w-6 h-6" />
+                                <Boxes className="w-6 h-6" />
                             </div>
                             <div>
-                                <h2 className="text-2xl font-black text-slate-900 dark:text-white uppercase italic tracking-tighter">Implementation Layer</h2>
-                                <p className="text-sm text-slate-500 font-bold uppercase tracking-widest">library_code.js</p>
+                                <h2 className="text-2xl font-black text-slate-900 dark:text-white uppercase italic tracking-tighter">Implementation Layers</h2>
+                                <p className="text-sm text-slate-500 font-bold uppercase tracking-widest">Modular Logic Files</p>
                             </div>
                         </div>
 
-                        <div className="prose prose-slate dark:prose-invert max-w-none mb-8">
-                            <p className="text-slate-600 dark:text-slate-400 italic">
-                                这里是组件的灵魂。它定义了所有的内部状态管理、副作用处理以及可导出的 API。
-                                在沙箱运行期间，这些导出将被直接注入到演示代码的执行作用域中。
-                            </p>
+                        <div className="grid grid-cols-1 gap-8">
+                            {libraryFiles.map((file, idx) => (
+                                <CodeBlock
+                                    key={idx}
+                                    code={file.content}
+                                    language="jsx"
+                                    title={file.name}
+                                    icon={Boxes}
+                                />
+                            ))}
                         </div>
-
-                        <CodeBlock
-                            code={data.libraryCode}
-                            language="jsx"
-                            title="Implementation (Lib)"
-                            icon={Boxes}
-                        />
                     </section>
 
                     {/* Layer 2: Wrapper */}
@@ -195,13 +197,6 @@ const DynamicComponentGuide = ({ componentId, initialData }) => {
                                     <h2 className="text-2xl font-black text-slate-900 dark:text-white uppercase italic tracking-tighter">Environment Wrapper</h2>
                                     <p className="text-sm text-slate-500 font-bold uppercase tracking-widest">wrapper_code.jsx</p>
                                 </div>
-                            </div>
-
-                            <div className="prose prose-slate dark:prose-invert max-w-none mb-8">
-                                <p className="text-slate-600 dark:text-slate-400 italic">
-                                    包裹器提供了组件运行的温床。通常用于放置 Context Providers 或通用的样式容器。
-                                    演示代码生成的 React 节点将作为 <code className="text-indigo-400 font-bold">{"{children}"}</code> 渲染在其中。
-                                </p>
                             </div>
 
                             <CodeBlock
@@ -224,13 +219,6 @@ const DynamicComponentGuide = ({ componentId, initialData }) => {
                                     <h2 className="text-2xl font-black text-slate-900 dark:text-white uppercase italic tracking-tighter">Styling Specification</h2>
                                     <p className="text-sm text-slate-500 font-bold uppercase tracking-widest">custom_styles.css</p>
                                 </div>
-                            </div>
-
-                            <div className="prose prose-slate dark:prose-invert max-w-none mb-8">
-                                <p className="text-slate-600 dark:text-slate-400 italic">
-                                    这里定义了组件的原始 CSS 样式。在预览环境中，这些样式将被动态挂载到 HEAD 标签中，
-                                    支持 BEM 规范、CSS 变量以及所有的自定义动画关键帧。
-                                </p>
                             </div>
 
                             <CodeBlock

@@ -109,8 +109,8 @@ const ToastItem = ({ toast, onRemove }) => {
                 <div className="absolute bottom-1.5 left-1/2 -translate-x-1/2 h-[3px] w-12 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden opacity-40">
                     <div
                         className={`h-full animate-progress rounded-full origin-left ${type === 'success' ? 'bg-emerald-500' :
-                                type === 'error' ? 'bg-rose-500' :
-                                    type === 'warning' ? 'bg-amber-500' : 'bg-blue-500'
+                            type === 'error' ? 'bg-rose-500' :
+                                type === 'warning' ? 'bg-amber-500' : 'bg-blue-500'
                             }`}
                         style={{
                             animationDuration: `${duration}ms`,
