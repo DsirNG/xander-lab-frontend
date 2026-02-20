@@ -53,6 +53,12 @@ export const ToastBasicDemo = () => {
                 >
                     {t('components.toast.scenarios.basic.info_btn', 'Info (Minimal)')}
                 </button>
+                <button
+                    onClick={() => triggerSimple('warning', t('components.toast.scenarios.basic.warning'))}
+                    className="px-5 py-2.5 bg-amber-500/10 text-amber-600 border border-amber-500/20 rounded-xl text-xs font-black"
+                >
+                    {t('components.toast.scenarios.basic.warning_btn', 'Warning (Minimal)')}
+                </button>
             </div>
 
             <div className="p-4 bg-slate-50 dark:bg-slate-900/40 rounded-2xl border border-slate-100 dark:border-slate-800">

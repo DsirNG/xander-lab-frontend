@@ -226,11 +226,13 @@ export default {
           success: 'Status: Core logic ready',
           error: 'Error: Request rate limit exceeded',
           info: 'Update: Version v2.4.0 joined',
+          warning: 'Warning: Low disk space',
           custom: 'Trigger Custom Style',
           customMsg: 'Custom Purple Phantom Style',
           success_btn: 'Success (Minimal)',
           error_btn: 'Error (Minimal)',
-          info_btn: 'Info (Minimal)'
+          info_btn: 'Info (Minimal)',
+          warning_btn: 'Warning (Minimal)'
         },
         physics: {
           title: 'Interactive Physics (Pause on Hover)',

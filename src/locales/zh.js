@@ -226,8 +226,13 @@ export default {
           success: '状态：核心逻辑已就绪',
           error: '异常：请求频率超限',
           info: '更新：版本 v2.4.0 已加入',
+          warning: '警告：系统正在维护中',
           custom: '触发自定义样式',
-          customMsg: '自定义紫色幻彩样式'
+          customMsg: '自定义紫色幻彩样式',
+          success_btn: '成功反馈 (简约)',
+          error_btn: '异常告警 (简约)',
+          info_btn: '信息更新 (简约)',
+          warning_btn: '警告提示 (简约)'
         },
         physics: {
           title: '物理交互 (悬停暂停)',

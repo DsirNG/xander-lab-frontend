@@ -90,6 +90,12 @@ export const getComponentConfig = (t) => {
                 >
                     Info (Minimal)
                 </button>
+                <button
+                    onClick={() => triggerSimple('warning', '警告：系统正在维护中')}
+                    className="px-5 py-2.5 bg-amber-500/10 text-amber-600 border border-amber-500/20 rounded-xl text-xs font-black"
+                >
+                    Warning (Minimal)
+                </button>
             </div>
 
             <div className="p-4 bg-slate-50 dark:bg-slate-900/40 rounded-2xl border border-slate-100 dark:border-slate-800">
