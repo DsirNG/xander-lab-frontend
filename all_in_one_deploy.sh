@@ -8,7 +8,7 @@ REGISTRY_VPC="crpi-v3gvy8meoymt6a59-vpc.cn-shenzhen.personal.cr.aliyuncs.com"
 NAMESPACE="test_xander"
 IMAGE_NAME="xander"
 CONTAINER_NAME="xander-lab-frontend"
-TAG="1.0.1"
+TAG="1.0.2"
 USERNAME="aliyun6938781443"
 
 echo "=========================================="
