@@ -51,7 +51,7 @@ const ComponentDetailWrapper = () => {
             if (PageComponent) {
                 return (
                     <Suspense fallback={<div>正在加载页面...</div>}>
-                        <PageComponent />
+                        <PageComponent componentId={componentId} />
                     </Suspense>
                 );
             }

@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 
 const SidebarItem = ({ item, active, onClick, subtitleKey = 'tag' }) => (
     <Link
-        to={item.path || item.id}
+        to={item.path || String(item.id)}
         onClick={onClick}
         className={`w-full text-left p-4 rounded-2xl transition-all duration-300 flex items-center group mb-2
             ${active
@@ -57,11 +57,10 @@ const SidebarLayout = ({
             {/* 移动端菜单按钮 */}
             <button
                 onClick={() => setIsMobileMenuOpen(true)}
-                className={`lg:hidden fixed top-20 left-0 z-50 p-2 bg-white/10 dark:bg-slate-950/50 backdrop-blur-[2px] rounded-r-lg shadow-md border border-l-0 border-slate-200 dark:border-slate-800 transition-all duration-300 ease-in-out ${
-                    isMobileMenuOpen
-                        ? '-translate-x-full opacity-0 pointer-events-none'
-                        : 'translate-x-0 opacity-100'
-                }`}
+                className={`lg:hidden fixed top-20 left-0 z-50 p-2 bg-white/10 dark:bg-slate-950/50 backdrop-blur-[2px] rounded-r-lg shadow-md border border-l-0 border-slate-200 dark:border-slate-800 transition-all duration-300 ease-in-out ${isMobileMenuOpen
+                    ? '-translate-x-full opacity-0 pointer-events-none'
+                    : 'translate-x-0 opacity-100'
+                    }`}
                 aria-label="打开菜单"
             >
                 <ChevronRight className="w-5 h-5 text-slate-600 dark:text-slate-400" />
@@ -105,7 +104,7 @@ const SidebarLayout = ({
                             <SidebarItem
                                 key={item.id}
                                 item={item}
-                                active={activeId === item.id}
+                                active={String(activeId) === String(item.id)}
                                 subtitleKey={subtitleKey}
                                 onClick={(e) => {
                                     if (item.isComingSoon) {

@@ -51,7 +51,7 @@ const ComponentList = () => {
     // 如果在 /components 根路径，自动重定向到第一个组件
     useEffect(() => {
         if (!loading && items.length > 0 && location.pathname === '/components') {
-            navigate(items[0].id, { replace: true });
+            navigate(String(items[0].id), { replace: true });
         }
     }, [loading, items, location.pathname, navigate]);
 

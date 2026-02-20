@@ -66,14 +66,14 @@ const DependencyCard = ({ title, items }) => (
     </div>
 );
 
-const CustomSelectGuide = () => {
+const CustomSelectGuide = ({ componentId }) => {
     const { t } = useTranslation();
 
     return (
         <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pb-20">
             <div className="max-w-6xl mx-auto pt-10 px-6">
                 {/* Navigation */}
-                <Link to="/components/custom-select" className="inline-flex items-center text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white mb-8 transition-colors">
+                <Link to={`/components/${componentId}`} className="inline-flex items-center text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white mb-8 transition-colors">
                     <ArrowLeft className="w-4 h-4 mr-2" />
                     {t('common.backToComponents')}
                 </Link>

@@ -79,14 +79,14 @@ const DependencyCard = ({ title, items, icon: Icon }) => (
     </div>
 );
 
-const ToastGuide = () => {
+const ToastGuide = ({ componentId }) => {
     const { t } = useTranslation();
 
     return (
         <div className="min-h-screen bg-slate-50 dark:bg-[#080b14] pb-20">
             <div className="max-w-6xl mx-auto pt-10 px-6">
                 {/* Navigation */}
-                <Link to="/components/toast" className="inline-flex items-center text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-primary mb-8 transition-colors group">
+                <Link to={`/components/${componentId}`} className="inline-flex items-center text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-primary mb-8 transition-colors group">
                     <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
                     {t('components.toast.guide.back')}
                 </Link>
