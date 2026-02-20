@@ -18,8 +18,9 @@ const getDetailComponents = () => ({
  */
 export const getInfraConfig = (t) => {
     const detailComponents = getDetailComponents();
-    
+
     return [
+        /*
         {
             id: 'anchored',
             title: t('infra.anchored.title'),
@@ -69,5 +70,6 @@ export const getInfraConfig = (t) => {
             icon: <MoveIcon className="w-5 h-5" />,
             detailPages: [], // 暂无详情页
         }
+        */
     ];
 };

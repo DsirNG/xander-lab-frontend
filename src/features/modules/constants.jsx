@@ -42,6 +42,7 @@ export const getModuleConfig = (t) => {
     const detailComponents = getDetailComponents();
 
     return [
+        /*
         {
             id: 'popover',
             title: t('modules.popover.title'),
@@ -83,6 +84,7 @@ export const getModuleConfig = (t) => {
             icon: <HelpCircle className="w-5 h-5" />,
             detailPages: [], // 暂无详情页
         },
+        */
         {
             id: 'drag-drop',
             title: t('modules.dragdrop.title'),
@@ -136,6 +138,7 @@ export const getModuleConfig = (t) => {
                 }
             ]
         },
+        /*
         {
             id: 'context',
             title: t('modules.context.title'),
@@ -144,5 +147,6 @@ export const getModuleConfig = (t) => {
             icon: <MousePointer2 className="w-5 h-5" />,
             detailPages: [], // 暂无详情页
         }
+        */
     ];
 };

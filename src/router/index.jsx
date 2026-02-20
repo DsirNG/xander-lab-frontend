@@ -64,7 +64,7 @@ export const createRouter = (t) => {
           children: [
             {
               index: true,
-              element: <Navigate to="anchored" replace />,
+              element: <Navigate to="/" replace />,
             },
             ...infraSystems.map(system => ({
               path: system.id,
@@ -91,7 +91,7 @@ export const createRouter = (t) => {
           children: [
             {
               index: true,
-              element: <Navigate to="popover" replace />,
+              element: <Navigate to="drag-drop" replace />,
             },
             ...featureModules.map(module => ({
               path: module.id,
