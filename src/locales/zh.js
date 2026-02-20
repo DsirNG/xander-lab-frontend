@@ -199,7 +199,97 @@ export default {
         { name: 'CustomSelect/index.module.css', role: '组件样式' },
         { name: 'demo/demo.jsx', role: '使用示例' }
       ],
-      featureList: ['边界检测', '滚动感知', '键盘导航', '对齐控制']
+      featureList: ['边界检测', '滚动感知', '键盘导航', '对齐控制'],
+      scenarios: {
+        basic: {
+          title: '基础用法',
+          desc: '标准单选模式，支持自定义样式。'
+        },
+        alignment: {
+          title: '文本对齐',
+          desc: '支持左对齐、居中和右对齐，适应不同业务场景。'
+        },
+        states: {
+          title: '交互状态',
+          desc: '包括错误状态在内的多种交互反馈。'
+        }
+      }
+    },
+    toast: {
+      title: 'Toast 消息通知',
+      desc: '基于物理学交互的高级反馈系统，提供流畅的状态提醒。',
+      tag: '交互反馈',
+      scenarios: {
+        basic: {
+          title: '基础用法 (极简)',
+          desc: '不含进度条或关闭按钮的纯净状态，适合非干扰性 UI。',
+          success: '状态：核心逻辑已就绪',
+          error: '异常：请求频率超限',
+          info: '更新：版本 v2.4.0 已加入',
+          custom: '触发自定义样式',
+          customMsg: '自定义紫色幻彩样式'
+        },
+        physics: {
+          title: '物理交互 (悬停暂停)',
+          desc: '实时时间锁定：鼠标悬停将冻结倒计时，为用户提供无限阅读时间。',
+          hint: '此模式下，鼠标悬停将冻结计时器，移开后恢复执行。',
+          msg: '实验观测：由于设置了 pauseOnHover: true，悬停可无限延展阅读时间。',
+          btn: '启动物理暂停实验室'
+        },
+        manual: {
+          title: '手动关闭',
+          desc: '明确的交互模型，展示关闭按钮，适用于需要确认的告警。',
+          hint: '强制展示关闭按钮，允许用户主动清理通知轨道。',
+          msg: '检测到非法指令注入，安全协议已强制执行清理。',
+          btn: '弹出带叉叉的告警'
+        },
+        action: {
+          title: 'JSX & 丰富动作',
+          desc: '不仅是字符串：直接在反馈流中嵌入链接、按钮和自定义布局逻辑。',
+          hint: '支持嵌入交互式链接，点击链接时自动触发业务跳转。',
+          msg: '文档编译成功',
+          btn: '弹出交互链接'
+        },
+        comparison: {
+          title: '系统对比 (强制不暂停)',
+          desc: '禁用 pauseOnHover 的基准演示，无论是否对焦，通知都会消失。',
+          hint: '对比项：即便悬停，倒计时依然会强行流逝。',
+          msg: '强制流逝测试：无论怎么悬停，我都会在 3s 后消失。',
+          btn: '触发不可暂停提示'
+        },
+        stack: {
+          btn: '触发脉冲堆叠'
+        }
+      },
+      guide: {
+        back: '返回列表',
+        title: 'Toast // 源码实现',
+        subtitle: '“专为现代 C 端体验设计的高级物理基准通知系统。精准的时间控制与硬件加速的流体动画完美融合。”',
+        architecture: {
+          engine: '实验性引擎',
+          physics: '动力学与运动学',
+          logic: '核心逻辑概览',
+          logicDesc: '解耦的状态管理确保通知在页面导航中持久存在，同时保持像素级的定时精度。'
+        },
+        sections: {
+          physics: {
+            title: '01. 物理项逻辑',
+            desc: '处理悬停状态、毫秒级倒计时以及 CSS 动画同步。'
+          },
+          orchestration: {
+            title: '02. 状态编排',
+            desc: '全局 Context 提供者，管理通知队列的生命周期和属性映射。'
+          },
+          portal: {
+            title: '03. Portal 基础设施',
+            desc: '在主 DOM 树之外渲染通知堆栈，确保一致的深度和布局。'
+          },
+          entry: {
+            title: '04. 入口终端',
+            desc: '统一导出，便于在各个功能模块中集成。'
+          }
+        }
+      }
     }
   },
   footer: {

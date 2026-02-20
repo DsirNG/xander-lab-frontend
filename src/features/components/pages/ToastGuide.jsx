@@ -88,7 +88,7 @@ const ToastGuide = () => {
                 {/* Navigation */}
                 <Link to="/components/toast" className="inline-flex items-center text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-primary mb-8 transition-colors group">
                     <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
-                    Back to Terminal
+                    {t('components.toast.guide.back')}
                 </Link>
 
                 {/* Header */}
@@ -98,33 +98,33 @@ const ToastGuide = () => {
                             <Zap className="w-7 h-7 text-primary" />
                         </div>
                         <h1 className="text-4xl font-black italic tracking-tighter text-slate-900 dark:text-white uppercase">
-                            Toast // <span className="text-primary">Source Code</span>
+                            {t('components.toast.guide.title').split(' // ')[0]} // <span className="text-primary">{t('components.toast.guide.title').split(' // ')[1]}</span>
                         </h1>
                     </div>
                     <p className="text-lg text-slate-500 dark:text-slate-400 max-w-3xl font-medium leading-relaxed italic">
-                        "A premium, physics-based notification system designed for modern C-end experiences. Precise temporal control meets hardware-accelerated fluid motion."
+                        {t('components.toast.guide.subtitle')}
                     </p>
                 </div>
 
                 {/* Architecture Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
                     <DependencyCard
-                        title="Experimental Engine"
+                        title={t('components.toast.guide.architecture.engine')}
                         icon={Cpu}
                         items={['React hooks', 'useRef Timing', 'Context API', 'Portal']}
                     />
                     <DependencyCard
-                        title="Dynamics & Kinematics"
+                        title={t('components.toast.guide.architecture.physics')}
                         icon={Activity}
                         items={['CSS Keyframes', 'GPU Compositing', 'Bouncy Physics']}
                     />
                     <div className="p-8 rounded-[2rem] bg-primary text-white shadow-2xl shadow-primary/20 flex flex-col justify-between">
                         <h3 className="text-[10px] uppercase tracking-[0.2em] font-black mb-4 flex items-center gap-2 opacity-80">
                             <Layers className="w-3.5 h-3.5" />
-                            Core Logic Overview
+                            {t('components.toast.guide.architecture.logic')}
                         </h3>
                         <p className="text-xs font-bold leading-relaxed">
-                            Decoupled state management ensures notifications persist across navigation while maintaining pixel-perfect timing accuracy.
+                            {t('components.toast.guide.architecture.logicDesc')}
                         </p>
                     </div>
                 </div>
@@ -134,8 +134,12 @@ const ToastGuide = () => {
                     {/* 1. Item Logic */}
                     <section>
                         <div className="mb-6 px-2">
-                            <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-2 italic uppercase tracking-tighter">01. Physics Item Logic</h2>
-                            <p className="text-slate-500 dark:text-slate-400 text-sm font-medium">Handles hover-states, millisecond-perfect countdowns, and CSS animation synchronization.</p>
+                            <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-2 italic uppercase tracking-tighter">
+                                {t('components.toast.guide.sections.physics.title')}
+                            </h2>
+                            <p className="text-slate-500 dark:text-slate-400 text-sm font-medium">
+                                {t('components.toast.guide.sections.physics.desc')}
+                            </p>
                         </div>
                         <CodeBlock
                             code={ToastItemCode}
@@ -148,8 +152,12 @@ const ToastGuide = () => {
                     {/* 2. Context Management */}
                     <section>
                         <div className="mb-6 px-2">
-                            <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-2 italic uppercase tracking-tighter">02. State Orchestration</h2>
-                            <p className="text-slate-500 dark:text-slate-400 text-sm font-medium">Global context provider managing the lifecycle and property mapping of the notification queue.</p>
+                            <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-2 italic uppercase tracking-tighter">
+                                {t('components.toast.guide.sections.orchestration.title')}
+                            </h2>
+                            <p className="text-slate-500 dark:text-slate-400 text-sm font-medium">
+                                {t('components.toast.guide.sections.orchestration.desc')}
+                            </p>
                         </div>
                         <CodeBlock
                             code={ToastContextCode}
@@ -162,8 +170,12 @@ const ToastGuide = () => {
                     {/* 3. Container & Portal */}
                     <section>
                         <div className="mb-6 px-2">
-                            <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-2 italic uppercase tracking-tighter">03. Portal Infrastructure</h2>
-                            <p className="text-slate-500 dark:text-slate-400 text-sm font-medium">Renders the notification stack outside the main DOM tree to ensure consistent depth and layout.</p>
+                            <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-2 italic uppercase tracking-tighter">
+                                {t('components.toast.guide.sections.portal.title')}
+                            </h2>
+                            <p className="text-slate-500 dark:text-slate-400 text-sm font-medium">
+                                {t('components.toast.guide.sections.portal.desc')}
+                            </p>
                         </div>
                         <CodeBlock
                             code={ToastContainerCode}
@@ -176,8 +188,12 @@ const ToastGuide = () => {
                     {/* 4. Entry Point */}
                     <section>
                         <div className="mb-6 px-2">
-                            <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-2 italic uppercase tracking-tighter">04. Entry Terminal</h2>
-                            <p className="text-slate-500 dark:text-slate-400 text-sm font-medium">Unified exports for easy integration across the feature modules.</p>
+                            <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-2 italic uppercase tracking-tighter">
+                                {t('components.toast.guide.sections.entry.title')}
+                            </h2>
+                            <p className="text-slate-500 dark:text-slate-400 text-sm font-medium">
+                                {t('components.toast.guide.sections.entry.desc')}
+                            </p>
                         </div>
                         <CodeBlock
                             code={ToastIndexCode}

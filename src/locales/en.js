@@ -199,7 +199,100 @@ export default {
         { name: 'CustomSelect/index.module.css', role: 'Component Styles' },
         { name: 'demo/demo.jsx', role: 'Usage Examples' }
       ],
-      featureList: ['Boundary Detection', 'Scroll Awareness', 'Keyboard Navigation', 'Alignment Control']
+      featureList: ['Boundary Detection', 'Scroll Awareness', 'Keyboard Navigation', 'Alignment Control'],
+      scenarios: {
+        basic: {
+          title: 'Basic Usage',
+          desc: 'Standard single selection with custom styling capabilities.'
+        },
+        alignment: {
+          title: 'Text Alignment',
+          desc: 'Support for Left, Center, and Right text alignment depending on context.'
+        },
+        states: {
+          title: 'States',
+          desc: 'Visual feedback for different interaction states including Error.'
+        }
+      }
+    },
+    toast: {
+      title: 'Toast Notifications',
+      desc: 'Premium feedback system with physics-based interactions, providing fluid state alerts.',
+      tag: 'Interaction',
+      scenarios: {
+        basic: {
+          title: 'Basic Usage (Minimal)',
+          desc: 'Pure notification state without progress bars or close buttons for a clean, non-intrusive UI.',
+          success: 'Status: Core logic ready',
+          error: 'Error: Request rate limit exceeded',
+          info: 'Update: Version v2.4.0 joined',
+          custom: 'Trigger Custom Style',
+          customMsg: 'Custom Purple Phantom Style',
+          success_btn: 'Success (Minimal)',
+          error_btn: 'Error (Minimal)',
+          info_btn: 'Info (Minimal)'
+        },
+        physics: {
+          title: 'Interactive Physics (Pause on Hover)',
+          desc: 'Real-time temporal locking: hovering freezes the countdown, allowing users infinite reading time.',
+          hint: 'In this mode, hovering freezes the timer; it resumes once the mouse leaves.',
+          msg: 'Experimental Observation: With pauseOnHover: true, hovering extends reading time indefinitely.',
+          btn: 'Start Physics Pause Lab'
+        },
+        manual: {
+          title: 'Manual Dismissal',
+          desc: 'Explicit interaction model showing close buttons for alerts that require acknowledgment.',
+          hint: 'Forces close buttons, allowing users to actively clear the notification track.',
+          msg: 'Illegal instruction injection detected, security protocol enforced cleanup.',
+          btn: 'Manual Close Alert'
+        },
+        action: {
+          title: 'JSX & Rich Actions',
+          desc: 'Beyond strings: embed links, buttons, and custom layout logic directly into the feedback stream.',
+          hint: 'Supports embedded interactive links that trigger business navigation on click.',
+          msg: 'Document compiled successfully',
+          btn: 'Pop Action Link'
+        },
+        comparison: {
+          title: 'System Comparison (No Pause)',
+          desc: 'A benchmark demo where pauseOnHover is disabled, forcing the notification to disappear regardless of focus.',
+          hint: 'Comparison: Even when hovered, the countdown will continue to flow.',
+          msg: 'Forced Flow Test: No matter how you hover, I will disappear in 3s.',
+          btn: 'Trigger Non-pausable Toast'
+        },
+        stack: {
+          btn: 'Trigger Pulse Stack'
+        }
+      },
+      guide: {
+        back: 'Back to List',
+        title: 'Toast // Source Code',
+        subtitle: '"A premium, physics-based notification system designed for modern C-end experiences. Precise temporal control meets hardware-accelerated fluid motion."',
+        architecture: {
+          engine: 'Experimental Engine',
+          physics: 'Dynamics & Kinematics',
+          logic: 'Core Logic Overview',
+          logicDesc: 'Decoupled state management ensures notifications persist across navigation while maintaining pixel-perfect timing accuracy.'
+        },
+        sections: {
+          physics: {
+            title: '01. Physics Item Logic',
+            desc: 'Handles hover-states, millisecond-perfect countdowns, and CSS animation synchronization.'
+          },
+          orchestration: {
+            title: '02. State Orchestration',
+            desc: 'Global context provider managing the lifecycle and property mapping of the notification queue.'
+          },
+          portal: {
+            title: '03. Portal Infrastructure',
+            desc: 'Renders the notification stack outside the main DOM tree to ensure consistent depth and layout.'
+          },
+          entry: {
+            title: '04. Entry Terminal',
+            desc: 'Unified exports for easy integration across the feature modules.'
+          }
+        }
+      }
     }
   },
   footer: {
