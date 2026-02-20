@@ -7,4 +7,5 @@ import React from 'react';
 export const PAGE_REGISTRY = {
     'CustomSelectGuide': React.lazy(() => import('../pages/CustomSelectGuide')),
     'ToastGuide': React.lazy(() => import('../pages/ToastGuide')),
+    'DynamicGuide': React.lazy(() => import('../pages/DynamicComponentGuide')),
 };

@@ -44,19 +44,26 @@ const ComponentDetailWrapper = () => {
     // 检查是否在特定的子详情页（如 /guide）
     // 如果路由定义为 ':componentId/*'，subPath 将是 'guide'
     if (subPath) {
+        const isShared = !!data.libraryCode;
         // 查找 subPath 是否匹配任何详情页类型
-        const pageConfig = data.detailPages?.find(p => p.type === subPath);
+        let pageConfig = data.detailPages?.find(p => p.type === subPath);
+
+        // 如果数据库没配，但是是分享组件且访问的是 guide，我们手动指定 DynamicGuide
+        if (!pageConfig && isShared && subPath === 'guide') {
+            pageConfig = { type: 'guide', componentKey: 'DynamicGuide' };
+        }
+
         if (pageConfig) {
             const PageComponent = PAGE_REGISTRY[pageConfig.componentKey];
             if (PageComponent) {
                 return (
                     <Suspense fallback={<div>正在加载页面...</div>}>
-                        <PageComponent componentId={componentId} />
+                        <PageComponent componentId={componentId} initialData={data} />
                     </Suspense>
                 );
             }
         }
-        // 如果 subPath 存在但配置中未找到，可能跳转到 404 或重定向回主页
+        // 如果 subPath 存在但配置中未找到，且不是合法的动态路径，重定向回主页
         return <Navigate to={`/components/${componentId}`} replace />;
     }
 

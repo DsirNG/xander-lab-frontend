@@ -35,9 +35,10 @@ export const DEMO_REGISTRY = {
  * @param {string} customCode - 用户输入的 JSX 代码
  * @param {string} libCode - 底层库注入代码
  * @param {string} wrapperCode - 环境包裹代码
+ * @param {string} cssCode - 自定义 CSS 样式代码
  * @returns {React.ReactNode} 渲染的演示组件
  */
-export const resolveDemo = (demoKey, customCode, libCode = '', wrapperCode = '') => {
+export const resolveDemo = (demoKey, customCode, libCode = '', wrapperCode = '', cssCode = '') => {
     // 1. 优先从注册表中查找静态组件
     if (demoKey && DEMO_REGISTRY[demoKey]) {
         return DEMO_REGISTRY[demoKey];
@@ -50,6 +51,7 @@ export const resolveDemo = (demoKey, customCode, libCode = '', wrapperCode = '')
                 initialCode={customCode}
                 libraryCode={libCode}
                 wrapperCode={wrapperCode}
+                cssCode={cssCode}
                 previewOnly={true}
             />
         );

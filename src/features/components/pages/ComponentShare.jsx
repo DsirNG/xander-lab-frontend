@@ -135,7 +135,8 @@ const ComponentShare = () => {
     const [meta, setMeta] = useState({ titleZh: '', titleEn: '', version: '1.0.0', descriptionZh: '', descriptionEn: '' });
     const [libCode, setLibCode] = useState(INIT_LIB);
     const [wrapperCode, setWrapperCode] = useState(INIT_WRAPPER);
-    const [activeConfigTab, setActiveConfigTab] = useState('meta'); // meta | impl | env
+    const [cssCode, setCssCode] = useState('');
+    const [activeConfigTab, setActiveConfigTab] = useState('meta'); // meta | impl | env | css
     const [scenarios, setScenarios] = useState([createScenario(0)]);
     const [activeIdx, setActiveIdx] = useState(0);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -174,6 +175,7 @@ const ComponentShare = () => {
                 ...meta,
                 libraryCode: libCode,
                 wrapperCode,
+                cssCode,
                 scenarios: scenarios.map(s => ({
                     ...s,
                     codeSnippet: s.codeSnippet || s.demoCode
@@ -223,6 +225,7 @@ const ComponentShare = () => {
                         <TabButton active={activeConfigTab === 'meta'} icon={Settings} label="基本信息" onClick={() => setActiveConfigTab('meta')} />
                         <TabButton active={activeConfigTab === 'impl'} icon={Boxes} label="核心实现" onClick={() => setActiveConfigTab('impl')} />
                         <TabButton active={activeConfigTab === 'env'} icon={Layout} label="环境包裹" onClick={() => setActiveConfigTab('env')} />
+                        <TabButton active={activeConfigTab === 'css'} icon={FileCode} label="样式定义" onClick={() => setActiveConfigTab('css')} />
                     </nav>
 
                     <div className="flex-1 overflow-y-auto p-6 space-y-6 flex flex-col">
@@ -280,6 +283,23 @@ const ComponentShare = () => {
                                         onChange={e => setWrapperCode(e.target.value)}
                                         className="flex-1 w-full bg-slate-950 text-violet-300 font-mono text-[11px] border border-slate-700/50 rounded-2xl p-4 outline-none resize-none leading-relaxed"
                                         placeholder={`<Provider>\n  {children}\n</Provider>`}
+                                    />
+                                </motion.div>
+                            )}
+                            {activeConfigTab === 'css' && (
+                                <motion.div key="css" initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }} className="flex-1 flex flex-col">
+                                    <div className="flex items-center gap-2 mb-3 px-1">
+                                        <FileCode className="w-4 h-4 text-emerald-500" />
+                                        <span className="text-xs font-black text-slate-700 dark:text-slate-300">Global Styles (CSS)</span>
+                                    </div>
+                                    <p className="text-[10px] text-slate-400 mb-4 leading-relaxed">
+                                        定义组件所需的 CSS 样式。样式将被动态注入到演示页面的头部。
+                                    </p>
+                                    <textarea
+                                        value={cssCode}
+                                        onChange={e => setCssCode(e.target.value)}
+                                        className="flex-1 w-full bg-slate-950 text-emerald-300 font-mono text-[11px] border border-slate-700/50 rounded-2xl p-4 outline-none resize-none leading-relaxed"
+                                        placeholder=".my-component { ... }"
                                     />
                                 </motion.div>
                             )}
@@ -351,6 +371,7 @@ const ComponentShare = () => {
                                         initialCode={activeScenario.demoCode}
                                         libraryCode={libCode}
                                         wrapperCode={wrapperCode}
+                                        cssCode={cssCode}
                                         onChange={code => updateScenario('demoCode', code)}
                                     />
                                 </div>
