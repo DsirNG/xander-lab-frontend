@@ -21,6 +21,8 @@ import ModuleList from '@features/modules/pages/ModuleList';
 import ModuleContent from '@features/modules/pages/ModuleContent';
 import ComponentList from '@features/components/pages/ComponentList';
 import ComponentContent from '@features/components/pages/ComponentContent';
+import ComponentDetailWrapper from '@features/components/pages/ComponentDetailWrapper';
+import ComponentShare from '@features/components/pages/ComponentShare';
 import BlogHome from '@features/blog/pages/BlogHome';
 import BlogDetail from '@features/blog/pages/BlogDetail';
 import BlogTags from '@features/blog/pages/BlogTags';
@@ -29,7 +31,7 @@ import LoginPage from '@features/auth/pages/LoginPage';
 // 配置数据
 import { getInfraConfig } from '@features/infra/constants';
 import { getModuleConfig } from '@features/modules/constants';
-import { getComponentConfig } from '@features/components/constants';
+
 
 /**
  * 创建路由配置
@@ -40,7 +42,7 @@ export const createRouter = (t) => {
   // 获取业务配置数据
   const infraSystems = getInfraConfig(t);
   const featureModules = getModuleConfig(t);
-  const components = getComponentConfig(t);
+
 
   // 动态生成路由配置
   const routerConfig = [
@@ -115,27 +117,14 @@ export const createRouter = (t) => {
           element: <ComponentList />,
           children: [
             {
-              index: true,
-              element: <Navigate to="custom-select" replace />,
+              path: ':componentId/*',
+              element: <ComponentDetailWrapper />,
             },
-            ...components.map(component => ({
-              path: component.id,
-              children: [
-                {
-                  index: true,
-                  element: <ComponentContent component={component} />,
-                },
-                ...(component.detailPages || []).map(detailPage => ({
-                  path: detailPage.type,
-                  element: (
-                    <Suspense fallback={<div className="flex items-center justify-center min-h-screen">Loading...</div>}>
-                      <detailPage.component />
-                    </Suspense>
-                  ),
-                })),
-              ],
-            })),
           ],
+        },
+        {
+          path: 'components/share',
+          element: <ComponentShare />,
         },
         // 博客路由 - 独立 Layout
         {

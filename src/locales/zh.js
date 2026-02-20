@@ -212,6 +212,18 @@ export default {
         states: {
           title: '交互状态',
           desc: '包括错误状态在内的多种交互反馈。'
+        },
+        demo: {
+          status: {
+            required: '必填字段',
+            requiredDesc: '点击提交以触发错误',
+            requiredPlaceholder: '请选择...',
+            simulateSubmit: '模拟提交',
+            errorMsg: '请选择一个选项',
+            optional: '可选字段',
+            optionalDesc: '提交验证已禁用',
+            optionalPlaceholder: '请选择(可选)...'
+          }
         }
       }
     },

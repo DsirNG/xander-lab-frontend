@@ -16,7 +16,7 @@ export const ENV_CONFIG = {
     MODE: env.MODE,
 
     /** API 基础路径 */
-    BASE_URL: env.VITE_API_BASE_URL || '',
+    BASE_URL: env.VITE_API_BASE_URL || '/api',
 
     /** 请求超时时间 */
     TIMEOUT: Number(env.VITE_REQUEST_TIMEOUT) || 15000,

@@ -212,6 +212,18 @@ export default {
         states: {
           title: 'States',
           desc: 'Visual feedback for different interaction states including Error.'
+        },
+        demo: {
+          status: {
+            required: 'Required Field',
+            requiredDesc: 'Click submit to trigger error',
+            requiredPlaceholder: 'Select required...',
+            simulateSubmit: 'Simulate Submit',
+            errorMsg: 'Please select an option',
+            optional: 'Optional Field',
+            optionalDesc: 'Submit validation disabled',
+            optionalPlaceholder: 'Select optional...'
+          }
         }
       }
     },
