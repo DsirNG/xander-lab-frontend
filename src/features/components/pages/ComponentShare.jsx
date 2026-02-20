@@ -145,6 +145,24 @@ const ComponentShare = () => {
         setScenarios(prev => prev.map((s, i) => i === activeIdx ? { ...s, [field]: value } : s));
     };
 
+    const removeScenario = (idx, e) => {
+        e.stopPropagation(); // 防止触发父级的 onClick
+        if (scenarios.length <= 1) {
+            toast.error('请至少保留一个演示场景');
+            return;
+        }
+
+        const newScenarios = scenarios.filter((_, i) => i !== idx);
+        setScenarios(newScenarios);
+
+        // 如果删除的是当前处于激活状态的场景，或者删除的是索引在当前的场景之前的，需要调整 activeIdx
+        if (activeIdx === idx) {
+            setActiveIdx(Math.max(0, idx - 1));
+        } else if (activeIdx > idx) {
+            setActiveIdx(activeIdx - 1);
+        }
+    };
+
     const handleSubmit = async () => {
         if (!meta.titleZh || !meta.titleEn) {
             toast.error('请填写组件基本名称');
@@ -279,15 +297,25 @@ const ComponentShare = () => {
                     </div>
                     <div className="flex-1 overflow-y-auto p-3 space-y-2">
                         {scenarios.map((s, idx) => (
-                            <button
-                                key={s.id}
-                                onClick={() => setActiveIdx(idx)}
-                                className={`w-full text-left px-3 py-3 rounded-xl transition-all group ${idx === activeIdx ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20' : 'bg-slate-50 dark:bg-slate-800/50 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
-                                    }`}
-                            >
-                                <div className="text-[9px] font-black opacity-50 mb-0.5 tracking-tighter uppercase">Scene {idx + 1}</div>
-                                <div className="text-xs font-bold truncate">{s.titleZh}</div>
-                            </button>
+                            <div key={s.id} className="relative group/item">
+                                <button
+                                    onClick={() => setActiveIdx(idx)}
+                                    className={`w-full text-left px-3 py-3 rounded-xl transition-all ${idx === activeIdx ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20' : 'bg-slate-50 dark:bg-slate-800/50 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
+                                        }`}
+                                >
+                                    <div className="text-[9px] font-black opacity-50 mb-0.5 tracking-tighter uppercase">Scene {idx + 1}</div>
+                                    <div className="text-xs font-bold truncate pr-6">{s.titleZh || `未命名场景 ${idx + 1}`}</div>
+                                </button>
+                                {scenarios.length > 1 && (
+                                    <button
+                                        onClick={(e) => removeScenario(idx, e)}
+                                        className={`absolute right-2 top-1/2 -translate-y-1/2 p-1.5 rounded-lg transition-all opacity-0 group-hover/item:opacity-100 hover:bg-rose-500 hover:text-white ${idx === activeIdx ? 'text-white/60' : 'text-slate-400'}`}
+                                        title="删除场景"
+                                    >
+                                        <Trash2 className="w-3.5 h-3.5" />
+                                    </button>
+                                )}
+                            </div>
                         ))}
                     </div>
                 </nav>
