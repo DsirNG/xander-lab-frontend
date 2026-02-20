@@ -49,7 +49,7 @@ export function resolveDemo(demoKey, customCode) {
 
     // 2. 注册表里没有，但有 customCode → 渲染沙箱并预填代码
     if (customCode) {
-        return <LiveDemoSandbox initialCode={customCode} />;
+        return <LiveDemoSandbox initialCode={customCode} previewOnly={true} />;
     }
 
     // 3. 什么都没有 → 提示用户用空沙箱自己写

@@ -41,7 +41,7 @@ const ComponentShare = () => {
       <p className="text-slate-500 dark:text-slate-400 mb-8 text-center max-w-xs">
         点赞并观察状态变化
       </p>
-      <button 
+      <button
         onClick={() => setCount(c => c + 1)}
         className="px-10 py-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-2xl font-bold transition-all shadow-xl shadow-indigo-500/25 active:scale-95"
       >
@@ -61,9 +61,9 @@ const ComponentShare = () => {
         const newErrors = {};
         if (!formData.titleZh.trim()) newErrors.titleZh = '请输入中文标题';
         if (!formData.titleEn.trim()) newErrors.titleEn = '请输入英文标题';
-        if (!formData.demoCode.includes('export default')) {
-            newErrors.demoCode = '代码中必须包含 export default 导出组件';
-        }
+        // if (!formData.demoCode.includes('export default')) {
+        //     newErrors.demoCode = '代码中必须包含 export default 导出组件';
+        // }
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
@@ -147,7 +147,7 @@ const ComponentShare = () => {
     );
 
     return (
-        <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col">
+        <div className="bg-slate-50 dark:bg-slate-950 flex flex-col">
             {/* Top Stats Bar / Info Bar */}
             <div className="bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-white/5 py-4 px-8 flex items-center justify-between">
                 <div className="flex items-center gap-6">
@@ -240,7 +240,6 @@ const ComponentShare = () => {
                                 '使用 React.useState 替代普通 useState 如果作用域内未定义',
                                 '支持直接使用项目内的 CustomSelect 组件',
                                 'JSX 标签必须正确闭合',
-                                '最外层必须 export default 一个 React 组件'
                             ].map((text, idx) => (
                                 <li key={idx} className="flex gap-2 text-[11px] text-slate-500 leading-relaxed font-bold">
                                     <CheckCircle2 className="w-3 h-3 text-indigo-500 flex-shrink-0 mt-0.5" />

@@ -151,7 +151,12 @@ function SandboxPreview({ code }) {
 }
 
 // ─── 主组件：LiveDemoSandbox ─────────────────────────────────────
-const LiveDemoSandbox = ({ initialCode = DEFAULT_CODE, readOnly = false, onChange }) => {
+const LiveDemoSandbox = ({
+    initialCode = DEFAULT_CODE,
+    readOnly = false,
+    onChange,
+    previewOnly = false
+}) => {
     const [code, setCode] = useState(initialCode);
     const [runningCode, setRunningCode] = useState(initialCode);
     const [isRunning, setIsRunning] = useState(false);
@@ -211,6 +216,14 @@ const LiveDemoSandbox = ({ initialCode = DEFAULT_CODE, readOnly = false, onChang
             handleRun();
         }
     }, [code, handleRun]);
+
+    if (previewOnly) {
+        return (
+            <div className="w-full">
+                <SandboxPreview code={code} />
+            </div>
+        );
+    }
 
     return (
         <div className="w-full rounded-[2.5rem] border border-slate-200 dark:border-white/5 overflow-hidden shadow-2xl bg-white dark:bg-slate-900">
@@ -294,13 +307,13 @@ const LiveDemoSandbox = ({ initialCode = DEFAULT_CODE, readOnly = false, onChang
 
                 {/* 右侧预览区 */}
                 <div className="flex-1 bg-white dark:bg-slate-950 overflow-auto min-h-[260px] relative">
-                    <div className="flex items-center justify-between px-6 py-3 border-b border-slate-50 dark:border-white/5 sticky top-0 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md z-20">
-                        <div className="flex items-center gap-2">
-                            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                            <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Live Preview</span>
-                        </div>
-                        <Eye className="w-3.5 h-3.5 text-slate-300" />
-                    </div>
+                    {/*<div className="flex items-center justify-between px-6 py-3 border-b border-slate-50 dark:border-white/5 sticky top-0 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md z-20">*/}
+                    {/*    <div className="flex items-center gap-2">*/}
+                    {/*        <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />*/}
+                    {/*        <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Live Preview</span>*/}
+                    {/*    </div>*/}
+                    {/*    <Eye className="w-3.5 h-3.5 text-slate-300" />*/}
+                    {/*</div>*/}
                     <AnimatePresence mode="wait">
                         <motion.div
                             key={runningCode}
