@@ -139,5 +139,8 @@ EnhancedDemoSection.propTypes = {
     useBrowserWindow: PropTypes.bool
 };
 
+EnhancedDemoSection.SyntaxHighlighter = SyntaxHighlighter;
+EnhancedDemoSection.vscDarkPlus = vscDarkPlus;
+
 export default EnhancedDemoSection;
 

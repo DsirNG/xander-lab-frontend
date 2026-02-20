@@ -25,8 +25,8 @@ const ComponentService = {
     },
 
     /**
-     * 提交分享组件
-     * @param {Object} data - 组件数据 (titleZh, titleEn, author, demoCode, descriptionZh)
+     * 提交分享组件（支持多场景）
+     * @param {Object} data - { titleZh, titleEn, version, descriptionZh, sourceCode, scenarios[] }
      * @returns {Promise<string>} 返回生成的组件ID
      */
     shareComponent: (data) => {

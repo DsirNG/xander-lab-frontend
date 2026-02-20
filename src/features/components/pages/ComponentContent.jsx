@@ -48,7 +48,41 @@ const ComponentContent = ({ component }) => {
             detailButtonIcon={Code}
             extraHeaderButtons={metadata}
             themeColor="emerald-600"
-        />
+        >
+            {/* 组件完整源码说明（由用户通过分享功能配置） */}
+            {component.sourceCode && (
+                <div className="mt-16 pt-10 border-t border-slate-100 dark:border-white/5">
+                    <div className="flex items-center gap-3 mb-6">
+                        <div className="p-2.5 bg-indigo-500/10 rounded-xl">
+                            <Code className="w-5 h-5 text-indigo-500" />
+                        </div>
+                        <div>
+                            <h3 className="text-xl font-black text-slate-900 dark:text-white">组件实现源码</h3>
+                            <p className="text-sm text-slate-500 dark:text-slate-400">完整的文件结构与实现细节参考</p>
+                        </div>
+                    </div>
+
+                    <div className="relative group rounded-[2.5rem] overflow-hidden border border-slate-200 dark:border-white/5 shadow-2xl bg-[#0f172a]">
+                        <div className="max-h-[800px] overflow-auto scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent">
+                            <EnhancedDemoSection.SyntaxHighlighter
+                                language="javascript"
+                                style={EnhancedDemoSection.vscDarkPlus}
+                                customStyle={{
+                                    margin: 0,
+                                    padding: '2.5rem',
+                                    fontSize: '0.85rem',
+                                    background: '#0f172a',
+                                    lineHeight: '1.6',
+                                    width: '100%'
+                                }}
+                            >
+                                {component.sourceCode}
+                            </EnhancedDemoSection.SyntaxHighlighter>
+                        </div>
+                    </div>
+                </div>
+            )}
+        </ContentLayout>
     );
 };
 
