@@ -53,81 +53,154 @@ function Demo() {
 `;
 
 // ─── 执行用户代码并提取组件 ───────────────────────────────────────
-function compileAndRun(code) {
-    // 1. 预处理：支持 export default 语法
-    // 将 "export default " 替换为 "exports.default = "，以便在 new Function 中运行
-    let processedCode = code.replace(/export\s+default\s+/, 'exports.default = ');
+const createFunction = (code, scope, exportsObj) => {
+    const keys = Object.keys(scope).filter(k => k !== 'React' && k !== 'exports');
+    const values = keys.map(k => scope[k]);
+    try {
+        const fn = new Function('React', 'exports', ...keys, code);
+        fn(React, exportsObj, ...values);
+    } catch (e) {
+        throw e;
+    }
+};
 
-    // 2. 如果代码里没有导出，尝试自动添加最后一个定义的组件为导出
-    if (!processedCode.includes('exports.default')) {
-        // 寻找最后一个 const/function/class 定义的名字
-        const match = processedCode.match(/(?:const|function|class)\s+([A-Z][a-zA-Z0-9_]*)/g);
-        if (match) {
-            const lastMatch = match[match.length - 1];
-            const componentName = lastMatch.split(/\s+/)[1];
-            processedCode += `\n\nexports.default = ${componentName};`;
+function compileAndRun(code, libraryCode = '', wrapperCode = '') {
+    const baseScope = {
+        React, ...React,
+        CustomSelect, motion, AnimatePresence
+    };
+
+    // 1. 编译 Library
+    let libExports = {};
+    if (libraryCode.trim()) {
+        try {
+            const processedLib = libraryCode
+                .replace(/export\s+const\s+([a-zA-Z0-9_$]+)/g, 'const $1 = exports.$1')
+                .replace(/export\s+function\s+([a-zA-Z0-9_$]+)/g, 'exports.$1 = function $1')
+                .replace(/export\s+class\s+([a-zA-Z0-9_$]+)/g, 'exports.$1 = class $1')
+                .replace(/export\s+default\s+/g, 'exports.default = ');
+
+            const transformedLib = Babel.transform(processedLib, {
+                presets: ['react', 'env']
+            }).code;
+            createFunction(transformedLib, baseScope, libExports);
+        } catch (e) {
+            console.error('Library Compile Error:', e);
+            throw new Error(`底层库编译错误: ${e.message}`);
         }
     }
 
-    // 3. 用 Babel 将 JSX 转换为普通 JS (增加 env 支持更现代的语法)
-    const transformed = Babel.transform(processedCode, {
-        presets: ['react', 'env'],
-        filename: 'demo.jsx',
-    }).code;
+    // 2. 编译 Scenario
+    const fullScope = { ...baseScope, ...libExports };
+    let processedScenario = code.replace(/export\s+default\s+/, 'exports.default = ');
+    if (!processedScenario.includes('exports.default')) {
+        const match = processedScenario.match(/(?:const|function|class)\s+([A-Z][a-zA-Z0-9_]*)/g);
+        if (match) {
+            const componentName = match[match.length - 1].split(/\s+/)[1];
+            processedScenario += `\n\nexports.default = ${componentName};`;
+        }
+    }
 
-    // 3. 构造沙箱环境，注入 React、Hooks 和自定义组件
-    // eslint-disable-next-line no-new-func
-    const fn = new Function(
-        'React',
-        'useState',
-        'useEffect',
-        'useMemo',
-        'useCallback',
-        'useRef',
-        'CustomSelect', // 注入你的组件
-        'exports',
-        transformed
-    );
+    const scenarioExports = {};
+    try {
+        const transformedScenario = Babel.transform(processedScenario, {
+            presets: ['react', 'env'],
+        }).code;
+        createFunction(transformedScenario, fullScope, scenarioExports);
+    } catch (e) {
+        throw new Error(`演示代码运行错误: ${e.message}`);
+    }
 
-    const exports = {};
-    fn(
-        React,
-        React.useState,
-        React.useEffect,
-        React.useMemo,
-        React.useCallback,
-        React.useRef,
-        CustomSelect,
-        exports
-    );
+    const MainComponent = scenarioExports.default || scenarioExports[Object.keys(scenarioExports)[0]];
 
-    return exports.default || exports[Object.keys(exports)[0]] || null;
+    if (!MainComponent) return null;
+
+    // 3. 编译 Wrapper
+    if (wrapperCode.trim() && wrapperCode.includes('{children}')) {
+        try {
+            const wrappedCode = `exports.DefaultWrapper = ({ children }) => { return (${wrapperCode}); };`;
+            const transformedWrapper = Babel.transform(wrappedCode, { presets: ['react', 'env'] }).code;
+            const wrapperExports = {};
+            createFunction(transformedWrapper, fullScope, wrapperExports);
+
+            const Wrapper = wrapperExports.DefaultWrapper;
+            if (Wrapper) {
+                return () => (
+                    <Wrapper>
+                        <MainComponent />
+                    </Wrapper>
+                );
+            }
+        } catch (e) {
+            console.error('Wrapper Error:', e);
+            // 包裹器失败时回退到原始组件
+            return MainComponent;
+        }
+    }
+
+    return MainComponent;
+}
+
+// ─── 错误边界组件 ────────────────────────────────────────────────
+class SandboxErrorBoundary extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = { hasError: false, error: null };
+    }
+    static getDerivedStateFromError(error) {
+        return { hasError: true, error };
+    }
+    componentDidCatch(error, errorInfo) {
+        console.error('Sandbox Runtime Error:', error, errorInfo);
+    }
+    componentDidUpdate(prevProps) {
+        if (prevProps.code !== this.props.code || prevProps.libCode !== this.props.libCode) {
+            if (this.state.hasError) this.setState({ hasError: false, error: null });
+        }
+    }
+    render() {
+        if (this.state.hasError) {
+            return (
+                <div className="flex flex-col items-center justify-center p-6 text-center">
+                    <div className="p-3 bg-red-500/10 rounded-2xl mb-4">
+                        <AlertTriangle className="w-6 h-6 text-red-500" />
+                    </div>
+                    <h3 className="text-sm font-black text-slate-900 dark:text-white mb-2">运行时异常</h3>
+                    <pre className="text-[10px] text-red-400 font-mono bg-red-500/5 p-4 rounded-xl border border-red-500/10 max-w-full overflow-auto">
+                        {this.state.error?.message}
+                    </pre>
+                    <p className="mt-4 text-[10px] text-slate-400 tracking-tight">提示：请检查 Demo 代码是否调用了未定义的变量或 Hook</p>
+                </div>
+            );
+        }
+        return this.props.children;
+    }
 }
 
 // ─── 沙箱预览面板 ────────────────────────────────────────────────
-function SandboxPreview({ code }) {
+function SandboxPreview({ code, libraryCode, wrapperCode }) {
     const [Component, setComponent] = useState(null);
     const [error, setError] = useState(null);
 
     useEffect(() => {
         try {
             setError(null);
-            const comp = compileAndRun(code);
+            const comp = compileAndRun(code, libraryCode, wrapperCode);
             setComponent(() => comp);
         } catch (e) {
             setError(e.message || String(e));
             setComponent(null);
         }
-    }, [code]);
+    }, [code, libraryCode, wrapperCode]);
 
     if (error) {
         return (
             <div className="flex flex-col items-center justify-center h-full min-h-[200px] p-6">
                 <div className="flex items-center gap-2 text-red-500 mb-3">
                     <AlertTriangle className="w-5 h-5" />
-                    <span className="font-bold text-sm">编译错误</span>
+                    <span className="font-bold text-sm">环境配置错误</span>
                 </div>
-                <pre className="text-xs text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl p-4 max-w-full overflow-auto whitespace-pre-wrap">
+                <pre className="text-xs text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl p-4 max-w-full overflow-auto whitespace-pre-wrap font-mono">
                     {error}
                 </pre>
             </div>
@@ -136,16 +209,18 @@ function SandboxPreview({ code }) {
 
     if (!Component) {
         return (
-            <div className="flex items-center justify-center h-full min-h-[200px] text-slate-400 text-sm">
+            <div className="flex items-center justify-center h-full min-h-[200px] text-slate-400 text-sm italic">
                 <Terminal className="w-4 h-4 mr-2 opacity-50" />
-                等待代码运行…
+                等待组件挂载...
             </div>
         );
     }
 
     return (
-        <div className="w-full h-full min-h-[200px] p-4">
-            <Component />
+        <div className="w-full h-full min-h-[200px] flex items-center justify-center">
+            <SandboxErrorBoundary code={code} libCode={libraryCode}>
+                <Component />
+            </SandboxErrorBoundary>
         </div>
     );
 }
@@ -153,6 +228,8 @@ function SandboxPreview({ code }) {
 // ─── 主组件：LiveDemoSandbox ─────────────────────────────────────
 const LiveDemoSandbox = ({
     initialCode = DEFAULT_CODE,
+    libraryCode = '',
+    wrapperCode = '',
     readOnly = false,
     onChange,
     previewOnly = false
@@ -173,12 +250,12 @@ const LiveDemoSandbox = ({
     // 自动检测运行时错误
     const checkRunResult = useCallback((codeToRun) => {
         try {
-            compileAndRun(codeToRun);
+            compileAndRun(codeToRun, libraryCode, wrapperCode);
             setLastRunSuccess(true);
         } catch {
             setLastRunSuccess(false);
         }
-    }, []);
+    }, [libraryCode, wrapperCode]);
 
     const handleRun = useCallback(() => {
         setIsRunning(true);
@@ -220,7 +297,7 @@ const LiveDemoSandbox = ({
     if (previewOnly) {
         return (
             <div className="w-full">
-                <SandboxPreview code={code} />
+                <SandboxPreview code={code} libraryCode={libraryCode} wrapperCode={wrapperCode} />
             </div>
         );
     }
@@ -323,7 +400,7 @@ const LiveDemoSandbox = ({
                             transition={{ duration: 0.4, ease: "circOut" }}
                             className="h-full flex items-center justify-center p-8 lg:p-12"
                         >
-                            <SandboxPreview code={runningCode} />
+                            <SandboxPreview code={runningCode} libraryCode={libraryCode} wrapperCode={wrapperCode} />
                         </motion.div>
                     </AnimatePresence>
                 </div>

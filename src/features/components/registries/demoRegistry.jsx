@@ -30,26 +30,29 @@ export const DEMO_REGISTRY = {
 };
 
 /**
- * 根据 demoKey 获取对应的演示组件。
- *
- * 优先级：
- * 1. 直接在 DEMO_REGISTRY 中已注册的组件（静态的，最优先）
- * 2. 如果 key 不在注册表中，且 scenario 里带有 `customCode` 字段，则渲染实时沙箱
- * 3. 如果都没有，渲染一个空白的可编辑沙箱（让用户自己写）
- *
- * @param {string} demoKey - 数据库中的 demo_key
- * @param {string} [customCode] - 可选的自定义代码（存在数据库 code 字段中）
- * @returns {React.ReactNode}
+ * 根据 demoKey 或 customCode 解析演示组件
+ * @param {string} demoKey - 注册表中的 key
+ * @param {string} customCode - 用户输入的 JSX 代码
+ * @param {string} libCode - 底层库注入代码
+ * @param {string} wrapperCode - 环境包裹代码
+ * @returns {React.ReactNode} 渲染的演示组件
  */
-export function resolveDemo(demoKey, customCode) {
-    // 1. 注册表里有 → 直接用
+export const resolveDemo = (demoKey, customCode, libCode = '', wrapperCode = '') => {
+    // 1. 优先从注册表中查找静态组件
     if (demoKey && DEMO_REGISTRY[demoKey]) {
         return DEMO_REGISTRY[demoKey];
     }
 
     // 2. 注册表里没有，但有 customCode → 渲染沙箱并预填代码
     if (customCode) {
-        return <LiveDemoSandbox initialCode={customCode} previewOnly={true} />;
+        return (
+            <LiveDemoSandbox
+                initialCode={customCode}
+                libraryCode={libCode}
+                wrapperCode={wrapperCode}
+                previewOnly={true}
+            />
+        );
     }
 
     // 3. 什么都没有 → 提示用户用空沙箱自己写

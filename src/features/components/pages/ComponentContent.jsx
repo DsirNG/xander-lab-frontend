@@ -18,7 +18,7 @@ const ComponentContent = ({ component }) => {
             useBrowserWindow={false}
         >
             {/* 优先用旧版 demo 节点；否则用 resolveDemo 解析（注册表 → demoCode沙箱 → 空白沙箱） */}
-            {scenario.demo || resolveDemo(scenario.demoKey, scenario.demoCode)}
+            {scenario.demo || resolveDemo(scenario.demoKey, scenario.demoCode, component.libraryCode, component.wrapperCode)}
         </EnhancedDemoSection>
     );
 
