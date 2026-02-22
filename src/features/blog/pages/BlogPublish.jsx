@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
@@ -10,10 +10,11 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { blogService } from '../services/blogService';
 import { useToast } from '@/hooks/useToast';
+import CustomSelect from '../../components/pages/codeComponent/CustomSelect';
 
 /**
  * 博客发布页面
- * Blog Publish Page - modern and clean writing experience
+ * Blog Publish Page - Premium Split Layout (Left: Editor, Right: Settings)
  */
 const BlogPublish = () => {
     const { t } = useTranslation();
@@ -32,15 +33,16 @@ const BlogPublish = () => {
     });
 
     const [tagInput, setTagInput] = useState('');
+    const contentTextareaRef = useRef(null);
 
     useEffect(() => {
         const fetchCategories = async () => {
             try {
                 const data = await blogService.getCategories();
-                setCategories(data);
-                // 默认选择第一个分类
-                if (data && data.length > 0) {
-                    setFormData(prev => ({ ...prev, categoryId: data[0].id }));
+                const formatted = data.map(c => ({ value: String(c.id), label: c.name }));
+                setCategories(formatted);
+                if (formatted.length > 0) {
+                    setFormData(prev => ({ ...prev, categoryId: formatted[0].value }));
                 }
             } catch (err) {
                 console.error('Failed to fetch categories:', err);
@@ -88,30 +90,32 @@ const BlogPublish = () => {
     };
 
     return (
-        <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col">
+        <div className="h-screen bg-slate-50 dark:bg-[#030712] flex flex-col overflow-hidden font-sans">
             {/* 顶部导航栏 / Header */}
-            <header className="h-16 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between px-6 sticky top-0 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md z-10">
+            <header className="h-16 shrink-0 border-b border-slate-200 dark:border-slate-800/60 flex items-center justify-between px-6 bg-white dark:bg-slate-900 z-20 shadow-sm relative">
                 <div className="flex items-center gap-4">
                     <button
                         onClick={() => navigate(-1)}
-                        className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors"
+                        className="p-2 -ml-2 text-slate-400 hover:text-slate-900 hover:bg-slate-100 dark:hover:text-white dark:hover:bg-slate-800/50 rounded-xl transition-all group"
                         title={t('blog.backToBlog')}
                     >
-                        <ChevronLeft className="w-5 h-5 text-slate-500" />
+                        <ChevronLeft className="w-5 h-5 group-hover:-translate-x-0.5 transition-transform" />
                     </button>
-                    <h1 className="text-sm font-black uppercase italic tracking-widest text-slate-900 dark:text-white">
+                    <div className="h-4 w-px bg-slate-200 dark:bg-slate-700"></div>
+                    <span className="text-xs font-black uppercase tracking-widest text-slate-900 dark:text-white flex items-center gap-2">
+                        <span className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse ring-4 ring-indigo-500/20"></span>
                         {t('blog.publishTitle')}
-                    </h1>
+                    </span>
                 </div>
 
                 <div className="flex items-center gap-3">
-                    <button className="px-4 py-2 text-xs font-bold text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors flex items-center gap-2">
+                    <button className="px-5 py-2 text-xs font-bold text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors flex items-center gap-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/50">
                         <Save className="w-4 h-4" /> {t('blog.saveDraft')}
                     </button>
                     <button
                         onClick={handlePublish}
                         disabled={loading}
-                        className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-full text-xs font-black shadow-lg shadow-indigo-600/20 transition-all active:scale-95 disabled:opacity-50 flex items-center gap-2"
+                        className="px-6 py-2 bg-slate-900 dark:bg-white hover:bg-indigo-600 dark:hover:bg-indigo-500 text-white dark:text-slate-900 hover:text-white rounded-xl text-xs font-black shadow-lg shadow-indigo-600/0 hover:shadow-indigo-600/30 dark:hover:shadow-indigo-500/30 transition-all active:scale-95 disabled:opacity-50 flex items-center gap-2"
                     >
                         {loading ? (
                             <><Loader2 className="w-4 h-4 animate-spin" /> {t('blog.publishing')}</>
@@ -122,135 +126,163 @@ const BlogPublish = () => {
                 </div>
             </header>
 
-            <main className="flex-1 max-w-5xl mx-auto w-full p-6 md:p-10 space-y-8">
-                {/* 核心卡片容器 */}
-                <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-2xl shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:border-slate-800 overflow-hidden">
-                    <div className="p-8 md:p-12 space-y-10">
-                        {/* 标题 / Title */}
-                        <section className="space-y-4">
-                            <div className="flex items-center gap-2 text-slate-400 group">
-                                <Type className="w-4 h-4 group-hover:text-indigo-500 transition-colors" />
-                                <span className="text-[10px] font-black uppercase tracking-widest">{t('blog.titleLabel')}</span>
-                            </div>
-                            <input
-                                value={formData.title}
-                                onChange={e => setFormData({ ...formData, title: e.target.value })}
-                                placeholder={t('blog.titlePlaceholder')}
-                                className="w-full text-3xl md:text-4xl font-black bg-transparent border-none outline-none placeholder:text-slate-100 dark:placeholder:text-slate-800 text-slate-900 dark:text-white"
-                            />
-                        </section>
+            <div className="flex-1 flex overflow-hidden relative">
+                {/* 主编辑区 / Left Pane - Editor & Preview */}
+                <main className="flex-1 flex flex-col relative bg-white dark:bg-[#030712] rounded-tr-[2.5rem] border-r border-t border-slate-200 dark:border-slate-800/80 shadow-[10px_0_30px_-15px_rgba(0,0,0,0.05)] dark:shadow-none z-10 transition-all overflow-hidden mt-2 ml-2">
+                    <div className="absolute top-6 right-8 z-20">
+                        <div className="flex bg-slate-100/80 dark:bg-slate-900/80 backdrop-blur-md p-1 rounded-2xl border border-slate-200/50 dark:border-slate-800/50 shadow-sm">
+                            <button
+                                onClick={() => { setIsPreview(false); setTimeout(() => contentTextareaRef.current?.focus(), 10); }}
+                                className={`flex items-center gap-2 px-5 py-2 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all ${!isPreview ? 'bg-white dark:bg-slate-800 text-indigo-600 shadow-sm scale-100' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 scale-95'}`}
+                            >
+                                <Edit3 className="w-4 h-4" /> <span className="hidden sm:inline">编辑</span>
+                            </button>
+                            <button
+                                onClick={() => setIsPreview(true)}
+                                className={`flex items-center gap-2 px-5 py-2 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all ${isPreview ? 'bg-white dark:bg-slate-800 text-indigo-600 shadow-sm scale-100' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 scale-95'}`}
+                            >
+                                <Eye className="w-4 h-4" /> <span className="hidden sm:inline">预览</span>
+                            </button>
+                        </div>
+                    </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div className="flex-1 overflow-y-auto custom-scrollbar flex justify-center scroll-smooth">
+                        <div className="w-full max-w-4xl px-12 md:px-16 py-20 flex flex-col gap-10 min-h-full">
+                            {/* 标题 */}
+                            <div className="relative group">
+                                {!isPreview && (
+                                    <div className="absolute -left-10 top-5 text-slate-200 dark:text-slate-800 pointer-events-none transition-colors group-focus-within:text-indigo-500">
+                                        <Type className="w-6 h-6" />
+                                    </div>
+                                )}
+                                <textarea
+                                    value={formData.title}
+                                    onChange={e => setFormData({ ...formData, title: e.target.value })}
+                                    placeholder={t('blog.titlePlaceholder')}
+                                    rows={1}
+                                    className={`w-full text-4xl md:text-5xl font-black bg-transparent border-none outline-none text-slate-900 dark:text-white resize-none break-words ${isPreview ? 'hidden' : 'placeholder:text-slate-200 dark:placeholder:text-slate-800'}`}
+                                    onInput={(e) => {
+                                        e.target.style.height = 'auto';
+                                        e.target.style.height = e.target.scrollHeight + 'px';
+                                    }}
+                                />
+                            </div>
+
+                            {/* 内容区 */}
+                            <div className={`flex-1 relative group ${isPreview ? 'hidden' : 'flex'}`}>
+                                <div className="absolute -left-10 top-2 text-slate-200 dark:text-slate-800 pointer-events-none transition-colors group-focus-within:text-indigo-500">
+                                    <Hash className="w-6 h-6" />
+                                </div>
+                                <textarea
+                                    ref={contentTextareaRef}
+                                    value={formData.content}
+                                    onChange={e => setFormData({ ...formData, content: e.target.value })}
+                                    placeholder={t('blog.contentPlaceholder')}
+                                    className="w-full h-full min-h-[60vh] bg-transparent border-none outline-none text-lg leading-[1.8] text-slate-700 dark:text-slate-300 placeholder:text-slate-300 dark:placeholder:text-slate-700 resize-none font-medium mb-20"
+                                />
+                            </div>
+
+                            {/* 预览区 */}
+                            {isPreview && (
+                                <div className="prose prose-slate dark:prose-invert max-w-none pt-2 mb-20">
+                                    {formData.title && (
+                                        <h1 className="text-4xl md:text-5xl font-black mb-12 text-slate-900 dark:text-white leading-tight">
+                                            {formData.title}
+                                        </h1>
+                                    )}
+                                    {formData.content ? (
+                                        <ReactMarkdown remarkPlugins={[remarkGfm]}>{formData.content}</ReactMarkdown>
+                                    ) : (
+                                        <div className="flex flex-col items-center justify-center py-40 text-slate-300 dark:text-slate-700">
+                                            <Info className="w-16 h-16 mb-6 opacity-30" />
+                                            <p className="text-sm font-bold uppercase tracking-widest italic">尚未输入内容 // No Content</p>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </main>
+
+                {/* 侧边栏 / Right Pane - Configuration */}
+                <aside className="w-[420px] shrink-0 bg-transparent flex flex-col z-0 mt-2">
+                    <div className="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar p-10 space-y-12 pb-32">
+
+                        {/* 状态与控制面板 */}
+                        <div>
+                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500 mb-8 block flex items-center gap-3">
+                                <span className="h-px bg-slate-200 dark:bg-slate-800 flex-1"></span>
+                                DOCUMENT SETTINGS
+                                <span className="h-px bg-slate-200 dark:bg-slate-800 flex-1"></span>
+                            </span>
+
                             {/* 分类 / Category */}
-                            <section className="space-y-4">
-                                <div className="flex items-center gap-2 text-slate-400 group">
+                            <section className="space-y-4 mb-10">
+                                <div className="flex items-center gap-2 text-slate-500 group">
                                     <Layout className="w-4 h-4 group-hover:text-indigo-500 transition-colors" />
                                     <span className="text-[10px] font-black uppercase tracking-widest">{t('blog.categoryLabel')}</span>
                                 </div>
-                                <div className="relative">
-                                    <select
-                                        value={formData.categoryId}
-                                        onChange={e => setFormData({ ...formData, categoryId: e.target.value })}
-                                        className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 rounded-2xl px-5 py-3.5 text-sm font-bold outline-none focus:border-indigo-600 focus:ring-4 focus:ring-indigo-500/5 transition-all appearance-none text-slate-700 dark:text-slate-200"
-                                    >
-                                        {categories.map(cat => (
-                                            <option key={cat.id} value={cat.id}>{cat.name}</option>
-                                        ))}
-                                    </select>
-                                    <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
-                                        <ChevronLeft className="w-4 h-4 -rotate-90" />
-                                    </div>
-                                </div>
+                                <CustomSelect
+                                    options={categories}
+                                    value={formData.categoryId}
+                                    onChange={val => setFormData({ ...formData, categoryId: val })}
+                                    placeholder={t('blog.categoryPlaceholder')}
+                                    className="w-full shadow-sm bg-white dark:bg-slate-900 rounded-2xl"
+                                />
                             </section>
 
                             {/* 标签 / Tags */}
-                            <section className="space-y-4">
-                                <div className="flex items-center gap-2 text-slate-400 group">
-                                    <TagIcon className="w-4 h-4 group-hover:text-indigo-500 transition-colors" />
-                                    <span className="text-[10px] font-black uppercase tracking-widest">{t('blog.tagLabel')}</span>
+                            <section className="space-y-4 mb-10 relative">
+                                <div className="flex items-center justify-between group">
+                                    <div className="flex items-center gap-2 text-slate-500">
+                                        <TagIcon className="w-4 h-4 group-hover:text-indigo-500 transition-colors" />
+                                        <span className="text-[10px] font-black uppercase tracking-widest">{t('blog.tagLabel')}</span>
+                                    </div>
+                                    <span className="text-[10px] text-slate-400 font-medium">Press Enter ↵</span>
                                 </div>
-                                <div className="flex flex-wrap gap-2 min-h-[50px] p-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 rounded-2xl focus-within:border-indigo-600 focus-within:ring-4 focus-within:ring-indigo-500/5 transition-all">
+                                <div className="flex flex-wrap gap-2 min-h-[56px] p-3 bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 rounded-2xl focus-within:border-indigo-500 focus-within:ring-4 focus-within:ring-indigo-500/10 transition-all shadow-sm">
                                     {formData.tags.map(tag => (
-                                        <span key={tag} className="px-3 py-1 bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-full text-[11px] font-bold text-indigo-600 flex items-center gap-1.5 shadow-sm">
+                                        <span key={tag} className="px-3 py-1.5 bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 text-[11px] font-bold text-slate-700 dark:text-slate-300 rounded-xl flex items-center gap-1.5 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 dark:hover:bg-rose-950/30 dark:hover:text-rose-400 dark:hover:border-rose-900 transition-colors group/tag cursor-pointer" onClick={() => removeTag(tag)}>
                                             {tag}
-                                            <button onClick={() => removeTag(tag)} className="hover:text-rose-500 transition-colors">
-                                                <X className="w-3 h-3" />
-                                            </button>
+                                            <X className="w-3.5 h-3.5 opacity-50 group-hover/tag:opacity-100" />
                                         </span>
                                     ))}
                                     <input
                                         value={tagInput}
                                         onChange={e => setTagInput(e.target.value)}
                                         onKeyDown={handleAddTag}
-                                        placeholder={t('blog.tagsPlaceholder')}
-                                        className="flex-1 bg-transparent border-none outline-none text-sm px-2 py-1 min-w-[150px] dark:placeholder:text-slate-700 text-slate-700 dark:text-slate-200"
+                                        placeholder={formData.tags.length === 0 ? "e.g. React, Architecture..." : ''}
+                                        className="flex-1 bg-transparent border-none outline-none text-sm px-2 py-1.5 min-w-[120px] dark:placeholder:text-slate-600 text-slate-800 dark:text-slate-200"
                                     />
                                 </div>
                             </section>
+
+                            {/* 摘要 / Abstract */}
+                            <section className="space-y-4">
+                                <div className="flex items-center justify-between group">
+                                    <div className="flex items-center gap-2 text-slate-500">
+                                        <AlignLeft className="w-4 h-4 group-hover:text-indigo-500 transition-colors" />
+                                        <span className="text-[10px] font-black uppercase tracking-widest">{t('blog.summaryLabel')}</span>
+                                    </div>
+                                    <span className={`text-[10px] font-medium ${formData.summary.length > 200 ? 'text-rose-500' : 'text-slate-400'}`}>
+                                        {formData.summary.length} / 200
+                                    </span>
+                                </div>
+                                <textarea
+                                    value={formData.summary}
+                                    onChange={e => setFormData({ ...formData, summary: e.target.value })}
+                                    placeholder={t('blog.summaryPlaceholder')}
+                                    className="w-full bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 rounded-2xl px-5 py-4 text-sm leading-relaxed outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all resize-none h-40 shadow-sm text-slate-800 dark:text-slate-200 placeholder:text-slate-400 custom-scrollbar"
+                                />
+                            </section>
                         </div>
 
-                        {/* 摘要 / Abstract */}
-                        <section className="space-y-4">
-                            <div className="flex items-center gap-2 text-slate-400 group">
-                                <AlignLeft className="w-4 h-4 group-hover:text-indigo-500 transition-colors" />
-                                <span className="text-[10px] font-black uppercase tracking-widest">{t('blog.summaryLabel')}</span>
-                            </div>
-                            <textarea
-                                value={formData.summary}
-                                onChange={e => setFormData({ ...formData, summary: e.target.value })}
-                                placeholder={t('blog.summaryPlaceholder')}
-                                className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 rounded-2xl px-6 py-4 text-sm font-medium leading-relaxed outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/5 transition-all resize-none h-24 text-slate-700 dark:text-slate-200"
-                            />
-                        </section>
-
-                        {/* 内容 / Content - 增强可见性 */}
-                        <section className="space-y-4 pb-10">
-                            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
-                                <div className="flex items-center gap-2 text-slate-400 group">
-                                    <Hash className="w-4 h-4 group-hover:text-indigo-500 transition-colors" />
-                                    <span className="text-[10px] font-black uppercase tracking-widest">{t('blog.contentLabel')}</span>
-                                </div>
-                                <div className="flex bg-slate-100 dark:bg-slate-950 p-1 rounded-xl">
-                                    <button
-                                        onClick={() => setIsPreview(false)}
-                                        className={`flex items-center gap-2 px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${!isPreview ? 'bg-white dark:bg-slate-800 text-indigo-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
-                                    >
-                                        <Edit3 className="w-3 h-3" /> 编辑
-                                    </button>
-                                    <button
-                                        onClick={() => setIsPreview(true)}
-                                        className={`flex items-center gap-2 px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${isPreview ? 'bg-white dark:bg-slate-800 text-indigo-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
-                                    >
-                                        <Eye className="w-3 h-3" /> 预览
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div className={`relative min-h-[500px] rounded-3xl transition-all ${!isPreview ? 'bg-slate-50/50 dark:bg-slate-950/30 ring-1 ring-slate-100 dark:ring-slate-800 focus-within:ring-2 focus-within:ring-indigo-500/50' : ''}`}>
-                                {!isPreview ? (
-                                    <textarea
-                                        value={formData.content}
-                                        onChange={e => setFormData({ ...formData, content: e.target.value })}
-                                        placeholder={t('blog.contentPlaceholder')}
-                                        className="w-full min-h-[500px] bg-transparent border-none outline-none text-base md:text-lg font-medium leading-relaxed p-8 placeholder:text-slate-200 dark:placeholder:text-slate-800 text-slate-800 dark:text-slate-200 custom-scrollbar"
-                                    />
-                                ) : (
-                                    <div className="p-8 prose prose-slate dark:prose-invert max-w-none">
-                                        {formData.content ? (
-                                            <ReactMarkdown remarkPlugins={[remarkGfm]}>{formData.content}</ReactMarkdown>
-                                        ) : (
-                                            <div className="flex flex-col items-center justify-center py-20 text-slate-300 dark:text-slate-700">
-                                                <Info className="w-10 h-10 mb-4 opacity-20" />
-                                                <p className="text-sm font-bold uppercase tracking-widest italic">暂无内容预览 // Null Content</p>
-                                            </div>
-                                        )}
-                                    </div>
-                                )}
-                            </div>
-                        </section>
                     </div>
-                </div>
-            </main>
+
+                    {/* 底部渐变遮罩，改善侧边栏滚动视觉效果 */}
+                    <div className="absolute bottom-0 left-0 w-[420px] h-12 bg-gradient-to-t from-slate-50 dark:from-[#030712] to-transparent pointer-events-none z-10"></div>
+                </aside>
+            </div>
         </div>
     );
 };

@@ -255,6 +255,10 @@ const LiveDemoSandbox = ({
 }) => {
     const [code, setCode] = useState(initialCode);
     const [runningCode, setRunningCode] = useState(initialCode);
+    const [runningLibraryCode, setRunningLibraryCode] = useState(libraryCode);
+    const [runningWrapperCode, setRunningWrapperCode] = useState(wrapperCode);
+    const [runningCssCode, setRunningCssCode] = useState(cssCode);
+
     const [isRunning, setIsRunning] = useState(false);
     const [lastRunSuccess, setLastRunSuccess] = useState(null);
     const textareaRef = useRef(null);
@@ -263,6 +267,16 @@ const LiveDemoSandbox = ({
         setCode(initialCode);
         setRunningCode(initialCode);
     }, [initialCode]);
+
+    // 自动节流编译（底层库和环境变动延时执行，防止按键输入极其卡顿）
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setRunningLibraryCode(libraryCode);
+            setRunningWrapperCode(wrapperCode);
+            setRunningCssCode(cssCode);
+        }, 800); // 800ms 防抖
+        return () => clearTimeout(timer);
+    }, [libraryCode, wrapperCode, cssCode]);
 
     const updateCode = (newCode) => {
         setCode(newCode);
@@ -273,9 +287,13 @@ const LiveDemoSandbox = ({
         setIsRunning(true);
         setTimeout(() => {
             try {
+                // 主动执行时用最新源码测试
                 compileAndRun(code, libraryCode, wrapperCode, cssCode);
                 setLastRunSuccess(true);
                 setRunningCode(code);
+                setRunningLibraryCode(libraryCode);
+                setRunningWrapperCode(wrapperCode);
+                setRunningCssCode(cssCode);
             } catch (e) {
                 console.error(e);
                 setLastRunSuccess(false);
@@ -336,7 +354,7 @@ const LiveDemoSandbox = ({
                     </div>
                 )}
                 <div className="flex-1 bg-white overflow-hidden relative">
-                    <SandboxPreview code={runningCode} libraryCode={libraryCode} wrapperCode={wrapperCode} cssCode={cssCode} />
+                    <SandboxPreview code={runningCode} libraryCode={runningLibraryCode} wrapperCode={runningWrapperCode} cssCode={runningCssCode} />
                 </div>
             </div>
         </div>

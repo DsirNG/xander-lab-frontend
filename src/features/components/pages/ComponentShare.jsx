@@ -4,12 +4,13 @@ import {
     Plus, Share2, Zap, Box, Info, Database,
     ChevronRight, Command, Layout, Boxes,
     FileCode, Terminal, Maximize2, Minimize2, Palette,
-    Type, Languages, Trash2, ShieldCheck, ChevronUp, ChevronDown
+    Type, Languages, Trash2, ShieldCheck, ChevronUp, ChevronDown, X
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import LiveDemoSandbox from './codeComponent/demo/LiveDemoSandbox';
 import ComponentService from '../services/componentService';
 import { useToast } from '@/hooks/useToast';
+import Modal from '../../../components/common/Modal';
 
 // ─── 预设数据 (完全对齐项目内 Toast 组件逻辑) ──────────────────────────────────────────
 const INIT_FILES = [
@@ -227,6 +228,55 @@ const ComponentShare = () => {
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [infTab, setInfTab] = useState('logic');
 
+    // --- 文件操作 ---
+    const [addModalOpen, setAddModalOpen] = useState(false);
+    const [newFileName, setNewFileName] = useState('NewComponent.jsx');
+
+    const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+    const [fileToDeleteIdx, setFileToDeleteIdx] = useState(null);
+
+    const handleAddFileSubmit = () => {
+        const fileName = newFileName.trim();
+        if (!fileName) {
+            toast.warning('文件名不能为空');
+            return;
+        }
+        if (!fileName.endsWith('.jsx') && !fileName.endsWith('.tsx') && !fileName.endsWith('.js') && !fileName.endsWith('.ts')) {
+            toast.warning('推荐使用 .jsx或.tsx 后缀');
+        }
+        if (libFiles.some(f => f.name === fileName)) {
+            toast.warning('文件名不能重复');
+            return;
+        }
+        setLibFiles([...libFiles, { name: fileName, content: '// ' + fileName + '\nexport const Component = () => {\n  return <div>New Component</div>;\n};\n' }]);
+        setActiveLibIdx(libFiles.length);
+        setAddModalOpen(false);
+    };
+
+    const handleDeleteFile = (e, index) => {
+        e.stopPropagation();
+        if (libFiles.length <= 1) {
+            toast.warning('至少需要保留一个文件');
+            return;
+        }
+        setFileToDeleteIdx(index);
+        setDeleteModalOpen(true);
+    };
+
+    const confirmDeleteFile = () => {
+        if (fileToDeleteIdx === null) return;
+        const index = fileToDeleteIdx;
+        const newFiles = libFiles.filter((_, i) => i !== index);
+        setLibFiles(newFiles);
+        if (activeLibIdx === index) {
+            setActiveLibIdx(Math.max(0, index - 1));
+        } else if (activeLibIdx > index) {
+            setActiveLibIdx(activeLibIdx - 1);
+        }
+        setDeleteModalOpen(false);
+        setFileToDeleteIdx(null);
+    };
+
     const combinedLibCode = useMemo(() => {
         return libFiles.map(f => `/* === FILE: ${f.name} === */\n${f.content}`).join('\n\n');
     }, [libFiles]);
@@ -313,7 +363,7 @@ const ComponentShare = () => {
                                 </span>
                                 <button onClick={() => {
                                     const id = Date.now().toString();
-                                    setScenarios([...scenarios, { id, titleZh: '新测试', titleEn: 'New Study', code: 'function Demo() {\n  return <div>New Scenario</div>;\n}' }]);
+                                    setScenarios([...scenarios, { id, titleZh: '新测试', titleEn: 'New Study', code: 'function Demo() {\n  return <div>New</div>;\n}' }]);
                                     setActiveSIdx(scenarios.length);
                                 }} className="p-1 hover:bg-slate-50 rounded-lg text-indigo-600 transition-all active:scale-125">
                                     <Plus className="w-5 h-5" />
@@ -342,7 +392,7 @@ const ComponentShare = () => {
                 <main className="flex-1 flex flex-col bg-slate-50 relative p-8 pb-20">
                     <div className="flex-1 flex flex-col bg-white rounded-[3rem] shadow-2xl border border-slate-200/50 overflow-hidden relative">
                         <LiveDemoSandbox
-                            key={activeSIdx + combinedLibCode.length}
+                            key={activeSIdx}
                             initialCode={scenarios[activeSIdx].code}
                             libraryCode={combinedLibCode}
                             wrapperCode={wrapperCode}
@@ -393,12 +443,28 @@ const ComponentShare = () => {
                             <AnimatePresence mode="wait">
                                 {infTab === 'logic' && (
                                     <motion.div key="logic" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex-1 flex h-full overflow-hidden">
-                                        <div className="w-64 flex-shrink-0 bg-white border-r border-slate-200 p-4 space-y-1 overflow-y-auto h-full">
-                                            {libFiles.map((f, i) => (
-                                                <button key={i} onClick={() => setActiveLibIdx(i)} className={`w-full px-4 py-3 rounded-xl text-left text-[11px] font-black truncate transition-all flex items-center justify-between group ${activeLibIdx === i ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20' : 'text-slate-500 hover:bg-slate-50'}`}>
-                                                    <span className="flex items-center gap-2"><FileCode className="w-4 h-4 opacity-40" /> {f.name}</span>
+                                        <div className="w-64 flex-shrink-0 bg-white border-r border-slate-200 p-4 flex flex-col h-full">
+                                            <div className="flex items-center justify-between mb-4 px-2">
+                                                <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Files</span>
+                                                <button onClick={() => { setNewFileName('NewComponent.jsx'); setAddModalOpen(true); }} className="p-1 hover:bg-slate-100 rounded text-slate-400 hover:text-indigo-600 transition-colors">
+                                                    <Plus className="w-3.5 h-3.5" />
                                                 </button>
-                                            ))}
+                                            </div>
+                                            <div className="space-y-1 overflow-y-auto custom-scrollbar flex-1 pb-4">
+                                                {libFiles.map((f, i) => (
+                                                    <button key={i} onClick={() => setActiveLibIdx(i)} className={`w-full px-4 py-3 rounded-xl text-left text-[11px] font-black truncate transition-all flex items-center justify-between group ${activeLibIdx === i ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20' : 'text-slate-500 hover:bg-slate-50'}`}>
+                                                        <span className="flex items-center gap-2 truncate"><FileCode className="w-4 h-4 opacity-40 flex-shrink-0" /> <span className="truncate">{f.name}</span></span>
+                                                        {libFiles.length > 1 && (
+                                                            <div
+                                                                onClick={(e) => handleDeleteFile(e, i)}
+                                                                className={`p-1 rounded opacity-0 group-hover:opacity-100 transition-all ${activeLibIdx === i ? 'hover:bg-indigo-500' : 'hover:bg-slate-200'}`}
+                                                            >
+                                                                <X className="w-3 h-3" />
+                                                            </div>
+                                                        )}
+                                                    </button>
+                                                ))}
+                                            </div>
                                         </div>
                                         <div className="flex-1 h-full relative">
                                             <textarea
@@ -429,6 +495,73 @@ const ComponentShare = () => {
                     </div>
                 </main>
             </div>
+
+            {/* --- Modals --- */}
+            <Modal
+                isOpen={addModalOpen}
+                onClose={() => setAddModalOpen(false)}
+                title={
+                    <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center">
+                            <FileCode className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+                        </div>
+                        <span className="text-[14px]">新建文件</span>
+                    </div>
+                }
+                width="max-w-[400px]"
+                footer={
+                    <>
+                        <button onClick={() => setAddModalOpen(false)} className="px-5 py-2.5 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all">取消</button>
+                        <button onClick={handleAddFileSubmit} className="px-6 py-2.5 rounded-xl text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 shadow-lg shadow-indigo-600/20 active:scale-95 transition-all">确定创建</button>
+                    </>
+                }
+            >
+                <div className="space-y-4 py-2">
+                    <div>
+                        <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest pl-1 block mb-2">File Name</label>
+                        <input
+                            autoFocus
+                            value={newFileName}
+                            onChange={(e) => setNewFileName(e.target.value)}
+                            onKeyDown={(e) => { if (e.key === 'Enter') handleAddFileSubmit(); }}
+                            className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl text-[13px] font-mono text-slate-900 dark:text-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 outline-none transition-all placeholder:text-slate-300 dark:placeholder:text-slate-700"
+                            placeholder="e.g. Button.tsx"
+                        />
+                    </div>
+                    <div className="bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-500 p-3 flex gap-3 text-xs rounded-xl font-medium border border-amber-100 dark:border-amber-500/20">
+                        <Info className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                        <p>推荐使用标准的前端扩展名如 <code className="bg-amber-100/50 dark:bg-amber-500/20 px-1 py-0.5 rounded font-black italic">.jsx</code>, <code className="bg-amber-100/50 dark:bg-amber-500/20 px-1 py-0.5 rounded font-black italic">.ts</code>, <code className="bg-amber-100/50 dark:bg-amber-500/20 px-1 py-0.5 rounded font-black italic">.tsx</code>。</p>
+                    </div>
+                </div>
+            </Modal>
+
+            <Modal
+                isOpen={deleteModalOpen}
+                onClose={() => setDeleteModalOpen(false)}
+                title="删除确认"
+                width="max-w-[360px]"
+                footer={
+                    <>
+                        <button onClick={() => setDeleteModalOpen(false)} className="px-5 py-2.5 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all">取消</button>
+                        <button onClick={confirmDeleteFile} className="px-6 py-2.5 rounded-xl text-xs font-bold text-white bg-rose-600 hover:bg-rose-700 shadow-lg shadow-rose-600/20 active:scale-95 transition-all flex items-center gap-2">
+                            <Trash2 className="w-3.5 h-3.5" /> 确认删除
+                        </button>
+                    </>
+                }
+            >
+                <div className="py-2 text-[14px] font-medium flex items-start gap-4 text-slate-600 dark:text-slate-300">
+                    <div className="w-10 h-10 rounded-full bg-rose-100/50 dark:bg-rose-500/20 text-rose-500 shrink-0 flex items-center justify-center border border-rose-200/50 dark:border-rose-500/30">
+                        <Trash2 className="w-5 h-5" />
+                    </div>
+                    <div>
+                        你正在极其危险地彻底抹除代码资产：<br />
+                        <span className="text-slate-900 dark:text-white font-black italic border-b border-rose-200 mt-2 inline-block">
+                            {fileToDeleteIdx !== null ? libFiles[fileToDeleteIdx].name : ''}
+                        </span>
+                        <p className="text-[12px] text-slate-400 mt-2">一旦删除，本地将丢失该文件的源码结构，是否强行覆盖执行？</p>
+                    </div>
+                </div>
+            </Modal>
         </div>
     );
 };
