@@ -101,13 +101,13 @@ const BlogHome = () => {
     return (
         <div className="space-y-6">
             {/* 头部区域 */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 dark:border-slate-800 pb-5">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200  pb-5">
                 <div className="flex-1">
-                    <h1 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight mb-1">
+                    <h1 className="text-xl font-bold text-slate-900  tracking-tight mb-1">
                         {getPageTitle()}
                     </h1>
                     <div className="flex items-center gap-2">
-                        <p className="text-xs text-slate-500 dark:text-slate-400">
+                        <p className="text-xs text-slate-500 ">
                             {loading ? t('blog.loading') : `${t('blog.foundArticles', { count: blogs?.length || 0 })}`}
                         </p>
                         {loadingMore && <Loader2 className="w-3 h-3 text-primary animate-spin" />}
@@ -123,24 +123,24 @@ const BlogHome = () => {
                         {t('blog.publish')}
                     </button>
 
-                    <div className="h-6 w-px bg-slate-200 dark:bg-slate-800 hidden md:block mx-1" />
+                    <div className="h-6 w-px bg-slate-200  hidden md:block mx-1" />
 
                     {(search || category || tag) && (
                         <button
                             onClick={clearFilters}
-                            className="flex items-center px-2.5 py-1.5 text-xs font-medium text-slate-600 bg-slate-100 rounded-lg hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 transition-colors"
+                            className="flex items-center px-2.5 py-1.5 text-xs font-medium text-slate-600 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors"
                         >
                             <X className="w-3.5 h-3.5 mr-1" />
                             {t('blog.clearFilters')}
                         </button>
                     )}
 
-                    <div className="hidden md:flex bg-slate-100 dark:bg-slate-800 p-0.5 rounded-lg">
+                    <div className="hidden md:flex bg-slate-100  p-0.5 rounded-lg">
                         <button
                             onClick={() => setViewMode('grid')}
                             className={`p-1.5 rounded-md transition-all ${viewMode === 'grid'
-                                ? 'bg-white dark:bg-slate-700 shadow-sm text-primary'
-                                : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-300'
+                                ? 'bg-white  shadow-sm text-primary'
+                                : 'text-slate-400 hover:text-slate-600 '
                                 }`}
                         >
                             <Grid className="w-3.5 h-3.5" />
@@ -148,8 +148,8 @@ const BlogHome = () => {
                         <button
                             onClick={() => setViewMode('list')}
                             className={`p-1.5 rounded-md transition-all ${viewMode === 'list'
-                                ? 'bg-white dark:bg-slate-700 shadow-sm text-primary'
-                                : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-300'
+                                ? 'bg-white  shadow-sm text-primary'
+                                : 'text-slate-400 hover:text-slate-600 '
                                 }`}
                         >
                             <List className="w-3.5 h-3.5" />
@@ -162,7 +162,7 @@ const BlogHome = () => {
             {loading && page === 1 ? (
                 <div className={`grid ${viewMode === 'grid' ? 'grid-cols-1 md:grid-cols-2' : 'grid-cols-1'} gap-4 animate-pulse`}>
                     {[1, 2, 3, 4].map(i => (
-                        <div key={i} className="h-48 bg-slate-100 dark:bg-slate-800 rounded-xl" />
+                        <div key={i} className="h-48 bg-slate-100  rounded-xl" />
                     ))}
                 </div>
             ) : blogs?.length > 0 ? (
@@ -199,11 +199,11 @@ const BlogHome = () => {
                     )}
                 </div>
             ) : (
-                <div className="flex flex-col items-center justify-center py-16 text-center bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-dashed border-slate-200 dark:border-slate-800">
-                    <div className="w-14 h-14 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mb-3">
+                <div className="flex flex-col items-center justify-center py-16 text-center bg-slate-50 /50 rounded-2xl border border-dashed border-slate-200 ">
+                    <div className="w-14 h-14 bg-slate-100  rounded-full flex items-center justify-center mb-3">
                         <Filter className="w-7 h-7 text-slate-400" />
                     </div>
-                    <h3 className="text-base font-medium text-slate-900 dark:text-white mb-1">
+                    <h3 className="text-base font-medium text-slate-900  mb-1">
                         {t('blog.noArticles')}
                     </h3>
                     <p className="text-sm text-slate-500 max-w-sm mx-auto mb-5">

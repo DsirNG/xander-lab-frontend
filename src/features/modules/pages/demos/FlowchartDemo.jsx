@@ -119,7 +119,7 @@ const FlowchartDemo = () => {
     return (
         <div
             ref={canvasRef}
-            className="relative w-full h-[500px] bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden cursor-crosshair select-none"
+            className="relative w-full h-[500px] bg-slate-50  border border-slate-200  rounded-2xl overflow-hidden cursor-crosshair select-none"
             style={{
                 backgroundImage: 'radial-gradient(#94a3b8 1px, transparent 1px)',
                 backgroundSize: '20px 20px',
@@ -142,7 +142,7 @@ const FlowchartDemo = () => {
                                 fill="none"
                                 stroke="#94a3b8"
                                 strokeWidth="3"
-                                className="dark:stroke-slate-600"
+
                             />
                             {/* Delete connection area */}
                             <circle cx={(start.x + end.x) / 2} cy={(start.y + end.y) / 2} r="10" fill="transparent"
@@ -169,24 +169,24 @@ const FlowchartDemo = () => {
             {nodes.map(node => (
                 <div
                     key={node.id}
-                    className="absolute w-[140px] h-[64px] bg-white dark:bg-slate-800 rounded-xl shadow-lg border-2 border-slate-200 dark:border-slate-700 flex items-center justify-between px-3 group transition-colors hover:border-blue-400 z-10"
+                    className="absolute w-[140px] h-[64px] bg-white  rounded-xl shadow-lg border-2 border-slate-200 flex items-center justify-between px-3 group transition-colors hover:border-blue-400 z-10"
                     style={{ left: node.x, top: node.y }}
                     onMouseDown={(e) => startMovingNode(e, node)}
                 >
                     {/* Left Connector (Target) */}
                     <div
-                        className="w-3 h-3 rounded-full bg-slate-300 dark:bg-slate-600 -ml-4 border-2 border-white dark:border-slate-800 cursor-pointer hover:scale-125 hover:bg-blue-500 transition-transform"
+                        className="w-3 h-3 rounded-full bg-slate-300 -ml-4 border-2 border-white  cursor-pointer hover:scale-125 hover:bg-blue-500 transition-transform"
                         onMouseUp={(e) => finishConnection(e, node.id)}
                     />
 
                     <div className="flex items-center space-x-3 pointer-events-none">
                         <node.icon className="w-5 h-5 text-slate-500" />
-                        <span className="font-bold text-sm text-slate-700 dark:text-slate-200">{node.label}</span>
+                        <span className="font-bold text-sm text-slate-700 ">{node.label}</span>
                     </div>
 
                     {/* Right Connector (Source) */}
                     <div
-                        className="w-3 h-3 rounded-full bg-blue-500 -mr-4 border-2 border-white dark:border-slate-800 cursor-pointer hover:scale-125 transition-transform"
+                        className="w-3 h-3 rounded-full bg-blue-500 -mr-4 border-2 border-white  cursor-pointer hover:scale-125 transition-transform"
                         onMouseDown={(e) => startConnection(e, node.id)}
                     />
 
@@ -204,7 +204,7 @@ const FlowchartDemo = () => {
                 </div>
             ))}
 
-            <div className="absolute bottom-4 left-4 text-xs font-mono text-slate-400 pointer-events-none bg-white/80 dark:bg-black/50 p-2 rounded-lg">
+            <div className="absolute bottom-4 left-4 text-xs font-mono text-slate-400 pointer-events-none bg-white/80 p-2 rounded-lg">
                 Draw lines from right dots • Drop on left dots
             </div>
         </div>

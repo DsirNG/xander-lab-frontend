@@ -150,7 +150,7 @@ const SingleFileTransferDemo = () => {
                 <div className="lg:col-span-2 space-y-4">
                     <div className="flex items-center justify-between px-2">
                         <h4 className="text-[11px] font-black text-slate-400 uppercase tracking-widest">Available Files</h4>
-                        <span className="text-[10px] bg-slate-100 dark:bg-slate-800 text-slate-500 px-2 py-0.5 rounded-full font-bold">{files.length}</span>
+                        <span className="text-[10px] bg-slate-100  text-slate-500 px-2 py-0.5 rounded-full font-bold">{files.length}</span>
                     </div>
 
                     <div className="space-y-3 h-[320px] overflow-y-auto pr-2 custom-scrollbar">
@@ -165,16 +165,16 @@ const SingleFileTransferDemo = () => {
                                     draggable
                                     onDragStart={(e) => dragDrop.handleDragStart(file, e)}
                                     onDragEnd={dragDrop.handleDragEnd}
-                                    className="group relative flex items-center p-4 bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/50 rounded-2xl cursor-grab active:cursor-grabbing hover:border-sky-500/50 hover:shadow-xl hover:shadow-sky-500/5 transition-all duration-300"
+                                    className="group relative flex items-center p-4 bg-white /80 border border-slate-200  rounded-2xl cursor-grab active:cursor-grabbing hover:border-sky-500/50 hover:shadow-xl hover:shadow-sky-500/5 transition-all duration-300"
                                 >
-                                    <div className="mr-4 p-2.5 bg-slate-50 dark:bg-slate-700/50 rounded-xl group-hover:scale-110 transition-transform duration-300">
+                                    <div className="mr-4 p-2.5 bg-slate-50 /50 rounded-xl group-hover:scale-110 transition-transform duration-300">
                                         {getFileIcon(file.type)}
                                     </div>
                                     <div className="flex-grow min-w-0">
-                                        <p className="text-sm font-bold text-slate-700 dark:text-slate-200 truncate">{file.name}</p>
+                                        <p className="text-sm font-bold text-slate-700  truncate">{file.name}</p>
                                         <p className="text-[10px] text-slate-400 font-medium">{file.size}</p>
                                     </div>
-                                    <GripVertical className="w-4 h-4 text-slate-200 dark:text-slate-700 group-hover:text-slate-400 transition-colors" />
+                                    <GripVertical className="w-4 h-4 text-slate-200  group-hover:text-slate-400 transition-colors" />
                                 </motion.div>
                             ))}
                         </AnimatePresence>
@@ -182,7 +182,7 @@ const SingleFileTransferDemo = () => {
                             <motion.div
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
-                                className="h-40 flex flex-col items-center justify-center border-2 border-dashed border-slate-100 dark:border-slate-800 rounded-3xl text-slate-300 dark:text-slate-700"
+                                className="h-40 flex flex-col items-center justify-center border-2 border-dashed border-slate-100  rounded-3xl text-slate-300 "
                             >
                                 <CheckCircle2 className="w-8 h-8 mb-2 opacity-50" />
                                 <p className="text-xs font-medium">No files left</p>
@@ -205,16 +205,16 @@ const SingleFileTransferDemo = () => {
                                 onDragLeave={dragDrop.handleDragLeave}
                                 onDrop={(e) => dragDrop.handleDrop(folder, e)}
                                 className={`relative p-6 rounded-[2rem] border-2 transition-all duration-500 flex flex-col min-h-[220px] ${dragDrop.dragOverItem?.id === folder.id
-                                    ? 'border-sky-500 bg-sky-50/50 dark:bg-sky-500/5 scale-[1.02] shadow-2xl shadow-sky-500/10'
-                                    : 'border-slate-100 dark:border-slate-800 bg-white/50 dark:bg-slate-900/50'
+                                    ? 'border-sky-500 bg-sky-50/50  scale-[1.02] shadow-2xl shadow-sky-500/10'
+                                    : 'border-slate-100  bg-white/50 /50'
                                     }`}
                             >
                                 <div className="pointer-events-none flex flex-col h-full">
-                                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-4 transition-colors duration-300 ${dragDrop.dragOverItem?.id === folder.id ? 'bg-sky-500 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-400'
+                                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-4 transition-colors duration-300 ${dragDrop.dragOverItem?.id === folder.id ? 'bg-sky-500 text-white' : 'bg-slate-100  text-slate-400'
                                         }`}>
                                         <FolderPlus className="w-6 h-6" />
                                     </div>
-                                    <h5 className={`font-bold text-sm mb-1 ${dragDrop.dragOverItem?.id === folder.id ? 'text-sky-600' : 'text-slate-700 dark:text-slate-200'}`}>
+                                    <h5 className={`font-bold text-sm mb-1 ${dragDrop.dragOverItem?.id === folder.id ? 'text-sky-600' : 'text-slate-700 '}`}>
                                         {folder.name}
                                     </h5>
                                     <p className="text-[10px] text-slate-400 mb-4">{folder.items.length} files stored</p>
@@ -226,10 +226,10 @@ const SingleFileTransferDemo = () => {
                                                     key={`${folder.id}-${item.id}`}
                                                     initial={{ scale: 0.8, opacity: 0 }}
                                                     animate={{ scale: 1, opacity: 1 }}
-                                                    className="px-2 py-1 bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-lg shadow-sm flex items-center space-x-1"
+                                                    className="px-2 py-1 bg-white  border border-slate-100  rounded-lg shadow-sm flex items-center space-x-1"
                                                 >
                                                     <div className="w-1 h-1 rounded-full bg-sky-500" />
-                                                    <span className="text-[9px] font-bold text-slate-600 dark:text-slate-400 truncate max-w-[80px]">
+                                                    <span className="text-[9px] font-bold text-slate-600  truncate max-w-[80px]">
                                                         {item.name}
                                                     </span>
                                                 </motion.div>

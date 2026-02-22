@@ -36,13 +36,13 @@ const ComponentContent = ({ component }) => {
     const metadata = (
         <div className="hidden sm:flex items-center gap-3 text-xs font-mono text-slate-400 mr-2">
             {component.author && (
-                <div className="flex items-center gap-1.5 px-2 py-1 bg-slate-50 dark:bg-white/5 rounded-lg border border-slate-100 dark:border-white/10">
+                <div className="flex items-center gap-1.5 px-2 py-1 bg-slate-50  rounded-lg border border-slate-100">
                     <span className="opacity-70">by</span>
-                    <span className="text-slate-700 dark:text-slate-200 font-bold">{component.author}</span>
+                    <span className="text-slate-700  font-bold">{component.author}</span>
                 </div>
             )}
             {component.version && (
-                <div className="flex items-center gap-1 px-2 py-1 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-lg border border-emerald-100 dark:border-emerald-500/20 font-bold">
+                <div className="flex items-center gap-1 px-2 py-1 bg-emerald-50 text-emerald-600  rounded-lg border border-emerald-100 d font-bold">
                     <span>v{component.version}</span>
                 </div>
             )}
@@ -68,7 +68,7 @@ const ComponentContent = ({ component }) => {
                             <Code className="w-6 h-6" />
                         </div>
                         <div className="flex-1">
-                            <h3 className="text-lg font-black text-slate-800 dark:text-white uppercase tracking-tight">
+                            <h3 className="text-lg font-black text-slate-800  uppercase tracking-tight">
                                 技术实现概览 <span className="text-indigo-500 text-xs ml-2 opacity-50 font-black">Implementation Analysis</span>
                             </h3>
                             <p className="text-xs text-slate-500 font-bold">该组件包含自定义逻辑层，点击右上角按钮查看完整架构解析。</p>
@@ -76,12 +76,12 @@ const ComponentContent = ({ component }) => {
                     </div>
 
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                        <div className="group relative rounded-[2rem] border border-slate-200 dark:border-white/5 bg-white dark:bg-slate-900/50 p-8 hover:shadow-2xl transition-all h-full flex flex-col">
+                        <div className="group relative rounded-[2rem] border border-slate-200  bg-white /50 p-8 hover:shadow-2xl transition-all h-full flex flex-col">
                             <div className="flex items-center gap-3 mb-4">
                                 <Code className="w-4 h-4 text-indigo-500" />
                                 <span className="text-xs font-black uppercase tracking-widest text-slate-400">核心逻辑 (Lib)</span>
                             </div>
-                            <div className="flex-1 max-h-[200px] overflow-hidden relative rounded-xl border border-slate-100 dark:border-white/5">
+                            <div className="flex-1 max-h-[200px] overflow-hidden relative rounded-xl border border-slate-100 ">
                                 <EnhancedDemoSection.SyntaxHighlighter
                                     language="javascript"
                                     style={EnhancedDemoSection.vscDarkPlus}
@@ -94,12 +94,12 @@ const ComponentContent = ({ component }) => {
                         </div>
 
                         {component.cssCode && (
-                            <div className="group relative rounded-[2rem] border border-slate-200 dark:border-white/5 bg-white dark:bg-slate-900/50 p-8 hover:shadow-2xl transition-all h-full flex flex-col">
+                            <div className="group relative rounded-[2rem] border border-slate-200  bg-white /50 p-8 hover:shadow-2xl transition-all h-full flex flex-col">
                                 <div className="flex items-center gap-3 mb-4">
                                     <FileCode className="w-4 h-4 text-emerald-500" />
                                     <span className="text-xs font-black uppercase tracking-widest text-slate-400">样式定义 (CSS)</span>
                                 </div>
-                                <div className="flex-1 max-h-[200px] overflow-hidden relative rounded-xl border border-slate-100 dark:border-white/5">
+                                <div className="flex-1 max-h-[200px] overflow-hidden relative rounded-xl border border-slate-100 ">
                                     <EnhancedDemoSection.SyntaxHighlighter
                                         language="css"
                                         style={EnhancedDemoSection.vscDarkPlus}
@@ -134,18 +134,18 @@ const ComponentContent = ({ component }) => {
             )}
             {/* 组件完整源码说明（由用户通过分享功能配置） */}
             {component.sourceCode && (
-                <div className="mt-16 pt-10 border-t border-slate-100 dark:border-white/5">
+                <div className="mt-16 pt-10 border-t border-slate-100 ">
                     <div className="flex items-center gap-3 mb-6">
                         <div className="p-2.5 bg-indigo-500/10 rounded-xl">
                             <Code className="w-5 h-5 text-indigo-500" />
                         </div>
                         <div>
-                            <h3 className="text-xl font-black text-slate-900 dark:text-white">组件实现源码</h3>
-                            <p className="text-sm text-slate-500 dark:text-slate-400">完整的文件结构与实现细节参考</p>
+                            <h3 className="text-xl font-black text-slate-900 ">组件实现源码</h3>
+                            <p className="text-sm text-slate-500 ">完整的文件结构与实现细节参考</p>
                         </div>
                     </div>
 
-                    <div className="relative group rounded-[2.5rem] overflow-hidden border border-slate-200 dark:border-white/5 shadow-2xl bg-[#0f172a]">
+                    <div className="relative group rounded-[2.5rem] overflow-hidden border border-slate-200  shadow-2xl bg-[#0f172a]">
                         <div className="max-h-[800px] overflow-auto scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent">
                             <EnhancedDemoSection.SyntaxHighlighter
                                 language="javascript"

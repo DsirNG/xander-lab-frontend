@@ -76,10 +76,10 @@ const defaultIcons = {
 };
 
 const defaultStyles = {
-    success: 'bg-white/95 dark:bg-slate-900/95 border-emerald-100/50 dark:border-emerald-500/20 shadow-emerald-500/10',
-    error: 'bg-white/95 dark:bg-slate-900/95 border-rose-100/50 dark:border-rose-500/20 shadow-rose-500/10',
-    info: 'bg-white/95 dark:bg-slate-900/95 border-blue-100/50 dark:border-blue-500/20 shadow-blue-500/10',
-    warning: 'bg-white/95 dark:bg-slate-900/95 border-amber-100/50 dark:border-amber-500/20 shadow-amber-500/10',
+    success: 'bg-white/95 /95 border-emerald-100/50 d shadow-emerald-500/10',
+    error: 'bg-white/95 /95 border-rose-100/50  shadow-rose-500/10',
+    info: 'bg-white/95 /95 border-blue-100/50  shadow-blue-500/10',
+    warning: 'bg-white/95 /95 border-amber-100/50  shadow-amber-500/10',
 };
 
 const ToastItem = ({ toast, onRemove }) => {
@@ -141,7 +141,7 @@ const ToastItem = ({ toast, onRemove }) => {
         >
             <div className="flex-shrink-0">{icon || defaultIcons[type]}</div>
             <div className="flex-1 min-w-0">
-                <div className="text-[13px] font-black text-slate-800 dark:text-slate-100 px-1 leading-normal break-words">
+                <div className="text-[13px] font-black text-slate-800  px-1 leading-normal break-words">
                     {message}
                 </div>
             </div>
@@ -638,8 +638,8 @@ const ComponentShare = () => {
                 onClose={() => setAddModalOpen(false)}
                 title={
                     <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center">
-                            <FileCode className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+                        <div className="w-8 h-8 rounded-xl bg-indigo-50 flex items-center justify-center">
+                            <FileCode className="w-4 h-4 text-indigo-600" />
                         </div>
                         <span className="text-[14px]">新建文件</span>
                     </div>
@@ -647,7 +647,7 @@ const ComponentShare = () => {
                 width="max-w-[400px]"
                 footer={
                     <>
-                        <button onClick={() => setAddModalOpen(false)} className="px-5 py-2.5 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all">取消</button>
+                        <button onClick={() => setAddModalOpen(false)} className="px-5 py-2.5 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-100  transition-all">取消</button>
                         <button onClick={handleAddFileSubmit} className="px-6 py-2.5 rounded-xl text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 shadow-lg shadow-indigo-600/20 active:scale-95 transition-all">确定创建</button>
                     </>
                 }
@@ -660,13 +660,13 @@ const ComponentShare = () => {
                             value={newFileName}
                             onChange={(e) => setNewFileName(e.target.value)}
                             onKeyDown={(e) => { if (e.key === 'Enter') handleAddFileSubmit(); }}
-                            className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl text-[13px] font-mono text-slate-900 dark:text-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 outline-none transition-all placeholder:text-slate-300 dark:placeholder:text-slate-700"
+                            className="w-full px-4 py-3 bg-slate-50  border border-slate-200  rounded-2xl text-[13px] font-mono text-slate-900  focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 outline-none transition-all placeholder:text-slate-300 "
                             placeholder="e.g. Button.tsx"
                         />
                     </div>
-                    <div className="bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-500 p-3 flex gap-3 text-xs rounded-xl font-medium border border-amber-100 dark:border-amber-500/20">
+                    <div className="bg-amber-50 text-amber-600 p-3 flex gap-3 text-xs rounded-xl font-medium border border-amber-100 ">
                         <Info className="w-4 h-4 flex-shrink-0 mt-0.5" />
-                        <p>推荐使用标准的前端扩展名如 <code className="bg-amber-100/50 dark:bg-amber-500/20 px-1 py-0.5 rounded font-black italic">.jsx</code>, <code className="bg-amber-100/50 dark:bg-amber-500/20 px-1 py-0.5 rounded font-black italic">.ts</code>, <code className="bg-amber-100/50 dark:bg-amber-500/20 px-1 py-0.5 rounded font-black italic">.tsx</code>。</p>
+                        <p>推荐使用标准的前端扩展名如 <code className="bg-amber-100/50 px-1 py-0.5 rounded font-black italic">.jsx</code>, <code className="bg-amber-100/50 px-1 py-0.5 rounded font-black italic">.ts</code>, <code className="bg-amber-100/50 px-1 py-0.5 rounded font-black italic">.tsx</code>。</p>
                     </div>
                 </div>
             </Modal>
@@ -678,20 +678,20 @@ const ComponentShare = () => {
                 width="max-w-[360px]"
                 footer={
                     <>
-                        <button onClick={() => setDeleteModalOpen(false)} className="px-5 py-2.5 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all">取消</button>
+                        <button onClick={() => setDeleteModalOpen(false)} className="px-5 py-2.5 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-100  transition-all">取消</button>
                         <button onClick={confirmDeleteFile} className="px-6 py-2.5 rounded-xl text-xs font-bold text-white bg-rose-600 hover:bg-rose-700 shadow-lg shadow-rose-600/20 active:scale-95 transition-all flex items-center gap-2">
                             <Trash2 className="w-3.5 h-3.5" /> 确认删除
                         </button>
                     </>
                 }
             >
-                <div className="py-2 text-[14px] font-medium flex items-start gap-4 text-slate-600 dark:text-slate-300">
-                    <div className="w-10 h-10 rounded-full bg-rose-100/50 dark:bg-rose-500/20 text-rose-500 shrink-0 flex items-center justify-center border border-rose-200/50 dark:border-rose-500/30">
+                <div className="py-2 text-[14px] font-medium flex items-start gap-4 text-slate-600 ">
+                    <div className="w-10 h-10 rounded-full bg-rose-100/50 text-rose-500 shrink-0 flex items-center justify-center border border-rose-200/50">
                         <Trash2 className="w-5 h-5" />
                     </div>
                     <div>
                         你正在极其危险地彻底抹除代码资产：<br />
-                        <span className="text-slate-900 dark:text-white font-black italic border-b border-rose-200 mt-2 inline-block">
+                        <span className="text-slate-900  font-black italic border-b border-rose-200 mt-2 inline-block">
                             {fileToDeleteIdx !== null ? libFiles[fileToDeleteIdx].name : ''}
                         </span>
                         <p className="text-[12px] text-slate-400 mt-2">一旦删除，本地将丢失该文件的源码结构，是否强行覆盖执行？</p>
@@ -704,8 +704,8 @@ const ComponentShare = () => {
                 onClose={() => setHelpModalOpen(false)}
                 title={
                     <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center">
-                            <HelpCircle className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+                        <div className="w-8 h-8 rounded-xl bg-indigo-50 flex items-center justify-center">
+                            <HelpCircle className="w-4 h-4 text-indigo-600" />
                         </div>
                         <span className="text-[14px]">预置样例库 - {helpType.toUpperCase()}</span>
                     </div>
@@ -713,14 +713,14 @@ const ComponentShare = () => {
                 width="max-w-[420px]"
                 footer={
                     <>
-                        <button onClick={() => setHelpModalOpen(false)} className="px-5 py-2.5 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all">取消</button>
+                        <button onClick={() => setHelpModalOpen(false)} className="px-5 py-2.5 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-100  transition-all">取消</button>
                         <button id="tour-apply-btn" onClick={handleApplySample} className="px-6 py-2.5 rounded-xl text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 shadow-lg shadow-indigo-600/20 active:scale-95 transition-all relative z-10">
                             一键装载
                         </button>
                     </>
                 }
             >
-                <div className="py-2 text-[13px] text-slate-600 dark:text-slate-300 leading-relaxed font-medium">
+                <div className="py-2 text-[13px] text-slate-600  leading-relaxed font-medium">
                     这是一项开发向导功能。点击下方按钮后，我们将为您本环节自动填入 <strong>『全局物理通知组件 (Toast)』</strong> 的标准工程测试数据。<br /><br />
                     {helpType === 'meta' && '该操作将会为您填入 Toast 组件的完整基本信息（中英文名称、描述及版本），跳过繁杂的手动录入。'}
                     {helpType === 'scenario' && '该操作将会一键填充一份同时包含了 { 成功态 / 失败态 / 进度流 } 等交互机制的完整 React DOM 运行场景。'}
@@ -735,8 +735,8 @@ const ComponentShare = () => {
                 onClose={() => setEditScenarioModalOpen(false)}
                 title={
                     <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center">
-                            <Edit2 className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+                        <div className="w-8 h-8 rounded-xl bg-indigo-50 flex items-center justify-center">
+                            <Edit2 className="w-4 h-4 text-indigo-600" />
                         </div>
                         <span className="text-[14px]">修改测试场景信息</span>
                     </div>
@@ -744,7 +744,7 @@ const ComponentShare = () => {
                 width="max-w-[400px]"
                 footer={
                     <>
-                        <button onClick={() => setEditScenarioModalOpen(false)} className="px-5 py-2.5 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all">取消</button>
+                        <button onClick={() => setEditScenarioModalOpen(false)} className="px-5 py-2.5 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-100  transition-all">取消</button>
                         <button onClick={handleEditScenarioSubmit} className="px-6 py-2.5 rounded-xl text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 shadow-lg shadow-indigo-600/20 active:scale-95 transition-all">
                             保存修改
                         </button>
@@ -759,7 +759,7 @@ const ComponentShare = () => {
                             value={editScenTitleZh}
                             onChange={(e) => setEditScenTitleZh(e.target.value)}
                             onKeyDown={(e) => { if (e.key === 'Enter') handleEditScenarioSubmit(); }}
-                            className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl text-[13px] font-bold text-slate-900 dark:text-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 outline-none transition-all placeholder:text-slate-300 dark:placeholder:text-slate-700"
+                            className="w-full px-4 py-3 bg-slate-50  border border-slate-200  rounded-2xl text-[13px] font-bold text-slate-900  focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 outline-none transition-all placeholder:text-slate-300"
                             placeholder="输入场景中文名..."
                         />
                     </div>
@@ -769,7 +769,7 @@ const ComponentShare = () => {
                             value={editScenTitleEn}
                             onChange={(e) => setEditScenTitleEn(e.target.value)}
                             onKeyDown={(e) => { if (e.key === 'Enter') handleEditScenarioSubmit(); }}
-                            className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl text-[13px] font-bold text-slate-900 dark:text-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 outline-none transition-all placeholder:text-slate-300 dark:placeholder:text-slate-700"
+                            className="w-full px-4 py-3 bg-slate-50  border border-slate-200  rounded-2xl text-[13px] font-bold text-slate-900  focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 outline-none transition-all placeholder:text-slate-300"
                             placeholder="e.g. Interaction Study"
                         />
                     </div>
@@ -795,7 +795,7 @@ const ComponentShare = () => {
                     </>
                 }
             >
-                <div className="text-slate-600 dark:text-slate-300 text-[13px] leading-loose">
+                <div className="text-slate-600  text-[13px] leading-loose">
                     侦测到系统架构池处于初始完全清空状态，且您是第一次进入<strong> Xander-Lab Workspace</strong>。<br />
                     为了帮助您最快熟悉这个“四合一”热重载沙盒，我们为您内置了一整套全局通知系统（Toast）的骨架。<br /><br />
                     是否愿意花 <b>30 秒</b>的世界时间，跟随强光指引，一点点体验如何无脑将组件拼装、编译并最终发射运作？

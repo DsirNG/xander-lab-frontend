@@ -23,9 +23,9 @@ const CodeBlock = ({ language, children }) => {
     };
 
     return (
-        <div className="relative group rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800 my-4">
+        <div className="relative group rounded-xl overflow-hidden border border-slate-200  my-4">
             {/* 头部：语言标签 + 复制按钮 */}
-            <div className="flex items-center justify-between px-4 py-2 bg-slate-800 dark:bg-slate-950 border-b border-slate-700">
+            <div className="flex items-center justify-between px-4 py-2 bg-slate-800  border-b border-slate-700">
                 <span className="text-xs font-mono font-medium text-slate-400">
                     {language || 'code'}
                 </span>
@@ -82,7 +82,7 @@ const markdownComponents = {
         // 行内代码
         return (
             <code
-                className="px-1.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-primary dark:text-indigo-400 text-[0.85em] font-mono font-medium"
+                className="px-1.5 py-0.5 rounded-md bg-slate-100  text-primary text-[0.85em] font-mono font-medium"
                 {...props}
             >
                 {children}
@@ -110,7 +110,7 @@ const markdownComponents = {
                 <img
                     src={src}
                     alt={alt}
-                    className="rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm w-full"
+                    className="rounded-xl border border-slate-200  shadow-sm w-full"
                     loading="lazy"
                     {...props}
                 />
@@ -125,7 +125,7 @@ const markdownComponents = {
     // 表格包裹响应式容器
     table({ children, ...props }) {
         return (
-            <div className="overflow-x-auto my-4 rounded-lg border border-slate-200 dark:border-slate-800">
+            <div className="overflow-x-auto my-4 rounded-lg border border-slate-200 ">
                 <table {...props}>{children}</table>
             </div>
         );
@@ -134,7 +134,7 @@ const markdownComponents = {
     blockquote({ children, ...props }) {
         return (
             <blockquote
-                className="border-l-4 border-primary/50 bg-primary/5 dark:bg-primary/10 pl-4 py-2 my-4 rounded-r-lg text-slate-600 dark:text-slate-300 [&>p]:my-1"
+                className="border-l-4 border-primary/50 bg-primary/5 pl-4 py-2 my-4 rounded-r-lg text-slate-600  [&>p]:my-1"
                 {...props}
             >
                 {children}
@@ -180,7 +180,7 @@ const BlogDetail = () => {
     if (error || !blog) {
         return (
             <div className="flex flex-col items-center justify-center min-h-[400px] text-center">
-                <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-2">404</h2>
+                <h2 className="text-xl font-bold text-slate-900  mb-2">404</h2>
                 <p className="text-sm text-slate-500 mb-5">{t('blog.articleNotFound')}</p>
                 <Link
                     to="/blog"
@@ -209,14 +209,14 @@ const BlogDetail = () => {
                     {blog.categoryName || blog.category}
                 </span>
 
-                <h1 className="text-2xl md:text-3xl font-black text-slate-900 dark:text-white mb-4 leading-tight tracking-tight">
+                <h1 className="text-2xl md:text-3xl font-black text-slate-900  mb-4 leading-tight tracking-tight">
                     {blog.title}
                 </h1>
 
-                <div className="flex flex-wrap items-center gap-4 text-xs text-slate-500 dark:text-slate-400">
+                <div className="flex flex-wrap items-center gap-4 text-xs text-slate-500 ">
                     <div className="flex items-center">
                         <User className="w-3.5 h-3.5 mr-1.5 text-slate-400" />
-                        <span className="font-medium text-slate-700 dark:text-slate-300">{blog.author}</span>
+                        <span className="font-medium text-slate-700 ">{blog.author}</span>
                     </div>
                     <div className="flex items-center">
                         <Calendar className="w-3.5 h-3.5 mr-1.5 text-slate-400" />
@@ -231,14 +231,14 @@ const BlogDetail = () => {
 
             {/* 文章提示 (Tips) */}
             {blog.tips && (
-                <div className="mb-8 p-4 rounded-xl border border-amber-200 bg-amber-50 dark:bg-amber-900/10 dark:border-amber-900/30">
+                <div className="mb-8 p-4 rounded-xl border border-amber-200 bg-amber-50">
                     <div className="flex gap-3">
                         <div className="flex-shrink-0 mt-0.5">
-                            <div className="w-5 h-5 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
-                                <span className="text-amber-600 dark:text-amber-500 text-xs font-bold font-mono">i</span>
+                            <div className="w-5 h-5 rounded-full bg-amber-100 flex items-center justify-center">
+                                <span className="text-amber-600 text-xs font-bold font-mono">i</span>
                             </div>
                         </div>
-                        <p className="text-sm text-amber-800 dark:text-amber-300/90 leading-relaxed font-medium">
+                        <p className="text-sm text-amber-800 leading-relaxed font-medium">
                             {blog.tips}
                         </p>
                     </div>
@@ -246,7 +246,7 @@ const BlogDetail = () => {
             )}
 
             {/* 文章内容 - Markdown 渲染 */}
-            <div className="prose prose-slate dark:prose-invert prose-sm sm:prose-base max-w-none mb-10 prose-headings:font-bold prose-headings:tracking-tight prose-h2:text-xl prose-h2:mt-8 prose-h2:mb-4 prose-h3:text-lg prose-h3:mt-6 prose-h3:mb-3 prose-p:leading-relaxed prose-li:leading-relaxed prose-pre:bg-transparent prose-pre:p-0 prose-pre:m-0">
+            <div className="prose prose-slate prose-sm sm:prose-base max-w-none mb-10 prose-headings:font-bold prose-headings:tracking-tight prose-h2:text-xl prose-h2:mt-8 prose-h2:mb-4 prose-h3:text-lg prose-h3:mt-6 prose-h3:mb-3 prose-p:leading-relaxed prose-li:leading-relaxed prose-pre:bg-transparent prose-pre:p-0 prose-pre:m-0">
                 <ReactMarkdown
                     remarkPlugins={[remarkGfm]}
                     components={markdownComponents}
@@ -256,13 +256,13 @@ const BlogDetail = () => {
             </div>
 
             {/* 底部标签 */}
-            <div className="border-t border-slate-200 dark:border-slate-800 pt-6">
+            <div className="border-t border-slate-200  pt-6">
                 <div className="flex flex-wrap gap-2">
                     {blog.tags.map(tag => (
                         <Link
                             key={tag}
                             to={`/blog/tags?tag=${encodeURIComponent(tag)}`}
-                            className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-600 hover:bg-primary hover:text-white dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-primary dark:hover:text-white transition-colors"
+                            className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-600 hover:bg-primary hover:text-white transition-colors"
                         >
                             <Tag className="w-3 h-3 mr-1.5" />
                             {tag}

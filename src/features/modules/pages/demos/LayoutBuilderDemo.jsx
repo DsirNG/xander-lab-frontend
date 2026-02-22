@@ -41,8 +41,8 @@ const LayoutBuilderDemo = () => {
                     content: `New ${source.label}`
                 };
 
-                // If dropped on an existing item, insert before/after it? 
-                // For simplicity, we'll just append to the grid if not specifically targeting a swap position, 
+                // If dropped on an existing item, insert before/after it?
+                // For simplicity, we'll just append to the grid if not specifically targeting a swap position,
                 // or if target is valid item, insert at that index.
 
                 if (target && target.id && !target.id.startsWith('tool-')) {
@@ -88,9 +88,9 @@ const LayoutBuilderDemo = () => {
     };
 
     return (
-        <div className="flex w-full h-[500px] border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden bg-slate-50 dark:bg-slate-900/30">
+        <div className="flex w-full h-[500px] border border-slate-200  rounded-2xl overflow-hidden bg-slate-50 /30">
             {/* Sidebar Tools */}
-            <div className="w-64 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 p-4 flex flex-col">
+            <div className="w-64 bg-white  border-r border-slate-200  p-4 flex flex-col">
                 <h3 className="text-xs font-black text-slate-400 uppercase tracking-wider mb-4">Components</h3>
                 <div className="space-y-3">
                     {TOOL_ITEMS.map((tool) => (
@@ -99,18 +99,18 @@ const LayoutBuilderDemo = () => {
                             draggable
                             onDragStart={(e) => dragDrop.handleDragStart(tool, e)}
                             onDragEnd={dragDrop.handleDragEnd}
-                            className="flex items-center p-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl cursor-grab active:cursor-grabbing hover:border-blue-500 dark:hover:border-blue-500 transition-colors group"
+                            className="flex items-center p-3 bg-slate-50  border border-slate-200 rounded-xl cursor-grab active:cursor-grabbing hover:border-blue-500 transition-colors group"
                         >
-                            <div className="p-2 bg-white dark:bg-slate-700 rounded-lg mr-3 shadow-sm group-hover:scale-105 transition-transform">
-                                <tool.icon className="w-4 h-4 text-slate-600 dark:text-slate-300" />
+                            <div className="p-2 bg-white  rounded-lg mr-3 shadow-sm group-hover:scale-105 transition-transform">
+                                <tool.icon className="w-4 h-4 text-slate-600 " />
                             </div>
-                            <span className="font-medium text-slate-700 dark:text-slate-200 text-sm">{tool.label}</span>
+                            <span className="font-medium text-slate-700  text-sm">{tool.label}</span>
                         </div>
                     ))}
                 </div>
 
-                <div className="mt-auto p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-100 dark:border-blue-800/50">
-                    <p className="text-xs text-blue-600 dark:text-blue-400 leading-relaxed">
+                <div className="mt-auto p-4 bg-blue-50 rounded-xl border border-blue-100">
+                    <p className="text-xs text-blue-600 leading-relaxed">
                         Drag components from here to the canvas on the right to build your dashboard.
                     </p>
                 </div>
@@ -134,8 +134,8 @@ const LayoutBuilderDemo = () => {
                 }}
             >
                 <div className="grid grid-cols-3 gap-6 auto-rows-min min-h-full pb-20 relative">
-                    {/* 
-                       Grid visualization 
+                    {/*
+                       Grid visualization
                      */}
                     <div className="absolute inset-0 pointer-events-none grid grid-cols-3 gap-6 opacity-10">
                         {Array.from({ length: 12 }).map((_, i) => (
@@ -158,16 +158,16 @@ const LayoutBuilderDemo = () => {
                                 exit={{ opacity: 0, scale: 0.8 }}
                                 transition={{ type: 'spring', bounce: 0.2, duration: 0.4 }}
                                 className={`
-                                    relative group bg-white dark:bg-slate-800 rounded-2xl shadow-lg border-2 overflow-hidden flex flex-col
+                                    relative group bg-white  rounded-2xl shadow-lg border-2 overflow-hidden flex flex-col
                                     ${item.w === 2 ? 'col-span-2' : 'col-span-1'}
                                     ${item.w === 3 ? 'col-span-3' : ''}
                                     min-h-[160px]
                                     ${dragDrop.draggedItem?.id === item.id ? 'opacity-20 blur-sm' : ''}
-                                    ${dragDrop.dragOverItem?.id === item.id ? 'border-blue-500 ring-4 ring-blue-500/10 z-10' : 'border-transparent hover:border-slate-300 dark:hover:border-slate-600'}
+                                    ${dragDrop.dragOverItem?.id === item.id ? 'border-blue-500 ring-4 ring-blue-500/10 z-10' : 'border-transparent hover:border-slate-300'}
                                 `}
                             >
                                 {/* Header */}
-                                <div className="h-10 border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 flex items-center justify-between px-3 cursor-move">
+                                <div className="h-10 border-b border-slate-100 bg-slate-50 /50 flex items-center justify-between px-3 cursor-move">
                                     <div className="flex items-center space-x-2 text-slate-400">
                                         <GripVertical className="w-4 h-4" />
                                         <span className="text-xs font-bold uppercase tracking-wider">{item.type}</span>
@@ -180,14 +180,14 @@ const LayoutBuilderDemo = () => {
                                                 newItems[idx].w = newItems[idx].w === 2 ? 1 : 2;
                                                 setGridItems(newItems);
                                             }}
-                                            className="p-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded text-slate-400 hover:text-blue-500"
+                                            className="p-1 hover:bg-slate-200 rounded text-slate-400 hover:text-blue-500"
                                             title="Toggle Width"
                                         >
                                             <Maximize2 className="w-3.5 h-3.5" />
                                         </button>
                                         <button
                                             onClick={() => removeItem(item.id)}
-                                            className="p-1 hover:bg-red-100 dark:hover:bg-red-900/30 rounded text-slate-400 hover:text-red-500"
+                                            className="p-1 hover:bg-red-100 rounded text-slate-400 hover:text-red-500"
                                         >
                                             <X className="w-3.5 h-3.5" />
                                         </button>
@@ -195,9 +195,9 @@ const LayoutBuilderDemo = () => {
                                 </div>
 
                                 {/* Content Placeholder */}
-                                <div className="flex-1 p-6 flex items-center justify-center bg-white dark:bg-slate-800 relative overflow-hidden">
-                                    <div className="absolute inset-0 bg-gradient-to-tr from-slate-50 to-white dark:from-slate-800 dark:to-slate-900 opacity-50" />
-                                    <h4 className="relative font-bold text-slate-700 dark:text-slate-300 text-lg flex items-center">
+                                <div className="flex-1 p-6 flex items-center justify-center bg-white  relative overflow-hidden">
+                                    <div className="absolute inset-0 bg-gradient-to-tr from-slate-50 to-white opacity-50" />
+                                    <h4 className="relative font-bold text-slate-700  text-lg flex items-center">
                                         {item.type === 'chart-bar' && <BarChart3 className="w-6 h-6 mr-2 text-blue-500" />}
                                         {item.type === 'chart-pie' && <PieChart className="w-6 h-6 mr-2 text-purple-500" />}
                                         {item.type === 'image' && <ImageIcon className="w-6 h-6 mr-2 text-emerald-500" />}

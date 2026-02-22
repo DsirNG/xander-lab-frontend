@@ -39,13 +39,13 @@ const EnhancedDemoSection = ({ title, desc, children, code, useBrowserWindow = t
             <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center space-x-3">
                     <div className="h-6 w-1 bg-blue-600 rounded-full" />
-                    <h3 className="text-lg font-bold text-slate-900 dark:text-white">{title}</h3>
+                    <h3 className="text-lg font-bold text-slate-900 ">{title}</h3>
                 </div>
                 <div className="flex items-center space-x-2">
                     {/* 重置按钮 */}
                     <button
                         onClick={handleReset}
-                        className="flex items-center space-x-2 px-4 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-xs font-bold hover:bg-orange-500 hover:text-white transition-all shadow-sm"
+                        className="flex items-center space-x-2 px-4 py-1.5 rounded-xl bg-slate-100  text-slate-600  text-xs font-bold hover:bg-orange-500 hover:text-white transition-all shadow-sm"
                         title="Reset Demo"
                     >
                         <RotateCcw className="w-3.5 h-3.5" />
@@ -55,7 +55,7 @@ const EnhancedDemoSection = ({ title, desc, children, code, useBrowserWindow = t
                     {code && (
                         <button
                             onClick={() => setShowCode(!showCode)}
-                            className="flex items-center space-x-2 px-4 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-xs font-bold hover:bg-blue-600 hover:text-white transition-all shadow-sm"
+                            className="flex items-center space-x-2 px-4 py-1.5 rounded-xl bg-slate-100  text-slate-600  text-xs font-bold hover:bg-blue-600 hover:text-white transition-all shadow-sm"
                         >
                             {showCode ? <ChevronUp className="w-3.5 h-3.5" /> : <Code className="w-3.5 h-3.5" />}
                             <span>{showCode ? 'Hide Code' : 'View Code'}</span>
@@ -65,14 +65,14 @@ const EnhancedDemoSection = ({ title, desc, children, code, useBrowserWindow = t
             </div>
 
             {/* 描述 */}
-            <p className="text-slate-500 dark:text-slate-400 text-sm mb-6 max-w-2xl">{desc}</p>
+            <p className="text-slate-500  text-sm mb-6 max-w-2xl">{desc}</p>
 
             {/* 演示区域 */}
             {useBrowserWindow ? (
                 <BrowserWindow>
-                    <div className="bg-slate-50 dark:bg-slate-900/50 dark:border-slate-800 p-10 min-h-[300px] flex items-center justify-center relative overflow-hidden transition-all">
+                    <div className="bg-slate-50 /50  p-10 min-h-[300px] flex items-center justify-center relative overflow-hidden transition-all">
                         <div
-                            className="absolute inset-0 opacity-[0.03] dark:opacity-[0.05] pointer-events-none"
+                            className="absolute inset-0 opacity-[0.03] pointer-events-none"
                             style={{ backgroundImage: 'radial-gradient(#000 1px, transparent 1px)', backgroundSize: '20px 20px' }}
                         />
                         <div key={resetKey} className="w-full relative z-10">
@@ -96,7 +96,7 @@ const EnhancedDemoSection = ({ title, desc, children, code, useBrowserWindow = t
                         exit={{ opacity: 0, height: 0 }}
                         className="overflow-hidden mt-4 w-full"
                     >
-                        <div className="relative group rounded-[2rem] overflow-hidden border border-slate-200 dark:border-slate-800 shadow-2xl w-full">
+                        <div className="relative group rounded-[2rem] overflow-hidden border border-slate-200  shadow-2xl w-full">
                             {/* 复制按钮 */}
                             <button
                                 onClick={handleCopy}

@@ -28,15 +28,15 @@ const SortableListDemo = () => {
                     onDragLeave={dragDrop.handleDragLeave}
                     onDrop={(e) => dragDrop.handleDrop(item, e)}
                     onDragEnd={dragDrop.handleDragEnd}
-                    className={`flex items-center p-3 bg-white dark:bg-slate-800 border-2 rounded-xl transition-all duration-200 cursor-move group
+                    className={`flex items-center p-3 bg-white  border-2 rounded-xl transition-all duration-200 cursor-move group
                         ${dragDrop.draggedItem === item ? 'opacity-30 grayscale' : ''}
-                        ${dragDrop.dragOverItem === item ? 'border-blue-600 ring-4 ring-blue-600/5' : 'border-slate-100 dark:border-slate-800 hover:border-slate-200 shadow-sm'}
+                        ${dragDrop.dragOverItem === item ? 'border-blue-600 ring-4 ring-blue-600/5' : 'border-slate-100  hover:border-slate-200 shadow-sm'}
                     `}
                 >
-                    <div className="p-2 bg-slate-50 dark:bg-slate-700 rounded-lg mr-4">
+                    <div className="p-2 bg-slate-50  rounded-lg mr-4">
                         <Move className="w-4 h-4 text-slate-400 group-hover:text-blue-600" />
                     </div>
-                    <span className="font-bold text-sm text-slate-700 dark:text-slate-200">{item}</span>
+                    <span className="font-bold text-sm text-slate-700 ">{item}</span>
                 </div>
             ))}
         </div>

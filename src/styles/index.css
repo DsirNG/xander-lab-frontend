@@ -8,12 +8,10 @@
 @plugin "@tailwindcss/typography";
 
 @theme {
-  --color-primary: #000000;
+  --color-primary: #4f39f6;
   --color-primary-dark: #f2f2f2;
   --color-background-light: #ffffff;
-  --color-background-dark: #0f172a;
   --color-surface-light: #f8fafc;
-  --color-surface-dark: #1e293b;
   --font-sans: 'Inter', system-ui, sans-serif;
   --font-mono: 'Fira Code', monospace;
 }
@@ -30,8 +28,8 @@
   line-height: 1.5;
   font-weight: 400;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
+  color-scheme: light;
+  color: rgba(0, 0, 0, 0.87);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -63,9 +61,7 @@ html {
     scrollbar-color: #cbd5e1 transparent;
   }
 
-  .dark * {
-    scrollbar-color: #475569 transparent;
-  }
+
 }
 
 /* Webkit 浏览器滚动条样式 (Chrome, Safari, Edge) */
@@ -96,26 +92,12 @@ html {
   background-clip: padding-box;
 }
 
-/* 暗色主题滚动条样式 */
-.dark *::-webkit-scrollbar-thumb {
-  background: #475569;
-  background-clip: padding-box;
-}
 
-.dark *::-webkit-scrollbar-thumb:hover {
-  background: #64748b;
-  background-clip: padding-box;
-}
-
-.dark *::-webkit-scrollbar-thumb:active {
-  background: #334155;
-  background-clip: padding-box;
-}
 
 @layer base {
   :root {
     --primary: #3b82f6;
-    --primary-dark: #2563eb;
+
     --primary-light: #60a5fa;
   }
 
@@ -129,7 +111,7 @@ html {
   }
 
   body {
-    @apply bg-white text-slate-900 dark:bg-slate-950 dark:text-slate-100;
+    @apply bg-white text-slate-900  ;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
     /* 移除 Body 的全局 translateZ，避免创建不必要的全局堆叠上下文 */
   }

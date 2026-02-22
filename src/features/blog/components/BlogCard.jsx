@@ -11,11 +11,11 @@ const BlogCard = ({ blog }) => {
     return (
         <Link
             to={`/blog/${blog.id}`}
-            className="group block bg-white dark:bg-slate-900 rounded-xl p-5 border border-slate-100 dark:border-slate-800 hover:border-slate-200 dark:hover:border-slate-700 hover:shadow-sm transition-all duration-200"
+            className="group block bg-white  rounded-xl p-5 border border-slate-100  hover:border-slate-200 hover:shadow-sm transition-all duration-200"
         >
             {/* 分类 + 日期 */}
-            <div className="flex items-center text-xs text-slate-500 dark:text-slate-400 mb-2.5 gap-3">
-                <span className="bg-primary/5 text-primary dark:bg-primary/10 px-2 py-0.5 rounded-full font-medium">
+            <div className="flex items-center text-xs text-slate-500  mb-2.5 gap-3">
+<span className="bg-primary/5 text-primary px-2 py-0.5 rounded-full font-medium">
                     {blog.categoryName || blog.category}
                 </span>
                 <span className="flex items-center">
@@ -29,21 +29,21 @@ const BlogCard = ({ blog }) => {
             </div>
 
             {/* 标题 */}
-            <h3 className="text-base font-bold text-slate-900 dark:text-white mb-1.5 group-hover:text-primary transition-colors line-clamp-1">
+            <h3 className="text-base font-bold text-slate-900  mb-1.5 group-hover:text-primary transition-colors line-clamp-1">
                 {blog.title}
             </h3>
 
             {/* 摘要 */}
-            <p className="text-sm text-slate-500 dark:text-slate-400 mb-3 line-clamp-2 leading-relaxed">
+            <p className="text-sm text-slate-500  mb-3 line-clamp-2 leading-relaxed">
                 {blog.summary}
             </p>
 
             {/* 标签 + 阅读时间 */}
-            <div className="flex items-center gap-2 pt-3 border-t border-slate-50 dark:border-slate-800/50">
+            <div className="flex items-center gap-2 pt-3 border-t border-slate-50 /50">
                 {blog.tags.slice(0, 3).map((tag, index) => (
                     <span
                         key={index}
-                        className="text-[10px] text-slate-500 dark:text-slate-500 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-full"
+                        className="text-[10px] text-slate-500  bg-slate-100  px-2 py-0.5 rounded-full"
                     >
                         #{tag}
                     </span>

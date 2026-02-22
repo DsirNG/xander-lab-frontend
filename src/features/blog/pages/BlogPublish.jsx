@@ -76,32 +76,32 @@ const BlogPublish = () => {
     };
 
     return (
-        <div className="h-screen bg-slate-50 dark:bg-[#030712] flex flex-col overflow-hidden font-sans">
+        <div className="h-screen bg-slate-50  flex flex-col overflow-hidden font-sans">
             {/* 顶部导航栏 / Header */}
-            <header className="h-16 shrink-0 border-b border-slate-200 dark:border-slate-800/60 flex items-center justify-between px-6 bg-white dark:bg-slate-900 z-20 shadow-sm relative">
+            <header className="h-16 shrink-0 border-b border-slate-200 /60 flex items-center justify-between px-6 bg-white  z-20 shadow-sm relative">
                 <div className="flex items-center gap-4">
                     <button
                         onClick={() => navigate(-1)}
-                        className="p-2 -ml-2 text-slate-400 hover:text-slate-900 hover:bg-slate-100 dark:hover:text-white dark:hover:bg-slate-800/50 rounded-xl transition-all group"
+                        className="p-2 -ml-2 text-slate-400 hover:text-slate-900 hover:bg-slate-100  rounded-xl transition-all group"
                         title={t('blog.backToBlog')}
                     >
                         <ChevronLeft className="w-5 h-5 group-hover:-translate-x-0.5 transition-transform" />
                     </button>
-                    <div className="h-4 w-px bg-slate-200 dark:bg-slate-700"></div>
-                    <span className="text-xs font-black uppercase tracking-widest text-slate-900 dark:text-white flex items-center gap-2">
+                    <div className="h-4 w-px bg-slate-200 "></div>
+                    <span className="text-xs font-black uppercase tracking-widest text-slate-900  flex items-center gap-2">
                         <span className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse ring-4 ring-indigo-500/20"></span>
                         {t('blog.publishTitle')}
                     </span>
                 </div>
 
                 <div className="flex items-center gap-3">
-                    <button className="px-5 py-2 text-xs font-bold text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors flex items-center gap-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/50">
+                    <button className="px-5 py-2 text-xs font-bold text-slate-500 hover:text-slate-900 transition-colors flex items-center gap-2 rounded-xl hover:bg-slate-100 ">
                         <Save className="w-4 h-4" /> {t('blog.saveDraft')}
                     </button>
                     <button
                         onClick={handlePublish}
                         disabled={loading}
-                        className="px-6 py-2 bg-slate-900 dark:bg-white hover:bg-indigo-600 dark:hover:bg-indigo-500 text-white dark:text-slate-900 hover:text-white rounded-xl text-xs font-black shadow-lg shadow-indigo-600/0 hover:shadow-indigo-600/30 dark:hover:shadow-indigo-500/30 transition-all active:scale-95 disabled:opacity-50 flex items-center gap-2"
+                        className="px-6 py-2 bg-slate-900  hover:bg-indigo-600  text-white  hover:text-white rounded-xl text-xs font-black shadow-lg shadow-indigo-600/0 hover:shadow-indigo-600/30 transition-all active:scale-95 disabled:opacity-50 flex items-center gap-2"
                     >
                         {loading ? (
                             <><Loader2 className="w-4 h-4 animate-spin" /> {t('blog.publishing')}</>
@@ -114,18 +114,18 @@ const BlogPublish = () => {
 
             <div className="flex-1 flex overflow-hidden relative">
                 {/* 主编辑区 / Left Pane - Editor & Preview */}
-                <main className="flex-1 flex flex-col relative bg-white dark:bg-[#030712] rounded-tr-[2.5rem] border-r border-t border-slate-200 dark:border-slate-800/80 shadow-[10px_0_30px_-15px_rgba(0,0,0,0.05)] dark:shadow-none z-10 transition-all overflow-hidden mt-2 ml-2">
+                <main className="flex-1 flex flex-col relative bg-white  rounded-tr-[2.5rem] border-r border-t border-slate-200 /80 shadow-[10px_0_30px_-15px_rgba(0,0,0,0.05)] z-10 transition-all overflow-hidden mt-2 ml-2">
                     <div className="absolute top-6 right-8 z-20">
-                        <div className="flex bg-slate-100/80 dark:bg-slate-900/80 backdrop-blur-md p-1 rounded-2xl border border-slate-200/50 dark:border-slate-800/50 shadow-sm">
+                        <div className="flex bg-slate-100/80 /80 backdrop-blur-md p-1 rounded-2xl border border-slate-200/50 /50 shadow-sm">
                             <button
                                 onClick={() => { setIsPreview(false); setTimeout(() => contentTextareaRef.current?.focus(), 10); }}
-                                className={`flex items-center gap-2 px-5 py-2 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all ${!isPreview ? 'bg-white dark:bg-slate-800 text-indigo-600 shadow-sm scale-100' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 scale-95'}`}
+                                className={`flex items-center gap-2 px-5 py-2 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all ${!isPreview ? 'bg-white  text-indigo-600 shadow-sm scale-100' : 'text-slate-500 hover:text-slate-700  hover:bg-slate-200/50  scale-95'}`}
                             >
                                 <Edit3 className="w-4 h-4" /> <span className="hidden sm:inline">编辑</span>
                             </button>
                             <button
                                 onClick={() => setIsPreview(true)}
-                                className={`flex items-center gap-2 px-5 py-2 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all ${isPreview ? 'bg-white dark:bg-slate-800 text-indigo-600 shadow-sm scale-100' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 scale-95'}`}
+                                className={`flex items-center gap-2 px-5 py-2 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all ${isPreview ? 'bg-white  text-indigo-600 shadow-sm scale-100' : 'text-slate-500 hover:text-slate-700  hover:bg-slate-200/50  scale-95'}`}
                             >
                                 <Eye className="w-4 h-4" /> <span className="hidden sm:inline">预览</span>
                             </button>
@@ -137,7 +137,7 @@ const BlogPublish = () => {
                             {/* 标题 */}
                             <div className="relative group">
                                 {!isPreview && (
-                                    <div className="absolute -left-10 top-5 text-slate-200 dark:text-slate-800 pointer-events-none transition-colors group-focus-within:text-indigo-500">
+                                    <div className="absolute -left-10 top-5 text-slate-200 pointer-events-none transition-colors group-focus-within:text-indigo-500">
                                         <Type className="w-6 h-6" />
                                     </div>
                                 )}
@@ -146,7 +146,7 @@ const BlogPublish = () => {
                                     onChange={e => setFormData({ ...formData, title: e.target.value })}
                                     placeholder={t('blog.titlePlaceholder')}
                                     rows={1}
-                                    className={`w-full text-4xl md:text-5xl font-black bg-transparent border-none outline-none text-slate-900 dark:text-white resize-none break-words ${isPreview ? 'hidden' : 'placeholder:text-slate-200 dark:placeholder:text-slate-800'}`}
+                                    className={`w-full text-4xl md:text-5xl font-black bg-transparent border-none outline-none text-slate-900  resize-none break-words ${isPreview ? 'hidden' : 'placeholder:text-slate-200'}`}
                                     onInput={(e) => {
                                         e.target.style.height = 'auto';
                                         e.target.style.height = e.target.scrollHeight + 'px';
@@ -156,7 +156,7 @@ const BlogPublish = () => {
 
                             {/* 内容区 */}
                             <div className={`flex-1 relative group ${isPreview ? 'hidden' : 'flex'}`}>
-                                <div className="absolute -left-10 top-2 text-slate-200 dark:text-slate-800 pointer-events-none transition-colors group-focus-within:text-indigo-500">
+                                <div className="absolute -left-10 top-2 text-slate-200 pointer-events-none transition-colors group-focus-within:text-indigo-500">
                                     <Hash className="w-6 h-6" />
                                 </div>
                                 <textarea
@@ -164,22 +164,22 @@ const BlogPublish = () => {
                                     value={formData.content}
                                     onChange={e => setFormData({ ...formData, content: e.target.value })}
                                     placeholder={t('blog.contentPlaceholder')}
-                                    className="w-full h-full min-h-[60vh] bg-transparent border-none outline-none text-lg leading-[1.8] text-slate-700 dark:text-slate-300 placeholder:text-slate-300 dark:placeholder:text-slate-700 resize-none font-medium mb-20"
+                                    className="w-full h-full min-h-[60vh] bg-transparent border-none outline-none text-lg leading-[1.8] text-slate-700  placeholder:text-slate-300 resize-none font-medium mb-20"
                                 />
                             </div>
 
                             {/* 预览区 */}
                             {isPreview && (
-                                <div className="prose prose-slate dark:prose-invert max-w-none pt-2 mb-20">
+                                <div className="prose prose-slate max-w-none pt-2 mb-20">
                                     {formData.title && (
-                                        <h1 className="text-4xl md:text-5xl font-black mb-12 text-slate-900 dark:text-white leading-tight">
+                                        <h1 className="text-4xl md:text-5xl font-black mb-12 text-slate-900  leading-tight">
                                             {formData.title}
                                         </h1>
                                     )}
                                     {formData.content ? (
                                         <ReactMarkdown remarkPlugins={[remarkGfm]}>{formData.content}</ReactMarkdown>
                                     ) : (
-                                        <div className="flex flex-col items-center justify-center py-40 text-slate-300 dark:text-slate-700">
+                                        <div className="flex flex-col items-center justify-center py-40 text-slate-300">
                                             <Info className="w-16 h-16 mb-6 opacity-30" />
                                             <p className="text-sm font-bold uppercase tracking-widest italic">尚未输入内容 // No Content</p>
                                         </div>
@@ -196,10 +196,10 @@ const BlogPublish = () => {
 
                         {/* 状态与控制面板 */}
                         <div>
-                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500 mb-8 block flex items-center gap-3">
-                                <span className="h-px bg-slate-200 dark:bg-slate-800 flex-1"></span>
+                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400  mb-8 block flex items-center gap-3">
+                                <span className="h-px bg-slate-200  flex-1"></span>
                                 DOCUMENT SETTINGS
-                                <span className="h-px bg-slate-200 dark:bg-slate-800 flex-1"></span>
+                                <span className="h-px bg-slate-200  flex-1"></span>
                             </span>
 
                             {/* 分类 / Category */}
@@ -213,7 +213,7 @@ const BlogPublish = () => {
                                     value={formData.categoryId}
                                     onChange={val => setFormData({ ...formData, categoryId: val })}
                                     placeholder={t('blog.categoryPlaceholder')}
-                                    className="w-full shadow-sm bg-white dark:bg-slate-900 rounded-2xl"
+                                    className="w-full shadow-sm bg-white  rounded-2xl"
                                 />
                             </section>
 
@@ -248,7 +248,7 @@ const BlogPublish = () => {
                                     value={formData.summary}
                                     onChange={e => setFormData({ ...formData, summary: e.target.value })}
                                     placeholder={t('blog.summaryPlaceholder')}
-                                    className="w-full bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 rounded-2xl px-5 py-4 text-sm leading-relaxed outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all resize-none h-40 shadow-sm text-slate-800 dark:text-slate-200 placeholder:text-slate-400 custom-scrollbar"
+                                    className="w-full bg-white  border border-slate-200/60  rounded-2xl px-5 py-4 text-sm leading-relaxed outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all resize-none h-40 shadow-sm text-slate-800  placeholder:text-slate-400 custom-scrollbar"
                                 />
                             </section>
                         </div>
@@ -256,7 +256,7 @@ const BlogPublish = () => {
                     </div>
 
                     {/* 底部渐变遮罩，改善侧边栏滚动视觉效果 */}
-                    <div className="absolute bottom-0 left-0 w-[420px] h-12 bg-gradient-to-t from-slate-50 dark:from-[#030712] to-transparent pointer-events-none z-10"></div>
+                    <div className="absolute bottom-0 left-0 w-[420px] h-12 bg-gradient-to-t from-slate-50 to-transparent pointer-events-none z-10"></div>
                 </aside >
             </div>
         </div>

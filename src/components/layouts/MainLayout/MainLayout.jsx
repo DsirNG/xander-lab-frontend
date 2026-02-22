@@ -126,11 +126,11 @@ const Navbar = () => {
                             </a>
 
                             {/* 用户区域 */}
-                            <div className="hidden sm:flex items-center ml-2 pl-2 border-l border-slate-200 dark:border-slate-800">
+                            <div className="hidden sm:flex items-center ml-2 pl-2 border-l border-slate-200 ">
                                 {userInfo ? (
                                     <div className="flex items-center gap-3">
                                         <div className="flex flex-col items-end">
-                                            <span className="text-[10px] font-bold text-slate-900 dark:text-white leading-tight">
+                                            <span className="text-[10px] font-bold text-slate-900  leading-tight">
                                                 {userInfo.nickname || userInfo.username}
                                             </span>
                                             <span className="text-[9px] text-slate-400 leading-tight">
@@ -139,7 +139,7 @@ const Navbar = () => {
                                         </div>
                                         <button
                                             onClick={handleLogout}
-                                            className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 hover:text-rose-500 hover:bg-rose-50 transition-all"
+                                            className="w-8 h-8 rounded-full bg-slate-100  flex items-center justify-center text-slate-500 hover:text-rose-500 hover:bg-rose-50 transition-all"
                                             title="退出登录"
                                         >
                                             <LogOut className="w-4 h-4" />

@@ -4,7 +4,7 @@ import { X, Hash } from 'lucide-react';
 /**
  * CreatableMultiSelect 组件
  * 支持从预设列表中选择，也支持手动输入创建新选项。
- * 
+ *
  * @param {Object} props
  * @param {string[]} props.value - 已选中的数据项数组
  * @param {(items: string[]) => void} props.onChange - 数据项变更回调
@@ -64,13 +64,13 @@ const CreatableMultiSelect = ({
     return (
         <div
             ref={containerRef}
-            className={`relative flex flex-wrap gap-2 min-h-[56px] p-3 bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 rounded-2xl focus-within:border-indigo-500 focus-within:ring-4 focus-within:ring-indigo-500/10 transition-all shadow-sm ${className}`}
+            className={`relative flex flex-wrap gap-2 min-h-[56px] p-3 bg-white  border border-slate-200/60  rounded-2xl focus-within:border-indigo-500 focus-within:ring-4 focus-within:ring-indigo-500/10 transition-all shadow-sm ${className}`}
             onClick={() => inputRef.current?.focus()}
         >
             {value.map(item => (
                 <span
                     key={item}
-                    className="px-3 py-1.5 bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 text-[11px] font-bold text-slate-700 dark:text-slate-300 rounded-xl flex items-center gap-1.5 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 dark:hover:bg-rose-950/30 dark:hover:text-rose-400 dark:hover:border-rose-900 transition-colors group/item cursor-pointer"
+                    className="px-3 py-1.5 bg-slate-50  border border-slate-100  text-[11px] font-bold text-slate-700  rounded-xl flex items-center gap-1.5 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200    transition-colors group/item cursor-pointer"
                     onClick={(e) => { e.stopPropagation(); removeItem(item); }}
                 >
                     {item}
@@ -89,12 +89,12 @@ const CreatableMultiSelect = ({
                     onFocus={() => setIsDropdownOpen(true)}
                     onKeyDown={handleKeyDown}
                     placeholder={value.length === 0 ? placeholder : ''}
-                    className="w-full bg-transparent border-none outline-none text-sm px-2 py-1.5 dark:placeholder:text-slate-600 text-slate-800 dark:text-slate-200"
+                    className="w-full bg-transparent border-none outline-none text-sm px-2 py-1.5  text-slate-800 "
                 />
 
                 {/* 自定义下拉选择器 */}
                 {isDropdownOpen && (inputValue || options.length > 0) && (
-                    <div className="absolute top-full left-0 mt-2 w-[240px] max-h-48 overflow-y-auto custom-scrollbar bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.1)] z-50 py-1">
+                    <div className="absolute top-full left-0 mt-2 w-[240px] max-h-48 overflow-y-auto custom-scrollbar bg-white  border border-slate-200 rounded-xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.1)] z-50 py-1">
                         {options
                             .filter(t => !value.includes(t) && t.toLowerCase().includes(inputValue.toLowerCase()))
                             .map(item => (
@@ -104,7 +104,7 @@ const CreatableMultiSelect = ({
                                         e.stopPropagation();
                                         addItem(item);
                                     }}
-                                    className="px-4 py-2.5 text-[12px] font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50 hover:text-indigo-600 dark:hover:text-indigo-400 cursor-pointer transition-colors flex items-center gap-2"
+                                    className="px-4 py-2.5 text-[12px] font-medium text-slate-600  hover:bg-slate-50 hover:text-indigo-600 cursor-pointer transition-colors flex items-center gap-2"
                                 >
                                     <Hash className="w-3.5 h-3.5 opacity-50" /> {item}
                                 </div>
@@ -112,14 +112,14 @@ const CreatableMultiSelect = ({
                         {/* 如果用户输入了一个不存在的新选项，给个提示 */}
                         {inputValue.trim() && !options.includes(inputValue.trim()) && (
                             <div
-                                className="px-4 py-2.5 text-[12px] font-medium text-slate-400 dark:text-slate-500 border-t border-slate-100 dark:border-slate-700/50 mt-1 first:border-0 first:mt-0 italic flex items-center justify-between cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/50"
+                                className="px-4 py-2.5 text-[12px] font-medium text-slate-400  border-t border-slate-100 mt-1 first:border-0 first:mt-0 italic flex items-center justify-between cursor-pointer hover:bg-slate-50"
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     addItem(inputValue.trim());
                                 }}
                             >
                                 <span>创建项 "{inputValue}"</span>
-                                <span className="text-[9px] uppercase tracking-wider bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5 rounded font-bold">Enter</span>
+                                <span className="text-[9px] uppercase tracking-wider bg-slate-100  px-1.5 py-0.5 rounded font-bold">Enter</span>
                             </div>
                         )}
                         {/* 如果全部选完并且没有输入内容 */}

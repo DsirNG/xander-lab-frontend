@@ -9,15 +9,12 @@ export default {
             colors: {
                 primary: {
                     DEFAULT: '#6366f1', // Indigo 500
-                    dark: '#4338ca', // Indigo 700
                 },
                 background: {
                     light: '#ffffff',
-                    dark: '#0f172a', // Slate 900
                 },
                 surface: {
                     light: '#f8fafc',
-                    dark: '#1e293b', // Slate 800
                 }
             },
             fontFamily: {

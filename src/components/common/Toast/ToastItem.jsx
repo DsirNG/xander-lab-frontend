@@ -9,10 +9,10 @@ const defaultIcons = {
 };
 
 const defaultStyles = {
-    success: 'bg-white/95 dark:bg-slate-900/95 border-emerald-100/50 dark:border-emerald-500/20 shadow-emerald-500/10',
-    error: 'bg-white/95 dark:bg-slate-900/95 border-rose-100/50 dark:border-rose-500/20 shadow-rose-500/10',
-    info: 'bg-white/95 dark:bg-slate-900/95 border-blue-100/50 dark:border-blue-500/20 shadow-blue-500/10',
-    warning: 'bg-white/95 dark:bg-slate-900/95 border-amber-100/50 dark:border-amber-500/20 shadow-amber-500/10',
+    success: 'bg-white/95 /95 border-emerald-100/50 d shadow-emerald-500/10',
+    error: 'bg-white/95 /95 border-rose-100/50  shadow-rose-500/10',
+    info: 'bg-white/95 /95 border-blue-100/50  shadow-blue-500/10',
+    warning: 'bg-white/95 /95 border-amber-100/50  shadow-amber-500/10',
 };
 
 const ToastItem = ({ toast, onRemove }) => {
@@ -90,7 +90,7 @@ const ToastItem = ({ toast, onRemove }) => {
             </div>
 
             <div className="flex-1 min-w-0">
-                <div className="text-[13px] font-black text-slate-800 dark:text-slate-100 px-1 leading-normal break-words">
+                <div className="text-[13px] font-black text-slate-800  px-1 leading-normal break-words">
                     {message}
                 </div>
             </div>
@@ -98,7 +98,7 @@ const ToastItem = ({ toast, onRemove }) => {
             {showClose && (
                 <button
                     onClick={() => setIsExiting(true)}
-                    className="flex-shrink-0 p-1 opacity-0 group-hover:opacity-100 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 dark:text-slate-500 transition-all duration-300"
+                    className="flex-shrink-0 p-1 opacity-0 group-hover:opacity-100 rounded-full hover:bg-slate-100  text-slate-400  transition-all duration-300"
                 >
                     <X className="w-3.5 h-3.5" />
                 </button>
@@ -106,7 +106,7 @@ const ToastItem = ({ toast, onRemove }) => {
 
             {/* C-End Style Progress Bar */}
             {duration !== Infinity && !isExiting && showProgress && (
-                <div className="absolute bottom-1.5 left-1/2 -translate-x-1/2 h-[3px] w-12 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden opacity-40">
+                <div className="absolute bottom-1.5 left-1/2 -translate-x-1/2 h-[3px] w-12 bg-slate-100  rounded-full overflow-hidden opacity-40">
                     <div
                         className={`h-full animate-progress rounded-full origin-left ${type === 'success' ? 'bg-emerald-500' :
                             type === 'error' ? 'bg-rose-500' :

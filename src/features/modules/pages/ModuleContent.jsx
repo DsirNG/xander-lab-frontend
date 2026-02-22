@@ -22,7 +22,7 @@ const ModuleContent = ({ module }) => {
 
     // 额外的头部按钮（实现细节标签）
     const extraButtons = (
-        <div className="flex items-center bg-slate-100 dark:bg-slate-800 px-6 py-3 rounded-2xl font-bold text-sm text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+        <div className="flex items-center bg-slate-100  px-6 py-3 rounded-2xl font-bold text-sm text-slate-600  border border-slate-200">
             <Zap className="w-4 h-4 text-blue-600 mr-2" />
             <span>{t('common.implementationDetails')}</span>
         </div>

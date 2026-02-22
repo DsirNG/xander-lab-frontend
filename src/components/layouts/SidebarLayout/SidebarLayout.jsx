@@ -11,9 +11,9 @@ const SidebarItem = ({ item, active, onClick, subtitleKey = 'tag' }) => (
         className={`w-full text-left p-4 rounded-2xl transition-all duration-300 flex items-center group mb-2
             ${active
                 ? 'bg-primary text-white shadow-xl shadow-primary/30'
-                : 'hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400'}`}
+                : 'hover:bg-slate-100  text-slate-600 '}`}
     >
-        <div className={`p-2 rounded-xl mr-4 transition-colors ${active ? 'bg-white/20' : 'bg-slate-100 dark:bg-slate-800 group-hover:bg-white/50'}`}>
+        <div className={`p-2 rounded-xl mr-4 transition-colors ${active ? 'bg-white/20' : 'bg-slate-100  group-hover:bg-white/50'}`}>
             {item.icon}
         </div>
         <div className="flex-grow">
@@ -53,17 +53,17 @@ const SidebarLayout = ({
     }, []);
 
     return (
-        <div className="bg-white dark:bg-slate-950">
+        <div className="bg-white ">
             {/* 移动端菜单按钮 */}
             <button
                 onClick={() => setIsMobileMenuOpen(true)}
-                className={`lg:hidden fixed top-20 left-0 z-50 p-2 bg-white/10 dark:bg-slate-950/50 backdrop-blur-[2px] rounded-r-lg shadow-md border border-l-0 border-slate-200 dark:border-slate-800 transition-all duration-300 ease-in-out ${isMobileMenuOpen
+                className={`lg:hidden fixed top-20 left-0 z-50 p-2 bg-white/10 /50 backdrop-blur-[2px] rounded-r-lg shadow-md border border-l-0 border-slate-200  transition-all duration-300 ease-in-out ${isMobileMenuOpen
                     ? '-translate-x-full opacity-0 pointer-events-none'
                     : 'translate-x-0 opacity-100'
                     }`}
                 aria-label="打开菜单"
             >
-                <ChevronRight className="w-5 h-5 text-slate-600 dark:text-slate-400" />
+                <ChevronRight className="w-5 h-5 text-slate-600 " />
             </button>
 
             {/* 移动端遮罩层 */}
@@ -82,16 +82,16 @@ const SidebarLayout = ({
                     top-[64px] left-0 bottom-0
                     w-[280px] sm:w-[320px] md:w-[300px] lg:w-[280px] xl:w-[320px] 2xl:w-[350px]
                     flex-shrink-0
-                    border-r border-slate-100 dark:border-slate-800
+                    border-r border-slate-100
                     p-4 sm:p-6 md:p-6 lg:p-8
                     flex flex-col h-[calc(100vh-64px)]
-                    bg-slate-50/50 dark:bg-slate-900/20 backdrop-blur-sm
+                    bg-slate-50/50 /20 backdrop-blur-sm
                     transform transition-transform duration-300 ease-in-out z-40
                     ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
                 `}>
 
                     <header className="mb-6 md:mb-8 lg:mb-10">
-                        <h1 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white mb-2 hidden lg:block">
+                        <h1 className="text-xl sm:text-2xl font-black text-slate-900  mb-2 hidden lg:block">
                             {title}
                         </h1>
                         <p className="text-xs text-slate-500 leading-relaxed hidden lg:block">
@@ -121,7 +121,7 @@ const SidebarLayout = ({
                     </div>
 
                     {bottomCard && (
-                        <div className="mt-auto pt-4 md:pt-6 border-t border-slate-100 dark:border-slate-800">
+                        <div className="mt-auto pt-4 md:pt-6 border-t border-slate-100 ">
                             {bottomCard}
                         </div>
                     )}
@@ -130,7 +130,7 @@ const SidebarLayout = ({
                 {/* Right Content Area - 响应式布局 */}
                 <main className={`
                     flex-grow overflow-y-auto custom-scrollbar
-                    bg-white dark:bg-slate-950
+                    bg-white
                     px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12
                     py-6 sm:py-8 md:py-9 lg:py-10
                     relative

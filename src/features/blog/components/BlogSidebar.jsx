@@ -80,7 +80,7 @@ const BlogSidebar = ({ onNavigate }) => {
                         placeholder={t('blog.searchPlaceholder')}
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full pl-9 pr-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary/40 transition-all"
+                        className="w-full pl-9 pr-4 py-2 bg-white  border border-slate-200 rounded-xl text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary/40 transition-all"
                     />
                     <Search className="w-4 h-4 absolute left-3 top-2.5 text-slate-400" />
                 </form>
@@ -99,7 +99,7 @@ const BlogSidebar = ({ onNavigate }) => {
                             onClick={() => onNavigate?.()}
                             className={`flex items-center justify-between p-2 rounded-lg text-sm transition-colors ${!activeCategory
                                     ? 'bg-primary/10 text-primary font-medium'
-                                    : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
+                                    : 'text-slate-600  hover:bg-slate-100 '
                                 }`}
                         >
                             <span>{t('blog.allCategories')}</span>
@@ -112,13 +112,13 @@ const BlogSidebar = ({ onNavigate }) => {
                                 onClick={() => onNavigate?.()}
                                 className={`flex items-center justify-between p-2 rounded-lg text-sm transition-colors ${activeCategory === cat.id
                                         ? 'bg-primary/10 text-primary font-medium'
-                                        : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
+                                        : 'text-slate-600  hover:bg-slate-100 '
                                     }`}
                             >
                                 <span>{cat.name}</span>
                                 <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded-full transition-colors ${activeCategory === cat.id
                                         ? 'bg-primary/20 text-primary'
-                                        : 'bg-slate-100 dark:bg-slate-800 text-slate-500'
+                                        : 'bg-slate-100  text-slate-500'
                                     }`}>
                                     {cat.count}
                                 </span>
@@ -154,7 +154,7 @@ const BlogSidebar = ({ onNavigate }) => {
                                 onClick={() => onNavigate?.()}
                                 className={`inline-flex items-center gap-1 text-[11px] px-2 py-1 rounded-full border transition-all ${isActive
                                         ? 'bg-primary text-white border-primary'
-                                        : 'bg-white dark:bg-slate-800/60 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:border-primary/50 hover:text-primary'
+                                        : 'bg-white /60 text-slate-500  border-slate-200 hover:border-primary/50 hover:text-primary'
                                     }`}
                             >
                                 <span>{tag.name}</span>
@@ -181,7 +181,7 @@ const BlogSidebar = ({ onNavigate }) => {
                             onClick={() => onNavigate?.()}
                             className="block group"
                         >
-                            <h4 className="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-primary transition-colors line-clamp-2 leading-snug mb-1">
+                            <h4 className="text-sm font-medium text-slate-700  group-hover:text-primary transition-colors line-clamp-2 leading-snug mb-1">
                                 {post.title}
                             </h4>
                             <span className="text-[11px] text-slate-400">

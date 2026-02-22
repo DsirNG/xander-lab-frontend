@@ -185,15 +185,15 @@ const MultiFileTransferDemo = () => {
         <div className="w-full max-w-5xl mx-auto p-4">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                 {/* File Explorer style source */}
-                <div className="lg:col-span-7 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[2.5rem] overflow-hidden shadow-2xl">
-                    <div className="p-8 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/50 dark:bg-slate-800/20">
+                <div className="lg:col-span-7 bg-white  border border-slate-200  rounded-[2.5rem] overflow-hidden shadow-2xl">
+                    <div className="p-8 border-b border-slate-100  flex items-center justify-between bg-slate-50/50 /20">
                         <div>
-                            <h3 className="text-xl font-black text-slate-800 dark:text-white">Workspace</h3>
+                            <h3 className="text-xl font-black text-slate-800 ">Workspace</h3>
                             <p className="text-xs text-slate-400 font-medium tracking-wide">SHIPPING_DEPT / PROJECTS</p>
                         </div>
                         <div className="flex -space-x-2">
                             {[1, 2, 3].map(i => (
-                                <div key={i} className="w-8 h-8 rounded-full border-2 border-white dark:border-slate-900 bg-slate-200 dark:bg-slate-700 overflow-hidden">
+                                <div key={i} className="w-8 h-8 rounded-full border-2 border-white bg-slate-200  overflow-hidden">
                                     <img src={`https://i.pravatar.cc/100?u=${i}`} alt="user" className="w-full h-full object-cover" />
                                 </div>
                             ))}
@@ -216,11 +216,11 @@ const MultiFileTransferDemo = () => {
                                         onDragEnd={dragDrop.handleDragEnd}
                                         onClick={() => toggleSelect(file.id)}
                                         className={`group flex items-center p-3 rounded-2xl cursor-pointer transition-all duration-300 ${isSelected
-                                            ? 'bg-indigo-50 dark:bg-indigo-500/10 ring-1 ring-indigo-500/20'
-                                            : 'hover:bg-slate-50 dark:hover:bg-slate-800/50'
+                                            ? 'bg-indigo-50 ring-1 ring-indigo-500/20'
+                                            : 'hover:bg-slate-50 '
                                             }`}
                                     >
-                                        <div className={`mr-4 w-12 h-12 flex items-center justify-center rounded-xl transition-all duration-300 ${isSelected ? 'bg-indigo-500 scale-110 shadow-lg shadow-indigo-500/30' : 'bg-slate-100 dark:bg-slate-800'
+                                        <div className={`mr-4 w-12 h-12 flex items-center justify-center rounded-xl transition-all duration-300 ${isSelected ? 'bg-indigo-500 scale-110 shadow-lg shadow-indigo-500/30' : 'bg-slate-100 '
                                             }`}>
                                             {isSelected ? (
                                                 <Layers className="w-5 h-5 text-white" />
@@ -229,7 +229,7 @@ const MultiFileTransferDemo = () => {
                                             )}
                                         </div>
                                         <div className="flex-grow">
-                                            <p className={`text-sm font-bold ${isSelected ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-600 dark:text-slate-300'}`}>
+                                            <p className={`text-sm font-bold ${isSelected ? 'text-indigo-600' : 'text-slate-600 '}`}>
                                                 {file.name}
                                             </p>
                                             <p className="text-[10px] text-slate-400 font-semibold">{file.size}</p>
@@ -252,7 +252,7 @@ const MultiFileTransferDemo = () => {
                         )}
                     </div>
 
-                    <div className="p-6 bg-slate-50 dark:bg-slate-800/30 border-t border-slate-100 dark:border-slate-800">
+                    <div className="p-6 bg-slate-50 /30 border-t border-slate-100 ">
                         <div className="flex items-center space-x-3 text-xs font-bold text-slate-400">
                             <span className="w-2 h-2 rounded-full bg-indigo-500 animate-ping" />
                             <span>{selectedIds.size} ITEMS READY FOR TRANSFER</span>
@@ -270,18 +270,18 @@ const MultiFileTransferDemo = () => {
                             onDrop={(e) => dragDrop.handleDrop(folder, e)}
                             className={`p-8 rounded-[2.5rem] border-2 border-dashed transition-all duration-500 relative min-h-[220px] group ${dragDrop.dragOverItem?.id === folder.id
                                 ? 'border-indigo-500 bg-indigo-500/10 scale-[1.02] shadow-2xl shadow-indigo-500/20'
-                                : 'border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 shadow-sm'
+                                : 'border-slate-200  hover:border-slate-300 shadow-sm'
                                 }`}
                         >
                             <div className="pointer-events-none">
                                 <div className="flex items-start justify-between mb-6">
-                                    <div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all duration-300 ${dragDrop.dragOverItem?.id === folder.id ? 'bg-indigo-600 text-white rotate-12 scale-110 shadow-xl' : 'bg-slate-100 dark:bg-slate-800 text-slate-400 group-hover:-rotate-3'
+                                    <div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all duration-300 ${dragDrop.dragOverItem?.id === folder.id ? 'bg-indigo-600 text-white rotate-12 scale-110 shadow-xl' : 'bg-slate-100  text-slate-400 group-hover:-rotate-3'
                                         }`}>
                                         {dragDrop.dragOverItem?.id === folder.id ? <FolderOpen className="w-7 h-7" /> : <Box className="w-7 h-7" />}
                                     </div>
                                     <div className="text-right">
                                         <p className="text-[10px] font-black text-indigo-500 mb-1">TARGET NODE</p>
-                                        <h4 className="font-black text-slate-800 dark:text-white">{folder.name}</h4>
+                                        <h4 className="font-black text-slate-800 ">{folder.name}</h4>
                                     </div>
                                 </div>
 
@@ -292,7 +292,7 @@ const MultiFileTransferDemo = () => {
                                                 key={item.id}
                                                 initial={{ x: 20, opacity: 0 }}
                                                 animate={{ x: 0, opacity: 1 }}
-                                                className="px-4 py-2 bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-xl shadow-sm text-xs font-bold text-slate-500 dark:text-slate-400"
+                                                className="px-4 py-2 bg-white  border border-slate-100 rounded-xl shadow-sm text-xs font-bold text-slate-500 "
                                             >
                                                 {item.name}
                                             </motion.div>
@@ -314,7 +314,7 @@ const MultiFileTransferDemo = () => {
                                 >
                                     <div className="w-full h-full rounded-[2rem] bg-indigo-600/10 backdrop-blur-sm border-2 border-indigo-500 border-dashed flex flex-col items-center justify-center">
                                         <Files className="w-10 h-10 text-indigo-500 mb-3 animate-bounce" />
-                                        <p className="text-indigo-600 dark:text-indigo-400 text-sm font-black tracking-widest uppercase">Release to transfer</p>
+                                        <p className="text-indigo-600 text-sm font-black tracking-widest uppercase">Release to transfer</p>
                                     </div>
                                 </motion.div>
                             )}

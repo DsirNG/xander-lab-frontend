@@ -61,7 +61,7 @@ const ComponentList = () => {
         <div className="space-y-3">
             <div className="bg-gradient-to-br from-emerald-600/10 to-teal-600/10 p-4 rounded-2xl border border-emerald-600/10">
                 <p className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest mb-1">UI Kit</p>
-                <p className="text-xs text-slate-600 dark:text-slate-400">用于构建一致界面的原子组件。</p>
+                <p className="text-xs text-slate-600 ">用于构建一致界面的原子组件。</p>
             </div>
 
             <button

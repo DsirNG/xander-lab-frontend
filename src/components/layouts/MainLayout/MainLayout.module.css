@@ -3,8 +3,8 @@
 
 .navbar {
     @apply fixed top-0 left-0 w-full z-50 backdrop-blur-md transition-all;
-    @apply bg-background-light/80 dark:bg-background-dark/80;
-    @apply border-b border-surface-light dark:border-surface-dark;
+    @apply bg-background-light/80;
+    @apply border-b border-surface-light;
 }
 
 .container {
@@ -32,8 +32,8 @@
 }
 
 .navLink {
-    @apply text-gray-700 dark:text-gray-300 px-3 py-2 rounded-md text-sm font-medium transition-colors;
-    @apply hover:text-primary dark:hover:text-primary;
+    @apply text-gray-700 px-3 py-2 rounded-md text-sm font-medium transition-colors;
+    @apply hover:text-primary;
 }
 
 .actionsArea {
@@ -42,21 +42,21 @@
 
 .iconButton {
     @apply p-2 rounded-full transition-colors;
-    @apply hover:bg-surface-light dark:hover:bg-surface-dark;
-    @apply text-gray-700 dark:text-gray-300;
+    @apply hover:bg-surface-light;
+    @apply text-gray-700;
 }
 
 .menuButton {
-    @apply md:hidden p-2 rounded-md text-gray-700 dark:text-gray-300;
-    @apply hover:bg-surface-light dark:hover:bg-surface-dark;
+    @apply md:hidden p-2 rounded-md text-gray-700;
+    @apply hover:bg-surface-light;
     @apply transition-colors;
 }
 
 /* 移动端菜单 */
 .mobileMenu {
     @apply fixed top-16 left-0 right-0 z-40;
-    @apply bg-background-light dark:bg-background-dark;
-    @apply border-b border-surface-light dark:border-surface-dark;
+    @apply bg-background-light;
+    @apply border-b border-surface-light;
     @apply transform transition-transform duration-300 ease-in-out;
     @apply max-h-[calc(100vh-64px)] overflow-y-auto;
     @apply md:hidden;
@@ -81,24 +81,23 @@
 
 .mobileNavLink {
     @apply px-4 py-3 rounded-lg text-base font-medium transition-colors;
-    @apply text-gray-700 dark:text-gray-300;
-    @apply hover:bg-surface-light dark:hover:bg-surface-dark;
-    @apply hover:text-primary dark:hover:text-primary;
+    @apply text-gray-700;
+    @apply hover:bg-surface-light;
+    @apply hover:text-primary;
 }
 
 .mobileNavLinkActive {
-    @apply bg-primary/10 text-primary dark:text-primary;
-    @apply dark:bg-primary/20;
+    @apply bg-primary/10 text-primary;
 }
 
 .mobileMenuActions {
-    @apply flex flex-col space-y-2 pt-4 border-t border-surface-light dark:border-surface-dark;
+    @apply flex flex-col space-y-2 pt-4 border-t border-surface-light;
 }
 
 .mobileActionButton {
     @apply px-4 py-3 rounded-lg text-base font-medium transition-colors;
-    @apply text-gray-700 dark:text-gray-300;
-    @apply hover:bg-surface-light dark:hover:bg-surface-dark;
+    @apply text-gray-700;
+    @apply hover:bg-surface-light;
     @apply w-full text-left;
 }
 
@@ -108,28 +107,28 @@
     top: 64px;
 }
 
-.footer {
-    @apply bg-surface-light dark:bg-surface-dark py-12 mt-auto;
-}
-
 .footerGrid {
     @apply grid grid-cols-1 md:grid-cols-3 gap-8;
 }
 
 .footerTitle {
-    @apply text-lg font-bold mb-4 text-gray-900 dark:text-white;
+    @apply text-lg font-bold mb-4 text-gray-900 ;
+}
+
+.footer {
+    @apply bg-surface-light py-12 mt-auto;
 }
 
 .footerText {
-    @apply text-gray-600 dark:text-gray-400 text-sm;
+    @apply text-gray-600 text-sm;
 }
 
 .footerSectionTitle {
-    @apply font-semibold mb-4 text-gray-900 dark:text-white;
+    @apply font-semibold mb-4 text-gray-900 ;
 }
 
 .footerList {
-    @apply space-y-2 text-sm text-gray-600 dark:text-gray-400;
+    @apply space-y-2 text-sm text-gray-600;
 }
 
 .footerLink {
@@ -137,12 +136,12 @@
 }
 
 .footerBottom {
-    @apply border-t border-gray-200 dark:border-gray-700 mt-8 pt-8 text-center text-sm text-gray-500;
+    @apply border-t border-gray-200 mt-8 pt-8 text-center text-sm text-gray-500;
 }
 
 .layoutContainer {
     @apply min-h-screen flex flex-col font-sans;
-    @apply bg-background-light dark:bg-background-dark text-gray-900 dark:text-gray-100;
+    @apply bg-background-light text-gray-900 ;
 }
 
 .mainContent {

@@ -109,7 +109,7 @@ const ShoppingDemo = () => {
                                 className={`
                                       px-3 py-1 rounded-full text-xs font-bold cursor-grab border transition-all hover:scale-105 active:scale-95
                                       bg-${tag.color}-100 text-${tag.color}-600 border-${tag.color}-200
-                                      dark:bg-${tag.color}-900/30 dark:text-${tag.color}-300 dark:border-${tag.color}-800
+
                                   `}
                                 style={{
                                     // Fallback colors for tailwind strict scanning usually failing dynamic
@@ -135,13 +135,13 @@ const ShoppingDemo = () => {
                             onDragStart={(e) => dragDrop.handleDragStart(product, e)}
                             onDrop={(e) => dragDrop.handleDrop(product, e)} // Allow dropping tags
                             onDragOver={(e) => dragDrop.handleDragOver(product, e)}
-                            className="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-xl transition-all group relative cursor-move"
+                            className="bg-white  rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-xl transition-all group relative cursor-move"
                         >
-                            <div className={`w-12 h-12 rounded-xl mb-4 flex items-center justify-center bg-slate-100 dark:bg-slate-700 ${product.color}`}>
+                            <div className={`w-12 h-12 rounded-xl mb-4 flex items-center justify-center bg-slate-100  ${product.color}`}>
                                 <product.icon className="w-6 h-6" />
                             </div>
-                            <h4 className="font-bold text-slate-800 dark:text-white mb-1">{product.name}</h4>
-                            <p className="text-slate-500 dark:text-slate-400 text-sm font-medium">{product.price}</p>
+                            <h4 className="font-bold text-slate-800  mb-1">{product.name}</h4>
+                            <p className="text-slate-500  text-sm font-medium">{product.price}</p>
 
                             {/* Attached Tags Area */}
                             <div className="absolute top-2 right-2 flex flex-col items-end space-y-1">
@@ -196,18 +196,18 @@ const ShoppingDemo = () => {
                     <motion.div
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="absolute bottom-24 right-0 w-64 bg-white dark:bg-slate-800 rounded-xl shadow-2xl border border-slate-200 dark:border-slate-700 p-4"
+                        className="absolute bottom-24 right-0 w-64 bg-white  rounded-xl shadow-2xl border border-slate-200 p-4"
                     >
-                        <h4 className="text-sm font-bold border-b border-slate-100 dark:border-slate-700 pb-2 mb-2 text-slate-800 dark:text-white">Cart Summary</h4>
+    <h4 className="text-sm font-bold border-b border-slate-100 pb-2 mb-2 text-slate-800 ">Cart Summary</h4>
                         <div className="space-y-2 max-h-40 overflow-y-auto">
                             {cartItems.map((item, i) => (
                                 <div key={i} className="flex justify-between items-center text-sm">
-                                    <span className="text-slate-600 dark:text-slate-300">{item.name}</span>
+                                    <span className="text-slate-600 ">{item.name}</span>
                                     <span className="font-mono text-slate-400">{item.price}</span>
                                 </div>
                             ))}
                         </div>
-                        <div className="mt-3 pt-2 border-t border-slate-100 dark:border-slate-700 flex justify-between font-bold text-blue-600">
+<div className="mt-3 pt-2 border-t border-slate-100 flex justify-between font-bold text-blue-600">
                             <span>Total</span>
                             <span>
                                 ${cartItems.reduce((acc, i) => acc + parseInt(i.price.slice(1)), 0)}

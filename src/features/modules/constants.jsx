@@ -57,12 +57,12 @@ export const getModuleConfig = (t) => {
                     demo: (
                         <motion.div
                             whileHover={{ scale: 1.05 }}
-                            className="bg-white dark:bg-slate-800 shadow-xl border border-slate-200 dark:border-slate-700 p-6 rounded-2xl flex flex-col items-center space-y-4 cursor-pointer"
+                            className="bg-white  shadow-xl border border-slate-200 p-6 rounded-2xl flex flex-col items-center space-y-4 cursor-pointer"
                         >
                             <div className="w-12 h-12 rounded-full bg-blue-500/10 text-blue-600 flex items-center justify-center">
                                 <MousePointerClick className="w-6 h-6" />
                             </div>
-                            <span className="text-sm font-bold dark:text-white">Click Me</span>
+                            <span className="text-sm font-bold ">Click Me</span>
                         </motion.div>
                     )
                 }

@@ -24,7 +24,7 @@ const ModuleList = () => {
     const bottomCard = (
         <div className="bg-gradient-to-br from-blue-600/10 to-indigo-600/10 p-4 rounded-2xl border border-blue-600/10">
             <p className="text-[10px] font-bold text-blue-600 uppercase tracking-widest mb-1">Patterns</p>
-            <p className="text-xs text-slate-600 dark:text-slate-400">Reusable UI patterns built on top of robust infrastructure.</p>
+            <p className="text-xs text-slate-600 ">Reusable UI patterns built on top of robust infrastructure.</p>
         </div>
     )
 

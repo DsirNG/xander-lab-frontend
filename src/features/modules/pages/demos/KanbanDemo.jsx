@@ -84,7 +84,7 @@ const KanbanDemo = () => {
 
                     newItems.splice(oldIdx, 1);
                     // If moving down, the target index might have shifted if we don't account for removal logic.
-                    // But splice modifies in place. 
+                    // But splice modifies in place.
                     // To insert correctly at *target's* visual position:
                     // If dragged item was *before* target, target index effectively decreases by 1.
 
@@ -136,7 +136,7 @@ const KanbanDemo = () => {
             {Object.entries(columns).map(([colId, col]) => (
                 <div
                     key={colId}
-                    className="flex-shrink-0 w-72 bg-slate-100 dark:bg-slate-900/50 rounded-2xl flex flex-col max-h-[500px]"
+                    className="flex-shrink-0 w-72 bg-slate-100 /50 rounded-2xl flex flex-col max-h-[500px]"
                     // Allow dropping onto empty columns headers (advanced implementation would need a wrapper)
                     onDragOver={(e) => {
                         e.preventDefault();
@@ -149,12 +149,12 @@ const KanbanDemo = () => {
                     {/* Column Header */}
                     <div className="p-4 flex items-center justify-between">
                         <div className="flex items-center space-x-2">
-                            <h3 className="font-bold text-slate-700 dark:text-slate-200">{col.title}</h3>
-                            <span className="bg-slate-200 dark:bg-slate-700 text-slate-500 dark:text-slate-400 px-2 py-0.5 rounded-full text-xs font-bold">
+                            <h3 className="font-bold text-slate-700 ">{col.title}</h3>
+                            <span className="bg-slate-200  text-slate-500  px-2 py-0.5 rounded-full text-xs font-bold">
                                 {col.items.length}
                             </span>
                         </div>
-                        <button className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition-colors">
+                        <button className="text-slate-400 hover:text-slate-600 p-1 hover:bg-slate-200 rounded-lg transition-colors">
                             <Plus className="w-4 h-4" />
                         </button>
                     </div>
@@ -181,31 +181,31 @@ const KanbanDemo = () => {
                                     animate={{ opacity: 1, y: 0 }}
                                     exit={{ opacity: 0, scale: 0.9 }}
                                     className={`
-                                        bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 cursor-grab active:cursor-grabbing group
+                                        bg-white  p-4 rounded-xl shadow-sm border border-slate-200 cursor-grab active:cursor-grabbing group
                                         ${dragDrop.draggedItem?.id === item.id ? 'opacity-50 border-dashed' : ''}
-                                        ${dragDrop.dragOverItem?.id === item.id ? 'ring-2 ring-blue-500 ring-offset-2 ring-offset-slate-100 dark:ring-offset-slate-900' : ''}
+                                        ${dragDrop.dragOverItem?.id === item.id ? 'ring-2 ring-blue-500 ring-offset-2 ring-offset-slate-100' : ''}
                                     `}
                                 >
                                     <div className="flex justify-between items-start mb-2">
                                         <span className={`text-[10px] font-bold px-2 py-1 rounded-md mb-2 inline-block
-                                            ${item.tag === 'Strategy' ? 'bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-300' : ''}
-                                            ${item.tag === 'Product' ? 'bg-orange-100 text-orange-600 dark:bg-orange-900/30 dark:text-orange-300' : ''}
-                                            ${item.tag === 'Design' ? 'bg-pink-100 text-pink-600 dark:bg-pink-900/30 dark:text-pink-300' : ''}
-                                            ${item.tag === 'Dev' ? 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-300' : ''}
+                                            ${item.tag === 'Strategy' ? 'bg-purple-100 text-purple-600' : ''}
+                                            ${item.tag === 'Product' ? 'bg-orange-100 text-orange-600' : ''}
+                                            ${item.tag === 'Design' ? 'bg-pink-100 text-pink-600' : ''}
+                                            ${item.tag === 'Dev' ? 'bg-blue-100 text-blue-600' : ''}
                                          `}>
                                             {item.tag}
                                         </span>
-                                        <button className="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-opacity">
+                                        <button className="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-slate-600 transition-opacity">
                                             <MoreHorizontal className="w-4 h-4" />
                                         </button>
                                     </div>
-                                    <h4 className="font-semibold text-slate-800 dark:text-slate-100 mb-3 text-sm leading-snug">
+                                    <h4 className="font-semibold text-slate-800  mb-3 text-sm leading-snug">
                                         {item.title}
                                     </h4>
                                     <div className="flex items-center justify-between text-slate-400">
                                         <div className="flex -space-x-2">
-                                            <div className="w-6 h-6 rounded-full bg-gradient-to-br from-blue-400 to-indigo-500 border-2 border-white dark:border-slate-800" />
-                                            <div className="w-6 h-6 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 border-2 border-white dark:border-slate-800" />
+                                            <div className="w-6 h-6 rounded-full bg-gradient-to-br from-blue-400 to-indigo-500 border-2 border-white " />
+                                            <div className="w-6 h-6 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 border-2 border-white " />
                                         </div>
                                         <div className="flex items-center space-x-3 text-xs font-medium">
                                             <div className="flex items-center hover:text-blue-500 transition-colors">
@@ -216,7 +216,7 @@ const KanbanDemo = () => {
                                                 <MessageSquare className="w-3 h-3 mr-1" />
                                                 <span>4</span>
                                             </div>
-                                            <div className="flex items-center text-slate-300 dark:text-slate-600">
+                                            <div className="flex items-center text-slate-300">
                                                 <Calendar className="w-3 h-3 mr-1" />
                                                 <span>{item.date}</span>
                                             </div>
@@ -234,10 +234,10 @@ const KanbanDemo = () => {
                                     exit={{ opacity: 0 }}
                                     onDragOver={(e) => {
                                         e.preventDefault();
-                                        // e.stopPropagation(); 
+                                        // e.stopPropagation();
                                     }}
                                     onDrop={(e) => dragDrop.handleDrop(colId, e)}
-                                    className="h-full border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-xl flex items-center justify-center text-slate-400 text-sm font-medium"
+                                    className="h-full border-2 border-dashed border-slate-200 rounded-xl flex items-center justify-center text-slate-400 text-sm font-medium"
                                 >
                                     Drop here
                                 </motion.div>

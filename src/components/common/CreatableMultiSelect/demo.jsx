@@ -25,9 +25,9 @@ export default function CreatableMultiSelectDemo() {
     };
 
     return (
-        <div className="p-8 max-w-2xl mx-auto bg-slate-50 dark:bg-slate-900/50 rounded-3xl border border-slate-200 dark:border-slate-800">
+        <div className="p-8 max-w-2xl mx-auto bg-slate-50 /50 rounded-3xl border border-slate-200 ">
             <div className="mb-8">
-                <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-2 font-sans tracking-tight">
+                <h2 className="text-2xl font-black text-slate-900  mb-2 font-sans tracking-tight">
                     可创建多选框 (CreatableMultiSelect)
                 </h2>
                 <p className="text-sm text-slate-500 font-medium">
@@ -58,7 +58,7 @@ export default function CreatableMultiSelectDemo() {
                 </section>
 
                 {/* 提交与结果展示 */}
-                <section className="pt-6 border-t border-slate-200/60 dark:border-slate-800 flex flex-col items-start gap-4">
+                <section className="pt-6 border-t border-slate-200/60  flex flex-col items-start gap-4">
                     <button
                         onClick={handleSubmit}
                         className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-sm font-bold shadow-lg shadow-indigo-600/20 transition-all flex items-center gap-2"
@@ -68,9 +68,9 @@ export default function CreatableMultiSelectDemo() {
                     </button>
 
                     {submittedItems.length > 0 && (
-                        <div className="w-full mt-4 p-4 bg-white dark:bg-slate-950 rounded-2xl border border-slate-100 dark:border-slate-800">
+                        <div className="w-full mt-4 p-4 bg-white  rounded-2xl border border-slate-100 ">
                             <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">多选结果</h3>
-                            <pre className="text-xs font-mono text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/30 p-4 rounded-xl overflow-x-auto">
+                            <pre className="text-xs font-mono text-emerald-600  bg-emerald-50  p-4 rounded-xl overflow-x-auto">
                                 {JSON.stringify(submittedItems, null, 2)}
                             </pre>
                         </div>

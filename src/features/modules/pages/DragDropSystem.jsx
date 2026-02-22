@@ -17,25 +17,25 @@ const PhaseCard = ({ phase, index }) => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: index * 0.1 }}
-            className="relative pl-8 pb-12 border-l-2 border-slate-200 dark:border-slate-800 last:border-0 last:pb-0"
+            className="relative pl-8 pb-12 border-l-2 border-slate-200  last:border-0 last:pb-0"
         >
-            <div className="absolute left-[-16px] top-0 w-8 h-8 rounded-full bg-white dark:bg-slate-900 border-2 border-blue-600 flex items-center justify-center text-blue-600 shadow-sm">
+            <div className="absolute left-[-16px] top-0 w-8 h-8 rounded-full bg-white  border-2 border-blue-600 flex items-center justify-center text-blue-600 shadow-sm">
                 {index === 0 && <Compass className="w-4 h-4" />}
                 {index === 1 && <Cpu className="w-4 h-4" />}
                 {index === 2 && <Box className="w-4 h-4" />}
             </div>
 
-            <div className="bg-white dark:bg-slate-900/50 rounded-3xl p-8 border border-slate-200 dark:border-slate-800 hover:border-blue-600/50 transition-colors shadow-sm">
-                <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">
+            <div className="bg-white /50 rounded-3xl p-8 border border-slate-200  hover:border-blue-600/50 transition-colors shadow-sm">
+                <h3 className="text-2xl font-bold text-slate-900  mb-2">
                     {phase.title}
                 </h3>
-                <p className="text-slate-600 dark:text-slate-400 mb-6 text-lg">
+                <p className="text-slate-600  mb-6 text-lg">
                     {phase.desc}
                 </p>
 
                 <ul className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     {phase.points.map((point, i) => (
-                        <li key={i} className="flex items-center space-x-2 text-slate-500 dark:text-slate-500">
+                        <li key={i} className="flex items-center space-x-2 text-slate-500 ">
                             <CheckCircle2 className="w-4 h-4 text-green-500 flex-shrink-0" />
                             <span>{point}</span>
                         </li>
@@ -56,7 +56,7 @@ const DragDropSystem = () => {
     ];
 
     return (
-        <div className="bg-slate-50 dark:bg-slate-950">
+        <div className="bg-slate-50 ">
             <div className="max-w-4xl mx-auto pt-12 px-6">
                 <Link to="/modules/drag-drop" className="inline-flex items-center text-blue-600 hover:underline mb-8 group">
                     <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
@@ -67,10 +67,10 @@ const DragDropSystem = () => {
                     <div className="inline-block px-3 py-1 rounded-md bg-blue-600/10 text-blue-600 text-xs font-bold uppercase tracking-wider mb-4">
                         Interaction Layer
                     </div>
-                    <h1 className="text-5xl font-black text-slate-900 dark:text-white mb-6">
+                    <h1 className="text-5xl font-black text-slate-900  mb-6">
                         {t('modules.dragdrop.title')}
                     </h1>
-                    <p className="text-xl text-slate-600 dark:text-slate-400 leading-relaxed">
+                    <p className="text-xl text-slate-600  leading-relaxed">
                         {t('modules.dragdrop.desc')}
                     </p>
                 </header>

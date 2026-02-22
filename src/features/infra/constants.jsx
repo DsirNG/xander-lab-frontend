@@ -42,12 +42,12 @@ export const getInfraConfig = (t) => {
                             <div className="w-24 h-12 bg-blue-600/20 border-2 border-dashed border-blue-600 rounded-lg flex items-center justify-center text-xs font-bold text-blue-600 font-mono">
                                 ANCHOR
                             </div>
-                            <div className="bg-white dark:bg-slate-800 shadow-xl border border-slate-200 dark:border-slate-700 p-4 rounded-xl flex items-center space-x-3">
+                            <div className="bg-white  shadow-xl border border-slate-200 p-4 rounded-xl flex items-center space-x-3">
                                 <div className="w-8 h-8 rounded-lg bg-blue-500/10 text-blue-500 flex items-center justify-center">
                                     <span className="text-xs font-bold">POS</span>
                                 </div>
                                 <div>
-                                    <p className="text-xs font-bold dark:text-white">Floating Content</p>
+                                    <p className="text-xs font-bold ">Floating Content</p>
                                     <p className="text-[10px] text-slate-400">Aligned to Main Axis</p>
                                 </div>
                             </div>

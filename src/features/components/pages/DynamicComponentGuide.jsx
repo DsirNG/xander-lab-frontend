@@ -22,7 +22,7 @@ const CodeBlock = ({ code, language, title, icon: Icon = FileCode }) => {
     if (!code) return null;
 
     return (
-        <div className="rounded-[2.5rem] overflow-hidden border border-slate-200 dark:border-white/5 bg-[#0f172a] shadow-2xl mb-12 group">
+        <div className="rounded-[2.5rem] overflow-hidden border border-slate-200  bg-[#0f172a] shadow-2xl mb-12 group">
             <div className="flex items-center justify-between px-8 py-5 bg-white/5 border-b border-white/5">
                 <div className="flex items-center space-x-4">
                     <div className="p-2 rounded-xl bg-indigo-500/10">
@@ -62,12 +62,12 @@ const CodeBlock = ({ code, language, title, icon: Icon = FileCode }) => {
 };
 
 const FeatureCard = ({ title, desc, icon: Icon, color }) => (
-    <div className="p-8 rounded-[2.5rem] bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 shadow-sm hover:shadow-xl transition-all group hover:-translate-y-1">
+    <div className="p-8 rounded-[2.5rem] bg-white  border border-slate-200  shadow-sm hover:shadow-xl transition-all group hover:-translate-y-1">
         <div className={`w-12 h-12 rounded-2xl ${color} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform`}>
             <Icon className="w-6 h-6 text-white" />
         </div>
-        <h3 className="text-lg font-black text-slate-900 dark:text-white mb-2">{title}</h3>
-        <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">{desc}</p>
+        <h3 className="text-lg font-black text-slate-900  mb-2">{title}</h3>
+        <p className="text-sm text-slate-500  leading-relaxed">{desc}</p>
     </div>
 );
 
@@ -125,14 +125,14 @@ const DynamicComponentGuide = ({ componentId, initialData }) => {
     const libraryFiles = parseLibraryFiles(data.libraryCode);
 
     return (
-        <div className="min-h-screen bg-slate-50/50 dark:bg-[#080b14] pb-32">
+        <div className="min-h-screen bg-slate-50/50  pb-32">
             {/* 渐变装饰背景 */}
             <div className="absolute top-0 left-0 right-0 h-[500px] bg-gradient-to-b from-indigo-500/5 to-transparent pointer-events-none" />
 
             <div className="max-w-6xl mx-auto pt-12 px-6 relative z-10">
                 {/* Navigation */}
                 <Link to={`/components/${componentId}`} className="inline-flex items-center text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-indigo-500 mb-12 transition-all group">
-                    <div className="w-8 h-8 rounded-full border border-slate-200 dark:border-white/10 flex items-center justify-center mr-3 group-hover:border-indigo-500/30 group-hover:bg-indigo-500/5">
+                    <div className="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center mr-3 group-hover:border-indigo-500/30 group-hover:bg-indigo-500/5">
                         <ArrowLeft className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-1" />
                     </div>
                     {t('common.backToComponents', 'Back to Showcase')}
@@ -144,17 +144,17 @@ const DynamicComponentGuide = ({ componentId, initialData }) => {
                         <div className="px-3 py-1 bg-indigo-500 text-white text-[10px] font-black rounded-lg uppercase tracking-wider">
                             Source Analysis
                         </div>
-                        <div className="h-px flex-1 bg-slate-200 dark:bg-white/5" />
+                        <div className="h-px flex-1 bg-slate-200 " />
                         <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
                             v{data.version || '1.0.0'}
                         </div>
                     </div>
 
-                    <h1 className="text-5xl md:text-6xl font-black text-slate-900 dark:text-white mb-8 tracking-tighter italic uppercase">
+                    <h1 className="text-5xl md:text-6xl font-black text-slate-900  mb-8 tracking-tighter italic uppercase">
                         {data.title} <span className="text-indigo-500">Structure</span>
                     </h1>
 
-                    <p className="text-xl text-slate-600 dark:text-slate-400 max-w-3xl leading-relaxed font-medium">
+                    <p className="text-xl text-slate-600  max-w-3xl leading-relaxed font-medium">
                         {data.desc || "该组件通过动态沙箱引擎实现，包含了完整的组件逻辑层与环境包裹层。"}
                     </p>
                 </div>
@@ -168,7 +168,7 @@ const DynamicComponentGuide = ({ componentId, initialData }) => {
                                 <Boxes className="w-6 h-6" />
                             </div>
                             <div>
-                                <h2 className="text-2xl font-black text-slate-900 dark:text-white uppercase italic tracking-tighter">Implementation Layers</h2>
+                                <h2 className="text-2xl font-black text-slate-900  uppercase italic tracking-tighter">Implementation Layers</h2>
                                 <p className="text-sm text-slate-500 font-bold uppercase tracking-widest">Modular Logic Files</p>
                             </div>
                         </div>
@@ -194,7 +194,7 @@ const DynamicComponentGuide = ({ componentId, initialData }) => {
                                     <Layout className="w-6 h-6" />
                                 </div>
                                 <div>
-                                    <h2 className="text-2xl font-black text-slate-900 dark:text-white uppercase italic tracking-tighter">Environment Wrapper</h2>
+                                    <h2 className="text-2xl font-black text-slate-900  uppercase italic tracking-tighter">Environment Wrapper</h2>
                                     <p className="text-sm text-slate-500 font-bold uppercase tracking-widest">wrapper_code.jsx</p>
                                 </div>
                             </div>
@@ -216,7 +216,7 @@ const DynamicComponentGuide = ({ componentId, initialData }) => {
                                     <FileCode className="w-6 h-6" />
                                 </div>
                                 <div>
-                                    <h2 className="text-2xl font-black text-slate-900 dark:text-white uppercase italic tracking-tighter">Styling Specification</h2>
+                                    <h2 className="text-2xl font-black text-slate-900  uppercase italic tracking-tighter">Styling Specification</h2>
                                     <p className="text-sm text-slate-500 font-bold uppercase tracking-widest">custom_styles.css</p>
                                 </div>
                             </div>

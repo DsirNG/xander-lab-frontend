@@ -25,7 +25,7 @@ export const ToastBasicDemo = () => {
 
     const triggerCustomClass = () => {
         toast.info(t('components.toast.scenarios.basic.customMsg'), {
-            className: 'bg-gradient-to-r from-purple-500/10 to-blue-500/10 border-purple-500/20 text-purple-600 dark:text-purple-400 !shadow-purple-500/20',
+            className: 'bg-gradient-to-r from-purple-500/10 to-blue-500/10 border-purple-500/20 text-purple-600  !shadow-purple-500/20',
             icon: <Activity className="w-5 h-5 text-purple-500" />,
             showProgress: false,
             showClose: true
@@ -61,7 +61,7 @@ export const ToastBasicDemo = () => {
                 </button>
             </div>
 
-            <div className="p-4 bg-slate-50 dark:bg-slate-900/40 rounded-2xl border border-slate-100 dark:border-slate-800">
+            <div className="p-4 bg-slate-50 /40 rounded-2xl border border-slate-100 ">
                 <button
                     onClick={triggerCustomClass}
                     className="flex items-center gap-2 px-5 py-2.5 bg-purple-500 text-white rounded-xl text-xs font-black shadow-lg shadow-purple-500/20"
@@ -154,7 +154,7 @@ export const ToastActionDemo = () => {
                     </div>,
                     { duration: 5000, showProgress: true }
                 )}
-                className="w-fit px-6 py-3 bg-white dark:bg-slate-800 text-emerald-600 border border-emerald-500/30 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-emerald-50 transition-all"
+                className="w-fit px-6 py-3 bg-white  text-emerald-600 border border-emerald-500/30 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-emerald-50 transition-all"
             >
                 {t('components.toast.scenarios.action.btn')}
             </button>
@@ -177,7 +177,7 @@ export const ToastNoHoverDemo = () => {
                     t('components.toast.scenarios.comparison.msg'),
                     { pauseOnHover: false, showProgress: true }
                 )}
-                className="w-fit px-6 py-3 bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-2xl text-[10px] font-black uppercase tracking-widest"
+                className="w-fit px-6 py-3 bg-slate-200  text-slate-600  rounded-2xl text-[10px] font-black uppercase tracking-widest"
             >
                 {t('components.toast.scenarios.comparison.btn')}
             </button>
