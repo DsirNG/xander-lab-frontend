@@ -6,11 +6,21 @@
  * @module blog/services
  */
 
-import { get } from '@api';
+import { get, post } from '@api';
 
 const BASE = '/api/blog';
 
 export const blogService = {
+  /**
+   * 发布博客
+   * POST /api/blog/posts
+   *
+   * @param {Object} blogData - { title, summary, content, categoryId, tags }
+   * @returns {Promise<number>} 文章ID
+   */
+  publishBlog: (blogData) => {
+    return post(`${BASE}/posts`, blogData);
+  },
   /**
    * 获取博客列表（支持搜索、分类、标签筛选，支持分页）
    * GET /api/blog/posts?search=&category=&tag=&page=1&size=10

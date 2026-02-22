@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSearchParams } from 'react-router-dom';
-import { Grid, List, Filter, X, Loader2 } from 'lucide-react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Grid, List, Filter, X, Loader2, Plus } from 'lucide-react';
 import { blogService } from '../services/blogService';
 import BlogCard from '../components/BlogCard';
 
@@ -11,6 +11,7 @@ import BlogCard from '../components/BlogCard';
  */
 const BlogHome = () => {
     const { t } = useTranslation();
+    const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
     const [blogs, setBlogs] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -113,7 +114,17 @@ const BlogHome = () => {
                     </div>
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-3">
+                    <button
+                        onClick={() => navigate('publish')}
+                        className="flex items-center px-4 py-2 text-xs font-black text-white bg-indigo-600 rounded-full hover:bg-slate-900 transition-all shadow-lg shadow-indigo-600/20 active:scale-95"
+                    >
+                        <Plus className="w-4 h-4 mr-1" />
+                        {t('blog.publish')}
+                    </button>
+
+                    <div className="h-6 w-px bg-slate-200 dark:bg-slate-800 hidden md:block mx-1" />
+
                     {(search || category || tag) && (
                         <button
                             onClick={clearFilters}

@@ -26,6 +26,7 @@ import ComponentShare from '@features/components/pages/ComponentShare';
 import BlogHome from '@features/blog/pages/BlogHome';
 import BlogDetail from '@features/blog/pages/BlogDetail';
 import BlogTags from '@features/blog/pages/BlogTags';
+import BlogPublish from '@features/blog/pages/BlogPublish';
 import LoginPage from '@features/auth/pages/LoginPage';
 
 // 配置数据
@@ -122,10 +123,7 @@ export const createRouter = (t) => {
             },
           ],
         },
-        {
-          path: 'components/share',
-          element: <ComponentShare />,
-        },
+
         // 博客路由 - 独立 Layout
         {
           path: 'blog',
@@ -139,6 +137,7 @@ export const createRouter = (t) => {
               path: 'tags',
               element: <BlogTags />,
             },
+
             {
               path: ':id',
               element: <BlogDetail />,
@@ -154,6 +153,14 @@ export const createRouter = (t) => {
           ),
         },
       ],
+    },
+    {
+      path: 'components/share',
+      element: <ComponentShare />,
+    },
+    {
+      path: 'blog/publish',
+      element: <BlogPublish />,
     },
   ];
 
