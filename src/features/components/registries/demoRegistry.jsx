@@ -9,6 +9,7 @@ import {
     ToastNoHoverDemo
 } from '../pages/codeComponent/demo/ToastDemo';
 import LiveDemoSandbox from '../pages/codeComponent/demo/LiveDemoSandbox';
+import TagInputDemo from '@/components/common/CreatableMultiSelect/demo.jsx';
 
 /**
  * 演示组件注册表：将数据库中的 key 映射到实际的 React 演示组件。
@@ -27,6 +28,9 @@ export const DEMO_REGISTRY = {
     'ToastActionDemo': <ToastActionDemo />,
     'ToastStackDemo': <ToastStackDemo />,
     'ToastNoHoverDemo': <ToastNoHoverDemo />,
+
+    // TagInput 标签选择器
+    'TagInputDemo': <TagInputDemo />,
 };
 
 /**

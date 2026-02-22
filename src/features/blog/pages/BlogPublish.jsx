@@ -11,6 +11,7 @@ import remarkGfm from 'remark-gfm';
 import { blogService } from '../services/blogService';
 import { useToast } from '@/hooks/useToast';
 import CustomSelect from '../../components/pages/codeComponent/CustomSelect';
+import CreatableMultiSelect from '@/components/common/CreatableMultiSelect';
 
 /**
  * 博客发布页面
@@ -24,8 +25,6 @@ const BlogPublish = () => {
     const [categories, setCategories] = useState([]);
     const [availableTags, setAvailableTags] = useState([]);
     const [isPreview, setIsPreview] = useState(false);
-    const [isTagDropdownOpen, setIsTagDropdownOpen] = useState(false);
-
     const [formData, setFormData] = useState({
         title: '',
         categoryId: '',
@@ -34,7 +33,6 @@ const BlogPublish = () => {
         tags: []
     });
 
-    const [tagInput, setTagInput] = useState('');
     const contentTextareaRef = useRef(null);
     useEffect(() => {
         const fetchData = async () => {
@@ -58,31 +56,6 @@ const BlogPublish = () => {
         };
         fetchData();
     }, []);
-
-    const handleAddTag = (e) => {
-        if (e.key === 'Enter' && tagInput.trim()) {
-            e.preventDefault();
-            addTag(tagInput.trim());
-        }
-    };
-
-    const addTag = (tagName) => {
-        if (!formData.tags.includes(tagName)) {
-            setFormData(prev => ({
-                ...prev,
-                tags: [...prev.tags, tagName]
-            }));
-        }
-        setTagInput('');
-        setIsTagDropdownOpen(false);
-    };
-
-    const removeTag = (tagToRemove) => {
-        setFormData({
-            ...formData,
-            tags: formData.tags.filter(t => t !== tagToRemove)
-        });
-    };
 
     const handlePublish = async () => {
         if (!formData.title || !formData.content || !formData.categoryId) {
@@ -246,68 +219,18 @@ const BlogPublish = () => {
 
                             {/* 标签 / Tags */}
                             <section className="space-y-4 mb-10 relative">
-                                <div className="flex items-center justify-between group">
+                                <div className="flex items-center justify-between group mb-2">
                                     <div className="flex items-center gap-2 text-slate-500">
                                         <TagIcon className="w-4 h-4 group-hover:text-indigo-500 transition-colors" />
                                         <span className="text-[10px] font-black uppercase tracking-widest">{t('blog.tagLabel')}</span>
                                     </div>
                                     <span className="text-[10px] text-slate-400 font-medium">Press Enter ↵</span>
                                 </div>
-                                <div className="flex flex-wrap gap-2 min-h-[56px] p-3 bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 rounded-2xl focus-within:border-indigo-500 focus-within:ring-4 focus-within:ring-indigo-500/10 transition-all shadow-sm">
-                                    {formData.tags.map(tag => (
-                                        <span key={tag} className="px-3 py-1.5 bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 text-[11px] font-bold text-slate-700 dark:text-slate-300 rounded-xl flex items-center gap-1.5 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 dark:hover:bg-rose-950/30 dark:hover:text-rose-400 dark:hover:border-rose-900 transition-colors group/tag cursor-pointer" onClick={() => removeTag(tag)}>
-                                            {tag}
-                                            <X className="w-3.5 h-3.5 opacity-50 group-hover/tag:opacity-100" />
-                                        </span>
-                                    ))}
-                                    <div className="relative flex-1 min-w-[120px]">
-                                        <input
-                                            value={tagInput}
-                                            onChange={e => {
-                                                setTagInput(e.target.value);
-                                                setIsTagDropdownOpen(true);
-                                            }}
-                                            onFocus={() => setIsTagDropdownOpen(true)}
-                                            onBlur={() => setTimeout(() => setIsTagDropdownOpen(false), 200)}
-                                            onKeyDown={handleAddTag}
-                                            placeholder={formData.tags.length === 0 ? "e.g. React, Architecture..." : ''}
-                                            className="w-full bg-transparent border-none outline-none text-sm px-2 py-1.5 dark:placeholder:text-slate-600 text-slate-800 dark:text-slate-200"
-                                        />
-
-                                        {/* Tag 自定义下拉选择器 */}
-                                        {isTagDropdownOpen && (
-                                            <div className="absolute top-full left-0 mt-2 w-[240px] max-h-48 overflow-y-auto custom-scrollbar bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.1)] z-50 py-1">
-                                                {availableTags
-                                                    .filter(t => !formData.tags.includes(t) && t.toLowerCase().includes(tagInput.toLowerCase()))
-                                                    .map(tag => (
-                                                        <div
-                                                            key={tag}
-                                                            onClick={(e) => {
-                                                                e.stopPropagation();
-                                                                addTag(tag);
-                                                            }}
-                                                            className="px-4 py-2.5 text-[12px] font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50 hover:text-indigo-600 dark:hover:text-indigo-400 cursor-pointer transition-colors flex items-center gap-2"
-                                                        >
-                                                            <Hash className="w-3.5 h-3.5 opacity-50" /> {tag}
-                                                        </div>
-                                                    ))}
-                                                {/* 如果用户输入了一个不存在的新标签，给个提示 */}
-                                                {tagInput.trim() && !availableTags.includes(tagInput.trim()) && (
-                                                    <div className="px-4 py-2.5 text-[12px] font-medium text-slate-400 dark:text-slate-500 border-t border-slate-100 dark:border-slate-700/50 mt-1 first:border-0 first:mt-0 italic flex items-center justify-between">
-                                                        <span>创建标签 "{tagInput}"</span>
-                                                        <span className="text-[9px] uppercase tracking-wider bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5 rounded font-bold">Enter</span>
-                                                    </div>
-                                                )}
-                                                {/* 如果全部选完 */}
-                                                {!tagInput && availableTags.filter(t => !formData.tags.includes(t)).length === 0 && (
-                                                    <div className="px-4 py-3 text-[11px] text-center text-slate-400 italic">
-                                                        暂无推荐标签，输入按回车创建
-                                                    </div>
-                                                )}
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
+                                <CreatableMultiSelect
+                                    value={formData.tags}
+                                    onChange={(newTags) => setFormData({ ...formData, tags: newTags })}
+                                    options={availableTags}
+                                />
                             </section>
 
                             {/* 摘要 / Abstract */}

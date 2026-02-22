@@ -516,8 +516,8 @@ const ComponentShare = () => {
                     </div>
                 </aside>
 
-                <main className="flex-1 flex flex-col bg-slate-50 relative p-8 pb-20">
-                    <div className="flex-1 flex flex-col bg-white rounded-[3rem] shadow-2xl border border-slate-200/50 overflow-hidden relative">
+                <main className="flex-1 flex flex-col bg-slate-50 relative">
+                    <div className="flex-1 flex flex-col bg-white overflow-hidden relative">
                         <LiveDemoSandbox
                             key={activeSIdx}
                             initialCode={scenarios[activeSIdx].code}

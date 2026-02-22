@@ -270,7 +270,7 @@ function SandboxPreview({ code, libraryCode, wrapperCode, cssCode }) {
     }
 
     return (
-        <div className="w-full h-full flex items-center justify-center overflow-auto p-4">
+        <div className="w-full h-full flex items-center justify-center p-4">
             <SandboxErrorBoundary code={code} libraryCode={libraryCode} wrapperCode={wrapperCode}>
                 <Component />
             </SandboxErrorBoundary>
