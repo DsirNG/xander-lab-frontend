@@ -1,133 +1,77 @@
 @import "tailwindcss";
 @reference "../../../styles/index.css";
 
-.heroSection {
-    @apply relative overflow-hidden py-20 lg:py-32;
+.pageWrapper {
+  @apply min-h-screen bg-white dark:bg-[#080808] selection:bg-black selection:text-white;
 }
 
-.heroBackground {
-    @apply absolute top-0 right-0 -mr-40 -mt-20 w-[600px] h-[600px];
-    @apply bg-primary/10 rounded-full blur-3xl opacity-50 pointer-events-none;
+.heroSection {
+  @apply relative pt-40 pb-24 overflow-hidden;
+}
+
+/* 核心去 AI 味：点阵背景带来的工程师严谨感 */
+.gridOverlay {
+  @apply absolute inset-0 pointer-events-none opacity-[0.05] dark:opacity-[0.1];
+  background-image: radial-gradient(circle, currentColor 1px, transparent 1px);
+  background-size: 32px 32px;
 }
 
 .container {
-    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10;
+  @apply max-w-6xl mx-auto px-6 relative z-10;
 }
 
-.heroContent {
-    @apply lg:grid lg:grid-cols-2 lg:gap-16 items-center;
+.heroMain {
+  @apply flex flex-col items-center text-center;
 }
 
-.badge {
-    @apply inline-block px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-semibold tracking-wide mb-6;
+.announcement {
+  @apply flex items-center gap-3 px-3 py-1.5 rounded-full border border-gray-200 dark:border-white/10
+  bg-white/50 dark:bg-white/5 backdrop-blur-md mb-12 text-sm font-medium
+  hover:bg-gray-100 dark:hover:bg-white/10 transition-all cursor-pointer;
 }
 
-.heroTitle {
-    @apply text-5xl sm:text-6xl font-extrabold tracking-tight mb-6 text-gray-900 dark:text-white leading-tight;
+.versionTag {
+  @apply px-2 py-0.5 rounded-full bg-black dark:bg-white text-white dark:text-black text-[10px] font-black;
 }
 
-.gradientText {
-    @apply text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-600;
+/* 极具压迫感的大标题，打破平庸感 */
+.megaTitle {
+  @apply text-6xl md:text-9xl font-black tracking-tighter mb-10 text-black dark:text-white leading-[0.85];
 }
 
-.heroDescription {
-    @apply text-lg text-gray-600 dark:text-gray-300 mb-8 leading-relaxed;
+/* 镂空文字：设计感的核心，AI 很少会主动用这种排版 */
+.outlineText {
+  @apply block text-transparent;
+  -webkit-text-stroke: 1.5px rgba(0,0,0,0.8);
 }
 
-.buttonGroup {
-    @apply flex flex-wrap gap-4;
+:global(.dark) .outlineText {
+  -webkit-text-stroke: 1.5px rgba(255,255,255,0.4);
 }
 
-.btnPrimary {
-    @apply flex items-center justify-center px-8 py-3.5 rounded-lg text-base font-medium transition-all;
-    @apply text-white bg-primary hover:bg-primary-dark;
-    @apply shadow-lg shadow-primary/25 hover:shadow-primary/40;
+.subtext {
+  @apply max-w-2xl text-lg md:text-2xl text-gray-500 dark:text-gray-400 mb-14 font-light leading-relaxed;
 }
 
-.btnSecondary {
-    @apply flex items-center justify-center px-8 py-3.5 rounded-lg text-base font-medium transition-all;
-    @apply border border-gray-200 dark:border-gray-700 bg-surface-light dark:bg-surface-dark;
-    @apply text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800;
+.ctaWrapper {
+  @apply flex flex-col sm:flex-row gap-6 items-center;
 }
 
-/* Feature Section */
-.featureSection {
-    @apply py-20 bg-surface-light dark:bg-surface-dark border-y border-gray-200 dark:border-gray-700;
+.mainButton {
+  @apply px-12 py-4 bg-black dark:bg-white text-white dark:text-black rounded-none font-bold
+  hover:invert transition-all duration-300 shadow-[8px_8px_0_rgba(0,0,0,0.1)] dark:shadow-[8px_8px_0_rgba(255,255,255,0.1)];
 }
 
-.sectionHeader {
-    @apply text-center mb-16;
+.ghostButton {
+  @apply flex items-center px-10 py-4 text-black dark:text-white font-bold border-b-2 border-transparent hover:border-black dark:hover:border-white transition-all;
 }
 
-.sectionTitle {
-    @apply text-3xl font-bold text-gray-900 dark:text-white mb-4;
+.visualCanvas {
+  @apply absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 -z-10 w-full h-full;
 }
 
-.sectionDesc {
-    @apply text-gray-600 dark:text-gray-400 max-w-2xl mx-auto;
+.abstractGlow {
+  @apply absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
+  w-[600px] h-[400px] bg-blue-500/10 dark:bg-blue-500/5
+  blur-[150px] rounded-[100%];
 }
-
-.featureGrid {
-    @apply grid grid-cols-1 md:grid-cols-3 gap-8;
-}
-
-.featureCard {
-    @apply p-8 rounded-2xl bg-background-light dark:bg-background-dark;
-    @apply border border-gray-200 dark:border-gray-700 shadow-sm cursor-default transition-colors;
-    @apply hover:border-primary/50;
-}
-
-.featureIconBox {
-    @apply w-12 h-12 rounded-lg flex items-center justify-center mb-6 shadow-lg;
-}
-
-.featureTitle {
-    @apply text-xl font-bold text-gray-900 dark:text-white mb-3;
-}
-
-.featureDesc {
-    @apply text-gray-600 dark:text-gray-400 leading-relaxed;
-}
-
-/* Visual Block */
-.visualBlock {
-    @apply relative rounded-2xl bg-surface-light dark:bg-surface-dark;
-    @apply border border-gray-200 dark:border-gray-700 shadow-2xl;
-    @apply p-6 transform rotate-3 hover:rotate-0 transition-transform duration-500 ease-out;
-}
-
-.codeDots {
-    @apply flex space-x-2 mb-4;
-}
-
-.dot {
-    @apply w-3 h-3 rounded-full;
-}
-
-.dotRed {
-    @apply bg-red-500;
-}
-
-.dotYellow {
-    @apply bg-yellow-500;
-}
-
-.dotGreen {
-    @apply bg-green-500;
-}
-
-.codeLines {
-    @apply space-y-3 font-mono text-sm opacity-80;
-}
-
-.line {
-    @apply h-4 bg-gray-200 dark:bg-gray-700 rounded;
-}
-
-.floatingBadge {
-    @apply absolute -right-8 -bottom-8 p-4 rounded-xl shadow-xl;
-    @apply bg-white dark:bg-slate-800 border border-gray-100 dark:border-gray-700;
-}
-
-
-

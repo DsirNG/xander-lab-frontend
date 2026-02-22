@@ -8,8 +8,8 @@
 @plugin "@tailwindcss/typography";
 
 @theme {
-  --color-primary: #6366f1;
-  --color-primary-dark: #4338ca;
+  --color-primary: #000000;
+  --color-primary-dark: #f2f2f2;
   --color-background-light: #ffffff;
   --color-background-dark: #0f172a;
   --color-surface-light: #f8fafc;

@@ -20,7 +20,7 @@
 }
 
 .logoText {
-    @apply text-lg sm:text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary-dark;
+    @apply text-lg sm:text-xl font-bold text-black;
 }
 
 .desktopNav {

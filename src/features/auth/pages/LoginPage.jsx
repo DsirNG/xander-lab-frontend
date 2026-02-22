@@ -88,7 +88,7 @@ const LoginPage = () => {
                     <div className="relative">
                         <div className="absolute inset-0 bg-primary blur-md opacity-20 group-hover:opacity-40 transition-opacity" />
                         <div className="relative p-2.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl group-hover:scale-110 transition-transform duration-500">
-                            <Layers className="w-6 h-6 text-primary" />
+                            {/*<Layers className="w-6 h-6 text-primary" />*/}
                         </div>
                     </div>
                     <div className="flex flex-col">
