@@ -160,11 +160,35 @@ class SandboxErrorBoundary extends React.Component {
     constructor(props) {
         super(props);
         this.state = { hasError: false, error: null };
+        this.handleGlobalError = this.handleGlobalError.bind(this);
     }
+
+    handleGlobalError(event) {
+        const stack = event.error?.stack || '';
+        // 捕获只有从我们的沙盒（eval / createFunction）里抛出的全局未捕获事件异常
+        if (stack.includes('createFunction') || stack.includes('eval') || stack.includes('<anonymous>')) {
+            this.setState({ hasError: true, error: event.error || new Error(event.message) });
+        }
+    }
+
+    componentDidMount() {
+        window.addEventListener('error', this.handleGlobalError);
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener('error', this.handleGlobalError);
+    }
+
     static getDerivedStateFromError(error) { return { hasError: true, error }; }
     componentDidUpdate(prevProps) {
-        if (prevProps.code !== this.props.code) {
-            if (this.state.hasError) this.setState({ hasError: false, error: null });
+        if (
+            prevProps.code !== this.props.code ||
+            prevProps.libraryCode !== this.props.libraryCode ||
+            prevProps.wrapperCode !== this.props.wrapperCode
+        ) {
+            if (this.state.hasError) {
+                this.setState({ hasError: false, error: null });
+            }
         }
     }
     render() {
@@ -237,7 +261,7 @@ function SandboxPreview({ code, libraryCode, wrapperCode, cssCode }) {
 
     return (
         <div className="w-full h-full flex items-center justify-center overflow-auto p-4">
-            <SandboxErrorBoundary code={code}>
+            <SandboxErrorBoundary code={code} libraryCode={libraryCode} wrapperCode={wrapperCode}>
                 <Component />
             </SandboxErrorBoundary>
         </div>
@@ -271,12 +295,13 @@ const LiveDemoSandbox = ({
     // 自动节流编译（底层库和环境变动延时执行，防止按键输入极其卡顿）
     useEffect(() => {
         const timer = setTimeout(() => {
+            setRunningCode(code);
             setRunningLibraryCode(libraryCode);
             setRunningWrapperCode(wrapperCode);
             setRunningCssCode(cssCode);
         }, 800); // 800ms 防抖
         return () => clearTimeout(timer);
-    }, [libraryCode, wrapperCode, cssCode]);
+    }, [code, libraryCode, wrapperCode, cssCode]);
 
     const updateCode = (newCode) => {
         setCode(newCode);

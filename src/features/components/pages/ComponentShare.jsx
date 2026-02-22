@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import {
     Plus, Share2, Zap, Box, Info, Database,
     ChevronRight, Command, Layout, Boxes,
-    FileCode, Terminal, Maximize2, Minimize2, Palette,
-    Type, Languages, Trash2, ShieldCheck, ChevronUp, ChevronDown, X
+    Terminal, Maximize2, Minimize2, Palette, FileCode, Edit2,
+    Type, Languages, Trash2, ShieldCheck, ChevronUp, ChevronDown, X, HelpCircle
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import LiveDemoSandbox from './codeComponent/demo/LiveDemoSandbox';
@@ -194,39 +194,90 @@ const INIT_CSS = `@keyframes toast-in {
 .animate-toast-in { animation: toast-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 .animate-toast-out { animation: toast-out 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }`;
 
+const INIT_WRAPPER = '<ToastProvider>\n  <ToastContainer />\n  {children}\n</ToastProvider>';
+
+const INIT_SCENARIOS = [
+    {
+        id: '1',
+        titleZh: '交互测试',
+        titleEn: 'Interaction Study',
+        code: 'function Demo() {\n  const toast = useToast();\n  \n  return (\n    <div className="flex flex-col items-center gap-8 p-12">\n       <div className="flex flex-col items-center gap-2 mb-4 text-center">\n         <h3 className="text-sm font-black text-slate-400 uppercase tracking-[0.3em] italic">Toast Architecture</h3>\n         <div className="w-16 h-1 bg-indigo-500 rounded-full" />\n       </div>\n\n       <div className="flex flex-wrap justify-center gap-6">\n         <button \n           onClick={() => toast.success("验证成功 // Verification Success")}\n           className="px-12 py-5 bg-indigo-600 text-white font-black italic rounded-[2.5rem] shadow-xl shadow-indigo-600/20 active:scale-95 transition-all text-[11px] uppercase tracking-widest hover:rotate-1 hover:scale-105"\n         >\n           Run Success\n         </button>\n\n         <button \n           onClick={() => toast.error("系统拦截 // Kernel Violation")}\n           className="px-12 py-5 bg-slate-900 text-white font-black italic rounded-[2.5rem] shadow-xl shadow-black/20 active:scale-95 transition-all text-[11px] uppercase tracking-widest hover:-rotate-1 hover:scale-105"\n         >\n           Run Error\n         </button>\n       </div>\n\n       <div className="mt-8 px-6 py-3 bg-slate-50 border border-slate-100 rounded-2xl">\n         <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest text-center">\n           点击按钮触发全局物理通知容器\n         </p>\n       </div>\n    </div>\n  );\n}'
+    }
+];
+
+const INIT_META = {
+    titleZh: '全局物理通知系统 (Toast)',
+    titleEn: 'Global Kinetic Toast',
+    version: '1.2.0',
+    descriptionZh: '高性能、带物理挤压感和自动进度管理的全局通知组件。',
+    descriptionEn: 'High-performance notification system with kinetic interactions and progress management.'
+};
+
 const ComponentShare = () => {
     const navigate = useNavigate();
     const toast = useToast();
 
     // --- 基础信息状态 ---
     const [meta, setMeta] = useState({
-        titleZh: '全局物理通知系统 (Toast)',
-        titleEn: 'Global Kinetic Toast',
-        version: '1.2.0',
-        descriptionZh: '高性能、带物理挤压感和自动进度管理的全局通知组件。',
-        descriptionEn: 'High-performance notification system with kinetic interactions and progress management.'
+        titleZh: '',
+        titleEn: '',
+        version: '1.0.0',
+        descriptionZh: '',
+        descriptionEn: ''
     });
 
     // --- 核心资产状态 ---
-    const [libFiles, setLibFiles] = useState(INIT_FILES);
+    const [libFiles, setLibFiles] = useState([{ name: 'Index.jsx', content: '' }]);
     const [activeLibIdx, setActiveLibIdx] = useState(0);
-    const [wrapperCode, setWrapperCode] = useState('<ToastProvider>\n  <ToastContainer />\n  {children}\n</ToastProvider>');
-    const [cssCode, setCssCode] = useState(INIT_CSS);
+    const [wrapperCode, setWrapperCode] = useState('');
+    const [cssCode, setCssCode] = useState('');
 
-    // --- 场景状态 (直接使用正式 Demo) ---
+    // --- 场景状态 ---
     const [scenarios, setScenarios] = useState([
-        {
-            id: '1',
-            titleZh: '交互测试',
-            titleEn: 'Interaction Study',
-            code: 'function Demo() {\n  const toast = useToast();\n  \n  return (\n    <div className="flex flex-col items-center gap-8 p-12">\n       <div className="flex flex-col items-center gap-2 mb-4 text-center">\n         <h3 className="text-sm font-black text-slate-400 uppercase tracking-[0.3em] italic">Toast Architecture</h3>\n         <div className="w-16 h-1 bg-indigo-500 rounded-full" />\n       </div>\n\n       <div className="flex flex-wrap justify-center gap-6">\n         <button \n           onClick={() => toast.success("验证成功 // Verification Success")}\n           className="px-12 py-5 bg-indigo-600 text-white font-black italic rounded-[2.5rem] shadow-xl shadow-indigo-600/20 active:scale-95 transition-all text-[11px] uppercase tracking-widest hover:rotate-1 hover:scale-105"\n         >\n           Run Success\n         </button>\n\n         <button \n           onClick={() => toast.error("系统拦截 // Kernel Violation")}\n           className="px-12 py-5 bg-slate-900 text-white font-black italic rounded-[2.5rem] shadow-xl shadow-black/20 active:scale-95 transition-all text-[11px] uppercase tracking-widest hover:-rotate-1 hover:scale-105"\n         >\n           Run Error\n         </button>\n       </div>\n\n       <div className="mt-8 px-6 py-3 bg-slate-50 border border-slate-100 rounded-2xl">\n         <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest text-center">\n           点击按钮触发全局物理通知容器\n         </p>\n       </div>\n    </div>\n  );\n}'
-        }
+        { id: '1', titleZh: '演示', titleEn: 'Demo', code: '' }
     ]);
     const [activeSIdx, setActiveSIdx] = useState(0);
 
     // --- 界面控制状态 ---
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [infTab, setInfTab] = useState('logic');
+
+    // --- 使用样例说明层 ---
+    const [helpModalOpen, setHelpModalOpen] = useState(false);
+    const [helpType, setHelpType] = useState('meta');
+
+    const handleApplySample = () => {
+        if (helpType === 'meta') {
+            setMeta(INIT_META);
+        } else if (helpType === 'logic') {
+            setLibFiles(INIT_FILES);
+            setActiveLibIdx(0);
+        } else if (helpType === 'scenario') {
+            setScenarios(INIT_SCENARIOS);
+            setActiveSIdx(0);
+        } else if (helpType === 'env') {
+            setWrapperCode(INIT_WRAPPER);
+        } else if (helpType === 'css') {
+            setCssCode(INIT_CSS);
+        }
+        setHelpModalOpen(false);
+        toast.success('样例代码已填充至面板！');
+    };
+
+    // --- 场景编辑状态 ---
+    const [editScenarioModalOpen, setEditScenarioModalOpen] = useState(false);
+    const [editingScenarioIndex, setEditingScenarioIndex] = useState(null);
+    const [editScenTitleZh, setEditScenTitleZh] = useState('');
+    const [editScenTitleEn, setEditScenTitleEn] = useState('');
+
+    const handleEditScenarioSubmit = () => {
+        if (editingScenarioIndex === null) return;
+        const newScenarios = [...scenarios];
+        newScenarios[editingScenarioIndex].titleZh = editScenTitleZh;
+        newScenarios[editingScenarioIndex].titleEn = editScenTitleEn;
+        setScenarios(newScenarios);
+        setEditScenarioModalOpen(false);
+    };
 
     // --- 文件操作 ---
     const [addModalOpen, setAddModalOpen] = useState(false);
@@ -329,8 +380,9 @@ const ComponentShare = () => {
                 <aside className="w-[320px] flex-shrink-0 bg-white border-r border-slate-200 flex flex-col overflow-y-auto custom-scrollbar">
                     <div className="p-6 space-y-10">
                         <section className="space-y-6">
-                            <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic flex items-center gap-2">
-                                <Database className="w-4 h-4 text-indigo-500" /> 注册元数据
+                            <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic flex items-center justify-between">
+                                <span className="flex items-center gap-2"><Database className="w-4 h-4 text-indigo-500" /> 注册元数据</span>
+                                <button onClick={() => { setHelpType('meta'); setHelpModalOpen(true); }} className="p-1 hover:bg-slate-50 rounded text-slate-300 hover:text-indigo-600 transition-colors"><HelpCircle className="w-4 h-4" /></button>
                             </div>
 
                             <div className="space-y-4">
@@ -361,27 +413,40 @@ const ComponentShare = () => {
                                 <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic flex items-center gap-2">
                                     <Zap className="w-4 h-4 text-amber-500" /> 测试用例场景
                                 </span>
-                                <button onClick={() => {
-                                    const id = Date.now().toString();
-                                    setScenarios([...scenarios, { id, titleZh: '新测试', titleEn: 'New Study', code: 'function Demo() {\n  return <div>New</div>;\n}' }]);
-                                    setActiveSIdx(scenarios.length);
-                                }} className="p-1 hover:bg-slate-50 rounded-lg text-indigo-600 transition-all active:scale-125">
-                                    <Plus className="w-5 h-5" />
-                                </button>
+                                <div className="flex items-center gap-1">
+                                    <button onClick={() => { setHelpType('scenario'); setHelpModalOpen(true); }} className="p-1 hover:bg-slate-50 rounded-lg text-slate-300 hover:text-indigo-600 transition-colors">
+                                        <HelpCircle className="w-4 h-4" />
+                                    </button>
+                                    <button onClick={() => {
+                                        const id = Date.now().toString();
+                                        setScenarios([...scenarios, { id, titleZh: '新测试', titleEn: 'New Study', code: 'function Demo() {\n  return <div>New</div>;\n}' }]);
+                                        setActiveSIdx(scenarios.length);
+                                    }} className="p-1 hover:bg-slate-50 rounded-lg text-indigo-600 transition-all active:scale-125">
+                                        <Plus className="w-5 h-5" />
+                                    </button>
+                                </div>
                             </div>
                             <div className="space-y-2">
                                 {scenarios.map((s, i) => (
                                     <div key={s.id} onClick={() => setActiveSIdx(i)} className={`relative group px-5 py-4 rounded-2xl cursor-pointer border transition-all ${activeSIdx === i ? 'bg-indigo-600 border-indigo-600 shadow-xl' : 'bg-white border-slate-100 hover:border-slate-200'}`}>
                                         <div className={`text-[11px] font-black uppercase italic mb-1 ${activeSIdx === i ? 'text-white' : 'text-slate-900'}`}>{s.titleEn}</div>
                                         <div className={`text-[9px] font-bold ${activeSIdx === i ? 'text-indigo-100' : 'text-slate-400'}`}>{s.titleZh}</div>
-                                        {scenarios.length > 1 && (
+                                        <div className="absolute top-4 right-4 flex opacity-0 group-hover:opacity-100 transition-all gap-1">
                                             <button
-                                                onClick={(e) => { e.stopPropagation(); setScenarios(scenarios.filter(x => x.id !== s.id)); setActiveSIdx(0); }}
-                                                className={`absolute top-4 right-4 p-1.5 opacity-0 group-hover:opacity-100 transition-all ${activeSIdx === i ? 'text-white/40 hover:text-white' : 'text-slate-200 hover:text-rose-500'}`}
+                                                onClick={(e) => { e.stopPropagation(); setEditingScenarioIndex(i); setEditScenTitleZh(s.titleZh); setEditScenTitleEn(s.titleEn); setEditScenarioModalOpen(true); }}
+                                                className={`p-1.5 transition-all outline-none ${activeSIdx === i ? 'text-white/40 hover:text-white' : 'text-slate-200 hover:text-indigo-500'}`}
                                             >
-                                                <Trash2 className="w-3.5 h-3.5" />
+                                                <Edit2 className="w-3.5 h-3.5" />
                                             </button>
-                                        )}
+                                            {scenarios.length > 1 && (
+                                                <button
+                                                    onClick={(e) => { e.stopPropagation(); setScenarios(scenarios.filter(x => x.id !== s.id)); setActiveSIdx(0); }}
+                                                    className={`p-1.5 transition-all outline-none ${activeSIdx === i ? 'text-white/40 hover:text-white' : 'text-slate-200 hover:text-rose-500'}`}
+                                                >
+                                                    <Trash2 className="w-3.5 h-3.5" />
+                                                </button>
+                                            )}
+                                        </div>
                                     </div>
                                 ))}
                             </div>
@@ -445,7 +510,10 @@ const ComponentShare = () => {
                                     <motion.div key="logic" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex-1 flex h-full overflow-hidden">
                                         <div className="w-64 flex-shrink-0 bg-white border-r border-slate-200 p-4 flex flex-col h-full">
                                             <div className="flex items-center justify-between mb-4 px-2">
-                                                <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Files</span>
+                                                <div className="flex items-center gap-2">
+                                                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Files</span>
+                                                    <button onClick={() => { setHelpType('logic'); setHelpModalOpen(true); }} className="p-1 hover:bg-slate-100 rounded text-slate-300 hover:text-indigo-600 transition-colors"><HelpCircle className="w-3.5 h-3.5" /></button>
+                                                </div>
                                                 <button onClick={() => { setNewFileName('NewComponent.jsx'); setAddModalOpen(true); }} className="p-1 hover:bg-slate-100 rounded text-slate-400 hover:text-indigo-600 transition-colors">
                                                     <Plus className="w-3.5 h-3.5" />
                                                 </button>
@@ -482,11 +550,17 @@ const ComponentShare = () => {
                                 )}
                                 {infTab === 'env' && (
                                     <motion.div key="env" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex-1 h-full relative">
+                                        <div className="absolute top-4 right-8 z-10">
+                                            <button onClick={() => { setHelpType('env'); setHelpModalOpen(true); }} className="p-2 rounded-xl text-slate-400 hover:bg-slate-50 hover:text-indigo-600 transition-colors shadow-sm bg-white border border-slate-100" title="获取外层包裹样例"><HelpCircle className="w-4 h-4" /></button>
+                                        </div>
                                         <textarea value={wrapperCode} onChange={e => setWrapperCode(e.target.value)} className="absolute inset-0 w-full h-full bg-white p-10 text-[14px] font-mono text-slate-700 outline-none resize-none" spellCheck={false} />
                                     </motion.div>
                                 )}
                                 {infTab === 'css' && (
                                     <motion.div key="css" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex-1 h-full relative">
+                                        <div className="absolute top-4 right-8 z-10">
+                                            <button onClick={() => { setHelpType('css'); setHelpModalOpen(true); }} className="p-2 rounded-xl text-slate-400 hover:bg-slate-50 hover:text-indigo-600 transition-colors shadow-sm bg-white border border-slate-100" title="获取CSS样式样例"><HelpCircle className="w-4 h-4" /></button>
+                                        </div>
                                         <textarea value={cssCode} onChange={e => setCssCode(e.target.value)} className="absolute inset-0 w-full h-full bg-white p-10 text-[14px] font-mono text-slate-700 outline-none resize-none" spellCheck={false} />
                                     </motion.div>
                                 )}
@@ -559,6 +633,83 @@ const ComponentShare = () => {
                             {fileToDeleteIdx !== null ? libFiles[fileToDeleteIdx].name : ''}
                         </span>
                         <p className="text-[12px] text-slate-400 mt-2">一旦删除，本地将丢失该文件的源码结构，是否强行覆盖执行？</p>
+                    </div>
+                </div>
+            </Modal>
+
+            <Modal
+                isOpen={helpModalOpen}
+                onClose={() => setHelpModalOpen(false)}
+                title={
+                    <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center">
+                            <HelpCircle className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+                        </div>
+                        <span className="text-[14px]">预置样例库 - {helpType.toUpperCase()}</span>
+                    </div>
+                }
+                width="max-w-[420px]"
+                footer={
+                    <>
+                        <button onClick={() => setHelpModalOpen(false)} className="px-5 py-2.5 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all">取消</button>
+                        <button onClick={handleApplySample} className="px-6 py-2.5 rounded-xl text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 shadow-lg shadow-indigo-600/20 active:scale-95 transition-all">
+                            一键装载
+                        </button>
+                    </>
+                }
+            >
+                <div className="py-2 text-[13px] text-slate-600 dark:text-slate-300 leading-relaxed font-medium">
+                    这是一项开发向导功能。点击下方按钮后，我们将为您本环节自动填入 <strong>『全局物理通知组件 (Toast)』</strong> 的标准工程测试数据。<br /><br />
+                    {helpType === 'meta' && '该操作将会为您填入 Toast 组件的完整基本信息（中英文名称、描述及版本），跳过繁杂的手动录入。'}
+                    {helpType === 'scenario' && '该操作将会一键填充一份同时包含了 { 成功态 / 失败态 / 进度流 } 等交互机制的完整 React DOM 运行场景。'}
+                    {helpType === 'logic' && '该操作将会为您直接写入 ToastContext、ToastItem 和 ToastContainer 三个具备相互依赖关系的核心架构文件。'}
+                    {helpType === 'env' && '该操作将会为您填入 <ToastProvider /> 等全量外层上下文节点，使您的演示代码能够正常接管全局路由或顶层依赖。'}
+                    {helpType === 'css' && '该操作将会为您补充 Toast 高性能进退场的 CSS Keyframes 等基底渲染数据。'}
+                </div>
+            </Modal>
+
+            <Modal
+                isOpen={editScenarioModalOpen}
+                onClose={() => setEditScenarioModalOpen(false)}
+                title={
+                    <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center">
+                            <Edit2 className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+                        </div>
+                        <span className="text-[14px]">修改测试场景信息</span>
+                    </div>
+                }
+                width="max-w-[400px]"
+                footer={
+                    <>
+                        <button onClick={() => setEditScenarioModalOpen(false)} className="px-5 py-2.5 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all">取消</button>
+                        <button onClick={handleEditScenarioSubmit} className="px-6 py-2.5 rounded-xl text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 shadow-lg shadow-indigo-600/20 active:scale-95 transition-all">
+                            保存修改
+                        </button>
+                    </>
+                }
+            >
+                <div className="space-y-4 py-2">
+                    <div>
+                        <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest pl-1 block mb-2">中文名称</label>
+                        <input
+                            autoFocus
+                            value={editScenTitleZh}
+                            onChange={(e) => setEditScenTitleZh(e.target.value)}
+                            onKeyDown={(e) => { if (e.key === 'Enter') handleEditScenarioSubmit(); }}
+                            className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl text-[13px] font-bold text-slate-900 dark:text-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 outline-none transition-all placeholder:text-slate-300 dark:placeholder:text-slate-700"
+                            placeholder="输入场景中文名..."
+                        />
+                    </div>
+                    <div>
+                        <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest pl-1 block mb-2">English Title</label>
+                        <input
+                            value={editScenTitleEn}
+                            onChange={(e) => setEditScenTitleEn(e.target.value)}
+                            onKeyDown={(e) => { if (e.key === 'Enter') handleEditScenarioSubmit(); }}
+                            className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl text-[13px] font-bold text-slate-900 dark:text-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 outline-none transition-all placeholder:text-slate-300 dark:placeholder:text-slate-700"
+                            placeholder="e.g. Interaction Study"
+                        />
                     </div>
                 </div>
             </Modal>
