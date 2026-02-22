@@ -4,8 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
 
 /**
- * 企业级通用弹窗组件
- * 已修复：Framer Motion 字体抖动/移位问题、AnimatePresence 退出动画失效问题
+ * 通用弹窗组件
  */
 const Modal = ({
     isOpen,
