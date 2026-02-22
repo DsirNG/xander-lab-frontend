@@ -8,7 +8,17 @@
 @plugin "@tailwindcss/typography";
 
 @theme {
-  --color-primary: #4f39f6;
+  --color-primary: #36f;
+  --color-primary-50: #e6f3ff;
+  --color-primary-100: #cce7ff;
+  --color-primary-200: #99ceff;
+  --color-primary-300: #66b4ff;
+  --color-primary-400: #339bff;
+  --color-primary-500: #36f;
+  --color-primary-600: #005ce6;
+  --color-primary-700: #0047b3;
+  --color-primary-800: #003380;
+  --color-primary-900: #001f4d;
   --color-primary-dark: #f2f2f2;
   --color-background-light: #ffffff;
   --color-surface-light: #f8fafc;
@@ -96,9 +106,19 @@ html {
 
 @layer base {
   :root {
-    --primary: #3b82f6;
-
-    --primary-light: #60a5fa;
+    --primary: #36f;
+    --primary-50: #e6f3ff;
+    --primary-100: #cce7ff;
+    --primary-200: #99ceff;
+    --primary-300: #66b4ff;
+    --primary-400: #339bff;
+    --primary-500: #36f;
+    --primary-600: #005ce6;
+    --primary-700: #0047b3;
+    --primary-800: #003380;
+    --primary-900: #001f4d;
+  
+    --primary-light: #339bff;
   }
 
   html {

@@ -64,12 +64,12 @@ const ComponentContent = ({ component }) => {
             {isShared && (
                 <div className="mb-20">
                     <div className="flex items-center gap-4 mb-8">
-                        <div className="p-3 rounded-2xl bg-indigo-500/10 text-indigo-500">
+                        <div className="p-3 rounded-2xl bg-primary/10 text-primary">
                             <Code className="w-6 h-6" />
                         </div>
                         <div className="flex-1">
                             <h3 className="text-lg font-black text-slate-800  uppercase tracking-tight">
-                                技术实现概览 <span className="text-indigo-500 text-xs ml-2 opacity-50 font-black">Implementation Analysis</span>
+                                技术实现概览 <span className="text-primary text-xs ml-2 opacity-50 font-black">Implementation Analysis</span>
                             </h3>
                             <p className="text-xs text-slate-500 font-bold">该组件包含自定义逻辑层，点击右上角按钮查看完整架构解析。</p>
                         </div>
@@ -78,7 +78,7 @@ const ComponentContent = ({ component }) => {
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                         <div className="group relative rounded-[2rem] border border-slate-200  bg-white /50 p-8 hover:shadow-2xl transition-all h-full flex flex-col">
                             <div className="flex items-center gap-3 mb-4">
-                                <Code className="w-4 h-4 text-indigo-500" />
+                                <Code className="w-4 h-4 text-primary" />
                                 <span className="text-xs font-black uppercase tracking-widest text-slate-400">核心逻辑 (Lib)</span>
                             </div>
                             <div className="flex-1 max-h-[200px] overflow-hidden relative rounded-xl border border-slate-100 ">
@@ -112,19 +112,19 @@ const ComponentContent = ({ component }) => {
                             </div>
                         )}
 
-                        <div className={`bg-indigo-600 rounded-[2rem] p-8 text-white flex flex-col justify-center relative overflow-hidden group ${!component.cssCode ? 'lg:col-span-2' : ''}`}>
+                        <div className={`bg-primary rounded-[2rem] p-8 text-white flex flex-col justify-center relative overflow-hidden group ${!component.cssCode ? 'lg:col-span-2' : ''}`}>
                             {/* 装饰背景 */}
                             <div className="absolute -right-8 -bottom-8 w-40 h-40 bg-white/10 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700" />
 
                             <h4 className="text-2xl font-black mb-4 tracking-tighter italic uppercase leading-tight">
                                 深入理解此组件的<br />运行机制
                             </h4>
-                            <p className="text-sm text-indigo-100 font-medium mb-8 leading-relaxed opacity-80">
+                            <p className="text-sm text-primary-100 font-medium mb-8 leading-relaxed opacity-80">
                                 不仅是 UI 演示。查看我们如何通过 Context API 和自定义 Hooks 构建这一交互系统。
                             </p>
                             <Link
                                 to={`/components/${component.id}/guide`}
-                                className="inline-flex items-center justify-center bg-white text-indigo-600 px-6 py-3 rounded-xl font-black text-xs hover:scale-105 active:scale-95 transition-all shadow-xl shadow-black/10"
+                                className="inline-flex items-center justify-center bg-white text-primary px-6 py-3 rounded-xl font-black text-xs hover:scale-105 active:scale-95 transition-all shadow-xl shadow-black/10"
                             >
                                 查看完整实现指南
                             </Link>
@@ -136,8 +136,8 @@ const ComponentContent = ({ component }) => {
             {component.sourceCode && (
                 <div className="mt-16 pt-10 border-t border-slate-100 ">
                     <div className="flex items-center gap-3 mb-6">
-                        <div className="p-2.5 bg-indigo-500/10 rounded-xl">
-                            <Code className="w-5 h-5 text-indigo-500" />
+                        <div className="p-2.5 bg-primary/10 rounded-xl">
+                            <Code className="w-5 h-5 text-primary" />
                         </div>
                         <div>
                             <h3 className="text-xl font-black text-slate-900 ">组件实现源码</h3>

@@ -117,7 +117,7 @@ const BlogHome = () => {
                 <div className="flex items-center gap-3">
                     <button
                         onClick={() => navigate('publish')}
-                        className="flex items-center px-4 py-2 text-xs font-black text-white bg-indigo-600 rounded-full hover:bg-slate-900 transition-all shadow-lg shadow-indigo-600/20 active:scale-95"
+                        className="flex items-center px-4 py-2 text-xs font-black text-white bg-primary rounded-full hover:bg-slate-900 transition-all shadow-lg shadow-primary/20 active:scale-95"
                     >
                         <Plus className="w-4 h-4 mr-1" />
                         {t('blog.publish')}

@@ -39,7 +39,7 @@ const TourSpotlight = ({ targetConfig, onSkip }) => {
             <div className="absolute right-0 bg-slate-900/40 backdrop-blur-[2px] transition-all duration-300 pointer-events-auto" style={{ top: topHeight, height: rect.height + pad * 2, left: rect.left + rect.width + pad }} />
 
             {/* 炫酷的光晕洞口引导线 */}
-            <div className="absolute rounded-xl pointer-events-none border-2 border-indigo-400 animate-ping opacity-40"
+            <div className="absolute rounded-xl pointer-events-none border-2 border-primary-400 animate-ping opacity-40"
                 style={{ top: rect.top - pad, left: rect.left - pad, width: rect.width + pad * 2, height: rect.height + pad * 2 }}
             />
             <div className="absolute rounded-xl pointer-events-none border-2 border-white/60 shadow-[0_0_20px_rgba(255,255,255,0.6)] transition-all duration-300"
@@ -55,15 +55,15 @@ const TourSpotlight = ({ targetConfig, onSkip }) => {
                     width: 320
                 }}
             >
-                <div className="bg-indigo-600 text-white p-5 rounded-2xl shadow-[0_30px_60px_-15px_rgba(79,70,229,0.5)] border border-indigo-400/30">
+                <div className="bg-primary text-white p-5 rounded-2xl shadow-[0_30px_60px_-15px_rgba(79,70,229,0.5)] border border-primary-400/30">
                     <div className="flex items-center justify-between mb-3">
                         <div className="flex items-center gap-2">
                             <Compass className="w-4 h-4 text-amber-300" />
                             <h4 className="font-black text-[13px] uppercase tracking-widest">{targetConfig.text}</h4>
                         </div>
-                        <button onClick={onSkip} className="text-indigo-200 hover:text-white transition-colors text-[9px] uppercase font-bold tracking-widest px-2 py-1 bg-indigo-700/50 rounded-lg">Skip // 退出</button>
+                        <button onClick={onSkip} className="text-primary-200 hover:text-white transition-colors text-[9px] uppercase font-bold tracking-widest px-2 py-1 bg-primary-700/50 rounded-lg">Skip // 退出</button>
                     </div>
-                    <p className="text-indigo-50 text-[12px] font-medium leading-relaxed opacity-90">{targetConfig.desc}</p>
+                    <p className="text-primary-50 text-[12px] font-medium leading-relaxed opacity-90">{targetConfig.desc}</p>
                 </div>
             </div>
         </div>,

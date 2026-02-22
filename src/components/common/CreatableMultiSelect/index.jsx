@@ -64,7 +64,7 @@ const CreatableMultiSelect = ({
     return (
         <div
             ref={containerRef}
-            className={`relative flex flex-wrap gap-2 min-h-[56px] p-3 bg-white  border border-slate-200/60  rounded-2xl focus-within:border-indigo-500 focus-within:ring-4 focus-within:ring-indigo-500/10 transition-all shadow-sm ${className}`}
+            className={`relative flex flex-wrap gap-2 min-h-[56px] p-3 bg-white  border border-slate-200/60  rounded-2xl focus-within:border-primary focus-within:ring-4 focus-within:ring-primary/10 transition-all shadow-sm ${className}`}
             onClick={() => inputRef.current?.focus()}
         >
             {value.map(item => (
@@ -104,7 +104,7 @@ const CreatableMultiSelect = ({
                                         e.stopPropagation();
                                         addItem(item);
                                     }}
-                                    className="px-4 py-2.5 text-[12px] font-medium text-slate-600  hover:bg-slate-50 hover:text-indigo-600 cursor-pointer transition-colors flex items-center gap-2"
+                                    className="px-4 py-2.5 text-[12px] font-medium text-slate-600  hover:bg-slate-50 hover:text-primary cursor-pointer transition-colors flex items-center gap-2"
                                 >
                                     <Hash className="w-3.5 h-3.5 opacity-50" /> {item}
                                 </div>

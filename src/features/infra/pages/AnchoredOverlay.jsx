@@ -105,8 +105,8 @@ const AnchoredOverlay = () => {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 {t('infra.anchored.files', { returnObjects: true }).map((file, i) => (
                                     <div key={i} className="flex items-center space-x-4 bg-white/5 border border-white/10 rounded-2xl p-4 hover:bg-white/10 transition-colors">
-                                        <div className="p-2 bg-blue-500/20 rounded-lg">
-                                            <Box className="w-5 h-5 text-blue-400" />
+                                        <div className="p-2 bg-primary/20 rounded-lg">
+                                            <Box className="w-5 h-5 text-primary" />
                                         </div>
                                         <div>
                                             <p className="text-white font-mono text-sm">{file.name}</p>

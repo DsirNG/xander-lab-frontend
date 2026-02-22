@@ -216,11 +216,11 @@ const MultiFileTransferDemo = () => {
                                         onDragEnd={dragDrop.handleDragEnd}
                                         onClick={() => toggleSelect(file.id)}
                                         className={`group flex items-center p-3 rounded-2xl cursor-pointer transition-all duration-300 ${isSelected
-                                            ? 'bg-indigo-50 ring-1 ring-indigo-500/20'
+                                            ? 'bg-primary-50 ring-1 ring-primary/20'
                                             : 'hover:bg-slate-50 '
                                             }`}
                                     >
-                                        <div className={`mr-4 w-12 h-12 flex items-center justify-center rounded-xl transition-all duration-300 ${isSelected ? 'bg-indigo-500 scale-110 shadow-lg shadow-indigo-500/30' : 'bg-slate-100 '
+                                        <div className={`mr-4 w-12 h-12 flex items-center justify-center rounded-xl transition-all duration-300 ${isSelected ? 'bg-primary scale-110 shadow-lg shadow-primary/30' : 'bg-slate-100 '
                                             }`}>
                                             {isSelected ? (
                                                 <Layers className="w-5 h-5 text-white" />
@@ -229,17 +229,17 @@ const MultiFileTransferDemo = () => {
                                             )}
                                         </div>
                                         <div className="flex-grow">
-                                            <p className={`text-sm font-bold ${isSelected ? 'text-indigo-600' : 'text-slate-600 '}`}>
+                                            <p className={`text-sm font-bold ${isSelected ? 'text-primary' : 'text-slate-600 '}`}>
                                                 {file.name}
                                             </p>
                                             <p className="text-[10px] text-slate-400 font-semibold">{file.size}</p>
                                         </div>
                                         {isSelected && (
-                                            <div className="bg-indigo-500 text-white text-[9px] font-black px-2 py-1 rounded-full animate-pulse">
+                                            <div className="bg-primary text-white text-[9px] font-black px-2 py-1 rounded-full animate-pulse">
                                                 READY
                                             </div>
                                         )}
-                                        <GripVertical className={`ml-4 w-4 h-4 transition-colors ${isSelected ? 'text-indigo-300' : 'text-slate-200 group-hover:text-slate-400'}`} />
+                                        <GripVertical className={`ml-4 w-4 h-4 transition-colors ${isSelected ? 'text-primary-300' : 'text-slate-200 group-hover:text-slate-400'}`} />
                                     </motion.div>
                                 );
                             })}
@@ -254,7 +254,7 @@ const MultiFileTransferDemo = () => {
 
                     <div className="p-6 bg-slate-50 /30 border-t border-slate-100 ">
                         <div className="flex items-center space-x-3 text-xs font-bold text-slate-400">
-                            <span className="w-2 h-2 rounded-full bg-indigo-500 animate-ping" />
+                            <span className="w-2 h-2 rounded-full bg-primary animate-ping" />
                             <span>{selectedIds.size} ITEMS READY FOR TRANSFER</span>
                         </div>
                     </div>
@@ -269,18 +269,18 @@ const MultiFileTransferDemo = () => {
                             onDragLeave={dragDrop.handleDragLeave}
                             onDrop={(e) => dragDrop.handleDrop(folder, e)}
                             className={`p-8 rounded-[2.5rem] border-2 border-dashed transition-all duration-500 relative min-h-[220px] group ${dragDrop.dragOverItem?.id === folder.id
-                                ? 'border-indigo-500 bg-indigo-500/10 scale-[1.02] shadow-2xl shadow-indigo-500/20'
+                                ? 'border-primary bg-primary/10 scale-[1.02] shadow-2xl shadow-primary/20'
                                 : 'border-slate-200  hover:border-slate-300 shadow-sm'
                                 }`}
                         >
                             <div className="pointer-events-none">
                                 <div className="flex items-start justify-between mb-6">
-                                    <div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all duration-300 ${dragDrop.dragOverItem?.id === folder.id ? 'bg-indigo-600 text-white rotate-12 scale-110 shadow-xl' : 'bg-slate-100  text-slate-400 group-hover:-rotate-3'
+                                    <div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all duration-300 ${dragDrop.dragOverItem?.id === folder.id ? 'bg-primary text-white rotate-12 scale-110 shadow-xl' : 'bg-slate-100  text-slate-400 group-hover:-rotate-3'
                                         }`}>
                                         {dragDrop.dragOverItem?.id === folder.id ? <FolderOpen className="w-7 h-7" /> : <Box className="w-7 h-7" />}
                                     </div>
                                     <div className="text-right">
-                                        <p className="text-[10px] font-black text-indigo-500 mb-1">TARGET NODE</p>
+                                        <p className="text-[10px] font-black text-primary mb-1">TARGET NODE</p>
                                         <h4 className="font-black text-slate-800 ">{folder.name}</h4>
                                     </div>
                                 </div>
@@ -312,9 +312,9 @@ const MultiFileTransferDemo = () => {
                                     animate={{ opacity: 1, scale: 1 }}
                                     className="absolute inset-0 flex items-center justify-center z-10 p-4 pointer-events-none"
                                 >
-                                    <div className="w-full h-full rounded-[2rem] bg-indigo-600/10 backdrop-blur-sm border-2 border-indigo-500 border-dashed flex flex-col items-center justify-center">
-                                        <Files className="w-10 h-10 text-indigo-500 mb-3 animate-bounce" />
-                                        <p className="text-indigo-600 text-sm font-black tracking-widest uppercase">Release to transfer</p>
+                                    <div className="w-full h-full rounded-[2rem] bg-primary/10 backdrop-blur-sm border-2 border-primary border-dashed flex flex-col items-center justify-center">
+                                        <Files className="w-10 h-10 text-primary mb-3 animate-bounce" />
+                                        <p className="text-primary text-sm font-black tracking-widest uppercase">Release to transfer</p>
                                     </div>
                                 </motion.div>
                             )}

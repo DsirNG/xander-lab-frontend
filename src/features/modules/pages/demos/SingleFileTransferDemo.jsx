@@ -85,7 +85,7 @@ const createPremiumDragPreview = (item) => {
     const hint = document.createElement('div');
     hint.style.marginTop = '8px';
     hint.style.padding = '8px 16px';
-    hint.style.background = '#0ea5e9';
+    hint.style.background = '#36f';
     hint.style.borderRadius = '12px';
     hint.style.color = 'white';
     hint.style.fontSize = '12px';
@@ -93,7 +93,7 @@ const createPremiumDragPreview = (item) => {
     hint.style.display = 'none';
     hint.style.alignItems = 'center';
     hint.style.gap = '8px';
-    hint.style.boxShadow = '0 10px 15px -3px rgba(14, 165, 233, 0.3)';
+    hint.style.boxShadow = '0 10px 15px -3px rgba(51, 102, 255, 0.3)';
     hint.style.width = 'fit-content';
     hint.style.margin = '8px auto 0';
 

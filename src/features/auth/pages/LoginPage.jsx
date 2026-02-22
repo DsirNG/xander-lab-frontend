@@ -118,7 +118,7 @@ const LoginPage = () => {
             >
                 {/* 装饰发光背景 */}
                 <div className="absolute -top-20 -right-20 w-64 h-64 bg-primary/10 rounded-full blur-[100px] animate-pulse" />
-                <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-indigo-500/10 rounded-full blur-[100px] animate-pulse delay-700" />
+                <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-primary/10 rounded-full blur-[100px] animate-pulse delay-700" />
 
                 <div className="relative bg-white/70 /40 backdrop-blur-3xl border border-white/40  rounded-[3.5rem] shadow-[0_32px_128px_-32px_rgba(0,0,0,0.15)] overflow-hidden">
 

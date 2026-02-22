@@ -89,7 +89,7 @@ const BlogPublish = () => {
                     </button>
                     <div className="h-4 w-px bg-slate-200 "></div>
                     <span className="text-xs font-black uppercase tracking-widest text-slate-900  flex items-center gap-2">
-                        <span className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse ring-4 ring-indigo-500/20"></span>
+                        <span className="w-2 h-2 rounded-full bg-primary animate-pulse ring-4 ring-primary/20"></span>
                         {t('blog.publishTitle')}
                     </span>
                 </div>
@@ -101,7 +101,7 @@ const BlogPublish = () => {
                     <button
                         onClick={handlePublish}
                         disabled={loading}
-                        className="px-6 py-2 bg-slate-900  hover:bg-indigo-600  text-white  hover:text-white rounded-xl text-xs font-black shadow-lg shadow-indigo-600/0 hover:shadow-indigo-600/30 transition-all active:scale-95 disabled:opacity-50 flex items-center gap-2"
+                        className="px-6 py-2 bg-slate-900  hover:bg-primary  text-white  hover:text-white rounded-xl text-xs font-black shadow-lg shadow-primary/0 hover:shadow-primary/30 transition-all active:scale-95 disabled:opacity-50 flex items-center gap-2"
                     >
                         {loading ? (
                             <><Loader2 className="w-4 h-4 animate-spin" /> {t('blog.publishing')}</>
@@ -119,13 +119,13 @@ const BlogPublish = () => {
                         <div className="flex bg-slate-100/80 /80 backdrop-blur-md p-1 rounded-2xl border border-slate-200/50 /50 shadow-sm">
                             <button
                                 onClick={() => { setIsPreview(false); setTimeout(() => contentTextareaRef.current?.focus(), 10); }}
-                                className={`flex items-center gap-2 px-5 py-2 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all ${!isPreview ? 'bg-white  text-indigo-600 shadow-sm scale-100' : 'text-slate-500 hover:text-slate-700  hover:bg-slate-200/50  scale-95'}`}
+                                className={`flex items-center gap-2 px-5 py-2 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all ${!isPreview ? 'bg-white  text-primary shadow-sm scale-100' : 'text-slate-500 hover:text-slate-700  hover:bg-slate-200/50  scale-95'}`}
                             >
                                 <Edit3 className="w-4 h-4" /> <span className="hidden sm:inline">编辑</span>
                             </button>
                             <button
                                 onClick={() => setIsPreview(true)}
-                                className={`flex items-center gap-2 px-5 py-2 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all ${isPreview ? 'bg-white  text-indigo-600 shadow-sm scale-100' : 'text-slate-500 hover:text-slate-700  hover:bg-slate-200/50  scale-95'}`}
+                                className={`flex items-center gap-2 px-5 py-2 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all ${isPreview ? 'bg-white  text-primary shadow-sm scale-100' : 'text-slate-500 hover:text-slate-700  hover:bg-slate-200/50  scale-95'}`}
                             >
                                 <Eye className="w-4 h-4" /> <span className="hidden sm:inline">预览</span>
                             </button>
@@ -137,7 +137,7 @@ const BlogPublish = () => {
                             {/* 标题 */}
                             <div className="relative group">
                                 {!isPreview && (
-                                    <div className="absolute -left-10 top-5 text-slate-200 pointer-events-none transition-colors group-focus-within:text-indigo-500">
+                                    <div className="absolute -left-10 top-5 text-slate-200 pointer-events-none transition-colors group-focus-within:text-primary">
                                         <Type className="w-6 h-6" />
                                     </div>
                                 )}
@@ -156,7 +156,7 @@ const BlogPublish = () => {
 
                             {/* 内容区 */}
                             <div className={`flex-1 relative group ${isPreview ? 'hidden' : 'flex'}`}>
-                                <div className="absolute -left-10 top-2 text-slate-200 pointer-events-none transition-colors group-focus-within:text-indigo-500">
+                                <div className="absolute -left-10 top-2 text-slate-200 pointer-events-none transition-colors group-focus-within:text-primary">
                                     <Hash className="w-6 h-6" />
                                 </div>
                                 <textarea
@@ -205,7 +205,7 @@ const BlogPublish = () => {
                             {/* 分类 / Category */}
                             <section className="space-y-4 mb-10">
                                 <div className="flex items-center gap-2 text-slate-500 group">
-                                    <Layout className="w-4 h-4 group-hover:text-indigo-500 transition-colors" />
+                                    <Layout className="w-4 h-4 group-hover:text-primary transition-colors" />
                                     <span className="text-[10px] font-black uppercase tracking-widest">{t('blog.categoryLabel')}</span>
                                 </div>
                                 <CustomSelect
@@ -221,7 +221,7 @@ const BlogPublish = () => {
                             <section className="space-y-4 mb-10 relative">
                                 <div className="flex items-center justify-between group mb-2">
                                     <div className="flex items-center gap-2 text-slate-500">
-                                        <TagIcon className="w-4 h-4 group-hover:text-indigo-500 transition-colors" />
+                                        <TagIcon className="w-4 h-4 group-hover:text-primary transition-colors" />
                                         <span className="text-[10px] font-black uppercase tracking-widest">{t('blog.tagLabel')}</span>
                                     </div>
                                     <span className="text-[10px] text-slate-400 font-medium">Press Enter ↵</span>
@@ -237,7 +237,7 @@ const BlogPublish = () => {
                             <section className="space-y-4">
                                 <div className="flex items-center justify-between group">
                                     <div className="flex items-center gap-2 text-slate-500">
-                                        <AlignLeft className="w-4 h-4 group-hover:text-indigo-500 transition-colors" />
+                                        <AlignLeft className="w-4 h-4 group-hover:text-primary transition-colors" />
                                         <span className="text-[10px] font-black uppercase tracking-widest">{t('blog.summaryLabel')}</span>
                                     </div>
                                     <span className={`text-[10px] font-medium ${formData.summary.length > 200 ? 'text-rose-500' : 'text-slate-400'}`}>
@@ -248,7 +248,7 @@ const BlogPublish = () => {
                                     value={formData.summary}
                                     onChange={e => setFormData({ ...formData, summary: e.target.value })}
                                     placeholder={t('blog.summaryPlaceholder')}
-                                    className="w-full bg-white  border border-slate-200/60  rounded-2xl px-5 py-4 text-sm leading-relaxed outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all resize-none h-40 shadow-sm text-slate-800  placeholder:text-slate-400 custom-scrollbar"
+                                    className="w-full bg-white  border border-slate-200/60  rounded-2xl px-5 py-4 text-sm leading-relaxed outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all resize-none h-40 shadow-sm text-slate-800  placeholder:text-slate-400 custom-scrollbar"
                                 />
                             </section>
                         </div>

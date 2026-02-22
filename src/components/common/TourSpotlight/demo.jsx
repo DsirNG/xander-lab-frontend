@@ -48,7 +48,7 @@ export const TourSpotlightDemo = () => {
             {/* 顶层触发器 */}
             <button
                 onClick={() => setTourStep(0)}
-                className="px-6 py-2.5 bg-indigo-600 text-white rounded-xl shadow-lg shadow-indigo-600/30 text-xs font-bold active:scale-95 transition-all text-center"
+                className="px-6 py-2.5 bg-primary text-white rounded-xl shadow-lg shadow-primary/30 text-xs font-bold active:scale-95 transition-all text-center"
             >
                 <Play className="w-4 h-4 inline-block mr-2" />
                 在这儿测试：点击启动向导示范！
@@ -59,7 +59,7 @@ export const TourSpotlightDemo = () => {
                 <button
                     id="demo-btn-1"
                     onClick={() => { if (tourStep === 0) handleNextStep(); }}
-                    className={`px-8 py-4 bg-white border border-slate-200 shadow-xl rounded-2xl text-[14px] font-black tracking-widest transition-all ${tourStep === 0 ? 'ring-4 ring-indigo-500/50 relative z-10' : ''}`}
+                    className={`px-8 py-4 bg-white border border-slate-200 shadow-xl rounded-2xl text-[14px] font-black tracking-widest transition-all ${tourStep === 0 ? 'ring-4 ring-primary/50 relative z-10' : ''}`}
                 >
                     [向导目标 1]
                 </button>
@@ -78,7 +78,7 @@ export const TourSpotlightDemo = () => {
                     id="demo-input-3"
                     onClick={() => { if (tourStep === 2) handleNextStep(); }}
                     placeholder="[向导目标 3] 输入框"
-                    className={`w-full px-6 py-4 bg-white border-2 border-indigo-100 rounded-2xl shadow-inner focus:outline-none transition-all ${tourStep === 2 ? 'relative z-10 border-indigo-500 bg-indigo-50' : ''}`}
+                    className={`w-full px-6 py-4 bg-white border-2 border-primary-100 rounded-2xl shadow-inner focus:outline-none transition-all ${tourStep === 2 ? 'relative z-10 border-primary bg-primary-50' : ''}`}
                 />
             </div>
 

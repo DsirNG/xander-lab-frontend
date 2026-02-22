@@ -2,14 +2,13 @@
 @reference "../../../styles/index.css";
 
 .pageWrapper {
-  @apply min-h-screen bg-white selection:bg-black selection:text-white;
+  @apply  bg-white selection:bg-black selection:text-white;
 }
 
 .heroSection {
-  @apply relative pt-40 pb-24 overflow-hidden;
+  @apply relative  overflow-hidden;
 }
 
-/* 核心去 AI 味：点阵背景带来的工程师严谨感 */
 .gridOverlay {
   @apply absolute inset-0 pointer-events-none opacity-[0.05];
   background-image: radial-gradient(circle, currentColor 1px, transparent 1px);
@@ -17,7 +16,7 @@
 }
 
 .container {
-  @apply max-w-6xl mx-auto px-6 relative z-10;
+  @apply max-w-6xl p-4 mx-auto px-6 relative z-10;
 }
 
 .heroMain {
@@ -36,7 +35,7 @@
 
 /* 极具压迫感的大标题，打破平庸感 */
 .megaTitle {
-  @apply text-6xl md:text-9xl font-black tracking-tighter mb-10 text-black  leading-[0.85];
+  @apply text-6xl md:text-9xl font-black tracking-tighter mb-10 text-primary leading-[0.85];
 }
 
 /* 镂空文字：设计感的核心，AI 很少会主动用这种排版 */
@@ -56,8 +55,8 @@
 }
 
 .mainButton {
-  @apply px-12 py-4 bg-black  text-white rounded-none font-bold
-  hover:invert transition-all duration-300 shadow-[8px_8px_0_rgba(0,0,0,0.1)];
+  @apply px-12 py-4 bg-primary text-white rounded-none font-bold
+  hover:bg-primary-600 transition-all duration-300 shadow-[8px_8px_0_rgba(0,0,0,0.1)];
 }
 
 .ghostButton {

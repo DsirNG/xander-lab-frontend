@@ -25,11 +25,11 @@ const CodeBlock = ({ code, language, title, icon: Icon = FileCode }) => {
         <div className="rounded-[2.5rem] overflow-hidden border border-slate-200  bg-[#0f172a] shadow-2xl mb-12 group">
             <div className="flex items-center justify-between px-8 py-5 bg-white/5 border-b border-white/5">
                 <div className="flex items-center space-x-4">
-                    <div className="p-2 rounded-xl bg-indigo-500/10">
-                        <Icon className="w-4 h-4 text-indigo-400" />
+                    <div className="p-2 rounded-xl bg-primary/10">
+                        <Icon className="w-4 h-4 text-primary-400" />
                     </div>
                     <div>
-                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-400/60 block">Source Layer</span>
+                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary-400/60 block">Source Layer</span>
                         <span className="text-sm font-bold text-slate-200">{title}</span>
                     </div>
                 </div>
@@ -127,12 +127,12 @@ const DynamicComponentGuide = ({ componentId, initialData }) => {
     return (
         <div className="min-h-screen bg-slate-50/50  pb-32">
             {/* 渐变装饰背景 */}
-            <div className="absolute top-0 left-0 right-0 h-[500px] bg-gradient-to-b from-indigo-500/5 to-transparent pointer-events-none" />
+            <div className="absolute top-0 left-0 right-0 h-[500px] bg-gradient-to-b from-primary/5 to-transparent pointer-events-none" />
 
             <div className="max-w-6xl mx-auto pt-12 px-6 relative z-10">
                 {/* Navigation */}
-                <Link to={`/components/${componentId}`} className="inline-flex items-center text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-indigo-500 mb-12 transition-all group">
-                    <div className="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center mr-3 group-hover:border-indigo-500/30 group-hover:bg-indigo-500/5">
+                <Link to={`/components/${componentId}`} className="inline-flex items-center text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-primary mb-12 transition-all group">
+                    <div className="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center mr-3 group-hover:border-primary/30 group-hover:bg-primary/5">
                         <ArrowLeft className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-1" />
                     </div>
                     {t('common.backToComponents', 'Back to Showcase')}
@@ -141,7 +141,7 @@ const DynamicComponentGuide = ({ componentId, initialData }) => {
                 {/* Header Section */}
                 <div className="mb-20">
                     <div className="flex items-center gap-4 mb-8">
-                        <div className="px-3 py-1 bg-indigo-500 text-white text-[10px] font-black rounded-lg uppercase tracking-wider">
+                        <div className="px-3 py-1 bg-primary text-white text-[10px] font-black rounded-lg uppercase tracking-wider">
                             Source Analysis
                         </div>
                         <div className="h-px flex-1 bg-slate-200 " />
@@ -151,7 +151,7 @@ const DynamicComponentGuide = ({ componentId, initialData }) => {
                     </div>
 
                     <h1 className="text-5xl md:text-6xl font-black text-slate-900  mb-8 tracking-tighter italic uppercase">
-                        {data.title} <span className="text-indigo-500">Structure</span>
+                        {data.title} <span className="text-primary">Structure</span>
                     </h1>
 
                     <p className="text-xl text-slate-600  max-w-3xl leading-relaxed font-medium">
@@ -164,7 +164,7 @@ const DynamicComponentGuide = ({ componentId, initialData }) => {
                     {/* Layer 1: Implementation */}
                     <section>
                         <div className="flex items-center gap-4 mb-10">
-                            <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-indigo-500 shadow-inner">
+                            <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shadow-inner">
                                 <Boxes className="w-6 h-6" />
                             </div>
                             <div>

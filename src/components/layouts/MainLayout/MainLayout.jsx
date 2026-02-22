@@ -86,7 +86,7 @@ const Navbar = () => {
                     <div className={styles.navContent}>
                         <Link to="/" className={styles.logoArea} onClick={() => setIsMobileMenuOpen(false)}>
                             {/*<Layers className="w-8 h-8 text-primary" />*/}
-                          <img className="w-8 h-8 text-primary" src="https://xander-lab.dsircity.top/favicon.png" alt=""/>
+                          {/*<img className="w-8 h-8 text-primary" src="https://xander-lab.dsircity.top/favicon.png" alt=""/>*/}
                             <span className={styles.logoText}>
                                 Xander Lab
                             </span>

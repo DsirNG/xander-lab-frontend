@@ -93,7 +93,7 @@ export const ToastHoverDemo = () => {
                         showProgress: true
                     }
                 )}
-                className="w-fit px-6 py-3 bg-indigo-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2"
+                className="w-fit px-6 py-3 bg-primary text-white rounded-2xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2"
             >
                 <Clock className="w-4 h-4" />
                 {t('components.toast.scenarios.physics.btn')}

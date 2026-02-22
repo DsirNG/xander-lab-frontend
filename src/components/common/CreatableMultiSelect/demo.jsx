@@ -40,7 +40,7 @@ export default function CreatableMultiSelectDemo() {
                 <section className="space-y-4">
                     <div className="flex items-center justify-between group">
                         <div className="flex items-center gap-2 text-slate-500">
-                            <LayoutList className="w-4 h-4 group-hover:text-indigo-500 transition-colors" />
+                            <LayoutList className="w-4 h-4 group-hover:text-primary transition-colors" />
                             <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">
                                 示例：选择技能栈
                             </span>
@@ -61,7 +61,7 @@ export default function CreatableMultiSelectDemo() {
                 <section className="pt-6 border-t border-slate-200/60  flex flex-col items-start gap-4">
                     <button
                         onClick={handleSubmit}
-                        className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-sm font-bold shadow-lg shadow-indigo-600/20 transition-all flex items-center gap-2"
+                        className="px-6 py-2.5 bg-primary hover:bg-primary-400 text-white rounded-xl text-sm font-bold shadow-lg shadow-primary/20 transition-all flex items-center gap-2"
                     >
                         <Check className="w-4 h-4" />
                         提交数据

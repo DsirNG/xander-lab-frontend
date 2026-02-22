@@ -30,11 +30,11 @@ const SortableListDemo = () => {
                     onDragEnd={dragDrop.handleDragEnd}
                     className={`flex items-center p-3 bg-white  border-2 rounded-xl transition-all duration-200 cursor-move group
                         ${dragDrop.draggedItem === item ? 'opacity-30 grayscale' : ''}
-                        ${dragDrop.dragOverItem === item ? 'border-blue-600 ring-4 ring-blue-600/5' : 'border-slate-100  hover:border-slate-200 shadow-sm'}
+                        ${dragDrop.dragOverItem === item ? 'border-primary ring-4 ring-primary/5' : 'border-slate-100  hover:border-slate-200 shadow-sm'}
                     `}
                 >
                     <div className="p-2 bg-slate-50  rounded-lg mr-4">
-                        <Move className="w-4 h-4 text-slate-400 group-hover:text-blue-600" />
+                        <Move className="w-4 h-4 text-slate-400 group-hover:text-primary" />
                     </div>
                     <span className="font-bold text-sm text-slate-700 ">{item}</span>
                 </div>

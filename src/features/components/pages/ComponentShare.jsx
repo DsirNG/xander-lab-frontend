@@ -203,7 +203,7 @@ const INIT_SCENARIOS = [
         id: '1',
         titleZh: '交互测试',
         titleEn: 'Interaction Study',
-        code: 'function Demo() {\n  const toast = useToast();\n  \n  return (\n    <div className="flex flex-col items-center gap-8 p-12">\n       <div className="flex flex-col items-center gap-2 mb-4 text-center">\n         <h3 className="text-sm font-black text-slate-400 uppercase tracking-[0.3em] italic">Toast Architecture</h3>\n         <div className="w-16 h-1 bg-indigo-500 rounded-full" />\n       </div>\n\n       <div className="flex flex-wrap justify-center gap-6">\n         <button \n           onClick={() => toast.success("验证成功 // Verification Success")}\n           className="px-12 py-5 bg-indigo-600 text-white font-black italic rounded-[2.5rem] shadow-xl shadow-indigo-600/20 active:scale-95 transition-all text-[11px] uppercase tracking-widest hover:rotate-1 hover:scale-105"\n         >\n           Run Success\n         </button>\n\n         <button \n           onClick={() => toast.error("系统拦截 // Kernel Violation")}\n           className="px-12 py-5 bg-slate-900 text-white font-black italic rounded-[2.5rem] shadow-xl shadow-black/20 active:scale-95 transition-all text-[11px] uppercase tracking-widest hover:-rotate-1 hover:scale-105"\n         >\n           Run Error\n         </button>\n       </div>\n\n       <div className="mt-8 px-6 py-3 bg-slate-50 border border-slate-100 rounded-2xl">\n         <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest text-center">\n           点击按钮触发全局物理通知容器\n         </p>\n       </div>\n    </div>\n  );\n}'
+        code: 'function Demo() {\n  const toast = useToast();\n  \n  return (\n    <div className="flex flex-col items-center gap-8 p-12">\n       <div className="flex flex-col items-center gap-2 mb-4 text-center">\n         <h3 className="text-sm font-black text-slate-400 uppercase tracking-[0.3em] italic">Toast Architecture</h3>\n         <div className="w-16 h-1 bg-primary rounded-full" />\n       </div>\n\n       <div className="flex flex-wrap justify-center gap-6">\n         <button \n           onClick={() => toast.success("验证成功 // Verification Success")}\n           className="px-12 py-5 bg-primary text-white font-black italic rounded-[2.5rem] shadow-xl shadow-primary/20 active:scale-95 transition-all text-[11px] uppercase tracking-widest hover:rotate-1 hover:scale-105"\n         >\n           Run Success\n         </button>\n\n         <button \n           onClick={() => toast.error("系统拦截 // Kernel Violation")}\n           className="px-12 py-5 bg-slate-900 text-white font-black italic rounded-[2.5rem] shadow-xl shadow-black/20 active:scale-95 transition-all text-[11px] uppercase tracking-widest hover:-rotate-1 hover:scale-105"\n         >\n           Run Error\n         </button>\n       </div>\n\n       <div className="mt-8 px-6 py-3 bg-slate-50 border border-slate-100 rounded-2xl">\n         <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest text-center">\n           点击按钮触发全局物理通知容器\n         </p>\n       </div>\n    </div>\n  );\n}'
     }
 ];
 
@@ -413,7 +413,7 @@ const ComponentShare = () => {
         <div className="h-screen flex flex-col bg-slate-50 text-slate-900 font-sans overflow-hidden">
             <header className="h-16 flex-shrink-0 bg-white border-b border-slate-200 flex items-center justify-between px-8 z-50 shadow-sm">
                 <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-2xl bg-indigo-600 flex items-center justify-center shadow-lg shadow-indigo-600/30" onClick={() => {
+                    <div className="w-10 h-10 rounded-2xl bg-primary flex items-center justify-center shadow-lg shadow-primary/30" onClick={() => {
                         //返回组件页面
                         navigate('/components');
                     }}>
@@ -428,10 +428,10 @@ const ComponentShare = () => {
                     </div>
                 </div>
                 <div className="flex items-center gap-4">
-                    <button onClick={() => setTourStep(0)} className="px-5 py-3 text-slate-400 hover:text-indigo-600 hover:bg-slate-50 border border-slate-100 rounded-2xl text-[10px] font-black transition-all active:scale-95 flex items-center gap-2" title="重启新手向导">
+                    <button onClick={() => setTourStep(0)} className="px-5 py-3 text-slate-400 hover:text-primary hover:bg-slate-50 border border-slate-100 rounded-2xl text-[10px] font-black transition-all active:scale-95 flex items-center gap-2" title="重启新手向导">
                         <Compass className="w-4 h-4" /> 新手向导
                     </button>
-                    <button onClick={handlePublish} className="px-10 py-3 bg-indigo-600 hover:bg-slate-900 text-white rounded-2xl text-[10px] font-black shadow-xl shadow-indigo-600/20 transition-all active:scale-95 flex items-center gap-2">
+                    <button onClick={handlePublish} className="px-10 py-3 bg-primary hover:bg-primary-600 text-white rounded-2xl text-[10px] font-black shadow-xl shadow-primary/20 transition-all active:scale-95 flex items-center gap-2">
                         <Share2 className="w-4 h-4" /> 发布至组件库
                     </button>
                 </div>
@@ -443,27 +443,27 @@ const ComponentShare = () => {
                     <div className="p-6 space-y-10">
                         <section className="space-y-6">
                             <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic flex items-center justify-between">
-                                <span className="flex items-center gap-2"><Database className="w-4 h-4 text-indigo-500" /> 注册元数据</span>
-                                <button id="tour-meta-help" onClick={() => { setHelpType('meta'); setHelpModalOpen(true); }} className="p-1 hover:bg-slate-50 rounded text-slate-300 hover:text-indigo-600 transition-colors relative z-10"><HelpCircle className="w-4 h-4" /></button>
+                                <span className="flex items-center gap-2"><Database className="w-4 h-4 text-primary" /> 注册元数据</span>
+                                <button id="tour-meta-help" onClick={() => { setHelpType('meta'); setHelpModalOpen(true); }} className="p-1 hover:bg-slate-50 rounded text-slate-300 hover:text-primary transition-colors relative z-10"><HelpCircle className="w-4 h-4" /></button>
                             </div>
 
                             <div className="space-y-4">
                                 <div className="space-y-1.5">
                                     <label className="text-[9px] font-black text-slate-300 uppercase tracking-widest pl-1">中文标题</label>
-                                    <input value={meta.titleZh} onChange={e => setMeta({ ...meta, titleZh: e.target.value })} className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-2.5 text-[11px] font-bold focus:border-indigo-600 focus:bg-white transition-all outline-none" />
+                                    <input value={meta.titleZh} onChange={e => setMeta({ ...meta, titleZh: e.target.value })} className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-2.5 text-[11px] font-bold focus:border-primary focus:bg-white transition-all outline-none" />
                                 </div>
                                 <div className="space-y-1.5">
                                     <label className="text-[9px] font-black text-slate-300 uppercase tracking-widest pl-1">English Title</label>
-                                    <input value={meta.titleEn} onChange={e => setMeta({ ...meta, titleEn: e.target.value })} className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-2.5 text-[11px] font-bold focus:border-indigo-600 focus:bg-white transition-all outline-none" />
+                                    <input value={meta.titleEn} onChange={e => setMeta({ ...meta, titleEn: e.target.value })} className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-2.5 text-[11px] font-bold focus:border-primary focus:bg-white transition-all outline-none" />
                                 </div>
                                 <div className="space-y-1.5">
                                     <label className="text-[9px] font-black text-slate-300 uppercase tracking-widest pl-1">组件详述 (CN/EN)</label>
-                                    <textarea value={meta.descriptionZh} onChange={e => setMeta({ ...meta, descriptionZh: e.target.value })} className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-2 text-[10px] h-16 outline-none focus:border-indigo-500 transition-all resize-none mb-2" placeholder="中文介绍..." />
-                                    <textarea value={meta.descriptionEn} onChange={e => setMeta({ ...meta, descriptionEn: e.target.value })} className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-2 text-[10px] h-16 outline-none focus:border-indigo-500 transition-all resize-none" placeholder="English Detail..." />
+                                    <textarea value={meta.descriptionZh} onChange={e => setMeta({ ...meta, descriptionZh: e.target.value })} className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-2 text-[10px] h-16 outline-none focus:border-primary transition-all resize-none mb-2" placeholder="中文介绍..." />
+                                    <textarea value={meta.descriptionEn} onChange={e => setMeta({ ...meta, descriptionEn: e.target.value })} className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-2 text-[10px] h-16 outline-none focus:border-primary transition-all resize-none" placeholder="English Detail..." />
                                 </div>
                                 <div className="flex items-center justify-between p-3 bg-slate-50 border border-slate-100 rounded-xl">
                                     <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Version</span>
-                                    <input value={meta.version} onChange={e => setMeta({ ...meta, version: e.target.value })} className="w-16 bg-transparent text-right text-indigo-600 font-black italic text-xs outline-none" />
+                                    <input value={meta.version} onChange={e => setMeta({ ...meta, version: e.target.value })} className="w-16 bg-transparent text-right text-primary font-black italic text-xs outline-none" />
                                 </div>
                             </div>
                         </section>
@@ -476,27 +476,27 @@ const ComponentShare = () => {
                                     <Zap className="w-4 h-4 text-amber-500" /> 测试用例场景
                                 </span>
                                 <div className="flex items-center gap-1 relative z-10">
-                                    <button id="tour-scenario-help" onClick={() => { setHelpType('scenario'); setHelpModalOpen(true); }} className="p-1 hover:bg-slate-50 rounded-lg text-slate-300 hover:text-indigo-600 transition-colors">
+                                    <button id="tour-scenario-help" onClick={() => { setHelpType('scenario'); setHelpModalOpen(true); }} className="p-1 hover:bg-slate-50 rounded-lg text-slate-300 hover:text-primary transition-colors">
                                         <HelpCircle className="w-4 h-4" />
                                     </button>
                                     <button onClick={() => {
                                         const id = Date.now().toString();
                                         setScenarios([...scenarios, { id, titleZh: '新测试', titleEn: 'New Study', code: 'function Demo() {\n  return <div>New</div>;\n}' }]);
                                         setActiveSIdx(scenarios.length);
-                                    }} className="p-1 hover:bg-slate-50 rounded-lg text-indigo-600 transition-all active:scale-125">
+                                    }} className="p-1 hover:bg-slate-50 rounded-lg text-primary transition-all active:scale-125">
                                         <Plus className="w-5 h-5" />
                                     </button>
                                 </div>
                             </div>
                             <div className="space-y-2">
                                 {scenarios.map((s, i) => (
-                                    <div key={s.id} onClick={() => setActiveSIdx(i)} className={`relative group px-5 py-4 rounded-2xl cursor-pointer border transition-all ${activeSIdx === i ? 'bg-indigo-600 border-indigo-600 shadow-xl' : 'bg-white border-slate-100 hover:border-slate-200'}`}>
+                                    <div key={s.id} onClick={() => setActiveSIdx(i)} className={`relative group px-5 py-4 rounded-2xl cursor-pointer border transition-all ${activeSIdx === i ? 'bg-primary border-primary shadow-xl' : 'bg-white border-slate-100 hover:border-slate-200'}`}>
                                         <div className={`text-[11px] font-black uppercase italic mb-1 ${activeSIdx === i ? 'text-white' : 'text-slate-900'}`}>{s.titleEn}</div>
-                                        <div className={`text-[9px] font-bold ${activeSIdx === i ? 'text-indigo-100' : 'text-slate-400'}`}>{s.titleZh}</div>
+                                        <div className={`text-[9px] font-bold ${activeSIdx === i ? 'text-primary-100' : 'text-slate-400'}`}>{s.titleZh}</div>
                                         <div className="absolute top-4 right-4 flex opacity-0 group-hover:opacity-100 transition-all gap-1">
                                             <button
                                                 onClick={(e) => { e.stopPropagation(); setEditingScenarioIndex(i); setEditScenTitleZh(s.titleZh); setEditScenTitleEn(s.titleEn); setEditScenarioModalOpen(true); }}
-                                                className={`p-1.5 transition-all outline-none ${activeSIdx === i ? 'text-white/40 hover:text-white' : 'text-slate-200 hover:text-indigo-500'}`}
+                                                className={`p-1.5 transition-all outline-none ${activeSIdx === i ? 'text-white/40 hover:text-white' : 'text-slate-200 hover:text-primary'}`}
                                             >
                                                 <Edit2 className="w-3.5 h-3.5" />
                                             </button>
@@ -549,17 +549,17 @@ const ComponentShare = () => {
                                         <button
                                             key={tab.id}
                                             onClick={() => { setInfTab(tab.id); setDrawerOpen(true); }}
-                                            className={`relative h-full flex items-center gap-2.5 px-6 text-[10px] font-black uppercase tracking-widest transition-all ${infTab === tab.id ? 'text-indigo-600' : 'text-slate-400 hover:text-slate-600'}`}
+                                            className={`relative h-full flex items-center gap-2.5 px-6 text-[10px] font-black uppercase tracking-widest transition-all ${infTab === tab.id ? 'text-primary' : 'text-slate-400 hover:text-slate-600'}`}
                                         >
                                             <tab.icon className="w-3.5 h-3.5" /> {tab.name}
-                                            {infTab === tab.id && <motion.div layoutId="itab_line" className="absolute bottom-0 left-0 right-0 h-1 bg-indigo-500 rounded-t-lg" />}
+                                            {infTab === tab.id && <motion.div layoutId="itab_line" className="absolute bottom-0 left-0 right-0 h-1 bg-primary-500 rounded-t-lg" />}
                                         </button>
                                     ))}
                                 </div>
                             </div>
                             <button
                                 onClick={() => setDrawerOpen(!drawerOpen)}
-                                className="flex items-center gap-2 px-4 py-2 rounded-xl text-slate-400 hover:bg-slate-50 hover:text-indigo-600 transition-all border border-slate-100"
+                                className="flex items-center gap-2 px-4 py-2 rounded-xl text-slate-400 hover:bg-slate-50 hover:text-primary transition-all border border-slate-100"
                             >
                                 <span className="text-[9px] font-black uppercase tracking-widest">{drawerOpen ? '收起控制台' : '查看源码架构'}</span>
                                 {drawerOpen ? <ChevronDown className="w-4 h-4" /> : <ChevronUp className="w-4 h-4" />}
@@ -574,20 +574,20 @@ const ComponentShare = () => {
                                             <div className="flex items-center justify-between mb-4 px-2">
                                                 <div className="flex items-center gap-2 relative z-10">
                                                     <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Files</span>
-                                                    <button id="tour-logic-help" onClick={() => { setHelpType('logic'); setHelpModalOpen(true); }} className="p-1 hover:bg-slate-100 rounded text-slate-300 hover:text-indigo-600 transition-colors"><HelpCircle className="w-3.5 h-3.5" /></button>
+                                                    <button id="tour-logic-help" onClick={() => { setHelpType('logic'); setHelpModalOpen(true); }} className="p-1 hover:bg-slate-100 rounded text-slate-300 hover:text-primary transition-colors"><HelpCircle className="w-3.5 h-3.5" /></button>
                                                 </div>
-                                                <button onClick={() => { setNewFileName('NewComponent.jsx'); setAddModalOpen(true); }} className="p-1 hover:bg-slate-100 rounded text-slate-400 hover:text-indigo-600 transition-colors">
+                                                <button onClick={() => { setNewFileName('NewComponent.jsx'); setAddModalOpen(true); }} className="p-1 hover:bg-slate-100 rounded text-slate-400 hover:text-primary transition-colors">
                                                     <Plus className="w-3.5 h-3.5" />
                                                 </button>
                                             </div>
                                             <div className="space-y-1 overflow-y-auto custom-scrollbar flex-1 pb-4">
                                                 {libFiles.map((f, i) => (
-                                                    <button key={i} onClick={() => setActiveLibIdx(i)} className={`w-full px-4 py-3 rounded-xl text-left text-[11px] font-black truncate transition-all flex items-center justify-between group ${activeLibIdx === i ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20' : 'text-slate-500 hover:bg-slate-50'}`}>
+                                                    <button key={i} onClick={() => setActiveLibIdx(i)} className={`w-full px-4 py-3 rounded-xl text-left text-[11px] font-black truncate transition-all flex items-center justify-between group ${activeLibIdx === i ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'text-slate-500 hover:bg-slate-50'}`}>
                                                         <span className="flex items-center gap-2 truncate"><FileCode className="w-4 h-4 opacity-40 flex-shrink-0" /> <span className="truncate">{f.name}</span></span>
                                                         {libFiles.length > 1 && (
                                                             <div
                                                                 onClick={(e) => handleDeleteFile(e, i)}
-                                                                className={`p-1 rounded opacity-0 group-hover:opacity-100 transition-all ${activeLibIdx === i ? 'hover:bg-indigo-500' : 'hover:bg-slate-200'}`}
+                                                                className={`p-1 rounded opacity-0 group-hover:opacity-100 transition-all ${activeLibIdx === i ? 'hover:bg-primary-500' : 'hover:bg-slate-200'}`}
                                                             >
                                                                 <X className="w-3 h-3" />
                                                             </div>
@@ -613,7 +613,7 @@ const ComponentShare = () => {
                                 {infTab === 'env' && (
                                     <motion.div key="env" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex-1 h-full relative">
                                         <div className="absolute top-4 right-8 z-10">
-                                            <button id="tour-env-help" onClick={() => { setHelpType('env'); setHelpModalOpen(true); }} className="p-2 rounded-xl text-slate-400 hover:bg-slate-50 hover:text-indigo-600 transition-colors shadow-sm bg-white border border-slate-100" title="获取外层包裹样例"><HelpCircle className="w-4 h-4" /></button>
+                                            <button id="tour-env-help" onClick={() => { setHelpType('env'); setHelpModalOpen(true); }} className="p-2 rounded-xl text-slate-400 hover:bg-slate-50 hover:text-primary transition-colors shadow-sm bg-white border border-slate-100" title="获取外层包裹样例"><HelpCircle className="w-4 h-4" /></button>
                                         </div>
                                         <textarea value={wrapperCode} onChange={e => setWrapperCode(e.target.value)} className="absolute inset-0 w-full h-full bg-white p-10 text-[14px] font-mono text-slate-700 outline-none resize-none" spellCheck={false} />
                                     </motion.div>
@@ -621,7 +621,7 @@ const ComponentShare = () => {
                                 {infTab === 'css' && (
                                     <motion.div key="css" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex-1 h-full relative">
                                         <div className="absolute top-4 right-8 z-10">
-                                            <button id="tour-css-help" onClick={() => { setHelpType('css'); setHelpModalOpen(true); }} className="p-2 rounded-xl text-slate-400 hover:bg-slate-50 hover:text-indigo-600 transition-colors shadow-sm bg-white border border-slate-100" title="获取CSS样式样例"><HelpCircle className="w-4 h-4" /></button>
+                                            <button id="tour-css-help" onClick={() => { setHelpType('css'); setHelpModalOpen(true); }} className="p-2 rounded-xl text-slate-400 hover:bg-slate-50 hover:text-primary transition-colors shadow-sm bg-white border border-slate-100" title="获取CSS样式样例"><HelpCircle className="w-4 h-4" /></button>
                                         </div>
                                         <textarea value={cssCode} onChange={e => setCssCode(e.target.value)} className="absolute inset-0 w-full h-full bg-white p-10 text-[14px] font-mono text-slate-700 outline-none resize-none" spellCheck={false} />
                                     </motion.div>
@@ -638,8 +638,8 @@ const ComponentShare = () => {
                 onClose={() => setAddModalOpen(false)}
                 title={
                     <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-xl bg-indigo-50 flex items-center justify-center">
-                            <FileCode className="w-4 h-4 text-indigo-600" />
+                        <div className="w-8 h-8 rounded-xl bg-primary-50 flex items-center justify-center">
+                            <FileCode className="w-4 h-4 text-primary" />
                         </div>
                         <span className="text-[14px]">新建文件</span>
                     </div>
@@ -648,7 +648,7 @@ const ComponentShare = () => {
                 footer={
                     <>
                         <button onClick={() => setAddModalOpen(false)} className="px-5 py-2.5 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-100  transition-all">取消</button>
-                        <button onClick={handleAddFileSubmit} className="px-6 py-2.5 rounded-xl text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 shadow-lg shadow-indigo-600/20 active:scale-95 transition-all">确定创建</button>
+                        <button onClick={handleAddFileSubmit} className="px-6 py-2.5 rounded-xl text-xs font-bold text-white bg-primary hover:bg-primary-700 shadow-lg shadow-primary/20 active:scale-95 transition-all">确定创建</button>
                     </>
                 }
             >
@@ -660,7 +660,7 @@ const ComponentShare = () => {
                             value={newFileName}
                             onChange={(e) => setNewFileName(e.target.value)}
                             onKeyDown={(e) => { if (e.key === 'Enter') handleAddFileSubmit(); }}
-                            className="w-full px-4 py-3 bg-slate-50  border border-slate-200  rounded-2xl text-[13px] font-mono text-slate-900  focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 outline-none transition-all placeholder:text-slate-300 "
+                            className="w-full px-4 py-3 bg-slate-50  border border-slate-200  rounded-2xl text-[13px] font-mono text-slate-900  focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all placeholder:text-slate-300 "
                             placeholder="e.g. Button.tsx"
                         />
                     </div>
@@ -704,8 +704,8 @@ const ComponentShare = () => {
                 onClose={() => setHelpModalOpen(false)}
                 title={
                     <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-xl bg-indigo-50 flex items-center justify-center">
-                            <HelpCircle className="w-4 h-4 text-indigo-600" />
+                        <div className="w-8 h-8 rounded-xl bg-primary-50 flex items-center justify-center">
+                            <HelpCircle className="w-4 h-4 text-primary" />
                         </div>
                         <span className="text-[14px]">预置样例库 - {helpType.toUpperCase()}</span>
                     </div>
@@ -714,7 +714,7 @@ const ComponentShare = () => {
                 footer={
                     <>
                         <button onClick={() => setHelpModalOpen(false)} className="px-5 py-2.5 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-100  transition-all">取消</button>
-                        <button id="tour-apply-btn" onClick={handleApplySample} className="px-6 py-2.5 rounded-xl text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 shadow-lg shadow-indigo-600/20 active:scale-95 transition-all relative z-10">
+                        <button id="tour-apply-btn" onClick={handleApplySample} className="px-6 py-2.5 rounded-xl text-xs font-bold text-white bg-primary hover:bg-primary-700 shadow-lg shadow-primary/20 active:scale-95 transition-all relative z-10">
                             一键装载
                         </button>
                     </>
@@ -735,8 +735,8 @@ const ComponentShare = () => {
                 onClose={() => setEditScenarioModalOpen(false)}
                 title={
                     <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-xl bg-indigo-50 flex items-center justify-center">
-                            <Edit2 className="w-4 h-4 text-indigo-600" />
+                        <div className="w-8 h-8 rounded-xl bg-primary-50 flex items-center justify-center">
+                            <Edit2 className="w-4 h-4 text-primary" />
                         </div>
                         <span className="text-[14px]">修改测试场景信息</span>
                     </div>
@@ -745,7 +745,7 @@ const ComponentShare = () => {
                 footer={
                     <>
                         <button onClick={() => setEditScenarioModalOpen(false)} className="px-5 py-2.5 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-100  transition-all">取消</button>
-                        <button onClick={handleEditScenarioSubmit} className="px-6 py-2.5 rounded-xl text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 shadow-lg shadow-indigo-600/20 active:scale-95 transition-all">
+                        <button onClick={handleEditScenarioSubmit} className="px-6 py-2.5 rounded-xl text-xs font-bold text-white bg-primary hover:bg-primary-700 shadow-lg shadow-primary/20 active:scale-95 transition-all">
                             保存修改
                         </button>
                     </>
@@ -759,7 +759,7 @@ const ComponentShare = () => {
                             value={editScenTitleZh}
                             onChange={(e) => setEditScenTitleZh(e.target.value)}
                             onKeyDown={(e) => { if (e.key === 'Enter') handleEditScenarioSubmit(); }}
-                            className="w-full px-4 py-3 bg-slate-50  border border-slate-200  rounded-2xl text-[13px] font-bold text-slate-900  focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 outline-none transition-all placeholder:text-slate-300"
+                            className="w-full px-4 py-3 bg-slate-50  border border-slate-200  rounded-2xl text-[13px] font-bold text-slate-900  focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all placeholder:text-slate-300"
                             placeholder="输入场景中文名..."
                         />
                     </div>
@@ -769,7 +769,7 @@ const ComponentShare = () => {
                             value={editScenTitleEn}
                             onChange={(e) => setEditScenTitleEn(e.target.value)}
                             onKeyDown={(e) => { if (e.key === 'Enter') handleEditScenarioSubmit(); }}
-                            className="w-full px-4 py-3 bg-slate-50  border border-slate-200  rounded-2xl text-[13px] font-bold text-slate-900  focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 outline-none transition-all placeholder:text-slate-300"
+                            className="w-full px-4 py-3 bg-slate-50  border border-slate-200  rounded-2xl text-[13px] font-bold text-slate-900  focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all placeholder:text-slate-300"
                             placeholder="e.g. Interaction Study"
                         />
                     </div>
@@ -789,7 +789,7 @@ const ComponentShare = () => {
                         }} className="px-5 py-2.5 text-xs text-slate-500 hover:bg-slate-100 rounded-xl font-bold transition-all">
                             我已熟悉，残忍拒绝
                         </button>
-                        <button onClick={() => setTourStep(0)} className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold shadow-xl shadow-indigo-600/20 active:scale-95 transition-all flex items-center gap-2">
+                        <button onClick={() => setTourStep(0)} className="px-6 py-2.5 bg-primary hover:bg-primary-700 text-white rounded-xl text-xs font-bold shadow-xl shadow-primary/20 active:scale-95 transition-all flex items-center gap-2">
                             <Compass className="w-4 h-4" /> 启动教学向导
                         </button>
                     </>

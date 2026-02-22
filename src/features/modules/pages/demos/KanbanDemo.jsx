@@ -204,7 +204,7 @@ const KanbanDemo = () => {
                                     </h4>
                                     <div className="flex items-center justify-between text-slate-400">
                                         <div className="flex -space-x-2">
-                                            <div className="w-6 h-6 rounded-full bg-gradient-to-br from-blue-400 to-indigo-500 border-2 border-white " />
+                                            <div className="w-6 h-6 rounded-full bg-gradient-to-br from-primary-400 to-primary border-2 border-white " />
                                             <div className="w-6 h-6 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 border-2 border-white " />
                                         </div>
                                         <div className="flex items-center space-x-3 text-xs font-medium">
