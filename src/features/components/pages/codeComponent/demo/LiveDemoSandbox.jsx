@@ -358,7 +358,7 @@ const LiveDemoSandbox = ({
                     <button onClick={() => setRunningCode(code)} className="px-5 py-2 hover:bg-slate-50 text-slate-400 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all">
                         Sync Changes
                     </button>
-                    <button onClick={handleRun} disabled={isRunning} className="flex items-center gap-2.5 px-8 py-2.5 bg-slate-900 text-white rounded-2xl text-[10px] font-black hover:bg-indigo-600 transition-all shadow-xl active:scale-95 disabled:opacity-50">
+                    <button id="tour-run-btn" onClick={handleRun} disabled={isRunning} className="flex items-center gap-2.5 px-8 py-2.5 bg-slate-900 text-white rounded-2xl text-[10px] font-black hover:bg-indigo-600 transition-all shadow-xl active:scale-95 disabled:opacity-50">
                         <Play className={`w-3.5 h-3.5 ${isRunning ? 'animate-spin' : ''}`} /> {isRunning ? 'EXECUTING...' : 'RUN ANALYTICS'}
                     </button>
                 </div>
