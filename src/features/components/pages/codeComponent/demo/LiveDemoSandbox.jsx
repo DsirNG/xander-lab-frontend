@@ -77,6 +77,10 @@ function compileAndRun(code, libraryCode = '', wrapperCode = '', cssCode = '') {
 
                 if (currentFileExports.default) {
                     libExports[moduleName] = currentFileExports.default;
+                    // 如果有真实的函数/类名（如 TourSpotlight），也将其注入全局作用域，忽略文件名
+                    if (currentFileExports.default.name) {
+                        libExports[currentFileExports.default.name] = currentFileExports.default;
+                    }
                 }
                 Object.keys(currentFileExports).forEach(key => {
                     if (key !== 'default' && key !== '__esModule') {
@@ -101,7 +105,13 @@ function compileAndRun(code, libraryCode = '', wrapperCode = '', cssCode = '') {
             'framer-motion': { motion, AnimatePresence },
         };
         if (registry[name]) return registry[name];
-        if (name.startsWith('.') || libExports[name]) return libExports;
+
+        const cleanName = name.replace(/^\.\//, '').replace(/\.jsx?$/, '');
+        if (name.startsWith('.') && moduleRegistry[cleanName]) {
+            return moduleRegistry[cleanName];
+        }
+
+        if (libExports[name]) return libExports[name];
         return LucideIcons[name] || baseScope[name];
     };
 
