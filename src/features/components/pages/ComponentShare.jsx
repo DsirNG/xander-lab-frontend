@@ -12,72 +12,7 @@ import LiveDemoSandbox from './codeComponent/demo/LiveDemoSandbox';
 import ComponentService from '../services/componentService';
 import { useToast } from '@/hooks/useToast';
 import Modal from '../../../components/common/Modal';
-
-// ─── 超聚焦向导漫游系统 ──────────────────────────────────────────
-const TourSpotlight = ({ targetConfig, onSkip }) => {
-    const [rect, setRect] = useState(null);
-
-    useEffect(() => {
-        if (!targetConfig) return;
-        const updateRect = () => {
-            const el = document.getElementById(targetConfig.id);
-            if (el) {
-                const r = el.getBoundingClientRect();
-                setRect({ top: r.top, left: r.left, width: r.width, height: r.height });
-            }
-        };
-        updateRect();
-        const interval = setInterval(updateRect, 50);
-        return () => clearInterval(interval);
-    }, [targetConfig]);
-
-    if (!targetConfig || !rect || rect.width === 0) return null;
-
-    const pad = 10;
-    const topHeight = Math.max(0, rect.top - pad);
-    const bottomTop = rect.top + rect.height + pad;
-    const isModalLevel = targetConfig.isModalLevel;
-
-    return createPortal(
-        <div className={`fixed inset-0 pointer-events-none transition-all duration-300 ${isModalLevel ? 'z-[99999]' : 'z-[9000]'}`}>
-            {/* 4 方向高斯模糊物理遮罩 */}
-            <div className="absolute top-0 left-0 right-0 bg-slate-900/40 backdrop-blur-[2px] transition-all duration-300 pointer-events-auto" style={{ height: topHeight }} />
-            <div className="absolute left-0 right-0 bottom-0 bg-slate-900/40 backdrop-blur-[2px] transition-all duration-300 pointer-events-auto" style={{ top: bottomTop }} />
-            <div className="absolute left-0 bg-slate-900/40 backdrop-blur-[2px] transition-all duration-300 pointer-events-auto" style={{ top: topHeight, height: rect.height + pad * 2, width: Math.max(0, rect.left - pad) }} />
-            <div className="absolute right-0 bg-slate-900/40 backdrop-blur-[2px] transition-all duration-300 pointer-events-auto" style={{ top: topHeight, height: rect.height + pad * 2, left: rect.left + rect.width + pad }} />
-
-            {/* 炫酷的光晕洞口引导线 */}
-            <div className="absolute rounded-xl pointer-events-none border-2 border-indigo-400 animate-ping opacity-40"
-                style={{ top: rect.top - pad, left: rect.left - pad, width: rect.width + pad * 2, height: rect.height + pad * 2 }}
-            />
-            <div className="absolute rounded-xl pointer-events-none border-2 border-white/60 shadow-[0_0_20px_rgba(255,255,255,0.6)] transition-all duration-300"
-                style={{ top: rect.top - pad, left: rect.left - pad, width: rect.width + pad * 2, height: rect.height + pad * 2 }}
-            />
-
-            {/* AI 讲解提示框 */}
-            <div
-                className="absolute flex flex-col pointer-events-auto transition-all duration-500"
-                style={{
-                    top: rect.top > window.innerHeight / 2 ? Math.max(10, rect.top - pad - 120) : bottomTop + 10,
-                    left: Math.max(20, Math.min(window.innerWidth - 320, rect.left + rect.width / 2 - 160)),
-                    width: 320
-                }}
-            >
-                <div className="bg-indigo-600 text-white p-5 rounded-2xl shadow-[0_30px_60px_-15px_rgba(79,70,229,0.5)] border border-indigo-400/30">
-                    <div className="flex items-center justify-between mb-3">
-                        <div className="flex items-center gap-2">
-                            <Compass className="w-4 h-4 text-amber-300" />
-                            <h4 className="font-black text-[13px] uppercase tracking-widest">{targetConfig.text}</h4>
-                        </div>
-                        <button onClick={onSkip} className="text-indigo-200 hover:text-white transition-colors text-[9px] uppercase font-bold tracking-widest px-2 py-1 bg-indigo-700/50 rounded-lg">Skip // 退出</button>
-                    </div>
-                    <p className="text-indigo-50 text-[12px] font-medium leading-relaxed opacity-90">{targetConfig.desc}</p>
-                </div>
-            </div>
-        </div>,
-        document.body
-    );
-};
+import TourSpotlight from '../../../components/common/TourSpotlight';
 
 // ─── 预设数据 (完全对齐项目内 Toast 组件逻辑) ──────────────────────────────────────────
 const INIT_FILES = [
@@ -479,11 +414,11 @@ const ComponentShare = () => {
             <header className="h-16 flex-shrink-0 bg-white border-b border-slate-200 flex items-center justify-between px-8 z-50 shadow-sm">
                 <div className="flex items-center gap-4">
                     <div className="w-10 h-10 rounded-2xl bg-indigo-600 flex items-center justify-center shadow-lg shadow-indigo-600/30" onClick={() => {
-                      //返回组件页面
-                      navigate('/components');
+                        //返回组件页面
+                        navigate('/components');
                     }}>
                         {/*<Command className="w-5 h-5 text-white" />*/}
-                      <img src="https://xander-lab.dsircity.top/favicon.png" alt=""/>
+                        <img src="https://xander-lab.dsircity.top/favicon.png" alt="" />
                     </div>
                     <div>
                         <h1 className="text-[13px] font-black uppercase italic tracking-widest mb-0.5">组件工作室</h1>
@@ -844,7 +779,7 @@ const ComponentShare = () => {
             <Modal
                 isOpen={tourStep === -2}
                 onClose={() => { setTourStep(-1); localStorage.setItem('hasSeenTourXanderLab', 'true'); }}
-                title="欢迎访问系统实验室 🧬"
+                title="欢迎访问系统实验室"
                 footer={
                     <>
                         <button onClick={() => {
