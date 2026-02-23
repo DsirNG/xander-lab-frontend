@@ -1,59 +1,86 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:xhtml="http://www.w3.org/1999/xhtml">
-  
-  <!-- Homepage -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://xander-lab.dsircity.top/</loc>
-    <lastmod>2026-01-15</lastmod>
+    <lastmod>2026-02-23</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>1.0</priority>
-    <xhtml:link rel="alternate" hreflang="en" href="https://xander-lab.dsircity.top/?lang=en"/>
-    <xhtml:link rel="alternate" hreflang="zh" href="https://xander-lab.dsircity.top/?lang=zh"/>
+    <priority>1</priority>
+    <image:image>
+      <image:loc>https://xander-lab.dsircity.top/og-image.png</image:loc>
+      <image:title>Xander Lab UI Infrastructure Showcase</image:title>
+      <image:caption>Cutting-edge UI infrastructure systems and interactive components platform</image:caption>
+    </image:image>
   </url>
-
-  <!-- Infrastructure Pages -->
   <url>
     <loc>https://xander-lab.dsircity.top/infra</loc>
-    <lastmod>2026-01-15</lastmod>
+    <lastmod>2026-02-23</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
-
-  <url>
-    <loc>https://xander-lab.dsircity.top/infra/positioning-system</loc>
-    <lastmod>2026-01-15</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-
-  <url>
-    <loc>https://xander-lab.dsircity.top/infra/drag-drop-system</loc>
-    <lastmod>2026-01-15</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-
-  <!-- Module Pages -->
   <url>
     <loc>https://xander-lab.dsircity.top/modules</loc>
-    <lastmod>2026-01-15</lastmod>
+    <lastmod>2026-02-23</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
-
+  <url>
+    <loc>https://xander-lab.dsircity.top/components</loc>
+    <lastmod>2026-02-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://xander-lab.dsircity.top/blog</loc>
+    <lastmod>2026-02-23</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://xander-lab.dsircity.top/infra/positioning-system</loc>
+    <lastmod>2026-02-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://xander-lab.dsircity.top/infra/drag-drop-system</loc>
+    <lastmod>2026-02-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
   <url>
     <loc>https://xander-lab.dsircity.top/modules/drag-drop</loc>
-    <lastmod>2026-01-15</lastmod>
+    <lastmod>2026-02-23</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
-
   <url>
     <loc>https://xander-lab.dsircity.top/modules/anchored-overlay</loc>
-    <lastmod>2026-01-15</lastmod>
+    <lastmod>2026-02-23</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
-
+  <url>
+    <loc>https://xander-lab.dsircity.top/blog/tags</loc>
+    <lastmod>2026-02-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://xander-lab.dsircity.top/blog/publish</loc>
+    <lastmod>2026-02-23</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://xander-lab.dsircity.top/login</loc>
+    <lastmod>2026-02-23</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.1</priority>
+  </url>
+  <url>
+    <loc>https://xander-lab.dsircity.top/components/share</loc>
+    <lastmod>2026-02-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.4</priority>
+  </url>
 </urlset>
