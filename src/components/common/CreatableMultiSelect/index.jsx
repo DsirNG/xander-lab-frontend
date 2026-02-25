@@ -64,7 +64,7 @@ const CreatableMultiSelect = ({
     return (
         <div
             ref={containerRef}
-            className={`relative flex flex-wrap gap-2 min-h-[56px] p-3 bg-white  border border-slate-200/60  rounded-2xl focus-within:border-primary focus-within:ring-4 focus-within:ring-primary/10 transition-all shadow-sm ${className}`}
+            className={`relative flex flex-wrap gap-2 p-3 bg-white  border border-slate-200/60  rounded-[8px] focus-within:border-primary focus-within:ring-4 focus-within:ring-primary/10 transition-all shadow-sm ${className}`}
             onClick={() => inputRef.current?.focus()}
         >
             {value.map(item => (

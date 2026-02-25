@@ -82,14 +82,14 @@ const BlogPublish = () => {
                 <div className="flex items-center gap-4">
                     <button
                         onClick={() => navigate(-1)}
-                        className="p-2 -ml-2 text-slate-400 hover:text-slate-900 hover:bg-slate-100  rounded-xl transition-all group"
+                        className="p-2 -ml-2 text-slate-400 hover:bg-slate-100  rounded-xl transition-all group"
                         title={t('blog.backToBlog')}
                     >
-                        <ChevronLeft className="w-5 h-5 group-hover:-translate-x-0.5 transition-transform" />
+                        <ChevronLeft className="w-5 h-5 transition-transform" />
                     </button>
                     <div className="h-4 w-px bg-slate-200 "></div>
                     <span className="text-xs font-black uppercase tracking-widest text-slate-900  flex items-center gap-2">
-                        <span className="w-2 h-2 rounded-full bg-primary animate-pulse ring-4 ring-primary/20"></span>
+                        {/*<span className="w-2 h-2 rounded-full bg-primary animate-pulse ring-4 ring-primary/20"></span>*/}
                         {t('blog.publishTitle')}
                     </span>
                 </div>
@@ -114,18 +114,18 @@ const BlogPublish = () => {
 
             <div className="flex-1 flex overflow-hidden relative">
                 {/* 主编辑区 / Left Pane - Editor & Preview */}
-                <main className="flex-1 flex flex-col relative bg-white  rounded-tr-[2.5rem] border-r border-t border-slate-200 /80 shadow-[10px_0_30px_-15px_rgba(0,0,0,0.05)] z-10 transition-all overflow-hidden mt-2 ml-2">
+                <main className="flex-1 flex flex-col relative bg-white  rounded-tr-[0.5rem] border-r border-t border-slate-200 /80 shadow-[10px_0_30px_-15px_rgba(0,0,0,0.05)] z-10 transition-all overflow-hidden mt-2 ml-2">
                     <div className="absolute top-6 right-8 z-20">
                         <div className="flex bg-slate-100/80 /80 backdrop-blur-md p-1 rounded-2xl border border-slate-200/50 /50 shadow-sm">
                             <button
                                 onClick={() => { setIsPreview(false); setTimeout(() => contentTextareaRef.current?.focus(), 10); }}
-                                className={`flex items-center gap-2 px-5 py-2 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all ${!isPreview ? 'bg-white  text-primary shadow-sm scale-100' : 'text-slate-500 hover:text-slate-700  hover:bg-slate-200/50  scale-95'}`}
+                                className={`flex items-center gap-2 px-5 py-2 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all ${!isPreview ? 'bg-white  text-primary shadow-sm scale-100' : 'text-slate-500 hover:text-slate-700  hover:bg-slate-200/50 '}`}
                             >
                                 <Edit3 className="w-4 h-4" /> <span className="hidden sm:inline">编辑</span>
                             </button>
                             <button
                                 onClick={() => setIsPreview(true)}
-                                className={`flex items-center gap-2 px-5 py-2 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all ${isPreview ? 'bg-white  text-primary shadow-sm scale-100' : 'text-slate-500 hover:text-slate-700  hover:bg-slate-200/50  scale-95'}`}
+                                className={`flex items-center gap-2 px-5 py-2 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all ${isPreview ? 'bg-white  text-primary shadow-sm scale-100' : 'text-slate-500 hover:text-slate-700  hover:bg-slate-200/50 '}`}
                             >
                                 <Eye className="w-4 h-4" /> <span className="hidden sm:inline">预览</span>
                             </button>
