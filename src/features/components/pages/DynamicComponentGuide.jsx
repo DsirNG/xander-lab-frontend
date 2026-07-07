@@ -1,65 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import {
-    Copy, Check, FileCode, Layers,
+    FileCode,
     ArrowLeft, Boxes, Layout
 } from 'lucide-react';
 import { Link, useParams } from 'react-router-dom';
 import ComponentService from '../services/componentService';
-
-const CodeBlock = ({ code, language, title, icon: Icon = FileCode }) => {
-    const [copied, setCopied] = useState(false);
-
-    const handleCopy = () => {
-        if (!code) return;
-        navigator.clipboard.writeText(code);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
-    };
-
-    if (!code) return null;
-
-    return (
-        <div className="rounded-[2.5rem] overflow-hidden border border-slate-200  bg-[#0f172a] shadow-2xl mb-12 group">
-            <div className="flex items-center justify-between px-8 py-5 bg-white/5 border-b border-white/5">
-                <div className="flex items-center space-x-4">
-                    <div className="p-2 rounded-xl bg-primary/10">
-                        <Icon className="w-4 h-4 text-primary-400" />
-                    </div>
-                    <div>
-                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary-400/60 block">Source Layer</span>
-                        <span className="text-sm font-bold text-slate-200">{title}</span>
-                    </div>
-                </div>
-                <button
-                    onClick={handleCopy}
-                    className="p-2.5 rounded-xl hover:bg-white/10 text-slate-400 hover:text-white transition-all active:scale-90"
-                >
-                    {copied ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
-                </button>
-            </div>
-            <div className="overflow-auto scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent max-h-[700px]">
-                <SyntaxHighlighter
-                    language={language}
-                    style={vscDarkPlus}
-                    customStyle={{
-                        margin: 0,
-                        padding: '2.5rem',
-                        fontSize: '0.85rem',
-                        background: 'transparent',
-                        lineHeight: '1.7',
-                        fontFamily: 'JetBrains Mono, Menlo, Monaco, Consolas, monospace'
-                    }}
-                    showLineNumbers={true}
-                >
-                    {code}
-                </SyntaxHighlighter>
-            </div>
-        </div>
-    );
-};
+import CodeBlock from '@/components/common/CodeBlock';
 
 const FeatureCard = ({ title, desc, icon: Icon, color }) => (
     <div className="p-8 rounded-[2.5rem] bg-white  border border-slate-200  shadow-sm hover:shadow-xl transition-all group hover:-translate-y-1">
@@ -179,8 +126,6 @@ const DynamicComponentGuide = ({ componentId, initialData }) => {
                                     key={idx}
                                     code={file.content}
                                     language="jsx"
-                                    title={file.name}
-                                    icon={Boxes}
                                 />
                             ))}
                         </div>
@@ -202,8 +147,6 @@ const DynamicComponentGuide = ({ componentId, initialData }) => {
                             <CodeBlock
                                 code={data.wrapperCode}
                                 language="jsx"
-                                title="Environment (Wrapper)"
-                                icon={Layout}
                             />
                         </section>
                     )}
@@ -224,8 +167,6 @@ const DynamicComponentGuide = ({ componentId, initialData }) => {
                             <CodeBlock
                                 code={data.cssCode}
                                 language="css"
-                                title="Global Styles (CSS)"
-                                icon={FileCode}
                             />
                         </section>
                     )}

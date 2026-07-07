@@ -19,11 +19,11 @@ const BlogCard = ({ blog }) => {
                     {blog.categoryName || blog.category}
                 </span>
                 <span className="flex items-center">
-                    <Clock className="w-3 h-3 mr-1" />
+                    <Clock aria-hidden="true" className="w-3 h-3 mr-1" />
                     {blog.date}
                 </span>
                 <span className="flex items-center">
-                    <User className="w-3 h-3 mr-1" />
+                    <User aria-hidden="true" className="w-3 h-3 mr-1" />
                     {blog.author}
                 </span>
             </div>

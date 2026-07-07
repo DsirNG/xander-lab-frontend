@@ -8,18 +8,6 @@ const ModuleContent = ({ module }) => {
 
     if (!module) return null;
 
-    // 渲染增强的演示区域（带代码展示）
-    const renderDemoSection = (scenario, index) => (
-        <EnhancedDemoSection
-            key={index}
-            title={scenario.title}
-            desc={scenario.desc}
-            code={scenario.code}
-        >
-            {scenario.demo}
-        </EnhancedDemoSection>
-    );
-
     // 额外的头部按钮（实现细节标签）
     const extraButtons = (
         <div className="flex items-center bg-slate-100  px-6 py-3 rounded-2xl font-bold text-sm text-slate-600  border border-slate-200">
@@ -31,14 +19,25 @@ const ModuleContent = ({ module }) => {
     return (
         <ContentLayout
             item={module}
-            scenarios={module.scenarios}
-            renderDemoSection={renderDemoSection}
             basePath="/modules"
             detailButtonText={t('common.viewDeepDive')}
             detailButtonIcon={ExternalLink}
             extraHeaderButtons={extraButtons}
             themeColor="blue-600"
-        />
+        >
+            {module.scenarios && module.scenarios.length > 0 ? (
+                module.scenarios.map((scenario, index) => (
+                    <EnhancedDemoSection
+                        key={index}
+                        title={scenario.title}
+                        desc={scenario.desc}
+                        code={scenario.code}
+                    >
+                        {scenario.demo}
+                    </EnhancedDemoSection>
+                ))
+            ) : null}
+        </ContentLayout>
     );
 };
 

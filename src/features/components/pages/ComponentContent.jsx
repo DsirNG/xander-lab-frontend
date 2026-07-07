@@ -20,19 +20,6 @@ const ComponentContent = ({ component }) => {
             : (isShared ? [{ type: 'guide', componentKey: 'DynamicGuide' }] : [])
     };
 
-    const renderDemoSection = (scenario, index) => (
-        <EnhancedDemoSection
-            key={index}
-            title={scenario.title}
-            desc={scenario.desc}
-            code={scenario.demoCode || scenario.code}
-            useBrowserWindow={false}
-        >
-            {/* 优先用旧版 demo 节点；否则用 resolveDemo 解析（注册表 → demoCode沙箱 → 空白沙箱） */}
-            {scenario.demo || resolveDemo(scenario.demoKey, scenario.demoCode, component.libraryCode, component.wrapperCode, component.cssCode)}
-        </EnhancedDemoSection>
-    );
-
     const metadata = (
         <div className="hidden sm:flex items-center gap-3 text-xs font-mono text-slate-400 mr-2">
             {component.author && (
@@ -52,14 +39,28 @@ const ComponentContent = ({ component }) => {
     return (
         <ContentLayout
             item={enrichedComponent}
-            scenarios={component.scenarios}
-            renderDemoSection={renderDemoSection}
             basePath="/components"
             detailButtonText={isShared ? "架构深度解析" : t('common.viewSource')}
             detailButtonIcon={Code}
             extraHeaderButtons={metadata}
             themeColor="emerald-600"
         >
+            {/* 场景演示 */}
+            {component.scenarios && component.scenarios.length > 0 ? (
+                component.scenarios.map((scenario, index) => (
+                    <EnhancedDemoSection
+                        key={index}
+                        title={scenario.title}
+                        desc={scenario.desc}
+                        code={scenario.demoCode || scenario.code}
+                        useBrowserWindow={false}
+                    >
+                        {/* 优先用旧版 demo 节点；否则用 resolveDemo 解析（注册表 → demoCode沙箱 → 空白沙箱） */}
+                        {scenario.demo || resolveDemo(scenario.demoKey, scenario.demoCode, component.libraryCode, component.wrapperCode, component.cssCode)}
+                    </EnhancedDemoSection>
+                ))
+            ) : null}
+
             {/* 技术实现预览（如果是分享组件且有实现代码） */}
             {isShared && (
                 <div className="mb-20">

@@ -1,50 +1,8 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { motion } from 'framer-motion';
-import {
-    Compass,
-    Cpu,
-    Box,
-    CheckCircle2,
-    ArrowLeft
-} from 'lucide-react';
+import { ArrowLeft, Box } from 'lucide-react';
 import { Link } from 'react-router-dom';
-
-const PhaseCard = ({ phase, index }) => {
-    return (
-        <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: index * 0.1 }}
-            className="relative pl-8 pb-12 border-l-2 border-slate-200  last:border-0 last:pb-0"
-        >
-            <div className="absolute left-[-16px] top-0 w-8 h-8 rounded-full bg-white  border-2 border-primary flex items-center justify-center text-primary shadow-sm">
-                {index === 0 && <Compass className="w-4 h-4" />}
-                {index === 1 && <Cpu className="w-4 h-4" />}
-                {index === 2 && <Box className="w-4 h-4" />}
-            </div>
-
-            <div className="bg-white /50 rounded-3xl p-8 border border-slate-200  hover:border-primary/50 transition-colors shadow-sm">
-                <h3 className="text-2xl font-bold text-slate-900  mb-2">
-                    {phase.title}
-                </h3>
-                <p className="text-slate-600  mb-6 text-lg">
-                    {phase.desc}
-                </p>
-
-                <ul className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    {phase.points.map((point, i) => (
-                        <li key={i} className="flex items-center space-x-2 text-slate-500 ">
-                            <CheckCircle2 className="w-4 h-4 text-green-500 flex-shrink-0" />
-                            <span>{point}</span>
-                        </li>
-                    ))}
-                </ul>
-            </div>
-        </motion.div>
-    );
-};
+import PhaseCard from '@/components/common/PhaseCard';
 
 const AnchoredOverlay = () => {
     const { t } = useTranslation();
@@ -94,7 +52,7 @@ const AnchoredOverlay = () => {
 
                     <div className="bg-slate-900 rounded-3xl p-8 overflow-hidden relative group">
                         <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity">
-                            <Box className="w-32 h-32 text-white" />
+                            <Box aria-hidden="true" className="w-32 h-32 text-white" />
                         </div>
 
                         <div className="relative z-10">
@@ -106,7 +64,7 @@ const AnchoredOverlay = () => {
                                 {t('infra.anchored.files', { returnObjects: true }).map((file, i) => (
                                     <div key={i} className="flex items-center space-x-4 bg-white/5 border border-white/10 rounded-2xl p-4 hover:bg-white/10 transition-colors">
                                         <div className="p-2 bg-primary/20 rounded-lg">
-                                            <Box className="w-5 h-5 text-primary" />
+                                            <Box aria-hidden="true" className="w-5 h-5 text-primary" />
                                         </div>
                                         <div>
                                             <p className="text-white font-mono text-sm">{file.name}</p>

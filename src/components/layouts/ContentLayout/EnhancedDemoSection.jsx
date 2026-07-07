@@ -48,7 +48,7 @@ const EnhancedDemoSection = ({ title, desc, children, code, useBrowserWindow = t
                         className="flex items-center space-x-2 px-4 py-1.5 rounded-xl bg-slate-100  text-slate-600  text-xs font-bold hover:bg-orange-500 hover:text-white transition-all shadow-sm"
                         title="Reset Demo"
                     >
-                        <RotateCcw className="w-3.5 h-3.5" />
+                        <RotateCcw aria-hidden="true" className="w-3.5 h-3.5" />
                         <span>Reset</span>
                     </button>
                     {/* 查看代码按钮 */}
@@ -57,7 +57,7 @@ const EnhancedDemoSection = ({ title, desc, children, code, useBrowserWindow = t
                             onClick={() => setShowCode(!showCode)}
                             className="flex items-center space-x-2 px-4 py-1.5 rounded-xl bg-slate-100  text-slate-600  text-xs font-bold hover:bg-blue-600 hover:text-white transition-all shadow-sm"
                         >
-                            {showCode ? <ChevronUp className="w-3.5 h-3.5" /> : <Code className="w-3.5 h-3.5" />}
+                            {showCode ? <ChevronUp aria-hidden="true" className="w-3.5 h-3.5" /> : <Code aria-hidden="true" className="w-3.5 h-3.5" />}
                             <span>{showCode ? 'Hide Code' : 'View Code'}</span>
                         </button>
                     )}
@@ -102,8 +102,9 @@ const EnhancedDemoSection = ({ title, desc, children, code, useBrowserWindow = t
                                 onClick={handleCopy}
                                 className="absolute right-6 top-6 z-20 p-2.5 rounded-xl bg-slate-800/50 text-slate-400 hover:text-white hover:bg-slate-700 transition-all backdrop-blur-md border border-white/5 opacity-0 group-hover:opacity-100 shadow-xl"
                                 title="Copy code"
+                                aria-label="Copy code"
                             >
-                                {copied ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
+                                {copied ? <Check aria-hidden="true" className="w-4 h-4 text-emerald-400" /> : <Copy aria-hidden="true" className="w-4 h-4" />}
                             </button>
 
                             <div className="max-h-[500px] overflow-auto scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent w-full">

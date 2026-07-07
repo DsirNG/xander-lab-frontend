@@ -112,7 +112,7 @@ const Navbar = () => {
                                 className={`${styles.iconButton} hidden sm:flex items-center space-x-1 px-2 sm:px-3`}
                                 title="Toggle Language"
                             >
-                                <Languages className="w-4 h-4" />
+                                <Languages aria-hidden="true" className="w-4 h-4" />
                                 <span className="text-xs font-bold hidden sm:inline">{currentLang}</span>
                             </button>
                             <a
@@ -122,7 +122,7 @@ const Navbar = () => {
                                 className={`${styles.iconButton} hidden sm:flex`}
                                 aria-label="GitHub"
                             >
-                                <Github className="w-5 h-5" />
+                                <Github aria-hidden="true" className="w-5 h-5" />
                             </a>
 
                             {/* 用户区域 */}
@@ -141,8 +141,9 @@ const Navbar = () => {
                                             onClick={handleLogout}
                                             className="w-8 h-8 rounded-full bg-slate-100  flex items-center justify-center text-slate-500 hover:text-rose-500 hover:bg-rose-50 transition-all"
                                             title="退出登录"
+                                            aria-label="退出登录"
                                         >
-                                            <LogOut className="w-4 h-4" />
+                                            <LogOut aria-hidden="true" className="w-4 h-4" />
                                         </button>
                                     </div>
                                 ) : (
@@ -150,7 +151,7 @@ const Navbar = () => {
                                         to="/login"
                                         className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-primary/5 text-primary hover:bg-primary hover:text-white transition-all text-xs font-bold"
                                     >
-                                        <UserIcon className="w-3.5 h-3.5" />
+                                        <UserIcon aria-hidden="true" className="w-3.5 h-3.5" />
                                         <span>登录</span>
                                     </Link>
                                 )}
@@ -162,9 +163,9 @@ const Navbar = () => {
                                 aria-expanded={isMobileMenuOpen}
                             >
                                 {isMobileMenuOpen ? (
-                                    <X className="w-5 h-5 sm:w-6 sm:h-6" />
+                                    <X aria-hidden="true" className="w-5 h-5 sm:w-6 sm:h-6" />
                                 ) : (
-                                    <Menu className="w-5 h-5 sm:w-6 sm:h-6" />
+                                    <Menu aria-hidden="true" className="w-5 h-5 sm:w-6 sm:h-6" />
                                 )}
                             </button>
                         </div>
@@ -203,7 +204,7 @@ const Navbar = () => {
                             onClick={toggleLanguage}
                             className={`${styles.mobileActionButton} flex items-center space-x-2`}
                         >
-                            <Languages className="w-4 h-4" />
+                            <Languages aria-hidden="true" className="w-4 h-4" />
                             <span className="text-sm font-medium">{currentLang}</span>
                         </button>
                         <a
@@ -212,7 +213,7 @@ const Navbar = () => {
                             rel="noopener noreferrer"
                             className={`${styles.mobileActionButton} flex items-center space-x-2`}
                         >
-                            <Github className="w-5 h-5" />
+                            <Github aria-hidden="true" className="w-5 h-5" />
                             <span className="text-sm font-medium">GitHub</span>
                         </a>
 
@@ -221,7 +222,7 @@ const Navbar = () => {
                                 onClick={handleLogout}
                                 className={`${styles.mobileActionButton} flex items-center space-x-2 text-rose-500`}
                             >
-                                <LogOut className="w-4 h-4" />
+                                <LogOut aria-hidden="true" className="w-4 h-4" />
                                 <span className="text-sm font-medium">退出登录 ({userInfo.nickname || userInfo.username})</span>
                             </button>
                         ) : (
@@ -230,7 +231,7 @@ const Navbar = () => {
                                 className={`${styles.mobileActionButton} flex items-center space-x-2 text-primary`}
                                 onClick={() => setIsMobileMenuOpen(false)}
                             >
-                                <UserIcon className="w-4 h-4" />
+                                <UserIcon aria-hidden="true" className="w-4 h-4" />
                                 <span className="text-sm font-medium">账户登录</span>
                             </Link>
                         )}

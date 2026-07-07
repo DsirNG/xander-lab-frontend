@@ -4,12 +4,13 @@ import { useTranslation } from 'react-i18next';
 import {
     Send, Save, Tag as TagIcon,
     ChevronLeft, Layout, Type, AlignLeft, Hash, Loader2,
-    Eye, Edit3, Info
+    Eye, Edit3, Info, Settings, X
 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { blogService } from '../services/blogService';
 import { useToast } from '@/hooks/useToast';
+import useIsMobile from '@hooks/useIsMobile';
 import CustomSelect from '../../components/pages/codeComponent/CustomSelect';
 import CreatableMultiSelect from '@/components/common/CreatableMultiSelect';
 
@@ -32,6 +33,15 @@ const BlogPublish = () => {
         content: '',
         tags: []
     });
+
+    // --- 移动端设置面板控制 ---
+    const isMobile = useIsMobile();
+    const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+    const toggleSettings = () => setIsSettingsOpen(prev => !prev);
+
+    useEffect(() => {
+        if (!isMobile) setIsSettingsOpen(false);
+    }, [isMobile]);
 
     const contentTextareaRef = useRef(null);
     useEffect(() => {
@@ -94,9 +104,17 @@ const BlogPublish = () => {
                     </span>
                 </div>
 
-                <div className="flex items-center gap-3">
-                    <button className="px-5 py-2 text-xs font-bold text-slate-500 hover:text-slate-900 transition-colors flex items-center gap-2 rounded-xl hover:bg-slate-100 ">
+                <div className="flex items-center gap-2 sm:gap-3">
+                    <button className="hidden sm:flex px-5 py-2 text-xs font-bold text-slate-500 hover:text-slate-900 transition-colors items-center gap-2 rounded-xl hover:bg-slate-100">
                         <Save className="w-4 h-4" /> {t('blog.saveDraft')}
+                    </button>
+                    {/* 移动端设置面板切换按钮 */}
+                    <button
+                        onClick={toggleSettings}
+                        className="lg:hidden p-2 text-slate-500 hover:text-primary hover:bg-slate-100 rounded-xl transition-all"
+                        title="文档设置"
+                    >
+                        {isSettingsOpen ? <X className="w-5 h-5" /> : <Settings className="w-5 h-5" />}
                     </button>
                     <button
                         onClick={handlePublish}
@@ -114,7 +132,7 @@ const BlogPublish = () => {
 
             <div className="flex-1 flex overflow-hidden relative">
                 {/* 主编辑区 / Left Pane - Editor & Preview */}
-                <main className="flex-1 flex flex-col relative bg-white  rounded-tr-[0.5rem] border-r border-t border-slate-200 /80 shadow-[10px_0_30px_-15px_rgba(0,0,0,0.05)] z-10 transition-all overflow-hidden mt-2 ml-2">
+                <main className="flex-1 flex flex-col relative bg-white  rounded-tr-[0.5rem] border-r border-t border-slate-200 lg:border-r lg:border-t /80 shadow-[10px_0_30px_-15px_rgba(0,0,0,0.05)] z-10 transition-all overflow-hidden mt-2 ml-2 lg:ml-2">
                     <div className="absolute top-6 right-8 z-20">
                         <div className="flex bg-slate-100/80 /80 backdrop-blur-md p-1 rounded-2xl border border-slate-200/50 /50 shadow-sm">
                             <button
@@ -190,9 +208,25 @@ const BlogPublish = () => {
                     </div>
                 </main>
 
+                {/* 移动端遮罩层 */}
+                {isSettingsOpen && (
+                    <div
+                        className="lg:hidden fixed inset-0 bg-black/30 z-30"
+                        style={{ top: '64px' }}
+                        onClick={toggleSettings}
+                    />
+                )}
+
                 {/* 侧边栏 / Right Pane - Configuration */}
-                <aside className="w-[420px] shrink-0 bg-transparent flex flex-col z-0 mt-2">
-                    <div className="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar p-10 space-y-12 pb-32">
+                <aside className={`
+                    fixed lg:static
+                    top-[64px] right-0 bottom-0
+                    w-[320px] lg:w-[420px] shrink-0
+                    bg-slate-50 flex flex-col z-40
+                    transform transition-transform duration-300 ease-in-out
+                    ${isSettingsOpen ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'}
+                `}>
+                    <div className="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar p-6 lg:p-10 space-y-12 pb-32">
 
                         {/* 状态与控制面板 */}
                         <div>
@@ -256,8 +290,8 @@ const BlogPublish = () => {
                     </div>
 
                     {/* 底部渐变遮罩，改善侧边栏滚动视觉效果 */}
-                    <div className="absolute bottom-0 left-0 w-[420px] h-12 bg-gradient-to-t from-slate-50 to-transparent pointer-events-none z-10"></div>
-                </aside >
+                    <div className="absolute bottom-0 left-0 w-full h-12 bg-gradient-to-t from-slate-50 to-transparent pointer-events-none z-10"></div>
+                </aside>
             </div>
         </div>
     );

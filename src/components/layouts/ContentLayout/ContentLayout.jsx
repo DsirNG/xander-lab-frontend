@@ -11,8 +11,6 @@ import PropTypes from 'prop-types';
  */
 const ContentLayout = ({
     item,
-    scenarios,
-    renderDemoSection,
     basePath = '',
     detailButtonText,
     detailButtonIcon: DetailButtonIcon,
@@ -73,22 +71,13 @@ const ContentLayout = ({
 
             {/* 场景演示区域 */}
             <div className="grid grid-cols-1">
-                {scenarios && scenarios.length > 0 ? (
-                    scenarios.map((scenario, index) => (
-                        <React.Fragment key={index}>
-                            {renderDemoSection(scenario, index)}
-                        </React.Fragment>
-                    ))
-                ) : (
+                {React.Children.count(children) > 0 ? children : (
                     <div className="min-h-[400px] flex flex-col items-center justify-center text-slate-400">
                         <Zap className="w-12 h-12 mb-4 opacity-20" />
                         <p>{t('common.comingSoon')}</p>
                     </div>
                 )}
             </div>
-
-            {/* 自定义内容区域 */}
-            {children}
         </motion.div>
     );
 };
@@ -102,15 +91,6 @@ ContentLayout.propTypes = {
         description: PropTypes.string,
         detailPages: PropTypes.array
     }).isRequired,
-    // 场景列表
-    scenarios: PropTypes.arrayOf(PropTypes.shape({
-        title: PropTypes.string,
-        desc: PropTypes.string,
-        demo: PropTypes.node,
-        code: PropTypes.string
-    })),
-    // 渲染单个演示区域的函数
-    renderDemoSection: PropTypes.func.isRequired,
     // 基础路径（用于详情链接）
     basePath: PropTypes.string,
     // 详情按钮文本
@@ -121,7 +101,7 @@ ContentLayout.propTypes = {
     extraHeaderButtons: PropTypes.node,
     // 主题色
     themeColor: PropTypes.string,
-    // 自定义子内容
+    // 自定义子内容（场景演示由消费方作为 children 传入）
     children: PropTypes.node
 };
 

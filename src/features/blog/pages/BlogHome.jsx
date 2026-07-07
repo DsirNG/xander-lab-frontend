@@ -48,8 +48,8 @@ const BlogHome = () => {
         fetchInitialBlogs();
     }, [search, category, tag]);
 
-    // 加载更多
-    const fetchMoreBlogs = async () => {
+    // 加载更多（useCallback 避免 IntersectionObserver 闭包过期）
+    const fetchMoreBlogs = useCallback(async () => {
         if (loadingMore || !hasMore) return;
 
         setLoadingMore(true);
@@ -58,7 +58,7 @@ const BlogHome = () => {
             const data = await blogService.getBlogs({ search, category, tag, page: nextPage, size: 10 });
             if (data && data.records) {
                 setBlogs(prev => [...prev, ...data.records]);
-                setPage(nextPage);
+                setPage(prev => prev + 1);
                 setHasMore(data.hasMore);
             } else {
                 setHasMore(false);
@@ -68,7 +68,7 @@ const BlogHome = () => {
         } finally {
             setLoadingMore(false);
         }
-    };
+    }, [page, loadingMore, hasMore, search, category, tag]);
 
     // 监听滚动到末尾
     const lastElementRef = useCallback(node => {
@@ -82,7 +82,7 @@ const BlogHome = () => {
         });
 
         if (node) observer.current.observe(node);
-    }, [loading, loadingMore, hasMore, page]);
+    }, [loading, loadingMore, fetchMoreBlogs]);
 
     const clearFilters = () => {
         setSearchParams({});
@@ -138,21 +138,25 @@ const BlogHome = () => {
                     <div className="hidden md:flex bg-slate-100  p-0.5 rounded-lg">
                         <button
                             onClick={() => setViewMode('grid')}
+                            aria-label="网格视图"
+                            aria-pressed={viewMode === 'grid'}
                             className={`p-1.5 rounded-md transition-all ${viewMode === 'grid'
                                 ? 'bg-white  shadow-sm text-primary'
                                 : 'text-slate-400 hover:text-slate-600 '
                                 }`}
                         >
-                            <Grid className="w-3.5 h-3.5" />
+                            <Grid aria-hidden="true" className="w-3.5 h-3.5" />
                         </button>
                         <button
                             onClick={() => setViewMode('list')}
+                            aria-label="列表视图"
+                            aria-pressed={viewMode === 'list'}
                             className={`p-1.5 rounded-md transition-all ${viewMode === 'list'
                                 ? 'bg-white  shadow-sm text-primary'
                                 : 'text-slate-400 hover:text-slate-600 '
                                 }`}
                         >
-                            <List className="w-3.5 h-3.5" />
+                            <List aria-hidden="true" className="w-3.5 h-3.5" />
                         </button>
                     </div>
                 </div>

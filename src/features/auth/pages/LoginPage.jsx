@@ -181,7 +181,7 @@ const LoginPage = () => {
                                 >
                                     <div className="space-y-5">
                                         <div className="group">
-                                            <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-2 px-1 block">
+                                            <label htmlFor="account" className="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-2 px-1 block">
                                                 Identity / 账户
                                             </label>
                                             <div className="relative">
@@ -190,6 +190,7 @@ const LoginPage = () => {
                                                 </div>
                                                 <input
                                                     type="text"
+                                                    id="account"
                                                     name="account"
                                                     required
                                                     value={formData.account}
@@ -202,7 +203,7 @@ const LoginPage = () => {
 
                                         {loginType === 'password' ? (
                                             <div className="group">
-                                                <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-2 px-1 block">
+                                                <label htmlFor="password" className="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-2 px-1 block">
                                                     Secret Key / 密码
                                                 </label>
                                                 <div className="relative">
@@ -211,6 +212,7 @@ const LoginPage = () => {
                                                     </div>
                                                     <input
                                                         type="password"
+                                                        id="password"
                                                         name="password"
                                                         required
                                                         value={formData.password}
@@ -222,7 +224,7 @@ const LoginPage = () => {
                                             </div>
                                         ) : (
                                             <div className="group">
-                                                <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-2 px-1 block">
+                                                <label htmlFor="code" className="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-2 px-1 block">
                                                     Command Stream / 验证码
                                                 </label>
                                                 <div className="flex gap-2">
@@ -232,6 +234,7 @@ const LoginPage = () => {
                                                         </div>
                                                         <input
                                                             type="text"
+                                                            id="code"
                                                             name="code"
                                                             required
                                                             maxLength={6}

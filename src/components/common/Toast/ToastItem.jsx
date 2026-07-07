@@ -99,6 +99,7 @@ const ToastItem = ({ toast, onRemove }) => {
                 <button
                     onClick={() => setIsExiting(true)}
                     className="flex-shrink-0 p-1 opacity-0 group-hover:opacity-100 rounded-full hover:bg-slate-100  text-slate-400  transition-all duration-300"
+                    aria-label="关闭通知"
                 >
                     <X className="w-3.5 h-3.5" />
                 </button>
