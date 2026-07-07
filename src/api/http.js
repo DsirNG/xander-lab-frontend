@@ -20,6 +20,7 @@
 
 import axios from 'axios';
 import { ENV_CONFIG } from '@config/env';
+import i18n from '@locales/index';
 
 // ─────────────────────────────────────────────
 // 1. 常量 & 配置
@@ -70,31 +71,43 @@ export const tokenStorage = {
 // 3. 错误码映射
 // ─────────────────────────────────────────────
 
-/** HTTP 状态码 → 友好提示 */
-const HTTP_ERROR_MAP = {
-    400: '请求参数错误',
-    401: '登录已过期，请重新登录',
-    403: '您没有权限执行此操作',
-    404: '请求的资源不存在',
-    405: '请求方法不被允许',
-    408: '请求超时，请稍后重试',
-    409: '数据冲突，请刷新后重试',
-    422: '请求数据验证失败',
-    429: '请求过于频繁，请稍后重试',
-    500: '服务器内部错误',
-    502: '网关错误，请稍后重试',
-    503: '服务暂时不可用',
-    504: '网关超时，请稍后重试',
+/** HTTP 状态码 → i18n key */
+const HTTP_ERROR_KEYS = {
+    400: 'http.errors.badRequest',
+    401: 'http.errors.unauthorized',
+    403: 'http.errors.forbidden',
+    404: 'http.errors.notFound',
+    405: 'http.errors.methodNotAllowed',
+    408: 'http.errors.requestTimeout',
+    409: 'http.errors.conflict',
+    422: 'http.errors.unprocessable',
+    429: 'http.errors.tooManyRequests',
+    500: 'http.errors.internalError',
+    502: 'http.errors.badGateway',
+    503: 'http.errors.serviceUnavailable',
+    504: 'http.errors.gatewayTimeout',
 };
 
-/** 业务错误码 → 友好提示（对接后端自定义 code） */
-const BIZ_ERROR_MAP = {
-    1001: '用户名或密码错误',
-    1002: '账号已被禁用',
-    1003: '验证码已过期',
-    4001: '数据不存在',
-    4003: '无操作权限',
-    5000: '服务器繁忙，请稍后重试',
+/** 业务错误码 → i18n key */
+const BIZ_ERROR_KEYS = {
+    1001: 'http.errors.invalidCredentials',
+    1002: 'http.errors.accountDisabled',
+    1003: 'http.errors.codeExpired',
+    4001: 'http.errors.dataNotFound',
+    4003: 'http.errors.noPermission',
+    5000: 'http.errors.serverBusy',
+};
+
+/** 获取 HTTP 错误提示（运行时解析翻译） */
+const getHttpErrorMessage = (status) => {
+    const key = HTTP_ERROR_KEYS[status];
+    return key ? i18n.t(key) : '';
+};
+
+/** 获取业务错误提示（运行时解析翻译） */
+const getBizErrorMessage = (code, fallback) => {
+    const key = BIZ_ERROR_KEYS[code];
+    return key ? i18n.t(key) : (fallback || i18n.t('http.errors.bizDefault'));
 };
 
 // ─────────────────────────────────────────────
@@ -218,7 +231,7 @@ function notifyRefreshSubscribers(newToken) {
 async function refreshAccessToken() {
     const refreshToken = tokenStorage.getRefreshToken();
     if (!refreshToken) {
-        throw new HttpError('无刷新令牌，请重新登录', 401, null, null);
+        throw new HttpError(i18n.t('http.errors.noRefreshToken'), 401, null, null);
     }
     // 使用原始 axios 避免循环拦截
     const response = await axios.post(`${BASE_URL}${REFRESH_URL}`, {
@@ -311,7 +324,7 @@ instance.interceptors.response.use(
             }
             // 业务错误
             const bizMsg =
-                BIZ_ERROR_MAP[body.code] || body.message || '业务处理失败';
+                getBizErrorMessage(body.code, body.message);
             throw new HttpError(bizMsg, response.status, body.code, body);
         }
 
@@ -387,7 +400,7 @@ instance.interceptors.response.use(
 
             if (IS_DEV) {
                 console.warn(
-                    `[HTTP] 重试 ${config._retryCount}/${MAX_RETRY}，延迟 ${delay}ms`,
+                    `[HTTP] Retry ${config._retryCount}/${MAX_RETRY}, delay ${delay}ms`,
                     config.url
                 );
             }
@@ -401,9 +414,9 @@ instance.interceptors.response.use(
         const serverMsg = response?.data?.message;
         const message =
             serverMsg ||
-            HTTP_ERROR_MAP[status] ||
+            getHttpErrorMessage(status) ||
             error.message ||
-            '网络请求失败，请检查网络连接';
+            i18n.t('http.errors.networkError');
 
         if (IS_DEV) {
             console.groupCollapsed(
@@ -660,7 +673,7 @@ export function createCancelToken() {
     const controller = new AbortController();
     return {
         signal: controller.signal,
-        cancel: (reason = '请求已取消') => controller.abort(reason),
+        cancel: (reason = i18n.t('http.errors.cancelled')) => controller.abort(reason),
     };
 }
 

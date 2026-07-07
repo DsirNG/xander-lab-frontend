@@ -33,7 +33,7 @@ const ShareDrawer = ({
 }) => {
     const { t } = useTranslation();
     return (
-        <div className={`absolute bottom-0 left-0 right-0 bg-white border-t border-slate-200 z-[70] transition-all duration-350 shadow-[0_-20px_50px_rgba(0,0,0,0.06)] flex flex-col ${drawerOpen ? 'h-[70vh] lg:h-[550px]' : 'h-14'}`}>
+        <div className={`absolute bottom-0 left-0 right-0 bg-white border-t border-slate-200 z-[70] transition-all duration-350 shadow-[0_-20px_50px_rgba(0,0,0,0.06)] flex flex-col ${drawerOpen ? 'h-[60vh] md:h-[50vh] lg:h-[550px]' : 'h-14'}`}>
             <div className="h-14 flex-shrink-0 flex items-center justify-between px-4 lg:px-10 border-b border-slate-50">
                 <div className="flex items-center gap-3 lg:gap-10 h-full">
                     <div className="hidden lg:flex items-center gap-2 text-slate-300">
@@ -67,7 +67,7 @@ const ShareDrawer = ({
                 <AnimatePresence mode="wait">
                     {infTab === 'logic' && (
                         <motion.div key="logic" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex-1 flex h-full overflow-hidden">
-                            <div className="w-48 lg:w-64 flex-shrink-0 bg-white border-r border-slate-200 p-3 lg:p-4 flex flex-col h-full">
+                            <div className="w-36 md:w-48 lg:w-64 flex-shrink-0 bg-white border-r border-slate-200 p-3 lg:p-4 flex flex-col h-full">
                                 <div className="flex items-center justify-between mb-4 px-2">
                                     <div className="flex items-center gap-2 relative z-10">
                                         <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Files</span>

@@ -9,6 +9,7 @@ export default {
     modules: 'Modules',
     components: 'Components',
     blog: 'Blog',
+    studio: 'Studio',
     about: 'About',
     home: 'Home',
     logout: 'Log Out',
@@ -58,15 +59,24 @@ export default {
     saveDraft: 'Save Draft',
     publishNow: 'Publish Now',
     publishing: 'Publishing...',
-    fillRequired: 'Please fill in title, content and category'
+    fillRequired: 'Please fill in title, content and category',
+    publishSettings: 'Document Settings',
+    edit: 'Edit',
+    preview: 'Preview',
+    noContent: 'No content yet'
   },
   common: {
+    backHome: 'Back to Home',
     backToInfra: 'Back to Infrastructure',
     backToComponents: 'Back to Components',
+    goBack: 'Go Back',
+    pageNotFound: 'Page Not Found',
+    pageNotFoundDesc: 'The page you are looking for does not exist or has been moved.',
     technicalNarrative: 'Technical Narrative',
     codeImplementation: 'Code Implementation',
     involvedFiles: 'Involved Files',
     implementationDetails: 'Implementation Details',
+    viewDetails: 'View Details',
     viewSource: 'View Source',
     viewDeepDive: 'View Deep Dive',
     comingSoon: 'Coming Soon',
@@ -90,6 +100,17 @@ export default {
       errorDetails: 'Error Details',
       reload: 'Reload',
       backToHome: 'Back to Home'
+    },
+    aria: {
+      mainNav: 'Main navigation',
+      openMenu: 'Open menu',
+      closeMenu: 'Close menu',
+      openSidebar: 'Open sidebar',
+      closeSidebar: 'Close sidebar',
+      gridView: 'Grid view',
+      listView: 'List view',
+      close: 'Close',
+      closeNotification: 'Close notification'
     }
   },
   auth: {
@@ -216,6 +237,11 @@ export default {
     }
   },
   components: {
+    desc: 'Explore our atomic component library.',
+    list: {
+      atomDesc: 'Atomic components for building consistent interfaces.',
+      shareMyComponents: 'Share My Components'
+    },
     customSelect: {
       title: 'Custom Select',
       desc: 'A custom dropdown component that supports boundary detection and scroll tracking. Standard dropdowns often fail to handle viewport constraints properly - this component automatically adjusts its position to stay visible and follows scroll events to maintain alignment with its trigger element.',
@@ -426,9 +452,40 @@ export default {
       }
     }
   },
+  http: {
+    errors: {
+      badRequest: 'Invalid request parameters',
+      unauthorized: 'Session expired, please log in again',
+      forbidden: 'You do not have permission to perform this action',
+      notFound: 'The requested resource does not exist',
+      methodNotAllowed: 'Request method is not allowed',
+      requestTimeout: 'Request timed out, please try again later',
+      conflict: 'Data conflict, please refresh and try again',
+      unprocessable: 'Request data validation failed',
+      tooManyRequests: 'Too many requests, please try again later',
+      internalError: 'Internal server error',
+      badGateway: 'Bad gateway, please try again later',
+      serviceUnavailable: 'Service temporarily unavailable',
+      gatewayTimeout: 'Gateway timeout, please try again later',
+      bizDefault: 'Business processing failed',
+      invalidCredentials: 'Invalid username or password',
+      accountDisabled: 'Account has been disabled',
+      codeExpired: 'Verification code has expired',
+      dataNotFound: 'Data does not exist',
+      noPermission: 'No permission for this operation',
+      serverBusy: 'Server is busy, please try again later',
+      networkError: 'Network request failed, please check your connection',
+      noRefreshToken: 'No refresh token, please log in again',
+      retryPrefix: '[HTTP] Retry',
+      retrySuffix: 'delay',
+      cancelled: 'Request cancelled'
+    }
+  },
   footer: {
     desc: 'A knowledge sharing and learning platform that documents project experiences and provides reusable components, Hooks, and learning resources. Welcome to point out errors and suggestions for improvement!',
     resources: 'Resources',
+    Infrastructure: 'Infrastructure',
+    Modules: 'Modules',
     components: 'Components',
     hooks: 'Hooks',
     docs: 'Documentation',

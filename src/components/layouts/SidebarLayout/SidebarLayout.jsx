@@ -1,33 +1,40 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link, Outlet } from 'react-router-dom';
-import { AnimatePresence } from 'framer-motion';
-import { ChevronRight, Menu, X } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 import PropTypes from 'prop-types';
 import useIsMobile from '@hooks/useIsMobile';
+import { useTranslation } from 'react-i18next';
 
 const EMPTY_ITEMS = [];
 
-const SidebarItem = ({ item, active, onClick, subtitleKey = 'tag' }) => (
+/**
+ * 侧边栏单个菜单项
+ * @param {Object} props.item - 菜单项数据
+ * @param {boolean} props.active - 是否为当前选中项
+ * @param {Function} props.onClick - 点击回调
+ * @param {string} props.subtitleKey - 副标题字段名
+ */
+const SidebarItem = React.memo(({ item, active, onClick, subtitleKey = 'tag' }) => (
     <Link
         to={item.path || String(item.id)}
         onClick={onClick}
-        className={`w-full text-left p-4 rounded-2xl transition-all duration-300 flex items-center group mb-2
+        className={`w-full text-left p-4 rounded-2xl flex items-center group mb-2
             ${active
-                ? 'bg-primary text-white shadow-xl shadow-primary/30'
-                : 'hover:bg-slate-100  text-slate-600 '}`}
+                ? 'bg-primary text-white shadow-lg shadow-primary/20'
+                : 'hover:bg-slate-100 text-slate-600'}`}
     >
-        <div className={`p-2 rounded-xl mr-4 transition-colors ${active ? 'bg-white/20' : 'bg-slate-100  group-hover:bg-white/50'}`}>
+        <div className={`p-2 rounded-xl mr-4 ${active ? 'bg-white/20' : 'bg-slate-100 group-hover:bg-white/50'}`}>
             {item.icon}
         </div>
-        <div className="flex-grow">
-            <h4 className="font-bold text-sm">{item.title}</h4>
-            <p className={`text-[10px] uppercase tracking-widest opacity-60 ${active ? 'text-white' : 'text-slate-400'}`}>
+        <div className="flex-grow min-w-0">
+            <h4 className="font-bold text-sm truncate">{item.title}</h4>
+            <p className={`text-[10px] uppercase tracking-widest opacity-60 truncate ${active ? 'text-white' : 'text-slate-400'}`}>
                 {item[subtitleKey] || item.id}
             </p>
         </div>
-        <ChevronRight className={`w-4 h-4 transition-transform ${active ? 'rotate-90' : 'group-hover:translate-x-1'}`} />
+        <ChevronRight className={`w-4 h-4 flex-shrink-0 ${active ? 'rotate-90' : ''}`} />
     </Link>
-);
+));
 
 const SidebarLayout = ({
     title,
@@ -39,6 +46,7 @@ const SidebarLayout = ({
 }) => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const isMobile = useIsMobile();
+    const { t } = useTranslation();
 
     // 桌面端自动关闭移动菜单
     useEffect(() => {
@@ -47,18 +55,26 @@ const SidebarLayout = ({
         }
     }, [isMobile]);
 
+    /** 菜单项点击处理，移动端点击后自动关闭菜单 */
+    const handleItemClick = useCallback((e, item) => {
+        if (item.isComingSoon) {
+            e.preventDefault();
+            return;
+        }
+        if (isMobile) {
+            setIsMobileMenuOpen(false);
+        }
+    }, [isMobile]);
+
     return (
-        <div className="bg-white ">
+        <div className="bg-white">
             {/* 移动端菜单按钮 */}
             <button
                 onClick={() => setIsMobileMenuOpen(true)}
-                className={`lg:hidden fixed top-20 left-0 z-40 p-2 bg-white/10 /50 backdrop-blur-[2px] rounded-r-lg shadow-md border border-l-0 border-slate-200  transition-all duration-300 ease-in-out ${isMobileMenuOpen
-                    ? '-translate-x-full opacity-0 pointer-events-none'
-                    : 'translate-x-0 opacity-100'
-                    }`}
-                aria-label="打开菜单"
+                className={`lg:hidden fixed top-20 left-0 z-40 p-2 bg-white rounded-r-lg shadow-md border border-l-0 border-slate-200 ${isMobileMenuOpen ? 'hidden' : ''}`}
+                aria-label={t('common.aria.openMenu', 'Open menu')}
             >
-                <ChevronRight className="w-5 h-5 text-slate-600 " />
+                <ChevronRight className="w-5 h-5 text-slate-600" />
             </button>
 
             {/* 移动端遮罩层 */}
@@ -70,23 +86,22 @@ const SidebarLayout = ({
                 />
             )}
 
-            <div className="max-w-full sm:max-w-[640px] md:max-w-[768px] lg:max-w-[1024px] xl:max-w-[1280px] 2xl:max-w-[1536px] mx-auto flex h-[calc(100vh-64px)] overflow-hidden pt-0 lg:pt-0">
-                {/* Left Sidebar - 响应式布局 */}
+            <div className="max-w-full sm:max-w-[640px] md:max-w-[768px] lg:max-w-[1024px] xl:max-w-[1280px] 2xl:max-w-[1536px] mx-auto flex h-[calc(100vh-64px)] overflow-hidden">
+                {/* 左侧边栏 */}
                 <aside className={`
                     fixed lg:static
                     top-[64px] left-0 bottom-0
-                    w-[280px] sm:w-[320px] md:w-[300px] lg:w-[280px] xl:w-[320px] 2xl:w-[350px]
+                    w-[260px] sm:w-[300px] md:w-[280px] lg:w-[260px] xl:w-[300px] 2xl:w-[320px]
                     flex-shrink-0
                     border-r border-slate-100
-                    p-4 sm:p-6 md:p-6 lg:p-8
+                    p-4 sm:p-5 lg:p-6
                     flex flex-col h-[calc(100vh-64px)]
-                    bg-slate-50/80 backdrop-blur-sm lg:bg-slate-50/50 lg:backdrop-blur-none
-                    transform transition-transform duration-300 ease-in-out z-40
-                    ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+                    bg-slate-50 z-40
+                    ${isMobileMenuOpen ? '' : 'hidden lg:block'}
                 `}>
 
-                    <header className="mb-6 md:mb-8 lg:mb-10">
-                        <h1 className="text-xl sm:text-2xl font-black text-slate-900  mb-2 hidden lg:block">
+                    <header className="mb-4 lg:mb-6">
+                        <h1 className="text-xl sm:text-2xl font-black text-slate-900 mb-1 hidden lg:block">
                             {title}
                         </h1>
                         <p className="text-xs text-slate-500 leading-relaxed hidden lg:block">
@@ -101,40 +116,21 @@ const SidebarLayout = ({
                                 item={item}
                                 active={String(activeId) === String(item.id)}
                                 subtitleKey={subtitleKey}
-                                onClick={(e) => {
-                                    if (item.isComingSoon) {
-                                        e.preventDefault();
-                                    } else {
-                                        // 移动端选择后自动关闭菜单
-                                        if (isMobile) {
-                                            setIsMobileMenuOpen(false);
-                                        }
-                                    }
-                                }}
+                                onClick={(e) => handleItemClick(e, item)}
                             />
                         ))}
                     </div>
 
                     {bottomCard && (
-                        <div className="mt-auto pt-4 md:pt-6 border-t border-slate-100 ">
+                        <div className="mt-auto pt-4 border-t border-slate-100">
                             {bottomCard}
                         </div>
                     )}
                 </aside>
 
-                {/* Right Content Area - 响应式布局 */}
-                <main className={`
-                    flex-grow overflow-y-auto custom-scrollbar
-                    bg-white
-                    px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12
-                    py-6 sm:py-8 md:py-9 lg:py-10
-                    relative
-                    w-full lg:w-auto
-                    pt-4 lg:pt-0
-                `}>
-                    <AnimatePresence mode="wait">
-                        <Outlet />
-                    </AnimatePresence>
+                {/* 右侧内容区 */}
+                <main className="flex-grow overflow-y-auto custom-scrollbar bg-white px-4 sm:px-6 lg:px-10 py-6 lg:py-8 relative w-full lg:w-auto">
+                    <Outlet />
                 </main>
             </div>
         </div>

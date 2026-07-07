@@ -142,7 +142,7 @@ const BlogTags = () => {
                                     ${tagLevelStyles[level]}
                                     ${isActive
                                         ? 'bg-primary text-white border-primary shadow-md shadow-primary/20'
-                                        : 'bg-white /60 text-slate-600  border-slate-200 hover:border-primary/50 hover:text-primary hover:shadow-sm'
+                                        : 'bg-white text-slate-600  border-slate-200 hover:border-primary/50 hover:text-primary hover:shadow-sm'
                                     }
                                 `}
                             >

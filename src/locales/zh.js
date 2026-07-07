@@ -9,6 +9,7 @@ export default {
     modules: '功能模块',
     components: '组件',
     blog: '博客',
+    studio: '工作室',
     about: '关于',
     home: '首页',
     logout: '退出登录',
@@ -58,15 +59,24 @@ export default {
     saveDraft: '保存草稿',
     publishNow: '立即发布',
     publishing: '发布中...',
-    fillRequired: '请填写完整的标题、内容和分类'
+    fillRequired: '请填写完整的标题、内容和分类',
+    publishSettings: '文档设置',
+    edit: '编辑',
+    preview: '预览',
+    noContent: '尚未输入内容'
   },
   common: {
+    backHome: '返回首页',
     backToInfra: '返回基础模块',
     backToComponents: '返回组件库',
+    goBack: '返回',
+    pageNotFound: '页面未找到',
+    pageNotFoundDesc: '您访问的页面不存在或已被移动。',
     technicalNarrative: '技术叙述',
     codeImplementation: '代码实现',
     involvedFiles: '涉及文件',
     implementationDetails: '实现细节',
+    viewDetails: '查看详情',
     viewSource: '查看源码',
     viewDeepDive: '查看深度分析',
     comingSoon: '敬请期待',
@@ -90,6 +100,17 @@ export default {
       errorDetails: '错误详情',
       reload: '重新加载',
       backToHome: '返回首页'
+    },
+    aria: {
+      mainNav: '主导航',
+      openMenu: '打开菜单',
+      closeMenu: '关闭菜单',
+      openSidebar: '打开侧边栏',
+      closeSidebar: '关闭侧边栏',
+      gridView: '网格视图',
+      listView: '列表视图',
+      close: '关闭',
+      closeNotification: '关闭通知'
     }
   },
   auth: {
@@ -216,6 +237,11 @@ export default {
     }
   },
   components: {
+    desc: '探索我们的原子组件库。',
+    list: {
+      atomDesc: '用于构建一致界面的原子组件。',
+      shareMyComponents: '分享我的组件'
+    },
     customSelect: {
       title: 'customSelect',
       desc: '一个支持边界检测和滚动跟随的自定义下拉选择组件。常规的下拉框往往无法很好地处理视口边界问题,该组件能够自动调整位置以保持可见性,并且在滚动时持续跟随触发元素,确保下拉框始终对齐。',
@@ -424,6 +450,35 @@ export default {
         welcomeDesc: '侦测到系统架构池处于初始完全清空状态，且您是第一次进入 Xander-Lab Workspace。为了帮助您最快熟悉这个"四合一"热重载沙盒，我们为您内置了一整套全局通知系统（Toast）的骨架。是否愿意花 30 秒的世界时间，跟随强光指引，一点点体验如何无脑将组件拼装、编译并最终发射运作？',
         fileExtensionHint: '推荐使用标准的前端扩展名如'
       }
+    }
+  },
+  http: {
+    errors: {
+      badRequest: '请求参数错误',
+      unauthorized: '登录已过期，请重新登录',
+      forbidden: '您没有权限执行此操作',
+      notFound: '请求的资源不存在',
+      methodNotAllowed: '请求方法不被允许',
+      requestTimeout: '请求超时，请稍后重试',
+      conflict: '数据冲突，请刷新后重试',
+      unprocessable: '请求数据验证失败',
+      tooManyRequests: '请求过于频繁，请稍后重试',
+      internalError: '服务器内部错误',
+      badGateway: '网关错误，请稍后重试',
+      serviceUnavailable: '服务暂时不可用',
+      gatewayTimeout: '网关超时，请稍后重试',
+      bizDefault: '业务处理失败',
+      invalidCredentials: '用户名或密码错误',
+      accountDisabled: '账号已被禁用',
+      codeExpired: '验证码已过期',
+      dataNotFound: '数据不存在',
+      noPermission: '无操作权限',
+      serverBusy: '服务器繁忙，请稍后重试',
+      networkError: '网络请求失败，请检查网络连接',
+      noRefreshToken: '无刷新令牌，请重新登录',
+      retryPrefix: '[HTTP] 重试',
+      retrySuffix: '延迟',
+      cancelled: '请求已取消'
     }
   },
   footer: {

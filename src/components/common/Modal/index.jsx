@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 /**
  * 通用弹窗组件
@@ -19,6 +20,7 @@ const Modal = ({
 }) => {
     const modalRef = useRef(null);
     const previousFocusRef = useRef(null);
+    const { t } = useTranslation();
 
     // 拦截背景滚动并防止滚动条消失引发的布局抖动
     useEffect(() => {
@@ -153,7 +155,7 @@ const Modal = ({
                                 {!hideCloseButton && (
                                     <button
                                         onClick={onClose}
-                                        aria-label="关闭"
+                                        aria-label={t('common.aria.close', 'Close')}
                                         className="p-2 -mr-2 text-slate-400 hover:text-rose-500 hover:bg-rose-50  rounded-full transition-all active:scale-90"
                                     >
                                         <X className="w-5 h-5" />

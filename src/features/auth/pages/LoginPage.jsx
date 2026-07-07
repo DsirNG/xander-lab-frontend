@@ -72,7 +72,7 @@ const LoginPage = () => {
     };
 
     return (
-        <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-[#fcfcfd]  overflow-hidden selection:bg-primary/30">
+        <div className="min-h-screen flex flex-col items-center justify-center p-4 sm:p-6 bg-[#fcfcfd]  overflow-hidden selection:bg-primary/30">
             {/* 1. 高级艺术背景：数字轨道与漂浮粒子 */}
             <div className="absolute inset-0 pointer-events-none z-0">
                 <DigitalOrbit />
@@ -124,7 +124,7 @@ const LoginPage = () => {
 
                 <div className="relative bg-white/70 backdrop-blur-3xl border border-white/40  rounded-[3.5rem] shadow-[0_32px_128px_-32px_rgba(0,0,0,0.15)] overflow-hidden">
 
-                    <div className="p-10 md:p-14 relative z-10">
+                    <div className="p-6 sm:p-10 md:p-14 relative z-10">
                         {/* 装饰图标 */}
                         <div className="absolute top-0 right-0 p-8 opacity-10">
                             <Cpu className="w-16 h-16 text-primary" />
@@ -318,14 +318,14 @@ const DigitalOrbit = () => {
             <motion.div
                 animate={{ rotate: 360 }}
                 transition={{ duration: 100, repeat: Infinity, ease: "linear" }}
-                className="absolute w-[1000px] h-[1000px] border border-slate-100 rounded-full [will-change:transform]"
+                className="absolute w-[500px] sm:w-[700px] md:w-[1000px] h-[500px] sm:h-[700px] md:h-[1000px] border border-slate-100 rounded-full [will-change:transform]"
             />
             <motion.div
                 animate={{ rotate: -360 }}
                 transition={{ duration: 80, repeat: Infinity, ease: "linear" }}
-                className="absolute w-[700px] h-[700px] border border-dashed border-slate-100/30 rounded-full [will-change:transform]"
+                className="absolute w-[350px] sm:w-[500px] md:w-[700px] h-[350px] sm:h-[500px] md:h-[700px] border border-dashed border-slate-100/30 rounded-full [will-change:transform]"
             />
-<div className="absolute w-[400px] h-[400px] border border-slate-50 rounded-full" />
+<div className="absolute w-[200px] sm:w-[300px] md:w-[400px] h-[200px] sm:h-[300px] md:h-[400px] border border-slate-50 rounded-full" />
         </div>
     );
 };

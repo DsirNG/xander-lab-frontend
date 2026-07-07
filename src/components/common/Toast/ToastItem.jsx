@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { CheckCircle2, AlertCircle, Info, XCircle, X } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 const defaultIcons = {
     success: <CheckCircle2 className="w-5 h-5 text-emerald-500" />,
@@ -27,6 +28,7 @@ const ToastItem = ({ toast, onRemove }) => {
         icon = null
     } = toast;
 
+    const { t } = useTranslation();
     const [isExiting, setIsExiting] = useState(false);
     const [isPaused, setIsPaused] = useState(false);
 
@@ -99,7 +101,7 @@ const ToastItem = ({ toast, onRemove }) => {
                 <button
                     onClick={() => setIsExiting(true)}
                     className="flex-shrink-0 p-1 opacity-0 group-hover:opacity-100 rounded-full hover:bg-slate-100  text-slate-400  transition-all duration-300"
-                    aria-label="关闭通知"
+                    aria-label={t('common.aria.closeNotification', 'Close notification')}
                 >
                     <X className="w-3.5 h-3.5" />
                 </button>

@@ -10,10 +10,18 @@ import LanguageDetector from 'i18next-browser-languagedetector';
 // 导入语言资源
 import en from './en';
 import zh from './zh';
+import fr from './fr';
+import ja from './ja';
+import ru from './ru';
+import vi from './vi';
 
 const resources = {
   en: { translation: en },
   zh: { translation: zh },
+  fr: { translation: fr },
+  ja: { translation: ja },
+  ru: { translation: ru },
+  vi: { translation: vi },
 };
 
 i18n

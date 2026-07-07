@@ -25,7 +25,7 @@
 
 .announcement {
   @apply flex items-center gap-3 px-3 py-1.5 rounded-full border border-gray-200
-  bg-white/50  backdrop-blur-md mb-12 text-sm font-medium
+  bg-white/50  backdrop-blur-md mb-6 sm:mb-8 md:mb-12 text-sm font-medium
   hover:bg-gray-100 transition-all cursor-pointer;
 }
 
@@ -35,7 +35,7 @@
 
 /* 极具压迫感的大标题，打破平庸感 */
 .megaTitle {
-  @apply text-6xl md:text-9xl font-black tracking-tighter mb-10 text-primary leading-[0.85];
+  @apply text-4xl sm:text-6xl md:text-9xl font-black tracking-tighter mb-6 sm:mb-8 md:mb-10 text-primary leading-[0.85];
 }
 
 /* 镂空文字：设计感的核心，AI 很少会主动用这种排版 */
@@ -55,12 +55,12 @@
 }
 
 .mainButton {
-  @apply px-12 py-4 bg-primary text-white rounded-none font-bold
+  @apply px-8 sm:px-12 py-3 sm:py-4 bg-primary text-white rounded-none font-bold
   hover:bg-primary-600 transition-all duration-300 shadow-[8px_8px_0_rgba(0,0,0,0.1)];
 }
 
 .ghostButton {
-  @apply flex items-center px-10 py-4 text-black  font-bold border-b-2 border-transparent hover:border-black transition-all;
+  @apply flex items-center px-6 sm:px-10 py-3 sm:py-4 text-black  font-bold border-b-2 border-transparent hover:border-black transition-all;
 }
 
 .visualCanvas {

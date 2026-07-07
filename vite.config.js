@@ -47,7 +47,17 @@ export default defineConfig({
         target: 'http://xander-lab.dsircity.top',
         changeOrigin: true,
         // rewrite: (path) => path.replace(/^\/api/, ''),
-      }
+      },
+      '/studio-api': {
+        target: 'http://localhost:3010',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/studio-api/, '/api'),
+      },
+      '/studio-preview': {
+        target: 'http://localhost:3010',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/studio-preview/, '/preview'),
+      },
     }
   }
 })

@@ -160,7 +160,7 @@ const BlogHome = () => {
                     <div className="hidden md:flex bg-slate-100  p-0.5 rounded-lg">
                         <button
                             onClick={() => setViewMode('grid')}
-                            aria-label="网格视图"
+                            aria-label={t('common.aria.gridView', 'Grid view')}
                             aria-pressed={viewMode === 'grid'}
                             className={`p-1.5 rounded-md transition-all ${viewMode === 'grid'
                                 ? 'bg-white  shadow-sm text-primary'
@@ -171,7 +171,7 @@ const BlogHome = () => {
                         </button>
                         <button
                             onClick={() => setViewMode('list')}
-                            aria-label="列表视图"
+                            aria-label={t('common.aria.listView', 'List view')}
                             aria-pressed={viewMode === 'list'}
                             className={`p-1.5 rounded-md transition-all ${viewMode === 'list'
                                 ? 'bg-white  shadow-sm text-primary'
@@ -225,7 +225,7 @@ const BlogHome = () => {
                     )}
                 </div>
             ) : (
-                <div className="flex flex-col items-center justify-center py-16 text-center bg-slate-50 /50 rounded-2xl border border-dashed border-slate-200 ">
+                <div className="flex flex-col items-center justify-center py-16 text-center bg-slate-50 rounded-2xl border border-dashed border-slate-200 ">
                     <div className="w-14 h-14 bg-slate-100  rounded-full flex items-center justify-center mb-3">
                         <Filter className="w-7 h-7 text-slate-400" />
                     </div>

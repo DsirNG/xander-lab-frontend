@@ -1,14 +1,22 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Github, Menu, Languages, X, User as UserIcon, LogOut } from 'lucide-react';
+import { Github, Menu, Languages, X, User as UserIcon, LogOut, ChevronDown, Check } from 'lucide-react';
 import styles from './MainLayout.module.css';
 import { authService } from '@features/auth/services/authService';
+
+const LANGUAGES = ['zh', 'en', 'fr', 'ja', 'ru', 'vi'];
+const LANG_LABELS = { zh: '中文', en: 'EN', fr: 'FR', ja: '日本語', ru: 'RU', vi: 'VI' };
+const LANG_FULL = { zh: '简体中文', en: 'English', fr: 'Français', ja: '日本語', ru: 'Русский', vi: 'Tiếng Việt' };
 
 const Navbar = () => {
     const { t, i18n } = useTranslation();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [userInfo, setUserInfo] = useState(authService.getLocalUserInfo());
+    const [isLangDropdownOpen, setIsLangDropdownOpen] = useState(false);
+    const [animDirection, setAnimDirection] = useState(0); // 1 = spin up, -1 = spin down
+    const [isAnimating, setIsAnimating] = useState(false);
+    const langDropdownRef = useRef(null);
     const location = useLocation();
 
     const handleLogout = async () => {
@@ -21,6 +29,33 @@ const Navbar = () => {
             console.error('Logout failed', err);
         }
     };
+
+    // 切换语言（带旋转动画）
+    const changeLanguage = useCallback((lng) => {
+        const currentIdx = LANGUAGES.indexOf(i18n.language);
+        const nextIdx = LANGUAGES.indexOf(lng);
+        if (currentIdx === nextIdx) {
+            setIsLangDropdownOpen(false);
+            return;
+        }
+        setAnimDirection(nextIdx > currentIdx ? 1 : -1);
+        setIsAnimating(true);
+        setIsLangDropdownOpen(false);
+        i18n.changeLanguage(lng);
+        setTimeout(() => setIsAnimating(false), 400);
+    }, [i18n]);
+
+    // 移动端循环切换
+    const toggleLanguageMobile = () => {
+        const currentIdx = LANGUAGES.indexOf(i18n.language);
+        const nextLng = LANGUAGES[(currentIdx + 1) % LANGUAGES.length];
+        setAnimDirection(1);
+        setIsAnimating(true);
+        i18n.changeLanguage(nextLng);
+        setTimeout(() => setIsAnimating(false), 400);
+    };
+
+    const currentLang = LANG_LABELS[i18n.language] || 'EN';
 
     // 监听全局登出事件
     useEffect(() => {
@@ -35,14 +70,7 @@ const Navbar = () => {
         setUserInfo(authService.getLocalUserInfo());
     }, [location.pathname]);
 
-    const toggleLanguage = () => {
-        const nextLng = i18n.language.startsWith('zh') ? 'en' : 'zh';
-        i18n.changeLanguage(nextLng);
-    };
-
-    const currentLang = i18n.language.startsWith('zh') ? '中文' : 'EN';
-
-    // 点击外部关闭菜单
+    // 点击外部关闭菜单和语言下拉
     useEffect(() => {
         const handleClickOutside = (event) => {
             const mobileMenu = document.querySelector(`.${styles.mobileMenu}`);
@@ -71,15 +99,28 @@ const Navbar = () => {
         };
     }, [isMobileMenuOpen]);
 
+    // 点击外部关闭语言下拉
+    useEffect(() => {
+        if (!isLangDropdownOpen) return;
+        const handleClickOutside = (event) => {
+            if (langDropdownRef.current && !langDropdownRef.current.contains(event.target)) {
+                setIsLangDropdownOpen(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, [isLangDropdownOpen]);
+
     const navLinks = [
         { path: '/', label: t('nav.home') },
         { path: '/components', label: t('nav.components') },
         { path: '/blog', label: t('nav.blog') },
+        { path: '/studio', label: t('nav.studio'), external: true },
     ];
 
     return (
         <>
-            <nav aria-label="主导航" className={styles.navbar}>
+            <nav aria-label={t('common.aria.mainNav', 'Main navigation')} className={styles.navbar}>
                 <div className={styles.container}>
                     <div className={styles.navContent}>
                         <Link to="/" className={styles.logoArea} onClick={() => setIsMobileMenuOpen(false)}>
@@ -91,26 +132,73 @@ const Navbar = () => {
                         <div className={styles.desktopNav}>
                             <div className={styles.navLinks}>
                                 {navLinks.map((link) => (
-                                    <Link
-                                        key={link.path}
-                                        to={link.path}
-                                        className={styles.navLink}
-                                    >
-                                        {link.label}
-                                    </Link>
+                                    link.external ? (
+                                        <a
+                                            key={link.path}
+                                            href={link.path}
+                                            className={styles.navLink}
+                                        >
+                                            {link.label}
+                                        </a>
+                                    ) : (
+                                        <Link
+                                            key={link.path}
+                                            to={link.path}
+                                            className={styles.navLink}
+                                        >
+                                            {link.label}
+                                        </Link>
+                                    )
                                 ))}
                             </div>
                         </div>
 
                         <div className={styles.actionsArea}>
-                            <button
-                                onClick={toggleLanguage}
-                                className={`${styles.iconButton} hidden sm:flex items-center space-x-1 px-2 sm:px-3`}
-                                title="Toggle Language"
-                            >
-                                <Languages aria-hidden="true" className="w-4 h-4" />
-                                <span className="text-xs font-bold hidden sm:inline">{currentLang}</span>
-                            </button>
+                            {/* PC端语言下拉选择器 */}
+                            <div className="hidden sm:flex items-center relative" ref={langDropdownRef}>
+                                <button
+                                    onClick={() => setIsLangDropdownOpen(!isLangDropdownOpen)}
+                                    className={`${styles.iconButton} flex items-center gap-1 px-2 sm:px-3`}
+                                    title="Language"
+                                    aria-expanded={isLangDropdownOpen}
+                                    aria-haspopup="listbox"
+                                >
+                                    <Languages aria-hidden="true" className="w-4 h-4" />
+                                    <span className={`text-xs font-bold inline-block overflow-hidden h-4 leading-4 min-w-[2ch] text-center ${isAnimating ? (animDirection > 0 ? styles.langSpinOut : styles.langSpinOutReverse) : ''}`}>
+                                        {currentLang}
+                                    </span>
+                                    <ChevronDown aria-hidden="true" className={`w-3 h-3 transition-transform duration-200 ${isLangDropdownOpen ? 'rotate-180' : ''}`} />
+                                </button>
+
+                                {/* 下拉菜单 */}
+                                <div className={`absolute top-full right-0 mt-2 ${styles.langDropdown} ${isLangDropdownOpen ? styles.langDropdownOpen : ''}`}>
+                                    <div className="py-1.5" role="listbox" aria-label="Select language">
+                                        {LANGUAGES.map((lng, idx) => {
+                                            const isActive = i18n.language === lng;
+                                            return (
+                                                <button
+                                                    key={lng}
+                                                    role="option"
+                                                    aria-selected={isActive}
+                                                    onClick={() => changeLanguage(lng)}
+                                                    className={`${styles.langOption} ${isActive ? styles.langOptionActive : ''}`}
+                                                    style={{ animationDelay: isLangDropdownOpen ? `${idx * 40}ms` : '0ms' }}
+                                                >
+                                                    <span className="flex items-center gap-2.5">
+                                                        <span className={`text-xs font-bold w-7 text-center ${isActive ? 'text-primary' : 'text-slate-500'}`}>
+                                                            {LANG_LABELS[lng]}
+                                                        </span>
+                                                        <span className={`text-xs ${isActive ? 'text-primary font-semibold' : 'text-slate-600'}`}>
+                                                            {LANG_FULL[lng]}
+                                                        </span>
+                                                    </span>
+                                                    {isActive && <Check className="w-3.5 h-3.5 text-primary" />}
+                                                </button>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            </div>
                             <a
                                 href="https://github.com/DsirNG/xander-lab-frontend"
                                 target="_blank"
@@ -155,7 +243,7 @@ const Navbar = () => {
                             <button
                                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                                 className={styles.menuButton}
-                                aria-label="菜单"
+                                aria-label={t('common.aria.openMenu', 'Open menu')}
                                 aria-expanded={isMobileMenuOpen}
                             >
                                 {isMobileMenuOpen ? (
@@ -184,24 +272,37 @@ const Navbar = () => {
                 <div className={styles.mobileMenuContent}>
                     <div className={styles.mobileNavLinks}>
                         {navLinks.map((link) => (
-                            <Link
-                                key={link.path}
-                                to={link.path}
-                                className={`${styles.mobileNavLink} ${location.pathname === link.path ? styles.mobileNavLinkActive : ''}`}
-                                onClick={() => setIsMobileMenuOpen(false)}
-                            >
-                                {link.label}
-                            </Link>
+                            link.external ? (
+                                <a
+                                    key={link.path}
+                                    href={link.path}
+                                    className={`${styles.mobileNavLink} ${location.pathname === link.path ? styles.mobileNavLinkActive : ''}`}
+                                    onClick={() => setIsMobileMenuOpen(false)}
+                                >
+                                    {link.label}
+                                </a>
+                            ) : (
+                                <Link
+                                    key={link.path}
+                                    to={link.path}
+                                    className={`${styles.mobileNavLink} ${location.pathname === link.path ? styles.mobileNavLinkActive : ''}`}
+                                    onClick={() => setIsMobileMenuOpen(false)}
+                                >
+                                    {link.label}
+                                </Link>
+                            )
                         ))}
                     </div>
 
                     <div className={styles.mobileMenuActions}>
                         <button
-                            onClick={toggleLanguage}
+                            onClick={toggleLanguageMobile}
                             className={`${styles.mobileActionButton} flex items-center space-x-2`}
                         >
                             <Languages aria-hidden="true" className="w-4 h-4" />
-                            <span className="text-sm font-medium">{currentLang}</span>
+                            <span className={`text-sm font-medium inline-block overflow-hidden h-5 leading-5 ${isAnimating ? styles.langSpinOut : ''}`}>
+                                {currentLang}
+                            </span>
                         </button>
                         <a
                             href="https://github.com/DsirNG/xander-lab-frontend"

@@ -115,7 +115,7 @@ const BlogPublish = () => {
                     <button
                         onClick={toggleSettings}
                         className="lg:hidden p-2 text-slate-500 hover:text-primary hover:bg-slate-100 rounded-xl transition-all"
-                        title="文档设置"
+                        title={t('blog.publishSettings', 'Document Settings')}
                     >
                         {isSettingsOpen ? <X className="w-5 h-5" /> : <Settings className="w-5 h-5" />}
                     </button>
@@ -135,20 +135,20 @@ const BlogPublish = () => {
 
             <div className="flex-1 flex overflow-hidden relative">
                 {/* 主编辑区 / Left Pane - Editor & Preview */}
-                <main className="flex-1 flex flex-col relative bg-white  rounded-tr-[0.5rem] border-r border-t border-slate-200 lg:border-r lg:border-t /80 shadow-[10px_0_30px_-15px_rgba(0,0,0,0.05)] z-10 transition-all overflow-hidden mt-2 ml-2 lg:ml-2">
+                <main className="flex-1 flex flex-col relative bg-white  rounded-tr-[0.5rem] border-r border-t border-slate-200 lg:border-r lg:border-t shadow-[10px_0_30px_-15px_rgba(0,0,0,0.05)] z-10 transition-all overflow-hidden mt-2 ml-2 lg:ml-2">
                     <div className="absolute top-6 right-8 z-20">
-                        <div className="flex bg-slate-100/80 /80 backdrop-blur-md p-1 rounded-2xl border border-slate-200/50 /50 shadow-sm">
+                        <div className="flex bg-slate-100/80 backdrop-blur-md p-1 rounded-2xl border border-slate-200/50 shadow-sm">
                             <button
                                 onClick={() => { setIsPreview(false); setTimeout(() => contentTextareaRef.current?.focus(), 10); }}
                                 className={`flex items-center gap-2 px-5 py-2 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all ${!isPreview ? 'bg-white  text-primary shadow-sm scale-100' : 'text-slate-500 hover:text-slate-700  hover:bg-slate-200/50 '}`}
                             >
-                                <Edit3 className="w-4 h-4" /> <span className="hidden sm:inline">编辑</span>
+                                <Edit3 className="w-4 h-4" /> <span className="hidden sm:inline">{t('blog.edit', 'Edit')}</span>
                             </button>
                             <button
                                 onClick={() => setIsPreview(true)}
                                 className={`flex items-center gap-2 px-5 py-2 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all ${isPreview ? 'bg-white  text-primary shadow-sm scale-100' : 'text-slate-500 hover:text-slate-700  hover:bg-slate-200/50 '}`}
                             >
-                                <Eye className="w-4 h-4" /> <span className="hidden sm:inline">预览</span>
+                                <Eye className="w-4 h-4" /> <span className="hidden sm:inline">{t('blog.preview', 'Preview')}</span>
                             </button>
                         </div>
                     </div>
@@ -202,7 +202,7 @@ const BlogPublish = () => {
                                     ) : (
                                         <div className="flex flex-col items-center justify-center py-40 text-slate-300">
                                             <Info className="w-16 h-16 mb-6 opacity-30" />
-                                            <p className="text-sm font-bold uppercase tracking-widest italic">尚未输入内容 // No Content</p>
+                                            <p className="text-sm font-bold uppercase tracking-widest italic">{t('blog.noContent', 'No content yet')} // No Content</p>
                                         </div>
                                     )}
                                 </div>

@@ -36,7 +36,7 @@ const ShareSidebar = ({
             <aside className={`
                 fixed lg:static
                 top-[64px] left-0 bottom-0
-                w-[320px] flex-shrink-0
+                w-[260px] md:w-[300px] lg:w-[320px] flex-shrink-0
                 bg-white border-r border-slate-200 flex flex-col overflow-y-auto custom-scrollbar
                 transform transition-transform duration-300 ease-in-out z-40
                 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}

@@ -64,7 +64,7 @@ const ComponentList = () => {
         <div className="space-y-3">
             <div className="bg-gradient-to-br from-emerald-600/10 to-teal-600/10 p-4 rounded-2xl border border-emerald-600/10">
                 <p className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest mb-1">UI Kit</p>
-                <p className="text-xs text-slate-600 ">用于构建一致界面的原子组件。</p>
+                <p className="text-xs text-slate-600 ">{t('components.list.atomDesc', 'Atomic components for building consistent interfaces.')}</p>
             </div>
 
             <button
@@ -72,7 +72,7 @@ const ComponentList = () => {
                 className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl bg-primary text-white text-xs font-black shadow-lg shadow-primary/20 hover:bg-primary-400 hover:scale-[1.02] active:scale-95 transition-all"
             >
                 <Plus className="w-3.5 h-3.5" />
-                分享我的组件
+                {t('components.list.shareMyComponents', 'Share My Components')}
             </button>
         </div>
     );

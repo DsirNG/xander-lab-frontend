@@ -3,6 +3,7 @@ import { Outlet } from 'react-router-dom';
 import { ChevronLeft, X } from 'lucide-react';
 import BlogSidebar from '../components/BlogSidebar';
 import useIsMobile from '@hooks/useIsMobile';
+import { useTranslation } from 'react-i18next';
 
 /**
  * 博客布局组件
@@ -13,6 +14,7 @@ import useIsMobile from '@hooks/useIsMobile';
 const BlogLayout = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const isMobile = useIsMobile();
+    const { t } = useTranslation();
 
     // 桌面端自动关闭移动菜单
     useEffect(() => {
@@ -26,12 +28,12 @@ const BlogLayout = () => {
             {/* 移动端侧边栏展开按钮 - 固定在右侧 */}
             <button
                 onClick={() => setIsSidebarOpen(true)}
-                className={`lg:hidden fixed top-20 right-0 z-50 p-2 bg-white/10 /50 backdrop-blur-[2px] rounded-l-lg shadow-md border border-r-0 border-slate-200  transition-all duration-300 ease-in-out ${
+                className={`lg:hidden fixed top-20 right-0 z-50 p-2 bg-white/10 backdrop-blur-[2px] rounded-l-lg shadow-md border border-r-0 border-slate-200  transition-all duration-300 ease-in-out ${
                     isSidebarOpen
                         ? 'translate-x-full opacity-0 pointer-events-none'
                         : 'translate-x-0 opacity-100'
                 }`}
-                aria-label="打开侧边栏"
+                aria-label={t('common.aria.openSidebar', 'Open sidebar')}
             >
                 <ChevronLeft className="w-5 h-5 text-slate-600 " />
             </button>
@@ -70,7 +72,7 @@ const BlogLayout = () => {
                     <button
                         onClick={() => setIsSidebarOpen(false)}
                         className="lg:hidden self-end mb-3 p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100   transition-colors"
-                        aria-label="关闭侧边栏"
+                        aria-label={t('common.aria.closeSidebar', 'Close sidebar')}
                     >
                         <X className="w-4 h-4" />
                     </button>
