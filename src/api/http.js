@@ -155,6 +155,22 @@ function addPendingRequest(config) {
         if (IS_DEV) console.debug(`%c[HTTP] ⚡ 重复请求已合并: ${config.url}`, 'color: #fb923c');
     }
     const controller = new AbortController();
+
+    // If the caller provided a signal (e.g. component-level AbortController),
+    // link it so that caller-initiated abort also aborts the dedup controller.
+    if (config.signal) {
+        const callerSignal = config.signal;
+        if (callerSignal.aborted) {
+            controller.abort(callerSignal.reason);
+        } else {
+            callerSignal.addEventListener(
+                'abort',
+                () => controller.abort(callerSignal.reason),
+                { once: true }
+            );
+        }
+    }
+
     config.signal = controller.signal;
     pendingRequests.set(key, controller);
 }
@@ -306,12 +322,12 @@ instance.interceptors.response.use(
     // ── 9.2 错误响应 ──
     async (error) => {
         if (axios.isCancel(error)) {
-            // 如果是被幂等锁取消的，静默处理（不报错给业务层）
-            if (IS_DEV) {
-                console.log(`%c[HTTP] ⚡ 请求已安全取消: ${error.message}`, 'color: #94a3b8');
-            }
-            // 返回一个永远 pending 的 promise，或者特定的标识，避免业务层进入 catch
-            return new Promise(() => { });
+            // 返回带标准标识的 rejection，让组件 catch 能识别并静默跳过
+            const cancelError = new Error('Request cancelled');
+            cancelError.name = 'CanceledError';
+            cancelError.code = 'ERR_CANCELED';
+            cancelError.isCancelled = true;
+            return Promise.reject(cancelError);
         }
 
         const { config, response } = error;

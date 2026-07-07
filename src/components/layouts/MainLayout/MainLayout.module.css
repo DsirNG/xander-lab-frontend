@@ -2,7 +2,7 @@
 @reference "../../../styles/index.css";
 
 .navbar {
-    @apply fixed top-0 left-0 w-full z-50 backdrop-blur-md transition-all;
+    @apply fixed top-0 left-0 w-full z-[100] backdrop-blur-md transition-all;
     @apply bg-background-light/80;
     @apply border-b border-surface-light;
 }
@@ -54,7 +54,7 @@
 
 /* 移动端菜单 */
 .mobileMenu {
-    @apply fixed top-16 left-0 right-0 z-40;
+    @apply fixed top-16 left-0 right-0 z-[90];
     @apply bg-background-light;
     @apply border-b border-surface-light;
     @apply transform transition-transform duration-300 ease-in-out;

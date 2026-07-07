@@ -29,17 +29,22 @@ const BlogTags = () => {
 
     // 加载所有标签
     useEffect(() => {
+        const controller = new AbortController();
+
         const fetchTags = async () => {
             try {
-                const tags = await blogService.getAllTags();
+                const tags = await blogService.getAllTags({ signal: controller.signal });
                 setAllTags(tags);
             } catch (error) {
+                if (error.name === 'CanceledError' || error.code === 'ERR_CANCELED') return;
                 console.error('Failed to fetch tags:', error);
             } finally {
                 setLoading(false);
             }
         };
         fetchTags();
+
+        return () => controller.abort();
     }, []);
 
     // 根据选中标签加载文章
@@ -48,13 +53,20 @@ const BlogTags = () => {
             setFilteredBlogs([]);
             return;
         }
+
+        const controller = new AbortController();
+
         const fetchBlogs = async () => {
             setBlogsLoading(true);
             try {
-                const data = await blogService.getBlogs({ tag: activeTag, size: 20 });
+                const data = await blogService.getBlogs(
+                    { tag: activeTag, size: 20 },
+                    { signal: controller.signal }
+                );
                 // 此时 data 是 PageData 对象
                 setFilteredBlogs(data.records || []);
             } catch (error) {
+                if (error.name === 'CanceledError' || error.code === 'ERR_CANCELED') return;
                 console.error('Failed to fetch blogs by tag:', error);
                 setFilteredBlogs([]);
             } finally {
@@ -62,6 +74,8 @@ const BlogTags = () => {
             }
         };
         fetchBlogs();
+
+        return () => controller.abort();
     }, [activeTag]);
 
     // 根据文章数量计算标签大小等级 (1-5)

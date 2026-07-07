@@ -96,18 +96,23 @@ const BlogDetail = () => {
     const [error, setError] = useState(null);
 
     useEffect(() => {
+        const controller = new AbortController();
+
         const fetchBlog = async () => {
             setLoading(true);
             try {
-                const data = await blogService.getBlogById(id);
+                const data = await blogService.getBlogById(id, { signal: controller.signal });
                 setBlog(data);
             } catch (err) {
+                if (err.name === 'CanceledError' || err.code === 'ERR_CANCELED') return;
                 setError(err.message);
             } finally {
                 setLoading(false);
             }
         };
         fetchBlog();
+
+        return () => controller.abort();
     }, [id]);
 
     if (loading) {

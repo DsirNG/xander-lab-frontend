@@ -11,7 +11,7 @@ import remarkGfm from 'remark-gfm';
 import { blogService } from '../services/blogService';
 import { useToast } from '@/hooks/useToast';
 import useIsMobile from '@hooks/useIsMobile';
-import CustomSelect from '../../components/pages/codeComponent/CustomSelect';
+import CustomSelect from '@/components/common/CustomSelect';
 import CreatableMultiSelect from '@/components/common/CreatableMultiSelect';
 
 /**
@@ -45,11 +45,12 @@ const BlogPublish = () => {
 
     const contentTextareaRef = useRef(null);
     useEffect(() => {
+        const controller = new AbortController();
         const fetchData = async () => {
             try {
                 const [catData, tagData] = await Promise.all([
-                    blogService.getCategories(),
-                    blogService.getAllTags()
+                    blogService.getCategories({ signal: controller.signal }),
+                    blogService.getAllTags({ signal: controller.signal })
                 ]);
 
                 const formattedOptions = catData.map(c => ({ value: String(c.id), label: c.name }));
@@ -61,10 +62,12 @@ const BlogPublish = () => {
                 // tagData is typically [{ name: 'React', count: 5 }, ...]
                 setAvailableTags(tagData.map(t => t.name));
             } catch (err) {
+                if (err.name === 'CanceledError' || err.code === 'ERR_CANCELED') return;
                 console.error('Failed to fetch data:', err);
             }
         };
         fetchData();
+        return () => controller.abort();
     }, []);
 
     const handlePublish = async () => {

@@ -6,8 +6,8 @@ import { ArrowLeft } from 'lucide-react';
 import CodeBlock from '@/components/common/CodeBlock';
 
 // Import raw code
-import ComponentCode from './codeComponent/CustomSelect/index.jsx?raw';
-import StyleCode from './codeComponent/CustomSelect/index.module.css?raw';
+import ComponentCode from '@/components/common/CustomSelect/index.jsx?raw';
+import StyleCode from '@/components/common/CustomSelect/index.module.css?raw';
 
 const DependencyCard = ({ title, items }) => (
     <div className="p-6 rounded-2xl bg-white  border border-slate-200 ">

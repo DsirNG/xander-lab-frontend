@@ -46,13 +46,13 @@ const LazyPage = ({ children }) => (
 
 /**
  * 创建路由配置
- * @param {Function} t - i18n 翻译函数
+ * 路由结构仅依赖语言无关的 ID 和 detailPages，翻译由页面组件内部解析。
  * @returns {Object} 路由器实例
  */
-export const createRouter = (t) => {
-  // 获取业务配置数据
-  const infraSystems = getInfraConfig(t);
-  const featureModules = getModuleConfig(t);
+export const createRouter = () => {
+  // 获取业务配置数据（路由结构仅需 id / detailPages 等静态字段）
+  const infraSystems = getInfraConfig();
+  const featureModules = getModuleConfig();
 
 
   // 动态生成路由配置

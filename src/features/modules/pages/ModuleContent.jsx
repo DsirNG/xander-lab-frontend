@@ -1,12 +1,21 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Zap, ExternalLink } from 'lucide-react';
 import { ContentLayout, EnhancedDemoSection } from '@components/layouts/ContentLayout';
+import { getModuleConfig } from '../constants';
 
 const ModuleContent = ({ module }) => {
     const { t } = useTranslation();
 
-    if (!module) return null;
+    // 路由传入的 module 包含稳定的结构数据（id, detailPages），
+    // 但显示字段（title, desc, tag）需要用当前语言重新解析。
+    const translatedModule = useMemo(() => {
+        if (!module) return null;
+        const current = getModuleConfig(t).find(m => m.id === module.id);
+        return current || module;
+    }, [module, t]);
+
+    if (!translatedModule) return null;
 
     // 额外的头部按钮（实现细节标签）
     const extraButtons = (
@@ -18,15 +27,15 @@ const ModuleContent = ({ module }) => {
 
     return (
         <ContentLayout
-            item={module}
+            item={translatedModule}
             basePath="/modules"
             detailButtonText={t('common.viewDeepDive')}
             detailButtonIcon={ExternalLink}
             extraHeaderButtons={extraButtons}
             themeColor="blue-600"
         >
-            {module.scenarios && module.scenarios.length > 0 ? (
-                module.scenarios.map((scenario, index) => (
+            {translatedModule.scenarios && translatedModule.scenarios.length > 0 ? (
+                translatedModule.scenarios.map((scenario, index) => (
                     <EnhancedDemoSection
                         key={index}
                         title={scenario.title}

@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { useTranslation } from 'react-i18next';
 import {
     Plus, Zap, Database,
     FileCode, Edit2,
@@ -20,6 +21,7 @@ const ShareSidebar = ({
     isSidebarOpen,
     onToggleSidebar,
 }) => {
+    const { t } = useTranslation();
     return (
         <>
             {/* 移动端遮罩层 */}
@@ -42,13 +44,13 @@ const ShareSidebar = ({
             <div className="p-6 space-y-10">
                 <section className="space-y-6">
                     <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic flex items-center justify-between">
-                        <span className="flex items-center gap-2"><Database className="w-4 h-4 text-primary" /> 注册元数据</span>
+                        <span className="flex items-center gap-2"><Database className="w-4 h-4 text-primary" /> {t('components.share.sidebar.registerMeta')}</span>
                         <button id={tourIds.metaHelp} onClick={() => onHelpClick('meta')} className="p-1 hover:bg-slate-50 rounded text-slate-300 hover:text-primary transition-colors relative z-10"><HelpCircle className="w-4 h-4" /></button>
                     </div>
 
                     <div className="space-y-4">
                         <div className="space-y-1.5">
-                            <label className="text-[9px] font-black text-slate-300 uppercase tracking-widest pl-1">中文标题</label>
+                            <label className="text-[9px] font-black text-slate-300 uppercase tracking-widest pl-1">{t('components.share.sidebar.titleZh')}</label>
                             <input value={meta.titleZh} onChange={e => setMeta({ ...meta, titleZh: e.target.value })} className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-2.5 text-[11px] font-bold focus:border-primary focus:bg-white transition-all outline-none" />
                         </div>
                         <div className="space-y-1.5">
@@ -56,8 +58,8 @@ const ShareSidebar = ({
                             <input value={meta.titleEn} onChange={e => setMeta({ ...meta, titleEn: e.target.value })} className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-2.5 text-[11px] font-bold focus:border-primary focus:bg-white transition-all outline-none" />
                         </div>
                         <div className="space-y-1.5">
-                            <label className="text-[9px] font-black text-slate-300 uppercase tracking-widest pl-1">组件详述 (CN/EN)</label>
-                            <textarea value={meta.descriptionZh} onChange={e => setMeta({ ...meta, descriptionZh: e.target.value })} className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-2 text-[10px] h-16 outline-none focus:border-primary transition-all resize-none mb-2" placeholder="中文介绍..." />
+                            <label className="text-[9px] font-black text-slate-300 uppercase tracking-widest pl-1">{t('components.share.sidebar.descLabel')}</label>
+                            <textarea value={meta.descriptionZh} onChange={e => setMeta({ ...meta, descriptionZh: e.target.value })} className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-2 text-[10px] h-16 outline-none focus:border-primary transition-all resize-none mb-2" placeholder={t('components.share.sidebar.descZhPlaceholder')} />
                             <textarea value={meta.descriptionEn} onChange={e => setMeta({ ...meta, descriptionEn: e.target.value })} className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-2 text-[10px] h-16 outline-none focus:border-primary transition-all resize-none" placeholder="English Detail..." />
                         </div>
                         <div className="flex items-center justify-between p-3 bg-slate-50 border border-slate-100 rounded-xl">
@@ -72,7 +74,7 @@ const ShareSidebar = ({
                 <section className="space-y-4 pb-24">
                     <div className="flex items-center justify-between px-1">
                         <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic flex items-center gap-2">
-                            <Zap className="w-4 h-4 text-amber-500" /> 测试用例场景
+                            <Zap className="w-4 h-4 text-amber-500" /> {t('components.share.sidebar.testScenarios')}
                         </span>
                         <div className="flex items-center gap-1 relative z-10">
                             <button id={tourIds.scenarioHelp} onClick={() => onHelpClick('scenario')} className="p-1 hover:bg-slate-50 rounded-lg text-slate-300 hover:text-primary transition-colors">

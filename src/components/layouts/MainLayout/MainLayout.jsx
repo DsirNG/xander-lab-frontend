@@ -73,8 +73,6 @@ const Navbar = () => {
 
     const navLinks = [
         { path: '/', label: t('nav.home') },
-        // { path: '/infra', label: t('nav.infra') },
-        // { path: '/modules', label: t('nav.modules') },
         { path: '/components', label: t('nav.components') },
         { path: '/blog', label: t('nav.blog') },
     ];
@@ -85,8 +83,6 @@ const Navbar = () => {
                 <div className={styles.container}>
                     <div className={styles.navContent}>
                         <Link to="/" className={styles.logoArea} onClick={() => setIsMobileMenuOpen(false)}>
-                            {/*<Layers className="w-8 h-8 text-primary" />*/}
-                          {/*<img className="w-8 h-8 text-primary" src="https://xander-lab.dsircity.top/favicon.png" alt=""/>*/}
                             <span className={styles.logoText}>
                                 Xander Lab
                             </span>
@@ -140,8 +136,8 @@ const Navbar = () => {
                                         <button
                                             onClick={handleLogout}
                                             className="w-8 h-8 rounded-full bg-slate-100  flex items-center justify-center text-slate-500 hover:text-rose-500 hover:bg-rose-50 transition-all"
-                                            title="退出登录"
-                                            aria-label="退出登录"
+                                            title={t('nav.logout')}
+                                            aria-label={t('nav.logout')}
                                         >
                                             <LogOut aria-hidden="true" className="w-4 h-4" />
                                         </button>
@@ -152,7 +148,7 @@ const Navbar = () => {
                                         className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-primary/5 text-primary hover:bg-primary hover:text-white transition-all text-xs font-bold"
                                     >
                                         <UserIcon aria-hidden="true" className="w-3.5 h-3.5" />
-                                        <span>登录</span>
+                                        <span>{t('nav.login')}</span>
                                     </Link>
                                 )}
                             </div>
@@ -176,9 +172,9 @@ const Navbar = () => {
             {/* 跳过导航链接 - 仅在 focus 时可见 */}
             <a
                 href="#main-content"
-                className="sr-only focus:not-sr-only focus:absolute focus:top-20 focus:left-4 focus:z-[10000] focus:px-4 focus:py-2 focus:bg-primary focus:text-white focus:rounded-lg focus:shadow-lg focus:text-sm focus:font-bold focus:outline-none"
+                className="sr-only focus:not-sr-only focus:absolute focus:top-20 focus:left-4 focus:z-[9999] focus:px-4 focus:py-2 focus:bg-primary focus:text-white focus:rounded-lg focus:shadow-lg focus:text-sm focus:font-bold focus:outline-none"
             >
-                跳至主要内容
+                {t('nav.skipToMain')}
             </a>
 
             {/* 移动端菜单 */}
@@ -208,7 +204,7 @@ const Navbar = () => {
                             <span className="text-sm font-medium">{currentLang}</span>
                         </button>
                         <a
-                            href="https://github.com"
+                            href="https://github.com/DsirNG/xander-lab-frontend"
                             target="_blank"
                             rel="noopener noreferrer"
                             className={`${styles.mobileActionButton} flex items-center space-x-2`}
@@ -223,7 +219,7 @@ const Navbar = () => {
                                 className={`${styles.mobileActionButton} flex items-center space-x-2 text-rose-500`}
                             >
                                 <LogOut aria-hidden="true" className="w-4 h-4" />
-                                <span className="text-sm font-medium">退出登录 ({userInfo.nickname || userInfo.username})</span>
+                                <span className="text-sm font-medium">{t('nav.logout')} ({userInfo.nickname || userInfo.username})</span>
                             </button>
                         ) : (
                             <Link
@@ -232,7 +228,7 @@ const Navbar = () => {
                                 onClick={() => setIsMobileMenuOpen(false)}
                             >
                                 <UserIcon aria-hidden="true" className="w-4 h-4" />
-                                <span className="text-sm font-medium">账户登录</span>
+                                <span className="text-sm font-medium">{t('nav.accountLogin')}</span>
                             </Link>
                         )}
                     </div>
@@ -267,7 +263,6 @@ const Footer = () => {
                         <ul className={styles.footerList}>
                             <li><Link to="/modules" className={styles.footerLink}>{t('footer.Infrastructure')}</Link></li>
                             <li><Link to="/hooks" className={styles.footerLink}>{t('footer.Modules')}</Link></li>
-                            {/* <li><a href="#" className={styles.footerLink}>{t('footer.docs')}</a></li> */}
                         </ul>
                     </div>
                     <div>
@@ -296,7 +291,6 @@ const MainLayout = () => {
             <main id="main-content" tabIndex={-1} className={styles.mainContent}>
                 <Outlet />
             </main>
-            {/*{isHomePage && <Footer />}*/}
         </div>
     );
 };

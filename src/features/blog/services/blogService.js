@@ -16,26 +16,28 @@ export const blogService = {
    * POST /api/blog/posts
    *
    * @param {Object} blogData - { title, summary, content, categoryId, tags }
+   * @param {Object} [config] - 额外 axios 配置（如 { signal }）
    * @returns {Promise<number>} 文章ID
    */
-  publishBlog: (blogData) => {
-    return post(`${BASE}/posts`, blogData);
+  publishBlog: (blogData, config) => {
+    return post(`${BASE}/posts`, blogData, config);
   },
   /**
    * 获取博客列表（支持搜索、分类、标签筛选，支持分页）
    * GET /api/blog/posts?search=&category=&tag=&page=1&size=10
    *
    * @param {Object} params - 查询参数 { search, category, tag, page, size }
+   * @param {Object} [config] - 额外 axios 配置（如 { signal }）
    * @returns {Promise<Object>} 分页对象 { records: [], total: 0, current: 1, ... }
    */
-  getBlogs: ({ search = '', category = '', tag = '', page = 1, size = 10 } = {}) => {
+  getBlogs: ({ search = '', category = '', tag = '', page = 1, size = 10 } = {}, config) => {
     // 过滤空值参数
     const params = Object.fromEntries(
       Object.entries({ search, category, tag, page, size }).filter(
         ([, v]) => v !== '' && v !== undefined && v !== null
       )
     );
-    return get(`${BASE}/posts`, params);
+    return get(`${BASE}/posts`, params, config);
   },
 
   /**
@@ -43,10 +45,11 @@ export const blogService = {
    * GET /api/blog/posts/recent?limit=N
    *
    * @param {number} limit
+   * @param {Object} [config] - 额外 axios 配置（如 { signal }）
    * @returns {Promise<Array>}
    */
-  getRecentBlogs: (limit = 5) => {
-    return get(`${BASE}/posts/recent`, { limit });
+  getRecentBlogs: (limit = 5, config) => {
+    return get(`${BASE}/posts/recent`, { limit }, config);
   },
 
   /**
@@ -54,30 +57,33 @@ export const blogService = {
    * GET /api/blog/posts/{id}
    *
    * @param {string|number} id
+   * @param {Object} [config] - 额外 axios 配置（如 { signal }）
    * @returns {Promise<Object>}
    */
-  getBlogById: (id) => {
-    return get(`${BASE}/posts/${id}`);
+  getBlogById: (id, config) => {
+    return get(`${BASE}/posts/${id}`, undefined, config);
   },
 
   /**
    * 获取所有分类（含文章数量）
    * GET /api/blog/categories
    *
+   * @param {Object} [config] - 额外 axios 配置（如 { signal }）
    * @returns {Promise<Array>}
    */
-  getCategories: () => {
-    return get(`${BASE}/categories`);
+  getCategories: (config) => {
+    return get(`${BASE}/categories`, undefined, config);
   },
 
   /**
    * 获取所有标签（含文章数量，按数量降序）
    * GET /api/blog/tags
    *
+   * @param {Object} [config] - 额外 axios 配置（如 { signal }）
    * @returns {Promise<Array<{ name: string, count: number }>>}
    */
-  getAllTags: () => {
-    return get(`${BASE}/tags`);
+  getAllTags: (config) => {
+    return get(`${BASE}/tags`, undefined, config);
   },
 
   /**
@@ -85,9 +91,10 @@ export const blogService = {
    * GET /api/blog/tags/popular?limit=N
    *
    * @param {number} limit
+   * @param {Object} [config] - 额外 axios 配置（如 { signal }）
    * @returns {Promise<Array<{ name: string, count: number }>>}
    */
-  getPopularTags: (limit = 8) => {
-    return get(`${BASE}/tags/popular`, { limit });
+  getPopularTags: (limit = 8, config) => {
+    return get(`${BASE}/tags/popular`, { limit }, config);
   },
 };

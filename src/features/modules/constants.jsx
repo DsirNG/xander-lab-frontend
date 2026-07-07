@@ -5,14 +5,6 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-// 导入Demo组件
-import SingleFileTransferDemo from './pages/demos/SingleFileTransferDemo';
-import MultiFileTransferDemo from './pages/demos/MultiFileTransferDemo';
-import KanbanDemo from './pages/demos/KanbanDemo';
-import LayoutBuilderDemo from './pages/demos/LayoutBuilderDemo';
-import ShoppingDemo from './pages/demos/ShoppingDemo';
-import FlowchartDemo from './pages/demos/FlowchartDemo';
-
 // 导入代码示例
 import {
     SINGLE_FILE_CODE,
@@ -22,6 +14,14 @@ import {
     SHOPPING_CODE,
     FLOWCHART_CODE
 } from './pages/demos/demo-code';
+
+// 导入Demo组件（延迟加载，避免首屏加载所有大型演示组件）
+const SingleFileTransferDemo = React.lazy(() => import('./pages/demos/SingleFileTransferDemo'));
+const MultiFileTransferDemo = React.lazy(() => import('./pages/demos/MultiFileTransferDemo'));
+const KanbanDemo = React.lazy(() => import('./pages/demos/KanbanDemo'));
+const LayoutBuilderDemo = React.lazy(() => import('./pages/demos/LayoutBuilderDemo'));
+const ShoppingDemo = React.lazy(() => import('./pages/demos/ShoppingDemo'));
+const FlowchartDemo = React.lazy(() => import('./pages/demos/FlowchartDemo'));
 
 // 延迟导入详情页组件（避免循环依赖）
 const getDetailComponents = () => ({
@@ -33,53 +33,10 @@ const getDetailComponents = () => ({
  * @param {Function} t - i18n 翻译函数
  * @returns {Array} 功能模块配置数组
  */
-export const getModuleConfig = (t) => {
+export const getModuleConfig = (t = (k) => k) => {
     const detailComponents = getDetailComponents();
 
     return [
-        /*
-        {
-            id: 'popover',
-            title: t('modules.popover.title'),
-            desc: t('modules.popover.desc'),
-            tag: t('modules.popover.tag'),
-            icon: <MessageSquare className="w-5 h-5" />,
-            detailPages: [], // 暂无详情页
-            scenarios: [
-                {
-                    title: 'Standard Click Trigger',
-                    desc: 'A general floating container that appears when clicking an element, maintaining its position relative to the trigger.',
-                    demo: (
-                        <motion.div
-                            whileHover={{ scale: 1.05 }}
-                            className="bg-white  shadow-xl border border-slate-200 p-6 rounded-2xl flex flex-col items-center space-y-4 cursor-pointer"
-                        >
-                            <div className="w-12 h-12 rounded-full bg-blue-500/10 text-blue-600 flex items-center justify-center">
-                                <MousePointerClick className="w-6 h-6" />
-                            </div>
-                            <span className="text-sm font-bold ">Click Me</span>
-                        </motion.div>
-                    )
-                }
-            ]
-        },
-        {
-            id: 'dropdown',
-            title: t('modules.dropdown.title'),
-            desc: t('modules.dropdown.desc'),
-            tag: t('modules.dropdown.tag'),
-            icon: <List className="w-5 h-5" />,
-            detailPages: [], // 暂无详情页
-        },
-        {
-            id: 'tooltip',
-            title: t('modules.tooltip.title'),
-            desc: t('modules.tooltip.desc'),
-            tag: t('modules.tooltip.tag'),
-            icon: <HelpCircle className="w-5 h-5" />,
-            detailPages: [], // 暂无详情页
-        },
-        */
         {
             id: 'drag-drop',
             title: t('modules.dragdrop.title'),
@@ -132,16 +89,6 @@ export const getModuleConfig = (t) => {
                     code: FLOWCHART_CODE
                 }
             ]
-        },
-        /*
-        {
-            id: 'context',
-            title: t('modules.context.title'),
-            desc: t('modules.context.desc'),
-            tag: t('modules.context.tag'),
-            icon: <MousePointer2 className="w-5 h-5" />,
-            detailPages: [], // 暂无详情页
         }
-        */
     ];
 };

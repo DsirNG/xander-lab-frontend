@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { Clock, User } from 'lucide-react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
  * 博客卡片组件
  * 展示单篇文章的摘要信息
  */
-const BlogCard = ({ blog }) => {
+const BlogCard = memo(({ blog }) => {
     return (
         <Link
             to={`/blog/${blog.id}`}
@@ -56,7 +56,7 @@ const BlogCard = ({ blog }) => {
             </div>
         </Link>
     );
-};
+});
 
 BlogCard.propTypes = {
     blog: PropTypes.shape({

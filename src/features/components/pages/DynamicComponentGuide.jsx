@@ -53,21 +53,30 @@ const DynamicComponentGuide = ({ componentId, initialData }) => {
             return;
         }
 
+        const controller = new AbortController();
+
         const fetchDetail = async () => {
             try {
-                const res = await ComponentService.getComponentDetail(componentId, i18n.language);
+                const res = await ComponentService.getComponentDetail(
+                    componentId,
+                    i18n.language,
+                    { signal: controller.signal }
+                );
                 setData(res);
             } catch (err) {
+                if (err.name === 'CanceledError' || err.code === 'ERR_CANCELED') return;
                 console.error("加载组件详情失败", err);
             } finally {
                 setLoading(false);
             }
         };
         fetchDetail();
+
+        return () => controller.abort();
     }, [componentId, i18n.language]);
 
-    if (loading) return <div className="p-20 text-center text-slate-400 animate-pulse">正在解析架构细节...</div>;
-    if (!data) return <div className="p-20 text-center text-rose-500">无法加载组件源码。</div>;
+    if (loading) return <div className="p-20 text-center text-slate-400 animate-pulse">{t('components.guide.parsingArchitecture')}</div>;
+    if (!data) return <div className="p-20 text-center text-rose-500">{t('components.guide.loadFailed')}</div>;
 
     const libraryFiles = parseLibraryFiles(data.libraryCode);
 
@@ -102,7 +111,7 @@ const DynamicComponentGuide = ({ componentId, initialData }) => {
                     </h1>
 
                     <p className="text-xl text-slate-600  max-w-3xl leading-relaxed font-medium">
-                        {data.desc || "该组件通过动态沙箱引擎实现，包含了完整的组件逻辑层与环境包裹层。"}
+                        {data.desc || t('components.guide.defaultDesc')}
                     </p>
                 </div>
 

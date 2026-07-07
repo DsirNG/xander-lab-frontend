@@ -52,7 +52,7 @@ const SidebarLayout = ({
             {/* 移动端菜单按钮 */}
             <button
                 onClick={() => setIsMobileMenuOpen(true)}
-                className={`lg:hidden fixed top-20 left-0 z-50 p-2 bg-white/10 /50 backdrop-blur-[2px] rounded-r-lg shadow-md border border-l-0 border-slate-200  transition-all duration-300 ease-in-out ${isMobileMenuOpen
+                className={`lg:hidden fixed top-20 left-0 z-40 p-2 bg-white/10 /50 backdrop-blur-[2px] rounded-r-lg shadow-md border border-l-0 border-slate-200  transition-all duration-300 ease-in-out ${isMobileMenuOpen
                     ? '-translate-x-full opacity-0 pointer-events-none'
                     : 'translate-x-0 opacity-100'
                     }`}
@@ -80,7 +80,7 @@ const SidebarLayout = ({
                     border-r border-slate-100
                     p-4 sm:p-6 md:p-6 lg:p-8
                     flex flex-col h-[calc(100vh-64px)]
-                    bg-slate-50/50 /20 backdrop-blur-sm
+                    bg-slate-50/80 backdrop-blur-sm lg:bg-slate-50/50 lg:backdrop-blur-none
                     transform transition-transform duration-300 ease-in-out z-40
                     ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
                 `}>

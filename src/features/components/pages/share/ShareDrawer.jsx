@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { useTranslation } from 'react-i18next';
 import {
     Plus, Boxes, FileCode,
     Palette, Trash2, ChevronUp, ChevronDown, X, HelpCircle, Layout
@@ -7,9 +8,9 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 
 const TABS = [
-    { id: 'logic', name: '底层逻辑 (Logic)', icon: FileCode },
-    { id: 'env', name: '执行环境 (Env)', icon: Layout },
-    { id: 'css', name: '样式底座 (Styles)', icon: Palette },
+    { id: 'logic', nameKey: 'components.share.drawer.logic', icon: FileCode },
+    { id: 'env', nameKey: 'components.share.drawer.env', icon: Layout },
+    { id: 'css', nameKey: 'components.share.drawer.css', icon: Palette },
 ];
 
 const ShareDrawer = ({
@@ -30,13 +31,14 @@ const ShareDrawer = ({
     onLibFileContentChange,
     onHelpClick,
 }) => {
+    const { t } = useTranslation();
     return (
         <div className={`absolute bottom-0 left-0 right-0 bg-white border-t border-slate-200 z-[70] transition-all duration-350 shadow-[0_-20px_50px_rgba(0,0,0,0.06)] flex flex-col ${drawerOpen ? 'h-[70vh] lg:h-[550px]' : 'h-14'}`}>
             <div className="h-14 flex-shrink-0 flex items-center justify-between px-4 lg:px-10 border-b border-slate-50">
                 <div className="flex items-center gap-3 lg:gap-10 h-full">
                     <div className="hidden lg:flex items-center gap-2 text-slate-300">
                         <Boxes className="w-4 h-4" />
-                        <span className="text-[10px] font-black uppercase tracking-[0.2em] italic">核心工程架构</span>
+                        <span className="text-[10px] font-black uppercase tracking-[0.2em] italic">{t('components.share.drawer.coreArchitecture')}</span>
                     </div>
                     <div className="hidden lg:block h-4 w-px bg-slate-100" />
                     <div className="flex h-full">
@@ -46,7 +48,7 @@ const ShareDrawer = ({
                                 onClick={() => { setInfTab(tab.id); setDrawerOpen(true); }}
                                 className={`relative h-full flex items-center gap-1.5 lg:gap-2.5 px-3 lg:px-6 text-[10px] font-black uppercase tracking-widest transition-all ${infTab === tab.id ? 'text-primary' : 'text-slate-400 hover:text-slate-600'}`}
                             >
-                                <tab.icon className="w-3.5 h-3.5" /> <span className="hidden sm:inline">{tab.name}</span>
+                                <tab.icon className="w-3.5 h-3.5" /> <span className="hidden sm:inline">{t(tab.nameKey)}</span>
                                 {infTab === tab.id && <motion.div layoutId="itab_line" className="absolute bottom-0 left-0 right-0 h-1 bg-primary-500 rounded-t-lg" />}
                             </button>
                         ))}
@@ -56,7 +58,7 @@ const ShareDrawer = ({
                     onClick={() => setDrawerOpen(!drawerOpen)}
                     className="flex items-center gap-1.5 lg:gap-2 px-2.5 lg:px-4 py-1.5 lg:py-2 rounded-xl text-slate-400 hover:bg-slate-50 hover:text-primary transition-all border border-slate-100"
                 >
-                    <span className="text-[9px] font-black uppercase tracking-widest hidden sm:inline">{drawerOpen ? '收起控制台' : '查看源码架构'}</span>
+                    <span className="text-[9px] font-black uppercase tracking-widest hidden sm:inline">{drawerOpen ? t('components.share.drawer.collapseConsole') : t('components.share.drawer.viewArchitecture')}</span>
                     {drawerOpen ? <ChevronDown className="w-4 h-4" /> : <ChevronUp className="w-4 h-4" />}
                 </button>
             </div>
@@ -104,7 +106,7 @@ const ShareDrawer = ({
                     {infTab === 'env' && (
                         <motion.div key="env" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex-1 h-full relative">
                             <div className="absolute top-4 right-8 z-10">
-                                <button id={tourIds.envHelp} onClick={() => onHelpClick('env')} className="p-2 rounded-xl text-slate-400 hover:bg-slate-50 hover:text-primary transition-colors shadow-sm bg-white border border-slate-100" title="获取外层包裹样例"><HelpCircle className="w-4 h-4" /></button>
+                                <button id={tourIds.envHelp} onClick={() => onHelpClick('env')} className="p-2 rounded-xl text-slate-400 hover:bg-slate-50 hover:text-primary transition-colors shadow-sm bg-white border border-slate-100" title={t('components.share.drawer.wrapperHint')}><HelpCircle className="w-4 h-4" /></button>
                             </div>
                             <textarea value={wrapperCode} onChange={e => setWrapperCode(e.target.value)} className="absolute inset-0 w-full h-full bg-white p-10 text-[14px] font-mono text-slate-700 outline-none resize-none" spellCheck={false} />
                         </motion.div>
@@ -112,7 +114,7 @@ const ShareDrawer = ({
                     {infTab === 'css' && (
                         <motion.div key="css" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex-1 h-full relative">
                             <div className="absolute top-4 right-8 z-10">
-                                <button id={tourIds.cssHelp} onClick={() => onHelpClick('css')} className="p-2 rounded-xl text-slate-400 hover:bg-slate-50 hover:text-primary transition-colors shadow-sm bg-white border border-slate-100" title="获取CSS样式样例"><HelpCircle className="w-4 h-4" /></button>
+                                <button id={tourIds.cssHelp} onClick={() => onHelpClick('css')} className="p-2 rounded-xl text-slate-400 hover:bg-slate-50 hover:text-primary transition-colors shadow-sm bg-white border border-slate-100" title={t('components.share.drawer.cssHint')}><HelpCircle className="w-4 h-4" /></button>
                             </div>
                             <textarea value={cssCode} onChange={e => setCssCode(e.target.value)} className="absolute inset-0 w-full h-full bg-white p-10 text-[14px] font-mono text-slate-700 outline-none resize-none" spellCheck={false} />
                         </motion.div>

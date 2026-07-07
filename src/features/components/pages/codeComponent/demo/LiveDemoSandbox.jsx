@@ -6,7 +6,7 @@ import {
 } from 'lucide-react';
 
 // ─── 注入项目内部组件 ──────────────────────────────────────────────
-import CustomSelect from '../CustomSelect';
+import CustomSelect from '@/components/common/CustomSelect';
 import * as LucideIcons from 'lucide-react';
 
 // ─── 动态加载 Babel（~2.5MB，不打入首屏 bundle）─────────────────
@@ -75,7 +75,7 @@ async function compileAndRun(code, libraryCode = '', wrapperCode = '', cssCode =
                         'react-dom': ReactDOM,
                         'lucide-react': LucideIcons,
                         'framer-motion': { motion, AnimatePresence },
-                        '@/components/CustomSelect': CustomSelect,
+                        '@/components/common/CustomSelect': CustomSelect,
                     };
                     const cleanName = name.replace(/^\.\//, '').replace(/\.jsx?$/, '');
                     if (registry[name]) return registry[name];

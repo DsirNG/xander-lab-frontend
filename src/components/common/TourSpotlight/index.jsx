@@ -11,16 +11,44 @@ const TourSpotlight = ({ targetConfig, onSkip }) => {
 
     useEffect(() => {
         if (!targetConfig) return;
+
+        const el = document.getElementById(targetConfig.id);
+        if (!el) return;
+
         const updateRect = () => {
-            const el = document.getElementById(targetConfig.id);
-            if (el) {
-                const r = el.getBoundingClientRect();
-                setRect({ top: r.top, left: r.left, width: r.width, height: r.height });
-            }
+            const r = el.getBoundingClientRect();
+            setRect({ top: r.top, left: r.left, width: r.width, height: r.height });
         };
+
         updateRect();
-        const interval = setInterval(updateRect, 50);
-        return () => clearInterval(interval);
+
+        // ResizeObserver on target element for size/position changes
+        const resizeObserver = new ResizeObserver(updateRect);
+        resizeObserver.observe(el);
+
+        // Find nearest scrollable ancestor for scroll tracking
+        const findScrollableAncestor = (element) => {
+            let parent = element.parentElement;
+            while (parent) {
+                const style = getComputedStyle(parent);
+                const overflow = style.overflow + style.overflowY + style.overflowX;
+                if (/(auto|scroll|overlay)/.test(overflow)) {
+                    return parent;
+                }
+                parent = parent.parentElement;
+            }
+            return document.documentElement;
+        };
+
+        const scrollableAncestor = findScrollableAncestor(el);
+        scrollableAncestor.addEventListener('scroll', updateRect, { passive: true });
+        window.addEventListener('resize', updateRect, { passive: true });
+
+        return () => {
+            resizeObserver.disconnect();
+            scrollableAncestor.removeEventListener('scroll', updateRect);
+            window.removeEventListener('resize', updateRect);
+        };
     }, [targetConfig]);
 
     if (!targetConfig || !rect || rect.width === 0) return null;
@@ -31,7 +59,7 @@ const TourSpotlight = ({ targetConfig, onSkip }) => {
     const isModalLevel = targetConfig.isModalLevel;
 
     return createPortal(
-        <div className={`fixed inset-0 pointer-events-none transition-all duration-300 ${isModalLevel ? 'z-[99999]' : 'z-[9000]'}`}>
+        <div className={`fixed inset-0 pointer-events-none transition-all duration-300 ${isModalLevel ? 'z-[1200]' : 'z-[900]'}`}>
             {/* 4 方向高斯模糊物理遮罩 */}
             <div className="absolute top-0 left-0 right-0 bg-slate-900/40 backdrop-blur-[2px] transition-all duration-300 pointer-events-auto" style={{ height: topHeight }} />
             <div className="absolute left-0 right-0 bottom-0 bg-slate-900/40 backdrop-blur-[2px] transition-all duration-300 pointer-events-auto" style={{ top: bottomTop }} />

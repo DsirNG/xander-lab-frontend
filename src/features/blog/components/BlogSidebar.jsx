@@ -29,21 +29,26 @@ const BlogSidebar = ({ onNavigate }) => {
     }, [searchParams]);
 
     useEffect(() => {
+        const controller = new AbortController();
+
         const fetchData = async () => {
             try {
                 const [cats, recent, tags] = await Promise.all([
-                    blogService.getCategories(),
-                    blogService.getRecentBlogs(5),
-                    blogService.getPopularTags(8)
+                    blogService.getCategories({ signal: controller.signal }),
+                    blogService.getRecentBlogs(5, { signal: controller.signal }),
+                    blogService.getPopularTags(8, { signal: controller.signal })
                 ]);
                 setCategories(cats);
                 setRecentPosts(recent);
                 setPopularTags(tags);
             } catch (error) {
+                if (error.name === 'CanceledError' || error.code === 'ERR_CANCELED') return;
                 console.error('Sidebar data fetch error:', error);
             }
         };
         fetchData();
+
+        return () => controller.abort();
     }, []);
 
     const handleSearch = (e) => {

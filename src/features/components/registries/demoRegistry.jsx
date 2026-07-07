@@ -12,25 +12,26 @@ import LiveDemoSandbox from '../pages/codeComponent/demo/LiveDemoSandbox';
 import TagInputDemo from '@/components/common/CreatableMultiSelect/demo.jsx';
 
 /**
- * 演示组件注册表：将数据库中的 key 映射到实际的 React 演示组件。
+ * 演示组件注册表：将数据库中的 key 映射到工厂函数。
+ * 使用工厂函数延迟 JSX 创建，避免模块加载时实例化所有演示组件。
  * keys 必须与 `component_scenario` 表中的 `demo_key` 一致。
  */
 export const DEMO_REGISTRY = {
     // 自定义选择器
-    'BasicDemo': <BasicDemo />,
-    'AlignmentDemo': <AlignmentDemo />,
-    'StatusDemo': <StatusDemo />,
+    'BasicDemo': () => <BasicDemo />,
+    'AlignmentDemo': () => <AlignmentDemo />,
+    'StatusDemo': () => <StatusDemo />,
 
     // Toast 通知
-    'ToastBasicDemo': <ToastBasicDemo />,
-    'ToastHoverDemo': <ToastHoverDemo />,
-    'ToastManualDemo': <ToastManualDemo />,
-    'ToastActionDemo': <ToastActionDemo />,
-    'ToastStackDemo': <ToastStackDemo />,
-    'ToastNoHoverDemo': <ToastNoHoverDemo />,
+    'ToastBasicDemo': () => <ToastBasicDemo />,
+    'ToastHoverDemo': () => <ToastHoverDemo />,
+    'ToastManualDemo': () => <ToastManualDemo />,
+    'ToastActionDemo': () => <ToastActionDemo />,
+    'ToastStackDemo': () => <ToastStackDemo />,
+    'ToastNoHoverDemo': () => <ToastNoHoverDemo />,
 
     // TagInput 标签选择器
-    'TagInputDemo': <TagInputDemo />,
+    'TagInputDemo': () => <TagInputDemo />,
 };
 
 /**
@@ -43,9 +44,9 @@ export const DEMO_REGISTRY = {
  * @returns {React.ReactNode} 渲染的演示组件
  */
 export const resolveDemo = (demoKey, customCode, libCode = '', wrapperCode = '', cssCode = '') => {
-    // 1. 优先从注册表中查找静态组件
+    // 1. 优先从注册表中查找静态组件（调用工厂函数生成 JSX）
     if (demoKey && DEMO_REGISTRY[demoKey]) {
-        return DEMO_REGISTRY[demoKey];
+        return DEMO_REGISTRY[demoKey]();
     }
 
     // 2. 注册表里没有，但有 customCode → 渲染沙箱并预填代码

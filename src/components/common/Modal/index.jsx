@@ -105,7 +105,7 @@ const Modal = ({
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.2 }}
-                    className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6"
+                    className="fixed inset-0 z-[1000] flex items-center justify-center p-4 sm:p-6"
                 >
                     {/* 背景遮罩 (因为父级有了透明度动画，这里改回普通 div 即可) */}
                     <div

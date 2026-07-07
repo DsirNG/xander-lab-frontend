@@ -10,7 +10,11 @@ export default {
     components: 'Components',
     blog: 'Blog',
     about: 'About',
-    home: 'Home'
+    home: 'Home',
+    logout: 'Log Out',
+    login: 'Log In',
+    skipToMain: 'Skip to main content',
+    accountLogin: 'Account Login'
   },
   blog: {
     description: 'Documenting the learning journey, sharing technical insights and best practices.',
@@ -79,7 +83,31 @@ export default {
     logicLayer: 'Logic Layer',
     logicLayerDesc: 'Main component implementation handling state and interaction.',
     styleLayer: 'Style Layer',
-    styleLayerDesc: 'CSS Modules for scoped styling and animations.'
+    styleLayerDesc: 'CSS Modules for scoped styling and animations.',
+    errorBoundary: {
+      title: 'Something went wrong',
+      description: 'An unexpected error occurred. You can try reloading the page or returning to the home page.',
+      errorDetails: 'Error Details',
+      reload: 'Reload',
+      backToHome: 'Back to Home'
+    }
+  },
+  auth: {
+    login: {
+      invalidEmail: 'Please enter a valid email',
+      codeSent: 'Verification code has been sent to your email',
+      codeSendFailed: 'Failed to send verification code, please check your network',
+      authSuccess: 'Authentication successful, welcome through the security gateway',
+      authFailed: 'Authentication failed, please check your credentials',
+      loginAccess: 'Login Access',
+      loginDesc: 'Get access to Xander Lab full features, blog management, and multi-dimensional data.',
+      passwordAuth: 'Password Authentication',
+      codeAuth: 'Verification Code',
+      getCode: 'Get Code',
+      login: 'Log In',
+      backToLobby: 'Back to Lobby',
+      techBlog: 'Tech Blog'
+    }
   },
   hero: {
     badge: 'v1.0.0 In Development',
@@ -322,6 +350,79 @@ export default {
             desc: 'Unified exports for easy integration across the feature modules.'
           }
         }
+      }
+    },
+    detail: {
+      loading: 'Loading component details...',
+      error: 'Failed to load or component does not exist.',
+      loadingPage: 'Loading page...'
+    },
+    content: {
+      architectureDeepDive: 'Architecture Deep Dive',
+      implementationOverview: 'Implementation Overview',
+      implementationHint: 'This component includes a custom logic layer. Click the button in the top right to view the full architecture analysis.',
+      understandTitle: 'Deeply understand this component\'s mechanism',
+      understandDesc: 'More than just a UI demo. See how we built this interaction system using the Context API and custom Hooks.',
+      viewGuide: 'View Full Implementation Guide',
+      sourceCode: 'Component Source Code',
+      sourceCodeDesc: 'Complete file structure and implementation reference',
+      coreLogic: 'Core Logic (Lib)',
+      stylesDef: 'Style Definitions (CSS)'
+    },
+    guide: {
+      parsingArchitecture: 'Parsing architecture details...',
+      loadFailed: 'Unable to load component source code.',
+      defaultDesc: 'This component is implemented through a dynamic sandbox engine, including complete component logic layer and environment wrapper layer.'
+    },
+    share: {
+      header: {
+        title: 'Component Studio',
+        restartTour: 'Restart Tutorial',
+        tour: 'Tutorial',
+        publish: 'Publish to Library'
+      },
+      sidebar: {
+        registerMeta: 'Register Metadata',
+        titleZh: 'Chinese Title',
+        descLabel: 'Component Description (CN/EN)',
+        descZhPlaceholder: 'Chinese description...',
+        testScenarios: 'Test Scenarios'
+      },
+      drawer: {
+        logic: 'Core Logic (Logic)',
+        env: 'Execution Environment (Env)',
+        css: 'Style Foundation (Styles)',
+        coreArchitecture: 'Core Engineering Architecture',
+        collapseConsole: 'Collapse Console',
+        viewArchitecture: 'View Source Architecture',
+        wrapperHint: 'Get wrapper example',
+        cssHint: 'Get CSS style example'
+      },
+      modals: {
+        newFile: 'New File',
+        cancel: 'Cancel',
+        confirmCreate: 'Confirm Create',
+        deleteConfirm: 'Delete Confirmation',
+        confirmDelete: 'Confirm Delete',
+        deleteWarning: 'You are about to permanently delete a code asset:',
+        deleteLoseWarning: 'Once deleted, the source code structure will be lost locally. Do you want to force overwrite?',
+        presetSamples: 'Preset Sample Library',
+        oneClickLoad: 'One-Click Load',
+        helpIntro: 'This is a development wizard feature. By clicking the button below, we will automatically fill in the standard engineering test data for',
+        helpMeta: 'This will fill in the complete basic information for the Toast component (Chinese/English names, description, and version), skipping tedious manual entry.',
+        helpScenario: 'This will one-click fill a complete React DOM scenario that includes { success / failure / progress flow } interaction mechanisms.',
+        helpLogic: 'This will directly write three core architecture files with mutual dependencies: ToastContext, ToastItem, and ToastContainer.',
+        helpEnv: 'This will fill in the full outer context nodes such as <ToastProvider />, allowing your demo code to properly take over global routing or top-level dependencies.',
+        helpCss: 'This will supplement the CSS Keyframes and other base rendering data for high-performance Toast entry and exit animations.',
+        editScenario: 'Edit Test Scenario Info',
+        saveChanges: 'Save Changes',
+        chineseName: 'Chinese Name',
+        chineseNamePlaceholder: 'Enter Chinese name...',
+        welcomeTitle: 'Welcome to System Lab',
+        welcomeReject: 'I\'m familiar, decline',
+        startTour: 'Start Tutorial',
+        welcomeDesc: 'Detected that the system architecture pool is in its initial empty state, and this is your first time entering Xander-Lab Workspace. To help you get familiar with this "4-in-1" hot-reload sandbox, we have built in a complete skeleton of the global notification system (Toast). Would you like to spend 30 seconds of real time following the spotlight to experience how to assemble, compile, and launch components?',
+        fileExtensionHint: 'It is recommended to use standard frontend extensions such as'
       }
     }
   },

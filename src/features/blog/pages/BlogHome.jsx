@@ -22,6 +22,7 @@ const BlogHome = () => {
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
     const observer = useRef();
+    const abortRef = useRef(null);
 
     const search = searchParams.get('search') || '';
     const category = searchParams.get('category') || '';
@@ -29,15 +30,22 @@ const BlogHome = () => {
 
     // 重置并拉取首屏数据
     useEffect(() => {
+        const controller = new AbortController();
+        abortRef.current = controller;
+
         const fetchInitialBlogs = async () => {
             setLoading(true);
             setPage(1);
             try {
-                const data = await blogService.getBlogs({ search, category, tag, page: 1, size: 10 });
+                const data = await blogService.getBlogs(
+                    { search, category, tag, page: 1, size: 10 },
+                    { signal: controller.signal }
+                );
                 // 严格对接新的 PageData 结构
                 setBlogs(data.records || []);
                 setHasMore(data.hasMore || false);
             } catch (error) {
+                if (error.name === 'CanceledError' || error.code === 'ERR_CANCELED') return;
                 console.error('Failed to fetch blogs:', error);
                 setBlogs([]);
                 setHasMore(false);
@@ -46,16 +54,24 @@ const BlogHome = () => {
             }
         };
         fetchInitialBlogs();
+
+        return () => controller.abort();
     }, [search, category, tag]);
 
     // 加载更多（useCallback 避免 IntersectionObserver 闭包过期）
     const fetchMoreBlogs = useCallback(async () => {
         if (loadingMore || !hasMore) return;
 
+        const controller = new AbortController();
+        abortRef.current = controller;
+
         setLoadingMore(true);
         const nextPage = page + 1;
         try {
-            const data = await blogService.getBlogs({ search, category, tag, page: nextPage, size: 10 });
+            const data = await blogService.getBlogs(
+                { search, category, tag, page: nextPage, size: 10 },
+                { signal: controller.signal }
+            );
             if (data && data.records) {
                 setBlogs(prev => [...prev, ...data.records]);
                 setPage(prev => prev + 1);
@@ -64,6 +80,7 @@ const BlogHome = () => {
                 setHasMore(false);
             }
         } catch (error) {
+            if (error.name === 'CanceledError' || error.code === 'ERR_CANCELED') return;
             console.error('Failed to fetch more blogs:', error);
         } finally {
             setLoadingMore(false);
@@ -83,6 +100,11 @@ const BlogHome = () => {
 
         if (node) observer.current.observe(node);
     }, [loading, loadingMore, fetchMoreBlogs]);
+
+    // 组件卸载时取消请求
+    useEffect(() => {
+        return () => abortRef.current?.abort();
+    }, []);
 
     const clearFilters = () => {
         setSearchParams({});

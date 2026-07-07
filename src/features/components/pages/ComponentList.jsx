@@ -19,10 +19,11 @@ const ComponentList = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        const controller = new AbortController();
         const fetchMenu = async () => {
             setLoading(true);
             try {
-                const res = await ComponentService.getMenu(i18n.language);
+                const res = await ComponentService.getMenu(i18n.language, { signal: controller.signal });
                 // 扁平化分类结构以适应当前的 SidebarLayout
                 const flatItems = [];
                 res.forEach(cat => {
@@ -39,6 +40,7 @@ const ComponentList = () => {
                 });
                 setItems(flatItems);
             } catch (error) {
+                if (error.name === 'CanceledError' || error.code === 'ERR_CANCELED') return;
                 console.error("加载组件菜单失败", error);
             } finally {
                 setLoading(false);
@@ -46,6 +48,7 @@ const ComponentList = () => {
         };
 
         fetchMenu();
+        return () => controller.abort();
     }, [i18n.language]);
 
     // 如果在 /components 根路径，自动重定向到第一个组件

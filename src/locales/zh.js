@@ -10,7 +10,11 @@ export default {
     components: '组件',
     blog: '博客',
     about: '关于',
-    home: '首页'
+    home: '首页',
+    logout: '退出登录',
+    login: '登录',
+    skipToMain: '跳至主要内容',
+    accountLogin: '账户登录'
   },
   blog: {
     description: '记录学习历程，分享技术见解，探讨最佳实践。',
@@ -79,7 +83,31 @@ export default {
     logicLayer: '逻辑层',
     logicLayerDesc: '处理状态和交互的主组件实现。',
     styleLayer: '样式层',
-    styleLayerDesc: '用于作用域样式和动画的CSS Modules。'
+    styleLayerDesc: '用于作用域样式和动画的CSS Modules。',
+    errorBoundary: {
+      title: '页面出现了问题',
+      description: '应用遇到了一个意外错误。你可以尝试重新加载页面，或者返回首页。',
+      errorDetails: '错误详情',
+      reload: '重新加载',
+      backToHome: '返回首页'
+    }
+  },
+  auth: {
+    login: {
+      invalidEmail: '请输入有效的邮箱',
+      codeSent: '验证码指令已发送至您的邮箱',
+      codeSendFailed: '验证码发送失败，请检查网络链路',
+      authSuccess: '鉴权成功，欢迎通过安全网关',
+      authFailed: '身份识别失败，请检查您的凭证',
+      loginAccess: '登录访问',
+      loginDesc: '以获取 Xander Lab 完整功能、博客管理及多维数据的访问权限。',
+      passwordAuth: '密码识别',
+      codeAuth: '验证码验证',
+      getCode: '获取验证码',
+      login: '登录',
+      backToLobby: '返回访客大厅',
+      techBlog: '技术博客'
+    }
   },
   hero: {
     badge: 'v1.0.0 研发中',
@@ -322,6 +350,79 @@ export default {
             desc: '统一导出，便于在各个功能模块中集成。'
           }
         }
+      }
+    },
+    detail: {
+      loading: '正在加载组件详情...',
+      error: '加载失败或组件不存在。',
+      loadingPage: '正在加载页面...'
+    },
+    content: {
+      architectureDeepDive: '架构深度解析',
+      implementationOverview: '技术实现概览',
+      implementationHint: '该组件包含自定义逻辑层，点击右上角按钮查看完整架构解析。',
+      understandTitle: '深入理解此组件的运行机制',
+      understandDesc: '不仅是 UI 演示。查看我们如何通过 Context API 和自定义 Hooks 构建这一交互系统。',
+      viewGuide: '查看完整实现指南',
+      sourceCode: '组件实现源码',
+      sourceCodeDesc: '完整的文件结构与实现细节参考',
+      coreLogic: '核心逻辑 (Lib)',
+      stylesDef: '样式定义 (CSS)'
+    },
+    guide: {
+      parsingArchitecture: '正在解析架构细节...',
+      loadFailed: '无法加载组件源码。',
+      defaultDesc: '该组件通过动态沙箱引擎实现，包含了完整的组件逻辑层与环境包裹层。'
+    },
+    share: {
+      header: {
+        title: '组件工作室',
+        restartTour: '重启新手向导',
+        tour: '新手向导',
+        publish: '发布至组件库'
+      },
+      sidebar: {
+        registerMeta: '注册元数据',
+        titleZh: '中文标题',
+        descLabel: '组件详述 (CN/EN)',
+        descZhPlaceholder: '中文介绍...',
+        testScenarios: '测试用例场景'
+      },
+      drawer: {
+        logic: '底层逻辑 (Logic)',
+        env: '执行环境 (Env)',
+        css: '样式底座 (Styles)',
+        coreArchitecture: '核心工程架构',
+        collapseConsole: '收起控制台',
+        viewArchitecture: '查看源码架构',
+        wrapperHint: '获取外层包裹样例',
+        cssHint: '获取CSS样式样例'
+      },
+      modals: {
+        newFile: '新建文件',
+        cancel: '取消',
+        confirmCreate: '确定创建',
+        deleteConfirm: '删除确认',
+        confirmDelete: '确认删除',
+        deleteWarning: '你正在极其危险地彻底抹除代码资产：',
+        deleteLoseWarning: '一旦删除，本地将丢失该文件的源码结构，是否强行覆盖执行？',
+        presetSamples: '预置样例库',
+        oneClickLoad: '一键装载',
+        helpIntro: '这是一项开发向导功能。点击下方按钮后，我们将为您本环节自动填入',
+        helpMeta: '该操作将会为您填入 Toast 组件的完整基本信息（中英文名称、描述及版本），跳过繁杂的手动录入。',
+        helpScenario: '该操作将会一键填充一份同时包含了 { 成功态 / 失败态 / 进度流 } 等交互机制的完整 React DOM 运行场景。',
+        helpLogic: '该操作将会为您直接写入 ToastContext、ToastItem 和 ToastContainer 三个具备相互依赖关系的核心架构文件。',
+        helpEnv: '该操作将会为您填入 <ToastProvider /> 等全量外层上下文节点，使您的演示代码能够正常接管全局路由或顶层依赖。',
+        helpCss: '该操作将会为您补充 Toast 高性能进退场的 CSS Keyframes 等基底渲染数据。',
+        editScenario: '修改测试场景信息',
+        saveChanges: '保存修改',
+        chineseName: '中文名称',
+        chineseNamePlaceholder: '输入场景中文名...',
+        welcomeTitle: '欢迎访问系统实验室',
+        welcomeReject: '我已熟悉，残忍拒绝',
+        startTour: '启动教学向导',
+        welcomeDesc: '侦测到系统架构池处于初始完全清空状态，且您是第一次进入 Xander-Lab Workspace。为了帮助您最快熟悉这个"四合一"热重载沙盒，我们为您内置了一整套全局通知系统（Toast）的骨架。是否愿意花 30 秒的世界时间，跟随强光指引，一点点体验如何无脑将组件拼装、编译并最终发射运作？',
+        fileExtensionHint: '推荐使用标准的前端扩展名如'
       }
     }
   },

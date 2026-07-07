@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
     Mail, Lock, ShieldCheck, ArrowRight, Loader2,
     ChevronLeft, Github, Globe, Sparkles,
@@ -17,6 +18,7 @@ const LoginPage = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const toast = useToast();
+    const { t } = useTranslation();
     const from = location.state?.from?.pathname || '/';
 
     const [loading, setLoading] = useState(false);
@@ -42,15 +44,15 @@ const LoginPage = () => {
 
     const handleSendCode = async () => {
         if (!formData.account || !formData.account.includes('@')) {
-            toast.warning('请输入有效的邮箱');
+            toast.warning(t('auth.login.invalidEmail'));
             return;
         }
         try {
             await authService.sendCode(formData.account);
             setCountdown(60);
-            toast.success('验证码指令已发送至您的邮箱');
+            toast.success(t('auth.login.codeSent'));
         } catch (err) {
-            toast.error(err.message || '验证码发送失败，请检查网络链路');
+            toast.error(err.message || t('auth.login.codeSendFailed'));
         }
     };
 
@@ -60,10 +62,10 @@ const LoginPage = () => {
 
         try {
             await authService.login({ ...formData, type: loginType });
-            toast.success('鉴权成功，欢迎通过安全网关');
+            toast.success(t('auth.login.authSuccess'));
             navigate(from, { replace: true });
         } catch (err) {
-            toast.error(err.message || '身份识别失败，请检查您的凭证');
+            toast.error(err.message || t('auth.login.authFailed'));
         } finally {
             setLoading(false);
         }
@@ -120,7 +122,7 @@ const LoginPage = () => {
                 <div className="absolute -top-20 -right-20 w-64 h-64 bg-primary/10 rounded-full blur-[100px] animate-pulse" />
                 <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-primary/10 rounded-full blur-[100px] animate-pulse delay-700" />
 
-                <div className="relative bg-white/70 /40 backdrop-blur-3xl border border-white/40  rounded-[3.5rem] shadow-[0_32px_128px_-32px_rgba(0,0,0,0.15)] overflow-hidden">
+                <div className="relative bg-white/70 backdrop-blur-3xl border border-white/40  rounded-[3.5rem] shadow-[0_32px_128px_-32px_rgba(0,0,0,0.15)] overflow-hidden">
 
                     <div className="p-10 md:p-14 relative z-10">
                         {/* 装饰图标 */}
@@ -135,18 +137,18 @@ const LoginPage = () => {
                                 <span className="text-[10px] font-black text-primary uppercase tracking-[0.3em]">Identity Gateway</span>
                             </div>
                             <h1 className="text-4xl font-black text-slate-900  tracking-tight mb-4">
-                                登录访问<span className="text-primary text-5xl">.</span>
+                                {t('auth.login.loginAccess')}<span className="text-primary text-5xl">.</span>
                             </h1>
                             <p className="text-slate-500  text-sm font-medium leading-relaxed">
-                                以获取 Xander Lab 完整功能、博客管理及多维数据的访问权限。
+                                {t('auth.login.loginDesc')}
                             </p>
                         </div>
 
                         {/* 模式选择 */}
-                        <div className="grid grid-cols-2 p-1.5 bg-slate-100/50 /30 rounded-2xl mb-10 border border-slate-200/50 /50">
+                        <div className="grid grid-cols-2 p-1.5 bg-slate-100/50 rounded-2xl mb-10 border border-slate-200/50">
                             {[
-                                { id: 'password', label: '密码识别', icon: Fingerprint },
-                                { id: 'code', label: '验证码验证', icon: Shield }
+                                { id: 'password', label: t('auth.login.passwordAuth'), icon: Fingerprint },
+                                { id: 'code', label: t('auth.login.codeAuth'), icon: Shield }
                             ].map((tab) => (
                                 <button
                                     key={tab.id}
@@ -195,7 +197,7 @@ const LoginPage = () => {
                                                     required
                                                     value={formData.account}
                                                     onChange={handleChange}
-                                                    className="block w-full pl-12 pr-6 py-4.5 bg-white/50 /30 border border-slate-200  rounded-3xl text-[14px] font-bold text-slate-900  placeholder:text-slate-300 focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all shadow-inner"
+                                                    className="block w-full pl-12 pr-6 py-4.5 bg-white/50 border border-slate-200  rounded-3xl text-[14px] font-bold text-slate-900  placeholder:text-slate-300 focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all shadow-inner"
                                                     placeholder="Username / Email"
                                                 />
                                             </div>
@@ -217,7 +219,7 @@ const LoginPage = () => {
                                                         required
                                                         value={formData.password}
                                                         onChange={handleChange}
-                                                        className="block w-full pl-12 pr-6 py-4.5 bg-white/50 /30 border border-slate-200  rounded-3xl text-[14px] font-bold text-slate-900  placeholder:text-slate-300 focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all shadow-inner"
+                                                        className="block w-full pl-12 pr-6 py-4.5 bg-white/50 border border-slate-200  rounded-3xl text-[14px] font-bold text-slate-900  placeholder:text-slate-300 focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all shadow-inner"
                                                         placeholder="Laboratory Passkey"
                                                     />
                                                 </div>
@@ -240,7 +242,7 @@ const LoginPage = () => {
                                                             maxLength={6}
                                                             value={formData.code}
                                                             onChange={handleChange}
-                                                            className="block w-full pl-12 pr-6 py-4.5 bg-white/50 /30 border border-slate-200  rounded-3xl text-[14px] font-bold text-slate-900  placeholder:text-slate-300 focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all shadow-inner"
+                                                            className="block w-full pl-12 pr-6 py-4.5 bg-white/50 border border-slate-200  rounded-3xl text-[14px] font-bold text-slate-900  placeholder:text-slate-300 focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all shadow-inner"
                                                             placeholder="6 Digits"
                                                         />
                                                     </div>
@@ -250,7 +252,7 @@ const LoginPage = () => {
                                                         onClick={handleSendCode}
                                                         className="px-6 rounded-3xl bg-slate-900 text-white text-xs font-black hover:scale-105 active:scale-95 disabled:opacity-30 transition-all shadow-xl shadow-slate-900/10"
                                                     >
-                                                        {countdown > 0 ? `${countdown}S` : '获取验证码'}
+                                                        {countdown > 0 ? `${countdown}S` : t('auth.login.getCode')}
                                                     </button>
                                                 </div>
                                             </div>
@@ -270,7 +272,7 @@ const LoginPage = () => {
                                         <Loader2 className="w-5 h-5 animate-spin" />
                                     ) : (
                                         <>
-                                            登录
+                                            {t('auth.login.login')}
                                             <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform duration-500" />
                                         </>
                                     )}
@@ -288,11 +290,11 @@ const LoginPage = () => {
                     <div className="flex items-center gap-8 text-xs font-black text-slate-400">
                         <Link to="/" className="group flex items-center gap-2 hover:text-primary transition-all">
                             <ChevronLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-                            返回访客大厅
+                            {t('auth.login.backToLobby')}
                         </Link>
                         <div className="w-1 h-1 rounded-full bg-slate-300 " />
                         <Link to="/blog" className="hover:text-primary transition-all">
-                            技术博客
+                            {t('auth.login.techBlog')}
                         </Link>
                     </div>
                 </div>
@@ -303,12 +305,6 @@ const LoginPage = () => {
                     Xander Lab // System Protocol
                 </p>
             </footer>
-
-            <style>{`
-                @keyframes shimmer {
-                    100% { transform: translateX(100%); }
-                }
-            `}</style>
         </div>
     );
 };
@@ -339,35 +335,42 @@ const DigitalOrbit = () => {
  */
 const FloatingParticles = () => {
     const icons = [Cpu, Zap, Shield, Sparkles, Fingerprint];
+    const particles = useMemo(() =>
+        Array.from({ length: 8 }, (_, i) => ({
+            x: Math.random() * 100,
+            y: Math.random() * 100,
+            duration: 15 + Math.random() * 10,
+            size: 80 + Math.random() * 100,
+            Icon: icons[i % icons.length]
+        })),
+    []);
+
     return (
         <div className="absolute inset-0 pointer-events-none">
-            {[...Array(8)].map((_, i) => {
-                const Icon = icons[i % icons.length];
-                return (
-                    <motion.div
-                        key={i}
-                        initial={{
-                            x: Math.random() * 100 + "%",
-                            y: Math.random() * 100 + "%",
-                            opacity: 0
-                        }}
-                        animate={{
-                            y: [null, "-20%", "20%"],
-                            opacity: [0, 0.15, 0],
-                            rotate: [0, 360],
-                            scale: [0.8, 1, 0.8]
-                        }}
-                        transition={{
-                            duration: 15 + Math.random() * 10,
-                            repeat: Infinity,
-                            ease: "easeInOut"
-                        }}
-                        className="absolute text-primary"
-                    >
-                        <Icon size={80 + Math.random() * 100} strokeWidth={0.5} />
-                    </motion.div>
-                );
-            })}
+            {particles.map((p, i) => (
+                <motion.div
+                    key={i}
+                    initial={{
+                        x: p.x + "%",
+                        y: p.y + "%",
+                        opacity: 0
+                    }}
+                    animate={{
+                        y: [null, "-20%", "20%"],
+                        opacity: [0, 0.15, 0],
+                        rotate: [0, 360],
+                        scale: [0.8, 1, 0.8]
+                    }}
+                    transition={{
+                        duration: p.duration,
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                    }}
+                    className="absolute text-primary"
+                >
+                    <p.Icon size={p.size} strokeWidth={0.5} />
+                </motion.div>
+            ))}
         </div>
     );
 };

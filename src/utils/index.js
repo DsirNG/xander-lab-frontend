@@ -72,7 +72,7 @@ export const storage = {
       const item = localStorage.getItem(key);
       return item ? JSON.parse(item) : defaultValue;
     } catch (error) {
-      console.error('Storage get error:', error);
+      if (import.meta.env.DEV) console.error('Storage get error:', error);
       return defaultValue;
     }
   },
@@ -81,7 +81,7 @@ export const storage = {
       localStorage.setItem(key, JSON.stringify(value));
       return true;
     } catch (error) {
-      console.error('Storage set error:', error);
+      if (import.meta.env.DEV) console.error('Storage set error:', error);
       return false;
     }
   },
@@ -90,7 +90,7 @@ export const storage = {
       localStorage.removeItem(key);
       return true;
     } catch (error) {
-      console.error('Storage remove error:', error);
+      if (import.meta.env.DEV) console.error('Storage remove error:', error);
       return false;
     }
   },
@@ -99,7 +99,7 @@ export const storage = {
       localStorage.clear();
       return true;
     } catch (error) {
-      console.error('Storage clear error:', error);
+      if (import.meta.env.DEV) console.error('Storage clear error:', error);
       return false;
     }
   },

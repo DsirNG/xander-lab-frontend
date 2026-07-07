@@ -51,7 +51,6 @@
 
 /* 平滑滚动行为 */
 html {
-  scroll-behavior: smooth;
   scrollbar-gutter: stable;
 }
 
@@ -140,6 +139,11 @@ html {
     filter: blur(0);
     -webkit-filter: blur(0);
   }
+}
+
+/* Login Button Shimmer Animation */
+@keyframes shimmer {
+  100% { transform: translateX(100%); }
 }
 
 /* Toast Animations (C-End Premium Bouncy) */

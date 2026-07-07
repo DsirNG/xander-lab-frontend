@@ -59,7 +59,7 @@ const BlogLayout = () => {
                     flex-shrink-0 flex flex-col
                     h-[calc(100vh-64px)]
                     border-l border-slate-100
-                    bg-slate-50/80 /80 lg:bg-slate-50/50 lg:/20
+                    bg-slate-50/80 lg:bg-slate-50/50
                     backdrop-blur-sm lg:backdrop-blur-none
                     overflow-y-auto custom-scrollbar
                     p-6 xl:p-8

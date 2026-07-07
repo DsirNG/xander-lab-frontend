@@ -9,10 +9,10 @@ const defaultIcons = {
 };
 
 const defaultStyles = {
-    success: 'bg-white/95 /95 border-emerald-100/50 d shadow-emerald-500/10',
-    error: 'bg-white/95 /95 border-rose-100/50  shadow-rose-500/10',
-    info: 'bg-white/95 /95 border-blue-100/50  shadow-blue-500/10',
-    warning: 'bg-white/95 /95 border-amber-100/50  shadow-amber-500/10',
+    success: 'bg-white/95 border-emerald-100/50 shadow-emerald-500/10',
+    error: 'bg-white/95 border-rose-100/50 shadow-rose-500/10',
+    info: 'bg-white/95 border-blue-100/50 shadow-blue-500/10',
+    warning: 'bg-white/95 border-amber-100/50 shadow-amber-500/10',
 };
 
 const ToastItem = ({ toast, onRemove }) => {

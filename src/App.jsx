@@ -6,7 +6,6 @@
  */
 
 import { RouterProvider } from 'react-router-dom'
-import { useTranslation } from 'react-i18next'
 import { useMemo } from 'react'
 import { createRouter } from './router'
 import { ToastProvider, ToastContainer } from './components/common/Toast'
@@ -19,10 +18,8 @@ import ErrorBoundary from './components/common/ErrorBoundary'
  * @returns {JSX.Element} 应用根组件
  */
 function App() {
-  const { t } = useTranslation()
-
-  // 使用 t 函数创建路由实例
-  const router = useMemo(() => createRouter(t), [t])
+  // 路由实例只创建一次，翻译由页面组件内部解析
+  const router = useMemo(() => createRouter(), [])
 
   return (
     <ErrorBoundary>

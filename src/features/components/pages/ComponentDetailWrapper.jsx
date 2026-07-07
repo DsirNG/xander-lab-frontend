@@ -7,7 +7,7 @@ import { PAGE_REGISTRY } from '../registries/pageRegistry';
 
 const ComponentDetailWrapper = () => {
     const { componentId, '*': subPath } = useParams();
-    const { i18n } = useTranslation();
+    const { t, i18n } = useTranslation();
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -15,12 +15,19 @@ const ComponentDetailWrapper = () => {
     useEffect(() => {
         if (!componentId) return;
 
+        const controller = new AbortController();
+
         const fetchData = async () => {
             setLoading(true);
             try {
-                const res = await ComponentService.getComponentDetail(componentId, i18n.language);
+                const res = await ComponentService.getComponentDetail(
+                    componentId,
+                    i18n.language,
+                    { signal: controller.signal }
+                );
                 setData(res);
             } catch (err) {
+                if (err.name === 'CanceledError' || err.code === 'ERR_CANCELED') return;
                 console.error(err);
                 setError(err);
             } finally {
@@ -31,14 +38,16 @@ const ComponentDetailWrapper = () => {
         fetchData();
         // 切换组件时重置数据
         setData(null);
+
+        return () => controller.abort();
     }, [componentId, i18n.language]);
 
     if (loading && !data) {
-        return <div className="p-8 text-center text-slate-500">正在加载组件详情...</div>;
+        return <div className="p-8 text-center text-slate-500">{t('components.detail.loading')}</div>;
     }
 
     if (error || !data) {
-        return <div className="p-8 text-center text-red-500">加载失败或组件不存在。</div>;
+        return <div className="p-8 text-center text-red-500">{t('components.detail.error')}</div>;
     }
 
     // 检查是否在特定的子详情页（如 /guide）
@@ -57,7 +66,7 @@ const ComponentDetailWrapper = () => {
             const PageComponent = PAGE_REGISTRY[pageConfig.componentKey];
             if (PageComponent) {
                 return (
-                    <Suspense fallback={<div>正在加载页面...</div>}>
+                    <Suspense fallback={<div>{t('components.detail.loadingPage')}</div>}>
                         <PageComponent componentId={componentId} initialData={data} />
                     </Suspense>
                 );
