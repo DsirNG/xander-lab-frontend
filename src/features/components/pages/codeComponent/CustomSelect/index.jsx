@@ -1,6 +1,8 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import styles from './index.module.css';
 
+const EMPTY_OPTIONS = [];
+
 const DownIcon = () => (
   <svg width="1rem" height="1rem" viewBox="0 0 16 16" fill="none">
     <path d="M4 6L8 10L12 6" stroke="#999999" strokeWidth="1.66667" strokeLinecap="round" strokeLinejoin="round" />
@@ -20,7 +22,7 @@ const DownIcon = () => (
  * @param {boolean} error - 是否显示错误状态
  */
 const CustomSelect = ({
-  options = [],
+  options = EMPTY_OPTIONS,
   value,
   onChange,
   placeholder = '请选择',
@@ -32,6 +34,7 @@ const CustomSelect = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isUpward, setIsUpward] = useState(false);
+  const [highlightedIndex, setHighlightedIndex] = useState(-1);
   const selectRef = useRef(null);
   const dropdownRef = useRef(null);
 
@@ -79,6 +82,7 @@ const CustomSelect = ({
     const handleClickOutside = (event) => {
       if (selectRef.current && !selectRef.current.contains(event.target)) {
         setIsOpen(false);
+        setHighlightedIndex(-1);
       }
     };
 
@@ -102,6 +106,7 @@ const CustomSelect = ({
     } else {
       // 关闭时重置方向
       setIsUpward(false);
+      setHighlightedIndex(-1);
     }
   }, [isOpen, checkBoundary]);
 
@@ -126,6 +131,55 @@ const CustomSelect = ({
   const handleSelect = (optionValue) => {
     onChange(optionValue);
     setIsOpen(false);
+    setHighlightedIndex(-1);
+  };
+
+  const handleKeyDown = (e) => {
+    switch (e.key) {
+      case 'Enter':
+      case ' ':
+        e.preventDefault();
+        if (isOpen && highlightedIndex >= 0 && highlightedIndex < options.length) {
+          // Select the highlighted option
+          handleSelect(options[highlightedIndex].value);
+        } else {
+          // Toggle dropdown
+          setIsOpen(!isOpen);
+          if (!isOpen) {
+            // When opening, highlight the currently selected option or first option
+            const selectedIdx = options.findIndex(opt => opt.value === value);
+            setHighlightedIndex(selectedIdx >= 0 ? selectedIdx : 0);
+          }
+        }
+        break;
+      case 'ArrowDown':
+        e.preventDefault();
+        if (!isOpen) {
+          setIsOpen(true);
+          const selectedIdx = options.findIndex(opt => opt.value === value);
+          setHighlightedIndex(selectedIdx >= 0 ? selectedIdx : 0);
+        } else if (highlightedIndex < options.length - 1) {
+          setHighlightedIndex(highlightedIndex + 1);
+        }
+        break;
+      case 'ArrowUp':
+        e.preventDefault();
+        if (!isOpen) {
+          setIsOpen(true);
+          const selectedIdx = options.findIndex(opt => opt.value === value);
+          setHighlightedIndex(selectedIdx >= 0 ? selectedIdx : 0);
+        } else if (highlightedIndex > 0) {
+          setHighlightedIndex(highlightedIndex - 1);
+        }
+        break;
+      case 'Escape':
+        e.preventDefault();
+        setIsOpen(false);
+        setHighlightedIndex(-1);
+        break;
+      default:
+        break;
+    }
   };
 
   // 生成对齐类名
@@ -137,32 +191,49 @@ const CustomSelect = ({
   const textAlignClass = getAlignClass(finalTextAlign);
   const dropdownAlignClass = getAlignClass(finalDropdownAlign);
 
+  // Compute the id of the highlighted option for aria-activedescendant
+  const activeDescendantId = highlightedIndex >= 0 && highlightedIndex < options.length
+    ? `option-${options[highlightedIndex].value}`
+    : undefined;
+
   return (
     <div className={`${styles.customSelect} ${className}`} ref={selectRef}>
-      <div
+      <button
+        type="button"
+        role="combobox"
+        aria-expanded={isOpen}
+        aria-haspopup="listbox"
+        aria-label={placeholder || '选择'}
+        aria-activedescendant={activeDescendantId}
         className={`${styles.selectTrigger} ${isOpen ? styles.active : ''} ${value ? styles.hasValue : ''} ${error ? styles.error : ''} ${textAlignClass}`}
         onClick={() => setIsOpen(!isOpen)}
+        onKeyDown={handleKeyDown}
       >
         <span className={styles.selectText}>{displayText}</span>
         <span className={`${styles.selectArrow} ${isOpen ? styles.rotated : ''}`}>
           <DownIcon />
         </span>
-      </div>
+      </button>
 
       {isOpen && (
         <div
           ref={dropdownRef}
           className={`${styles.selectDropdown} ${isUpward ? styles.upward : ''}`}
         >
-          <div className={styles.optionsList}>
-            {options.map((option) => (
-              <div
+          <div className={styles.optionsList} role="listbox">
+            {options.map((option, index) => (
+              <button
+                type="button"
+                role="option"
                 key={option.value}
-                className={`${styles.option} ${value === option.value ? styles.selected : ''} ${dropdownAlignClass}`}
+                id={`option-${option.value}`}
+                aria-selected={option.value === value}
+                className={`${styles.option} ${value === option.value ? styles.selected : ''} ${dropdownAlignClass} ${index === highlightedIndex ? 'bg-primary/10' : ''}`}
                 onClick={() => handleSelect(option.value)}
+                onMouseEnter={() => setHighlightedIndex(index)}
               >
                 {option.label}
-              </div>
+              </button>
             ))}
           </div>
         </div>

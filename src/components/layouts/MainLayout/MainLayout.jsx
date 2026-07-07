@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Layers, Github, Menu, Languages, X, User as UserIcon, LogOut } from 'lucide-react';
+import { Github, Menu, Languages, X, User as UserIcon, LogOut } from 'lucide-react';
 import styles from './MainLayout.module.css';
 import { authService } from '@features/auth/services/authService';
 
@@ -81,7 +81,7 @@ const Navbar = () => {
 
     return (
         <>
-            <nav className={styles.navbar}>
+            <nav aria-label="主导航" className={styles.navbar}>
                 <div className={styles.container}>
                     <div className={styles.navContent}>
                         <Link to="/" className={styles.logoArea} onClick={() => setIsMobileMenuOpen(false)}>
@@ -171,6 +171,14 @@ const Navbar = () => {
                     </div>
                 </div>
             </nav>
+
+            {/* 跳过导航链接 - 仅在 focus 时可见 */}
+            <a
+                href="#main-content"
+                className="sr-only focus:not-sr-only focus:absolute focus:top-20 focus:left-4 focus:z-[10000] focus:px-4 focus:py-2 focus:bg-primary focus:text-white focus:rounded-lg focus:shadow-lg focus:text-sm focus:font-bold focus:outline-none"
+            >
+                跳至主要内容
+            </a>
 
             {/* 移动端菜单 */}
             <div
@@ -284,7 +292,7 @@ const MainLayout = () => {
     return (
         <div className={styles.layoutContainer}>
             <Navbar />
-            <main className={styles.mainContent}>
+            <main id="main-content" tabIndex={-1} className={styles.mainContent}>
                 <Outlet />
             </main>
             {/*{isHomePage && <Footer />}*/}

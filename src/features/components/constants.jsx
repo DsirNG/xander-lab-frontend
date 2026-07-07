@@ -2,7 +2,6 @@ import React from 'react';
 import {
     ToggleLeft as ToggleIcon,
     ChevronsUpDown,
-    MousePointerClick,
     Activity
 } from 'lucide-react';
 

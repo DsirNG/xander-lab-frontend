@@ -3,6 +3,9 @@ import { Link, Outlet } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import { ChevronRight, Menu, X } from 'lucide-react';
 import PropTypes from 'prop-types';
+import useIsMobile from '@hooks/useIsMobile';
+
+const EMPTY_ITEMS = [];
 
 const SidebarItem = ({ item, active, onClick, subtitleKey = 'tag' }) => (
     <Link
@@ -29,28 +32,20 @@ const SidebarItem = ({ item, active, onClick, subtitleKey = 'tag' }) => (
 const SidebarLayout = ({
     title,
     description,
-    items = [],
+    items = EMPTY_ITEMS,
     activeId,
     bottomCard,
     subtitleKey
 }) => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-    const [isMobile, setIsMobile] = useState(false);
+    const isMobile = useIsMobile();
 
-    // 检测是否为移动端
+    // 桌面端自动关闭移动菜单
     useEffect(() => {
-        const checkIsMobile = () => {
-            setIsMobile(window.innerWidth < 1024);
-            // 桌面端自动关闭移动菜单
-            if (window.innerWidth >= 1024) {
-                setIsMobileMenuOpen(false);
-            }
-        };
-
-        checkIsMobile();
-        window.addEventListener('resize', checkIsMobile);
-        return () => window.removeEventListener('resize', checkIsMobile);
-    }, []);
+        if (!isMobile) {
+            setIsMobileMenuOpen(false);
+        }
+    }, [isMobile]);
 
     return (
         <div className="bg-white ">

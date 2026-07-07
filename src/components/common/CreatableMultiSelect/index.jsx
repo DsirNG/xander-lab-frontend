@@ -1,6 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { X, Hash } from 'lucide-react';
 
+const EMPTY_ARRAY = [];
+
 /**
  * CreatableMultiSelect 组件
  * 支持从预设列表中选择，也支持手动输入创建新选项。
@@ -13,22 +15,29 @@ import { X, Hash } from 'lucide-react';
  * @param {string} [props.className=''] - 附加的 CSS class
  */
 const CreatableMultiSelect = ({
-    value = [],
+    value = EMPTY_ARRAY,
     onChange,
-    options = [],
+    options = EMPTY_ARRAY,
     placeholder = '请选择或输入...',
     className = ''
 }) => {
     const [inputValue, setInputValue] = useState('');
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const [highlightedIndex, setHighlightedIndex] = useState(-1);
     const inputRef = useRef(null);
     const containerRef = useRef(null);
+
+    // Compute filtered options for keyboard navigation
+    const filteredOptions = options.filter(
+        t => !value.includes(t) && t.toLowerCase().includes(inputValue.toLowerCase())
+    );
 
     // 点击外部时关闭下拉框
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (containerRef.current && !containerRef.current.contains(event.target)) {
                 setIsDropdownOpen(false);
+                setHighlightedIndex(-1);
             }
         };
         document.addEventListener('mousedown', handleClickOutside);
@@ -38,12 +47,39 @@ const CreatableMultiSelect = ({
     const handleKeyDown = (e) => {
         if (e.key === 'Enter') {
             e.preventDefault();
-            if (inputValue.trim()) {
+            // If an option is highlighted in dropdown, select it
+            if (isDropdownOpen && highlightedIndex >= 0 && highlightedIndex < filteredOptions.length) {
+                addItem(filteredOptions[highlightedIndex]);
+            } else if (inputValue.trim()) {
                 addItem(inputValue.trim());
             }
         } else if (e.key === 'Backspace' && !inputValue && value.length > 0) {
             // 当输入框为空且按下退格键时，删除最后一个项
             removeItem(value[value.length - 1]);
+        } else if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            if (!isDropdownOpen) {
+                setIsDropdownOpen(true);
+                setHighlightedIndex(0);
+            } else if (filteredOptions.length > 0) {
+                setHighlightedIndex(prev =>
+                    prev < filteredOptions.length - 1 ? prev + 1 : 0
+                );
+            }
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            if (!isDropdownOpen) {
+                setIsDropdownOpen(true);
+                setHighlightedIndex(Math.max(0, filteredOptions.length - 1));
+            } else if (filteredOptions.length > 0) {
+                setHighlightedIndex(prev =>
+                    prev > 0 ? prev - 1 : filteredOptions.length - 1
+                );
+            }
+        } else if (e.key === 'Escape') {
+            e.preventDefault();
+            setIsDropdownOpen(false);
+            setHighlightedIndex(-1);
         }
     };
 
@@ -54,6 +90,7 @@ const CreatableMultiSelect = ({
         }
         setInputValue('');
         setIsDropdownOpen(false);
+        setHighlightedIndex(-1);
         inputRef.current?.focus();
     };
 
@@ -68,14 +105,16 @@ const CreatableMultiSelect = ({
             onClick={() => inputRef.current?.focus()}
         >
             {value.map(item => (
-                <span
+                <button
+                    type="button"
                     key={item}
+                    aria-label={`移除 ${item}`}
                     className="px-3 py-1.5 bg-slate-50  border border-slate-100  text-[11px] font-bold text-slate-700  rounded-xl flex items-center gap-1.5 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200    transition-colors group/item cursor-pointer"
                     onClick={(e) => { e.stopPropagation(); removeItem(item); }}
                 >
                     {item}
                     <X className="w-3.5 h-3.5 opacity-50 group-hover/item:opacity-100" />
-                </span>
+                </button>
             ))}
 
             <div className="relative flex-1 min-w-[120px]">
@@ -85,6 +124,7 @@ const CreatableMultiSelect = ({
                     onChange={e => {
                         setInputValue(e.target.value);
                         setIsDropdownOpen(true);
+                        setHighlightedIndex(-1);
                     }}
                     onFocus={() => setIsDropdownOpen(true)}
                     onKeyDown={handleKeyDown}
@@ -94,20 +134,23 @@ const CreatableMultiSelect = ({
 
                 {/* 自定义下拉选择器 */}
                 {isDropdownOpen && (inputValue || options.length > 0) && (
-                    <div className="absolute top-full left-0 mt-2 w-[240px] max-h-48 overflow-y-auto custom-scrollbar bg-white  border border-slate-200 rounded-xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.1)] z-50 py-1">
-                        {options
-                            .filter(t => !value.includes(t) && t.toLowerCase().includes(inputValue.toLowerCase()))
-                            .map(item => (
-                                <div
+                    <div role="listbox" className="absolute top-full left-0 mt-2 w-[240px] max-h-48 overflow-y-auto custom-scrollbar bg-white  border border-slate-200 rounded-xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.1)] z-50 py-1">
+                        {filteredOptions
+                            .map((item, index) => (
+                                <button
+                                    type="button"
+                                    role="option"
                                     key={item}
+                                    aria-selected={value.includes(item)}
                                     onClick={(e) => {
                                         e.stopPropagation();
                                         addItem(item);
                                     }}
-                                    className="px-4 py-2.5 text-[12px] font-medium text-slate-600  hover:bg-slate-50 hover:text-primary cursor-pointer transition-colors flex items-center gap-2"
+                                    onMouseEnter={() => setHighlightedIndex(index)}
+                                    className={`px-4 py-2.5 text-[12px] font-medium text-slate-600  hover:bg-slate-50 hover:text-primary cursor-pointer transition-colors flex items-center gap-2 w-full text-left ${index === highlightedIndex ? 'bg-primary/10' : ''}`}
                                 >
                                     <Hash className="w-3.5 h-3.5 opacity-50" /> {item}
-                                </div>
+                                </button>
                             ))}
                         {/* 如果用户输入了一个不存在的新选项，给个提示 */}
                         {inputValue.trim() && !options.includes(inputValue.trim()) && (

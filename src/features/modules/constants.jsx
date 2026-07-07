@@ -1,12 +1,7 @@
 
 import React from 'react';
 import {
-    MessageSquare,
-    List,
-    HelpCircle,
-    Move as MoveIcon,
-    MousePointer2,
-    MousePointerClick
+    Move as MoveIcon
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 

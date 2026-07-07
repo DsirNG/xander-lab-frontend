@@ -2,8 +2,8 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useToast } from '@/hooks/useToast';
 import {
-    Activity, Clock, X, ExternalLink, Layers,
-    CheckCircle2, XCircle, AlertCircle, Info, Palette
+    Activity, Clock, ExternalLink, Layers,
+    XCircle, Palette
 } from 'lucide-react';
 
 /**

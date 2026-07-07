@@ -9,7 +9,7 @@ const ToastContainer = () => {
     if (typeof document === 'undefined') return null;
 
     return createPortal(
-        <div className="fixed top-8 left-1/2 -translate-x-1/2 z-[9999] flex flex-col items-center gap-3 pointer-events-none w-full max-w-md px-6">
+        <div role="status" aria-live="polite" aria-atomic="false" className="fixed top-8 left-1/2 -translate-x-1/2 z-[9999] flex flex-col items-center gap-3 pointer-events-none w-full max-w-md px-6">
             {toasts.map((toast) => (
                 <ToastItem
                     key={toast.id}

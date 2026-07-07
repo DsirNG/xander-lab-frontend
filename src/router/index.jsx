@@ -9,29 +9,39 @@
 import React, { Suspense } from 'react';
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 
-// Layouts
+// Layouts (始终需要，保持静态导入)
 import MainLayout from '@components/layouts/MainLayout';
 import BlogLayout from '@features/blog/layouts/BlogLayout';
 
-// Features
-import HomePage from '@features/home/pages/HomePage';
-import InfraList from '@features/infra/pages/InfraList';
-import InfraContent from '@features/infra/pages/InfraContent';
-import ModuleList from '@features/modules/pages/ModuleList';
-import ModuleContent from '@features/modules/pages/ModuleContent';
-import ComponentList from '@features/components/pages/ComponentList';
-import ComponentContent from '@features/components/pages/ComponentContent';
-import ComponentDetailWrapper from '@features/components/pages/ComponentDetailWrapper';
-import ComponentShare from '@features/components/pages/ComponentShare';
-import BlogHome from '@features/blog/pages/BlogHome';
-import BlogDetail from '@features/blog/pages/BlogDetail';
-import BlogTags from '@features/blog/pages/BlogTags';
-import BlogPublish from '@features/blog/pages/BlogPublish';
-import LoginPage from '@features/auth/pages/LoginPage';
+// Features (路由级懒加载)
+const HomePage = React.lazy(() => import('@features/home/pages/HomePage'));
+const InfraList = React.lazy(() => import('@features/infra/pages/InfraList'));
+const InfraContent = React.lazy(() => import('@features/infra/pages/InfraContent'));
+const ModuleList = React.lazy(() => import('@features/modules/pages/ModuleList'));
+const ModuleContent = React.lazy(() => import('@features/modules/pages/ModuleContent'));
+const ComponentList = React.lazy(() => import('@features/components/pages/ComponentList'));
+const ComponentDetailWrapper = React.lazy(() => import('@features/components/pages/ComponentDetailWrapper'));
+const ComponentShare = React.lazy(() => import('@features/components/pages/ComponentShare'));
+const BlogHome = React.lazy(() => import('@features/blog/pages/BlogHome'));
+const BlogDetail = React.lazy(() => import('@features/blog/pages/BlogDetail'));
+const BlogTags = React.lazy(() => import('@features/blog/pages/BlogTags'));
+const BlogPublish = React.lazy(() => import('@features/blog/pages/BlogPublish'));
+const LoginPage = React.lazy(() => import('@features/auth/pages/LoginPage'));
 
 // 配置数据
 import { getInfraConfig } from '@features/infra/constants';
 import { getModuleConfig } from '@features/modules/constants';
+
+// 通用组件
+import LoadingSpinner from '@components/common/LoadingSpinner';
+const NotFoundPage = React.lazy(() => import('@features/home/pages/NotFoundPage'));
+
+// 通用 Suspense 包裹器
+const LazyPage = ({ children }) => (
+  <Suspense fallback={<LoadingSpinner fullScreen />}>
+    {children}
+  </Suspense>
+);
 
 
 /**
@@ -49,7 +59,7 @@ export const createRouter = (t) => {
   const routerConfig = [
     {
       path: '/login',
-      element: <LoginPage />,
+      element: <LazyPage><LoginPage /></LazyPage>,
     },
     {
       path: '/',
@@ -57,11 +67,11 @@ export const createRouter = (t) => {
       children: [
         {
           index: true,
-          element: <HomePage />,
+          element: <LazyPage><HomePage /></LazyPage>,
         },
         {
           path: 'infra',
-          element: <InfraList />,
+          element: <LazyPage><InfraList /></LazyPage>,
           children: [
             {
               index: true,
@@ -72,12 +82,12 @@ export const createRouter = (t) => {
               children: [
                 {
                   index: true,
-                  element: <InfraContent system={system} />,
+                  element: <LazyPage><InfraContent system={system} /></LazyPage>,
                 },
                 ...(system.detailPages || []).map(detailPage => ({
                   path: detailPage.type,
                   element: (
-                    <Suspense fallback={<div className="flex items-center justify-center min-h-screen">Loading...</div>}>
+                    <Suspense fallback={<LoadingSpinner fullScreen />}>
                       <detailPage.component />
                     </Suspense>
                   ),
@@ -88,7 +98,7 @@ export const createRouter = (t) => {
         },
         {
           path: 'modules',
-          element: <ModuleList />,
+          element: <LazyPage><ModuleList /></LazyPage>,
           children: [
             {
               index: true,
@@ -99,12 +109,12 @@ export const createRouter = (t) => {
               children: [
                 {
                   index: true,
-                  element: <ModuleContent module={module} />,
+                  element: <LazyPage><ModuleContent module={module} /></LazyPage>,
                 },
                 ...(module.detailPages || []).map(detailPage => ({
                   path: detailPage.type,
                   element: (
-                    <Suspense fallback={<div className="flex items-center justify-center min-h-screen">Loading...</div>}>
+                    <Suspense fallback={<LoadingSpinner fullScreen />}>
                       <detailPage.component />
                     </Suspense>
                   ),
@@ -115,11 +125,11 @@ export const createRouter = (t) => {
         },
         {
           path: 'components',
-          element: <ComponentList />,
+          element: <LazyPage><ComponentList /></LazyPage>,
           children: [
             {
               path: ':componentId/*',
-              element: <ComponentDetailWrapper />,
+              element: <LazyPage><ComponentDetailWrapper /></LazyPage>,
             },
           ],
         },
@@ -131,36 +141,32 @@ export const createRouter = (t) => {
           children: [
             {
               index: true,
-              element: <BlogHome />,
+              element: <LazyPage><BlogHome /></LazyPage>,
             },
             {
               path: 'tags',
-              element: <BlogTags />,
+              element: <LazyPage><BlogTags /></LazyPage>,
             },
 
             {
               path: ':id',
-              element: <BlogDetail />,
+              element: <LazyPage><BlogDetail /></LazyPage>,
             },
           ],
         },
         {
           path: '*',
-          element: (
-            <div className="p-10 text-center">
-              <h1 className="text-2xl font-bold">404 - 页面未找到</h1>
-            </div>
-          ),
+          element: <LazyPage><NotFoundPage /></LazyPage>,
         },
       ],
     },
     {
       path: 'components/share',
-      element: <ComponentShare />,
+      element: <LazyPage><ComponentShare /></LazyPage>,
     },
     {
       path: 'blog/publish',
-      element: <BlogPublish />,
+      element: <LazyPage><BlogPublish /></LazyPage>,
     },
   ];
 

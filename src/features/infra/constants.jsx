@@ -1,10 +1,5 @@
 
 import React from 'react';
-import {
-    Box as BoxIcon,
-    Layout as LayoutIcon,
-    Move as MoveIcon
-} from 'lucide-react';
 
 // 延迟导入详情页组件（避免循环依赖）
 const getDetailComponents = () => ({

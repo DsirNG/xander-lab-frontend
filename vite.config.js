@@ -22,6 +22,23 @@ export default defineConfig({
       '@router': path.resolve(__dirname, './src/router'),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            if (id.includes('@babel/standalone')) return 'vendor-compiler';
+            if (id.includes('react-syntax-highlighter')) return 'vendor-highlight';
+            if (id.includes('react-markdown') || id.includes('remark-gfm')) return 'vendor-markdown';
+            if (id.includes('framer-motion')) return 'vendor-motion';
+            if (id.includes('react-dom') || id.includes('react-router') || id.includes('react-i18next') || id.includes('i18next')) return 'vendor-react';
+            if (id.includes('lucide-react')) return 'vendor-icons';
+            if (id.includes('axios')) return 'vendor-http';
+          }
+        },
+      },
+    },
+  },
   server: {
     host: '0.0.0.0',
     port: 3000,

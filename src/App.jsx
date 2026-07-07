@@ -10,6 +10,7 @@ import { useTranslation } from 'react-i18next'
 import { useMemo } from 'react'
 import { createRouter } from './router'
 import { ToastProvider, ToastContainer } from './components/common/Toast'
+import ErrorBoundary from './components/common/ErrorBoundary'
 
 /**
  * App - 应用根组件
@@ -24,10 +25,12 @@ function App() {
   const router = useMemo(() => createRouter(t), [t])
 
   return (
-    <ToastProvider>
-      <RouterProvider router={router} />
-      <ToastContainer />
-    </ToastProvider>
+    <ErrorBoundary>
+      <ToastProvider>
+        <RouterProvider router={router} />
+        <ToastContainer />
+      </ToastProvider>
+    </ErrorBoundary>
   )
 }
 

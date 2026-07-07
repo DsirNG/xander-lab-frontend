@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import {
-    Layout,
     BarChart3,
     PieChart,
     Type,

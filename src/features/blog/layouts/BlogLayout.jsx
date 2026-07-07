@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
 import { ChevronLeft, X } from 'lucide-react';
 import BlogSidebar from '../components/BlogSidebar';
+import useIsMobile from '@hooks/useIsMobile';
 
 /**
  * 博客布局组件
@@ -11,19 +12,14 @@ import BlogSidebar from '../components/BlogSidebar';
  */
 const BlogLayout = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-    const [isMobile, setIsMobile] = useState(false);
+    const isMobile = useIsMobile();
 
-    // 检测是否为移动端
+    // 桌面端自动关闭移动菜单
     useEffect(() => {
-        const checkIsMobile = () => {
-            const mobile = window.innerWidth < 1024;
-            setIsMobile(mobile);
-            if (!mobile) setIsSidebarOpen(false);
-        };
-        checkIsMobile();
-        window.addEventListener('resize', checkIsMobile);
-        return () => window.removeEventListener('resize', checkIsMobile);
-    }, []);
+        if (!isMobile) {
+            setIsSidebarOpen(false);
+        }
+    }, [isMobile]);
 
     return (
         <div className="bg-white ">

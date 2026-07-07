@@ -4,7 +4,7 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import {
     Copy, Check, FileCode, Layers,
-    ArrowLeft, Cpu, Zap, Library, Boxes, Layout
+    ArrowLeft, Boxes, Layout
 } from 'lucide-react';
 import { Link, useParams } from 'react-router-dom';
 import ComponentService from '../services/componentService';

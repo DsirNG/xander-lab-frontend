@@ -12,7 +12,7 @@ import { blogService } from '../services/blogService';
  * Markdown 代码块组件
  * 支持语法高亮 + 复制按钮
  */
-const CodeBlock = ({ language, children }) => {
+const CodeBlock = React.memo(({ language, children }) => {
     const [copied, setCopied] = useState(false);
     const code = String(children).replace(/\n$/, '');
 
@@ -62,7 +62,7 @@ const CodeBlock = ({ language, children }) => {
             </SyntaxHighlighter>
         </div>
     );
-};
+});
 
 /**
  * Markdown 自定义渲染组件映射

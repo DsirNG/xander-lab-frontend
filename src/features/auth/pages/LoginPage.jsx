@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import {
     Mail, Lock, ShieldCheck, ArrowRight, Loader2,
-    Layers, ChevronLeft, Github, Globe, Sparkles,
+    ChevronLeft, Github, Globe, Sparkles,
     Fingerprint, Shield, Zap, Cpu
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';

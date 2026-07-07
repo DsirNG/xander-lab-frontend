@@ -105,22 +105,6 @@ html {
 
 
 @layer base {
-  :root {
-    --primary: #36f;
-    --primary-50: #e6f3ff;
-    --primary-100: #cce7ff;
-    --primary-200: #99ceff;
-    --primary-300: #66b4ff;
-    --primary-400: #339bff;
-    --primary-500: #36f;
-    --primary-600: #005ce6;
-    --primary-700: #0047b3;
-    --primary-800: #003380;
-    --primary-900: #001f4d;
-  
-    --primary-light: #339bff;
-  }
-
   html {
     -webkit-tap-highlight-color: transparent;
     scroll-behavior: smooth;
@@ -207,4 +191,20 @@ html {
 
 .animate-progress {
   animation: progress-linear linear forwards;
+}
+
+/* Reduced Motion - 尊重用户的动画偏好 */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  html {
+    scroll-behavior: auto;
+  }
 }

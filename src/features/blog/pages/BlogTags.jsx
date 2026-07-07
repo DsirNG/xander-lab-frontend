@@ -5,6 +5,14 @@ import { Tag, Hash, ChevronLeft, FileText } from 'lucide-react';
 import { blogService } from '../services/blogService';
 import BlogCard from '../components/BlogCard';
 
+const tagLevelStyles = {
+    1: 'text-xs px-2.5 py-1',
+    2: 'text-xs px-3 py-1.5',
+    3: 'text-sm px-3.5 py-1.5',
+    4: 'text-sm px-4 py-2',
+    5: 'text-base px-4 py-2 font-semibold',
+};
+
 /**
  * 标签云页面
  * 展示所有标签，点击标签筛选相关文章
@@ -66,14 +74,6 @@ const BlogTags = () => {
         if (ratio >= 0.4) return 3;
         if (ratio >= 0.2) return 2;
         return 1;
-    };
-
-    const tagLevelStyles = {
-        1: 'text-xs px-2.5 py-1',
-        2: 'text-xs px-3 py-1.5',
-        3: 'text-sm px-3.5 py-1.5',
-        4: 'text-sm px-4 py-2',
-        5: 'text-base px-4 py-2 font-semibold',
     };
 
     return (

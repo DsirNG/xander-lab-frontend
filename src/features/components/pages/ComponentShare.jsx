@@ -2,10 +2,9 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import {
-    Plus, Share2, Zap, Box, Info, Database,
-    ChevronRight, Command, Layout, Boxes,
-    Terminal, Maximize2, Minimize2, Palette, FileCode, Edit2,
-    Type, Languages, Trash2, ShieldCheck, ChevronUp, ChevronDown, X, HelpCircle, Compass, PartyPopper
+    Plus, Share2, Zap, Info, Database,
+    Layout, Boxes, FileCode, Edit2,
+    Palette, Trash2, ChevronUp, ChevronDown, X, HelpCircle, Compass
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import LiveDemoSandbox from './codeComponent/demo/LiveDemoSandbox';

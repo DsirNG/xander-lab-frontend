@@ -2,7 +2,7 @@ import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
-import { Terminal, ChevronRight, Github } from 'lucide-react'
+import { ChevronRight, Github } from 'lucide-react'
 import styles from './HomePage.module.css'
 
 const Hero = () => {

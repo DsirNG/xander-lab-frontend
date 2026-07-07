@@ -1,15 +1,27 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import ReactDOM from 'react-dom';
-import * as Babel from '@babel/standalone';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-    Play, RefreshCw, AlertTriangle, CheckCircle2,
-    Terminal, Maximize2, Minimize2, Code2, Eye, X
+    Play, RefreshCw, AlertTriangle
 } from 'lucide-react';
 
 // ─── 注入项目内部组件 ──────────────────────────────────────────────
 import CustomSelect from '../CustomSelect';
 import * as LucideIcons from 'lucide-react';
+
+// ─── 动态加载 Babel（~2.5MB，不打入首屏 bundle）─────────────────
+let _babel = null;
+let _babelLoading = null;
+const loadBabel = () => {
+    if (_babel) return Promise.resolve(_babel);
+    if (!_babelLoading) {
+        _babelLoading = import('@babel/standalone').then(mod => {
+            _babel = mod.default || mod;
+            return _babel;
+        });
+    }
+    return _babelLoading;
+};
 
 // ─── 执行代码并提取组件 ───────────────────────────────────────────
 const createFunction = (code, scope, exportsObj, sandboxRequire) => {
@@ -28,7 +40,8 @@ const createFunction = (code, scope, exportsObj, sandboxRequire) => {
     }
 };
 
-function compileAndRun(code, libraryCode = '', wrapperCode = '', cssCode = '') {
+async function compileAndRun(code, libraryCode = '', wrapperCode = '', cssCode = '') {
+    const Babel = await loadBabel();
     const stylesProxy = new Proxy({}, { get: (t, p) => typeof p === 'string' ? p : p });
 
     const baseScope = {
@@ -217,7 +230,7 @@ class SandboxErrorBoundary extends React.Component {
     }
 }
 
-function SandboxPreview({ code, libraryCode, wrapperCode, cssCode }) {
+const SandboxPreview = React.memo(function SandboxPreview({ code, libraryCode, wrapperCode, cssCode }) {
     const [Component, setComponent] = useState(null);
     const [error, setError] = useState(null);
 
@@ -235,16 +248,17 @@ function SandboxPreview({ code, libraryCode, wrapperCode, cssCode }) {
 
     useEffect(() => {
         let isMounted = true;
-        try {
-            setError(null);
-            const comp = compileAndRun(code, libraryCode, wrapperCode, cssCode);
-            if (isMounted) setComponent(() => comp);
-        } catch (e) {
-            if (isMounted) {
-                setError(e.message || String(e));
-                setComponent(null);
-            }
-        }
+        setError(null);
+        compileAndRun(code, libraryCode, wrapperCode, cssCode)
+            .then(comp => {
+                if (isMounted) setComponent(() => comp);
+            })
+            .catch(e => {
+                if (isMounted) {
+                    setError(e.message || String(e));
+                    setComponent(null);
+                }
+            });
         return () => { isMounted = false; };
     }, [code, libraryCode, wrapperCode, cssCode]);
 
@@ -276,7 +290,7 @@ function SandboxPreview({ code, libraryCode, wrapperCode, cssCode }) {
             </SandboxErrorBoundary>
         </div>
     );
-}
+});
 
 const LiveDemoSandbox = ({
     initialCode = '',
@@ -321,19 +335,19 @@ const LiveDemoSandbox = ({
     const handleRun = useCallback(() => {
         setIsRunning(true);
         setTimeout(() => {
-            try {
-                // 主动执行时用最新源码测试
-                compileAndRun(code, libraryCode, wrapperCode, cssCode);
-                setLastRunSuccess(true);
-                setRunningCode(code);
-                setRunningLibraryCode(libraryCode);
-                setRunningWrapperCode(wrapperCode);
-                setRunningCssCode(cssCode);
-            } catch (e) {
-                console.error(e);
-                setLastRunSuccess(false);
-            }
-            setIsRunning(false);
+            compileAndRun(code, libraryCode, wrapperCode, cssCode)
+                .then(() => {
+                    setLastRunSuccess(true);
+                    setRunningCode(code);
+                    setRunningLibraryCode(libraryCode);
+                    setRunningWrapperCode(wrapperCode);
+                    setRunningCssCode(cssCode);
+                })
+                .catch(e => {
+                    console.error(e);
+                    setLastRunSuccess(false);
+                })
+                .finally(() => setIsRunning(false));
         }, 300);
     }, [code, libraryCode, wrapperCode, cssCode]);
 

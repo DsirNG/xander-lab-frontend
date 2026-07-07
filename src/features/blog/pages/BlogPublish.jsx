@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
-    Send, Save, X, Tag as TagIcon,
+    Send, Save, Tag as TagIcon,
     ChevronLeft, Layout, Type, AlignLeft, Hash, Loader2,
     Eye, Edit3, Info
 } from 'lucide-react';

@@ -3,8 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import {
-    Copy, Check, FileCode, FileJson, Layers,
-    ArrowLeft, Terminal, Cpu, Zap, Activity
+    Copy, Check, FileCode, Layers,
+    ArrowLeft, Cpu, Zap, Activity
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
