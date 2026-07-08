@@ -53,6 +53,8 @@ export default defineConfig({
         target: 'http://localhost:3010',
         changeOrigin: true,
         secure: false,
+        timeout: 600000, // 10 minutes for large file uploads
+        proxyTimeout: 600000,
         rewrite: (path) => path.replace(/^\/studio-api/, '/api'),
       },
       '/studio-preview': {
