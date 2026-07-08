@@ -21,7 +21,6 @@ import {
   getStatusColor,
   getStatusLabel,
 } from '../services/studioService';
-import { useToast } from '@/hooks/useToast';
 
 const entryCards = [
   {
@@ -46,16 +45,14 @@ const entryCards = [
 
 export default function StudioPage() {
   const navigate = useNavigate();
-  const toast = useToast();
   const [projects, setProjects] = useState([]);
 
   const loadProjects = useCallback(async () => {
     try {
       const data = await fetchProjects();
       setProjects(data.projects || []);
-    } catch (err) {
+    } catch {
       setProjects([]);
-      toast.error(err.message || '加载项目失败');
     }
   }, []);
 

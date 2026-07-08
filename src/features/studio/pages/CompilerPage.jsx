@@ -22,7 +22,6 @@ import {
   getStatusLabel,
   isTerminalStatus,
 } from '../services/studioService';
-import { useToast } from '@/hooks/useToast';
 
 /**
  * 文件树节点递归组件，支持目录折叠/展开
@@ -107,7 +106,6 @@ function FileTreeNode({ node, depth, isActive, onOpenFile }) {
 export default function CompilerPage() {
   const { projectId } = useParams();
   const pollRef = useRef(null);
-  const toast = useToast();
   const [project, setProject] = useState(null);
   const [fileTree, setFileTree] = useState(null);
   const [activeFilePath, setActiveFilePath] = useState('');
@@ -133,8 +131,7 @@ export default function CompilerPage() {
       const data = await fetchProject(projectId);
       setProject(data.project);
       return data.project;
-    } catch (err) {
-      toast.error(err.message || '加载项目失败');
+    } catch {
       return null;
     }
   }, [projectId]);
@@ -145,9 +142,8 @@ export default function CompilerPage() {
     try {
       const data = await fetchFileTree(projectId);
       setFileTree(data.tree);
-    } catch (err) {
+    } catch {
       setFileTree(null);
-      toast.error(err.message || '加载文件树失败');
     }
   }, [projectId]);
 
@@ -161,9 +157,8 @@ export default function CompilerPage() {
       try {
         const data = await fetchFileContent(projectId, filePath);
         setFileContent(data.content);
-      } catch (err) {
+      } catch {
         setFileContent('文件加载失败');
-        toast.error(err.message || '文件加载失败');
       } finally {
         setIsLoadingFile(false);
       }
