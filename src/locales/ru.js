@@ -114,6 +114,7 @@ export default {
     }
   },
   auth: {
+    sessionExpired: 'Сессия истекла, пожалуйста, войдите снова',
     login: {
       invalidEmail: 'Введите действительный email',
       codeSent: 'Код подтверждения отправлен на вашу почту',

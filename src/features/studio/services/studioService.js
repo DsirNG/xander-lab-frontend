@@ -1,46 +1,32 @@
 /**
  * Studio API service.
+ * 统一使用 http.js 封装的 axios 实例发起请求，通过 baseURL: '' 覆盖 /api 前缀。
+ * 自动携带 token、统一错误 toast、401 处理等逻辑均由 http.js 拦截器处理。
  *
  * @module features/studio/services/studioService
  */
 
+import { get, post } from '@api/http';
+
+/** studio 请求通用配置：覆盖 http.js 的 /api baseURL */
+const STUDIO_CONFIG = { baseURL: '' };
+
 export async function fetchProjects() {
-  const res = await fetch('/studio-api/projects');
-
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({ error: '获取项目列表失败' }));
-    throw new Error(err.error || '获取项目列表失败');
-  }
-
-  return res.json();
+  return get('/studio-api/projects', {}, STUDIO_CONFIG);
 }
 
 export async function fetchProject(projectId) {
-  const res = await fetch(`/studio-api/projects/${projectId}`);
-
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({ error: '获取项目详情失败' }));
-    throw new Error(err.error || '获取项目详情失败');
-  }
-
-  return res.json();
+  return get(`/studio-api/projects/${projectId}`, {}, STUDIO_CONFIG);
 }
 
 export async function uploadProject(file) {
   const formData = new FormData();
   formData.append('project', file);
 
-  const res = await fetch('/studio-api/projects/upload', {
-    method: 'POST',
-    body: formData,
+  return post('/studio-api/projects/upload', formData, {
+    ...STUDIO_CONFIG,
+    headers: { 'Content-Type': 'multipart/form-data' },
   });
-
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({ error: '项目上传失败' }));
-    throw new Error(err.error || '项目上传失败');
-  }
-
-  return res.json();
 }
 
 export async function uploadComponent(componentFile, demoFile = null, externalCss = '') {
@@ -55,17 +41,10 @@ export async function uploadComponent(componentFile, demoFile = null, externalCs
     formData.append('externalCss', externalCss.trim());
   }
 
-  const res = await fetch('/studio-api/components/vue/upload', {
-    method: 'POST',
-    body: formData,
+  return post('/studio-api/components/vue/upload', formData, {
+    ...STUDIO_CONFIG,
+    headers: { 'Content-Type': 'multipart/form-data' },
   });
-
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({ error: '组件上传失败' }));
-    throw new Error(err.error || '组件上传失败');
-  }
-
-  return res.json();
 }
 
 export async function uploadVueComponent(componentFile, demoFile = null, externalCss = '') {
@@ -73,34 +52,19 @@ export async function uploadVueComponent(componentFile, demoFile = null, externa
 }
 
 export async function fetchFileTree(projectId) {
-  const res = await fetch(`/studio-api/projects/${projectId}/files`);
-
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({ error: '获取文件目录失败' }));
-    throw new Error(err.error || '获取文件目录失败');
-  }
-
-  return res.json();
+  return get(`/studio-api/projects/${projectId}/files`, {}, STUDIO_CONFIG);
 }
 
 export async function fetchFileContent(projectId, filePath) {
-  const res = await fetch(
-    `/studio-api/projects/${projectId}/files/content?path=${encodeURIComponent(filePath)}`
-  );
-
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({ error: '获取文件内容失败' }));
-    throw new Error(err.error || '获取文件内容失败');
-  }
-
-  return res.json();
+  return get(`/studio-api/projects/${projectId}/files/content`, { path: filePath }, STUDIO_CONFIG);
 }
 
-export function convertPreviewUrl(previewUrl, projectId) {
-  if (!previewUrl) return `/studio-preview/${projectId}/`;
-  if (previewUrl.startsWith('/studio-preview/')) return previewUrl;
-
-  return `/studio-preview/${projectId}/`;
+/**
+ * 返回后端提供的预览 URL（子域名格式 http://<projectId>.localhost:3010/）
+ * *.localhost 在大多数系统上默认解析到 127.0.0.1，iframe 可直接加载
+ */
+export function convertPreviewUrl(previewUrl, _projectId) {
+  return previewUrl || '';
 }
 
 export function isTerminalStatus(status) {

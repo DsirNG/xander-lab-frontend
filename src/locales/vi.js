@@ -114,6 +114,7 @@ export default {
     }
   },
   auth: {
+    sessionExpired: 'Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại',
     login: {
       invalidEmail: 'Vui lòng nhập email hợp lệ',
       codeSent: 'Mã xác minh đã được gửi đến email của bạn',

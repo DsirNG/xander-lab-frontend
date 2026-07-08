@@ -114,6 +114,7 @@ export default {
     }
   },
   auth: {
+    sessionExpired: 'ログインの有効期限が切れました。再度ログインしてください',
     login: {
       invalidEmail: '有効なメールアドレスを入力してください',
       codeSent: '確認コードがメールに送信されました',

@@ -2,10 +2,12 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useParams } from 'react-router-dom';
 import {
   ArrowLeft,
+  ChevronRight,
   Code2,
   ExternalLink,
   File,
   Folder,
+  FolderOpen,
   Loader2,
   Play,
   RefreshCw,
@@ -21,6 +23,9 @@ import {
   isTerminalStatus,
 } from '../services/studioService';
 
+/**
+ * 文件树节点递归组件，支持目录折叠/展开
+ */
 function FileTreeNodes({ nodes, depth, activePath, onOpenFile }) {
   return (
     <>
@@ -29,38 +34,71 @@ function FileTreeNodes({ nodes, depth, activePath, onOpenFile }) {
         const isFile = node.type === 'file';
         const isReadable = node.readable !== false;
         const isActive = node.path === activePath;
-        const Icon = isDir ? Folder : File;
 
         return (
-          <React.Fragment key={node.path}>
-            <button
-              type="button"
-              disabled={!isFile || !isReadable}
-              onClick={() => {
-                if (isFile && isReadable) onOpenFile(node.path);
-              }}
-              className={`flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left text-sm transition-colors ${
-                isActive
-                  ? 'bg-primary/10 font-bold text-primary'
-                  : 'text-slate-600 hover:bg-slate-100'
-              } ${!isFile || !isReadable ? 'cursor-default hover:bg-transparent' : ''}`}
-              style={{ paddingLeft: `${8 + depth * 16}px` }}
-            >
-              <Icon className="h-4 w-4 shrink-0 text-slate-400" />
-              <span className="truncate">{node.name}</span>
-            </button>
-
-            {isDir && node.children?.length > 0 && (
-              <FileTreeNodes
-                nodes={node.children}
-                depth={depth + 1}
-                activePath={activePath}
-                onOpenFile={onOpenFile}
-              />
-            )}
-          </React.Fragment>
+          <FileTreeNode
+            key={node.path}
+            node={node}
+            depth={depth}
+            isActive={isActive}
+            onOpenFile={onOpenFile}
+          />
         );
       })}
+    </>
+  );
+}
+
+/**
+ * 单个文件树节点，目录支持折叠/展开
+ */
+function FileTreeNode({ node, depth, isActive, onOpenFile }) {
+  const isDir = node.type === 'dir';
+  const isFile = node.type === 'file';
+  const isReadable = node.readable !== false;
+  const [expanded, setExpanded] = useState(true);
+
+  const handleClick = () => {
+    if (isDir) {
+      setExpanded((prev) => !prev);
+    } else if (isFile && isReadable) {
+      onOpenFile(node.path);
+    }
+  };
+
+  const Icon = isDir ? (expanded ? FolderOpen : Folder) : File;
+
+  return (
+    <>
+      <button
+        type="button"
+        onClick={handleClick}
+        className={`flex w-full items-center gap-1.5 rounded-lg px-2 py-1.5 text-left text-sm transition-colors ${
+          isActive && isFile
+            ? 'bg-primary/10 font-bold text-primary'
+            : 'text-slate-600 hover:bg-slate-100'
+        } ${!isFile || !isReadable ? 'cursor-default' : 'cursor-pointer'}`}
+        style={{ paddingLeft: `${8 + depth * 16}px` }}
+      >
+        {isDir && (
+          <ChevronRight
+            className={`h-3 w-3 shrink-0 text-slate-400 transition-transform duration-150 ${
+              expanded ? 'rotate-90' : ''
+            }`}
+          />
+        )}
+        <Icon className="h-4 w-4 shrink-0 text-slate-400" />
+        <span className="truncate">{node.name}</span>
+      </button>
+
+      {isDir && expanded && node.children?.length > 0 && (
+        <FileTreeNodes
+          nodes={node.children}
+          depth={depth + 1}
+          activePath={isActive ? '' : ''}
+          onOpenFile={onOpenFile}
+        />
+      )}
     </>
   );
 }
@@ -78,6 +116,13 @@ export default function CompilerPage() {
   const treeNodes = useMemo(() => fileTree?.children || [], [fileTree]);
   const isReady = project?.status === 'ready';
   const previewUrl = project ? convertPreviewUrl(project.previewUrl, project.id) : '';
+
+  /** 项目构建完成后自动打开预览弹窗 */
+  useEffect(() => {
+    if (isReady) {
+      setIsPreviewOpen(true);
+    }
+  }, [isReady]);
 
   const loadProject = useCallback(async () => {
     if (!projectId) return null;
@@ -154,6 +199,7 @@ export default function CompilerPage() {
 
   return (
     <div className="min-h-screen bg-slate-50">
+      {/* 顶部栏 */}
       <div className="border-b border-slate-200 bg-white">
         <div className="mx-auto flex max-w-[1600px] flex-col gap-3 px-4 py-4 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
           <div className="min-w-0">
@@ -195,7 +241,9 @@ export default function CompilerPage() {
         </div>
       </div>
 
-      <main className="mx-auto grid max-w-[1600px] gap-6 px-4 py-6 sm:px-6 lg:grid-cols-[320px_1fr] lg:px-8">
+      {/* 主内容 */}
+      <main className="mx-auto grid  max-w-[1600px] gap-6 px-4 py-6 sm:px-6 lg:grid-cols-[320px_1fr] lg:px-8">
+        {/* 文件树 */}
         <aside className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
           <div className="border-b border-slate-100 px-4 py-3">
             <p className="text-[11px] font-bold uppercase tracking-widest text-slate-400">
@@ -219,6 +267,7 @@ export default function CompilerPage() {
           </div>
         </aside>
 
+        {/* 代码查看区 */}
         <section className="min-w-0 overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
           <div className="flex items-center justify-between gap-3 border-b border-slate-100 px-4 py-3">
             <div className="flex min-w-0 items-center gap-2">
@@ -232,7 +281,7 @@ export default function CompilerPage() {
             )}
           </div>
 
-          <pre className="m-0 min-h-[620px] max-h-[calc(100vh-220px)] overflow-auto bg-slate-950 p-5 text-[13px] leading-6 text-slate-100">
+          <pre className="m-0 h-full overflow-auto bg-slate-950 p-5 text-[13px] leading-6 text-slate-100">
             <code className="whitespace-pre font-mono">
               {fileContent || '从左侧文件树选择一个文件后，这里会展示文件内容。'}
             </code>
@@ -240,6 +289,7 @@ export default function CompilerPage() {
         </section>
       </main>
 
+      {/* 构建运行按钮 */}
       <button
         type="button"
         disabled={!isReady}
@@ -247,9 +297,10 @@ export default function CompilerPage() {
         className="fixed bottom-6 right-6 z-30 inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-5 py-3 text-sm font-black text-white shadow-2xl shadow-primary/30 transition-all hover:-translate-y-0.5 hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-40"
       >
         {isReady ? <Play className="h-4 w-4" /> : <Loader2 className="h-4 w-4 animate-spin" />}
-        {isReady ? '构建运行' : '等待构建'}
+        {isReady ? '预览' : '等待构建'}
       </button>
 
+      {/* 预览弹窗 */}
       {isPreviewOpen && (
         <div className="fixed inset-0 z-50 bg-slate-950/60 p-4 backdrop-blur-sm">
           <div className="mx-auto flex h-full max-w-[1400px] flex-col overflow-hidden rounded-lg bg-white shadow-2xl">
@@ -282,11 +333,20 @@ export default function CompilerPage() {
                 </button>
               </div>
             </div>
-            <iframe
-              src={previewUrl}
-              title="项目预览"
-              className="h-full w-full flex-1 border-0 bg-white"
-            />
+            <div className="relative flex-1">
+              {previewUrl ? (
+                <iframe
+                  src={previewUrl}
+                  title="项目预览"
+                  className="absolute inset-0 h-full w-full border-0 bg-white"
+                />
+              ) : (
+                <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-slate-50">
+                  <Loader2 className="h-10 w-10 animate-spin text-primary" />
+                  <p className="text-sm font-medium text-slate-500">正在加载预览...</p>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       )}

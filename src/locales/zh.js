@@ -114,6 +114,7 @@ export default {
     }
   },
   auth: {
+    sessionExpired: '登录已过期，请重新登录',
     login: {
       invalidEmail: '请输入有效的邮箱',
       codeSent: '验证码指令已发送至您的邮箱',

@@ -114,6 +114,7 @@ export default {
     }
   },
   auth: {
+    sessionExpired: 'Session expirée, veuillez vous reconnecter',
     login: {
       invalidEmail: 'Veuillez entrer un email valide',
       codeSent: 'Le code de vérification a été envoyé à votre email',

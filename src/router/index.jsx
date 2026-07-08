@@ -163,18 +163,6 @@ export const createRouter = () => {
           element: <LazyPage><StudioPage /></LazyPage>,
         },
         {
-          path: 'studio/project',
-          element: <LazyPage><ProjectUploadPage /></LazyPage>,
-        },
-        {
-          path: 'studio/component',
-          element: <LazyPage><ComponentUploadPage /></LazyPage>,
-        },
-        {
-          path: 'studio/compiler/:projectId',
-          element: <LazyPage><CompilerPage /></LazyPage>,
-        },
-        {
           path: '*',
           element: <LazyPage><NotFoundPage /></LazyPage>,
         },
@@ -187,6 +175,19 @@ export const createRouter = () => {
     {
       path: 'blog/publish',
       element: <LazyPage><BlogPublish /></LazyPage>,
+    },
+    // 工作室路由 - 独立页面，不使用 MainLayout
+    {
+      path: 'studio/project',
+      element: <LazyPage><ProjectUploadPage /></LazyPage>,
+    },
+    {
+      path: 'studio/component',
+      element: <LazyPage><ComponentUploadPage /></LazyPage>,
+    },
+    {
+      path: 'studio/compiler/:projectId',
+      element: <LazyPage><CompilerPage /></LazyPage>,
     },
   ];
 
