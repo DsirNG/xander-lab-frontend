@@ -46,25 +46,14 @@ Xander Lab 由三个服务组成：
 
 ## 前端 Toast 提示
 
-- **组件自行处理**：各页面/组件在 catch 中使用 `useToast` hook 显示错误提示
-  ```jsx
-  import { useToast } from '@/hooks/useToast';
-  
-  function MyComponent() {
-    const toast = useToast();
-    const loadData = async () => {
-      try {
-        const data = await fetchData();
-        setData(data);
-      } catch (err) {
-        toast.error(err.message || '加载失败');
-      }
-    };
-  }
-  ```
-- **http.js 只负责 reject**：拦截器捕获错误后抛出 `HttpError`，不直接弹 toast
-- **不要使用 `window.__toast` 桥接**：这是过时的全局方案，已移除
-- 登录过期（401 刷新失败）通过 `auth:logout` 事件通知业务层，由 MainLayout 监听并清除用户状态
+- 全局 toast 桥接：App.jsx 的 `ToastBridge` 注册 `window.__toast`
+- http.js 拦截器直接按状态码弹 toast：
+  - 401 → `warning`
+  - 5xx / 网络错误 → `error`
+  - 4xx → `error`
+  - 业务错误（code !== 200/0）→ `error`
+- 特定请求可传 `config._silent = true` 静默 toast
+- 不要使用事件监听（auth:logout）来弹 toast，直接在拦截器层处理
 
 ## 国际化（i18n）
 
