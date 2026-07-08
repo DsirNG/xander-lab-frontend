@@ -27,6 +27,10 @@ const BlogDetail = React.lazy(() => import('@features/blog/pages/BlogDetail'));
 const BlogTags = React.lazy(() => import('@features/blog/pages/BlogTags'));
 const BlogPublish = React.lazy(() => import('@features/blog/pages/BlogPublish'));
 const LoginPage = React.lazy(() => import('@features/auth/pages/LoginPage'));
+const StudioPage = React.lazy(() => import('@features/studio/pages/StudioPage'));
+const ProjectUploadPage = React.lazy(() => import('@features/studio/pages/ProjectUploadPage'));
+const ComponentUploadPage = React.lazy(() => import('@features/studio/pages/ComponentUploadPage'));
+const CompilerPage = React.lazy(() => import('@features/studio/pages/CompilerPage'));
 
 // 配置数据
 import { getInfraConfig } from '@features/infra/constants';
@@ -153,6 +157,22 @@ export const createRouter = () => {
               element: <LazyPage><BlogDetail /></LazyPage>,
             },
           ],
+        },
+        {
+          path: 'studio',
+          element: <LazyPage><StudioPage /></LazyPage>,
+        },
+        {
+          path: 'studio/project',
+          element: <LazyPage><ProjectUploadPage /></LazyPage>,
+        },
+        {
+          path: 'studio/component',
+          element: <LazyPage><ComponentUploadPage /></LazyPage>,
+        },
+        {
+          path: 'studio/compiler/:projectId',
+          element: <LazyPage><CompilerPage /></LazyPage>,
         },
         {
           path: '*',

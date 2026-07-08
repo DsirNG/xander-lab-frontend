@@ -115,7 +115,7 @@ const Navbar = () => {
         { path: '/', label: t('nav.home') },
         { path: '/components', label: t('nav.components') },
         { path: '/blog', label: t('nav.blog') },
-        { path: '/studio', label: t('nav.studio'), external: true },
+        { path: '/studio', label: t('nav.studio') },
     ];
 
     return (
@@ -132,23 +132,13 @@ const Navbar = () => {
                         <div className={styles.desktopNav}>
                             <div className={styles.navLinks}>
                                 {navLinks.map((link) => (
-                                    link.external ? (
-                                        <a
-                                            key={link.path}
-                                            href={link.path}
-                                            className={styles.navLink}
-                                        >
-                                            {link.label}
-                                        </a>
-                                    ) : (
-                                        <Link
-                                            key={link.path}
-                                            to={link.path}
-                                            className={styles.navLink}
-                                        >
-                                            {link.label}
-                                        </Link>
-                                    )
+                                    <Link
+                                        key={link.path}
+                                        to={link.path}
+                                        className={styles.navLink}
+                                    >
+                                        {link.label}
+                                    </Link>
                                 ))}
                             </div>
                         </div>
@@ -272,25 +262,14 @@ const Navbar = () => {
                 <div className={styles.mobileMenuContent}>
                     <div className={styles.mobileNavLinks}>
                         {navLinks.map((link) => (
-                            link.external ? (
-                                <a
-                                    key={link.path}
-                                    href={link.path}
-                                    className={`${styles.mobileNavLink} ${location.pathname === link.path ? styles.mobileNavLinkActive : ''}`}
-                                    onClick={() => setIsMobileMenuOpen(false)}
-                                >
-                                    {link.label}
-                                </a>
-                            ) : (
-                                <Link
-                                    key={link.path}
-                                    to={link.path}
-                                    className={`${styles.mobileNavLink} ${location.pathname === link.path ? styles.mobileNavLinkActive : ''}`}
-                                    onClick={() => setIsMobileMenuOpen(false)}
-                                >
-                                    {link.label}
-                                </Link>
-                            )
+                            <Link
+                                key={link.path}
+                                to={link.path}
+                                className={`${styles.mobileNavLink} ${location.pathname === link.path ? styles.mobileNavLinkActive : ''}`}
+                                onClick={() => setIsMobileMenuOpen(false)}
+                            >
+                                {link.label}
+                            </Link>
                         ))}
                     </div>
 
