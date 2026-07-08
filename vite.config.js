@@ -52,6 +52,7 @@ export default defineConfig({
       '/studio-api': {
         target: 'http://localhost:3010',
         changeOrigin: true,
+        secure: false,
         rewrite: (path) => path.replace(/^\/studio-api/, '/api'),
       },
       '/studio-preview': {
