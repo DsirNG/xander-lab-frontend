@@ -48,16 +48,6 @@ const MAX_RETRY = 2;
 /** 重试间隔基数（ms），指数退避：delay = BASE_RETRY_DELAY * 2^attempt */
 const BASE_RETRY_DELAY = 500;
 
-/**
- * 全局 Toast 提示（由 App.jsx 的 ToastBridge 注册 window.__toast）
- * 在 axios 拦截器中直接调用，实现请求级别的错误/警告提示
- * @param {'success'|'error'|'warning'|'info'} type
- * @param {string} message
- */
-function showToast(type, message) {
-    window.__toast?.(type, message);
-}
-
 // ─────────────────────────────────────────────
 // 2. Token 工具
 // ─────────────────────────────────────────────
@@ -335,9 +325,6 @@ instance.interceptors.response.use(
             // 业务错误
             const bizMsg =
                 getBizErrorMessage(body.code, body.message);
-            if (!config._silent) {
-                showToast('error', bizMsg);
-            }
             throw new HttpError(bizMsg, response.status, body.code, body);
         }
 
@@ -388,8 +375,6 @@ instance.interceptors.response.use(
                 isRefreshing = false;
                 refreshSubscribers = [];
                 tokenStorage.clear();
-                // 弹出登录过期提示
-                showToast('warning', i18n.t('auth.sessionExpired', '登录已过期，请重新登录'));
                 // 触发全局登出事件，由业务层监听清除用户状态
                 window.dispatchEvent(new CustomEvent('auth:logout'));
                 return Promise.reject(
@@ -440,17 +425,6 @@ instance.interceptors.response.use(
             );
             console.error('Error:', error);
             console.groupEnd();
-        }
-
-        // 全局 Toast 提示（config.silent 可静默）
-        if (!config?._silent) {
-            if (status === 401) {
-                showToast('warning', message);
-            } else if (status >= 500 || !status) {
-                showToast('error', message);
-            } else if (status >= 400) {
-                showToast('error', message);
-            }
         }
 
         return Promise.reject(

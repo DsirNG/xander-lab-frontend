@@ -30,7 +30,7 @@ Xander Lab 由三个服务组成：
 - Redis 存储：`login:token:{accessToken}` → userId（TTL 2h），`login:user_tokens:{userId}` → Set\<token\>
 - 路径鉴权：仅写操作（上传、分享、导出等）需要登录，GET 请求默认公开
 - Node 工作室与 Java 后端共享同一个 JWT 密钥和 Redis，token 互通
-- 前端 http.js 拦截器处理 401：先尝试无感刷新，刷新失败则弹 toast + 清除 token
+- 前端 http.js 拦截器处理 401：先尝试无感刷新，刷新失败则清除 token + 触发 auth:logout 事件
 
 ## 前端 HTTP 请求
 
@@ -46,14 +46,25 @@ Xander Lab 由三个服务组成：
 
 ## 前端 Toast 提示
 
-- http.js 拦截器直接按状态码弹 toast：
-  - 401 → `warning`
-  - 5xx / 网络错误 → `error`
-  - 4xx → `error`
-  - 业务错误（code !== 200/0）→ `error`
-- 通过 `window.__toast` 桥接（由 App.jsx ToastBridge 注册），使 http.js 纯 JS 层也能调用 React toast
-- 特定请求可传 `config._silent = true` 静默 toast
-- 不要使用事件监听（auth:logout）来弹 toast，直接在拦截器层处理
+- **组件自行处理**：各页面/组件在 catch 中使用 `useToast` hook 显示错误提示
+  ```jsx
+  import { useToast } from '@/hooks/useToast';
+  
+  function MyComponent() {
+    const toast = useToast();
+    const loadData = async () => {
+      try {
+        const data = await fetchData();
+        setData(data);
+      } catch (err) {
+        toast.error(err.message || '加载失败');
+      }
+    };
+  }
+  ```
+- **http.js 只负责 reject**：拦截器捕获错误后抛出 `HttpError`，不直接弹 toast
+- **不要使用 `window.__toast` 桥接**：这是过时的全局方案，已移除
+- 登录过期（401 刷新失败）通过 `auth:logout` 事件通知业务层，由 MainLayout 监听并清除用户状态
 
 ## 国际化（i18n）
 
