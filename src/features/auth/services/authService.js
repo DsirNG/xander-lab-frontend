@@ -5,7 +5,7 @@
 
 import { post, get, tokenStorage } from '@api';
 
-const BASE = '/api/auth';
+const BASE = '/auth';
 
 export const authService = {
     /**

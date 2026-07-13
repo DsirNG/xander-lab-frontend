@@ -26,11 +26,9 @@ FROM nginx:alpine
 # Copy custom nginx configuration
 COPY nginx.docker.conf /etc/nginx/conf.d/default.conf
 
-# Copy built files from builder stage
+# Copy built files from builder stage. Vite already copies public assets into
+# dist, and postbuild writes SEO files there.
 COPY --from=builder /app/dist /usr/share/nginx/html
-
-# Copy static assets
-COPY --from=builder /app/public /usr/share/nginx/html
 
 # Expose port 30001
 EXPOSE 30001

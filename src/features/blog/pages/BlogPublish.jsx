@@ -80,7 +80,7 @@ const BlogPublish = () => {
         try {
             await blogService.publishBlog(formData);
             toast.success(t('blog.publishSuccess'));
-            navigate('/blog');
+            navigate('/blog/');
         } catch (err) {
             toast.error(err.message || t('blog.publishError'));
         } finally {

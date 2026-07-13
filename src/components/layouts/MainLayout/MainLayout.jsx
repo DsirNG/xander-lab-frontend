@@ -114,7 +114,7 @@ const Navbar = () => {
     const navLinks = [
         { path: '/', label: t('nav.home') },
         { path: '/components', label: t('nav.components') },
-        { path: '/blog', label: t('nav.blog') },
+        { path: '/blog/', label: t('nav.blog') },
         { path: '/studio', label: t('nav.studio') },
     ];
 

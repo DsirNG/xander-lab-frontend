@@ -127,14 +127,14 @@ const BlogHome = () => {
             <SEOHead
                 title={t('blog.latestPosts', 'Blog')}
                 description="Xander Lab 技术博客 — 前端架构、React 实践、UI 组件设计等技术文章"
-                canonical="/blog"
+                canonical="/blog/"
                 ogType="website"
                 jsonLd={{
                     '@context': 'https://schema.org',
                     '@type': 'CollectionPage',
                     name: 'Blog | Xander Lab',
                     description: 'Technical articles on frontend architecture, React patterns, and UI component design',
-                    url: 'https://xander-lab.dsircity.top/blog',
+                    url: 'https://xander-lab.dsircity.top/blog/',
                     isPartOf: { '@id': 'https://xander-lab.dsircity.top/#website' }
                 }}
             />

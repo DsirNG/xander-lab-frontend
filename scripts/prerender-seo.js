@@ -116,7 +116,7 @@ function buildBlogMetaTags(blog) {
   const title = escapeHtml(blog.title);
   const desc = escapeHtml(blog.summary || extractSummary(blog.content));
   const keywords = escapeHtml((blog.tags || []).join(', '));
-  const url = `${SITE_URL}/blog/${blog.id}`;
+  const url = `${SITE_URL}/blog/${blog.id}/`;
 
   return `
     <!-- Prerendered SEO: Blog #${blog.id} -->
@@ -161,7 +161,7 @@ function buildBlogJsonLd(blog) {
     },
     mainEntityOfPage: {
       '@type': 'WebPage',
-      '@id': `${SITE_URL}/blog/${blog.id}`
+      '@id': `${SITE_URL}/blog/${blog.id}/`
     },
     keywords: (blog.tags || []).join(', ')
   };
@@ -262,8 +262,8 @@ function generateDynamicSitemap(blogs) {
   // 静态页面
   const staticUrls = [
     { loc: '/', priority: '1.0', changefreq: 'weekly' },
-    { loc: '/blog', priority: '0.8', changefreq: 'daily' },
-    { loc: '/blog/tags', priority: '0.6', changefreq: 'weekly' },
+    { loc: '/blog/', priority: '0.8', changefreq: 'daily' },
+    { loc: '/blog/tags/', priority: '0.6', changefreq: 'weekly' },
     { loc: '/components', priority: '0.8', changefreq: 'weekly' },
     { loc: '/modules', priority: '0.7', changefreq: 'monthly' },
   ];
@@ -273,7 +273,7 @@ function generateDynamicSitemap(blogs) {
   // 博客文章页
   for (const blog of blogs) {
     urls.push({
-      loc: `/blog/${blog.id}`,
+      loc: `/blog/${blog.id}/`,
       priority: '0.7',
       changefreq: 'monthly',
       lastmod: blog.date || today,
@@ -339,9 +339,9 @@ async function main() {
     <meta name="title" content="Blog | Xander Lab" />
     <meta name="description" content="Xander Lab 技术博客 — 前端架构、React 实践、UI 组件设计等技术文章" />
     <meta name="robots" content="index, follow" />
-    <link rel="canonical" href="${SITE_URL}/blog" />
+    <link rel="canonical" href="${SITE_URL}/blog/" />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="${SITE_URL}/blog" />
+    <meta property="og:url" content="${SITE_URL}/blog/" />
     <meta property="og:title" content="Blog | Xander Lab" />
     <meta property="og:description" content="Xander Lab 技术博客 — 前端架构、React 实践、UI 组件设计等技术文章" />
     <meta property="og:image" content="${OG_IMAGE}" />
@@ -357,7 +357,7 @@ async function main() {
     '@type': 'CollectionPage',
     name: 'Blog | Xander Lab',
     description: 'Technical articles on frontend architecture, React patterns, and UI component design',
-    url: `${SITE_URL}/blog`,
+    url: `${SITE_URL}/blog/`,
     isPartOf: { '@id': `${SITE_URL}/#website` }
   })}</script>`;
 
@@ -375,9 +375,9 @@ async function main() {
     <meta name="title" content="Tags | Xander Lab" />
     <meta name="description" content="Xander Lab 博客标签 — 按主题浏览前端技术文章" />
     <meta name="robots" content="index, follow" />
-    <link rel="canonical" href="${SITE_URL}/blog/tags" />
+    <link rel="canonical" href="${SITE_URL}/blog/tags/" />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="${SITE_URL}/blog/tags" />
+    <meta property="og:url" content="${SITE_URL}/blog/tags/" />
     <meta property="og:title" content="Tags | Xander Lab" />
     <meta property="og:description" content="Xander Lab 博客标签 — 按主题浏览前端技术文章" />
     <meta property="og:image" content="${OG_IMAGE}" />
@@ -392,7 +392,7 @@ async function main() {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
     name: 'Tags | Xander Lab',
-    url: `${SITE_URL}/blog/tags`,
+    url: `${SITE_URL}/blog/tags/`,
   })}</script>`;
 
   const tagsHtml = generatePageHtml(baseHtml, {

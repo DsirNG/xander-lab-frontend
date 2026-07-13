@@ -10,7 +10,7 @@ import { Link } from 'react-router-dom';
 const BlogCard = memo(({ blog }) => {
     return (
         <Link
-            to={`/blog/${blog.id}`}
+            to={`/blog/${blog.id}/`}
             className="group block bg-white  rounded-xl p-5 border border-slate-100  hover:border-slate-200 hover:shadow-sm transition-all duration-200"
         >
             {/* 分类 + 日期 */}

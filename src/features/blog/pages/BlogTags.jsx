@@ -97,13 +97,13 @@ const BlogTags = () => {
             <SEOHead
                 title={t('blog.allTags', 'Tags')}
                 description="Xander Lab 博客标签 — 按主题浏览前端技术文章"
-                canonical="/blog/tags"
+                canonical="/blog/tags/"
             />
 
             {/* 页面头部 */}
             <div className="border-b border-slate-200  pb-5">
                 <Link
-                    to="/blog"
+                    to="/blog/"
                     className="inline-flex items-center text-xs font-medium text-slate-500 hover:text-primary transition-colors mb-4"
                 >
                     <ChevronLeft className="w-4 h-4 mr-0.5" />
@@ -144,7 +144,7 @@ const BlogTags = () => {
                         return (
                             <Link
                                 key={tag.name}
-                                to={isActive ? '/blog/tags' : `/blog/tags?tag=${encodeURIComponent(tag.name)}`}
+                                to={isActive ? '/blog/tags/' : `/blog/tags/?tag=${encodeURIComponent(tag.name)}`}
                                 className={`
                                     inline-flex items-center gap-1.5 rounded-full border transition-all duration-200
                                     ${tagLevelStyles[level]}

@@ -68,7 +68,7 @@ const BlogSidebar = ({ onNavigate }) => {
         }
 
         const queryString = params.toString();
-        navigate(queryString ? `/blog?${queryString}` : '/blog');
+        navigate(queryString ? `/blog/?${queryString}` : '/blog/');
         onNavigate?.();
     };
 
@@ -101,7 +101,7 @@ const BlogSidebar = ({ onNavigate }) => {
                 <ul className="space-y-1">
                     <li>
                         <Link
-                            to="/blog"
+                            to="/blog/"
                             onClick={() => onNavigate?.()}
                             className={`flex items-center justify-between p-2 rounded-lg text-sm transition-colors ${!activeCategory
                                     ? 'bg-primary/10 text-primary font-medium'
@@ -114,7 +114,7 @@ const BlogSidebar = ({ onNavigate }) => {
                     {categories.map((cat) => (
                         <li key={cat.id}>
                             <Link
-                                to={`/blog?category=${cat.id}`}
+                                to={`/blog/?category=${cat.id}`}
                                 onClick={() => onNavigate?.()}
                                 className={`flex items-center justify-between p-2 rounded-lg text-sm transition-colors ${activeCategory === cat.id
                                         ? 'bg-primary/10 text-primary font-medium'
@@ -142,7 +142,7 @@ const BlogSidebar = ({ onNavigate }) => {
                         {t('blog.popularTags')}
                     </h3>
                     <Link
-                        to="/blog/tags"
+                        to="/blog/tags/"
                         onClick={() => onNavigate?.()}
                         className="text-[10px] text-slate-400 hover:text-primary transition-colors flex items-center gap-0.5"
                     >
@@ -156,7 +156,7 @@ const BlogSidebar = ({ onNavigate }) => {
                         return (
                             <Link
                                 key={tag.name}
-                                to={isActive ? '/blog' : `/blog?tag=${encodeURIComponent(tag.name)}`}
+                                to={isActive ? '/blog/' : `/blog/?tag=${encodeURIComponent(tag.name)}`}
                                 onClick={() => onNavigate?.()}
                                 className={`inline-flex items-center gap-1 text-[11px] px-2 py-1 rounded-full border transition-all ${isActive
                                         ? 'bg-primary text-white border-primary'
@@ -183,7 +183,7 @@ const BlogSidebar = ({ onNavigate }) => {
                     {recentPosts.map((post) => (
                         <Link
                             key={post.id}
-                            to={`/blog/${post.id}`}
+                            to={`/blog/${post.id}/`}
                             onClick={() => onNavigate?.()}
                             className="block group"
                         >

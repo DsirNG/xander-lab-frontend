@@ -12,7 +12,7 @@ const ComponentService = {
      * @returns {Promise<Array>} 包含组件的分类列表
      */
     getMenu: (lang = 'zh', config) => {
-        return get('/api/components/menu', { lang }, config);
+        return get('/components/menu', { lang }, config);
     },
 
     /**
@@ -23,7 +23,7 @@ const ComponentService = {
      * @returns {Promise<Object>} 组件详情对象
      */
     getComponentDetail: (id, lang = 'zh', config) => {
-        return get(`/api/components/${id}`, { lang }, config);
+        return get(`/components/${id}`, { lang }, config);
     },
 
     /**
@@ -33,7 +33,7 @@ const ComponentService = {
      * @returns {Promise<string>} 返回生成的组件ID
      */
     shareComponent: (data, config) => {
-        return post('/api/components/share', data, config);
+        return post('/components/share', data, config);
     }
 };
 
