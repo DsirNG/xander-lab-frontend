@@ -4,6 +4,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { Tag, Hash, ChevronLeft, FileText } from 'lucide-react';
 import { blogService } from '../services/blogService';
 import BlogCard from '../components/BlogCard';
+import SEOHead from '@components/seo/SEOHead';
 
 const tagLevelStyles = {
     1: 'text-xs px-2.5 py-1',
@@ -92,6 +93,13 @@ const BlogTags = () => {
 
     return (
         <div className="space-y-6">
+            {/* SEO: 标签云页面 meta */}
+            <SEOHead
+                title={t('blog.allTags', 'Tags')}
+                description="Xander Lab 博客标签 — 按主题浏览前端技术文章"
+                canonical="/blog/tags"
+            />
+
             {/* 页面头部 */}
             <div className="border-b border-slate-200  pb-5">
                 <Link

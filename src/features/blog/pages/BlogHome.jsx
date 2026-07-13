@@ -4,6 +4,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Grid, List, Filter, X, Loader2, Plus } from 'lucide-react';
 import { blogService } from '../services/blogService';
 import BlogCard from '../components/BlogCard';
+import SEOHead from '@components/seo/SEOHead';
 
 /**
  * 博客首页 - 文章列表
@@ -122,6 +123,22 @@ const BlogHome = () => {
 
     return (
         <div className="space-y-6">
+            {/* SEO: 博客列表页 meta */}
+            <SEOHead
+                title={t('blog.latestPosts', 'Blog')}
+                description="Xander Lab 技术博客 — 前端架构、React 实践、UI 组件设计等技术文章"
+                canonical="/blog"
+                ogType="website"
+                jsonLd={{
+                    '@context': 'https://schema.org',
+                    '@type': 'CollectionPage',
+                    name: 'Blog | Xander Lab',
+                    description: 'Technical articles on frontend architecture, React patterns, and UI component design',
+                    url: 'https://xander-lab.dsircity.top/blog',
+                    isPartOf: { '@id': 'https://xander-lab.dsircity.top/#website' }
+                }}
+            />
+
             {/* 头部区域 */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200  pb-5">
                 <div className="flex-1">

@@ -6,6 +6,7 @@
  */
 
 import { RouterProvider } from 'react-router-dom'
+import { HelmetProvider } from 'react-helmet-async'
 import { useMemo, useEffect } from 'react'
 import { createRouter } from './router'
 import { ToastProvider, ToastContainer } from './components/common/Toast'
@@ -39,13 +40,15 @@ function App() {
   const router = useMemo(() => createRouter(), [])
 
   return (
-    <ErrorBoundary>
-      <ToastProvider>
-        <ToastBridge />
-        <RouterProvider router={router} />
-        <ToastContainer />
-      </ToastProvider>
-    </ErrorBoundary>
+    <HelmetProvider>
+      <ErrorBoundary>
+        <ToastProvider>
+          <ToastBridge />
+          <RouterProvider router={router} />
+          <ToastContainer />
+        </ToastProvider>
+      </ErrorBoundary>
+    </HelmetProvider>
   )
 }
 

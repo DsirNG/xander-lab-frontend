@@ -5,6 +5,7 @@ import { Calendar, Clock, User, Tag, ChevronLeft, Eye } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import CodeBlock from '@/components/common/CodeBlock';
+import SEOHead from '@components/seo/SEOHead';
 import { blogService } from '../services/blogService';
 
 /**
@@ -214,6 +215,32 @@ const BlogDetail = () => {
 
     return (
         <article className="max-w-3xl">
+            {/* SEO: 每篇博客独立的 meta 信息和结构化数据 */}
+            <SEOHead
+                title={blog.title}
+                description={blog.summary || blog.content?.slice(0, 160).replace(/[#*`\n]/g, '')}
+                keywords={blog.tags?.join(', ')}
+                canonical={`/blog/${blog.id}`}
+                ogType="article"
+                jsonLd={{
+                    '@context': 'https://schema.org',
+                    '@type': 'Article',
+                    headline: blog.title,
+                    description: blog.summary || '',
+                    author: { '@type': 'Person', name: blog.author },
+                    datePublished: blog.date,
+                    publisher: {
+                        '@type': 'Organization',
+                        name: 'Xander Lab',
+                        logo: { '@type': 'ImageObject', url: 'https://xander-lab.dsircity.top/logo-512.png' }
+                    },
+                    mainEntityOfPage: {
+                        '@type': 'WebPage',
+                        '@id': `https://xander-lab.dsircity.top/blog/${blog.id}`
+                    },
+                    keywords: blog.tags?.join(', ') || ''
+                }}
+            />
 
             <Link
                 to="/blog"
