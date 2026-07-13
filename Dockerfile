@@ -18,7 +18,7 @@ RUN npm config set registry https://registry.npmmirror.com && \
 COPY . .
 
 # Build the application
-RUN npm run build
+RUN npm run build:seo
 
 # Stage 2: Production image with Nginx
 FROM nginx:alpine
