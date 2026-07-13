@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams, Link } from 'react-router-dom';
-import { Calendar, Clock, User, Tag, ChevronLeft } from 'lucide-react';
+import { Calendar, Clock, User, Tag, ChevronLeft, Eye } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import CodeBlock from '@/components/common/CodeBlock';
@@ -103,6 +103,8 @@ const BlogDetail = () => {
             try {
                 const data = await blogService.getBlogById(id, { signal: controller.signal });
                 setBlog(data);
+                // 记录阅读（fire-and-forget，后端按 userId/IP 24h 去重防刷）
+                blogService.recordView(id).catch(() => {});
             } catch (err) {
                 if (err.name === 'CanceledError' || err.code === 'ERR_CANCELED') return;
                 setError(err.message);
@@ -244,6 +246,12 @@ const BlogDetail = () => {
                         <Clock aria-hidden="true" className="w-3.5 h-3.5 mr-1.5 text-slate-400" />
                         <span>{blog.readTime}</span>
                     </div>
+                    {blog.views != null && (
+                        <div className="flex items-center">
+                            <Eye aria-hidden="true" className="w-3.5 h-3.5 mr-1.5 text-slate-400" />
+                            <span>{blog.views.toLocaleString()}</span>
+                        </div>
+                    )}
                 </div>
             </header>
 

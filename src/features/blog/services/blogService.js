@@ -97,4 +97,16 @@ export const blogService = {
   getPopularTags: (limit = 8, config) => {
     return get(`${BASE}/tags/popular`, { limit }, config);
   },
+
+  /**
+   * 记录文章阅读（后端按 userId/IP 去重防刷，24h 冷却期）
+   * POST /api/blog/posts/{id}/view
+   *
+   * @param {string|number} id - 文章ID
+   * @param {Object} [config] - 额外 axios 配置
+   * @returns {Promise<{ counted: boolean }>} counted=true 有效阅读，false 冷却期内重复
+   */
+  recordView: (id, config) => {
+    return post(`${BASE}/posts/${id}/view`, undefined, config);
+  },
 };

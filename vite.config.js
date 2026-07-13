@@ -50,17 +50,17 @@ export default defineConfig({
         rewrite: (path) => path.replace(/^\/api/, ''),
       },
       '/studio-api': {
-        target: 'http://localhost:3010',
+        target: 'http://localhost:30003',
         changeOrigin: true,
         secure: false,
         timeout: 600000, // 10 minutes for large file uploads
         proxyTimeout: 600000,
-        rewrite: (path) => path.replace(/^\/studio-api/, '/api'),
+        // rewrite: (path) => path.replace(/^\/studio-api/, '/api'),
       },
       '/studio-preview': {
-        target: 'http://localhost:3010',
+        target: 'http://localhost:30003',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/studio-preview/, '/preview'),
+        // rewrite: (path) => path.replace(/^\/studio-preview/, '/preview'),
       },
     }
   }
