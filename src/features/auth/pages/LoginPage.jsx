@@ -170,7 +170,7 @@ const LoginPage = () => {
                                         <motion.div
                                             layoutId="active-pill-immersive"
                                             className="absolute inset-0 bg-primary shadow-lg shadow-primary/20"
-                                            transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                                            transition={{ type: "tween", duration: 0.3, ease: "easeInOut" }}
                                         />
                                     )}
                                 </button>
