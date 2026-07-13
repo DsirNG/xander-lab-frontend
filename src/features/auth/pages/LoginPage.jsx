@@ -169,7 +169,7 @@ const LoginPage = () => {
                                     {loginType === tab.id && (
                                         <motion.div
                                             layoutId="active-pill-immersive"
-                                            className="absolute inset-0 bg-primary shadow-lg shadow-primary/20"
+                                            className="absolute inset-0 bg-primary shadow-lg shadow-primary/20 pointer-events-none"
                                             transition={{ type: "tween", duration: 0.3, ease: "easeInOut" }}
                                         />
                                     )}
