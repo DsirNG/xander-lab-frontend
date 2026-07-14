@@ -8,7 +8,7 @@
 
 import { get, post } from '@api';
 
-const BASE = '/blog';
+const BASE = '/api/blog';
 
 export const blogService = {
   /**

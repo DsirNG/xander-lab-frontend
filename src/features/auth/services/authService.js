@@ -5,13 +5,13 @@
 
 import { post, get, tokenStorage } from '@api';
 
-const BASE = '/auth';
+const BASE = '/api/auth';
 
 export const authService = {
     /**
      * 发送邮箱验证码
      * GET /api/auth/code
-     * 
+     *
      * @param {string} email
      * @returns {Promise<void>}
      */
@@ -22,7 +22,7 @@ export const authService = {
     /**
      * 登录（支持密码或验证码）
      * POST /api/auth/login
-     * 
+     *
      * @param {Object} data - { account, password, code, type }
      * @returns {Promise<Object>} TokenResponse { accessToken, refreshToken, userInfo }
      */
