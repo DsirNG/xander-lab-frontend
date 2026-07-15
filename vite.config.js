@@ -44,8 +44,8 @@ export default defineConfig({
     port: 3000,
     proxy: {
       '/api': {
-        // target: 'http://xander-lab.dsircity.top',
-        target: 'http://localhost:30002',
+        target: 'http://xander-lab.dsircity.top',
+        // target: 'http://localhost:30002',
         changeOrigin: true,
         // rewrite: (path) => path.replace(/^\/api/, ''),
       },

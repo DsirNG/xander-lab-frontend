@@ -4,6 +4,8 @@ import { get, post } from '@/api';
  * 组件服务
  * 负责动态组件库的数据获取
  */
+const base = '/api/components';
+
 const ComponentService = {
     /**
      * 获取侧边栏菜单结构
@@ -12,7 +14,7 @@ const ComponentService = {
      * @returns {Promise<Array>} 包含组件的分类列表
      */
     getMenu: (lang = 'zh', config) => {
-        return get('/components/menu', { lang }, config);
+        return get(`${base}/menu`, { lang }, config);
     },
 
     /**
@@ -23,7 +25,7 @@ const ComponentService = {
      * @returns {Promise<Object>} 组件详情对象
      */
     getComponentDetail: (id, lang = 'zh', config) => {
-        return get(`/components/${id}`, { lang }, config);
+        return get(`${base}/${id}`, { lang }, config);
     },
 
     /**
@@ -33,7 +35,7 @@ const ComponentService = {
      * @returns {Promise<string>} 返回生成的组件ID
      */
     shareComponent: (data, config) => {
-        return post('/components/share', data, config);
+        return post(`${base}/share`, data, config);
     }
 };
 
