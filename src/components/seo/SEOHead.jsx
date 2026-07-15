@@ -10,6 +10,7 @@ import { Helmet } from 'react-helmet-async';
 const SITE_URL = 'https://xander-lab.dsircity.top';
 const SITE_NAME = 'Xander Lab';
 const DEFAULT_OG_IMAGE = `${SITE_URL}/og-image.png`;
+const BRAND_KEYWORDS = 'xanderblog, 博客, xander博客, xanderlab, xander-lab';
 
 /**
  * SEOHead - 页面级 SEO 元信息注入
@@ -43,7 +44,7 @@ export default function SEOHead({
     <Helmet>
       <title>{fullTitle}</title>
       {description && <meta name="description" content={description} />}
-      {keywords && <meta name="keywords" content={keywords} />}
+      <meta name="keywords" content={keywords || BRAND_KEYWORDS} />
       <meta name="robots" content={noindex ? 'noindex' : 'index, follow'} />
       {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
 
@@ -71,4 +72,4 @@ export default function SEOHead({
   );
 }
 
-export { SITE_URL, SITE_NAME, DEFAULT_OG_IMAGE };
+export { SITE_URL, SITE_NAME, DEFAULT_OG_IMAGE, BRAND_KEYWORDS };

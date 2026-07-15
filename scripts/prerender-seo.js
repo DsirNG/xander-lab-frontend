@@ -27,6 +27,7 @@ const API_BASE = 'https://xander-lab.dsircity.top/api';
 const DIST_DIR = path.join(__dirname, '..', 'dist');
 const INDEX_HTML_PATH = path.join(DIST_DIR, 'index.html');
 const OG_IMAGE = `${SITE_URL}/og-image.png`;
+const BRAND_KEYWORDS = 'xanderblog, 博客, xander博客, xanderlab, xander-lab';
 
 // ============ 工具函数 ============
 
@@ -115,7 +116,7 @@ async function fetchAllBlogs() {
 function buildBlogMetaTags(blog) {
   const title = escapeHtml(blog.title);
   const desc = escapeHtml(blog.summary || extractSummary(blog.content));
-  const keywords = escapeHtml((blog.tags || []).join(', '));
+  const keywords = BRAND_KEYWORDS;
   const url = `${SITE_URL}/blog/${blog.id}/`;
 
   return `
