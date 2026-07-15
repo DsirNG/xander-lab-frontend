@@ -12,6 +12,7 @@ import { createBrowserRouter, Navigate } from 'react-router-dom';
 // Layouts (始终需要，保持静态导入)
 import MainLayout from '@components/layouts/MainLayout';
 import BlogLayout from '@features/blog/layouts/BlogLayout';
+import RouteSEOLayout from '@components/seo/RouteSEOLayout';
 
 // Features (路由级懒加载)
 const HomePage = React.lazy(() => import('@features/home/pages/HomePage'));
@@ -60,7 +61,9 @@ export const createRouter = () => {
 
 
   // 动态生成路由配置
-  const routerConfig = [
+  const routerConfig = [{
+    element: <RouteSEOLayout />,
+    children: [
     {
       path: '/login',
       element: <LazyPage><LoginPage /></LazyPage>,
@@ -189,7 +192,8 @@ export const createRouter = () => {
       path: 'studio/compiler/:projectId',
       element: <LazyPage><CompilerPage /></LazyPage>,
     },
-  ];
+    ],
+  }];
 
   return createBrowserRouter(routerConfig);
 };

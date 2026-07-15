@@ -265,7 +265,7 @@ function generateDynamicSitemap(blogs) {
     { loc: '/blog/', priority: '0.8', changefreq: 'daily' },
     { loc: '/blog/tags/', priority: '0.6', changefreq: 'weekly' },
     { loc: '/components', priority: '0.8', changefreq: 'weekly' },
-    { loc: '/modules', priority: '0.7', changefreq: 'monthly' },
+    { loc: '/modules/drag-drop/', priority: '0.7', changefreq: 'monthly' },
   ];
 
   const urls = [...staticUrls];
