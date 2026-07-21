@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 
 # Sitemap
-Sitemap: https://xander-lab.dsircity.top/sitemap.xml
+Sitemap: https://xander.dsircity.top/sitemap.xml

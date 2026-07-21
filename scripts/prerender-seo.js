@@ -20,10 +20,10 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // ============ 配置 ============
-const SITE_URL = 'https://xander-lab.dsircity.top';
+const SITE_URL = 'https://xander.dsircity.top';
 // 直接请求本地 Spring Boot 后端（不走 nginx 代理，避免 /api 前缀剥脱问题）
 // Docker 构建时后端运行在同一台宿主机的 30002 端口
-const API_BASE = 'https://xander-lab.dsircity.top/api';
+const API_BASE = 'https://xander.dsircity.top/api';
 const DIST_DIR = path.join(__dirname, '..', 'dist');
 const INDEX_HTML_PATH = path.join(DIST_DIR, 'index.html');
 const OG_IMAGE = `${SITE_URL}/og-image.png`;

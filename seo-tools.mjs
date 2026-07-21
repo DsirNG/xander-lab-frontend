@@ -3,7 +3,7 @@
 /**
  * Xander Lab SEO 工具集 (ES Module版本)
  * 集成sitemap生成、搜索引擎提交等功能
- * 
+ *
  * @author Xander Lab Team
  * @version 1.0.0
  */
@@ -29,7 +29,7 @@ try {
 
 // 配置常量
 const CONFIG = {
-  HOST: 'xander-lab.dsircity.top',
+  HOST: 'xander.dsircity.top',
   API_KEY: '7a05bd37ef5d47a3b0a1157e8421a998',
   PUBLIC_DIR: path.join(__dirname, 'public'),
   SITEMAP_FILE: 'sitemap.xml',
@@ -43,19 +43,19 @@ class Logger {
   static info(message) {
     console.log(`\x1b[36mℹ\x1b[0m ${message}`);
   }
-  
+
   static success(message) {
     console.log(`\x1b[32m✓\x1b[0m ${message}`);
   }
-  
+
   static warning(message) {
     console.log(`\x1b[33m⚠\x1b[0m ${message}`);
   }
-  
+
   static error(message) {
     console.log(`\x1b[31m✗\x1b[0m ${message}`);
   }
-  
+
   static header(title) {
     console.log(`\n\x1b[1m${title}\x1b[0m`);
     console.log('─'.repeat(title.length));
@@ -101,8 +101,8 @@ class SitemapGenerator {
    */
   generateStructure() {
     // 核心页面
-    this.addUrl('/', { 
-      changefreq: 'weekly', 
+    this.addUrl('/', {
+      changefreq: 'weekly',
       priority: 1.0,
       image: {
         url: `${this.baseUrl}/og-image.png`,
@@ -149,24 +149,24 @@ class SitemapGenerator {
    */
   async saveToFile(filename = CONFIG.SITEMAP_FILE) {
     const filePath = path.join(CONFIG.PUBLIC_DIR, filename);
-    
+
     try {
       const builder = new xml2js.default.Builder({
         xmldec: { version: '1.0', encoding: 'UTF-8' },
         renderOpts: { pretty: true, indent: '  ' }
       });
-      
+
       const xml = builder.buildObject(this.generateStructure());
-      
+
       // 确保public目录存在
       if (!fs.existsSync(CONFIG.PUBLIC_DIR)) {
         fs.mkdirSync(CONFIG.PUBLIC_DIR, { recursive: true });
       }
-      
+
       fs.writeFileSync(filePath, xml, 'utf8');
       Logger.success(`Sitemap 已生成: ${filePath}`);
       Logger.info(`包含 ${this.urls.length} 个URL`);
-      
+
       return filePath;
     } catch (error) {
       Logger.error(`生成 sitemap 失败: ${error.message}`);
@@ -185,7 +185,7 @@ class SearchEngineSubmitter {
    */
   static async submitToBing(urls) {
     Logger.header('Bing IndexNow 提交');
-    
+
     try {
       const response = await axios.default.post('https://www.bing.com/indexnow', {
         host: CONFIG.HOST,
@@ -193,7 +193,7 @@ class SearchEngineSubmitter {
         keyLocation: `https://${CONFIG.HOST}/${CONFIG.API_KEY_FILE}`,
         urlList: urls
       }, {
-        headers: { 
+        headers: {
           'Content-Type': 'application/json; charset=utf-8',
           'User-Agent': 'XanderLab-SEO-Tools/1.0'
         },
@@ -240,10 +240,10 @@ class SEOTools {
    */
   static async generateSitemap() {
     Logger.header('Sitemap 生成工具');
-    
+
     const generator = new SitemapGenerator();
     const filePath = await generator.saveToFile();
-    
+
     return {
       success: true,
       filePath: filePath,
@@ -256,10 +256,10 @@ class SEOTools {
    */
   static async submitToSearchEngines() {
     Logger.header('搜索引擎提交工具');
-    
+
     // 读取sitemap中的URL
     const sitemapPath = path.join(CONFIG.PUBLIC_DIR, CONFIG.SITEMAP_FILE);
-    
+
     if (!fs.existsSync(sitemapPath)) {
       Logger.error('sitemap.xml 文件不存在，请先生成sitemap');
       return { success: false };
@@ -269,11 +269,11 @@ class SEOTools {
       const sitemapXml = fs.readFileSync(sitemapPath, 'utf8');
       const parser = new xml2js.default.Parser({ explicitArray: false });
       const result = await parser.parseStringPromise(sitemapXml);
-      
+
       let urls = [];
       if (result.urlset && result.urlset.url) {
-        const urlEntries = Array.isArray(result.urlset.url) 
-          ? result.urlset.url 
+        const urlEntries = Array.isArray(result.urlset.url)
+          ? result.urlset.url
           : [result.urlset.url];
         urls = urlEntries.map(entry => entry.loc);
       }
@@ -303,12 +303,12 @@ class SEOTools {
    */
   static async runFullProcess() {
     Logger.header('Xander Lab SEO 自动化流程');
-    
+
     try {
       // 1. 生成sitemap
       Logger.info('步骤 1/2: 生成 sitemap.xml');
       const sitemapResult = await this.generateSitemap();
-      
+
       if (!sitemapResult.success) {
         throw new Error('Sitemap 生成失败');
       }
@@ -316,7 +316,7 @@ class SEOTools {
       // 2. 提交到搜索引擎
       Logger.info('步骤 2/2: 提交到搜索引擎');
       const submitResult = await this.submitToSearchEngines();
-      
+
       if (!submitResult.success) {
         throw new Error('搜索引擎提交失败');
       }
@@ -326,11 +326,11 @@ class SEOTools {
       Logger.success('✅ Sitemap 生成成功');
       Logger.success(`📁 文件位置: ${sitemapResult.filePath}`);
       Logger.success(`📊 包含URL: ${sitemapResult.urlCount} 个`);
-      
+
       if (submitResult.results.bing) {
         Logger.success('✅ Bing 提交成功');
       }
-      
+
       Logger.info('💡 建议:');
       Logger.info('• 定期更新sitemap内容');
       Logger.info('• 监控搜索引擎索引状态');
@@ -348,7 +348,7 @@ class SEOTools {
  */
 async function main() {
   const args = process.argv.slice(2);
-  
+
   if (args.length === 0 || args.includes('--help') || args.includes('-h')) {
     console.log(`
 Xander Lab SEO 工具集
@@ -383,15 +383,15 @@ Xander Lab SEO 工具集
       case 'generate':
         await SEOTools.generateSitemap();
         break;
-        
+
       case 'submit':
         await SEOTools.submitToSearchEngines();
         break;
-        
+
       case 'full':
         await SEOTools.runFullProcess();
         break;
-        
+
       default:
         Logger.error(`未知命令: ${command}`);
         Logger.info('使用 --help 查看可用命令');

@@ -10,7 +10,7 @@ const ShareHeader = ({ onPublish, onTourStart, onNavigateBack }) => {
             <div className="flex items-center gap-4">
                 <div className="w-10 h-10 rounded-2xl bg-primary flex items-center justify-center shadow-lg shadow-primary/30" onClick={onNavigateBack}>
                     {/*<Command className="w-5 h-5 text-white" />*/}
-                    <img src="https://xander-lab.dsircity.top/favicon.png" alt="" />
+                    <img src="https://xander.dsircity.top/favicon.png" alt="" />
                 </div>
                 <div>
                     <h1 className="text-[13px] font-black uppercase italic tracking-widest mb-0.5">{t('components.share.header.title')}</h1>

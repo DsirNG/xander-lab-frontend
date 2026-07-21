@@ -134,8 +134,8 @@ const BlogHome = () => {
                     '@type': 'CollectionPage',
                     name: 'Blog | Xander Lab',
                     description: 'Technical articles on frontend architecture, React patterns, and UI component design',
-                    url: 'https://xander-lab.dsircity.top/blog/',
-                    isPartOf: { '@id': 'https://xander-lab.dsircity.top/#website' }
+                    url: 'https://xander.dsircity.top/blog/',
+                    isPartOf: { '@id': 'https://xander.dsircity.top/#website' }
                 }}
             />
 

@@ -7,7 +7,7 @@
 
 import { Helmet } from 'react-helmet-async';
 
-const SITE_URL = 'https://xander-lab.dsircity.top';
+const SITE_URL = 'https://xander.dsircity.top';
 const SITE_NAME = 'Xander Lab';
 const DEFAULT_OG_IMAGE = `${SITE_URL}/og-image.png`;
 const BRAND_KEYWORDS = 'xanderblog, 博客, xander博客, xanderlab, xander-lab';

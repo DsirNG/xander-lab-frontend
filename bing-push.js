@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 // 配置常量
-const HOST = 'xander-lab.dsircity.top';
+const HOST = 'xander.dsircity.top';
 const API_KEY_FILE = '7a05bd37ef5d47a3b0a1157e8421a998.txt';
 
 // 从文件读取API密钥
@@ -28,19 +28,19 @@ const URL_LIST = [
   `https://${HOST}/modules`,
   `https://${HOST}/components`,
   `https://${HOST}/blog`,
-  
+
   // 基础设施详细页面
   `https://${HOST}/infra/positioning-system`,
   `https://${HOST}/infra/drag-drop-system`,
-  
+
   // 功能模块详细页面
   `https://${HOST}/modules/drag-drop`,
   `https://${HOST}/modules/anchored-overlay`,
-  
+
   // 博客相关页面
   `https://${HOST}/blog/tags`,
   `https://${HOST}/blog/publish`,
-  
+
   // 特殊功能页面
   `https://${HOST}/components/share`,
   `https://${HOST}/login`
@@ -55,26 +55,26 @@ async function notifyBing(urls = URL_LIST, apiKey = getApiKey()) {
   console.log('🚀 开始向Bing搜索引擎推送URL更新...');
   console.log(`📡 目标主机: ${HOST}`);
   console.log(`📋 推送URL数量: ${urls.length}`);
-  
+
   try {
     const startTime = Date.now();
-    
+
     const response = await axios.post('https://www.bing.com/indexnow', {
       host: HOST,
       key: apiKey,
       keyLocation: `https://${HOST}/${API_KEY_FILE}`,
       urlList: urls
     }, {
-      headers: { 
+      headers: {
         'Content-Type': 'application/json; charset=utf-8',
         'User-Agent': 'XanderLab-Bot/1.0'
       },
       timeout: 10000 // 10秒超时
     });
-    
+
     const endTime = Date.now();
     const duration = ((endTime - startTime) / 1000).toFixed(2);
-    
+
     if (response.status === 200) {
       console.log('✅ 推送成功！');
       console.log(`📊 状态码: ${response.status}`);
@@ -83,10 +83,10 @@ async function notifyBing(urls = URL_LIST, apiKey = getApiKey()) {
     } else {
       console.warn(`⚠️  推送完成但状态码异常: ${response.status}`);
     }
-    
+
   } catch (error) {
     console.error('❌ 推送失败！');
-    
+
     if (error.response) {
       // 服务器响应错误
       console.error(`📡 服务器响应: ${error.response.status} - ${error.response.statusText}`);
@@ -100,13 +100,13 @@ async function notifyBing(urls = URL_LIST, apiKey = getApiKey()) {
       // 其他错误
       console.error(`💥 错误信息: ${error.message}`);
     }
-    
+
     console.log('\n💡 故障排除建议:');
     console.log('   • 检查网络连接是否正常');
     console.log('   • 确认API密钥文件存在且格式正确');
     console.log('   • 验证域名所有权设置');
     console.log('   • 检查Bing IndexNow服务状态');
-    
+
     process.exit(1);
   }
 }
@@ -118,35 +118,35 @@ async function notifyBing(urls = URL_LIST, apiKey = getApiKey()) {
  */
 async function batchNotifyBing(urls = URL_LIST, batchSize = 10) {
   console.log(`🔄 启用批量推送模式，每批处理 ${batchSize} 个URL`);
-  
+
   const apiKey = getApiKey();
   const batches = [];
-  
+
   // 分批处理
   for (let i = 0; i < urls.length; i += batchSize) {
     batches.push(urls.slice(i, i + batchSize));
   }
-  
+
   console.log(`📦 总共 ${batches.length} 批次，开始逐批推送...\n`);
-  
+
   for (let i = 0; i < batches.length; i++) {
     console.log(`📤 正在推送第 ${i + 1}/${batches.length} 批...`);
     await notifyBing(batches[i], apiKey);
-    
+
     // 批次间延迟，避免请求过于频繁
     if (i < batches.length - 1) {
       console.log('⏳ 等待2秒后继续下一批...\n');
       await new Promise(resolve => setTimeout(resolve, 2000));
     }
   }
-  
+
   console.log('\n🎉 所有批次推送完成！');
 }
 
 // 主程序入口
 async function main() {
   const args = process.argv.slice(2);
-  
+
   if (args.includes('--batch')) {
     // 批量模式
     const batchSize = parseInt(args[args.indexOf('--batch') + 1]) || 10;

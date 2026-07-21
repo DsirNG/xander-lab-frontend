@@ -232,11 +232,11 @@ const BlogDetail = () => {
                     publisher: {
                         '@type': 'Organization',
                         name: 'Xander Lab',
-                        logo: { '@type': 'ImageObject', url: 'https://xander-lab.dsircity.top/logo-512.png' }
+                        logo: { '@type': 'ImageObject', url: 'https://xander.dsircity.top/logo-512.png' }
                     },
                     mainEntityOfPage: {
                         '@type': 'WebPage',
-                        '@id': `https://xander-lab.dsircity.top/blog/${blog.id}/`
+                        '@id': `https://xander.dsircity.top/blog/${blog.id}/`
                     },
                     keywords: blog.tags?.join(', ') || ''
                 }}

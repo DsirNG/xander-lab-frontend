@@ -1,32 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
-    <loc>https://xander-lab.dsircity.top/</loc>
+    <loc>https://xander.dsircity.top/</loc>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
     <image:image>
-      <image:loc>https://xander-lab.dsircity.top/og-image.png</image:loc>
+      <image:loc>https://xander.dsircity.top/og-image.png</image:loc>
       <image:title>Xander Lab UI Infrastructure Showcase</image:title>
       <image:caption>UI infrastructure systems and interactive components platform</image:caption>
     </image:image>
   </url>
   <url>
-    <loc>https://xander-lab.dsircity.top/blog/</loc>
+    <loc>https://xander.dsircity.top/blog/</loc>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://xander-lab.dsircity.top/blog/tags/</loc>
+    <loc>https://xander.dsircity.top/blog/tags/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://xander-lab.dsircity.top/components</loc>
+    <loc>https://xander.dsircity.top/components</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://xander-lab.dsircity.top/modules/drag-drop/</loc>
+    <loc>https://xander.dsircity.top/modules/drag-drop/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>

@@ -15,12 +15,12 @@ if (fs.existsSync(indexPath)) {
     let html = fs.readFileSync(indexPath, 'utf-8');
 
     // Ensure all image URLs are absolute
-    html = html.replace(/href="\/favicon/g, 'href="https://xander-lab.dsircity.top/favicon');
-    html = html.replace(/href="\/android-chrome/g, 'href="https://xander-lab.dsircity.top/android-chrome');
-    html = html.replace(/href="\/apple-touch/g, 'href="https://xander-lab.dsircity.top/apple-touch');
-    html = html.replace(/content="\/og-image/g, 'content="https://xander-lab.dsircity.top/og-image');
-    html = html.replace(/content="\/twitter-image/g, 'content="https://xander-lab.dsircity.top/twitter-image');
-    html = html.replace(/content="\/logo-512/g, 'content="https://xander-lab.dsircity.top/logo-512');
+    html = html.replace(/href="\/favicon/g, 'href="https://xander.dsircity.top/favicon');
+    html = html.replace(/href="\/android-chrome/g, 'href="https://xander.dsircity.top/android-chrome');
+    html = html.replace(/href="\/apple-touch/g, 'href="https://xander.dsircity.top/apple-touch');
+    html = html.replace(/content="\/og-image/g, 'content="https://xander.dsircity.top/og-image');
+    html = html.replace(/content="\/twitter-image/g, 'content="https://xander.dsircity.top/twitter-image');
+    html = html.replace(/content="\/logo-512/g, 'content="https://xander.dsircity.top/logo-512');
 
     // Write back
     fs.writeFileSync(indexPath, html);
@@ -33,5 +33,5 @@ if (fs.existsSync(indexPath)) {
 
 console.log('\n📋 Next steps:');
 console.log('1. Test social media preview: https://developers.facebook.com/tools/debug/');
-console.log('2. Verify images are accessible: https://xander-lab.dsircity.top/og-image.png');
+console.log('2. Verify images are accessible: https://xander.dsircity.top/og-image.png');
 console.log('3. Submit sitemap: https://search.google.com/search-console');
