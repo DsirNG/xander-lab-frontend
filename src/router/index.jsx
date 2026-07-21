@@ -32,6 +32,7 @@ const StudioPage = React.lazy(() => import('@features/studio/pages/StudioPage'))
 const ProjectUploadPage = React.lazy(() => import('@features/studio/pages/ProjectUploadPage'));
 const ComponentUploadPage = React.lazy(() => import('@features/studio/pages/ComponentUploadPage'));
 const CompilerPage = React.lazy(() => import('@features/studio/pages/CompilerPage'));
+const PublicSourcePage = React.lazy(() => import('@features/studio/pages/PublicSourcePage'));
 
 // 配置数据
 import { getInfraConfig } from '@features/infra/constants';
@@ -191,6 +192,10 @@ export const createRouter = () => {
     {
       path: 'studio/compiler/:projectId',
       element: <LazyPage><CompilerPage /></LazyPage>,
+    },
+    {
+      path: 'studio/source/:projectId',
+      element: <LazyPage><PublicSourcePage /></LazyPage>,
     },
     ],
   }];

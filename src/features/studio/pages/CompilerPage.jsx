@@ -4,6 +4,7 @@ import {
   ArrowLeft,
   ChevronRight,
   Code2,
+  Download,
   ExternalLink,
   File,
   Folder,
@@ -11,22 +12,27 @@ import {
   Loader2,
   Play,
   RefreshCw,
+  Link2,
+  Lock,
+  Globe2,
   X,
 } from 'lucide-react';
 import {
   convertPreviewUrl,
+  downloadPublicProjectSource,
   fetchFileContent,
   fetchFileTree,
   fetchProject,
   getStatusColor,
   getStatusLabel,
   isTerminalStatus,
+  updateProjectVisibility,
 } from '../services/studioService';
 
 /**
  * 文件树节点递归组件，支持目录折叠/展开
  */
-function FileTreeNodes({ nodes, depth, activePath, onOpenFile }) {
+export function FileTreeNodes({ nodes, depth, activePath, onOpenFile }) {
   return (
     <>
       {nodes.map((node) => {
@@ -112,10 +118,30 @@ export default function CompilerPage() {
   const [fileContent, setFileContent] = useState('');
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [isLoadingFile, setIsLoadingFile] = useState(false);
+  const [isUpdatingVisibility, setIsUpdatingVisibility] = useState(false);
 
   const treeNodes = useMemo(() => fileTree?.children || [], [fileTree]);
   const isReady = project?.status === 'ready';
   const previewUrl = project ? convertPreviewUrl(project.previewUrl, project.id) : '';
+  const visibility = project?.visibility || 'private';
+
+  const handleVisibilityChange = async (nextVisibility) => {
+    if (!project || nextVisibility === visibility) return;
+    setIsUpdatingVisibility(true);
+    try {
+      const data = await updateProjectVisibility(project.id, nextVisibility);
+      setProject(data.project);
+    } finally {
+      setIsUpdatingVisibility(false);
+    }
+  };
+
+  const handleShare = async () => {
+    if (!project) return;
+    const shareUrl = `${window.location.origin}/studio/source/${project.id}`;
+    await navigator.clipboard.writeText(shareUrl);
+    window.__toast?.success?.('开源访问链接已复制');
+  };
 
   /** 项目构建完成后自动打开预览弹窗 */
   useEffect(() => {
@@ -219,9 +245,33 @@ export default function CompilerPage() {
                 {project?.name || '编译器'}
               </h1>
             </div>
+            <div className="relative hidden sm:block">
+              {visibility === 'private' ? <Lock className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" /> : visibility === 'open' ? <Code2 className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" /> : <Globe2 className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />}
+              <select
+                value={visibility}
+                disabled={isUpdatingVisibility}
+                onChange={(event) => handleVisibilityChange(event.target.value)}
+                className="appearance-none rounded-lg border border-slate-200 bg-slate-50 py-2 pl-9 pr-8 text-xs font-bold text-slate-700 outline-none transition-colors hover:border-slate-300 disabled:opacity-50"
+                aria-label="项目可见性"
+              >
+                <option value="private">私有</option>
+                <option value="public">公开访问</option>
+                <option value="open">开源（可查看并下载源码）</option>
+              </select>
+            </div>
           </div>
 
           <div className="flex items-center gap-2">
+            {visibility === 'open' && (
+              <>
+                <button type="button" onClick={handleShare} className="hidden items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-slate-600 transition-colors hover:text-primary sm:inline-flex">
+                  <Link2 className="h-3.5 w-3.5" /> 分享
+                </button>
+                <button type="button" onClick={() => downloadPublicProjectSource(project.id, project.name)} className="hidden items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-slate-600 transition-colors hover:text-primary sm:inline-flex">
+                  <Download className="h-3.5 w-3.5" /> 下载源码
+                </button>
+              </>
+            )}
             <span className={`rounded-full border px-3 py-1 text-xs font-bold ${getStatusColor(project?.status)}`}>
               {getStatusLabel(project?.status)}
             </span>

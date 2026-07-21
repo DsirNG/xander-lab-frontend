@@ -6,7 +6,7 @@
  * @module features/studio/services/studioService
  */
 
-import { get, post } from '@api/http';
+import { download, get, post, put } from '@api/http';
 
 /** studio 请求通用配置：覆盖 http.js 的 /api baseURL */
 const STUDIO_CONFIG = { baseURL: '' };
@@ -57,6 +57,26 @@ export async function fetchFileTree(projectId) {
 
 export async function fetchFileContent(projectId, filePath) {
   return get(`/studio-api/projects/${projectId}/files/content`, { path: filePath }, STUDIO_CONFIG);
+}
+
+export async function updateProjectVisibility(projectId, visibility) {
+  return put(`/studio-api/projects/${projectId}/visibility`, { visibility }, STUDIO_CONFIG);
+}
+
+export async function fetchPublicProject(projectId) {
+  return get(`/studio-api/public/projects/${projectId}`, {}, STUDIO_CONFIG);
+}
+
+export async function fetchPublicFileTree(projectId) {
+  return get(`/studio-api/public/projects/${projectId}/files`, {}, STUDIO_CONFIG);
+}
+
+export async function fetchPublicFileContent(projectId, filePath) {
+  return get(`/studio-api/public/projects/${projectId}/files/content`, { path: filePath }, STUDIO_CONFIG);
+}
+
+export function downloadPublicProjectSource(projectId, name) {
+  return download(`/studio-api/public/projects/${projectId}/download`, { filename: `${name || projectId}-source.zip`, config: STUDIO_CONFIG });
 }
 
 /**
