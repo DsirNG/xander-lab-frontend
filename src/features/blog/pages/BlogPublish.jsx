@@ -14,6 +14,8 @@ import useIsMobile from '@hooks/useIsMobile';
 import CustomSelect from '@/components/common/CustomSelect';
 import CreatableMultiSelect from '@/components/common/CreatableMultiSelect';
 
+const DRAFT_STORAGE_KEY = 'xander-lab:blog-publish-draft';
+
 /**
  * 博客发布页面
  * Blog Publish Page - Premium Split Layout (Left: Editor, Right: Settings)
@@ -44,6 +46,17 @@ const BlogPublish = () => {
     }, [isMobile]);
 
     const contentTextareaRef = useRef(null);
+
+    useEffect(() => {
+        try {
+            const draft = JSON.parse(localStorage.getItem(DRAFT_STORAGE_KEY));
+            if (draft && typeof draft === 'object') {
+                setFormData(prev => ({ ...prev, ...draft, tags: Array.isArray(draft.tags) ? draft.tags : [] }));
+            }
+        } catch {
+            localStorage.removeItem(DRAFT_STORAGE_KEY);
+        }
+    }, []);
     useEffect(() => {
         const controller = new AbortController();
         const fetchData = async () => {
@@ -56,7 +69,10 @@ const BlogPublish = () => {
                 const formattedOptions = catData.map(c => ({ value: String(c.id), label: c.name }));
                 setCategories(formattedOptions);
                 if (formattedOptions.length > 0) {
-                    setFormData(prev => ({ ...prev, categoryId: formattedOptions[0].value }));
+                    setFormData(prev => ({
+                        ...prev,
+                        categoryId: prev.categoryId || formattedOptions[0].value
+                    }));
                 }
 
                 // tagData is typically [{ name: 'React', count: 5 }, ...]
@@ -79,6 +95,7 @@ const BlogPublish = () => {
         setLoading(true);
         try {
             await blogService.publishBlog(formData);
+            localStorage.removeItem(DRAFT_STORAGE_KEY);
             toast.success(t('blog.publishSuccess'));
             navigate('/blog/');
         } catch (err) {
@@ -88,28 +105,43 @@ const BlogPublish = () => {
         }
     };
 
+    const handleSaveDraft = () => {
+        try {
+            localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(formData));
+            toast.success(t('blog.saveDraftSuccess'));
+        } catch (error) {
+            console.error('Failed to save blog draft:', error);
+            toast.error(t('blog.saveDraftError'));
+        }
+    };
+
     return (
-        <div className="h-screen bg-slate-50  flex flex-col overflow-hidden font-sans">
+        <div className="h-dvh bg-slate-50 flex flex-col overflow-hidden font-sans">
             {/* 顶部导航栏 / Header */}
-            <header className="h-16 shrink-0 border-b border-slate-200 /60 flex items-center justify-between px-6 bg-white  z-20 shadow-sm relative">
-                <div className="flex items-center gap-4">
+            <header className="h-16 shrink-0 border-b border-slate-200/60 flex items-center justify-between gap-2 px-3 sm:px-6 bg-white z-20 shadow-sm relative">
+                <div className="flex min-w-0 items-center gap-2 sm:gap-4">
                     <button
-                        onClick={() => navigate(-1)}
+                        onClick={() => navigate('/blog/')}
                         className="p-2 -ml-2 text-slate-400 hover:bg-slate-100  rounded-xl transition-all group"
                         title={t('blog.backToBlog')}
                     >
                         <ChevronLeft className="w-5 h-5 transition-transform" />
                     </button>
-                    <div className="h-4 w-px bg-slate-200 "></div>
-                    <span className="text-xs font-black uppercase tracking-widest text-slate-900  flex items-center gap-2">
+                    <div className="hidden sm:block h-4 w-px bg-slate-200"></div>
+                    <span className="truncate text-xs font-black uppercase tracking-widest text-slate-900 flex items-center gap-2">
                         {/*<span className="w-2 h-2 rounded-full bg-primary animate-pulse ring-4 ring-primary/20"></span>*/}
                         {t('blog.publishTitle')}
                     </span>
                 </div>
 
-                <div className="flex items-center gap-2 sm:gap-3">
-                    <button className="hidden sm:flex px-5 py-2 text-xs font-bold text-slate-500 hover:text-slate-900 transition-colors items-center gap-2 rounded-xl hover:bg-slate-100">
-                        <Save className="w-4 h-4" /> {t('blog.saveDraft')}
+                <div className="flex shrink-0 items-center gap-1 sm:gap-3">
+                    <button
+                        onClick={handleSaveDraft}
+                        disabled={loading}
+                        title={t('blog.saveDraft')}
+                        className="flex p-2 sm:px-5 text-xs font-bold text-slate-500 hover:text-slate-900 transition-colors items-center gap-2 rounded-xl hover:bg-slate-100 disabled:opacity-50"
+                    >
+                        <Save className="w-4 h-4" /> <span className="hidden md:inline">{t('blog.saveDraft')}</span>
                     </button>
                     {/* 移动端设置面板切换按钮 */}
                     <button
@@ -122,7 +154,7 @@ const BlogPublish = () => {
                     <button
                         onClick={handlePublish}
                         disabled={loading}
-                        className="px-6 py-2 bg-slate-900  hover:bg-primary  text-white  hover:text-white rounded-xl text-xs font-black shadow-lg shadow-primary/0 hover:shadow-primary/30 transition-all active:scale-95 disabled:opacity-50 flex items-center gap-2"
+                        className="px-3 sm:px-6 py-2 bg-slate-900 hover:bg-primary text-white rounded-xl text-xs font-black shadow-lg shadow-primary/0 hover:shadow-primary/30 transition-all active:scale-95 disabled:opacity-50 flex items-center gap-2"
                     >
                         {loading ? (
                             <><Loader2 className="w-4 h-4 animate-spin" /> {t('blog.publishing')}</>
@@ -135,18 +167,18 @@ const BlogPublish = () => {
 
             <div className="flex-1 flex overflow-hidden relative">
                 {/* 主编辑区 / Left Pane - Editor & Preview */}
-                <main className="flex-1 flex flex-col relative bg-white  rounded-tr-[0.5rem] border-r border-t border-slate-200 lg:border-r lg:border-t shadow-[10px_0_30px_-15px_rgba(0,0,0,0.05)] z-10 transition-all overflow-hidden mt-2 ml-2 lg:ml-2">
-                    <div className="absolute top-6 right-8 z-20">
+                <main className="flex-1 min-w-0 flex flex-col relative bg-white rounded-tr-[0.5rem] border-r border-t border-slate-200 lg:border-r lg:border-t shadow-[10px_0_30px_-15px_rgba(0,0,0,0.05)] z-10 transition-all overflow-hidden mt-2 ml-2">
+                    <div className="absolute top-3 right-3 sm:top-6 sm:right-8 z-20">
                         <div className="flex bg-slate-100/80 backdrop-blur-md p-1 rounded-2xl border border-slate-200/50 shadow-sm">
                             <button
                                 onClick={() => { setIsPreview(false); setTimeout(() => contentTextareaRef.current?.focus(), 10); }}
-                                className={`flex items-center gap-2 px-5 py-2 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all ${!isPreview ? 'bg-white  text-primary shadow-sm scale-100' : 'text-slate-500 hover:text-slate-700  hover:bg-slate-200/50 '}`}
+                                className={`flex items-center gap-2 px-3 sm:px-5 py-2 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all ${!isPreview ? 'bg-white  text-primary shadow-sm scale-100' : 'text-slate-500 hover:text-slate-700  hover:bg-slate-200/50 '}`}
                             >
                                 <Edit3 className="w-4 h-4" /> <span className="hidden sm:inline">{t('blog.edit', 'Edit')}</span>
                             </button>
                             <button
                                 onClick={() => setIsPreview(true)}
-                                className={`flex items-center gap-2 px-5 py-2 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all ${isPreview ? 'bg-white  text-primary shadow-sm scale-100' : 'text-slate-500 hover:text-slate-700  hover:bg-slate-200/50 '}`}
+                                className={`flex items-center gap-2 px-3 sm:px-5 py-2 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all ${isPreview ? 'bg-white  text-primary shadow-sm scale-100' : 'text-slate-500 hover:text-slate-700  hover:bg-slate-200/50 '}`}
                             >
                                 <Eye className="w-4 h-4" /> <span className="hidden sm:inline">{t('blog.preview', 'Preview')}</span>
                             </button>
@@ -154,7 +186,7 @@ const BlogPublish = () => {
                     </div>
 
                     <div className="flex-1 overflow-y-auto custom-scrollbar flex justify-center scroll-smooth">
-                        <div className="w-full max-w-4xl px-12 md:px-16 py-20 flex flex-col gap-10 min-h-full">
+                        <div className="w-full max-w-4xl px-5 sm:px-8 md:px-16 pt-20 pb-10 flex flex-col gap-10 min-h-full">
                             {/* 标题 */}
                             <div className="relative group">
                                 {!isPreview && (
@@ -167,7 +199,7 @@ const BlogPublish = () => {
                                     onChange={e => setFormData({ ...formData, title: e.target.value })}
                                     placeholder={t('blog.titlePlaceholder')}
                                     rows={1}
-                                    className={`w-full text-4xl md:text-5xl font-black bg-transparent border-none outline-none text-slate-900  resize-none break-words ${isPreview ? 'hidden' : 'placeholder:text-slate-200'}`}
+                                    className={`w-full text-3xl sm:text-4xl md:text-5xl font-black bg-transparent border-none outline-none text-slate-900 resize-none break-words ${isPreview ? 'hidden' : 'placeholder:text-slate-200'}`}
                                     onInput={(e) => {
                                         e.target.style.height = 'auto';
                                         e.target.style.height = e.target.scrollHeight + 'px';
@@ -202,7 +234,7 @@ const BlogPublish = () => {
                                     ) : (
                                         <div className="flex flex-col items-center justify-center py-40 text-slate-300">
                                             <Info className="w-16 h-16 mb-6 opacity-30" />
-                                            <p className="text-sm font-bold uppercase tracking-widest italic">{t('blog.noContent', 'No content yet')} // No Content</p>
+                                            <p className="text-sm font-bold uppercase tracking-widest italic">{t('blog.noContent', 'No content yet')}</p>
                                         </div>
                                     )}
                                 </div>
@@ -224,7 +256,7 @@ const BlogPublish = () => {
                 <aside className={`
                     fixed lg:static
                     top-[64px] right-0 bottom-0
-                    w-[320px] lg:w-[420px] shrink-0
+                    w-[min(20rem,100vw)] lg:w-[420px] shrink-0
                     bg-slate-50 flex flex-col z-40
                     transform transition-transform duration-300 ease-in-out
                     ${isSettingsOpen ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'}

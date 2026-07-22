@@ -57,6 +57,8 @@ export default {
     contentPlaceholder: 'Markdownで考えを記述...',
     tagsPlaceholder: 'Enterキーでタグを追加...',
     saveDraft: '下書きを保存',
+    saveDraftSuccess: 'この端末に下書きを保存しました',
+    saveDraftError: '下書きを保存できませんでした。ブラウザの保存権限を確認してください。',
     publishNow: '今すぐ投稿',
     publishing: '投稿中...',
     fillRequired: 'タイトル、本文、カテゴリーを入力してください',

@@ -57,6 +57,8 @@ export default {
     contentPlaceholder: 'Exprimez vos idées en Markdown...',
     tagsPlaceholder: 'Appuyez sur Entrée pour ajouter des étiquettes...',
     saveDraft: 'Sauvegarder le brouillon',
+    saveDraftSuccess: 'Brouillon enregistré sur cet appareil',
+    saveDraftError: 'Impossible d’enregistrer le brouillon. Vérifiez les autorisations de stockage.',
     publishNow: 'Publier maintenant',
     publishing: 'Publication...',
     fillRequired: 'Veuillez remplir le titre, le contenu et la catégorie',

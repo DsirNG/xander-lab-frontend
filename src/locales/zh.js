@@ -57,6 +57,8 @@ export default {
     contentPlaceholder: '使用 Markdown 倾诉你的想法...',
     tagsPlaceholder: '按回车添加标签...',
     saveDraft: '保存草稿',
+    saveDraftSuccess: '草稿已保存到本设备',
+    saveDraftError: '草稿保存失败，请检查浏览器存储权限',
     publishNow: '立即发布',
     publishing: '发布中...',
     fillRequired: '请填写完整的标题、内容和分类',

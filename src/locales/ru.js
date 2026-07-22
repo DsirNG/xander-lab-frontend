@@ -57,6 +57,8 @@ export default {
     contentPlaceholder: 'Изложите свои мысли в Markdown...',
     tagsPlaceholder: 'Нажмите Enter для добавления тега...',
     saveDraft: 'Сохранить черновик',
+    saveDraftSuccess: 'Черновик сохранён на этом устройстве',
+    saveDraftError: 'Не удалось сохранить черновик. Проверьте разрешения браузера.',
     publishNow: 'Опубликовать',
     publishing: 'Публикация...',
     fillRequired: 'Заполните заголовок, содержание и категорию',

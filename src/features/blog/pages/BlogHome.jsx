@@ -18,6 +18,7 @@ const BlogHome = () => {
     const [loading, setLoading] = useState(true);
     const [loadingMore, setLoadingMore] = useState(false);
     const [viewMode, setViewMode] = useState('grid');
+    const [total, setTotal] = useState(0);
 
     // 分页状态
     const [page, setPage] = useState(1);
@@ -44,11 +45,13 @@ const BlogHome = () => {
                 );
                 // 严格对接新的 PageData 结构
                 setBlogs(data.records || []);
+                setTotal(Number(data.total) || 0);
                 setHasMore(data.hasMore || false);
             } catch (error) {
                 if (error.name === 'CanceledError' || error.code === 'ERR_CANCELED') return;
                 console.error('Failed to fetch blogs:', error);
                 setBlogs([]);
+                setTotal(0);
                 setHasMore(false);
             } finally {
                 setLoading(false);
@@ -100,7 +103,7 @@ const BlogHome = () => {
         });
 
         if (node) observer.current.observe(node);
-    }, [loading, loadingMore, fetchMoreBlogs]);
+    }, [loading, loadingMore, hasMore, fetchMoreBlogs]);
 
     // 组件卸载时取消请求
     useEffect(() => {
@@ -147,7 +150,7 @@ const BlogHome = () => {
                     </h1>
                     <div className="flex items-center gap-2">
                         <p className="text-xs text-slate-500 ">
-                            {loading ? t('blog.loading') : `${t('blog.foundArticles', { count: blogs?.length || 0 })}`}
+                            {loading ? t('blog.loading') : t('blog.foundArticles', { count: total })}
                         </p>
                         {loadingMore && <Loader2 className="w-3 h-3 text-primary animate-spin" />}
                     </div>

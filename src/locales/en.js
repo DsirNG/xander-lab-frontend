@@ -57,6 +57,8 @@ export default {
     contentPlaceholder: 'Pour your thoughts here using Markdown...',
     tagsPlaceholder: 'Press Enter to add tags...',
     saveDraft: 'Save Draft',
+    saveDraftSuccess: 'Draft saved on this device',
+    saveDraftError: 'Could not save the draft. Check browser storage permissions.',
     publishNow: 'Publish Now',
     publishing: 'Publishing...',
     fillRequired: 'Please fill in title, content and category',

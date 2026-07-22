@@ -57,6 +57,8 @@ export default {
     contentPlaceholder: 'Thể hiện suy nghĩ bằng Markdown...',
     tagsPlaceholder: 'Nhấn Enter để thêm thẻ...',
     saveDraft: 'Lưu nháp',
+    saveDraftSuccess: 'Bản nháp đã được lưu trên thiết bị này',
+    saveDraftError: 'Không thể lưu bản nháp. Hãy kiểm tra quyền lưu trữ của trình duyệt.',
     publishNow: 'Xuất bản ngay',
     publishing: 'Đang xuất bản...',
     fillRequired: 'Vui lòng điền tiêu đề, nội dung và danh mục',
