@@ -1,9 +1,9 @@
 .discover {
   padding-bottom: 105px;
 }
+.discover > .article-card.featured {
+  margin-top: 24px;
+}
 .discover .article-card:not(.featured) {
   height: 142px;
-}
-.discover .article-art {
-  width: 132px;
 }
