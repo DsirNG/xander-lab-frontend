@@ -12,4 +12,12 @@ export default defineConfig({
   compiler: 'webpack5',
   alias: { '@': path.resolve(__dirname, '..', 'src') },
   mini: { postcss: { pxtransform: { enable: true }, cssModules: { enable: false } } },
+  h5: {
+    publicPath: '/',
+    staticDirectory: 'static',
+    devServer: {
+      host: '127.0.0.1',
+      port: 10086,
+    },
+  },
 })
