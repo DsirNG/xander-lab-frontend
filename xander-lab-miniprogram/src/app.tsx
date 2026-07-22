@@ -1,4 +1,6 @@
 import './app.scss'
 import type { ReactNode } from 'react'
 
-export default function App({ children }: { children: ReactNode }) { return children }
+export default function App({ children }: { children: ReactNode }) {
+  return children
+}

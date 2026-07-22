@@ -1,2 +1,24 @@
-import { View, Text } from '@tarojs/components';import { StatusBar } from '@/components/StatusBar';import { TabBar } from '@/components/TabBar';import { ArticleCard } from '@/components/ArticleCard';import { articles } from '@/data/articles'
-export default function Favorites(){return <View className='page'><StatusBar/><View className='top-title'><Text className='page-title'>我的收藏</Text><Text>管理</Text></View><View className='segmented'><Text className='segment active'>文章</Text><Text className='segment'>专题</Text></View>{[articles[0],articles[1],articles[2],articles[3]].map(a=><ArticleCard key={a.id} article={a}/>)}<TabBar active='star'/></View>}
+import { View, Text } from '@tarojs/components'
+import { StatusBar } from '@/components/StatusBar'
+import { TabBar } from '@/components/TabBar'
+import { ArticleCard } from '@/components/ArticleCard'
+import { articles } from '@/data/articles'
+export default function Favorites() {
+  return (
+    <View className="page">
+      <StatusBar />
+      <View className="top-title">
+        <Text className="page-title">我的收藏</Text>
+        <Text>管理</Text>
+      </View>
+      <View className="segmented">
+        <Text className="segment active">文章</Text>
+        <Text className="segment">专题</Text>
+      </View>
+      {[articles[0], articles[1], articles[2], articles[3]].map(a => (
+        <ArticleCard key={a.id} article={a} />
+      ))}
+      <TabBar active="star" />
+    </View>
+  )
+}
