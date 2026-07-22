@@ -8,7 +8,7 @@ import { articles } from '@/data/articles'
 export default function Articles() {
   return (
     <View className="page">
-      <StatusBar />
+
       <View className="top-title">
         <Text className="page-title">全部文章</Text>
         <View onClick={() => Taro.navigateTo({ url: '/pages/search/index' })}>

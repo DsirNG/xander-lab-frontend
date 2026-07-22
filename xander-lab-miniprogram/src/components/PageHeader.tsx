@@ -1,11 +1,11 @@
 import { View, Text } from '@tarojs/components'
 import Taro from '@tarojs/taro'
 import { Icon } from './Icon'
-import { StatusBar } from './StatusBar'
+
 export function PageHeader({ title, more = false }: { title: string; more?: boolean }) {
   return (
     <>
-      <StatusBar />
+
       <View className="page-header">
         <View onClick={() => Taro.navigateBack()}>
           <Icon name="back" />

@@ -9,7 +9,7 @@ import './index.scss'
 export default function Discover() {
   return (
     <View className="page discover">
-      <StatusBar />
+
       <View className="top-title">
         <Text className="brand">Xander Lab</Text>
         <View className="avatar">X</View>

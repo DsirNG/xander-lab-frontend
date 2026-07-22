@@ -6,7 +6,7 @@ import { articles } from '@/data/articles'
 export default function Favorites() {
   return (
     <View className="page">
-      <StatusBar />
+
       <View className="top-title">
         <Text className="page-title">我的收藏</Text>
         <Text>管理</Text>

@@ -14,7 +14,7 @@ const menus = [
 export default function Profile() {
   return (
     <View className="page profile">
-      <StatusBar />
+
       <View className="setting">⚙</View>
       <View className="profile-head">
         <View className="profile-avatar">X</View>

@@ -10,7 +10,7 @@ export default function Search() {
   const [value, setValue] = useState('Vue3')
   return (
     <View className="page search-page">
-      <StatusBar />
+
       <View className="search-head">
         <View onClick={() => Taro.navigateBack()}>
           <Icon name="back" />
