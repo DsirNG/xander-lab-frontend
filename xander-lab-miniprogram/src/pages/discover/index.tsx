@@ -1,4 +1,4 @@
-import { ScrollView, Text, View } from '@tarojs/components'
+import { Text, View } from '@tarojs/components'
 import Taro from '@tarojs/taro'
 import { useEffect, useState } from 'react'
 import { blogApi, type Article } from '@/api/blog'
@@ -9,17 +9,16 @@ import './index.scss'
 
 export default function Discover() {
   const [articles, setArticles] = useState<Article[]>([])
-  const [tags, setTags] = useState<string[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
   useEffect(() => {
     let active = true
-    Promise.all([blogApi.getRecentArticles(4), blogApi.getPopularTags(5)])
-      .then(([recentArticles, popularTags]) => {
+    blogApi
+      .getRecentArticles(4)
+      .then(recentArticles => {
         if (!active) return
         setArticles(recentArticles)
-        setTags(popularTags.map(item => item.name))
       })
       .catch(reason => {
         if (active) setError(reason instanceof Error ? reason.message : '首页加载失败')
@@ -42,13 +41,6 @@ export default function Discover() {
         <Icon name="search" />
         <Text>搜索文章、标签或关键词</Text>
       </View>
-      <ScrollView scrollX className="chips">
-        {['全部', ...tags].map((tag, index) => (
-          <Text className={`chip ${index === 0 ? 'active' : ''}`} key={tag}>
-            {tag}
-          </Text>
-        ))}
-      </ScrollView>
       {loading ? <Text className="data-state">正在加载文章...</Text> : null}
       {error ? <Text className="data-state error">{error}</Text> : null}
       {articles[0] ? <ArticleCard article={articles[0]} featured /> : null}
