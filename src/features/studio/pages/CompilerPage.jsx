@@ -2,8 +2,10 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useParams } from 'react-router-dom';
 import {
   ArrowLeft,
+  Check,
   ChevronRight,
   Code2,
+  Copy,
   Download,
   ExternalLink,
   File,
@@ -16,6 +18,7 @@ import {
   X,
 } from 'lucide-react';
 import CustomSelect from '@components/common/CustomSelect';
+import useClickOutside from '@hooks/useClickOutside';
 import {
   convertPreviewUrl,
   downloadPublicProjectSource,
@@ -116,6 +119,7 @@ function FileTreeNode({ node, depth, isActive, onOpenFile }) {
 export default function CompilerPage() {
   const { projectId } = useParams();
   const pollRef = useRef(null);
+  const shareMenuRef = useRef(null);
   const [project, setProject] = useState(null);
   const [fileTree, setFileTree] = useState(null);
   const [activeFilePath, setActiveFilePath] = useState('');
@@ -123,11 +127,18 @@ export default function CompilerPage() {
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [isLoadingFile, setIsLoadingFile] = useState(false);
   const [isUpdatingVisibility, setIsUpdatingVisibility] = useState(false);
+  const [isShareOpen, setIsShareOpen] = useState(false);
+  const [isShareCopied, setIsShareCopied] = useState(false);
+  const [isDownloadingSource, setIsDownloadingSource] = useState(false);
 
   const treeNodes = useMemo(() => fileTree?.children || [], [fileTree]);
   const isReady = project?.status === 'ready';
   const previewUrl = project ? convertPreviewUrl(project.previewUrl, project.id) : '';
   const visibility = project?.visibility || 'private';
+  const shareUrl = project ? `${window.location.origin}/studio/source/${project.id}` : '';
+
+  const closeShareMenu = useCallback(() => setIsShareOpen(false), []);
+  useClickOutside(shareMenuRef, closeShareMenu, isShareOpen);
 
   const handleVisibilityChange = async (nextVisibility) => {
     if (!project || nextVisibility === visibility) return;
@@ -140,11 +151,36 @@ export default function CompilerPage() {
     }
   };
 
-  const handleShare = async () => {
-    if (!project) return;
-    const shareUrl = `${window.location.origin}/studio/source/${project.id}`;
-    await navigator.clipboard.writeText(shareUrl);
-    window.__toast?.success?.('开源访问链接已复制');
+  const handleCopyShareLink = async () => {
+    if (!shareUrl) return;
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(shareUrl);
+      } else {
+        const input = document.createElement('textarea');
+        input.value = shareUrl;
+        document.body.appendChild(input);
+        input.select();
+        document.execCommand('copy');
+        document.body.removeChild(input);
+      }
+      setIsShareCopied(true);
+      window.__toast?.success?.('分享链接已复制');
+      window.setTimeout(() => setIsShareCopied(false), 1800);
+    } catch {
+      window.__toast?.error?.('复制链接失败，请手动复制');
+    }
+  };
+
+  const handleDownloadSource = async () => {
+    if (!project || isDownloadingSource) return;
+    setIsDownloadingSource(true);
+    try {
+      await downloadPublicProjectSource(project.id, project.name);
+      window.__toast?.success?.('源码 ZIP 已开始下载');
+    } finally {
+      setIsDownloadingSource(false);
+    }
   };
 
   /** 项目构建完成后自动打开预览弹窗 */
@@ -262,11 +298,31 @@ export default function CompilerPage() {
           <div className="flex items-center gap-2">
             {visibility === 'public' && (
               <>
-                <button type="button" onClick={handleShare} className="hidden items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-slate-600 transition-colors hover:text-primary sm:inline-flex">
-                  <Link2 className="h-3.5 w-3.5" /> 分享
-                </button>
-                <button type="button" onClick={() => downloadPublicProjectSource(project.id, project.name)} className="hidden items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-slate-600 transition-colors hover:text-primary sm:inline-flex">
-                  <Download className="h-3.5 w-3.5" /> 下载源码
+                <div ref={shareMenuRef} className="relative">
+                  <button
+                    type="button"
+                    onClick={() => setIsShareOpen((open) => !open)}
+                    aria-expanded={isShareOpen}
+                    aria-haspopup="dialog"
+                    className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-slate-600 transition-colors hover:text-primary"
+                  >
+                    <Link2 className="h-3.5 w-3.5" /> 分享
+                  </button>
+                  {isShareOpen ? (
+                    <div role="dialog" aria-label="分享项目" className="absolute right-0 top-full z-40 mt-2 w-80 rounded-xl border border-slate-200 bg-white p-3 shadow-xl">
+                      <p className="mb-2 text-xs font-bold text-slate-700">公开源码链接</p>
+                      <div className="flex items-center gap-2">
+                        <input value={shareUrl} readOnly onFocus={(event) => event.currentTarget.select()} className="min-w-0 flex-1 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-2 text-xs text-slate-600 outline-none" aria-label="公开源码链接" />
+                        <button type="button" onClick={handleCopyShareLink} className="inline-flex shrink-0 items-center gap-1 rounded-lg bg-primary px-2.5 py-2 text-xs font-bold text-white hover:bg-primary/90">
+                          {isShareCopied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
+                          {isShareCopied ? '已复制' : '复制'}
+                        </button>
+                      </div>
+                    </div>
+                  ) : null}
+                </div>
+                <button type="button" disabled={isDownloadingSource} onClick={handleDownloadSource} className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-slate-600 transition-colors hover:text-primary disabled:cursor-not-allowed disabled:opacity-50">
+                  {isDownloadingSource ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Download className="h-3.5 w-3.5" />} 下载 ZIP
                 </button>
               </>
             )}
