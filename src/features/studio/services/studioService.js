@@ -6,7 +6,7 @@
  * @module features/studio/services/studioService
  */
 
-import { download, get, post, put } from '@api/http';
+import { download, get, patch, post } from '@api/http';
 
 /** studio 请求通用配置：覆盖 http.js 的 /api baseURL */
 const STUDIO_CONFIG = { baseURL: '' };
@@ -60,7 +60,7 @@ export async function fetchFileContent(projectId, filePath) {
 }
 
 export async function updateProjectVisibility(projectId, visibility) {
-  return put(`/studio-api/projects/${projectId}/visibility`, { visibility }, STUDIO_CONFIG);
+  return patch(`/studio-api/projects/${projectId}/visibility`, { visibility }, STUDIO_CONFIG);
 }
 
 export async function fetchPublicProject(projectId) {

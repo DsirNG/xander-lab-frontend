@@ -13,10 +13,9 @@ import {
   Play,
   RefreshCw,
   Link2,
-  Lock,
-  Globe2,
   X,
 } from 'lucide-react';
+import CustomSelect from '@components/common/CustomSelect';
 import {
   convertPreviewUrl,
   downloadPublicProjectSource,
@@ -54,6 +53,11 @@ export function FileTreeNodes({ nodes, depth, activePath, onOpenFile }) {
     </>
   );
 }
+
+const VISIBILITY_OPTIONS = [
+  { value: 'private', label: '私有' },
+  { value: 'public', label: '公开（可查看并下载源码）' },
+];
 
 /**
  * 单个文件树节点，目录支持折叠/展开
@@ -245,24 +249,18 @@ export default function CompilerPage() {
                 {project?.name || '编译器'}
               </h1>
             </div>
-            <div className="relative hidden sm:block">
-              {visibility === 'private' ? <Lock className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" /> : visibility === 'open' ? <Code2 className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" /> : <Globe2 className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />}
-              <select
+            <div className={`hidden w-52 sm:block ${isUpdatingVisibility ? 'pointer-events-none opacity-50' : ''}`}>
+              <CustomSelect
+                options={VISIBILITY_OPTIONS}
                 value={visibility}
-                disabled={isUpdatingVisibility}
-                onChange={(event) => handleVisibilityChange(event.target.value)}
-                className="appearance-none rounded-lg border border-slate-200 bg-slate-50 py-2 pl-9 pr-8 text-xs font-bold text-slate-700 outline-none transition-colors hover:border-slate-300 disabled:opacity-50"
-                aria-label="项目可见性"
-              >
-                <option value="private">私有</option>
-                <option value="public">公开访问</option>
-                <option value="open">开源（可查看并下载源码）</option>
-              </select>
+                onChange={handleVisibilityChange}
+                placeholder="项目权限"
+              />
             </div>
           </div>
 
           <div className="flex items-center gap-2">
-            {visibility === 'open' && (
+            {visibility === 'public' && (
               <>
                 <button type="button" onClick={handleShare} className="hidden items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-slate-600 transition-colors hover:text-primary sm:inline-flex">
                   <Link2 className="h-3.5 w-3.5" /> 分享
