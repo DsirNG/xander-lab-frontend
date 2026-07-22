@@ -6,6 +6,7 @@ import { ArticleCard } from '@/components/ArticleCard'
 import { Icon } from '@/components/Icon'
 import { TabBar } from '@/components/TabBar'
 import { useArticles } from '@/hooks/useArticles'
+import './index.scss'
 
 export default function Articles() {
   const [categories, setCategories] = useState<Category[]>([])
@@ -20,7 +21,7 @@ export default function Articles() {
   }, [])
 
   return (
-    <View className="page">
+    <View className="page articles-page">
       <View className="top-title">
         <Text className="page-title">全部文章</Text>
         <View onClick={() => Taro.navigateTo({ url: '/pages/search/index' })}>

@@ -105,13 +105,13 @@ page {
   font-weight: 400;
 }
 .article-card {
-  min-height: 154px;
+  min-height: 174px;
   border: 1px solid #ececf1;
   border-radius: 16px;
-  padding: 12px;
+  padding: 18px;
   box-sizing: border-box;
   display: block;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
   background: #fff;
 }
 .article-card.featured {
@@ -124,7 +124,8 @@ page {
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding: 2px 0;
+  gap: 8px;
+  padding: 0;
 }
 .featured .article-info {
   padding: 0;
@@ -141,7 +142,7 @@ page {
   font-size: 17px;
   line-height: 1.42;
   font-weight: 700;
-  margin: 4px 0;
+  margin: 0;
 }
 .featured .article-title {
   font-size: 22px;
@@ -158,7 +159,7 @@ page {
 .tags {
   display: flex;
   gap: 7px;
-  margin-top: 5px;
+  margin-top: 0;
 }
 .tag {
   font-size: 11px;
@@ -174,6 +175,7 @@ page {
   color: #85858e;
   font-size: 11px;
   margin-top: auto;
+  padding-top: 4px;
 }
 .author,
 .views {

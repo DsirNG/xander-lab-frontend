@@ -18,13 +18,15 @@ export function ArticleCard({ article, featured = false }: ArticleCardProps) {
         {featured ? <Text className="featured-label">精选</Text> : null}
         <Text className="article-title">{article.title}</Text>
         <Text className="article-excerpt">{article.summary}</Text>
-        <View className="tags">
-          {article.tags.slice(0, 3).map(tag => (
-            <Text className="tag" key={tag}>
-              {tag}
-            </Text>
-          ))}
-        </View>
+        {article.tags.length > 0 ? (
+          <View className="tags">
+            {article.tags.slice(0, 3).map(tag => (
+              <Text className="tag" key={tag}>
+                {tag}
+              </Text>
+            ))}
+          </View>
+        ) : null}
         <View className="meta">
           <View className="author">
             <View className="avatar-mini">X</View>
