@@ -1,5 +1,4 @@
 import { View, Text } from '@tarojs/components'
-import { StatusBar } from '@/components/StatusBar'
 import { Icon } from '@/components/Icon'
 import { TabBar } from '@/components/TabBar'
 import './index.scss'
@@ -14,7 +13,6 @@ const menus = [
 export default function Profile() {
   return (
     <View className="page profile">
-
       <View className="setting">⚙</View>
       <View className="profile-head">
         <View className="profile-avatar">X</View>

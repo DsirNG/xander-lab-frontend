@@ -1,27 +1,25 @@
-import { View, Text } from '@tarojs/components'
+import { Text, View } from '@tarojs/components'
 import Taro from '@tarojs/taro'
-import type { Article } from '@/data/articles'
-import { ArticleArt } from './ArticleArt'
+import type { Article } from '@/api/blog'
 import { Icon } from './Icon'
-export function ArticleCard({
-  article,
-  featured = false,
-}: {
+
+type ArticleCardProps = {
   article: Article
   featured?: boolean
-}) {
+}
+
+export function ArticleCard({ article, featured = false }: ArticleCardProps) {
   return (
     <View
       className={`article-card ${featured ? 'featured' : ''}`}
       onClick={() => Taro.navigateTo({ url: `/pages/article/index?id=${article.id}` })}
     >
-      <ArticleArt type={article.art} />
       <View className="article-info">
-        {featured && <Text className="featured-label">精选</Text>}
+        {featured ? <Text className="featured-label">精选</Text> : null}
         <Text className="article-title">{article.title}</Text>
-        <Text className="article-excerpt">{article.excerpt}</Text>
+        <Text className="article-excerpt">{article.summary}</Text>
         <View className="tags">
-          {article.tags.map(tag => (
+          {article.tags.slice(0, 3).map(tag => (
             <Text className="tag" key={tag}>
               {tag}
             </Text>
@@ -30,11 +28,11 @@ export function ArticleCard({
         <View className="meta">
           <View className="author">
             <View className="avatar-mini">X</View>
-            <Text>Xander</Text>
+            <Text>{article.author}</Text>
           </View>
           <View className="views">
             <Icon name="eye" />
-            <Text>{article.views}</Text>
+            <Text>{article.views.toLocaleString()}</Text>
           </View>
           <Text>{article.date.slice(5)}</Text>
         </View>

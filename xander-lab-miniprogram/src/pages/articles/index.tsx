@@ -1,14 +1,26 @@
-import { View, Text, ScrollView } from '@tarojs/components'
+import { ScrollView, Text, View } from '@tarojs/components'
 import Taro from '@tarojs/taro'
-import { StatusBar } from '@/components/StatusBar'
+import { useEffect, useState } from 'react'
+import { blogApi, type Category } from '@/api/blog'
+import { ArticleCard } from '@/components/ArticleCard'
 import { Icon } from '@/components/Icon'
 import { TabBar } from '@/components/TabBar'
-import { ArticleCard } from '@/components/ArticleCard'
-import { articles } from '@/data/articles'
+import { useArticles } from '@/hooks/useArticles'
+
 export default function Articles() {
+  const [categories, setCategories] = useState<Category[]>([])
+  const [category, setCategory] = useState('')
+  const { articles, total, loading, error } = useArticles({ category, size: 20 })
+
+  useEffect(() => {
+    blogApi
+      .getCategories()
+      .then(setCategories)
+      .catch(() => setCategories([]))
+  }, [])
+
   return (
     <View className="page">
-
       <View className="top-title">
         <Text className="page-title">全部文章</Text>
         <View onClick={() => Taro.navigateTo({ url: '/pages/search/index' })}>
@@ -16,18 +28,33 @@ export default function Articles() {
         </View>
       </View>
       <ScrollView scrollX className="chips">
-        {['最新', '前端', 'Vue', 'React', 'AI', '工程化'].map((x, i) => (
-          <Text className={`chip ${i === 0 ? 'active' : ''}`} key={x}>
-            {x}
-          </Text>
-        ))}
+        <Text className={`chip ${category === '' ? 'active' : ''}`} onClick={() => setCategory('')}>
+          全部
+        </Text>
+        {categories.map(item => {
+          const value = item.code || item.name
+          return (
+            <Text
+              className={`chip ${category === value ? 'active' : ''}`}
+              key={value}
+              onClick={() => setCategory(value)}
+            >
+              {item.name}
+            </Text>
+          )
+        })}
       </ScrollView>
       <View className="segmented">
-        <Text className="segment active">最新发布</Text>
-        <Text className="segment">最多阅读</Text>
+        <Text className="segment active">最新发布 · {total}</Text>
+        <Text className="segment">真实文章</Text>
       </View>
-      {articles.map(a => (
-        <ArticleCard key={a.id} article={a} />
+      {loading ? <Text className="data-state">正在加载文章...</Text> : null}
+      {error ? <Text className="data-state error">{error}</Text> : null}
+      {!loading && !error && articles.length === 0 ? (
+        <Text className="data-state">暂无文章</Text>
+      ) : null}
+      {articles.map(article => (
+        <ArticleCard key={article.id} article={article} />
       ))}
       <TabBar active="article" />
     </View>

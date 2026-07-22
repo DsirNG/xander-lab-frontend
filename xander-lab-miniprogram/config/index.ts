@@ -18,6 +18,12 @@ export default defineConfig({
     devServer: {
       host: '127.0.0.1',
       port: 10086,
+      proxy: {
+        '/api': {
+          target: 'http://xander.dsircity.top',
+          changeOrigin: true,
+        },
+      },
     },
   },
 })

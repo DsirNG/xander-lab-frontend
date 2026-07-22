@@ -1,28 +1,31 @@
-import { View, Text } from '@tarojs/components'
-import { PageHeader } from '@/components/PageHeader'
+import { Text, View } from '@tarojs/components'
 import { ArticleCard } from '@/components/ArticleCard'
-import { articles } from '@/data/articles'
+import { PageHeader } from '@/components/PageHeader'
+import { useArticles } from '@/hooks/useArticles'
 import './index.scss'
+
 export default function Topic() {
+  const { articles, total, loading, error } = useArticles({ category: 'frontend', size: 20 })
+
   return (
     <View className="topic-page">
       <PageHeader title="前端专题" />
-      <View className="topic-hero">
-        <View className="topic-art">&lt;/&gt;</View>
+      <View className="topic-hero text-only">
         <View>
           <Text className="topic-name">前端开发</Text>
           <Text className="topic-desc">记录前端技术、工程实践与设计思考</Text>
-          <Text className="topic-count">42 篇文章　·　1.2k 订阅</Text>
+          <Text className="topic-count">{total} 篇真实文章</Text>
         </View>
-        <Text className="subscribe">订阅</Text>
       </View>
       <View className="segmented">
         <Text className="segment active">最新</Text>
-        <Text className="segment">热门</Text>
+        <Text className="segment">来自 PC 端接口</Text>
       </View>
       <View className="topic-list">
-        {articles.map(a => (
-          <ArticleCard key={a.id} article={a} />
+        {loading ? <Text className="data-state">正在加载文章...</Text> : null}
+        {error ? <Text className="data-state error">{error}</Text> : null}
+        {articles.map(article => (
+          <ArticleCard key={article.id} article={article} />
         ))}
       </View>
     </View>

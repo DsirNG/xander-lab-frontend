@@ -11,6 +11,10 @@
   gap: 25px;
   position: relative;
 }
+.topic-hero.text-only {
+  height: auto;
+  min-height: 132px;
+}
 .topic-art {
   font-size: 34px;
   color: #5b61fa;
