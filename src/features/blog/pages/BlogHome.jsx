@@ -6,6 +6,22 @@ import { blogService } from '../services/blogService';
 import BlogCard from '../components/BlogCard';
 import SEOHead from '@components/seo/SEOHead';
 
+const getHasMore = (data, loadedCount = 0) => {
+    const current = Number(data?.current);
+    const pages = Number(data?.pages);
+    const total = Number(data?.total);
+
+    if (Number.isFinite(current) && Number.isFinite(pages) && pages > 0) {
+        return current < pages;
+    }
+
+    if (Number.isFinite(total) && total >= 0) {
+        return loadedCount < total;
+    }
+
+    return data?.hasMore === true;
+};
+
 /**
  * 博客首页 - 文章列表
  * 支持搜索筛选、分类筛选、滚动加载、网格/列表视图切换
@@ -44,9 +60,10 @@ const BlogHome = () => {
                     { signal: controller.signal }
                 );
                 // 严格对接新的 PageData 结构
-                setBlogs(data.records || []);
+                const records = data.records || [];
+                setBlogs(records);
                 setTotal(Number(data.total) || 0);
-                setHasMore(data.hasMore || false);
+                setHasMore(getHasMore(data, records.length));
             } catch (error) {
                 if (error.name === 'CanceledError' || error.code === 'ERR_CANCELED') return;
                 console.error('Failed to fetch blogs:', error);
@@ -78,8 +95,8 @@ const BlogHome = () => {
             );
             if (data && data.records) {
                 setBlogs(prev => [...prev, ...data.records]);
-                setPage(prev => prev + 1);
-                setHasMore(data.hasMore);
+                setHasMore(getHasMore(data, (nextPage - 1) * 10 + data.records.length));
+                setPage(Number(data.current) || nextPage);
             } else {
                 setHasMore(false);
             }
