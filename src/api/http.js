@@ -512,6 +512,12 @@ export function postStream(url, data, { onEvent, ...config } = {}) {
         dedupe: false,
         timeout: 0,
         responseType: 'text',
+        // Spring uses the Accept header to select a handler. Declare SSE
+        // explicitly instead of inheriting the default application/json.
+        headers: {
+            ...config.headers,
+            Accept: 'text/event-stream',
+        },
         onDownloadProgress: (progressEvent) => {
             const responseText = progressEvent.event?.target?.responseText;
             if (typeof responseText !== 'string') return;
