@@ -1,11 +1,9 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
-import { Code2, FileCode2, Heading1, Heading2, ImagePlus, List, ListTodo, Loader2, Minus, PanelLeftClose, PanelLeftOpen, Quote, Table2, Type, Video } from 'lucide-react';
+import { Code2, FileCode2, Heading1, Heading2, ImagePlus, List, ListTodo, Minus, PanelLeftClose, PanelLeftOpen, Quote, Table2, Type, Video } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { upload } from '@api/http';
 import { useToast } from '@/hooks/useToast';
+import BlogImageLibraryModal from './BlogImageLibraryModal';
 
-const MAX_IMAGE_SIZE = 10 * 1024 * 1024;
-const SUPPORTED_IMAGE_TYPES = new Set(['image/png', 'image/jpeg', 'image/webp', 'image/gif']);
 const codeFence = String.fromCharCode(96).repeat(3);
 const blockMarkerPattern = /^(?:#{1,6}\s+|>\s+|- \[[ xX]\]\s+|-\s+)/;
 
@@ -34,10 +32,11 @@ const BlogMarkdownComposer = forwardRef(({ value, onChange, placeholder, disable
     const { t } = useTranslation();
     const toast = useToast();
     const textareaRef = useRef(null);
-    const fileInputRef = useRef(null);
     const valueRef = useRef(value);
     const selectionRef = useRef({ start: 0, end: 0 });
-    const [uploading, setUploading] = useState(false);
+    const librarySelectionRef = useRef({ start: 0, end: 0 });
+    const libraryViewportRef = useRef({ windowY: 0, editorY: 0 });
+    const [isImageLibraryOpen, setIsImageLibraryOpen] = useState(false);
     const [isToolbarExpanded, setIsToolbarExpanded] = useState(false);
 
     useImperativeHandle(forwardedRef, () => textareaRef.current);
@@ -58,7 +57,7 @@ const BlogMarkdownComposer = forwardRef(({ value, onChange, placeholder, disable
         selectionRef.current = { start, end };
         requestAnimationFrame(() => {
             const textarea = textareaRef.current;
-            textarea?.focus();
+            textarea?.focus({ preventScroll: true });
             textarea?.setSelectionRange(start, end);
         });
     };
@@ -139,29 +138,26 @@ const BlogMarkdownComposer = forwardRef(({ value, onChange, placeholder, disable
         rememberSelection();
     };
 
-    const handleImageUpload = async (file) => {
-        if (!file || !SUPPORTED_IMAGE_TYPES.has(file.type)) {
-            toast.warning(t('blog.media.invalidImage'));
-            return;
-        }
-        if (file.size > MAX_IMAGE_SIZE) {
-            toast.warning(t('blog.media.imageTooLarge'));
-            return;
-        }
+    const openImageLibrary = () => {
+        librarySelectionRef.current = { ...selectionRef.current };
+        libraryViewportRef.current = {
+            windowY: window.scrollY,
+            editorY: textareaRef.current?.scrollTop ?? 0,
+        };
+        setIsImageLibraryOpen(true);
+    };
 
-        const insertionSelection = { ...selectionRef.current };
-        setUploading(true);
-        try {
-            const uploaded = await upload('/api/upload/oss?type=photo', file);
-            selectionRef.current = insertionSelection;
-            const alt = imageAltFromName(file.name).replaceAll('[', '').replaceAll(']', '').replace(/\r?\n/g, ' ');
-            insertAtSelection(`\n\n![${alt}](${uploaded.url})\n\n`);
-            toast.success(t('blog.media.imageInserted'));
-        } catch (error) {
-            toast.error(error.message || t('blog.media.imageUploadFailed'));
-        } finally {
-            setUploading(false);
-        }
+    const insertLibraryImage = (image) => {
+        const viewport = libraryViewportRef.current;
+        selectionRef.current = librarySelectionRef.current;
+        const alt = imageAltFromName(image.originalName).replaceAll('[', '').replaceAll(']', '').replace(/\r?\n/g, ' ');
+        insertAtSelection(`\n\n![${alt}](${image.url})\n\n`);
+        setIsImageLibraryOpen(false);
+        toast.success(t('blog.media.imageInserted'));
+        requestAnimationFrame(() => {
+            if (textareaRef.current) textareaRef.current.scrollTop = viewport.editorY;
+            window.scrollTo({ top: viewport.windowY, behavior: 'auto' });
+        });
     };
 
     return (
@@ -206,32 +202,20 @@ const BlogMarkdownComposer = forwardRef(({ value, onChange, placeholder, disable
                         type="button"
                         title={t(`blog.editor.${key}`)}
                         aria-label={t(`blog.editor.${key}`)}
-                        disabled={disabled || uploading || actionDisabled}
+                        disabled={disabled || actionDisabled}
                         onMouseDown={prepareToolbarAction}
-                        onClick={() => key === 'imageGif' ? fileInputRef.current?.click() : insertAtSelection(markdown, cursorBack)}
+                        onClick={() => key === 'imageGif' ? openImageLibrary() : insertAtSelection(markdown, cursorBack)}
                         className={`flex h-8 w-full shrink-0 items-center gap-2 rounded-lg text-slate-500 transition hover:bg-primary/10 hover:text-primary disabled:cursor-not-allowed disabled:opacity-40 ${isToolbarExpanded ? 'justify-start px-2' : 'justify-center'}`}
                     >
-                        {key === 'imageGif' && uploading ? <Loader2 className="h-4 w-4 shrink-0 animate-spin" /> : <Icon className="h-4 w-4 shrink-0" />}
+                        <Icon className="h-4 w-4 shrink-0" />
                         {isToolbarExpanded && <span className="truncate text-xs font-semibold">{t(`blog.editor.${key}`)}</span>}
                     </button>
                 ))}
             </aside>
 
-            <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/png,image/jpeg,image/webp,image/gif"
-                className="hidden"
-                onChange={(event) => {
-                    handleImageUpload(event.target.files?.[0]);
-                    event.target.value = '';
-                }}
-            />
-
             <textarea
                 ref={textareaRef}
                 disabled={disabled}
-                readOnly={uploading}
                 value={value}
                 onChange={(event) => {
                     valueRef.current = event.target.value;
@@ -243,6 +227,12 @@ const BlogMarkdownComposer = forwardRef(({ value, onChange, placeholder, disable
                 onKeyUp={(event) => rememberSelection(event.currentTarget)}
                 placeholder={placeholder}
                 className="mb-20 h-full min-h-[60vh] w-full resize-none border-none bg-transparent text-lg font-medium leading-[1.8] text-slate-700 outline-none placeholder:text-slate-300"
+            />
+
+            <BlogImageLibraryModal
+                isOpen={isImageLibraryOpen}
+                onClose={() => setIsImageLibraryOpen(false)}
+                onInsert={insertLibraryImage}
             />
         </div>
     );

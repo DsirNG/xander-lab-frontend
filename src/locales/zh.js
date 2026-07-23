@@ -67,7 +67,7 @@ export default {
     edit: '编辑',
     preview: '预览',
     noContent: '尚未输入内容',
-    media: { insertImage: '插入图片', dropImage: '拖放或选择图片 / GIF，上传后插入到光标位置', uploadingImage: '正在上传', imageInserted: '图片已插入正文', imageUploadFailed: '图片上传失败，请重试', invalidImage: '请选择图片或 GIF 文件', imageTooLarge: '图片大小不能超过 10MB', altText: '图片说明（可访问性）', addToArticle: '插入正文' },
+    media: { insertImage: '插入图片', dropImage: '拖放或选择图片 / GIF，上传后插入到光标位置', uploadingImage: '正在上传', imageInserted: '图片已插入正文', imageUploadFailed: '图片上传失败，请重试', invalidImage: '请选择图片或 GIF 文件', imageTooLarge: '图片大小不能超过 10MB', altText: '图片说明（可访问性）', addToArticle: '插入正文', libraryTitle: '插入图片', uploadImage: '上传图片', uploadSuccess: '图片已上传到素材库', searchPlaceholder: '搜索图片名称', scopes: { recent: '最近上传', mine: '我的图片', gif: 'GIF' }, emptyTitle: '还没有可用图片', emptyHint: '上传一张图片后会保存在你的素材库中', selectHint: '选择一张图片查看详情', selectedCount: '已选择 {{count}} 张图片', cancel: '取消', insertAtCursor: '插入到当前位置' },
     editor: { toolbar: '写作工具', addBlock: '添加内容块', text: '文本', h1: 'H1', h2: 'H2', todo: '待办', list: '列表', quote: '引用', code: '代码', insertContent: '插入内容', imageGif: '图片 / GIF', video: '视频（即将支持）', divider: '分割线', table: '表格', codeBlock: '代码块', quoteBlock: '引用块' },
     agent: {
       title: '博客智能体', back: '返回博客', headline: '把想法变成可发布的知识博客',
