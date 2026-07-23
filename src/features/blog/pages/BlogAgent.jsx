@@ -36,10 +36,8 @@ const BlogAgent = () => {
       } catch (error) { if (active) toast.error(error.message || t('blog.agent.failed')); }
     };
     load();
-    if (task && !['created', 'running'].includes(task.status)) return () => { active = false; };
-    const timer = setInterval(load, 3000);
-    return () => { active = false; clearInterval(timer); };
-  }, [taskId, task?.status]);
+    return () => { active = false; };
+  }, [taskId]);
 
   const contentBoundary = taskData?.contentBoundary || {};
   const knowledgeGraph = taskData?.knowledgeGraph || {};
