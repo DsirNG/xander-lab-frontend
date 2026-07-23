@@ -498,7 +498,12 @@ export function postStream(url, data, { onEvent, ...config } = {}) {
     const dispatch = (rawEvent) => {
         const lines = rawEvent.split(/\r?\n/);
         const event = lines.find((line) => line.startsWith('event:'))?.slice(6).trim() || 'message';
-        const dataLine = lines.filter((line) => line.startsWith('data:')).map((line) => line.slice(5).trim()).join('\n');
+        const dataLine = lines
+            .filter((line) => line.startsWith('data:'))
+            // SSE removes at most one optional space after the colon. Do not
+            // trim the payload: a streamed token may itself be a space/newline.
+            .map((line) => line.slice(5).replace(/^ /, ''))
+            .join('\n');
         if (!dataLine || !onEvent) return;
         try {
             onEvent({ event, data: JSON.parse(dataLine) });
@@ -527,6 +532,9 @@ export function postStream(url, data, { onEvent, ...config } = {}) {
             buffer = chunks.pop() || '';
             chunks.forEach(dispatch);
         },
+    }).then((response) => {
+        if (buffer) dispatch(buffer);
+        return response;
     });
 }
 
