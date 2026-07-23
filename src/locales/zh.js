@@ -76,9 +76,9 @@ export default {
       inputType: '输入类型', audience: '目标读者', tone: '写作语气', defaultAudience: '对这个主题感兴趣的读者', defaultTone: '清晰、真诚、可操作',
       generate: '调研并写作', running: '正在调研和写作…', waiting: '等待你的输入', ready: '等待审阅', failed: '智能体未能完成这次任务', complete: '文章已生成，可开始审阅',
       workflow: '智能体工作流', guardrail: '个人经历始终标注为作者经历；外部事实必须可追溯，系统绝不会自动公开发布。',
-      stages: { analyze: '确定文章角度', research: '调研与核验', write: '撰写完整文章', review: '发布前审校' },
-      stageDescriptions: { analyze: '识别读者、观点和需要补充的证据。', research: '联网核验文章中的外部事实。', write: '生成完整的 Markdown 知识博客。', review: '检查证据、表达和发布状态。' },
-      article: '生成的文章', toDraft: '进入编辑器', draftCreated: '已创建草稿，现在可以编辑并发布。', sources: '调研来源', noSources: '这篇文章未保留外部来源。', review: '编辑审校', reviewPending: '智能体完成后会显示审校结果。', inputRequired: '请先输入主题或日记。', contentFocus: '内容边界', mustCover: '文章主干', relatedExpansion: '直接扩展', outOfScope: '不主动扩展', knowledgeGraph: '知识关系图谱'
+      stages: { analyze: '确定文章角度', research: '调研与核验', write: '撰写完整文章', illustrate: '生成知识插图', review: '发布前审校' },
+      stageDescriptions: { analyze: '识别读者、观点和需要补充的证据。', research: '联网核验文章中的外部事实。', write: '生成完整的 Markdown 知识博客。', illustrate: '按需生成插图并保存到你的素材库。', review: '检查证据、表达和发布状态。' },
+      article: '生成的文章', toDraft: '进入编辑器', draftCreated: '已创建草稿，现在可以编辑并发布。', sources: '调研来源', noSources: '这篇文章未保留外部来源。', review: '编辑审校', reviewPending: '智能体完成后会显示审校结果。', inputRequired: '请先输入主题或日记。', contentFocus: '内容边界', mustCover: '文章主干', relatedExpansion: '直接扩展', outOfScope: '不主动扩展', knowledgeGraph: '知识关系图谱', illustrations: '知识插图', illustrationStatuses: { running: '正在生成并保存插图。', complete: '插图已生成并插入文章，同时保存到你的素材库。', partial: '部分插图已生成，其余插图可以稍后补充。', failed: '插图生成失败，文章内容仍可正常审阅。', disabled: '尚未配置图片模型，本次已跳过插图。', none: '智能体判断这篇文章不需要额外插图。' }
     }
   },
   common: {
