@@ -6,12 +6,6 @@ import remarkGfm from 'remark-gfm';
 import { ArrowLeft, Bot, BookOpenCheck, ChevronRight, ExternalLink, FileText, GitFork, Layers, Loader2, Search, Send, Sparkles } from 'lucide-react';
 import { blogAgentService } from '../services/blogAgentService';
 import { useToast } from '@/hooks/useToast';
-import CustomSelect from '@/components/common/CustomSelect';
-
-const inputTypeOptions = [
-  { value: 'topic', label: '主题' },
-  { value: 'diary', label: '日记 / 随笔' },
-];
 
 const stageKeys = ['analyze', 'research', 'write', 'review'];
 const asArray = (value) => Array.isArray(value) ? value : [];
@@ -21,9 +15,6 @@ const BlogAgent = () => {
   const navigate = useNavigate();
   const toast = useToast();
   const [input, setInput] = useState('');
-  const [inputType, setInputType] = useState('topic');
-  const [audience, setAudience] = useState(t('blog.agent.defaultAudience'));
-  const [tone, setTone] = useState(t('blog.agent.defaultTone'));
   const [taskData, setTaskData] = useState(null);
   const [isRunning, setIsRunning] = useState(false);
   const [isSavingDraft, setIsSavingDraft] = useState(false);
@@ -50,7 +41,7 @@ const BlogAgent = () => {
     }
     setIsRunning(true);
     try {
-      const created = await blogAgentService.createTask({ input, inputType, audience, tone });
+      const created = await blogAgentService.createTask({ input });
       const completed = await blogAgentService.runTask(created.id);
       setTaskData(completed);
       toast.success(t('blog.agent.complete'));
@@ -106,12 +97,6 @@ const BlogAgent = () => {
           <label className="mb-2 block text-sm font-bold text-slate-700">{t('blog.agent.inputLabel')}</label>
           <textarea value={input} onChange={(event) => setInput(event.target.value)} disabled={isRunning}
             placeholder={t('blog.agent.inputPlaceholder')} className="min-h-64 w-full resize-y rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm leading-7 outline-none transition placeholder:text-slate-400 focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/10 disabled:opacity-60" />
-
-          <div className="mt-5 grid gap-4 sm:grid-cols-3">
-            <div><label className="mb-2 block text-xs font-bold text-slate-500">{t('blog.agent.inputType')}</label><CustomSelect options={inputTypeOptions} value={inputType} onChange={setInputType} /></div>
-            <label className="block"><span className="mb-2 block text-xs font-bold text-slate-500">{t('blog.agent.audience')}</span><input value={audience} onChange={(event) => setAudience(event.target.value)} disabled={isRunning} className="w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm outline-none focus:border-primary" /></label>
-            <label className="block"><span className="mb-2 block text-xs font-bold text-slate-500">{t('blog.agent.tone')}</span><input value={tone} onChange={(event) => setTone(event.target.value)} disabled={isRunning} className="w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm outline-none focus:border-primary" /></label>
-          </div>
 
           <button onClick={handleGenerate} disabled={isRunning} className="mt-6 inline-flex items-center gap-2 rounded-xl bg-slate-950 px-5 py-3 text-sm font-black text-white shadow-lg transition hover:bg-primary disabled:cursor-wait disabled:opacity-60">
             {isRunning ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
