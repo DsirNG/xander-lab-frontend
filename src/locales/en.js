@@ -68,6 +68,7 @@ export default {
     preview: 'Preview',
     noContent: 'No content yet',
     media: { insertImage: 'Insert image', dropImage: 'Drop or choose an image / GIF, then insert it at the cursor.', uploadingImage: 'Uploading', imageInserted: 'Image inserted into the article', imageUploadFailed: 'Could not upload the image. Try again.', invalidImage: 'Choose an image or GIF file', imageTooLarge: 'Images must be 10MB or smaller', altText: 'Image description', addToArticle: 'Insert into article' },
+    editor: { addBlock: 'Add block', text: 'Text', h1: 'H1', h2: 'H2', todo: 'To-do', list: 'List', quote: 'Quote', code: 'Code', insertContent: 'Insert content', imageGif: 'Image / GIF', video: 'Video (coming soon)', divider: 'Divider', table: 'Table', codeBlock: 'Code block', quoteBlock: 'Quote block' },
     agent: {
       title: 'Blog Agent', back: 'Back to blog', headline: 'Turn an idea into a publishable article',
       description: 'Give the agent a topic or a diary entry. It researches, writes, and checks a complete knowledge article with traceable sources.',

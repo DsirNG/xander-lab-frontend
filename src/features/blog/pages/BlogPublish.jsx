@@ -1,14 +1,14 @@
-import React, { useCallback, useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
     Send, Save, Tag as TagIcon,
-    ChevronLeft, Layout, Type, AlignLeft, Hash, Loader2,
+    ChevronLeft, Layout, Type, AlignLeft, Loader2,
     Eye, Edit3, Info, Settings, X
 } from 'lucide-react';
 import { blogService } from '../services/blogService';
 import BlogMarkdown from '../components/BlogMarkdown';
-import BlogMediaInsert from '../components/BlogMediaInsert';
+import BlogMarkdownComposer from '../components/BlogMarkdownComposer';
 import { useToast } from '@/hooks/useToast';
 import useIsMobile from '@hooks/useIsMobile';
 import CustomSelect from '@/components/common/CustomSelect';
@@ -140,21 +140,6 @@ const BlogPublish = () => {
         }
     };
 
-    const handleInsertMarkdown = useCallback((markdown) => {
-        const textarea = contentTextareaRef.current;
-        const start = textarea?.selectionStart ?? formData.content.length;
-        const end = textarea?.selectionEnd ?? start;
-        setFormData((current) => ({
-            ...current,
-            content: `${current.content.slice(0, start)}${markdown}${current.content.slice(end)}`,
-        }));
-        requestAnimationFrame(() => {
-            textarea?.focus();
-            const cursor = start + markdown.length;
-            textarea?.setSelectionRange(cursor, cursor);
-        });
-    }, [formData.content]);
-
     return (
         <div className="h-dvh bg-slate-50 flex flex-col overflow-hidden font-sans">
             {/* 顶部导航栏 / Header */}
@@ -249,17 +234,13 @@ const BlogPublish = () => {
 
                             {/* 内容区 */}
                             <div className={`flex-1 relative group ${isPreview ? 'hidden' : 'flex'}`}>
-                                <div className="absolute -left-10 top-2 text-slate-200 pointer-events-none transition-colors group-focus-within:text-primary">
-                                    <Hash className="w-6 h-6" />
-                                </div>
                                 <div className="w-full">
-                                <BlogMediaInsert onInsert={handleInsertMarkdown} disabled={loading} />
-                                <textarea
+                                <BlogMarkdownComposer
                                     ref={contentTextareaRef}
                                     value={formData.content}
-                                    onChange={e => setFormData({ ...formData, content: e.target.value })}
+                                    onChange={(content) => setFormData((current) => ({ ...current, content }))}
                                     placeholder={t('blog.contentPlaceholder')}
-                                    className="w-full h-full min-h-[60vh] bg-transparent border-none outline-none text-lg leading-[1.8] text-slate-700  placeholder:text-slate-300 resize-none font-medium mb-20"
+                                    disabled={loading}
                                 />
                                 </div>
                             </div>
