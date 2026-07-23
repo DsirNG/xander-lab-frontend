@@ -1,20 +1,24 @@
 import React, { startTransition, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeft, Bot, BookOpenCheck, ChevronRight, ExternalLink, FileText, GitFork, ImageIcon, Layers, Loader2, Search, Send, Sparkles } from 'lucide-react';
+import { ArrowLeft, Bot, Loader2, Plus, Send, Sparkles } from 'lucide-react';
 import { blogAgentService } from '../services/blogAgentService';
 import { useToast } from '@/hooks/useToast';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
-import BlogMarkdown from '../components/BlogMarkdown';
+import useIsMobile from '@/hooks/useIsMobile';
+import AgentChatMessage from '../components/agent/AgentChatMessage';
+import AgentProcessPanel from '../components/agent/AgentProcessPanel';
+import AgentResultCard from '../components/agent/AgentResultCard';
+import AgentPreviewPanel from '../components/agent/AgentPreviewPanel';
 
-const stageKeys = ['analyze', 'research', 'write', 'illustrate', 'review'];
-const asArray = (value) => Array.isArray(value) ? value : [];
+const RESULT_MESSAGE_ID = 'result';
 
 const BlogAgent = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { taskId } = useParams();
   const toast = useToast();
+  const isMobile = useIsMobile(1024);
   const [input, setInput] = useState('');
   const [taskData, setTaskData] = useState(null);
   const [isRunning, setIsRunning] = useState(false);
@@ -22,60 +26,135 @@ const BlogAgent = () => {
   const [isPublishing, setIsPublishing] = useState(false);
   const [isTaskLoading, setIsTaskLoading] = useState(Boolean(taskId));
   const [streamText, setStreamText] = useState('');
+  const [startedAt, setStartedAt] = useState(null);
+  const [endedAt, setEndedAt] = useState(null);
+  const [pendingUserInput, setPendingUserInput] = useState('');
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [selectedResultId, setSelectedResultId] = useState(null);
   const streamBufferRef = useRef('');
   const streamErrorRef = useRef(null);
   const streamFrameRef = useRef(null);
+  const chatEndRef = useRef(null);
+  const isRunningRef = useRef(false);
+  isRunningRef.current = isRunning;
   const task = taskData?.task;
-
-  useEffect(() => {
-    if (task?.input) setInput(task.input);
-  }, [task?.id, task?.input]);
+  const hasFinishedTurn = Boolean(task) && !isRunning && (task.status === 'ready' || task.status === 'failed');
+  const inputLocked = isRunning || hasFinishedTurn;
 
   useEffect(() => {
     if (!taskId) {
       setIsTaskLoading(false);
+      setTaskData(null);
+      setPendingUserInput('');
+      setStreamText('');
+      setStartedAt(null);
+      setEndedAt(null);
+      setPreviewOpen(false);
+      setSelectedResultId(null);
       return undefined;
     }
+
+    // 本页正在跑流时由 stream 更新状态，不额外 getTask
+    if (isRunningRef.current) {
+      setIsTaskLoading(false);
+      return undefined;
+    }
+
     setIsTaskLoading(true);
     let active = true;
     const load = async () => {
       try {
         const data = await blogAgentService.getTask(taskId, { _silent: true });
-        if (active) setTaskData(data);
-      } catch (error) { if (active) toast.error(error.message || t('blog.agent.failed')); }
-      finally { if (active) setIsTaskLoading(false); }
+        if (!active) return;
+        setTaskData(data);
+        setPendingUserInput(data?.task?.input || '');
+        if (data?.task?.status === 'ready') {
+          setSelectedResultId(RESULT_MESSAGE_ID);
+          setPreviewOpen(true);
+        }
+      } catch (error) {
+        if (active) toast.error(error.message || t('blog.agent.failed'));
+      } finally {
+        if (active) setIsTaskLoading(false);
+      }
     };
     load();
     return () => { active = false; };
+    // 仅在 taskId 变化时恢复；本地流式跑完不重复拉取，避免闪全屏 loading
   }, [taskId, t, toast]);
 
-  const contentBoundary = taskData?.contentBoundary || {};
-  const knowledgeGraph = taskData?.knowledgeGraph || {};
-  const graphNodes = asArray(knowledgeGraph.nodes);
-  const graphEdges = asArray(knowledgeGraph.edges);
-  const illustrations = asArray(taskData?.illustrations);
-  const graphLabels = useMemo(() => new Map(graphNodes.map((node) => [node.id, node.label || node.id])), [graphNodes]);
-  const stageIndex = Math.max(0, stageKeys.indexOf(task?.stage));
   const statusText = useMemo(() => {
     if (!task) return t('blog.agent.waiting');
     if (task.status === 'failed') return task.errorMessage || t('blog.agent.failed');
     if (task.status === 'ready') return t('blog.agent.ready');
-    if (task.status === 'running') return t('blog.agent.running');
+    if (task.status === 'running' || isRunning) return t('blog.agent.running');
     return t('blog.agent.waiting');
-  }, [task, t]);
+  }, [task, isRunning, t]);
+
+  const messages = useMemo(() => {
+    const list = [];
+    const userContent = pendingUserInput || task?.input;
+    if (userContent) {
+      list.push({ id: 'user', role: 'user', content: userContent });
+    }
+
+    if (isRunning || task) {
+      const processStatus = isRunning
+        ? 'running'
+        : task?.status === 'failed'
+          ? 'failed'
+          : task?.status === 'ready'
+            ? 'ready'
+            : 'running';
+      list.push({
+        id: 'process',
+        role: 'assistant',
+        kind: 'process',
+        status: processStatus,
+        stage: task?.stage,
+        streamText,
+        startedAt,
+        endedAt,
+        errorMessage: task?.errorMessage,
+      });
+    }
+
+    if (task?.status === 'ready' && (task.title || task.content)) {
+      list.push({
+        id: RESULT_MESSAGE_ID,
+        role: 'assistant',
+        kind: 'result',
+        title: task.title,
+        summary: task.summary,
+        taskId: task.id,
+      });
+    }
+
+    return list;
+  }, [pendingUserInput, task, isRunning, streamText, startedAt, endedAt]);
+
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+  }, [messages.length, streamText, isRunning]);
 
   const handleGenerate = async () => {
     if (!input.trim()) {
       toast.warning(t('blog.agent.inputRequired'));
       return;
     }
+    const submitted = input.trim();
     setIsRunning(true);
     setTaskData(null);
     setStreamText('');
+    setPendingUserInput(submitted);
+    setStartedAt(Date.now());
+    setEndedAt(null);
+    setPreviewOpen(false);
+    setSelectedResultId(null);
     streamBufferRef.current = '';
     streamErrorRef.current = null;
     try {
-      const created = await blogAgentService.createTask({ input });
+      const created = await blogAgentService.createTask({ input: submitted });
       navigate(`/blog/agent/${created.id}`, { replace: true });
       await blogAgentService.runTaskStream(created.id, ({ event, data }) => {
         if (event === 'delta') {
@@ -95,8 +174,13 @@ const BlogAgent = () => {
       if (streamFrameRef.current) cancelAnimationFrame(streamFrameRef.current);
       if (streamBufferRef.current) setStreamText(streamBufferRef.current);
       if (streamErrorRef.current) throw new Error(streamErrorRef.current);
+      setEndedAt(Date.now());
+      setSelectedResultId(RESULT_MESSAGE_ID);
+      setPreviewOpen(true);
+      setInput('');
       toast.success(t('blog.agent.complete'));
     } catch (error) {
+      setEndedAt(Date.now());
       toast.error(error.message || t('blog.agent.failed'));
     } finally {
       setIsRunning(false);
@@ -110,8 +194,11 @@ const BlogAgent = () => {
       const post = await blogAgentService.publishTask(task.id);
       setTaskData((current) => ({ ...current, task: { ...current.task, publishedPostId: post.id } }));
       toast.success(t('blog.publishSuccess'));
-    } catch (error) { toast.error(error.message || t('blog.publishError')); }
-    finally { setIsPublishing(false); }
+    } catch (error) {
+      toast.error(error.message || t('blog.publishError'));
+    } finally {
+      setIsPublishing(false);
+    }
   };
 
   const handleCreateDraft = async () => {
@@ -134,62 +221,174 @@ const BlogAgent = () => {
     }
   };
 
-  return (
-    <div className="min-h-dvh bg-slate-50 text-slate-900">
+  const handleNewTask = () => {
+    setInput('');
+    setTaskData(null);
+    setPendingUserInput('');
+    setStreamText('');
+    setStartedAt(null);
+    setEndedAt(null);
+    setPreviewOpen(false);
+    setSelectedResultId(null);
+    navigate('/blog/agent', { replace: true });
+  };
 
-      <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-slate-200 bg-white/95 px-4 backdrop-blur sm:px-8">
-        <button onClick={() => navigate('/blog/')} className="flex items-center gap-2 rounded-xl px-2 py-2 text-sm font-semibold text-slate-500 transition hover:bg-slate-100 hover:text-slate-950">
-          <ArrowLeft className="h-4 w-4" /> {t('blog.agent.back')}
+  const handleSelectResult = () => {
+    setSelectedResultId(RESULT_MESSAGE_ID);
+    setPreviewOpen(true);
+  };
+
+  const showPreview = previewOpen && selectedResultId === RESULT_MESSAGE_ID && Boolean(task);
+  const previewPanel = (
+    <AgentPreviewPanel
+      taskData={taskData}
+      statusText={statusText}
+      isPublishing={isPublishing}
+      isSavingDraft={isSavingDraft}
+      onPublish={handlePublish}
+      onCreateDraft={handleCreateDraft}
+      onViewPublished={() => task?.publishedPostId && navigate(`/blog/${task.publishedPostId}`)}
+      onClose={() => setPreviewOpen(false)}
+    />
+  );
+
+  return (
+    <div className="flex h-dvh flex-col bg-slate-50 text-slate-900">
+      <header className="sticky top-0 z-20 flex h-14 shrink-0 items-center justify-between border-b border-slate-200 bg-white/95 px-4 backdrop-blur sm:px-6">
+        <button
+          type="button"
+          onClick={() => navigate('/blog/')}
+          className="flex items-center gap-2 rounded-xl px-2 py-2 text-sm font-semibold text-slate-500 transition hover:bg-slate-100 hover:text-slate-950"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          {t('blog.agent.back')}
         </button>
         <div className="flex items-center gap-2 text-sm font-black tracking-tight">
-          <span className="grid h-8 w-8 place-items-center rounded-lg bg-primary text-white"><Bot className="h-4 w-4" /></span>
+          <span className="grid h-8 w-8 place-items-center rounded-lg bg-primary text-white">
+            <Bot className="h-4 w-4" />
+          </span>
           {t('blog.agent.title')}
         </div>
+        <button
+          type="button"
+          onClick={handleNewTask}
+          className="inline-flex items-center gap-1.5 rounded-xl px-2 py-2 text-sm font-semibold text-slate-500 transition hover:bg-slate-100 hover:text-slate-950"
+        >
+          <Plus className="h-4 w-4" />
+          <span className="hidden sm:inline">{t('blog.agent.newTask')}</span>
+        </button>
       </header>
-      {isTaskLoading ? <LoadingSpinner fullScreen text="正在恢复智能体任务…" /> : <>
-        <main className="mx-auto grid max-w-7xl gap-5 p-4 sm:p-8 xl:grid-cols-[minmax(0,1fr)_minmax(380px,0.9fr)]">
-          <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-8">
-            <div className="mb-7 flex items-start gap-4">
-              <div className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-primary/10 text-primary"><Sparkles className="h-5 w-5" /></div>
-              <div>
-                <h1 className="text-2xl font-black tracking-tight">{t('blog.agent.headline')}</h1>
-                <p className="mt-1 max-w-2xl text-sm leading-6 text-slate-500">{t('blog.agent.description')}</p>
-              </div>
+
+      {isTaskLoading ? (
+        <LoadingSpinner fullScreen text={t('blog.agent.restoring')} />
+      ) : (
+        <div className="relative flex min-h-0 flex-1 overflow-hidden">
+          <section className={`flex min-h-0 min-w-0 flex-1 flex-col ${showPreview && !isMobile ? 'lg:max-w-[48%]' : ''}`}>
+            <div className="min-h-0 flex-1 overflow-y-auto px-4 py-5 sm:px-6">
+              {messages.length === 0 ? (
+                <div className="mx-auto flex max-w-xl flex-col items-start gap-4 pt-8 sm:pt-16">
+                  <div className="grid h-12 w-12 place-items-center rounded-2xl bg-primary/10 text-primary">
+                    <Sparkles className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <h1 className="text-2xl font-black tracking-tight">{t('blog.agent.headline')}</h1>
+                    <p className="mt-2 text-sm leading-6 text-slate-500">{t('blog.agent.description')}</p>
+                  </div>
+                </div>
+              ) : (
+                <div className="mx-auto flex max-w-2xl flex-col gap-4">
+                  {messages.map((message) => {
+                    if (message.role === 'user') {
+                      return <AgentChatMessage key={message.id} content={message.content} />;
+                    }
+                    if (message.kind === 'process') {
+                      return (
+                        <AgentProcessPanel
+                          key={message.id}
+                          status={message.status}
+                          stage={message.stage}
+                          streamText={message.streamText}
+                          startedAt={message.startedAt}
+                          endedAt={message.endedAt}
+                          errorMessage={message.errorMessage}
+                        />
+                      );
+                    }
+                    if (message.kind === 'result') {
+                      return (
+                        <AgentResultCard
+                          key={message.id}
+                          title={message.title}
+                          summary={message.summary}
+                          selected={selectedResultId === message.id && previewOpen}
+                          onSelect={handleSelectResult}
+                        />
+                      );
+                    }
+                    return null;
+                  })}
+                  <div ref={chatEndRef} />
+                </div>
+              )}
             </div>
 
-            <label className="mb-2 block text-sm font-bold text-slate-700">{t('blog.agent.inputLabel')}</label>
-            <textarea value={input} onChange={(event) => setInput(event.target.value)} disabled={isRunning}
-                      placeholder={t('blog.agent.inputPlaceholder')} className="min-h-64 w-full resize-y rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm leading-7 outline-none transition placeholder:text-slate-400 focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/10 disabled:opacity-60" />
-
-            <button onClick={handleGenerate} disabled={isRunning} className="mt-6 inline-flex items-center gap-2 rounded-xl bg-slate-950 px-5 py-3 text-sm font-black text-white shadow-lg transition hover:bg-primary disabled:cursor-wait disabled:opacity-60">
-              {isRunning ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-              {isRunning ? t('blog.agent.running') : t('blog.agent.generate')}
-            </button>
+            <div className="shrink-0 border-t border-slate-200 bg-white px-4 py-3 sm:px-6">
+              <div className="mx-auto max-w-2xl">
+                {hasFinishedTurn && (
+                  <p className="mb-2 text-xs text-slate-500">{t('blog.agent.singleTurnHint')}</p>
+                )}
+                <div className="flex items-end gap-2 rounded-2xl border border-slate-200 bg-slate-50 p-2 focus-within:border-primary focus-within:bg-white focus-within:ring-4 focus-within:ring-primary/10">
+                  <textarea
+                    value={input}
+                    onChange={(event) => setInput(event.target.value)}
+                    disabled={inputLocked}
+                    rows={2}
+                    placeholder={inputLocked ? t('blog.agent.inputLockedPlaceholder') : t('blog.agent.inputPlaceholder')}
+                    onKeyDown={(event) => {
+                      if (event.key === 'Enter' && !event.shiftKey) {
+                        event.preventDefault();
+                        if (!inputLocked) handleGenerate();
+                      }
+                    }}
+                    className="max-h-40 min-h-[52px] flex-1 resize-none bg-transparent px-2 py-2 text-sm leading-6 outline-none placeholder:text-slate-400 disabled:opacity-60"
+                  />
+                  <button
+                    type="button"
+                    onClick={hasFinishedTurn ? handleNewTask : handleGenerate}
+                    disabled={isRunning || (!hasFinishedTurn && !input.trim())}
+                    className="inline-flex h-10 shrink-0 items-center gap-2 rounded-xl bg-slate-950 px-4 text-sm font-black text-white transition hover:bg-primary disabled:cursor-wait disabled:opacity-60"
+                  >
+                    {isRunning ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : hasFinishedTurn ? (
+                      <Plus className="h-4 w-4" />
+                    ) : (
+                      <Send className="h-4 w-4" />
+                    )}
+                    {isRunning
+                      ? t('blog.agent.running')
+                      : hasFinishedTurn
+                        ? t('blog.agent.newTask')
+                        : t('blog.agent.generate')}
+                  </button>
+                </div>
+              </div>
+            </div>
           </section>
 
-          <aside className="rounded-3xl border border-slate-200 bg-slate-950 p-6 text-white shadow-xl shadow-slate-950/10">
-            <div className="flex items-center justify-between"><h2 className="font-black">{t('blog.agent.workflow')}</h2><span className="rounded-full bg-white/10 px-3 py-1 text-xs text-slate-300">{statusText}</span></div>
-            <ol className="mt-6 space-y-4">
-              {stageKeys.map((stage, index) => <li key={stage} className="flex gap-3"><span className={`grid h-6 w-6 shrink-0 place-items-center rounded-full text-xs font-black ${index <= stageIndex && task ? 'bg-primary text-white' : 'bg-white/10 text-slate-400'}`}>{index < stageIndex ? '✓' : index + 1}</span><div><p className="text-sm font-bold">{t(`blog.agent.stages.${stage}`)}</p><p className="mt-0.5 text-xs leading-5 text-slate-400">{t(`blog.agent.stageDescriptions.${stage}`)}</p></div></li>)}
-            </ol>
-            <p className="mt-7 border-t border-white/10 pt-5 text-xs leading-5 text-slate-400">{t('blog.agent.guardrail')}</p>
-          </aside>
+          {showPreview && !isMobile && (
+            <aside className="hidden min-h-0 w-[52%] border-l border-slate-200 lg:block">
+              {previewPanel}
+            </aside>
+          )}
 
-          {isRunning && <section className="xl:col-span-2 overflow-hidden rounded-3xl border border-slate-800 bg-slate-950 shadow-sm"><div className="flex items-center gap-2 border-b border-white/10 px-5 py-3 text-sm font-bold text-white"><Loader2 className="h-4 w-4 animate-spin text-primary" />{t('blog.agent.running')}</div><pre className="max-h-96 overflow-auto whitespace-pre-wrap p-5 text-xs leading-6 text-slate-200">{streamText || '…'}</pre></section>}
-
-          {task && <section className="xl:col-span-2 grid gap-5 xl:grid-cols-[minmax(0,1fr)_320px]">
-            <article className="min-w-0 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-8">
-              <div className="mb-6 flex flex-wrap items-start justify-between gap-4 border-b border-slate-100 pb-5"><div><span className="text-xs font-bold uppercase tracking-widest text-primary">{t('blog.agent.article')}</span><h2 className="mt-1 text-2xl font-black tracking-tight">{task.title}</h2><p className="mt-2 text-sm leading-6 text-slate-500">{task.summary}</p></div>{task.publishedPostId ? <button onClick={() => navigate(`/blog/${task.publishedPostId}`)} className="inline-flex items-center gap-2 rounded-xl bg-slate-950 px-4 py-2.5 text-sm font-black text-white">查看文章</button> : task.status === 'ready' && <div className="flex gap-2"><button onClick={handleCreateDraft} disabled={isSavingDraft} className="inline-flex items-center gap-2 rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-black disabled:opacity-60">{isSavingDraft ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileText className="h-4 w-4" />}{t('blog.agent.toDraft')}</button><button onClick={handlePublish} disabled={isPublishing} className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-black text-white disabled:opacity-60">{isPublishing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}确认发布</button></div>}</div>
-              {task.content ? <BlogMarkdown content={task.content} className="prose-headings:font-black" /> : <p className="text-sm text-slate-500">{statusText}</p>}
-            </article>
-            <aside className="space-y-5">
-              <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm"><div className="flex items-center gap-2 text-sm font-black"><Layers className="h-4 w-4 text-primary" />{t('blog.agent.contentFocus')}</div><div className="mt-4 space-y-4"><div><p className="text-xs font-bold text-slate-500">{t('blog.agent.mustCover')}</p><div className="mt-2 flex flex-wrap gap-1.5">{asArray(contentBoundary.mustCover).map((item) => <span key={item} className="rounded-lg bg-primary/10 px-2 py-1 text-xs font-semibold text-primary">{item}</span>)}</div></div>{asArray(contentBoundary.relatedExpansion).length > 0 && <div><p className="text-xs font-bold text-slate-500">{t('blog.agent.relatedExpansion')}</p><p className="mt-1 text-xs leading-5 text-slate-600">{asArray(contentBoundary.relatedExpansion).join('、')}</p></div>}{asArray(contentBoundary.outOfScope).length > 0 && <div><p className="text-xs font-bold text-slate-500">{t('blog.agent.outOfScope')}</p><p className="mt-1 text-xs leading-5 text-slate-500">{asArray(contentBoundary.outOfScope).join('、')}</p></div>}</div></section>
-              {knowledgeGraph.enabled && graphNodes.length > 0 && <section className="rounded-3xl border border-indigo-100 bg-indigo-50/60 p-5"><div className="flex items-center gap-2 text-sm font-black text-indigo-950"><GitFork className="h-4 w-4 text-indigo-600" />{t('blog.agent.knowledgeGraph')}</div><p className="mt-2 text-xs leading-5 text-indigo-900/70">{knowledgeGraph.reason}</p><div className="mt-4 flex flex-wrap gap-1.5">{graphNodes.map((node) => <span key={node.id} title={node.description} className="rounded-lg border border-indigo-200 bg-white px-2 py-1 text-xs font-semibold text-indigo-900">{node.label}</span>)}</div><div className="mt-4 space-y-2">{graphEdges.map((edge, index) => <div key={`${edge.from}-${edge.to}-${index}`} className="rounded-lg bg-white/80 px-2.5 py-2 text-xs leading-5 text-indigo-950"><strong>{graphLabels.get(edge.from) || edge.from}</strong><span className="mx-1.5 text-indigo-400">→</span><span>{edge.relation}</span><span className="mx-1.5 text-indigo-400">→</span><strong>{graphLabels.get(edge.to) || edge.to}</strong></div>)}</div></section>}
-              {(illustrations.length > 0 || task.illustrationStatus) && <section className="rounded-3xl border border-cyan-100 bg-cyan-50/60 p-5"><div className="flex items-center gap-2 text-sm font-black text-cyan-950"><ImageIcon className="h-4 w-4 text-cyan-600" />{t('blog.agent.illustrations')}</div><p className="mt-2 text-xs leading-5 text-cyan-900/70">{t(`blog.agent.illustrationStatuses.${task.illustrationStatus || 'none'}`)}</p>{illustrations.length > 0 && <div className="mt-4 grid grid-cols-2 gap-2">{illustrations.map((image) => <img key={image.id} src={image.url} alt={image.originalName} className="aspect-[4/3] w-full rounded-xl bg-white object-cover" loading="lazy" />)}</div>}{task.illustrationError && <p className="mt-3 text-xs leading-5 text-amber-700">{task.illustrationError}</p>}</section>}
-              <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm"><div className="flex items-center gap-2 text-sm font-black"><Search className="h-4 w-4 text-primary" />{t('blog.agent.sources')}</div><div className="mt-4 space-y-4">{taskData.sources?.length ? taskData.sources.map((source) => <a key={source.id} href={source.url} target="_blank" rel="noreferrer" className="block rounded-xl bg-slate-50 p-3 transition hover:bg-primary/5"><p className="line-clamp-2 text-sm font-bold text-slate-800">{source.title}</p><p className="mt-1 text-xs text-slate-500">{source.publisher || source.reliability}</p><ExternalLink className="mt-2 h-3.5 w-3.5 text-primary" /></a>) : <p className="text-sm leading-6 text-slate-500">{t('blog.agent.noSources')}</p>}</div></section><section className="rounded-3xl border border-amber-200 bg-amber-50 p-5"><div className="flex items-center gap-2 text-sm font-black text-amber-900"><BookOpenCheck className="h-4 w-4" />{t('blog.agent.review')}</div><p className="mt-3 text-sm leading-6 text-amber-900/80">{task.review || t('blog.agent.reviewPending')}</p></section></aside>
-          </section>}
-        </main>
-      </>}
+          {showPreview && isMobile && (
+            <div className="absolute inset-0 z-30 bg-white">
+              {previewPanel}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };

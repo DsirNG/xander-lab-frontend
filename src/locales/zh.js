@@ -78,7 +78,8 @@ export default {
       workflow: '智能体工作流', guardrail: '个人经历始终标注为作者经历；外部事实必须可追溯，系统绝不会自动公开发布。',
       stages: { analyze: '确定文章角度', research: '调研与核验', write: '撰写完整文章', illustrate: '生成知识插图', review: '发布前审校' },
       stageDescriptions: { analyze: '识别读者、观点和需要补充的证据。', research: '联网核验文章中的外部事实。', write: '生成完整的 Markdown 知识博客。', illustrate: '按需生成插图并保存到你的素材库。', review: '检查证据、表达和发布状态。' },
-      article: '生成的文章', toDraft: '进入编辑器', draftCreated: '已创建草稿，现在可以编辑并发布。', sources: '调研来源', noSources: '这篇文章未保留外部来源。', review: '编辑审校', reviewPending: '智能体完成后会显示审校结果。', inputRequired: '请先输入主题或日记。', contentFocus: '内容边界', mustCover: '文章主干', relatedExpansion: '直接扩展', outOfScope: '不主动扩展', knowledgeGraph: '知识关系图谱', illustrations: '知识插图', illustrationStatuses: { running: '正在生成并保存插图。', complete: '插图已生成并插入文章，同时保存到你的素材库。', partial: '部分插图已生成，其余插图可以稍后补充。', failed: '插图生成失败，文章内容仍可正常审阅。', disabled: '尚未配置图片模型，本次已跳过插图。', none: '智能体判断这篇文章不需要额外插图。' }
+      article: '生成的文章', toDraft: '进入编辑器', draftCreated: '已创建草稿，现在可以编辑并发布。', sources: '调研来源', noSources: '这篇文章未保留外部来源。', review: '编辑审校', reviewPending: '智能体完成后会显示审校结果。', inputRequired: '请先输入主题或日记。', contentFocus: '内容边界', mustCover: '文章主干', relatedExpansion: '直接扩展', outOfScope: '不主动扩展', knowledgeGraph: '知识关系图谱', illustrations: '知识插图', illustrationStatuses: { running: '正在生成并保存插图。', complete: '插图已生成并插入文章，同时保存到你的素材库。', partial: '部分插图已生成，其余插图可以稍后补充。', failed: '插图生成失败，文章内容仍可正常审阅。', disabled: '尚未配置图片模型，本次已跳过插图。', none: '智能体判断这篇文章不需要额外插图。' },
+      processing: '处理中 {{duration}}', processed: '已处理 {{duration}}', processedDone: '已处理', processFailed: '处理失败', openPreview: '点击预览文章', previewEmpty: '选择左侧生成的博客以预览', untitled: '未命名文章', newTask: '新任务', restoring: '正在恢复智能体任务…', singleTurnHint: '本轮已完成。如需再写一篇，请开始新任务。', inputLockedPlaceholder: '本轮已结束，请开始新任务', confirmPublish: '确认发布', viewArticle: '查看文章', showMeta: '显示调研与审校信息', hideMeta: '收起调研与审校信息'
     }
   },
   common: {
