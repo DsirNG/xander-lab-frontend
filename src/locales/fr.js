@@ -48,6 +48,7 @@ export default {
     publishTitle: 'Publier un nouvel article',
     publishSuccess: 'Article publié avec succès',
     publishError: 'Échec de la publication, veuillez réessayer',
+    publishStatusUnknown: 'La publication est encore en cours de confirmation. Le brouillon est conservé ; ne soumettez pas à nouveau.',
     titleLabel: 'Titre de l\'article',
     titlePlaceholder: 'Entrez un titre accrocheur...',
     categoryPlaceholder: 'Sélectionner une catégorie',

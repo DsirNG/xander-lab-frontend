@@ -48,6 +48,7 @@ export default {
     publishTitle: 'Publish New Article',
     publishSuccess: 'Blog published successfully',
     publishError: 'Failed to publish, please try again',
+    publishStatusUnknown: 'Publication is still being confirmed. Your draft was kept; please do not submit again.',
     titleLabel: 'Post Title',
     titlePlaceholder: 'Enter a compelling title...',
     categoryPlaceholder: 'Select Category',

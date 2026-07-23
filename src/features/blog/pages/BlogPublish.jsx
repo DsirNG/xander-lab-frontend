@@ -15,6 +15,10 @@ import CustomSelect from '@/components/common/CustomSelect';
 import CreatableMultiSelect from '@/components/common/CreatableMultiSelect';
 
 const DRAFT_STORAGE_KEY = 'xander-lab:blog-publish-draft';
+const PUBLISH_REQUEST_STORAGE_KEY = 'xander-lab:blog-publish-request';
+
+const createPublishRequestId = () => globalThis.crypto?.randomUUID?.()
+    || `publish-${Date.now()}-${Math.random().toString(36).slice(2)}`;
 
 /**
  * 博客发布页面
@@ -93,13 +97,34 @@ const BlogPublish = () => {
         }
 
         setLoading(true);
+        const requestId = localStorage.getItem(PUBLISH_REQUEST_STORAGE_KEY) || createPublishRequestId();
+        localStorage.setItem(PUBLISH_REQUEST_STORAGE_KEY, requestId);
         try {
-            await blogService.publishBlog(formData);
+            await blogService.publishBlog(formData, { headers: { 'Idempotency-Key': requestId }, timeout: 0 });
             localStorage.removeItem(DRAFT_STORAGE_KEY);
+            localStorage.removeItem(PUBLISH_REQUEST_STORAGE_KEY);
             toast.success(t('blog.publishSuccess'));
             navigate('/blog/');
         } catch (err) {
-            toast.error(err.message || t('blog.publishError'));
+            const isUncertain = err.code === 'ECONNABORTED' || !err.response;
+            if (isUncertain) {
+                for (let attempt = 0; attempt < 5; attempt += 1) {
+                    if (attempt) await new Promise((resolve) => setTimeout(resolve, 1000));
+                    try {
+                        const status = await blogService.getPublishStatus(requestId, { timeout: 5000, _silent: true, dedupe: false });
+                        if (status.status === 'published') {
+                            localStorage.removeItem(DRAFT_STORAGE_KEY);
+                            localStorage.removeItem(PUBLISH_REQUEST_STORAGE_KEY);
+                            toast.success(t('blog.publishSuccess'));
+                            navigate('/blog/');
+                            return;
+                        }
+                    } catch { /* keep checking until the confirmation window closes */ }
+                }
+                toast.warning(t('blog.publishStatusUnknown'));
+            } else {
+                toast.error(err.message || t('blog.publishError'));
+            }
         } finally {
             setLoading(false);
         }

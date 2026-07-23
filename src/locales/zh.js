@@ -48,6 +48,7 @@ export default {
     publishTitle: '发布新文章',
     publishSuccess: '博客已成功发布',
     publishError: '发布失败，请重试',
+    publishStatusUnknown: '发布状态仍在确认中，草稿已保留，请勿重复提交',
     titleLabel: '文章标题',
     titlePlaceholder: '输入引人入胜的标题...',
     categoryPlaceholder: '选择分类',

@@ -48,6 +48,7 @@ export default {
     publishTitle: 'Опубликовать новую статью',
     publishSuccess: 'Статья успешно опубликована',
     publishError: 'Ошибка публикации, попробуйте снова',
+    publishStatusUnknown: 'Статус публикации ещё подтверждается. Черновик сохранён — не отправляйте повторно.',
     titleLabel: 'Заголовок',
     titlePlaceholder: 'Введите привлекательный заголовок...',
     categoryPlaceholder: 'Выберите категорию',

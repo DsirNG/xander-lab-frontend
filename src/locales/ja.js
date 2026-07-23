@@ -48,6 +48,7 @@ export default {
     publishTitle: '新しい記事を投稿',
     publishSuccess: 'ブログが正常に投稿されました',
     publishError: '投稿に失敗しました。もう一度お試しください',
+    publishStatusUnknown: '投稿状況を確認中です。下書きは保持されていますので、再送信しないでください。',
     titleLabel: '記事タイトル',
     titlePlaceholder: '魅力的なタイトルを入力...',
     categoryPlaceholder: 'カテゴリーを選択',

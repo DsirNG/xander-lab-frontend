@@ -22,6 +22,7 @@ export const blogService = {
   publishBlog: (blogData, config) => {
     return post(`${BASE}/posts`, blogData, config);
   },
+  getPublishStatus: (requestId, config) => get(`${BASE}/posts/publish-status`, { requestId }, config),
   /**
    * 获取博客列表（支持搜索、分类、标签筛选，支持分页）
    * GET /api/blog/posts?search=&category=&tag=&page=1&size=10

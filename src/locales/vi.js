@@ -48,6 +48,7 @@ export default {
     publishTitle: 'Xuất bản bài viết mới',
     publishSuccess: 'Bài viết đã được xuất bản thành công',
     publishError: 'Xuất bản thất bại, vui lòng thử lại',
+    publishStatusUnknown: 'Trạng thái xuất bản vẫn đang được xác nhận. Bản nháp đã được giữ lại; vui lòng không gửi lại.',
     titleLabel: 'Tiêu đề',
     titlePlaceholder: 'Nhập tiêu đề hấp dẫn...',
     categoryPlaceholder: 'Chọn danh mục',
