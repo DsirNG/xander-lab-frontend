@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { startTransition, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import ReactMarkdown from 'react-markdown';
@@ -18,6 +18,10 @@ const BlogAgent = () => {
   const [taskData, setTaskData] = useState(null);
   const [isRunning, setIsRunning] = useState(false);
   const [isSavingDraft, setIsSavingDraft] = useState(false);
+  const [streamText, setStreamText] = useState('');
+  const streamBufferRef = useRef('');
+  const streamErrorRef = useRef(null);
+  const streamFrameRef = useRef(null);
 
   const task = taskData?.task;
   const contentBoundary = taskData?.contentBoundary || {};
@@ -40,10 +44,30 @@ const BlogAgent = () => {
       return;
     }
     setIsRunning(true);
+    setTaskData(null);
+    setStreamText('');
+    streamBufferRef.current = '';
+    streamErrorRef.current = null;
     try {
       const created = await blogAgentService.createTask({ input });
-      const completed = await blogAgentService.runTask(created.id);
-      setTaskData(completed);
+      await blogAgentService.runTaskStream(created.id, ({ event, data }) => {
+        if (event === 'delta') {
+          streamBufferRef.current += data;
+          if (!streamFrameRef.current) {
+            streamFrameRef.current = requestAnimationFrame(() => {
+              startTransition(() => setStreamText(streamBufferRef.current));
+              streamFrameRef.current = null;
+            });
+          }
+        } else if (event === 'complete') {
+          setTaskData(data);
+        } else if (event === 'error') {
+          streamErrorRef.current = typeof data === 'string' ? data : t('blog.agent.failed');
+        }
+      });
+      if (streamFrameRef.current) cancelAnimationFrame(streamFrameRef.current);
+      if (streamBufferRef.current) setStreamText(streamBufferRef.current);
+      if (streamErrorRef.current) throw new Error(streamErrorRef.current);
       toast.success(t('blog.agent.complete'));
     } catch (error) {
       toast.error(error.message || t('blog.agent.failed'));
@@ -111,6 +135,8 @@ const BlogAgent = () => {
           </ol>
           <p className="mt-7 border-t border-white/10 pt-5 text-xs leading-5 text-slate-400">{t('blog.agent.guardrail')}</p>
         </aside>
+
+        {isRunning && <section className="xl:col-span-2 overflow-hidden rounded-3xl border border-slate-800 bg-slate-950 shadow-sm"><div className="flex items-center gap-2 border-b border-white/10 px-5 py-3 text-sm font-bold text-white"><Loader2 className="h-4 w-4 animate-spin text-primary" />{t('blog.agent.running')}</div><pre className="max-h-96 overflow-auto whitespace-pre-wrap p-5 text-xs leading-6 text-slate-200">{streamText || '…'}</pre></section>}
 
         {task && <section className="xl:col-span-2 grid gap-5 xl:grid-cols-[minmax(0,1fr)_320px]">
           <article className="min-w-0 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-8">

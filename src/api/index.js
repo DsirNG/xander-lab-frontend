@@ -12,6 +12,7 @@ export {
   default,
   get,
   post,
+  postStream,
   put,
   patch,
   del as delete,

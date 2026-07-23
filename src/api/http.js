@@ -488,6 +488,43 @@ export function post(url, data, config) {
 }
 
 /**
+ * Send a POST request whose response is Server-Sent Events, while preserving
+ * the shared axios instance's auth, retry, and error handling behaviour.
+ */
+export function postStream(url, data, { onEvent, ...config } = {}) {
+    let offset = 0;
+    let buffer = '';
+
+    const dispatch = (rawEvent) => {
+        const lines = rawEvent.split(/\r?\n/);
+        const event = lines.find((line) => line.startsWith('event:'))?.slice(6).trim() || 'message';
+        const dataLine = lines.filter((line) => line.startsWith('data:')).map((line) => line.slice(5).trim()).join('\n');
+        if (!dataLine || !onEvent) return;
+        try {
+            onEvent({ event, data: JSON.parse(dataLine) });
+        } catch {
+            onEvent({ event, data: dataLine });
+        }
+    };
+
+    return instance.post(url, data, {
+        ...config,
+        dedupe: false,
+        timeout: 0,
+        responseType: 'text',
+        onDownloadProgress: (progressEvent) => {
+            const responseText = progressEvent.event?.target?.responseText;
+            if (typeof responseText !== 'string') return;
+            buffer += responseText.slice(offset);
+            offset = responseText.length;
+            const chunks = buffer.split(/\r?\n\r?\n/);
+            buffer = chunks.pop() || '';
+            chunks.forEach(dispatch);
+        },
+    });
+}
+
+/**
  * PUT 请求
  * @template T
  * @param {string} url
@@ -722,6 +759,7 @@ export { instance as axiosInstance };
 const http = {
     get,
     post,
+    postStream,
     put,
     patch,
     delete: del,
