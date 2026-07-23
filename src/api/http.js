@@ -221,8 +221,8 @@ let refreshSubscribers = [];
  * 将失败请求加入刷新队列
  * @param {Function} callback - Token 刷新成功后的回调
  */
-function subscribeTokenRefresh(callback) {
-    refreshSubscribers.push(callback);
+function subscribeTokenRefresh(onSuccess, onFailure) {
+    refreshSubscribers.push({ onSuccess, onFailure });
 }
 
 /**
@@ -230,7 +230,12 @@ function subscribeTokenRefresh(callback) {
  * @param {string} newToken
  */
 function notifyRefreshSubscribers(newToken) {
-    refreshSubscribers.forEach((cb) => cb(newToken));
+    refreshSubscribers.forEach(({ onSuccess }) => onSuccess(newToken));
+    refreshSubscribers = [];
+}
+
+function rejectRefreshSubscribers(error) {
+    refreshSubscribers.forEach(({ onFailure }) => onFailure(error));
     refreshSubscribers = [];
 }
 
@@ -247,7 +252,17 @@ async function refreshAccessToken() {
     const response = await axios.post(`${BASE_URL}${REFRESH_URL}`, {
         refreshToken,
     });
-    const { accessToken, refreshToken: newRefreshToken } = response.data?.data ?? {};
+    const body = response.data;
+    const tokenData = body?.data;
+    if ((body?.code !== 200 && body?.code !== 0) || !tokenData?.accessToken) {
+        throw new HttpError(
+            body?.message || i18n.t('auth.sessionExpired'),
+            401,
+            body?.code,
+            body
+        );
+    }
+    const { accessToken, refreshToken: newRefreshToken } = tokenData;
     tokenStorage.setToken(accessToken);
     if (newRefreshToken) tokenStorage.setRefreshToken(newRefreshToken);
     return accessToken;
@@ -363,15 +378,21 @@ instance.interceptors.response.use(
         }
 
         // ── 9.2.1 Token 过期，无感刷新 ──
-        if (response?.status === 401 && config && !config._retryRefresh) {
+        const isTokenEndpoint = ['/auth/login', '/auth/refresh'].some(
+            (path) => config?.url?.endsWith(path)
+        );
+        if (response?.status === 401 && config && !config._retryRefresh && !isTokenEndpoint) {
             if (isRefreshing) {
                 // 排队等待刷新完成
                 return new Promise((resolve, reject) => {
-                    subscribeTokenRefresh((newToken) => {
-                        config.headers['Authorization'] = `Bearer ${newToken}`;
-                        config._retryRefresh = true;
-                        resolve(instance(config));
-                    });
+                    subscribeTokenRefresh(
+                        (newToken) => {
+                            config.headers['Authorization'] = `Bearer ${newToken}`;
+                            config._retryRefresh = true;
+                            resolve(instance(config));
+                        },
+                        reject
+                    );
                 });
             }
 
@@ -386,7 +407,7 @@ instance.interceptors.response.use(
                 return instance(config);
             } catch (refreshError) {
                 isRefreshing = false;
-                refreshSubscribers = [];
+                rejectRefreshSubscribers(refreshError);
                 tokenStorage.clear();
                 // 弹出登录过期提示
                 showToast('warning', i18n.t('auth.sessionExpired', '登录已过期，请重新登录'));

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Xander Lab Guardrails"
+  short_description: "Apply Xander Lab API, auth, and loading conventions"
+  default_prompt: "Implement or review an Xander Lab feature using the project guardrails."

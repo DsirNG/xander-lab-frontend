@@ -6,6 +6,7 @@ import remarkGfm from 'remark-gfm';
 import { ArrowLeft, Bot, BookOpenCheck, ChevronRight, ExternalLink, FileText, GitFork, Layers, Loader2, Search, Send, Sparkles } from 'lucide-react';
 import { blogAgentService } from '../services/blogAgentService';
 import { useToast } from '@/hooks/useToast';
+import LoadingSpinner from '@/components/common/LoadingSpinner';
 
 const stageKeys = ['analyze', 'research', 'write', 'review'];
 const asArray = (value) => Array.isArray(value) ? value : [];
@@ -20,6 +21,7 @@ const BlogAgent = () => {
   const [isRunning, setIsRunning] = useState(false);
   const [isSavingDraft, setIsSavingDraft] = useState(false);
   const [isPublishing, setIsPublishing] = useState(false);
+  const [isTaskLoading, setIsTaskLoading] = useState(Boolean(taskId));
   const [streamText, setStreamText] = useState('');
   const streamBufferRef = useRef('');
   const streamErrorRef = useRef(null);
@@ -31,13 +33,18 @@ const BlogAgent = () => {
   }, [task?.id, task?.input]);
 
   useEffect(() => {
-    if (!taskId) return undefined;
+    if (!taskId) {
+      setIsTaskLoading(false);
+      return undefined;
+    }
+    setIsTaskLoading(true);
     let active = true;
     const load = async () => {
       try {
         const data = await blogAgentService.getTask(taskId, { _silent: true });
         if (active) setTaskData(data);
       } catch (error) { if (active) toast.error(error.message || t('blog.agent.failed')); }
+      finally { if (active) setIsTaskLoading(false); }
     };
     load();
     return () => { active = false; };
@@ -129,6 +136,7 @@ const BlogAgent = () => {
 
   return (
     <div className="min-h-dvh bg-slate-50 text-slate-900">
+      {isTaskLoading && <LoadingSpinner fullScreen text="正在恢复智能体任务…" />}
       <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-slate-200 bg-white/95 px-4 backdrop-blur sm:px-8">
         <button onClick={() => navigate('/blog/')} className="flex items-center gap-2 rounded-xl px-2 py-2 text-sm font-semibold text-slate-500 transition hover:bg-slate-100 hover:text-slate-950">
           <ArrowLeft className="h-4 w-4" /> {t('blog.agent.back')}
