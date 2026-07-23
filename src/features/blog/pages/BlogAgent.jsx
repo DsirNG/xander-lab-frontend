@@ -1,7 +1,7 @@
-import React, { startTransition, useEffect, useMemo, useRef, useState } from 'react';
+import React, { startTransition, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeft, Bot, Loader2, Plus, Send, Sparkles } from 'lucide-react';
+import { ArrowLeft, Bot, Loader2, MessageSquareText, Plus, Send, Sparkles, X } from 'lucide-react';
 import { blogAgentService } from '../services/blogAgentService';
 import { useToast } from '@/hooks/useToast';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
@@ -10,8 +10,31 @@ import AgentChatMessage from '../components/agent/AgentChatMessage';
 import AgentProcessPanel from '../components/agent/AgentProcessPanel';
 import AgentResultCard from '../components/agent/AgentResultCard';
 import AgentPreviewPanel from '../components/agent/AgentPreviewPanel';
+import AgentSessionList from '../components/agent/AgentSessionList';
 
 const RESULT_MESSAGE_ID = 'result';
+const buildStoredMessages = (stored = []) => {
+  const result = [];
+  let process = null;
+  stored.forEach((message) => {
+    if (message.kind === 'process') {
+      if (!process) {
+        process = { id: `process-${message.id}`, role: 'assistant', kind: 'process', status: 'ready', logs: [], stage: message.stage };
+        result.push(process);
+      }
+      process.logs.push(message.content);
+      process.stage = message.stage || process.stage;
+      return;
+    }
+    process = null;
+    if (message.role === 'user') {
+      result.push({ id: `message-${message.id}`, role: 'user', content: message.content });
+    } else if (message.kind === 'result') {
+      result.push({ id: `result-${message.id}`, role: 'assistant', kind: 'result', title: message.content });
+    }
+  });
+  return result;
+};
 
 const BlogAgent = () => {
   const { t } = useTranslation();
@@ -31,6 +54,12 @@ const BlogAgent = () => {
   const [pendingUserInput, setPendingUserInput] = useState('');
   const [previewOpen, setPreviewOpen] = useState(false);
   const [selectedResultId, setSelectedResultId] = useState(null);
+  const [sessions, setSessions] = useState([]);
+  const [sessionsLoading, setSessionsLoading] = useState(true);
+  const [liveLogs, setLiveLogs] = useState([]);
+  const [liveStage, setLiveStage] = useState('analyze');
+  const [liveUserInput, setLiveUserInput] = useState('');
+  const [mobileSessionsOpen, setMobileSessionsOpen] = useState(false);
   const streamBufferRef = useRef('');
   const streamErrorRef = useRef(null);
   const streamFrameRef = useRef(null);
@@ -38,8 +67,23 @@ const BlogAgent = () => {
   const isRunningRef = useRef(false);
   isRunningRef.current = isRunning;
   const task = taskData?.task;
-  const hasFinishedTurn = Boolean(task) && !isRunning && (task.status === 'ready' || task.status === 'failed');
-  const inputLocked = isRunning || hasFinishedTurn;
+  const hasFinishedTurn = Boolean(task) && !isRunning && task.status === 'ready';
+  const inputLocked = isRunning;
+
+  const loadSessions = useCallback(async () => {
+    setSessionsLoading(true);
+    try {
+      setSessions(await blogAgentService.getSessions({ _silent: true }) || []);
+    } catch {
+      setSessions([]);
+    } finally {
+      setSessionsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadSessions();
+  }, [loadSessions]);
 
   useEffect(() => {
     if (!taskId) {
@@ -49,6 +93,7 @@ const BlogAgent = () => {
       setStreamText('');
       setStartedAt(null);
       setEndedAt(null);
+      setLiveStage('analyze');
       setPreviewOpen(false);
       setSelectedResultId(null);
       return undefined;
@@ -68,6 +113,9 @@ const BlogAgent = () => {
         if (!active) return;
         setTaskData(data);
         setPendingUserInput(data?.task?.input || '');
+        setLiveUserInput('');
+        setLiveLogs([]);
+        setLiveStage(data?.task?.stage || 'analyze');
         if (data?.task?.status === 'ready') {
           setSelectedResultId(RESULT_MESSAGE_ID);
           setPreviewOpen(true);
@@ -92,13 +140,20 @@ const BlogAgent = () => {
   }, [task, isRunning, t]);
 
   const messages = useMemo(() => {
-    const list = [];
-    const userContent = pendingUserInput || task?.input;
-    if (userContent) {
-      list.push({ id: 'user', role: 'user', content: userContent });
+    const list = buildStoredMessages(taskData?.messages);
+    if (task?.status === 'failed') {
+      const latestProcess = list.findLast?.((message) => message.kind === 'process')
+        || [...list].reverse().find((message) => message.kind === 'process');
+      if (latestProcess) {
+        latestProcess.status = 'failed';
+        latestProcess.errorMessage = task.errorMessage;
+      }
     }
-
-    if (isRunning || task) {
+    if (list.length === 0 && (pendingUserInput || task?.input)) {
+      list.push({ id: 'user', role: 'user', content: pendingUserInput || task.input });
+    }
+    if (liveUserInput) list.push({ id: 'live-user', role: 'user', content: liveUserInput });
+    if (isRunning) {
       const processStatus = isRunning
         ? 'running'
         : task?.status === 'failed'
@@ -111,15 +166,15 @@ const BlogAgent = () => {
         role: 'assistant',
         kind: 'process',
         status: processStatus,
-        stage: task?.stage,
+        stage: task?.stage || liveStage,
         streamText,
         startedAt,
         endedAt,
         errorMessage: task?.errorMessage,
+        logs: liveLogs,
       });
     }
-
-    if (task?.status === 'ready' && (task.title || task.content)) {
+    if (task?.status === 'ready' && (task.title || task.content) && !list.some((message) => message.kind === 'result')) {
       list.push({
         id: RESULT_MESSAGE_ID,
         role: 'assistant',
@@ -131,7 +186,7 @@ const BlogAgent = () => {
     }
 
     return list;
-  }, [pendingUserInput, task, isRunning, streamText, startedAt, endedAt]);
+  }, [taskData?.messages, pendingUserInput, task, isRunning, streamText, startedAt, endedAt, liveLogs, liveStage, liveUserInput]);
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
@@ -147,14 +202,19 @@ const BlogAgent = () => {
     setTaskData(null);
     setStreamText('');
     setPendingUserInput(submitted);
+    setLiveUserInput(submitted);
+    setLiveLogs([]);
+    setLiveStage('analyze');
     setStartedAt(Date.now());
     setEndedAt(null);
     setPreviewOpen(false);
     setSelectedResultId(null);
     streamBufferRef.current = '';
     streamErrorRef.current = null;
+    let createdTaskId = null;
     try {
       const created = await blogAgentService.createTask({ input: submitted });
+      createdTaskId = created.id;
       navigate(`/blog/agent/${created.id}`, { replace: true });
       await blogAgentService.runTaskStream(created.id, ({ event, data }) => {
         if (event === 'delta') {
@@ -165,6 +225,11 @@ const BlogAgent = () => {
               streamFrameRef.current = null;
             });
           }
+        } else if (event === 'stage') {
+          const [stage, message] = String(data).split('|', 2);
+          setLiveStage(stage);
+          setLiveLogs((current) => [...current, message || stage]);
+          setTaskData((current) => current ? { ...current, task: { ...current.task, stage, status: 'running' } } : current);
         } else if (event === 'complete') {
           setTaskData(data);
         } else if (event === 'error') {
@@ -178,14 +243,77 @@ const BlogAgent = () => {
       setSelectedResultId(RESULT_MESSAGE_ID);
       setPreviewOpen(true);
       setInput('');
+      setLiveUserInput('');
+      setLiveLogs([]);
+      loadSessions();
       toast.success(t('blog.agent.complete'));
     } catch (error) {
       setEndedAt(Date.now());
+      if (createdTaskId) {
+        try {
+          setTaskData(await blogAgentService.getTask(createdTaskId, { _silent: true }));
+        } catch {
+          // 保留原始生成错误，任务仍可从左侧会话列表重新进入。
+        }
+      }
+      loadSessions();
       toast.error(error.message || t('blog.agent.failed'));
     } finally {
       setIsRunning(false);
     }
   };
+
+  const handleRevise = async () => {
+    if (!task?.id || !input.trim()) return;
+    const submitted = input.trim();
+    setIsRunning(true);
+    setLiveUserInput(submitted);
+    setLiveLogs([]);
+    setLiveStage('analyze');
+    setStreamText('');
+    setStartedAt(Date.now());
+    setEndedAt(null);
+    streamBufferRef.current = '';
+    streamErrorRef.current = null;
+    try {
+      await blogAgentService.reviseTaskStream(task.id, submitted, ({ event, data }) => {
+        if (event === 'delta') {
+          streamBufferRef.current += data;
+        } else if (event === 'stage') {
+          const [stage, message] = String(data).split('|', 2);
+          setLiveStage(stage);
+          setLiveLogs((current) => [...current, message || stage]);
+          setTaskData((current) => ({ ...current, task: { ...current.task, stage, status: 'running' } }));
+        } else if (event === 'complete') {
+          setTaskData(data);
+        } else if (event === 'error') {
+          streamErrorRef.current = typeof data === 'string' ? data : t('blog.agent.failed');
+        }
+      });
+      if (streamErrorRef.current) throw new Error(streamErrorRef.current);
+      setEndedAt(Date.now());
+      setInput('');
+      setLiveUserInput('');
+      setLiveLogs([]);
+      setSelectedResultId(RESULT_MESSAGE_ID);
+      setPreviewOpen(true);
+      loadSessions();
+      toast.success(t('blog.agent.revisionComplete'));
+    } catch (error) {
+      setEndedAt(Date.now());
+      try {
+        setTaskData(await blogAgentService.getTask(task.id, { _silent: true }));
+      } catch {
+        // 后端会保留上一版本；恢复失败时仍保留当前页面内容。
+      }
+      loadSessions();
+      toast.error(error.message || t('blog.agent.failed'));
+    } finally {
+      setIsRunning(false);
+    }
+  };
+
+  const handleSubmit = () => hasFinishedTurn ? handleRevise() : handleGenerate();
 
   const handlePublish = async () => {
     if (!task?.id) return;
@@ -230,6 +358,9 @@ const BlogAgent = () => {
     setEndedAt(null);
     setPreviewOpen(false);
     setSelectedResultId(null);
+    setLiveUserInput('');
+    setLiveLogs([]);
+    setLiveStage('analyze');
     navigate('/blog/agent', { replace: true });
   };
 
@@ -269,20 +400,55 @@ const BlogAgent = () => {
           </span>
           {t('blog.agent.title')}
         </div>
-        <button
-          type="button"
-          onClick={handleNewTask}
-          className="inline-flex items-center gap-1.5 rounded-xl px-2 py-2 text-sm font-semibold text-slate-500 transition hover:bg-slate-100 hover:text-slate-950"
-        >
-          <Plus className="h-4 w-4" />
-          <span className="hidden sm:inline">{t('blog.agent.newTask')}</span>
-        </button>
+        <div className="flex items-center gap-1">
+          <button type="button" onClick={() => setMobileSessionsOpen(true)} className="rounded-xl p-2 text-slate-500 hover:bg-slate-100 lg:hidden" aria-label={t('blog.agent.conversations')}>
+            <MessageSquareText className="h-4 w-4" />
+          </button>
+          <button
+            type="button"
+            onClick={handleNewTask}
+            className="inline-flex items-center gap-1.5 rounded-xl px-2 py-2 text-sm font-semibold text-slate-500 transition hover:bg-slate-100 hover:text-slate-950"
+          >
+            <Plus className="h-4 w-4" />
+            <span className="hidden sm:inline">{t('blog.agent.newTask')}</span>
+          </button>
+        </div>
       </header>
 
       {isTaskLoading ? (
         <LoadingSpinner fullScreen text={t('blog.agent.restoring')} />
       ) : (
         <div className="relative flex min-h-0 flex-1 overflow-hidden">
+          <AgentSessionList
+            sessions={sessions}
+            activeId={taskId}
+            loading={sessionsLoading}
+            disabled={isRunning}
+            onSelect={(id) => navigate(`/blog/agent/${id}`)}
+            onNew={handleNewTask}
+          />
+          {mobileSessionsOpen && (
+            <div className="absolute inset-0 z-40 flex bg-slate-950/40 lg:hidden">
+              <AgentSessionList
+                mobile
+                sessions={sessions}
+                activeId={taskId}
+                loading={sessionsLoading}
+                disabled={isRunning}
+                onSelect={(id) => {
+                  setMobileSessionsOpen(false);
+                  navigate(`/blog/agent/${id}`);
+                }}
+                onNew={() => {
+                  setMobileSessionsOpen(false);
+                  handleNewTask();
+                }}
+              />
+              <button type="button" onClick={() => setMobileSessionsOpen(false)} className="m-3 grid h-10 w-10 place-items-center rounded-full bg-white text-slate-700" aria-label={t('common.aria.close', 'Close')}>
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+          )}
           <section className={`flex min-h-0 min-w-0 flex-1 flex-col ${showPreview && !isMobile ? 'lg:max-w-[48%]' : ''}`}>
             <div className="min-h-0 flex-1 overflow-y-auto px-4 py-5 sm:px-6">
               {messages.length === 0 ? (
@@ -311,6 +477,7 @@ const BlogAgent = () => {
                           startedAt={message.startedAt}
                           endedAt={message.endedAt}
                           errorMessage={message.errorMessage}
+                          logs={message.logs}
                         />
                       );
                     }
@@ -334,9 +501,7 @@ const BlogAgent = () => {
 
             <div className="shrink-0 border-t border-slate-200 bg-white px-4 py-3 sm:px-6">
               <div className="mx-auto max-w-2xl">
-                {hasFinishedTurn && (
-                  <p className="mb-2 text-xs text-slate-500">{t('blog.agent.singleTurnHint')}</p>
-                )}
+                {hasFinishedTurn && <p className="mb-2 text-xs text-slate-500">{t('blog.agent.multiTurnHint')}</p>}
                 <div className="flex items-end gap-2 rounded-2xl border border-slate-200 bg-slate-50 p-2 focus-within:border-primary focus-within:bg-white focus-within:ring-4 focus-within:ring-primary/10">
                   <textarea
                     value={input}
@@ -347,28 +512,26 @@ const BlogAgent = () => {
                     onKeyDown={(event) => {
                       if (event.key === 'Enter' && !event.shiftKey) {
                         event.preventDefault();
-                        if (!inputLocked) handleGenerate();
+                        if (!inputLocked) handleSubmit();
                       }
                     }}
                     className="max-h-40 min-h-[52px] flex-1 resize-none bg-transparent px-2 py-2 text-sm leading-6 outline-none placeholder:text-slate-400 disabled:opacity-60"
                   />
                   <button
                     type="button"
-                    onClick={hasFinishedTurn ? handleNewTask : handleGenerate}
-                    disabled={isRunning || (!hasFinishedTurn && !input.trim())}
+                    onClick={handleSubmit}
+                    disabled={isRunning || !input.trim()}
                     className="inline-flex h-10 shrink-0 items-center gap-2 rounded-xl bg-slate-950 px-4 text-sm font-black text-white transition hover:bg-primary disabled:cursor-wait disabled:opacity-60"
                   >
                     {isRunning ? (
                       <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : hasFinishedTurn ? (
-                      <Plus className="h-4 w-4" />
                     ) : (
                       <Send className="h-4 w-4" />
                     )}
                     {isRunning
                       ? t('blog.agent.running')
                       : hasFinishedTurn
-                        ? t('blog.agent.newTask')
+                        ? t('blog.agent.revise')
                         : t('blog.agent.generate')}
                   </button>
                 </div>

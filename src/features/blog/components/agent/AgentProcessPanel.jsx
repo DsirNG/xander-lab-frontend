@@ -4,7 +4,7 @@ import { ChevronRight, Loader2 } from 'lucide-react';
 
 const STAGE_KEYS = ['analyze', 'research', 'write', 'illustrate', 'review'];
 
-export const formatDuration = (ms) => {
+const formatDuration = (ms) => {
   const totalSec = Math.max(0, Math.floor((ms || 0) / 1000));
   const minutes = Math.floor(totalSec / 60);
   const seconds = totalSec % 60;
@@ -22,6 +22,7 @@ const AgentProcessPanel = ({
   startedAt,
   endedAt,
   errorMessage,
+  logs = [],
   defaultExpanded,
 }) => {
   const { t } = useTranslation();
@@ -36,16 +37,12 @@ const AgentProcessPanel = ({
     return () => clearInterval(timer);
   }, [isRunning, startedAt]);
 
-  useEffect(() => {
-    if (isRunning) setExpanded(true);
-    else if (status === 'ready') setExpanded(false);
-  }, [isRunning, status]);
-
   const elapsedMs = startedAt
-    ? (endedAt || (isRunning ? now : Date.now())) - startedAt
+    ? (endedAt || now) - startedAt
     : null;
   const durationLabel = elapsedMs == null ? '' : formatDuration(elapsedMs);
   const stageIndex = Math.max(0, STAGE_KEYS.indexOf(stage));
+  const visibleExpanded = isRunning || expanded;
   const title = isRunning
     ? (durationLabel
       ? t('blog.agent.processing', { duration: durationLabel })
@@ -66,12 +63,12 @@ const AgentProcessPanel = ({
         {isRunning ? (
           <Loader2 className="h-4 w-4 shrink-0 animate-spin text-primary" />
         ) : (
-          <ChevronRight className={`h-4 w-4 shrink-0 text-slate-400 transition ${expanded ? 'rotate-90' : ''}`} />
+          <ChevronRight className={`h-4 w-4 shrink-0 text-slate-400 transition ${visibleExpanded ? 'rotate-90' : ''}`} />
         )}
         <span className="min-w-0 flex-1 truncate">{title}</span>
       </button>
 
-      {expanded && (
+      {visibleExpanded && (
         <div className="space-y-4 border-t border-slate-100 px-4 py-4">
           <ol className="space-y-3">
             {STAGE_KEYS.map((key, index) => {
@@ -95,10 +92,11 @@ const AgentProcessPanel = ({
             })}
           </ol>
 
-          {(streamText || isRunning) && (
-            <pre className="max-h-56 overflow-auto rounded-xl bg-slate-950 p-3 text-xs leading-6 text-slate-200 whitespace-pre-wrap">
-              {streamText || '…'}
-            </pre>
+          {(logs.length > 0 || streamText || isRunning) && (
+            <div className="max-h-56 space-y-1.5 overflow-auto rounded-xl bg-slate-950 p-3 text-xs leading-6 text-slate-200">
+              {logs.map((log, index) => <p key={`${log}-${index}`}><span className="mr-2 text-primary">●</span>{log}</p>)}
+              {isRunning && logs.length === 0 && <p className="text-slate-400">{t('blog.agent.waitingForStage')}</p>}
+            </div>
           )}
 
           {isFailed && (
