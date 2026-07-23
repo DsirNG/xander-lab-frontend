@@ -75,7 +75,7 @@ export default {
       workflow: '智能体工作流', guardrail: '个人经历始终标注为作者经历；外部事实必须可追溯，系统绝不会自动公开发布。',
       stages: { analyze: '确定文章角度', research: '调研与核验', write: '撰写完整文章', review: '发布前审校' },
       stageDescriptions: { analyze: '识别读者、观点和需要补充的证据。', research: '联网核验文章中的外部事实。', write: '生成完整的 Markdown 知识博客。', review: '检查证据、表达和发布状态。' },
-      article: '生成的文章', toDraft: '进入编辑器', draftCreated: '已创建草稿，现在可以编辑并发布。', sources: '调研来源', noSources: '这篇文章未保留外部来源。', review: '编辑审校', reviewPending: '智能体完成后会显示审校结果。', inputRequired: '请先输入主题或日记。'
+      article: '生成的文章', toDraft: '进入编辑器', draftCreated: '已创建草稿，现在可以编辑并发布。', sources: '调研来源', noSources: '这篇文章未保留外部来源。', review: '编辑审校', reviewPending: '智能体完成后会显示审校结果。', inputRequired: '请先输入主题或日记。', contentFocus: '内容边界', mustCover: '文章主干', relatedExpansion: '直接扩展', outOfScope: '不主动扩展', knowledgeGraph: '知识关系图谱'
     }
   },
   common: {

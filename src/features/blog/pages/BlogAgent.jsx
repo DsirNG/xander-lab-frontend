@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { ArrowLeft, Bot, BookOpenCheck, ChevronRight, ExternalLink, FileText, Loader2, Search, Send, Sparkles } from 'lucide-react';
+import { ArrowLeft, Bot, BookOpenCheck, ChevronRight, ExternalLink, FileText, GitFork, Layers, Loader2, Search, Send, Sparkles } from 'lucide-react';
 import { blogAgentService } from '../services/blogAgentService';
 import { useToast } from '@/hooks/useToast';
 import CustomSelect from '@/components/common/CustomSelect';
@@ -14,6 +14,7 @@ const inputTypeOptions = [
 ];
 
 const stageKeys = ['analyze', 'research', 'write', 'review'];
+const asArray = (value) => Array.isArray(value) ? value : [];
 
 const BlogAgent = () => {
   const { t } = useTranslation();
@@ -28,6 +29,11 @@ const BlogAgent = () => {
   const [isSavingDraft, setIsSavingDraft] = useState(false);
 
   const task = taskData?.task;
+  const contentBoundary = taskData?.contentBoundary || {};
+  const knowledgeGraph = taskData?.knowledgeGraph || {};
+  const graphNodes = asArray(knowledgeGraph.nodes);
+  const graphEdges = asArray(knowledgeGraph.edges);
+  const graphLabels = useMemo(() => new Map(graphNodes.map((node) => [node.id, node.label || node.id])), [graphNodes]);
   const stageIndex = Math.max(0, stageKeys.indexOf(task?.stage));
   const statusText = useMemo(() => {
     if (!task) return t('blog.agent.waiting');
@@ -126,7 +132,10 @@ const BlogAgent = () => {
             <div className="mb-6 flex flex-wrap items-start justify-between gap-4 border-b border-slate-100 pb-5"><div><span className="text-xs font-bold uppercase tracking-widest text-primary">{t('blog.agent.article')}</span><h2 className="mt-1 text-2xl font-black tracking-tight">{task.title}</h2><p className="mt-2 text-sm leading-6 text-slate-500">{task.summary}</p></div>{task.status === 'ready' && <button onClick={handleCreateDraft} disabled={isSavingDraft} className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-black text-white disabled:opacity-60">{isSavingDraft ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileText className="h-4 w-4" />}{t('blog.agent.toDraft')}<ChevronRight className="h-4 w-4" /></button>}</div>
             {task.content ? <div className="prose prose-slate max-w-none prose-headings:font-black prose-a:text-primary"><ReactMarkdown remarkPlugins={[remarkGfm]}>{task.content}</ReactMarkdown></div> : <p className="text-sm text-slate-500">{statusText}</p>}
           </article>
-          <aside className="space-y-5"><section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm"><div className="flex items-center gap-2 text-sm font-black"><Search className="h-4 w-4 text-primary" />{t('blog.agent.sources')}</div><div className="mt-4 space-y-4">{taskData.sources?.length ? taskData.sources.map((source) => <a key={source.id} href={source.url} target="_blank" rel="noreferrer" className="block rounded-xl bg-slate-50 p-3 transition hover:bg-primary/5"><p className="line-clamp-2 text-sm font-bold text-slate-800">{source.title}</p><p className="mt-1 text-xs text-slate-500">{source.publisher || source.reliability}</p><ExternalLink className="mt-2 h-3.5 w-3.5 text-primary" /></a>) : <p className="text-sm leading-6 text-slate-500">{t('blog.agent.noSources')}</p>}</div></section><section className="rounded-3xl border border-amber-200 bg-amber-50 p-5"><div className="flex items-center gap-2 text-sm font-black text-amber-900"><BookOpenCheck className="h-4 w-4" />{t('blog.agent.review')}</div><p className="mt-3 text-sm leading-6 text-amber-900/80">{task.review || t('blog.agent.reviewPending')}</p></section></aside>
+          <aside className="space-y-5">
+            <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm"><div className="flex items-center gap-2 text-sm font-black"><Layers className="h-4 w-4 text-primary" />{t('blog.agent.contentFocus')}</div><div className="mt-4 space-y-4"><div><p className="text-xs font-bold text-slate-500">{t('blog.agent.mustCover')}</p><div className="mt-2 flex flex-wrap gap-1.5">{asArray(contentBoundary.mustCover).map((item) => <span key={item} className="rounded-lg bg-primary/10 px-2 py-1 text-xs font-semibold text-primary">{item}</span>)}</div></div>{asArray(contentBoundary.relatedExpansion).length > 0 && <div><p className="text-xs font-bold text-slate-500">{t('blog.agent.relatedExpansion')}</p><p className="mt-1 text-xs leading-5 text-slate-600">{asArray(contentBoundary.relatedExpansion).join('、')}</p></div>}{asArray(contentBoundary.outOfScope).length > 0 && <div><p className="text-xs font-bold text-slate-500">{t('blog.agent.outOfScope')}</p><p className="mt-1 text-xs leading-5 text-slate-500">{asArray(contentBoundary.outOfScope).join('、')}</p></div>}</div></section>
+            {knowledgeGraph.enabled && graphNodes.length > 0 && <section className="rounded-3xl border border-indigo-100 bg-indigo-50/60 p-5"><div className="flex items-center gap-2 text-sm font-black text-indigo-950"><GitFork className="h-4 w-4 text-indigo-600" />{t('blog.agent.knowledgeGraph')}</div><p className="mt-2 text-xs leading-5 text-indigo-900/70">{knowledgeGraph.reason}</p><div className="mt-4 flex flex-wrap gap-1.5">{graphNodes.map((node) => <span key={node.id} title={node.description} className="rounded-lg border border-indigo-200 bg-white px-2 py-1 text-xs font-semibold text-indigo-900">{node.label}</span>)}</div><div className="mt-4 space-y-2">{graphEdges.map((edge, index) => <div key={`${edge.from}-${edge.to}-${index}`} className="rounded-lg bg-white/80 px-2.5 py-2 text-xs leading-5 text-indigo-950"><strong>{graphLabels.get(edge.from) || edge.from}</strong><span className="mx-1.5 text-indigo-400">→</span><span>{edge.relation}</span><span className="mx-1.5 text-indigo-400">→</span><strong>{graphLabels.get(edge.to) || edge.to}</strong></div>)}</div></section>}
+            <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm"><div className="flex items-center gap-2 text-sm font-black"><Search className="h-4 w-4 text-primary" />{t('blog.agent.sources')}</div><div className="mt-4 space-y-4">{taskData.sources?.length ? taskData.sources.map((source) => <a key={source.id} href={source.url} target="_blank" rel="noreferrer" className="block rounded-xl bg-slate-50 p-3 transition hover:bg-primary/5"><p className="line-clamp-2 text-sm font-bold text-slate-800">{source.title}</p><p className="mt-1 text-xs text-slate-500">{source.publisher || source.reliability}</p><ExternalLink className="mt-2 h-3.5 w-3.5 text-primary" /></a>) : <p className="text-sm leading-6 text-slate-500">{t('blog.agent.noSources')}</p>}</div></section><section className="rounded-3xl border border-amber-200 bg-amber-50 p-5"><div className="flex items-center gap-2 text-sm font-black text-amber-900"><BookOpenCheck className="h-4 w-4" />{t('blog.agent.review')}</div><p className="mt-3 text-sm leading-6 text-amber-900/80">{task.review || t('blog.agent.reviewPending')}</p></section></aside>
         </section>}
       </main>
     </div>

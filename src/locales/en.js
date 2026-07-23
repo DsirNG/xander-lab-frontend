@@ -75,7 +75,7 @@ export default {
       workflow: 'Agent workflow', guardrail: 'Personal experience remains attributed to its author. External claims must have a traceable source and are never published automatically.',
       stages: { analyze: 'Frame the article', research: 'Research and verify', write: 'Write the full article', review: 'Review before publishing' },
       stageDescriptions: { analyze: 'Finds the reader, point of view, and evidence gaps.', research: 'Uses web research to verify external claims.', write: 'Builds a complete Markdown knowledge article.', review: 'Checks evidence, clarity, and publish readiness.' },
-      article: 'Generated article', toDraft: 'Open in editor', draftCreated: 'Draft created. You can now edit and publish it.', sources: 'Research sources', noSources: 'No external sources were retained for this article.', review: 'Editorial review', reviewPending: 'The review will appear when the agent completes its work.', inputRequired: 'Enter a topic or diary entry first.'
+      article: 'Generated article', toDraft: 'Open in editor', draftCreated: 'Draft created. You can now edit and publish it.', sources: 'Research sources', noSources: 'No external sources were retained for this article.', review: 'Editorial review', reviewPending: 'The review will appear when the agent completes its work.', inputRequired: 'Enter a topic or diary entry first.', contentFocus: 'Content focus', mustCover: 'Article backbone', relatedExpansion: 'Direct extensions', outOfScope: 'Not expanded', knowledgeGraph: 'Knowledge graph'
     }
   },
   common: {
