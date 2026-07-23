@@ -1,5 +1,5 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
-import { Code2, FileCode2, Heading1, Heading2, ImagePlus, List, ListTodo, Loader2, Minus, Quote, Table2, Type, Video } from 'lucide-react';
+import { Code2, FileCode2, Heading1, Heading2, ImagePlus, List, ListTodo, Loader2, Minus, PanelLeftClose, PanelLeftOpen, Quote, Table2, Type, Video } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { upload } from '@api/http';
 import { useToast } from '@/hooks/useToast';
@@ -38,6 +38,7 @@ const BlogMarkdownComposer = forwardRef(({ value, onChange, placeholder, disable
     const valueRef = useRef(value);
     const selectionRef = useRef({ start: 0, end: 0 });
     const [uploading, setUploading] = useState(false);
+    const [isToolbarExpanded, setIsToolbarExpanded] = useState(false);
 
     useImperativeHandle(forwardedRef, () => textareaRef.current);
 
@@ -164,8 +165,23 @@ const BlogMarkdownComposer = forwardRef(({ value, onChange, placeholder, disable
     };
 
     return (
-        <div className="grid w-full">
-            <aside className="sticky top-4 z-30 col-start-1 row-start-1 flex h-fit w-10 -translate-x-12 flex-col gap-1 rounded-xl border border-slate-200 bg-white/95 p-1 shadow-lg backdrop-blur">
+        <div className="w-full">
+            <aside className={`fixed left-3 top-1/2 z-50 flex max-h-[calc(100dvh-6rem)] -translate-y-1/2 flex-col gap-1 overflow-y-auto rounded-xl border border-slate-200 bg-white/95 p-1 shadow-xl backdrop-blur transition-[width] duration-200 ${isToolbarExpanded ? 'w-44' : 'w-10'}`}>
+                <button
+                    type="button"
+                    title={t('blog.editor.toolbar')}
+                    aria-label={t('blog.editor.toolbar')}
+                    aria-expanded={isToolbarExpanded}
+                    onMouseDown={prepareToolbarAction}
+                    onClick={() => setIsToolbarExpanded((current) => !current)}
+                    className={`flex h-8 w-full shrink-0 items-center gap-2 rounded-lg bg-slate-100 text-slate-600 transition hover:bg-slate-200 hover:text-slate-900 ${isToolbarExpanded ? 'justify-start px-2' : 'justify-center'}`}
+                >
+                    {isToolbarExpanded ? <PanelLeftClose className="h-4 w-4 shrink-0" /> : <PanelLeftOpen className="h-4 w-4 shrink-0" />}
+                    {isToolbarExpanded && <span className="truncate text-xs font-black">{t('blog.editor.toolbar')}</span>}
+                </button>
+
+                <span className="mx-1 my-0.5 h-px shrink-0 bg-slate-200" />
+
                 {formatActions.map(({ key, icon: Icon, prefix, code }) => (
                     <button
                         key={key}
@@ -175,9 +191,10 @@ const BlogMarkdownComposer = forwardRef(({ value, onChange, placeholder, disable
                         disabled={disabled}
                         onMouseDown={prepareToolbarAction}
                         onClick={() => code ? applyCodeFormat() : applyLineFormat(prefix)}
-                        className="grid h-8 w-8 place-items-center rounded-lg text-slate-500 transition hover:bg-primary/10 hover:text-primary disabled:cursor-not-allowed disabled:opacity-40"
+                        className={`flex h-8 w-full shrink-0 items-center gap-2 rounded-lg text-slate-500 transition hover:bg-primary/10 hover:text-primary disabled:cursor-not-allowed disabled:opacity-40 ${isToolbarExpanded ? 'justify-start px-2' : 'justify-center'}`}
                     >
-                        <Icon className="h-4 w-4" />
+                        <Icon className="h-4 w-4 shrink-0" />
+                        {isToolbarExpanded && <span className="truncate text-xs font-semibold">{t(`blog.editor.${key}`)}</span>}
                     </button>
                 ))}
 
@@ -192,9 +209,10 @@ const BlogMarkdownComposer = forwardRef(({ value, onChange, placeholder, disable
                         disabled={disabled || uploading || actionDisabled}
                         onMouseDown={prepareToolbarAction}
                         onClick={() => key === 'imageGif' ? fileInputRef.current?.click() : insertAtSelection(markdown, cursorBack)}
-                        className="grid h-8 w-8 place-items-center rounded-lg text-slate-500 transition hover:bg-primary/10 hover:text-primary disabled:cursor-not-allowed disabled:opacity-40"
+                        className={`flex h-8 w-full shrink-0 items-center gap-2 rounded-lg text-slate-500 transition hover:bg-primary/10 hover:text-primary disabled:cursor-not-allowed disabled:opacity-40 ${isToolbarExpanded ? 'justify-start px-2' : 'justify-center'}`}
                     >
-                        {key === 'imageGif' && uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Icon className="h-4 w-4" />}
+                        {key === 'imageGif' && uploading ? <Loader2 className="h-4 w-4 shrink-0 animate-spin" /> : <Icon className="h-4 w-4 shrink-0" />}
+                        {isToolbarExpanded && <span className="truncate text-xs font-semibold">{t(`blog.editor.${key}`)}</span>}
                     </button>
                 ))}
             </aside>
@@ -224,7 +242,7 @@ const BlogMarkdownComposer = forwardRef(({ value, onChange, placeholder, disable
                 onClick={(event) => rememberSelection(event.currentTarget)}
                 onKeyUp={(event) => rememberSelection(event.currentTarget)}
                 placeholder={placeholder}
-                className="col-start-1 row-start-1 mb-20 h-full min-h-[60vh] w-full resize-none border-none bg-transparent text-lg font-medium leading-[1.8] text-slate-700 outline-none placeholder:text-slate-300"
+                className="mb-20 h-full min-h-[60vh] w-full resize-none border-none bg-transparent text-lg font-medium leading-[1.8] text-slate-700 outline-none placeholder:text-slate-300"
             />
         </div>
     );

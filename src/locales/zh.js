@@ -68,7 +68,7 @@ export default {
     preview: '预览',
     noContent: '尚未输入内容',
     media: { insertImage: '插入图片', dropImage: '拖放或选择图片 / GIF，上传后插入到光标位置', uploadingImage: '正在上传', imageInserted: '图片已插入正文', imageUploadFailed: '图片上传失败，请重试', invalidImage: '请选择图片或 GIF 文件', imageTooLarge: '图片大小不能超过 10MB', altText: '图片说明（可访问性）', addToArticle: '插入正文' },
-    editor: { addBlock: '添加内容块', text: '文本', h1: 'H1', h2: 'H2', todo: '待办', list: '列表', quote: '引用', code: '代码', insertContent: '插入内容', imageGif: '图片 / GIF', video: '视频（即将支持）', divider: '分割线', table: '表格', codeBlock: '代码块', quoteBlock: '引用块' },
+    editor: { toolbar: '写作工具', addBlock: '添加内容块', text: '文本', h1: 'H1', h2: 'H2', todo: '待办', list: '列表', quote: '引用', code: '代码', insertContent: '插入内容', imageGif: '图片 / GIF', video: '视频（即将支持）', divider: '分割线', table: '表格', codeBlock: '代码块', quoteBlock: '引用块' },
     agent: {
       title: '博客智能体', back: '返回博客', headline: '把想法变成可发布的知识博客',
       description: '输入一个主题或一篇日记。智能体会联网调研、写作并审校，给出带来源的完整文章。',
