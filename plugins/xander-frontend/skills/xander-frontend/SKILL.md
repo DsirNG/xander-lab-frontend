@@ -14,7 +14,8 @@ Use this skill as the project entry workflow. It supplies repository-specific ro
 3. Inspect only the feature, route, service, and component files relevant to the request.
 4. Read `references/task-routing.md` and apply the minimal relevant specialist skills in the stated order.
 5. Keep API calls on `@api/http`; preserve the project’s authentication, Toast, i18n, and layout boundaries.
-6. Validate proportionally, then commit only task files using the repository’s required commit format.
+6. Read the `xander-lab-guardrails` skill for API, authentication, long-task, and loading requirements.
+7. Validate proportionally, then commit only task files using the repository’s required commit format.
 
 ## Required project rules
 

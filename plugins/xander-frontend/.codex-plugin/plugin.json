@@ -1,7 +1,7 @@
 {
   "name": "xander-frontend",
-  "version": "0.1.0",
-  "description": "Project workflow and task routing for the Xander Lab frontend.",
+  "version": "0.1.0+codex.20260723054132",
+  "description": "Project workflow and guardrails for the Xander Lab frontend.",
   "author": {
     "name": "Local developer"
   },
@@ -9,7 +9,7 @@
   "interface": {
     "displayName": "Xander Frontend",
     "shortDescription": "Use Xander Lab frontend workflows in Codex.",
-    "longDescription": "Routes Xander Lab frontend work through project rules, the component catalog, and the smallest relevant specialist skills.",
+    "longDescription": "Routes Xander Lab frontend work through project rules, shared error handling, loading conventions, and the component catalog.",
     "developerName": "Local developer",
     "category": "Productivity",
     "capabilities": [],
