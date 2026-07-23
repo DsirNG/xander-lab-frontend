@@ -27,6 +27,10 @@ const BlogAgent = () => {
   const task = taskData?.task;
 
   useEffect(() => {
+    if (task?.input) setInput(task.input);
+  }, [task?.id, task?.input]);
+
+  useEffect(() => {
     if (!taskId) return undefined;
     let active = true;
     const load = async () => {
