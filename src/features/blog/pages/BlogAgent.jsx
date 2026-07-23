@@ -24,6 +24,7 @@ const BlogAgent = () => {
   const streamBufferRef = useRef('');
   const streamErrorRef = useRef(null);
   const streamFrameRef = useRef(null);
+  const task = taskData?.task;
 
   useEffect(() => {
     if (!taskId) return undefined;
@@ -35,11 +36,11 @@ const BlogAgent = () => {
       } catch (error) { if (active) toast.error(error.message || t('blog.agent.failed')); }
     };
     load();
+    if (task && !['created', 'running'].includes(task.status)) return () => { active = false; };
     const timer = setInterval(load, 3000);
     return () => { active = false; clearInterval(timer); };
-  }, [taskId, t, toast]);
+  }, [taskId, task?.status]);
 
-  const task = taskData?.task;
   const contentBoundary = taskData?.contentBoundary || {};
   const knowledgeGraph = taskData?.knowledgeGraph || {};
   const graphNodes = asArray(knowledgeGraph.nodes);
