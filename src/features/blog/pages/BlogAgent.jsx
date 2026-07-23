@@ -1,5 +1,5 @@
-import React, { startTransition, useMemo, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { startTransition, useEffect, useMemo, useRef, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -13,15 +13,31 @@ const asArray = (value) => Array.isArray(value) ? value : [];
 const BlogAgent = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const { taskId } = useParams();
   const toast = useToast();
   const [input, setInput] = useState('');
   const [taskData, setTaskData] = useState(null);
   const [isRunning, setIsRunning] = useState(false);
   const [isSavingDraft, setIsSavingDraft] = useState(false);
+  const [isPublishing, setIsPublishing] = useState(false);
   const [streamText, setStreamText] = useState('');
   const streamBufferRef = useRef('');
   const streamErrorRef = useRef(null);
   const streamFrameRef = useRef(null);
+
+  useEffect(() => {
+    if (!taskId) return undefined;
+    let active = true;
+    const load = async () => {
+      try {
+        const data = await blogAgentService.getTask(taskId, { _silent: true });
+        if (active) setTaskData(data);
+      } catch (error) { if (active) toast.error(error.message || t('blog.agent.failed')); }
+    };
+    load();
+    const timer = setInterval(load, 3000);
+    return () => { active = false; clearInterval(timer); };
+  }, [taskId, t, toast]);
 
   const task = taskData?.task;
   const contentBoundary = taskData?.contentBoundary || {};
@@ -50,6 +66,7 @@ const BlogAgent = () => {
     streamErrorRef.current = null;
     try {
       const created = await blogAgentService.createTask({ input });
+      navigate(`/blog/agent/${created.id}`, { replace: true });
       await blogAgentService.runTaskStream(created.id, ({ event, data }) => {
         if (event === 'delta') {
           streamBufferRef.current += data;
@@ -74,6 +91,17 @@ const BlogAgent = () => {
     } finally {
       setIsRunning(false);
     }
+  };
+
+  const handlePublish = async () => {
+    if (!task?.id) return;
+    setIsPublishing(true);
+    try {
+      const post = await blogAgentService.publishTask(task.id);
+      setTaskData((current) => ({ ...current, task: { ...current.task, publishedPostId: post.id } }));
+      toast.success(t('blog.publishSuccess'));
+    } catch (error) { toast.error(error.message || t('blog.publishError')); }
+    finally { setIsPublishing(false); }
   };
 
   const handleCreateDraft = async () => {
@@ -140,7 +168,7 @@ const BlogAgent = () => {
 
         {task && <section className="xl:col-span-2 grid gap-5 xl:grid-cols-[minmax(0,1fr)_320px]">
           <article className="min-w-0 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-8">
-            <div className="mb-6 flex flex-wrap items-start justify-between gap-4 border-b border-slate-100 pb-5"><div><span className="text-xs font-bold uppercase tracking-widest text-primary">{t('blog.agent.article')}</span><h2 className="mt-1 text-2xl font-black tracking-tight">{task.title}</h2><p className="mt-2 text-sm leading-6 text-slate-500">{task.summary}</p></div>{task.status === 'ready' && <button onClick={handleCreateDraft} disabled={isSavingDraft} className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-black text-white disabled:opacity-60">{isSavingDraft ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileText className="h-4 w-4" />}{t('blog.agent.toDraft')}<ChevronRight className="h-4 w-4" /></button>}</div>
+            <div className="mb-6 flex flex-wrap items-start justify-between gap-4 border-b border-slate-100 pb-5"><div><span className="text-xs font-bold uppercase tracking-widest text-primary">{t('blog.agent.article')}</span><h2 className="mt-1 text-2xl font-black tracking-tight">{task.title}</h2><p className="mt-2 text-sm leading-6 text-slate-500">{task.summary}</p></div>{task.publishedPostId ? <button onClick={() => navigate(`/blog/${task.publishedPostId}`)} className="inline-flex items-center gap-2 rounded-xl bg-slate-950 px-4 py-2.5 text-sm font-black text-white">查看文章</button> : task.status === 'ready' && <div className="flex gap-2"><button onClick={handleCreateDraft} disabled={isSavingDraft} className="inline-flex items-center gap-2 rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-black disabled:opacity-60">{isSavingDraft ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileText className="h-4 w-4" />}{t('blog.agent.toDraft')}</button><button onClick={handlePublish} disabled={isPublishing} className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-black text-white disabled:opacity-60">{isPublishing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}确认发布</button></div>}</div>
             {task.content ? <div className="prose prose-slate max-w-none prose-headings:font-black prose-a:text-primary"><ReactMarkdown remarkPlugins={[remarkGfm]}>{task.content}</ReactMarkdown></div> : <p className="text-sm text-slate-500">{statusText}</p>}
           </article>
           <aside className="space-y-5">

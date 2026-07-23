@@ -185,6 +185,10 @@ export const createRouter = () => {
       path: 'blog/agent',
       element: <LazyPage><BlogAgent /></LazyPage>,
     },
+    {
+      path: 'blog/agent/:taskId',
+      element: <LazyPage><BlogAgent /></LazyPage>,
+    },
     // 工作室路由 - 独立页面，不使用 MainLayout
     {
       path: 'studio/project',

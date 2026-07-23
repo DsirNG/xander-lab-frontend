@@ -7,4 +7,5 @@ export const blogAgentService = {
   getTask: (id, config) => get(`${BASE}/${id}`, undefined, config),
   runTask: (id, config) => post(`${BASE}/${id}/run`, undefined, { dedupe: false, timeout: 120000, ...config }),
   runTaskStream: (id, onEvent, config) => postStream(`${BASE}/${id}/run/stream`, undefined, { onEvent, ...config }),
+  publishTask: (id, config) => post(`${BASE}/${id}/publish`, undefined, { dedupe: false, timeout: 0, ...config }),
 };
