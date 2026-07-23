@@ -65,7 +65,18 @@ export default {
     publishSettings: '文档设置',
     edit: '编辑',
     preview: '预览',
-    noContent: '尚未输入内容'
+    noContent: '尚未输入内容',
+    agent: {
+      title: '博客智能体', back: '返回博客', headline: '把想法变成可发布的知识博客',
+      description: '输入一个主题或一篇日记。智能体会联网调研、写作并审校，给出带来源的完整文章。',
+      inputLabel: '主题或日记', inputPlaceholder: '例如：最近我开始用 AI 写代码，效率更高了，但我担心自己理解代码的能力在下降……',
+      inputType: '输入类型', audience: '目标读者', tone: '写作语气', defaultAudience: '对这个主题感兴趣的读者', defaultTone: '清晰、真诚、可操作',
+      generate: '调研并写作', running: '正在调研和写作…', waiting: '等待你的输入', ready: '等待审阅', failed: '智能体未能完成这次任务', complete: '文章已生成，可开始审阅',
+      workflow: '智能体工作流', guardrail: '个人经历始终标注为作者经历；外部事实必须可追溯，系统绝不会自动公开发布。',
+      stages: { analyze: '确定文章角度', research: '调研与核验', write: '撰写完整文章', review: '发布前审校' },
+      stageDescriptions: { analyze: '识别读者、观点和需要补充的证据。', research: '联网核验文章中的外部事实。', write: '生成完整的 Markdown 知识博客。', review: '检查证据、表达和发布状态。' },
+      article: '生成的文章', toDraft: '进入编辑器', draftCreated: '已创建草稿，现在可以编辑并发布。', sources: '调研来源', noSources: '这篇文章未保留外部来源。', review: '编辑审校', reviewPending: '智能体完成后会显示审校结果。', inputRequired: '请先输入主题或日记。'
+    }
   },
   common: {
     backHome: '返回首页',

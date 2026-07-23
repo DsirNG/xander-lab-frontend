@@ -65,7 +65,18 @@ export default {
     publishSettings: 'Document Settings',
     edit: 'Edit',
     preview: 'Preview',
-    noContent: 'No content yet'
+    noContent: 'No content yet',
+    agent: {
+      title: 'Blog Agent', back: 'Back to blog', headline: 'Turn an idea into a publishable article',
+      description: 'Give the agent a topic or a diary entry. It researches, writes, and checks a complete knowledge article with traceable sources.',
+      inputLabel: 'Your topic or diary entry', inputPlaceholder: 'For example: I have begun using AI to code faster, but I worry my understanding of the code is getting weaker…',
+      inputType: 'Input type', audience: 'Audience', tone: 'Tone', defaultAudience: 'Readers curious about this topic', defaultTone: 'Clear, sincere, and practical',
+      generate: 'Research and write', running: 'Researching and writing…', waiting: 'Waiting for your input', ready: 'Ready to review', failed: 'The agent could not finish this task', complete: 'Article is ready to review',
+      workflow: 'Agent workflow', guardrail: 'Personal experience remains attributed to its author. External claims must have a traceable source and are never published automatically.',
+      stages: { analyze: 'Frame the article', research: 'Research and verify', write: 'Write the full article', review: 'Review before publishing' },
+      stageDescriptions: { analyze: 'Finds the reader, point of view, and evidence gaps.', research: 'Uses web research to verify external claims.', write: 'Builds a complete Markdown knowledge article.', review: 'Checks evidence, clarity, and publish readiness.' },
+      article: 'Generated article', toDraft: 'Open in editor', draftCreated: 'Draft created. You can now edit and publish it.', sources: 'Research sources', noSources: 'No external sources were retained for this article.', review: 'Editorial review', reviewPending: 'The review will appear when the agent completes its work.', inputRequired: 'Enter a topic or diary entry first.'
+    }
   },
   common: {
     backHome: 'Back to Home',

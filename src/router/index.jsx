@@ -27,6 +27,7 @@ const BlogHome = React.lazy(() => import('@features/blog/pages/BlogHome'));
 const BlogDetail = React.lazy(() => import('@features/blog/pages/BlogDetail'));
 const BlogTags = React.lazy(() => import('@features/blog/pages/BlogTags'));
 const BlogPublish = React.lazy(() => import('@features/blog/pages/BlogPublish'));
+const BlogAgent = React.lazy(() => import('@features/blog/pages/BlogAgent'));
 const LoginPage = React.lazy(() => import('@features/auth/pages/LoginPage'));
 const StudioPage = React.lazy(() => import('@features/studio/pages/StudioPage'));
 const ProjectUploadPage = React.lazy(() => import('@features/studio/pages/ProjectUploadPage'));
@@ -179,6 +180,10 @@ export const createRouter = () => {
     {
       path: 'blog/publish',
       element: <LazyPage><BlogPublish /></LazyPage>,
+    },
+    {
+      path: 'blog/agent',
+      element: <LazyPage><BlogAgent /></LazyPage>,
     },
     // 工作室路由 - 独立页面，不使用 MainLayout
     {

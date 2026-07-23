@@ -5,7 +5,6 @@ import { Icon } from './Icon'
 export function PageHeader({ title, more = false }: { title: string; more?: boolean }) {
   return (
     <>
-
       <View className="page-header">
         <View onClick={() => Taro.navigateBack()}>
           <Icon name="back" />

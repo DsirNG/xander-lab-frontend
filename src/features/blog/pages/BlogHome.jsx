@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Grid, List, Filter, X, Loader2, Plus } from 'lucide-react';
+import { Bot, Grid, List, Filter, X, Loader2, Plus } from 'lucide-react';
 import { blogService } from '../services/blogService';
 import BlogCard from '../components/BlogCard';
 import SEOHead from '@components/seo/SEOHead';
@@ -174,6 +174,13 @@ const BlogHome = () => {
                 </div>
 
                 <div className="flex items-center gap-3">
+                    <button
+                        onClick={() => navigate('/blog/agent')}
+                        className="flex items-center px-4 py-2 text-xs font-black text-primary bg-primary/10 rounded-full hover:bg-primary hover:text-white transition-all"
+                    >
+                        <Bot className="w-4 h-4 mr-1" />
+                        {t('blog.agent.title')}
+                    </button>
                     <button
                         onClick={() => navigate('publish')}
                         className="flex items-center px-4 py-2 text-xs font-black text-white bg-primary rounded-full hover:bg-slate-900 transition-all shadow-lg shadow-primary/20 active:scale-95"
