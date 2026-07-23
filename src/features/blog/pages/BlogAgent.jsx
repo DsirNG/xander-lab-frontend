@@ -1,12 +1,11 @@
 import React, { startTransition, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
 import { ArrowLeft, Bot, BookOpenCheck, ChevronRight, ExternalLink, FileText, GitFork, Layers, Loader2, Search, Send, Sparkles } from 'lucide-react';
 import { blogAgentService } from '../services/blogAgentService';
 import { useToast } from '@/hooks/useToast';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
+import BlogMarkdown from '../components/BlogMarkdown';
 
 const stageKeys = ['analyze', 'research', 'write', 'review'];
 const asArray = (value) => Array.isArray(value) ? value : [];
@@ -180,7 +179,7 @@ const BlogAgent = () => {
           {task && <section className="xl:col-span-2 grid gap-5 xl:grid-cols-[minmax(0,1fr)_320px]">
             <article className="min-w-0 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-8">
               <div className="mb-6 flex flex-wrap items-start justify-between gap-4 border-b border-slate-100 pb-5"><div><span className="text-xs font-bold uppercase tracking-widest text-primary">{t('blog.agent.article')}</span><h2 className="mt-1 text-2xl font-black tracking-tight">{task.title}</h2><p className="mt-2 text-sm leading-6 text-slate-500">{task.summary}</p></div>{task.publishedPostId ? <button onClick={() => navigate(`/blog/${task.publishedPostId}`)} className="inline-flex items-center gap-2 rounded-xl bg-slate-950 px-4 py-2.5 text-sm font-black text-white">查看文章</button> : task.status === 'ready' && <div className="flex gap-2"><button onClick={handleCreateDraft} disabled={isSavingDraft} className="inline-flex items-center gap-2 rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-black disabled:opacity-60">{isSavingDraft ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileText className="h-4 w-4" />}{t('blog.agent.toDraft')}</button><button onClick={handlePublish} disabled={isPublishing} className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-black text-white disabled:opacity-60">{isPublishing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}确认发布</button></div>}</div>
-              {task.content ? <div className="prose prose-slate max-w-none prose-headings:font-black prose-a:text-primary"><ReactMarkdown remarkPlugins={[remarkGfm]}>{task.content}</ReactMarkdown></div> : <p className="text-sm text-slate-500">{statusText}</p>}
+              {task.content ? <BlogMarkdown content={task.content} className="prose-headings:font-black" /> : <p className="text-sm text-slate-500">{statusText}</p>}
             </article>
             <aside className="space-y-5">
               <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm"><div className="flex items-center gap-2 text-sm font-black"><Layers className="h-4 w-4 text-primary" />{t('blog.agent.contentFocus')}</div><div className="mt-4 space-y-4"><div><p className="text-xs font-bold text-slate-500">{t('blog.agent.mustCover')}</p><div className="mt-2 flex flex-wrap gap-1.5">{asArray(contentBoundary.mustCover).map((item) => <span key={item} className="rounded-lg bg-primary/10 px-2 py-1 text-xs font-semibold text-primary">{item}</span>)}</div></div>{asArray(contentBoundary.relatedExpansion).length > 0 && <div><p className="text-xs font-bold text-slate-500">{t('blog.agent.relatedExpansion')}</p><p className="mt-1 text-xs leading-5 text-slate-600">{asArray(contentBoundary.relatedExpansion).join('、')}</p></div>}{asArray(contentBoundary.outOfScope).length > 0 && <div><p className="text-xs font-bold text-slate-500">{t('blog.agent.outOfScope')}</p><p className="mt-1 text-xs leading-5 text-slate-500">{asArray(contentBoundary.outOfScope).join('、')}</p></div>}</div></section>

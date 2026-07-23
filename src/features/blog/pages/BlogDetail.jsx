@@ -2,16 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams, Link } from 'react-router-dom';
 import { Calendar, Clock, User, Tag, ChevronLeft, Eye } from 'lucide-react';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
-import CodeBlock from '@/components/common/CodeBlock';
 import SEOHead from '@components/seo/SEOHead';
 import { blogService } from '../services/blogService';
+import BlogMarkdown from '../components/BlogMarkdown';
 
 /**
  * Markdown 自定义渲染组件映射
  */
-const markdownComponents = {
+/* const markdownComponents = {
     // 代码块渲染
     code({ className, children, ...props }) {
         const match = /language-(\w+)/.exec(className || '');
@@ -83,7 +81,7 @@ const markdownComponents = {
             </blockquote>
         );
     },
-};
+}; */
 
 /**
  * 博客详情页
@@ -299,14 +297,7 @@ const BlogDetail = () => {
             )}
 
             {/* 文章内容 - Markdown 渲染 */}
-            <div className="prose prose-slate prose-sm sm:prose-base max-w-none mb-10 prose-headings:font-bold prose-headings:tracking-tight prose-h2:text-xl prose-h2:mt-8 prose-h2:mb-4 prose-h3:text-lg prose-h3:mt-6 prose-h3:mb-3 prose-p:leading-relaxed prose-li:leading-relaxed prose-pre:bg-transparent prose-pre:p-0 prose-pre:m-0">
-                <ReactMarkdown
-                    remarkPlugins={[remarkGfm]}
-                    components={markdownComponents}
-                >
-                    {blog.content}
-                </ReactMarkdown>
-            </div>
+            <BlogMarkdown content={blog.content} className="mb-10" />
 
             {/* 底部标签 */}
             <div className="border-t border-slate-200  pt-6">
