@@ -36,10 +36,10 @@ const BlogMarkdownComposer = forwardRef(({ value, onChange, placeholder, disable
     const rootRef = useRef(null);
     const fileInputRef = useRef(null);
     const hoverOffsetRef = useRef(null);
+    const hoverExitTimerRef = useRef(null);
     const valueRef = useRef(value);
     const [isFocused, setIsFocused] = useState(false);
-    const [isHovered, setIsHovered] = useState(false);
-    const [menuOpen, setMenuOpen] = useState(false);
+    const [isInteractionActive, setIsInteractionActive] = useState(false);
     const [uploading, setUploading] = useState(false);
 
     useImperativeHandle(forwardedRef, () => textareaRef.current);
@@ -48,21 +48,14 @@ const BlogMarkdownComposer = forwardRef(({ value, onChange, placeholder, disable
         valueRef.current = value;
     }, [value]);
 
+    useEffect(() => () => window.clearTimeout(hoverExitTimerRef.current), []);
+
     useEffect(() => {
-        if (!menuOpen) return undefined;
-        const closeOnOutsidePointer = (event) => {
-            if (!rootRef.current?.contains(event.target)) setMenuOpen(false);
-        };
-        const closeOnEscape = (event) => {
-            if (event.key === 'Escape') setMenuOpen(false);
-        };
-        document.addEventListener('pointerdown', closeOnOutsidePointer);
-        document.addEventListener('keydown', closeOnEscape);
-        return () => {
-            document.removeEventListener('pointerdown', closeOnOutsidePointer);
-            document.removeEventListener('keydown', closeOnEscape);
-        };
-    }, [menuOpen]);
+        if (!isInteractionActive) return undefined;
+        const preventWheel = (event) => event.preventDefault();
+        document.addEventListener('wheel', preventWheel, { capture: true, passive: false });
+        return () => document.removeEventListener('wheel', preventWheel, { capture: true });
+    }, [isInteractionActive]);
 
     const getLineStartAtPointer = (clientY) => {
         const textarea = textareaRef.current;
@@ -92,15 +85,16 @@ const BlogMarkdownComposer = forwardRef(({ value, onChange, placeholder, disable
     const insertMarkdown = (markdown) => {
         const textarea = textareaRef.current;
         const currentValue = valueRef.current;
-        const start = textarea?.selectionStart ?? currentValue.length;
-        const end = textarea?.selectionEnd ?? start;
+        const hoveredStart = hoverOffsetRef.current;
+        const start = hoveredStart ?? textarea?.selectionStart ?? currentValue.length;
+        const end = hoveredStart ?? textarea?.selectionEnd ?? start;
         const before = currentValue.slice(0, start);
         const after = currentValue.slice(end);
         const prefix = before && !before.endsWith('\n\n') ? '\n\n' : '';
         const suffix = after && !after.startsWith('\n\n') ? '\n\n' : '';
         const inserted = `${prefix}${markdown}${suffix}`;
         onChange(`${before}${inserted}${after}`);
-        setMenuOpen(false);
+        setIsInteractionActive(false);
         requestAnimationFrame(() => {
             textarea?.focus();
             const nextCursor = start + prefix.length + markdown.length;
@@ -109,14 +103,14 @@ const BlogMarkdownComposer = forwardRef(({ value, onChange, placeholder, disable
         });
     };
 
-    const handleToolbarClick = () => {
-        const textarea = textareaRef.current;
-        const offset = hoverOffsetRef.current;
-        if (textarea && offset !== null) {
-            textarea.focus();
-            textarea.setSelectionRange(offset, offset);
-        }
-        setMenuOpen((current) => !current);
+    const beginInteraction = () => {
+        window.clearTimeout(hoverExitTimerRef.current);
+        setIsInteractionActive(true);
+    };
+
+    const scheduleInteractionClose = () => {
+        window.clearTimeout(hoverExitTimerRef.current);
+        hoverExitTimerRef.current = window.setTimeout(() => setIsInteractionActive(false), 120);
     };
 
     const handleImageUpload = async (file) => {
@@ -146,28 +140,28 @@ const BlogMarkdownComposer = forwardRef(({ value, onChange, placeholder, disable
         hoverOffsetRef.current = getLineStartAtPointer(event.clientY);
         const rootTop = rootRef.current?.getBoundingClientRect().top ?? event.clientY;
         rootRef.current?.style.setProperty('--markdown-toolbar-top', `${Math.max(6, event.clientY - rootTop - 13)}px`);
-        setIsHovered(true);
+        beginInteraction();
     };
 
-    const showToolbar = menuOpen || isHovered || isFocused;
+    const showPlus = isInteractionActive || isFocused;
 
     return (
-        <div ref={rootRef} className="relative w-full" onPointerMove={handlePointerMove} onPointerLeave={() => !menuOpen && setIsHovered(false)}>
+        <div ref={rootRef} className="relative w-full">
             <input ref={fileInputRef} type="file" accept="image/png,image/jpeg,image/webp,image/gif" className="hidden" onChange={(event) => { handleImageUpload(event.target.files?.[0]); event.target.value = ''; }} />
             <button
                 type="button"
                 aria-label={t('blog.editor.addBlock')}
                 disabled={disabled}
-                onMouseDown={(event) => event.preventDefault()}
-                onClick={handleToolbarClick}
+                onPointerEnter={beginInteraction}
+                onPointerLeave={scheduleInteractionClose}
                 style={{ top: 'var(--markdown-toolbar-top, 8px)' }}
-                className={`absolute -left-10 z-20 grid h-7 w-7 place-items-center rounded-full border border-primary/50 bg-white text-primary shadow-sm transition-all hover:scale-105 disabled:cursor-not-allowed disabled:opacity-50 ${showToolbar ? 'opacity-100' : 'pointer-events-none opacity-0'}`}
+                className={`absolute -left-10 z-20 grid h-7 w-7 place-items-center rounded-full border border-primary/50 bg-white text-primary shadow-sm transition-all hover:scale-105 disabled:cursor-not-allowed disabled:opacity-50 ${showPlus ? 'opacity-100' : 'pointer-events-none opacity-0'}`}
             >
                 <Plus className="h-4 w-4" />
             </button>
 
-            {menuOpen && (
-                <div style={{ top: 'calc(var(--markdown-toolbar-top, 8px) + 34px)' }} className="absolute -left-10 z-30 w-[318px] overflow-hidden rounded-2xl border border-slate-200 bg-white p-2 shadow-xl">
+            {isInteractionActive && (
+                <div onPointerEnter={beginInteraction} onPointerLeave={scheduleInteractionClose} style={{ top: 'calc(var(--markdown-toolbar-top, 8px) + 34px)' }} className="absolute -left-10 z-30 w-[318px] overflow-hidden rounded-2xl border border-slate-200 bg-white p-2 shadow-xl">
                     <div className="grid grid-cols-7 gap-1">
                         {textBlocks.map(({ key, icon: Icon, markdown }) => (
                             <button key={key} type="button" onMouseDown={(event) => event.preventDefault()} onClick={() => insertMarkdown(markdown)} className="grid place-items-center gap-1 rounded-lg px-1 py-2 text-[10px] font-bold text-slate-600 transition hover:bg-primary/10 hover:text-primary">
@@ -196,6 +190,9 @@ const BlogMarkdownComposer = forwardRef(({ value, onChange, placeholder, disable
                 onClick={updateCursorAnchor}
                 onKeyUp={updateCursorAnchor}
                 onScroll={updateCursorAnchor}
+                onPointerEnter={beginInteraction}
+                onPointerMove={handlePointerMove}
+                onPointerLeave={scheduleInteractionClose}
                 placeholder={placeholder}
                 className="w-full h-full min-h-[60vh] bg-transparent border-none outline-none text-lg leading-[1.8] text-slate-700 placeholder:text-slate-300 resize-none font-medium mb-20"
             />
