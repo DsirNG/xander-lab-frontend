@@ -68,6 +68,15 @@ const toDateTimeLocalValue = (date) => {
     return localDate.toISOString().slice(0, 16);
 };
 
+const toOffsetDateTimeValue = (localValue, date) => {
+    const offsetMinutes = -date.getTimezoneOffset();
+    const sign = offsetMinutes >= 0 ? '+' : '-';
+    const absoluteOffset = Math.abs(offsetMinutes);
+    const offsetHours = String(Math.floor(absoluteOffset / 60)).padStart(2, '0');
+    const offsetRemainder = String(absoluteOffset % 60).padStart(2, '0');
+    return `${localValue}:00${sign}${offsetHours}:${offsetRemainder}`;
+};
+
 const createInitialForm = () => ({
     recipientEmail: '',
     scheduledAt: toDateTimeLocalValue(new Date(Date.now() + 60 * 60 * 1000)),
@@ -163,7 +172,7 @@ const ProfileCenterModal = ({ isOpen, onClose, userInfo }) => {
             await emailReminderService.create({
                 clientRequestId: clientRequestIdRef.current,
                 recipientEmail,
-                scheduledAt: scheduledDate.toISOString(),
+                scheduledAt: toOffsetDateTimeValue(form.scheduledAt, scheduledDate),
                 subject,
                 message,
             });
