@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
@@ -31,6 +31,8 @@ const LoginPage = () => {
         code: ''
     });
     const [countdown, setCountdown] = useState(0);
+    const [sendingCode, setSendingCode] = useState(false);
+    const sendCodeLockRef = useRef(false);
 
     /** 验证码倒计时 */
     useEffect(() => {
@@ -48,16 +50,25 @@ const LoginPage = () => {
 
     /** 发送验证码到邮箱 */
     const handleSendCode = async () => {
+        if (sendingCode || sendCodeLockRef.current || countdown > 0) {
+            return;
+        }
+
         if (!formData.account || !formData.account.includes('@')) {
             toast.warning(t('auth.login.invalidEmail'));
             return;
         }
+        sendCodeLockRef.current = true;
+        setSendingCode(true);
         try {
             await authService.sendCode(formData.account);
             setCountdown(60);
             toast.success(t('auth.login.codeSent'));
         } catch (err) {
             toast.error(err.message || t('auth.login.codeSendFailed'));
+        } finally {
+            sendCodeLockRef.current = false;
+            setSendingCode(false);
         }
     };
 
@@ -259,11 +270,13 @@ const LoginPage = () => {
                                                     </div>
                                                     <button
                                                         type="button"
-                                                        disabled={countdown > 0}
+                                                        disabled={countdown > 0 || sendingCode}
                                                         onClick={handleSendCode}
                                                         className="px-6 rounded-3xl bg-slate-900 text-white text-xs font-black hover:scale-105 active:scale-95 disabled:opacity-30 transition-all shadow-xl shadow-slate-900/10 whitespace-nowrap"
                                                     >
-                                                        {countdown > 0 ? `${countdown}s` : t('auth.login.sendCode')}
+                                                        {sendingCode ? (
+                                                            <Loader2 className="w-4 h-4 animate-spin" aria-label={t('auth.login.sendCode')} />
+                                                        ) : countdown > 0 ? `${countdown}s` : t('auth.login.sendCode')}
                                                     </button>
                                                 </div>
                                             </div>

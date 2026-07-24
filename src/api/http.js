@@ -35,9 +35,10 @@ const BASE_URL = ENV_CONFIG.BASE_URL;
 /** 是否开发环境 */
 const IS_DEV = ENV_CONFIG.IS_DEV;
 
-/** Token 存储 key */
+/** Token / 会话存储 key */
 const TOKEN_KEY = 'access_token';
 const REFRESH_TOKEN_KEY = 'refresh_token';
+const USER_INFO_KEY = 'user_info';
 
 /** 刷新 Token 的接口路径（相对 baseURL） */
 const REFRESH_URL = '/auth/refresh';
@@ -71,11 +72,24 @@ export const tokenStorage = {
     setRefreshToken: (token) => localStorage.setItem(REFRESH_TOKEN_KEY, token),
     removeRefreshToken: () => localStorage.removeItem(REFRESH_TOKEN_KEY),
 
+    /** 清除全部登录态（token + 本地用户信息），与未登录一致 */
     clear: () => {
         localStorage.removeItem(TOKEN_KEY);
         localStorage.removeItem(REFRESH_TOKEN_KEY);
+        localStorage.removeItem(USER_INFO_KEY);
     },
 };
+
+/**
+ * 将会话降为真正未登录：清本地凭证、通知 UI。
+ * 用于 access/refresh 失效等「登录已过期」场景，不用于登录接口账号密码错误。
+ * 过期提示始终弹出（与请求的 _silent 无关）：静默只抑制该请求自身的业务错误 toast。
+ */
+function forceLoggedOut() {
+    tokenStorage.clear();
+    window.dispatchEvent(new CustomEvent('auth:logout', { detail: { reason: 'session_expired' } }));
+    showToast('warning', i18n.t('auth.sessionExpired', '登录已过期，请重新登录'));
+}
 
 // ─────────────────────────────────────────────
 // 3. 错误码映射
@@ -377,11 +391,29 @@ instance.interceptors.response.use(
             removePendingRequest(config);
         }
 
-        // ── 9.2.1 Token 过期，无感刷新 ──
-        const isTokenEndpoint = ['/auth/login', '/auth/refresh'].some(
-            (path) => config?.url?.endsWith(path)
-        );
-        if (response?.status === 401 && config && !config._retryRefresh && !isTokenEndpoint) {
+        // ── 9.2.1 Token 过期，无感刷新 / 强制未登录 ──
+        const requestUrl = config?.url || '';
+        const isLoginEndpoint = requestUrl.endsWith('/auth/login');
+        const isRefreshEndpoint = requestUrl.endsWith('/auth/refresh');
+        const skipAuthRecovery = Boolean(config?._skipAuthRecovery);
+        const sessionExpiredError = () =>
+            new HttpError(i18n.t('auth.sessionExpired', '登录已过期，请重新登录'), 401, null, null);
+
+        // 主动登出等场景：跳过无感刷新与强制未登录提示，交给调用方清理
+        if (response?.status === 401 && config && skipAuthRecovery) {
+            // fall through to 9.2.3
+        } else if (response?.status === 401 && config && isRefreshEndpoint) {
+            // refresh 接口自身 401：refresh token 已失效 → 直接变为未登录
+            forceLoggedOut();
+            return Promise.reject(sessionExpiredError());
+        } else if (response?.status === 401 && config && !isLoginEndpoint) {
+            // 业务接口 401：先尝试无感刷新；已重试仍 401 或刷新失败 → 真正未登录
+            // 登录接口 401 视为账号/验证码错误，不清理会话
+            if (config._retryRefresh) {
+                forceLoggedOut();
+                return Promise.reject(sessionExpiredError());
+            }
+
             if (isRefreshing) {
                 // 排队等待刷新完成
                 return new Promise((resolve, reject) => {
@@ -391,7 +423,12 @@ instance.interceptors.response.use(
                             config._retryRefresh = true;
                             resolve(instance(config));
                         },
-                        reject
+                        (refreshError) => {
+                            // 刷新已在主请求里 forceLoggedOut，排队请求只跟着重置
+                            reject(refreshError instanceof HttpError
+                                ? refreshError
+                                : sessionExpiredError());
+                        }
                     );
                 });
             }
@@ -407,15 +444,10 @@ instance.interceptors.response.use(
                 return instance(config);
             } catch (refreshError) {
                 isRefreshing = false;
-                rejectRefreshSubscribers(refreshError);
-                tokenStorage.clear();
-                // 弹出登录过期提示
-                showToast('warning', i18n.t('auth.sessionExpired', '登录已过期，请重新登录'));
-                // 触发全局登出事件，由业务层监听清除用户状态
-                window.dispatchEvent(new CustomEvent('auth:logout'));
-                return Promise.reject(
-                    new HttpError('登录已过期，请重新登录', 401, null, null)
-                );
+                forceLoggedOut();
+                const expired = sessionExpiredError();
+                rejectRefreshSubscribers(expired);
+                return Promise.reject(expired);
             }
         }
 

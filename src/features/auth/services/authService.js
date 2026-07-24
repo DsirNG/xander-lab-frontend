@@ -45,10 +45,15 @@ export const authService = {
     logout: async () => {
         const refreshToken = tokenStorage.getRefreshToken();
         try {
-            await post(`${BASE}/logout`, { refreshToken });
+            // 主动登出：跳过过期恢复逻辑，避免误弹「登录已过期」
+            await post(`${BASE}/logout`, { refreshToken }, {
+                _silent: true,
+                _skipAuthRecovery: true,
+            });
         } finally {
+            // tokenStorage.clear 同步清除 access/refresh/user_info
             tokenStorage.clear();
-            localStorage.removeItem('user_info');
+            window.dispatchEvent(new CustomEvent('auth:logout', { detail: { reason: 'logout' } }));
         }
     },
 
