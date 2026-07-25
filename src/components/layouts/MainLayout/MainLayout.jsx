@@ -20,37 +20,75 @@ const Navbar = () => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [userInfo, setUserInfo] = useState(authService.getLocalUserInfo());
     const [isLangDropdownOpen, setIsLangDropdownOpen] = useState(false);
-    const [animDirection, setAnimDirection] = useState(0); // 1 = spin up, -1 = spin down
-    const [isAnimating, setIsAnimating] = useState(false);
+    const [langReel, setLangReel] = useState(() => ({
+        outgoing: LANG_LABELS[i18n.language] || 'EN',
+        incoming: null,
+        rolling: false,
+    }));
+    const langRollTimerRef = useRef(null);
     const langDropdownRef = useRef(null);
     const location = useLocation();
 
-    // 切换语言（带旋转动画）
+    const rollLanguageLabel = useCallback((nextLng) => {
+        const nextLabel = LANG_LABELS[nextLng] || 'EN';
+        setLangReel((current) => {
+            if (current.rolling && current.incoming === nextLabel) {
+                return current;
+            }
+            return {
+                outgoing: current.incoming || current.outgoing,
+                incoming: nextLabel,
+                rolling: true,
+            };
+        });
+        if (langRollTimerRef.current) {
+            window.clearTimeout(langRollTimerRef.current);
+        }
+        langRollTimerRef.current = window.setTimeout(() => {
+            setLangReel({
+                outgoing: nextLabel,
+                incoming: null,
+                rolling: false,
+            });
+            langRollTimerRef.current = null;
+        }, 360);
+    }, []);
+
+    // 切换语言（标签下→上滚动）
     const changeLanguage = useCallback((lng) => {
-        const currentIdx = LANGUAGES.indexOf(i18n.language);
-        const nextIdx = LANGUAGES.indexOf(lng);
-        if (currentIdx === nextIdx) {
+        if (lng === i18n.language) {
             setIsLangDropdownOpen(false);
             return;
         }
-        setAnimDirection(nextIdx > currentIdx ? 1 : -1);
-        setIsAnimating(true);
         setIsLangDropdownOpen(false);
+        rollLanguageLabel(lng);
         i18n.changeLanguage(lng);
-        setTimeout(() => setIsAnimating(false), 400);
-    }, [i18n]);
+    }, [i18n, rollLanguageLabel]);
 
     // 移动端循环切换
     const toggleLanguageMobile = () => {
-        const currentIdx = LANGUAGES.indexOf(i18n.language);
+        const currentIdx = Math.max(0, LANGUAGES.indexOf(i18n.language));
         const nextLng = LANGUAGES[(currentIdx + 1) % LANGUAGES.length];
-        setAnimDirection(1);
-        setIsAnimating(true);
+        rollLanguageLabel(nextLng);
         i18n.changeLanguage(nextLng);
-        setTimeout(() => setIsAnimating(false), 400);
     };
 
-    const currentLang = LANG_LABELS[i18n.language] || 'EN';
+    useEffect(() => () => {
+        if (langRollTimerRef.current) {
+            window.clearTimeout(langRollTimerRef.current);
+        }
+    }, []);
+
+    // Keep reel label in sync when language changes elsewhere
+    useEffect(() => {
+        const label = LANG_LABELS[i18n.language] || 'EN';
+        setLangReel((current) => {
+            if (current.rolling) return current;
+            if (current.outgoing === label) return current;
+            return { outgoing: label, incoming: null, rolling: false };
+        });
+    }, [i18n.language]);
+
     const displayName = getDisplayName(userInfo);
     const avatarText = getAvatarText(userInfo);
     const roleLabel = userInfo?.role || '';
@@ -164,8 +202,22 @@ const Navbar = () => {
                                     aria-haspopup="listbox"
                                 >
                                     <Languages aria-hidden="true" className="w-4 h-4" />
-                                    <span className={`text-xs font-bold inline-block overflow-hidden h-4 leading-4 min-w-[2ch] text-center ${isAnimating ? (animDirection > 0 ? styles.langSpinOut : styles.langSpinOutReverse) : ''}`}>
-                                        {currentLang}
+                                    <span
+                                        className={`${styles.langReel} ${styles.langReelSm}`}
+                                        aria-live="polite"
+                                    >
+                                        <span
+                                            className={`${styles.langReelItem} ${
+                                                langReel.rolling ? styles.langReelOut : ''
+                                            }`}
+                                        >
+                                            {langReel.outgoing}
+                                        </span>
+                                        {langReel.rolling && langReel.incoming ? (
+                                            <span className={`${styles.langReelItem} ${styles.langReelIn}`}>
+                                                {langReel.incoming}
+                                            </span>
+                                        ) : null}
                                     </span>
                                     <ChevronDown aria-hidden="true" className={`w-3 h-3 transition-transform duration-200 ${isLangDropdownOpen ? 'rotate-180' : ''}`} />
                                 </button>
@@ -302,8 +354,22 @@ const Navbar = () => {
                             className={`${styles.mobileActionButton} flex items-center space-x-2`}
                         >
                             <Languages aria-hidden="true" className="w-4 h-4" />
-                            <span className={`text-sm font-medium inline-block overflow-hidden h-5 leading-5 ${isAnimating ? styles.langSpinOut : ''}`}>
-                                {currentLang}
+                            <span
+                                className={`${styles.langReel} ${styles.langReelMd}`}
+                                aria-live="polite"
+                            >
+                                <span
+                                    className={`${styles.langReelItem} ${
+                                        langReel.rolling ? styles.langReelOut : ''
+                                    }`}
+                                >
+                                    {langReel.outgoing}
+                                </span>
+                                {langReel.rolling && langReel.incoming ? (
+                                    <span className={`${styles.langReelItem} ${styles.langReelIn}`}>
+                                        {langReel.incoming}
+                                    </span>
+                                ) : null}
                             </span>
                         </button>
                         <a

@@ -193,34 +193,55 @@
     }
 }
 
-/* ── 语言标签旋转动画 ── */
+/* ── 语言标签下→上滚动 ── */
 
-@keyframes langSpinOut {
+.langReel {
+    @apply relative inline-block overflow-hidden align-middle text-center font-bold;
+    min-width: 2.5ch;
+}
+
+.langReelSm {
+    @apply h-4 text-xs;
+    line-height: 1rem;
+}
+
+.langReelMd {
+    @apply h-5 text-sm font-medium;
+    line-height: 1.25rem;
+}
+
+.langReelItem {
+    @apply absolute inset-x-0 top-0 block w-full;
+    height: 100%;
+    line-height: inherit;
+}
+
+@keyframes langReelOut {
     0% {
+        transform: translateY(0);
         opacity: 1;
-        transform: translateY(0) rotateX(0deg);
     }
     100% {
+        transform: translateY(-110%);
         opacity: 0;
-        transform: translateY(-100%) rotateX(-90deg);
     }
 }
 
-@keyframes langSpinIn {
+@keyframes langReelIn {
     0% {
+        transform: translateY(110%);
         opacity: 0;
-        transform: translateY(100%) rotateX(90deg);
     }
     100% {
+        transform: translateY(0);
         opacity: 1;
-        transform: translateY(0) rotateX(0deg);
     }
 }
 
-.langSpinOut {
-    animation: langSpinOut 0.35s ease-in forwards;
+.langReelOut {
+    animation: langReelOut 0.34s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
-.langSpinOutReverse {
-    animation: langSpinOut 0.35s ease-in forwards;
+.langReelIn {
+    animation: langReelIn 0.34s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
