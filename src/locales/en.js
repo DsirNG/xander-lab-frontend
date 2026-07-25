@@ -187,6 +187,7 @@ export default {
       filterAll: 'All statuses',
       searchPlaceholder: 'Search by task name or recipient',
       pageInfo: '{{from}}-{{to}} of {{total}}',
+      pageSizeOption: '{{size}} / page',
       prevPage: 'Previous page',
       nextPage: 'Next page',
       refresh: 'Refresh',

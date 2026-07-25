@@ -179,6 +179,7 @@ export default {
       filterAll: 'Tất cả trạng thái',
       searchPlaceholder: 'Tìm theo tên tác vụ hoặc người nhận',
       pageInfo: '{{from}}-{{to}} / {{total}}',
+      pageSizeOption: '{{size}} / trang',
       prevPage: 'Trang trước',
       nextPage: 'Trang sau',
       refresh: 'Làm mới',

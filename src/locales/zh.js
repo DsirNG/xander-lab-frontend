@@ -187,6 +187,7 @@ export default {
       filterAll: '全部状态',
       searchPlaceholder: '搜索任务名称或收件人',
       pageInfo: '第 {{from}}-{{to}} 条，共 {{total}} 条',
+      pageSizeOption: '每页 {{size}} 条',
       prevPage: '上一页',
       nextPage: '下一页',
       refresh: '刷新',

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
     AlertCircle,
@@ -24,7 +24,16 @@ import { useToast } from '@hooks/useToast';
 import { emailReminderService } from '../services/emailReminderService';
 import EmailReminderCreateModal from './EmailReminderCreateModal';
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE_OPTIONS = [5, 10, 15, 20];
+const DEFAULT_PAGE_SIZE = 10;
+const SEARCH_DEBOUNCE_MS = 300;
+
+const EMPTY_STATS = {
+    total: 0,
+    active: 0,
+    sent: 0,
+    pending: 0,
+};
 
 const STATUS_STYLES = {
     PENDING: {
@@ -68,10 +77,24 @@ const getReminderList = (result) => {
     return [];
 };
 
+const getListStats = (result) => {
+    const stats = result?.stats;
+    if (!stats || typeof stats !== 'object') return EMPTY_STATS;
+    return {
+        total: Number(stats.total) || 0,
+        active: Number(stats.active) || 0,
+        sent: Number(stats.sent) || 0,
+        pending: Number(stats.pending) || 0,
+    };
+};
+
 const EmailRemindersPanel = () => {
     const { t, i18n } = useTranslation();
     const toast = useToast();
     const [reminders, setReminders] = useState([]);
+    const [stats, setStats] = useState(EMPTY_STATS);
+    const [total, setTotal] = useState(0);
+    const [totalPages, setTotalPages] = useState(1);
     const [isLoading, setIsLoading] = useState(false);
     const [isCreateOpen, setIsCreateOpen] = useState(false);
     const [actionKey, setActionKey] = useState('');
@@ -79,7 +102,11 @@ const EmailRemindersPanel = () => {
     const [pendingDeleteId, setPendingDeleteId] = useState(null);
     const [statusFilter, setStatusFilter] = useState('ALL');
     const [searchQuery, setSearchQuery] = useState('');
+    const [debouncedSearch, setDebouncedSearch] = useState('');
     const [page, setPage] = useState(1);
+    const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
+    const listRequestSeqRef = useRef(0);
+    const listAbortRef = useRef(null);
 
     const dateFormatter = useMemo(() => new Intl.DateTimeFormat(i18n.language, {
         dateStyle: 'medium',
@@ -115,43 +142,69 @@ const EmailRemindersPanel = () => {
         });
     }, [formatDate, t]);
 
-    const loadReminders = useCallback(async ({ signal, showLoading = true } = {}) => {
+    // Trailing debounce: only commit search after typing settles.
+    useEffect(() => {
+        const timer = window.setTimeout(() => {
+            setDebouncedSearch(searchQuery.trim());
+        }, SEARCH_DEBOUNCE_MS);
+        return () => window.clearTimeout(timer);
+    }, [searchQuery]);
+
+    useEffect(() => {
+        setPage(1);
+    }, [debouncedSearch, statusFilter, pageSize]);
+
+    const loadReminders = useCallback(async ({ showLoading = true } = {}) => {
+        listAbortRef.current?.abort();
+        const controller = new AbortController();
+        listAbortRef.current = controller;
+        const requestSeq = ++listRequestSeqRef.current;
+
         if (showLoading) setIsLoading(true);
         setLoadError('');
         try {
-            const result = await emailReminderService.list({ signal, _silent: true });
-            setReminders(getReminderList(result));
+            const result = await emailReminderService.list({
+                page,
+                size: pageSize,
+                status: statusFilter === 'ALL' ? undefined : statusFilter,
+                search: debouncedSearch || undefined,
+            }, { signal: controller.signal, _silent: true });
+
+            // Drop stale responses; only the latest (tail) request may update UI.
+            if (requestSeq !== listRequestSeqRef.current || controller.signal.aborted) {
+                return;
+            }
+
+            const records = getReminderList(result);
+            const nextTotal = Number(result?.total) || records.length;
+            const nextPages = Math.max(
+                1,
+                Number(result?.pages) || Math.ceil(nextTotal / pageSize) || 1
+            );
+            setReminders(records);
+            setTotal(nextTotal);
+            setTotalPages(nextPages);
+            setStats(getListStats(result));
+            if (page > nextPages) {
+                setPage(nextPages);
+            }
         } catch (error) {
             if (error.name === 'CanceledError' || error.code === 'ERR_CANCELED') return;
+            if (requestSeq !== listRequestSeqRef.current) return;
             setLoadError(error.message || t('profile.emailReminders.loadError'));
         } finally {
-            if (!signal?.aborted && showLoading) setIsLoading(false);
+            if (requestSeq === listRequestSeqRef.current && showLoading && !controller.signal.aborted) {
+                setIsLoading(false);
+            }
         }
-    }, [t]);
+    }, [debouncedSearch, page, pageSize, statusFilter, t]);
 
     useEffect(() => {
-        const controller = new AbortController();
-        loadReminders({ signal: controller.signal });
-        return () => controller.abort();
-    }, [loadReminders]);
-
-    const stats = useMemo(() => {
-        let active = 0;
-        let sent = 0;
-        let pending = 0;
-        reminders.forEach((item) => {
-            const status = normalizeStatus(item.status);
-            if (status === 'PENDING' || status === 'SENDING') active += 1;
-            if (status === 'SENT') sent += 1;
-            if (status === 'PENDING') pending += 1;
-        });
-        return {
-            total: reminders.length,
-            active,
-            sent,
-            pending,
+        loadReminders();
+        return () => {
+            listAbortRef.current?.abort();
         };
-    }, [reminders]);
+    }, [loadReminders]);
 
     const statusOptions = useMemo(() => ([
         { value: 'ALL', label: t('profile.emailReminders.filterAll') },
@@ -162,32 +215,21 @@ const EmailRemindersPanel = () => {
         { value: 'FAILED', label: t('profile.emailReminders.status.failed') },
     ]), [t]);
 
-    const filteredReminders = useMemo(() => {
-        const query = searchQuery.trim().toLowerCase();
-        return reminders.filter((item) => {
-            const status = normalizeStatus(item.status);
-            if (statusFilter !== 'ALL' && status !== statusFilter) return false;
-            if (!query) return true;
-            const subject = String(item.subject || '').toLowerCase();
-            const email = String(item.recipientEmail || '').toLowerCase();
-            return subject.includes(query) || email.includes(query);
-        });
-    }, [reminders, searchQuery, statusFilter]);
+    const pageSizeOptions = useMemo(() => (
+        PAGE_SIZE_OPTIONS.map((size) => ({
+            value: String(size),
+            label: t('profile.emailReminders.pageSizeOption', { size }),
+        }))
+    ), [t]);
 
-    const totalPages = Math.max(1, Math.ceil(filteredReminders.length / PAGE_SIZE));
+    const handleStatusFilterChange = (value) => {
+        setStatusFilter(value);
+    };
 
-    useEffect(() => {
-        setPage(1);
-    }, [statusFilter, searchQuery]);
-
-    useEffect(() => {
-        if (page > totalPages) setPage(totalPages);
-    }, [page, totalPages]);
-
-    const pagedReminders = useMemo(() => {
-        const start = (page - 1) * PAGE_SIZE;
-        return filteredReminders.slice(start, start + PAGE_SIZE);
-    }, [filteredReminders, page]);
+    const handlePageSizeChange = (value) => {
+        const nextSize = Number(value);
+        setPageSize(PAGE_SIZE_OPTIONS.includes(nextSize) ? nextSize : DEFAULT_PAGE_SIZE);
+    };
 
     const handleStatusChange = async (reminder) => {
         const status = normalizeStatus(reminder.status);
@@ -195,13 +237,9 @@ const EmailRemindersPanel = () => {
         const key = `status-${reminder.id}`;
         setActionKey(key);
         try {
-            const updated = await emailReminderService.updateStatus(reminder.id, nextStatus);
-            setReminders((current) => current.map((item) => (
-                item.id === reminder.id
-                    ? { ...item, ...updated, status: updated?.status || nextStatus }
-                    : item
-            )));
+            await emailReminderService.updateStatus(reminder.id, nextStatus);
             toast.success(t('profile.emailReminders.statusUpdated'));
+            await loadReminders({ showLoading: false });
         } catch {
             // Shared HTTP handling presents the server error.
         } finally {
@@ -214,9 +252,13 @@ const EmailRemindersPanel = () => {
         setActionKey(key);
         try {
             await emailReminderService.remove(id);
-            setReminders((current) => current.filter((item) => item.id !== id));
             setPendingDeleteId(null);
             toast.success(t('profile.emailReminders.deleted'));
+            if (reminders.length <= 1 && page > 1) {
+                setPage((current) => Math.max(1, current - 1));
+            } else {
+                await loadReminders({ showLoading: false });
+            }
         } catch {
             // Shared HTTP handling presents the server error.
         } finally {
@@ -324,7 +366,7 @@ const EmailRemindersPanel = () => {
                                     size="sm"
                                     options={statusOptions}
                                     value={statusFilter}
-                                    onChange={setStatusFilter}
+                                    onChange={handleStatusFilterChange}
                                 />
                             </div>
                             <label className="relative block w-full min-w-0 sm:w-52">
@@ -363,7 +405,7 @@ const EmailRemindersPanel = () => {
                                     {t('profile.emailReminders.retry')}
                                 </button>
                             </div>
-                        ) : filteredReminders.length === 0 ? (
+                        ) : reminders.length === 0 ? (
                             <div className="flex min-h-[220px] flex-col items-center justify-center px-6 text-center">
                                 <span className="mb-3 grid h-11 w-11 place-items-center rounded-xl bg-slate-50 text-slate-300">
                                     <CalendarClock className="h-5 w-5" />
@@ -394,7 +436,7 @@ const EmailRemindersPanel = () => {
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-slate-100">
-                                    {pagedReminders.map((reminder) => {
+                                    {reminders.map((reminder) => {
                                         const status = normalizeStatus(reminder.status);
                                         const statusStyle = STATUS_STYLES[status];
                                         const canToggle = status === 'PENDING' || status === 'PAUSED';
@@ -511,15 +553,25 @@ const EmailRemindersPanel = () => {
                         )}
                     </div>
 
-                    {filteredReminders.length > 0 ? (
+                    {total > 0 ? (
                         <div className="flex shrink-0 flex-col gap-2 border-t border-slate-100 px-3 py-2.5 sm:flex-row sm:items-center sm:justify-between sm:px-4">
-                            <p className="text-[10px] font-medium text-slate-400">
-                                {t('profile.emailReminders.pageInfo', {
-                                    from: (page - 1) * PAGE_SIZE + 1,
-                                    to: Math.min(page * PAGE_SIZE, filteredReminders.length),
-                                    total: filteredReminders.length,
-                                })}
-                            </p>
+                            <div className="flex flex-wrap items-center gap-2">
+                                <p className="text-[10px] font-medium text-slate-400">
+                                    {t('profile.emailReminders.pageInfo', {
+                                        from: (page - 1) * pageSize + 1,
+                                        to: Math.min(page * pageSize, total),
+                                        total,
+                                    })}
+                                </p>
+                                <div className="w-[7.5rem]">
+                                    <CustomSelect
+                                        size="sm"
+                                        options={pageSizeOptions}
+                                        value={String(pageSize)}
+                                        onChange={handlePageSizeChange}
+                                    />
+                                </div>
+                            </div>
                             <div className="flex items-center gap-1">
                                 <button
                                     type="button"
@@ -592,7 +644,13 @@ const EmailRemindersPanel = () => {
             <EmailReminderCreateModal
                 isOpen={isCreateOpen}
                 onClose={() => setIsCreateOpen(false)}
-                onCreated={() => loadReminders({ showLoading: false })}
+                onCreated={() => {
+                    if (page !== 1) {
+                        setPage(1);
+                        return;
+                    }
+                    loadReminders({ showLoading: false });
+                }}
             />
         </div>
     );

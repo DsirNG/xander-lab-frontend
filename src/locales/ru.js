@@ -179,6 +179,7 @@ export default {
       filterAll: 'Все статусы',
       searchPlaceholder: 'Поиск по названию или получателю',
       pageInfo: '{{from}}-{{to}} из {{total}}',
+      pageSizeOption: '{{size}} / стр.',
       prevPage: 'Предыдущая страница',
       nextPage: 'Следующая страница',
       refresh: 'Обновить',

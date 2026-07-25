@@ -179,6 +179,7 @@ export default {
       filterAll: 'Tous les états',
       searchPlaceholder: 'Rechercher par nom ou destinataire',
       pageInfo: '{{from}}-{{to}} sur {{total}}',
+      pageSizeOption: '{{size}} / page',
       prevPage: 'Page précédente',
       nextPage: 'Page suivante',
       refresh: 'Actualiser',

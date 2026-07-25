@@ -179,6 +179,7 @@ export default {
       filterAll: 'すべての状態',
       searchPlaceholder: 'タスク名または宛先で検索',
       pageInfo: '{{from}}-{{to}} / {{total}} 件',
+      pageSizeOption: '{{size}} 件/ページ',
       prevPage: '前のページ',
       nextPage: '次のページ',
       refresh: '更新',
