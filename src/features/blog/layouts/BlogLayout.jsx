@@ -24,18 +24,18 @@ const BlogLayout = () => {
     }, [isMobile]);
 
     return (
-        <div className="bg-white ">
+        <div className="bg-canvas">
             {/* 移动端侧边栏展开按钮 - 固定在右侧 */}
             <button
                 onClick={() => setIsSidebarOpen(true)}
-                className={`lg:hidden fixed top-20 right-0 z-50 p-2 bg-white/10 backdrop-blur-[2px] rounded-l-lg shadow-md border border-r-0 border-slate-200  transition-all duration-300 ease-in-out ${
+                className={`lg:hidden fixed top-20 right-0 z-50 p-2 bg-canvas/10 backdrop-blur-[2px] rounded-l-lg shadow-md border border-r-0 border-border transition-all duration-300 ease-in-out ${
                     isSidebarOpen
                         ? 'translate-x-full opacity-0 pointer-events-none'
                         : 'translate-x-0 opacity-100'
                 }`}
                 aria-label={t('common.aria.openSidebar', 'Open sidebar')}
             >
-                <ChevronLeft className="w-5 h-5 text-slate-600 " />
+                <ChevronLeft className="w-5 h-5 text-ink-secondary" />
             </button>
 
             {/* 移动端遮罩层 */}
@@ -60,8 +60,8 @@ const BlogLayout = () => {
                     w-[300px] xl:w-[320px] 2xl:w-[340px]
                     flex-shrink-0 flex flex-col
                     h-[calc(100vh-64px)]
-                    border-l border-slate-100
-                    bg-slate-50/80 lg:bg-slate-50/50
+                    border-l border-border
+                    bg-surface/80 lg:bg-surface/50
                     backdrop-blur-sm lg:backdrop-blur-none
                     overflow-y-auto custom-scrollbar
                     p-6 xl:p-8
@@ -71,7 +71,7 @@ const BlogLayout = () => {
                     {/* 移动端关闭按钮 */}
                     <button
                         onClick={() => setIsSidebarOpen(false)}
-                        className="lg:hidden self-end mb-3 p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100   transition-colors"
+                        className="lg:hidden self-end mb-3 p-1.5 rounded-lg text-ink-faint hover:text-ink-secondary hover:bg-surface-muted transition-colors"
                         aria-label={t('common.aria.closeSidebar', 'Close sidebar')}
                     >
                         <X className="w-4 h-4" />

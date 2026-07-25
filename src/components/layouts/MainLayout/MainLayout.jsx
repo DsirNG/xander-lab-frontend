@@ -169,14 +169,14 @@ const Navbar = () => {
                                                     style={{ animationDelay: isLangDropdownOpen ? `${idx * 40}ms` : '0ms' }}
                                                 >
                                                     <span className="flex items-center gap-2.5">
-                                                        <span className={`text-xs font-bold w-7 text-center ${isActive ? 'text-primary' : 'text-slate-500'}`}>
+                                                        <span className={`text-xs font-bold w-7 text-center ${isActive ? 'text-accent' : 'text-ink-muted'}`}>
                                                             {LANG_LABELS[lng]}
                                                         </span>
-                                                        <span className={`text-xs ${isActive ? 'text-primary font-semibold' : 'text-slate-600'}`}>
+                                                        <span className={`text-xs ${isActive ? 'text-accent font-semibold' : 'text-ink-secondary'}`}>
                                                             {LANG_FULL[lng]}
                                                         </span>
                                                     </span>
-                                                    {isActive && <Check className="w-3.5 h-3.5 text-primary" />}
+                                                    {isActive && <Check className="w-3.5 h-3.5 text-accent" />}
                                                 </button>
                                             );
                                         })}
@@ -194,24 +194,24 @@ const Navbar = () => {
                             </a>
 
                             {/* 用户区域：头像 + 名字，进入个人中心；退出仅在个人中心 */}
-                            <div className="hidden sm:flex items-center ml-2 pl-2 border-l border-slate-200 ">
+                            <div className="hidden sm:flex items-center ml-2 pl-2 border-l border-border ">
                                 {userInfo ? (
                                     <Link
                                         to="/profile"
-                                        className="flex items-center gap-2 rounded-xl px-1.5 py-1 transition hover:bg-sky-50 focus:outline-none focus:ring-2 focus:ring-sky-200"
+                                        className="flex items-center gap-2 rounded-xl px-1.5 py-1 transition hover:bg-accent-soft focus:outline-none focus:ring-2 focus:ring-accent-200"
                                         title={t('profile.open')}
                                         aria-label={t('profile.open')}
                                     >
-                                        <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-sky-600 text-[10px] font-black uppercase text-white">
+                                        <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-accent text-micro font-black uppercase text-white">
                                             {avatarText}
                                         </span>
                                         <span className="min-w-0 text-left">
                                             <span className="flex max-w-[9rem] items-center gap-1.5">
-                                                <span className="truncate text-xs font-bold text-slate-800">
+                                                <span className="truncate text-xs font-bold text-ink">
                                                     {displayName}
                                                 </span>
                                                 {roleLabel ? (
-                                                    <span className="shrink-0 rounded bg-sky-50 px-1.5 py-0.5 text-[9px] font-bold uppercase text-sky-600 ring-1 ring-sky-100">
+                                                    <span className="shrink-0 rounded bg-accent-soft px-1.5 py-0.5 text-micro font-bold uppercase text-accent ring-1 ring-accent-100">
                                                         {roleLabel}
                                                     </span>
                                                 ) : null}
@@ -221,7 +221,7 @@ const Navbar = () => {
                                 ) : (
                                     <Link
                                         to="/login"
-                                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-primary/5 text-primary hover:bg-primary hover:text-white transition-all text-xs font-bold"
+                                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-accent-soft text-accent hover:bg-accent hover:text-white transition-all text-xs font-bold"
                                     >
                                         <UserIcon aria-hidden="true" className="w-3.5 h-3.5" />
                                         <span>{t('nav.login')}</span>
@@ -248,7 +248,7 @@ const Navbar = () => {
             {/* 跳过导航链接 - 仅在 focus 时可见 */}
             <a
                 href="#main-content"
-                className="sr-only focus:not-sr-only focus:absolute focus:top-20 focus:left-4 focus:z-[9999] focus:px-4 focus:py-2 focus:bg-primary focus:text-white focus:rounded-lg focus:shadow-lg focus:text-sm focus:font-bold focus:outline-none"
+                className="sr-only focus:not-sr-only focus:absolute focus:top-20 focus:left-4 focus:z-[9999] focus:px-4 focus:py-2 focus:bg-accent focus:text-white focus:rounded-lg focus:shadow-lg focus:text-sm focus:font-bold focus:outline-none"
             >
                 {t('nav.skipToMain')}
             </a>
@@ -297,21 +297,21 @@ const Navbar = () => {
                                 onClick={() => setIsMobileMenuOpen(false)}
                                 className={`${styles.mobileActionButton} flex items-center gap-2.5 text-left`}
                             >
-                                <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-sky-600 text-[10px] font-black uppercase text-white">
+                                <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-accent text-micro font-black uppercase text-white">
                                     {avatarText}
                                 </span>
                                 <span className="min-w-0 flex-1">
                                     <span className="flex flex-wrap items-center gap-1.5">
-                                        <span className="truncate text-sm font-bold text-slate-800">
+                                        <span className="truncate text-sm font-bold text-ink">
                                             {displayName}
                                         </span>
                                         {roleLabel ? (
-                                            <span className="rounded bg-sky-50 px-1.5 py-0.5 text-[10px] font-bold uppercase text-sky-600 ring-1 ring-sky-100">
+                                            <span className="rounded bg-accent-soft px-1.5 py-0.5 text-micro font-bold uppercase text-accent ring-1 ring-accent-100">
                                                 {roleLabel}
                                             </span>
                                         ) : null}
                                     </span>
-                                    <span className="mt-0.5 block text-xs font-medium text-slate-400">
+                                    <span className="mt-0.5 block text-xs font-medium text-ink-faint">
                                         {t('profile.open')}
                                     </span>
                                 </span>
@@ -319,7 +319,7 @@ const Navbar = () => {
                         ) : (
                             <Link
                                 to="/login"
-                                className={`${styles.mobileActionButton} flex items-center space-x-2 text-primary`}
+                                className={`${styles.mobileActionButton} flex items-center space-x-2 text-accent`}
                                 onClick={() => setIsMobileMenuOpen(false)}
                             >
                                 <UserIcon aria-hidden="true" className="w-4 h-4" />

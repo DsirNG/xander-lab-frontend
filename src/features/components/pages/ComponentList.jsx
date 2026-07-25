@@ -62,14 +62,14 @@ const ComponentList = () => {
 
     const bottomCard = (
         <div className="space-y-3">
-            <div className="bg-gradient-to-br from-emerald-600/10 to-teal-600/10 p-4 rounded-2xl border border-emerald-600/10">
-                <p className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest mb-1">UI Kit</p>
-                <p className="text-xs text-slate-600 ">{t('components.list.atomDesc', 'Atomic components for building consistent interfaces.')}</p>
+            <div className="bg-gradient-to-br from-success/10 to-success/10 p-4 rounded-2xl border border-success/10">
+                <p className="text-micro font-bold text-success uppercase tracking-widest mb-1">UI Kit</p>
+                <p className="text-caption text-ink-muted ">{t('components.list.atomDesc', 'Atomic components for building consistent interfaces.')}</p>
             </div>
 
             <button
                 onClick={() => navigate('share')}
-                className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl bg-primary text-white text-xs font-black shadow-lg shadow-primary/20 hover:bg-primary-400 hover:scale-[1.02] active:scale-95 transition-all"
+                className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl bg-accent text-white text-caption font-black shadow-lg shadow-accent/20 hover:bg-accent-400 hover:scale-[1.02] active:scale-95 transition-all"
             >
                 <Plus className="w-3.5 h-3.5" />
                 {t('components.list.shareMyComponents', 'Share My Components')}

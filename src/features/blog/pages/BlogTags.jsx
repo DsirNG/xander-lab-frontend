@@ -101,24 +101,24 @@ const BlogTags = () => {
             />
 
             {/* 页面头部 */}
-            <div className="border-b border-slate-200  pb-5">
+            <div className="border-b border-border pb-5">
                 <Link
                     to="/blog/"
-                    className="inline-flex items-center text-xs font-medium text-slate-500 hover:text-primary transition-colors mb-4"
+                    className="inline-flex items-center text-xs font-medium text-ink-muted hover:text-accent transition-colors mb-4"
                 >
                     <ChevronLeft className="w-4 h-4 mr-0.5" />
                     {t('blog.backToBlog')}
                 </Link>
 
                 <div className="flex items-center gap-3">
-                    <div className="p-2 rounded-xl bg-primary/10">
-                        <Hash className="w-5 h-5 text-primary" />
+                    <div className="p-2 rounded-xl bg-accent/10">
+                        <Hash className="w-5 h-5 text-accent" />
                     </div>
                     <div>
-                        <h1 className="text-xl font-bold text-slate-900  tracking-tight">
+                        <h1 className="text-xl font-bold text-ink tracking-tight">
                             {t('blog.allTags')}
                         </h1>
-                        <p className="text-xs text-slate-500  mt-0.5">
+                        <p className="text-xs text-ink-muted mt-0.5">
                             {loading
                                 ? t('blog.loading')
                                 : t('blog.tagsCount', { count: allTags.length })
@@ -132,7 +132,7 @@ const BlogTags = () => {
             {loading ? (
                 <div className="flex flex-wrap gap-2 animate-pulse">
                     {[1, 2, 3, 4, 5, 6, 7, 8].map(i => (
-                        <div key={i} className="h-8 bg-slate-100  rounded-full" style={{ width: `${60 + i * 15}px` }} />
+                        <div key={i} className="h-8 bg-surface-muted rounded-full" style={{ width: `${60 + i * 15}px` }} />
                     ))}
                 </div>
             ) : (
@@ -145,20 +145,16 @@ const BlogTags = () => {
                             <Link
                                 key={tag.name}
                                 to={isActive ? '/blog/tags/' : `/blog/tags/?tag=${encodeURIComponent(tag.name)}`}
-                                className={`
-                                    inline-flex items-center gap-1.5 rounded-full border transition-all duration-200
-                                    ${tagLevelStyles[level]}
-                                    ${isActive
-                                        ? 'bg-primary text-white border-primary shadow-md shadow-primary/20'
-                                        : 'bg-white text-slate-600  border-slate-200 hover:border-primary/50 hover:text-primary hover:shadow-sm'
-                                    }
-                                `}
+                                className={`inline-flex items-center gap-1.5 rounded-full border transition-all duration-200 ${tagLevelStyles[level]} ${isActive
+                                    ? 'bg-accent text-white border-accent shadow-md shadow-accent/20'
+                                    : 'bg-canvas text-ink-secondary border-border hover:border-accent/50 hover:text-accent hover:shadow-sm'
+                                    }`}
                             >
                                 <Tag className="w-3 h-3" />
                                 <span>{tag.name}</span>
-                                <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded-full ${isActive
-                                    ? 'bg-white/20 text-white'
-                                    : 'bg-slate-100  text-slate-500 '
+                                <span className={`text-micro font-medium px-1.5 py-0.5 rounded-full ${isActive
+                                    ? 'bg-canvas/20 text-white'
+                                    : 'bg-surface-muted text-ink-muted'
                                     }`}>
                                     {tag.count}
                                 </span>
@@ -171,12 +167,12 @@ const BlogTags = () => {
             {/* 选中标签后展示文章列表 */}
             {activeTag && (
                 <div className="space-y-4 pt-2">
-                    <div className="flex items-center gap-2 border-b border-slate-200  pb-4">
-                        <FileText className="w-4 h-4 text-slate-400" />
-                        <h2 className="text-sm font-semibold text-slate-700 ">
+                    <div className="flex items-center gap-2 border-b border-border pb-4">
+                        <FileText className="w-4 h-4 text-ink-faint" />
+                        <h2 className="text-sm font-semibold text-ink-secondary">
                             {t('blog.tagArticles', { tag: activeTag })}
                         </h2>
-                        <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-primary/10 text-primary">
+                        <span className="text-micro font-medium px-2 py-0.5 rounded-full bg-accent/10 text-accent">
                             {blogsLoading ? '...' : (filteredBlogs?.length || 0)}
                         </span>
                     </div>
@@ -184,7 +180,7 @@ const BlogTags = () => {
                     {blogsLoading ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-pulse">
                             {[1, 2].map(i => (
-                                <div key={i} className="h-48 bg-slate-100  rounded-xl" />
+                                <div key={i} className="h-48 bg-surface-muted rounded-xl" />
                             ))}
                         </div>
                     ) : filteredBlogs.length > 0 ? (
@@ -194,7 +190,7 @@ const BlogTags = () => {
                             ))}
                         </div>
                     ) : (
-                        <div className="text-center py-10 text-sm text-slate-500">
+                        <div className="text-center py-10 text-sm text-ink-muted">
                             {t('blog.noArticles')}
                         </div>
                     )}

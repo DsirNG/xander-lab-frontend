@@ -32,10 +32,10 @@ export const HTML_STARTERS = {
 };
 
 export const TEMPLATE_SWATCH = {
-    classic: 'from-sky-400 to-blue-700',
-    minimal: 'from-neutral-400 to-neutral-900',
-    card: 'from-rose-400 to-orange-500',
-    notice: 'from-teal-400 to-teal-800',
+    classic: 'from-accent-400 to-accent-800',
+    minimal: 'from-ink-faint to-ink',
+    card: 'from-warning to-danger',
+    notice: 'from-success to-accent-800',
 };
 
 const FONT = "-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif";

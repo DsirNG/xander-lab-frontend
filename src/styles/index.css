@@ -1,6 +1,9 @@
 /**
- * 全局样式入口
- * Global Styles Entry Point
+ * 全局样式入口 + UI Design Tokens
+ * Global Styles Entry Point & Design System
+ *
+ * Accent (#0284c7) is for accents only (avatar, CTA, focus, links).
+ * Ink / surface / border carry the rest of the UI.
  */
 
 @import "tailwindcss";
@@ -8,25 +11,84 @@
 @plugin "@tailwindcss/typography";
 
 @theme {
-  --color-primary: #36f;
-  --color-primary-50: #e6f3ff;
-  --color-primary-100: #cce7ff;
-  --color-primary-200: #99ceff;
-  --color-primary-300: #66b4ff;
-  --color-primary-400: #339bff;
-  --color-primary-500: #36f;
-  --color-primary-600: #005ce6;
-  --color-primary-700: #0047b3;
-  --color-primary-800: #003380;
-  --color-primary-900: #001f4d;
-  --color-primary-dark: #0047b3;
+  /* ── Accent (theme accent, sky-600 family) ── */
+  --color-accent: #0284c7;
+  --color-accent-50: #f0f9ff;
+  --color-accent-100: #e0f2fe;
+  --color-accent-200: #bae6fd;
+  --color-accent-300: #7dd3fc;
+  --color-accent-400: #38bdf8;
+  --color-accent-500: #0ea5e9;
+  --color-accent-600: #0284c7;
+  --color-accent-700: #0369a1;
+  --color-accent-800: #075985;
+  --color-accent-900: #0c4a6e;
+  --color-accent-soft: #f0f9ff;
+  --color-accent-muted: #e0f2fe;
+  --color-accent-fg: #0369a1;
+
+  /* primary = accent alias (legacy class names) */
+  --color-primary: #0284c7;
+  --color-primary-50: #f0f9ff;
+  --color-primary-100: #e0f2fe;
+  --color-primary-200: #bae6fd;
+  --color-primary-300: #7dd3fc;
+  --color-primary-400: #38bdf8;
+  --color-primary-500: #0ea5e9;
+  --color-primary-600: #0284c7;
+  --color-primary-700: #0369a1;
+  --color-primary-800: #075985;
+  --color-primary-900: #0c4a6e;
+  --color-primary-dark: #0369a1;
+
+  /* ── Ink (text hierarchy) ── */
+  --color-ink: #0f172a;
+  --color-ink-secondary: #334155;
+  --color-ink-muted: #64748b;
+  --color-ink-faint: #94a3b8;
+
+  /* ── Surfaces ── */
+  --color-canvas: #ffffff;
+  --color-surface: #f8fafc;
+  --color-surface-muted: #f1f5f9;
   --color-background-light: #ffffff;
   --color-surface-light: #f8fafc;
-  --font-sans: 'Inter', system-ui, sans-serif;
-  --font-mono: 'Fira Code', monospace;
+
+  /* ── Borders ── */
+  --color-border: #e2e8f0;
+  --color-border-strong: #cbd5e1;
+
+  /* ── Status ── */
+  --color-success: #059669;
+  --color-success-soft: #ecfdf5;
+  --color-success-fg: #047857;
+  --color-warning: #d97706;
+  --color-warning-soft: #fffbeb;
+  --color-warning-fg: #b45309;
+  --color-danger: #e11d48;
+  --color-danger-soft: #fff1f2;
+  --color-danger-fg: #be123c;
+  --color-info: #0284c7;
+  --color-info-soft: #f0f9ff;
+  --color-info-fg: #0369a1;
+
+  /* ── Typography ── */
+  --font-sans: 'Plus Jakarta Sans', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  --text-display: 1.75rem;
+  --text-display--line-height: 1.25;
+  --text-title: 1.125rem;
+  --text-title--line-height: 1.4;
+  --text-body: 0.875rem;
+  --text-body--line-height: 1.5;
+  --text-caption: 0.75rem;
+  --text-caption--line-height: 1.45;
+  --text-micro: 0.6875rem;
+  --text-micro--line-height: 1.4;
 }
 
-/* Global Box Sizing - 全局盒模型配置 */
+/* Global Box Sizing */
 *,
 *::before,
 *::after {
@@ -34,27 +96,21 @@
 }
 
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: var(--font-sans);
   line-height: 1.5;
   font-weight: 400;
-
   color-scheme: light;
-  color: rgba(0, 0, 0, 0.87);
-
+  color: var(--color-ink);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Global Scrollbar Styles - 全局滚动条样式 */
-
-/* 平滑滚动行为 */
 html {
   scrollbar-gutter: stable;
 }
 
-/* 强制所有滚动容器预留滚动条位置，防止布局跳动 */
 .overflow-auto,
 .overflow-y-auto,
 .overflow-scroll,
@@ -63,17 +119,13 @@ html {
   scrollbar-gutter: stable;
 }
 
-/* Firefox 滚动条样式 - 只在不支持 webkit 滚动条的浏览器(如 Firefox)应用 */
 @supports not selector(::-webkit-scrollbar) {
   * {
     scrollbar-width: thin;
-    scrollbar-color: #cbd5e1 transparent;
+    scrollbar-color: var(--color-border-strong) transparent;
   }
-
-
 }
 
-/* Webkit 浏览器滚动条样式 (Chrome, Safari, Edge) */
 *::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -85,78 +137,61 @@ html {
 }
 
 *::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: var(--color-border-strong);
   border-radius: 4px;
   border: 2px solid transparent;
   background-clip: padding-box;
 }
 
 *::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: var(--color-ink-faint);
   background-clip: padding-box;
 }
 
 *::-webkit-scrollbar-thumb:active {
-  background: #64748b;
+  background: var(--color-ink-muted);
   background-clip: padding-box;
 }
-
-
 
 @layer base {
   html {
     -webkit-tap-highlight-color: transparent;
     scroll-behavior: smooth;
-    /* Windows Chrome 字体模糊修复：使用 subpixel 或让系统决定 */
     -webkit-font-smoothing: subpixel-antialiased;
     text-rendering: optimizeSpeed;
-    /* 在动画频繁的项目中，Speed 有时比 Legibility 渲染更清晰 */
   }
 
   body {
-    @apply bg-white text-slate-900  ;
-    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
-    /* 移除 Body 的全局 translateZ，避免创建不必要的全局堆叠上下文 */
+    @apply bg-canvas text-ink font-sans text-body;
+    font-feature-settings: "ss01", "cv11";
   }
 
-  /* 核心修复辅助类：针对所有涉及 scale 的元素 */
   .scale-fix {
-    /* 1. 强制 3D 合成层 */
     transform: translate3d(0, 0, 0);
     -webkit-transform: translate3d(0, 0, 0);
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
-
-    /* 2. 禁止缩放时的抗锯齿抖动 */
     perspective: 1000px;
     -webkit-perspective: 1000px;
     transform-style: preserve-3d;
-
-    /* 3. 极致修复：微小的文字阴影可以强制 Chrome 以高精度矢量渲染文字，而非缓存位图 */
-    text-shadow: 0 0 1px rgba(0, 0, 0, 0.05);
-
-    /* 4. 滤镜黑科技 */
+    text-shadow: 0 0 1px rgba(15, 23, 42, 0.05);
     filter: blur(0);
     -webkit-filter: blur(0);
   }
 }
 
-/* Login Button Shimmer Animation */
 @keyframes shimmer {
   100% { transform: translateX(100%); }
 }
 
-/* Toast Animations (C-End Premium Bouncy) */
 @keyframes toast-in-top {
   0% {
     transform: translateY(-100%) scale(0.9);
     opacity: 0;
   }
-
   70% {
     transform: translateY(10%) scale(1.02);
   }
-
   100% {
     transform: translateY(0) scale(1);
     opacity: 1;
@@ -168,7 +203,6 @@ html {
     transform: translateY(0) scale(1);
     opacity: 1;
   }
-
   100% {
     transform: translateY(-150%) scale(0.9);
     opacity: 0;
@@ -184,20 +218,14 @@ html {
 }
 
 @keyframes progress-linear {
-  from {
-    width: 100%;
-  }
-
-  to {
-    width: 0%;
-  }
+  from { width: 100%; }
+  to { width: 0%; }
 }
 
 .animate-progress {
   animation: progress-linear linear forwards;
 }
 
-/* Reduced Motion - 尊重用户的动画偏好 */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

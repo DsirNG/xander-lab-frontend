@@ -38,23 +38,23 @@ class ErrorBoundary extends React.Component {
       }
 
       return (
-        <div className="min-h-screen flex items-center justify-center bg-slate-50 p-6">
-          <div className="max-w-md w-full bg-white rounded-2xl shadow-xl border border-slate-200 p-8 text-center">
-            <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-red-50 flex items-center justify-center">
-              <svg className="w-8 h-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <div className="min-h-screen flex items-center justify-center bg-surface p-6">
+          <div className="max-w-md w-full bg-canvas rounded-2xl shadow-xl border border-border p-8 text-center">
+            <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-danger-soft flex items-center justify-center">
+              <svg className="w-8 h-8 text-danger" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
               </svg>
             </div>
-            <h2 className="text-xl font-bold text-slate-900 mb-2">{t('common.errorBoundary.title')}</h2>
-            <p className="text-sm text-slate-500 mb-6">
+            <h2 className="text-title font-bold text-ink mb-2">{t('common.errorBoundary.title')}</h2>
+            <p className="text-body text-ink-muted mb-6">
               {t('common.errorBoundary.description')}
             </p>
             {this.state.error && (
-              <details className="text-left mb-6 bg-slate-50 rounded-lg p-4 border border-slate-200">
-                <summary className="text-xs font-medium text-slate-600 cursor-pointer mb-2">
+              <details className="text-left mb-6 bg-surface rounded-lg p-4 border border-border">
+                <summary className="text-caption font-medium text-ink-secondary cursor-pointer mb-2">
                   {t('common.errorBoundary.errorDetails')}
                 </summary>
-                <pre className="text-xs text-red-500 font-mono whitespace-pre-wrap overflow-auto max-h-32">
+                <pre className="text-caption text-danger font-mono whitespace-pre-wrap overflow-auto max-h-32">
                   {this.state.error.message}
                 </pre>
               </details>
@@ -62,13 +62,13 @@ class ErrorBoundary extends React.Component {
             <div className="flex gap-3 justify-center">
               <button
                 onClick={this.handleReload}
-                className="px-6 py-2.5 bg-primary text-white rounded-xl text-sm font-bold hover:opacity-90 transition-all"
+                className="px-6 py-2.5 bg-accent text-white rounded-xl text-body font-bold hover:opacity-90 transition-all"
               >
                 {t('common.errorBoundary.reload')}
               </button>
               <button
                 onClick={() => window.location.href = '/'}
-                className="px-6 py-2.5 bg-slate-100 text-slate-700 rounded-xl text-sm font-bold hover:bg-slate-200 transition-all"
+                className="px-6 py-2.5 bg-surface-muted text-ink-secondary rounded-xl text-body font-bold hover:bg-border transition-all"
               >
                 {t('common.errorBoundary.backToHome')}
               </button>

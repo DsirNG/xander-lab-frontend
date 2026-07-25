@@ -349,26 +349,26 @@ const EmailReminderCreateModal = ({ isOpen, onClose, onCreated }) => {
     };
 
     return (
-        <div className="fixed inset-0 z-[1100] flex items-center justify-center bg-slate-900/45 p-3 backdrop-blur-[1px] sm:p-6">
+        <div className="fixed inset-0 z-[1100] flex items-center justify-center bg-ink/45 p-3 backdrop-blur-[1px] sm:p-6">
             <div
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby="email-reminder-create-title"
-                className="flex max-h-[min(900px,92vh)] w-full max-w-5xl flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl shadow-slate-900/20"
+                className="flex max-h-[min(900px,92vh)] w-full max-w-5xl flex-col overflow-hidden rounded-2xl border border-border bg-canvas shadow-2xl shadow-ink/20"
             >
-                <header className="flex shrink-0 items-center justify-between border-b border-slate-100 px-5 py-4">
+                <header className="flex shrink-0 items-center justify-between border-b border-border px-5 py-4">
                     <div className="flex items-center gap-2.5">
-                        <span className="grid h-8 w-8 place-items-center rounded-xl bg-sky-50 text-sky-600">
+                        <span className="grid h-8 w-8 place-items-center rounded-xl bg-accent-soft text-accent">
                             <CalendarClock className="h-4 w-4" />
                         </span>
-                        <h2 id="email-reminder-create-title" className="text-sm font-black text-slate-800">
+                        <h2 id="email-reminder-create-title" className="text-sm font-black text-ink">
                             {t('profile.emailReminders.addTitle')}
                         </h2>
                     </div>
                     <button
                         type="button"
                         onClick={handleClose}
-                        className="rounded-full p-1.5 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600"
+                        className="rounded-full p-1.5 text-ink-faint transition hover:bg-surface-muted hover:text-ink-muted"
                         aria-label={t('common.aria.close', 'Close')}
                     >
                         <X className="h-4 w-4" />
@@ -379,12 +379,12 @@ const EmailReminderCreateModal = ({ isOpen, onClose, onCreated }) => {
                     <div className="grid min-h-0 flex-1 gap-0 overflow-y-auto lg:grid-cols-[minmax(0,1.4fr)_minmax(240px,0.75fr)]">
                         <div className="space-y-5 p-5">
                             <section>
-                                <h3 className="mb-3 flex items-center gap-2 text-xs font-black text-slate-700">
-                                    <span className="grid h-5 w-5 place-items-center rounded-full bg-sky-100 text-[10px] font-black text-sky-700">1</span>
+                                <h3 className="mb-3 flex items-center gap-2 text-xs font-black text-ink-secondary">
+                                    <span className="grid h-5 w-5 place-items-center rounded-full bg-accent-muted text-micro font-black text-accent-fg">1</span>
                                     {t('profile.emailReminders.sectionRecipient')}
                                 </h3>
                                 <label className="block">
-                                    <span className="mb-1 block text-[10px] font-bold text-slate-500">
+                                    <span className="mb-1 block text-micro font-bold text-ink-muted">
                                         {t('profile.emailReminders.recipientEmail')}
                                     </span>
                                     <div className="relative">
@@ -394,23 +394,23 @@ const EmailReminderCreateModal = ({ isOpen, onClose, onCreated }) => {
                                             value={form.recipientEmail}
                                             onChange={updateField('recipientEmail')}
                                             placeholder={t('profile.emailReminders.recipientPlaceholder')}
-                                            className="h-9 w-full rounded-lg border border-slate-200 bg-white px-3 pr-9 text-xs font-medium text-slate-700 outline-none transition placeholder:text-slate-300 focus:border-primary focus:ring-2 focus:ring-primary/10"
+                                            className="h-9 w-full rounded-lg border border-border bg-canvas px-3 pr-9 text-xs font-medium text-ink-secondary outline-none transition placeholder:text-ink-faint focus:border-accent focus:ring-2 focus:ring-accent/10"
                                         />
-                                        <Mail className="pointer-events-none absolute right-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-300" />
+                                        <Mail className="pointer-events-none absolute right-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-ink-faint" />
                                     </div>
                                 </label>
                             </section>
 
                             <section>
-                                <h3 className="mb-3 flex items-center gap-2 text-xs font-black text-slate-700">
-                                    <span className="grid h-5 w-5 place-items-center rounded-full bg-sky-100 text-[10px] font-black text-sky-700">2</span>
+                                <h3 className="mb-3 flex items-center gap-2 text-xs font-black text-ink-secondary">
+                                    <span className="grid h-5 w-5 place-items-center rounded-full bg-accent-muted text-micro font-black text-accent-fg">2</span>
                                     {t('profile.emailReminders.sectionContent')}
                                 </h3>
                                 <div className="space-y-3">
                                     <label className="block">
-                                        <span className="mb-1 block text-[10px] font-bold text-slate-500">
+                                        <span className="mb-1 block text-micro font-bold text-ink-muted">
                                             {t('profile.emailReminders.subject')}
-                                            <span className="ml-0.5 text-rose-500">*</span>
+                                            <span className="ml-0.5 text-danger">*</span>
                                         </span>
                                         <input
                                             type="text"
@@ -419,21 +419,21 @@ const EmailReminderCreateModal = ({ isOpen, onClose, onCreated }) => {
                                             value={form.subject}
                                             onChange={updateField('subject')}
                                             placeholder={t('profile.emailReminders.subjectPlaceholder')}
-                                            className="h-9 w-full rounded-lg border border-slate-200 bg-white px-3 text-xs font-medium text-slate-700 outline-none transition placeholder:text-slate-300 focus:border-primary focus:ring-2 focus:ring-primary/10"
+                                            className="h-9 w-full rounded-lg border border-border bg-canvas px-3 text-xs font-medium text-ink-secondary outline-none transition placeholder:text-ink-faint focus:border-accent focus:ring-2 focus:ring-accent/10"
                                         />
                                     </label>
 
                                     <div>
                                         <div className="mb-1 flex items-center justify-between gap-2">
-                                            <span className="text-[10px] font-bold text-slate-500">
+                                            <span className="text-micro font-bold text-ink-muted">
                                                 {t('profile.emailReminders.message')}
-                                                <span className="ml-0.5 text-rose-500">*</span>
+                                                <span className="ml-0.5 text-danger">*</span>
                                             </span>
                                             <div className="flex items-center gap-2">
                                                 <button
                                                     type="button"
                                                     onClick={() => setIsTemplatePickerOpen(true)}
-                                                    className="inline-flex items-center gap-1 rounded-md border border-slate-200 bg-white px-2 py-1 text-[10px] font-bold text-slate-600 transition hover:border-primary/40 hover:text-primary"
+                                                    className="inline-flex items-center gap-1 rounded-md border border-border bg-canvas px-2 py-1 text-micro font-bold text-ink-muted transition hover:border-accent/40 hover:text-accent"
                                                 >
                                                     <LayoutTemplate className="h-3 w-3" />
                                                     {t('profile.emailReminders.selectTemplate')}
@@ -447,9 +447,9 @@ const EmailReminderCreateModal = ({ isOpen, onClose, onCreated }) => {
                                             value={form.message}
                                             onChange={updateField('message')}
                                             placeholder={t('profile.emailReminders.messagePlaceholder')}
-                                            className="w-full resize-y rounded-lg border border-slate-200 bg-white px-3 py-2 font-mono text-xs font-medium leading-5 text-slate-700 outline-none transition placeholder:text-slate-300 focus:border-primary focus:ring-2 focus:ring-primary/10"
+                                            className="w-full resize-y rounded-lg border border-border bg-canvas px-3 py-2 font-mono text-xs font-medium leading-5 text-ink-secondary outline-none transition placeholder:text-ink-faint focus:border-accent focus:ring-2 focus:ring-accent/10"
                                         />
-                                        <p className="mt-1.5 text-[10px] font-medium leading-4 text-slate-400">
+                                        <p className="mt-1.5 text-micro font-medium leading-4 text-ink-faint">
                                             {usesLayoutTemplate
                                                 ? t('profile.emailReminders.htmlContentHint', {
                                                     template: t(`profile.emailReminders.templates.${form.templateId}`),
@@ -461,8 +461,8 @@ const EmailReminderCreateModal = ({ isOpen, onClose, onCreated }) => {
                             </section>
 
                             <section>
-                                <h3 className="mb-3 flex items-center gap-2 text-xs font-black text-slate-700">
-                                    <span className="grid h-5 w-5 place-items-center rounded-full bg-sky-100 text-[10px] font-black text-sky-700">3</span>
+                                <h3 className="mb-3 flex items-center gap-2 text-xs font-black text-ink-secondary">
+                                    <span className="grid h-5 w-5 place-items-center rounded-full bg-accent-muted text-micro font-black text-accent-fg">3</span>
                                     {t('profile.emailReminders.sectionSchedule')}
                                 </h3>
 
@@ -470,7 +470,7 @@ const EmailReminderCreateModal = ({ isOpen, onClose, onCreated }) => {
                                     <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
                                         {(form.frequency === 'WEEKLY' || form.frequency === 'MONTHLY') ? (
                                             <label className="block w-full shrink-0 sm:w-[7.5rem]">
-                                                <span className="mb-1 block text-[10px] font-bold text-slate-500">
+                                                <span className="mb-1 block text-micro font-bold text-ink-muted">
                                                     {form.frequency === 'WEEKLY'
                                                         ? t('profile.emailReminders.weekday')
                                                         : t('profile.emailReminders.monthDayLabel')}
@@ -489,7 +489,7 @@ const EmailReminderCreateModal = ({ isOpen, onClose, onCreated }) => {
 
                                         {form.frequency === 'CUSTOM' ? (
                                             <label className="block w-full shrink-0 sm:w-[7.5rem]">
-                                                <span className="mb-1 block text-[10px] font-bold text-slate-500">
+                                                <span className="mb-1 block text-micro font-bold text-ink-muted">
                                                     {t('profile.emailReminders.intervalDays')}
                                                 </span>
                                                 <input
@@ -498,13 +498,13 @@ const EmailReminderCreateModal = ({ isOpen, onClose, onCreated }) => {
                                                     max={365}
                                                     value={form.intervalDays}
                                                     onChange={updateField('intervalDays')}
-                                                    className="h-9 w-full rounded-lg border border-slate-200 bg-white px-3 text-xs font-medium text-slate-700 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/10"
+                                                    className="h-9 w-full rounded-lg border border-border bg-canvas px-3 text-xs font-medium text-ink-secondary outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/10"
                                                 />
                                             </label>
                                         ) : null}
 
                                         <label className={`block w-full shrink-0 ${form.frequency === 'ONCE' ? 'sm:w-[14.5rem]' : 'sm:w-[8.5rem]'}`}>
-                                            <span className="mb-1 block text-[10px] font-bold text-slate-500">
+                                            <span className="mb-1 block text-micro font-bold text-ink-muted">
                                                 {form.frequency === 'ONCE'
                                                     ? t('profile.emailReminders.scheduledAt')
                                                     : t('profile.emailReminders.sendTime')}
@@ -516,7 +516,7 @@ const EmailReminderCreateModal = ({ isOpen, onClose, onCreated }) => {
                                                     value={form.scheduledLocal}
                                                     onChange={updateField('scheduledLocal')}
                                                     onClick={openDateTimePicker}
-                                                    className="relative h-9 w-full min-w-0 cursor-pointer rounded-lg border border-slate-200 bg-white px-2.5 text-xs font-medium text-slate-700 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/10 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-0"
+                                                    className="relative h-9 w-full min-w-0 cursor-pointer rounded-lg border border-border bg-canvas px-2.5 text-xs font-medium text-ink-secondary outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/10 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-0"
                                                 />
                                             ) : (
                                                 <input
@@ -525,13 +525,13 @@ const EmailReminderCreateModal = ({ isOpen, onClose, onCreated }) => {
                                                     value={form.sendTime}
                                                     onChange={updateField('sendTime')}
                                                     onClick={openDateTimePicker}
-                                                    className="relative h-9 w-full min-w-0 cursor-pointer rounded-lg border border-slate-200 bg-white px-2.5 text-xs font-medium text-slate-700 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/10 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-0"
+                                                    className="relative h-9 w-full min-w-0 cursor-pointer rounded-lg border border-border bg-canvas px-2.5 text-xs font-medium text-ink-secondary outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/10 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-0"
                                                 />
                                             )}
                                         </label>
 
                                         <label className="block min-w-0 flex-1">
-                                            <span className="mb-1 block text-[10px] font-bold text-slate-500">
+                                            <span className="mb-1 block text-micro font-bold text-ink-muted">
                                                 {t('profile.emailReminders.timezone')}
                                             </span>
                                             <CustomSelect
@@ -544,7 +544,7 @@ const EmailReminderCreateModal = ({ isOpen, onClose, onCreated }) => {
                                     </div>
 
                                     <div>
-                                        <span className="mb-1.5 block text-[10px] font-bold text-slate-500">
+                                        <span className="mb-1.5 block text-micro font-bold text-ink-muted">
                                             {t('profile.emailReminders.frequency')}
                                         </span>
                                         <div className="flex flex-wrap gap-1.5">
@@ -555,10 +555,10 @@ const EmailReminderCreateModal = ({ isOpen, onClose, onCreated }) => {
                                                         key={item}
                                                         type="button"
                                                         onClick={() => setFrequency(item)}
-                                                        className={`rounded-lg border px-2.5 py-1.5 text-[11px] font-bold transition ${
+                                                        className={`rounded-lg border px-2.5 py-1.5 text-caption font-bold transition ${
                                                             active
-                                                                ? 'border-primary bg-primary text-white'
-                                                                : 'border-slate-200 bg-white text-slate-500 hover:border-primary/30 hover:text-primary'
+                                                                ? 'border-accent bg-accent text-white'
+                                                                : 'border-border bg-canvas text-ink-muted hover:border-accent/30 hover:text-accent'
                                                         }`}
                                                     >
                                                         {t(`profile.emailReminders.frequencies.${item.toLowerCase()}`)}
@@ -571,67 +571,67 @@ const EmailReminderCreateModal = ({ isOpen, onClose, onCreated }) => {
                             </section>
                         </div>
 
-                        <aside className="space-y-4 border-t border-slate-100 bg-slate-50/70 p-5 lg:border-l lg:border-t-0">
-                            <div className="rounded-xl border border-slate-200 bg-white p-4">
-                                <h4 className="text-xs font-black text-slate-800">
+                        <aside className="space-y-4 border-t border-border bg-surface/70 p-5 lg:border-l lg:border-t-0">
+                            <div className="rounded-xl border border-border bg-canvas p-4">
+                                <h4 className="text-xs font-black text-ink">
                                     {t('profile.emailReminders.overviewTitle')}
                                 </h4>
-                                <dl className="mt-3 space-y-2 text-[11px]">
+                                <dl className="mt-3 space-y-2 text-caption">
                                     <div className="flex justify-between gap-3">
-                                        <dt className="text-slate-400">{t('profile.emailReminders.recipientEmail')}</dt>
-                                        <dd className="max-w-[60%] truncate font-semibold text-slate-700">
+                                        <dt className="text-ink-faint">{t('profile.emailReminders.recipientEmail')}</dt>
+                                        <dd className="max-w-[60%] truncate font-semibold text-ink-secondary">
                                             {form.recipientEmail || t('profile.emailReminders.notSet')}
                                         </dd>
                                     </div>
                                     <div className="flex justify-between gap-3">
-                                        <dt className="text-slate-400">{t('profile.emailReminders.scheduledAt')}</dt>
-                                        <dd className="max-w-[60%] text-right font-semibold text-slate-700">
+                                        <dt className="text-ink-faint">{t('profile.emailReminders.scheduledAt')}</dt>
+                                        <dd className="max-w-[60%] text-right font-semibold text-ink-secondary">
                                             {scheduleLabel}
                                         </dd>
                                     </div>
                                     <div className="flex justify-between gap-3">
-                                        <dt className="text-slate-400">{t('profile.emailReminders.frequency')}</dt>
-                                        <dd className="font-semibold text-slate-700">
+                                        <dt className="text-ink-faint">{t('profile.emailReminders.frequency')}</dt>
+                                        <dd className="font-semibold text-ink-secondary">
                                             {t(`profile.emailReminders.frequencies.${form.frequency.toLowerCase()}`)}
                                         </dd>
                                     </div>
                                     {usesLayoutTemplate ? (
                                         <div className="flex justify-between gap-3">
-                                            <dt className="text-slate-400">{t('profile.emailReminders.template')}</dt>
-                                            <dd className="font-semibold text-slate-700">
+                                            <dt className="text-ink-faint">{t('profile.emailReminders.template')}</dt>
+                                            <dd className="font-semibold text-ink-secondary">
                                                 {t(`profile.emailReminders.templates.${form.templateId}`)}
                                             </dd>
                                         </div>
                                     ) : null}
                                     <div className="flex justify-between gap-3">
-                                        <dt className="text-slate-400">{t('profile.emailReminders.timezone')}</dt>
-                                        <dd className="max-w-[60%] truncate text-right font-semibold text-slate-700">
+                                        <dt className="text-ink-faint">{t('profile.emailReminders.timezone')}</dt>
+                                        <dd className="max-w-[60%] truncate text-right font-semibold text-ink-secondary">
                                             {form.timezone}
                                         </dd>
                                     </div>
                                 </dl>
                             </div>
 
-                            <div className="overflow-hidden rounded-xl border border-slate-200 bg-white">
-                                <div className="flex items-center justify-between border-b border-slate-100 px-4 py-2.5">
-                                    <span className="text-xs font-black text-slate-800">
+                            <div className="overflow-hidden rounded-xl border border-border bg-canvas">
+                                <div className="flex items-center justify-between border-b border-border px-4 py-2.5">
+                                    <span className="text-xs font-black text-ink">
                                         {t('profile.emailReminders.previewTitle')}
                                     </span>
-                                    <span className="text-[10px] font-bold text-slate-400">
+                                    <span className="text-micro font-bold text-ink-faint">
                                         {usesLayoutTemplate
                                             ? t(`profile.emailReminders.templates.${form.templateId}`)
                                             : t('profile.emailReminders.customPreviewBadge')}
                                     </span>
                                 </div>
-                                <div className="bg-slate-100/80 p-2">
-                                    <div className="max-h-[min(560px,52vh)] overflow-y-auto rounded-lg border border-slate-200 bg-white">
+                                <div className="bg-surface-muted/80 p-2">
+                                    <div className="max-h-[min(560px,52vh)] overflow-y-auto rounded-lg border border-border bg-canvas">
                                         <iframe
                                             ref={previewFrameRef}
                                             title={t('profile.emailReminders.previewTitle')}
                                             srcDoc={previewHtml}
                                             sandbox="allow-same-origin"
                                             onLoad={syncPreviewHeight}
-                                            className="block w-full border-0 bg-white"
+                                            className="block w-full border-0 bg-canvas"
                                             style={{ height: `${previewHeight}px` }}
                                         />
                                     </div>
@@ -640,19 +640,19 @@ const EmailReminderCreateModal = ({ isOpen, onClose, onCreated }) => {
                         </aside>
                     </div>
 
-                    <footer className="flex shrink-0 items-center justify-end gap-2 border-t border-slate-100 bg-white px-5 py-3">
+                    <footer className="flex shrink-0 items-center justify-end gap-2 border-t border-border bg-canvas px-5 py-3">
                         <button
                             type="button"
                             onClick={handleClose}
                             disabled={isCreating}
-                            className="h-9 rounded-lg border border-slate-200 px-4 text-xs font-bold text-slate-600 transition hover:bg-slate-50 disabled:opacity-60"
+                            className="h-9 rounded-lg border border-border px-4 text-xs font-bold text-ink-muted transition hover:bg-surface disabled:opacity-60"
                         >
                             {t('profile.emailReminders.cancelDelete')}
                         </button>
                         <button
                             type="submit"
                             disabled={isCreating}
-                            className="inline-flex h-9 items-center justify-center gap-1.5 rounded-lg bg-primary px-4 text-xs font-bold text-white shadow-sm shadow-primary/20 transition hover:brightness-105 disabled:cursor-wait disabled:opacity-60"
+                            className="inline-flex h-9 items-center justify-center gap-1.5 rounded-lg bg-accent px-4 text-xs font-bold text-white shadow-sm shadow-accent/20 transition hover:brightness-105 disabled:cursor-wait disabled:opacity-60"
                         >
                             {isCreating
                                 ? <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -666,26 +666,26 @@ const EmailReminderCreateModal = ({ isOpen, onClose, onCreated }) => {
             </div>
 
             {isTemplatePickerOpen ? (
-                <div className="fixed inset-0 z-[1200] flex items-center justify-center bg-slate-900/45 p-3 sm:p-6">
+                <div className="fixed inset-0 z-[1200] flex items-center justify-center bg-ink/45 p-3 sm:p-6">
                     <div
                         role="dialog"
                         aria-modal="true"
                         aria-labelledby="email-template-picker-title"
-                        className="flex max-h-[min(640px,88vh)] w-full max-w-6xl flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl"
+                        className="flex max-h-[min(640px,88vh)] w-full max-w-6xl flex-col overflow-hidden rounded-2xl border border-border bg-canvas shadow-2xl"
                     >
-                        <header className="flex shrink-0 items-center justify-between border-b border-slate-100 px-5 py-3.5">
+                        <header className="flex shrink-0 items-center justify-between border-b border-border px-5 py-3.5">
                             <div>
-                                <h3 id="email-template-picker-title" className="text-sm font-black text-slate-800">
+                                <h3 id="email-template-picker-title" className="text-sm font-black text-ink">
                                     {t('profile.emailReminders.templatePickerTitle')}
                                 </h3>
-                                <p className="mt-0.5 text-[10px] font-medium text-slate-400">
+                                <p className="mt-0.5 text-micro font-medium text-ink-faint">
                                     {t('profile.emailReminders.templatePickerHint')}
                                 </p>
                             </div>
                             <button
                                 type="button"
                                 onClick={() => setIsTemplatePickerOpen(false)}
-                                className="rounded-full p-1.5 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600"
+                                className="rounded-full p-1.5 text-ink-faint transition hover:bg-surface-muted hover:text-ink-muted"
                                 aria-label={t('common.aria.close', 'Close')}
                             >
                                 <X className="h-4 w-4" />
@@ -698,24 +698,24 @@ const EmailReminderCreateModal = ({ isOpen, onClose, onCreated }) => {
                                         key={card.id}
                                         type="button"
                                         onClick={() => applyTemplate(card.id)}
-                                        className={`w-[220px] shrink-0 overflow-hidden rounded-xl border text-left transition hover:border-primary/40 hover:shadow-md lg:w-0 lg:min-w-0 lg:flex-1 ${
+                                        className={`w-[220px] shrink-0 overflow-hidden rounded-xl border text-left transition hover:border-accent/40 hover:shadow-md lg:w-0 lg:min-w-0 lg:flex-1 ${
                                             form.templateId === card.id
-                                                ? 'border-primary ring-1 ring-primary/20'
-                                                : 'border-slate-200'
+                                                ? 'border-accent ring-1 ring-accent/20'
+                                                : 'border-border'
                                         }`}
                                     >
-                                        <div className="flex items-center justify-between gap-2 border-b border-slate-100 px-3 py-2">
+                                        <div className="flex items-center justify-between gap-2 border-b border-border px-3 py-2">
                                             <div className="flex min-w-0 items-center gap-2">
                                                 <span className={`h-2 w-8 shrink-0 rounded-full bg-gradient-to-r ${TEMPLATE_SWATCH[card.id]}`} />
-                                                <span className="truncate text-[11px] font-black text-slate-700">
+                                                <span className="truncate text-caption font-black text-ink-secondary">
                                                     {t(`profile.emailReminders.templates.${card.id}`)}
                                                 </span>
                                             </div>
-                                            <span className="shrink-0 text-[10px] font-bold text-primary">
+                                            <span className="shrink-0 text-micro font-bold text-accent">
                                                 {t('profile.emailReminders.useThisTemplate')}
                                             </span>
                                         </div>
-                                        <div className="relative h-48 w-full overflow-hidden bg-slate-100">
+                                        <div className="relative h-48 w-full overflow-hidden bg-surface-muted">
                                             <iframe
                                                 title={t(`profile.emailReminders.templates.${card.id}`)}
                                                 srcDoc={card.previewHtml}

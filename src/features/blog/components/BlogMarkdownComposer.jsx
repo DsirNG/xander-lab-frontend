@@ -162,7 +162,7 @@ const BlogMarkdownComposer = forwardRef(({ value, onChange, placeholder, disable
 
     return (
         <div className="w-full">
-            <aside className={`fixed left-3 top-1/2 z-50 flex max-h-[calc(100dvh-6rem)] -translate-y-1/2 flex-col gap-1 overflow-y-auto rounded-xl border border-slate-200 bg-white/95 p-1 shadow-xl backdrop-blur transition-[width] duration-200 ${isToolbarExpanded ? 'w-44' : 'w-10'}`}>
+            <aside className={`fixed left-3 top-1/2 z-50 flex max-h-[calc(100dvh-6rem)] -translate-y-1/2 flex-col gap-1 overflow-y-auto rounded-xl border border-border bg-canvas/95 p-1 shadow-xl backdrop-blur transition-[width] duration-200 ${isToolbarExpanded ? 'w-44' : 'w-10'}`}>
                 <button
                     type="button"
                     title={t('blog.editor.toolbar')}
@@ -170,13 +170,13 @@ const BlogMarkdownComposer = forwardRef(({ value, onChange, placeholder, disable
                     aria-expanded={isToolbarExpanded}
                     onMouseDown={prepareToolbarAction}
                     onClick={() => setIsToolbarExpanded((current) => !current)}
-                    className={`flex h-8 w-full shrink-0 items-center gap-2 rounded-lg bg-slate-100 text-slate-600 transition hover:bg-slate-200 hover:text-slate-900 ${isToolbarExpanded ? 'justify-start px-2' : 'justify-center'}`}
+                    className={`flex h-8 w-full shrink-0 items-center gap-2 rounded-lg bg-surface-muted text-ink-secondary transition hover:bg-border hover:text-ink ${isToolbarExpanded ? 'justify-start px-2' : 'justify-center'}`}
                 >
                     {isToolbarExpanded ? <PanelLeftClose className="h-4 w-4 shrink-0" /> : <PanelLeftOpen className="h-4 w-4 shrink-0" />}
                     {isToolbarExpanded && <span className="truncate text-xs font-black">{t('blog.editor.toolbar')}</span>}
                 </button>
 
-                <span className="mx-1 my-0.5 h-px shrink-0 bg-slate-200" />
+                <span className="mx-1 my-0.5 h-px shrink-0 bg-border" />
 
                 {formatActions.map(({ key, icon: Icon, prefix, code }) => (
                     <button
@@ -187,14 +187,14 @@ const BlogMarkdownComposer = forwardRef(({ value, onChange, placeholder, disable
                         disabled={disabled}
                         onMouseDown={prepareToolbarAction}
                         onClick={() => code ? applyCodeFormat() : applyLineFormat(prefix)}
-                        className={`flex h-8 w-full shrink-0 items-center gap-2 rounded-lg text-slate-500 transition hover:bg-primary/10 hover:text-primary disabled:cursor-not-allowed disabled:opacity-40 ${isToolbarExpanded ? 'justify-start px-2' : 'justify-center'}`}
+                        className={`flex h-8 w-full shrink-0 items-center gap-2 rounded-lg text-ink-muted transition hover:bg-accent/10 hover:text-accent disabled:cursor-not-allowed disabled:opacity-40 ${isToolbarExpanded ? 'justify-start px-2' : 'justify-center'}`}
                     >
                         <Icon className="h-4 w-4 shrink-0" />
                         {isToolbarExpanded && <span className="truncate text-xs font-semibold">{t(`blog.editor.${key}`)}</span>}
                     </button>
                 ))}
 
-                <span className="mx-1 my-0.5 h-px bg-slate-200" />
+                <span className="mx-1 my-0.5 h-px bg-border" />
 
                 {insertActions.map(({ key, icon: Icon, markdown, cursorBack, disabled: actionDisabled }) => (
                     <button
@@ -205,7 +205,7 @@ const BlogMarkdownComposer = forwardRef(({ value, onChange, placeholder, disable
                         disabled={disabled || actionDisabled}
                         onMouseDown={prepareToolbarAction}
                         onClick={() => key === 'imageGif' ? openImageLibrary() : insertAtSelection(markdown, cursorBack)}
-                        className={`flex h-8 w-full shrink-0 items-center gap-2 rounded-lg text-slate-500 transition hover:bg-primary/10 hover:text-primary disabled:cursor-not-allowed disabled:opacity-40 ${isToolbarExpanded ? 'justify-start px-2' : 'justify-center'}`}
+                        className={`flex h-8 w-full shrink-0 items-center gap-2 rounded-lg text-ink-muted transition hover:bg-accent/10 hover:text-accent disabled:cursor-not-allowed disabled:opacity-40 ${isToolbarExpanded ? 'justify-start px-2' : 'justify-center'}`}
                     >
                         <Icon className="h-4 w-4 shrink-0" />
                         {isToolbarExpanded && <span className="truncate text-xs font-semibold">{t(`blog.editor.${key}`)}</span>}
@@ -226,7 +226,7 @@ const BlogMarkdownComposer = forwardRef(({ value, onChange, placeholder, disable
                 onClick={(event) => rememberSelection(event.currentTarget)}
                 onKeyUp={(event) => rememberSelection(event.currentTarget)}
                 placeholder={placeholder}
-                className="mb-20 h-full min-h-[60vh] w-full resize-none border-none bg-transparent text-lg font-medium leading-[1.8] text-slate-700 outline-none placeholder:text-slate-300"
+                className="mb-20 h-full min-h-[60vh] w-full resize-none border-none bg-transparent text-lg font-medium leading-[1.8] text-ink-secondary outline-none placeholder:text-ink-faint"
             />
 
             <BlogImageLibraryModal

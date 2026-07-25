@@ -50,35 +50,35 @@ const ShareModals = ({
                 onClose={onCloseAddModal}
                 title={
                     <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-xl bg-primary-50 flex items-center justify-center">
-                            <FileCode className="w-4 h-4 text-primary" />
+                        <div className="w-8 h-8 rounded-xl bg-accent-soft flex items-center justify-center">
+                            <FileCode className="w-4 h-4 text-accent" />
                         </div>
-                        <span className="text-[14px]">{t('components.share.modals.newFile')}</span>
+                        <span className="text-body">{t('components.share.modals.newFile')}</span>
                     </div>
                 }
                 width="max-w-[400px]"
                 footer={
                     <>
-                        <button onClick={onCloseAddModal} className="px-5 py-2.5 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-100  transition-all">{t('components.share.modals.cancel')}</button>
-                        <button onClick={onAddFileSubmit} className="px-6 py-2.5 rounded-xl text-xs font-bold text-white bg-primary hover:bg-primary-700 shadow-lg shadow-primary/20 active:scale-95 transition-all">{t('components.share.modals.confirmCreate')}</button>
+                        <button onClick={onCloseAddModal} className="px-5 py-2.5 rounded-xl text-caption font-bold text-ink-muted hover:bg-surface-muted  transition-all">{t('components.share.modals.cancel')}</button>
+                        <button onClick={onAddFileSubmit} className="px-6 py-2.5 rounded-xl text-caption font-bold text-white bg-accent hover:bg-accent-700 shadow-lg shadow-accent/20 active:scale-95 transition-all">{t('components.share.modals.confirmCreate')}</button>
                     </>
                 }
             >
                 <div className="space-y-4 py-2">
                     <div>
-                        <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest pl-1 block mb-2">File Name</label>
+                        <label className="text-micro font-black text-ink-faint uppercase tracking-widest pl-1 block mb-2">File Name</label>
                         <input
                             autoFocus
                             value={newFileName}
                             onChange={(e) => setNewFileName(e.target.value)}
                             onKeyDown={(e) => { if (e.key === 'Enter') onAddFileSubmit(); }}
-                            className="w-full px-4 py-3 bg-slate-50  border border-slate-200  rounded-2xl text-[13px] font-mono text-slate-900  focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all placeholder:text-slate-300 "
+                            className="w-full px-4 py-3 bg-surface  border border-border  rounded-2xl text-body font-mono text-ink  focus:border-accent focus:ring-4 focus:ring-accent/10 outline-none transition-all placeholder:text-ink-faint "
                             placeholder="e.g. Button.tsx"
                         />
                     </div>
-                    <div className="bg-amber-50 text-amber-600 p-3 flex gap-3 text-xs rounded-xl font-medium border border-amber-100 ">
+                    <div className="bg-warning-soft text-warning p-3 flex gap-3 text-caption rounded-xl font-medium border border-warning/20 ">
                         <Info className="w-4 h-4 flex-shrink-0 mt-0.5" />
-                        <p>{t('components.share.modals.fileExtensionHint')} <code className="bg-amber-100/50 px-1 py-0.5 rounded font-black italic">.jsx</code>, <code className="bg-amber-100/50 px-1 py-0.5 rounded font-black italic">.ts</code>, <code className="bg-amber-100/50 px-1 py-0.5 rounded font-black italic">.tsx</code>。</p>
+                        <p>{t('components.share.modals.fileExtensionHint')} <code className="bg-warning/10 px-1 py-0.5 rounded font-black italic">.jsx</code>, <code className="bg-warning/10 px-1 py-0.5 rounded font-black italic">.ts</code>, <code className="bg-warning/10 px-1 py-0.5 rounded font-black italic">.tsx</code>。</p>
                     </div>
                 </div>
             </Modal>
@@ -91,23 +91,23 @@ const ShareModals = ({
                 width="max-w-[360px]"
                 footer={
                     <>
-                        <button onClick={onCloseDeleteModal} className="px-5 py-2.5 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-100  transition-all">{t('components.share.modals.cancel')}</button>
-                        <button onClick={onConfirmDeleteFile} className="px-6 py-2.5 rounded-xl text-xs font-bold text-white bg-rose-600 hover:bg-rose-700 shadow-lg shadow-rose-600/20 active:scale-95 transition-all flex items-center gap-2">
+                        <button onClick={onCloseDeleteModal} className="px-5 py-2.5 rounded-xl text-caption font-bold text-ink-muted hover:bg-surface-muted  transition-all">{t('components.share.modals.cancel')}</button>
+                        <button onClick={onConfirmDeleteFile} className="px-6 py-2.5 rounded-xl text-caption font-bold text-white bg-danger hover:bg-danger-fg shadow-lg shadow-danger/20 active:scale-95 transition-all flex items-center gap-2">
                             <Trash2 className="w-3.5 h-3.5" /> {t('components.share.modals.confirmDelete')}
                         </button>
                     </>
                 }
             >
-                <div className="py-2 text-[14px] font-medium flex items-start gap-4 text-slate-600 ">
-                    <div className="w-10 h-10 rounded-full bg-rose-100/50 text-rose-500 shrink-0 flex items-center justify-center border border-rose-200/50">
+                <div className="py-2 text-body font-medium flex items-start gap-4 text-ink-muted ">
+                    <div className="w-10 h-10 rounded-full bg-danger-soft text-danger shrink-0 flex items-center justify-center border border-danger/30">
                         <Trash2 className="w-5 h-5" />
                     </div>
                     <div>
                         {t('components.share.modals.deleteWarning')}<br />
-                        <span className="text-slate-900  font-black italic border-b border-rose-200 mt-2 inline-block">
+                        <span className="text-ink  font-black italic border-b border-danger/30 mt-2 inline-block">
                             {fileToDeleteIdx !== null ? libFiles[fileToDeleteIdx].name : ''}
                         </span>
-                        <p className="text-[12px] text-slate-400 mt-2">{t('components.share.modals.deleteLoseWarning')}</p>
+                        <p className="text-caption text-ink-faint mt-2">{t('components.share.modals.deleteLoseWarning')}</p>
                     </div>
                 </div>
             </Modal>
@@ -118,23 +118,23 @@ const ShareModals = ({
                 onClose={onCloseHelpModal}
                 title={
                     <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-xl bg-primary-50 flex items-center justify-center">
-                            <HelpCircle className="w-4 h-4 text-primary" />
+                        <div className="w-8 h-8 rounded-xl bg-accent-soft flex items-center justify-center">
+                            <HelpCircle className="w-4 h-4 text-accent" />
                         </div>
-                        <span className="text-[14px]">{t('components.share.modals.presetSamples')} - {helpType.toUpperCase()}</span>
+                        <span className="text-body">{t('components.share.modals.presetSamples')} - {helpType.toUpperCase()}</span>
                     </div>
                 }
                 width="max-w-[420px]"
                 footer={
                     <>
-                        <button onClick={onCloseHelpModal} className="px-5 py-2.5 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-100  transition-all">{t('components.share.modals.cancel')}</button>
-                        <button id="tour-apply-btn" onClick={onApplySample} className="px-6 py-2.5 rounded-xl text-xs font-bold text-white bg-primary hover:bg-primary-700 shadow-lg shadow-primary/20 active:scale-95 transition-all relative z-10">
+                        <button onClick={onCloseHelpModal} className="px-5 py-2.5 rounded-xl text-caption font-bold text-ink-muted hover:bg-surface-muted  transition-all">{t('components.share.modals.cancel')}</button>
+                        <button id="tour-apply-btn" onClick={onApplySample} className="px-6 py-2.5 rounded-xl text-caption font-bold text-white bg-accent hover:bg-accent-700 shadow-lg shadow-accent/20 active:scale-95 transition-all relative z-10">
                             {t('components.share.modals.oneClickLoad')}
                         </button>
                     </>
                 }
             >
-                <div className="py-2 text-[13px] text-slate-600  leading-relaxed font-medium">
+                <div className="py-2 text-body text-ink-muted  leading-relaxed font-medium">
                     {t('components.share.modals.helpIntro')} <strong>『全局物理通知组件 (Toast)』</strong>。<br /><br />
                     {helpType === 'meta' && t('components.share.modals.helpMeta')}
                     {helpType === 'scenario' && t('components.share.modals.helpScenario')}
@@ -150,17 +150,17 @@ const ShareModals = ({
                 onClose={onCloseEditScenarioModal}
                 title={
                     <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-xl bg-primary-50 flex items-center justify-center">
-                            <Edit2 className="w-4 h-4 text-primary" />
+                        <div className="w-8 h-8 rounded-xl bg-accent-soft flex items-center justify-center">
+                            <Edit2 className="w-4 h-4 text-accent" />
                         </div>
-                        <span className="text-[14px]">{t('components.share.modals.editScenario')}</span>
+                        <span className="text-body">{t('components.share.modals.editScenario')}</span>
                     </div>
                 }
                 width="max-w-[400px]"
                 footer={
                     <>
-                        <button onClick={onCloseEditScenarioModal} className="px-5 py-2.5 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-100  transition-all">{t('components.share.modals.cancel')}</button>
-                        <button onClick={onEditScenarioSubmit} className="px-6 py-2.5 rounded-xl text-xs font-bold text-white bg-primary hover:bg-primary-700 shadow-lg shadow-primary/20 active:scale-95 transition-all">
+                        <button onClick={onCloseEditScenarioModal} className="px-5 py-2.5 rounded-xl text-caption font-bold text-ink-muted hover:bg-surface-muted  transition-all">{t('components.share.modals.cancel')}</button>
+                        <button onClick={onEditScenarioSubmit} className="px-6 py-2.5 rounded-xl text-caption font-bold text-white bg-accent hover:bg-accent-700 shadow-lg shadow-accent/20 active:scale-95 transition-all">
                             {t('components.share.modals.saveChanges')}
                         </button>
                     </>
@@ -168,23 +168,23 @@ const ShareModals = ({
             >
                 <div className="space-y-4 py-2">
                     <div>
-                        <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest pl-1 block mb-2">{t('components.share.modals.chineseName')}</label>
+                        <label className="text-micro font-black text-ink-faint uppercase tracking-widest pl-1 block mb-2">{t('components.share.modals.chineseName')}</label>
                         <input
                             autoFocus
                             value={editScenTitleZh}
                             onChange={(e) => setEditScenTitleZh(e.target.value)}
                             onKeyDown={(e) => { if (e.key === 'Enter') onEditScenarioSubmit(); }}
-                            className="w-full px-4 py-3 bg-slate-50  border border-slate-200  rounded-2xl text-[13px] font-bold text-slate-900  focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all placeholder:text-slate-300"
+                            className="w-full px-4 py-3 bg-surface  border border-border  rounded-2xl text-body font-bold text-ink  focus:border-accent focus:ring-4 focus:ring-accent/10 outline-none transition-all placeholder:text-ink-faint"
                             placeholder={t('components.share.modals.chineseNamePlaceholder')}
                         />
                     </div>
                     <div>
-                        <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest pl-1 block mb-2">English Title</label>
+                        <label className="text-micro font-black text-ink-faint uppercase tracking-widest pl-1 block mb-2">English Title</label>
                         <input
                             value={editScenTitleEn}
                             onChange={(e) => setEditScenTitleEn(e.target.value)}
                             onKeyDown={(e) => { if (e.key === 'Enter') onEditScenarioSubmit(); }}
-                            className="w-full px-4 py-3 bg-slate-50  border border-slate-200  rounded-2xl text-[13px] font-bold text-slate-900  focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all placeholder:text-slate-300"
+                            className="w-full px-4 py-3 bg-surface  border border-border  rounded-2xl text-body font-bold text-ink  focus:border-accent focus:ring-4 focus:ring-accent/10 outline-none transition-all placeholder:text-ink-faint"
                             placeholder="e.g. Interaction Study"
                         />
                     </div>
@@ -198,16 +198,16 @@ const ShareModals = ({
                 title={t('components.share.modals.welcomeTitle')}
                 footer={
                     <>
-                        <button onClick={onTourWelcomeSkip} className="px-5 py-2.5 text-xs text-slate-500 hover:bg-slate-100 rounded-xl font-bold transition-all">
+                        <button onClick={onTourWelcomeSkip} className="px-5 py-2.5 text-caption text-ink-muted hover:bg-surface-muted rounded-xl font-bold transition-all">
                             {t('components.share.modals.welcomeReject')}
                         </button>
-                        <button onClick={onTourWelcomeStart} className="px-6 py-2.5 bg-primary hover:bg-primary-700 text-white rounded-xl text-xs font-bold shadow-xl shadow-primary/20 active:scale-95 transition-all flex items-center gap-2">
+                        <button onClick={onTourWelcomeStart} className="px-6 py-2.5 bg-accent hover:bg-accent-700 text-white rounded-xl text-caption font-bold shadow-xl shadow-accent/20 active:scale-95 transition-all flex items-center gap-2">
                             <Compass className="w-4 h-4" /> {t('components.share.modals.startTour')}
                         </button>
                     </>
                 }
             >
-                <div className="text-slate-600  text-[13px] leading-loose">
+                <div className="text-ink-muted  text-body leading-loose">
                     {t('components.share.modals.welcomeDesc')}
                 </div>
             </Modal>

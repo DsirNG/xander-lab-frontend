@@ -17,14 +17,14 @@ const LoadingSpinner = ({
 
   const spinner = (
     <div className="flex flex-col items-center gap-3">
-      <div className={`${sizeClasses[size]} border-2 border-slate-200 border-t-primary rounded-full animate-spin`} />
-      {text && <span className="text-sm text-slate-400 font-medium">{text}</span>}
+      <div className={`${sizeClasses[size]} border-2 border-border border-t-accent rounded-full animate-spin`} />
+      {text && <span className="text-body text-ink-faint font-medium">{text}</span>}
     </div>
   );
 
   if (fullScreen) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center justify-center min-h-screen bg-canvas">
         {spinner}
       </div>
     );

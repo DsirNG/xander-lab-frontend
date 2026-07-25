@@ -54,22 +54,22 @@ const AgentProcessPanel = ({
         : t('blog.agent.processedDone'));
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+    <div className="overflow-hidden rounded-2xl border border-border bg-canvas shadow-sm">
       <button
         type="button"
         onClick={() => setExpanded((value) => !value)}
-        className="flex w-full items-center gap-2 px-4 py-3 text-left text-sm font-semibold text-slate-600 transition hover:bg-slate-50"
+        className="flex w-full items-center gap-2 px-4 py-3 text-left text-sm font-semibold text-ink-secondary transition hover:bg-surface"
       >
         {isRunning ? (
-          <Loader2 className="h-4 w-4 shrink-0 animate-spin text-primary" />
+          <Loader2 className="h-4 w-4 shrink-0 animate-spin text-accent" />
         ) : (
-          <ChevronRight className={`h-4 w-4 shrink-0 text-slate-400 transition ${visibleExpanded ? 'rotate-90' : ''}`} />
+          <ChevronRight className={`h-4 w-4 shrink-0 text-ink-faint transition ${visibleExpanded ? 'rotate-90' : ''}`} />
         )}
         <span className="min-w-0 flex-1 truncate">{title}</span>
       </button>
 
       {visibleExpanded && (
-        <div className="space-y-4 border-t border-slate-100 px-4 py-4">
+        <div className="space-y-4 border-t border-border px-4 py-4">
           <ol className="space-y-3">
             {STAGE_KEYS.map((key, index) => {
               const done = !isRunning && !isFailed ? index <= stageIndex : index < stageIndex;
@@ -78,14 +78,14 @@ const AgentProcessPanel = ({
                 <li key={key} className="flex gap-3">
                   <span
                     className={`grid h-6 w-6 shrink-0 place-items-center rounded-full text-xs font-black ${
-                      done || active ? 'bg-primary text-white' : 'bg-slate-100 text-slate-400'
+                      done || active ? 'bg-accent text-white' : 'bg-surface-muted text-ink-faint'
                     }`}
                   >
                     {done ? '✓' : active ? <Loader2 className="h-3 w-3 animate-spin" /> : index + 1}
                   </span>
                   <div className="min-w-0">
-                    <p className="text-sm font-bold text-slate-800">{t(`blog.agent.stages.${key}`)}</p>
-                    <p className="mt-0.5 text-xs leading-5 text-slate-500">{t(`blog.agent.stageDescriptions.${key}`)}</p>
+                    <p className="text-sm font-bold text-ink">{t(`blog.agent.stages.${key}`)}</p>
+                    <p className="mt-0.5 text-caption leading-5 text-ink-muted">{t(`blog.agent.stageDescriptions.${key}`)}</p>
                   </div>
                 </li>
               );
@@ -93,19 +93,19 @@ const AgentProcessPanel = ({
           </ol>
 
           {(logs.length > 0 || streamText || isRunning) && (
-            <div className="max-h-56 space-y-1.5 overflow-auto rounded-xl bg-slate-950 p-3 text-xs leading-6 text-slate-200">
-              {logs.map((log, index) => <p key={`${log}-${index}`}><span className="mr-2 text-primary">●</span>{log}</p>)}
-              {isRunning && logs.length === 0 && <p className="text-slate-400">{t('blog.agent.waitingForStage')}</p>}
+            <div className="max-h-56 space-y-1.5 overflow-auto rounded-xl bg-ink p-3 text-caption leading-6 text-border-strong">
+              {logs.map((log, index) => <p key={`${log}-${index}`}><span className="mr-2 text-accent">●</span>{log}</p>)}
+              {isRunning && logs.length === 0 && <p className="text-ink-faint">{t('blog.agent.waitingForStage')}</p>}
             </div>
           )}
 
           {isFailed && (
-            <p className="rounded-xl bg-rose-50 px-3 py-2 text-sm leading-6 text-rose-700">
+            <p className="rounded-xl bg-danger-soft px-3 py-2 text-sm leading-6 text-danger-fg">
               {errorMessage || t('blog.agent.failed')}
             </p>
           )}
 
-          <p className="text-xs leading-5 text-slate-400">{t('blog.agent.guardrail')}</p>
+          <p className="text-caption leading-5 text-ink-faint">{t('blog.agent.guardrail')}</p>
         </div>
       )}
     </div>

@@ -22,9 +22,9 @@ const ModuleList = () => {
 
     // 定义底部卡片
     const bottomCard = (
-        <div className="bg-gradient-to-br from-primary/10 to-primary/10 p-4 rounded-2xl border border-primary/10">
-            <p className="text-[10px] font-bold text-blue-600 uppercase tracking-widest mb-1">Patterns</p>
-            <p className="text-xs text-slate-600 ">Reusable UI patterns built on top of robust infrastructure.</p>
+        <div className="bg-gradient-to-br from-accent/10 to-accent/10 p-4 rounded-2xl border border-accent/10">
+            <p className="text-micro font-bold text-accent uppercase tracking-widest mb-1">Patterns</p>
+            <p className="text-caption text-ink-muted ">Reusable UI patterns built on top of robust infrastructure.</p>
         </div>
     )
 

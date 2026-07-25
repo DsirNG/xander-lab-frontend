@@ -2,7 +2,7 @@
 @reference "../../../styles/index.css";
 
 .pageWrapper {
-  @apply  bg-white selection:bg-black selection:text-white;
+  @apply  bg-canvas selection:bg-ink selection:text-canvas;
 }
 
 .heroSection {
@@ -24,30 +24,30 @@
 }
 
 .announcement {
-  @apply flex items-center gap-3 px-3 py-1.5 rounded-full border border-gray-200
-  bg-white/50  backdrop-blur-md mb-6 sm:mb-8 md:mb-12 text-sm font-medium
-  hover:bg-gray-100 transition-all cursor-pointer;
+  @apply flex items-center gap-3 px-3 py-1.5 rounded-full border border-border
+  bg-canvas/50  backdrop-blur-md mb-6 sm:mb-8 md:mb-12 text-body font-medium
+  hover:bg-surface-muted transition-all cursor-pointer;
 }
 
 .versionTag {
-  @apply px-2 py-0.5 rounded-full bg-black  text-white text-[10px] font-black;
+  @apply px-2 py-0.5 rounded-full bg-ink  text-canvas text-micro font-black;
 }
 
 /* 极具压迫感的大标题，打破平庸感 */
 .megaTitle {
-  @apply text-4xl sm:text-6xl md:text-9xl font-black tracking-tighter mb-6 sm:mb-8 md:mb-10 text-primary leading-[0.85];
+  @apply text-4xl sm:text-6xl md:text-9xl font-black tracking-tighter mb-6 sm:mb-8 md:mb-10 text-accent leading-[0.85];
 }
 
 /* 镂空文字：设计感的核心，AI 很少会主动用这种排版 */
 .outlineText {
   @apply block text-transparent;
-  -webkit-text-stroke: 1.5px rgba(0,0,0,0.8);
+  -webkit-text-stroke: 1.5px rgba(15, 23, 42, 0.8);
 }
 
 
 
 .subtext {
-  @apply max-w-2xl text-lg md:text-2xl text-gray-500 mb-14 font-light leading-relaxed;
+  @apply max-w-2xl text-lg md:text-2xl text-ink-muted mb-14 font-light leading-relaxed;
 }
 
 .ctaWrapper {
@@ -55,12 +55,12 @@
 }
 
 .mainButton {
-  @apply px-8 sm:px-12 py-3 sm:py-4 bg-primary text-white rounded-none font-bold
-  hover:bg-primary-600 transition-all duration-300 shadow-[8px_8px_0_rgba(0,0,0,0.1)];
+  @apply px-8 sm:px-12 py-3 sm:py-4 bg-accent text-white rounded-none font-bold
+  hover:bg-accent-600 transition-all duration-300 shadow-[8px_8px_0_rgba(15,23,42,0.1)];
 }
 
 .ghostButton {
-  @apply flex items-center px-6 sm:px-10 py-3 sm:py-4 text-black  font-bold border-b-2 border-transparent hover:border-black transition-all;
+  @apply flex items-center px-6 sm:px-10 py-3 sm:py-4 text-ink  font-bold border-b-2 border-transparent hover:border-ink transition-all;
 }
 
 .visualCanvas {
@@ -69,6 +69,6 @@
 
 .abstractGlow {
   @apply absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
-  w-[600px] h-[400px] bg-blue-500/10
+  w-[600px] h-[400px] bg-accent/10
   blur-[150px] rounded-[100%];
 }

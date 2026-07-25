@@ -5,7 +5,7 @@ import React from 'react';
  */
 const AgentChatMessage = ({ content }) => (
   <div className="flex justify-end">
-    <div className="max-w-[85%] rounded-2xl rounded-br-md bg-slate-900 px-4 py-3 text-sm leading-6 text-white shadow-sm whitespace-pre-wrap">
+    <div className="max-w-[85%] rounded-2xl rounded-br-md bg-ink px-4 py-3 text-sm leading-6 text-white shadow-sm whitespace-pre-wrap">
       {content}
     </div>
   </div>

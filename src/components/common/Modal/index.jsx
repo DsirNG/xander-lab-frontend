@@ -111,7 +111,7 @@ const Modal = ({
                 >
                     {/* 背景遮罩 (因为父级有了透明度动画，这里改回普通 div 即可) */}
                     <div
-                        className="absolute inset-0 bg-slate-900/60 "
+                        className="absolute inset-0 bg-ink/60"
                         onClick={closeOnOutsideClick ? onClose : undefined}
                     />
 
@@ -132,7 +132,7 @@ const Modal = ({
                             duration: 0.3
                         }}
                         // 【修复 1】增加 antialiased 和 transform-gpu 类名
-                        className={`relative w-full ${width} bg-white  rounded-3xl shadow-2xl shadow-black/20  border border-slate-200/60  flex flex-col max-h-[90vh] overflow-hidden antialiased transform-gpu outline-none ${className}`}
+                        className={`relative w-full ${width} bg-canvas rounded-3xl shadow-2xl shadow-ink/20 border border-border flex flex-col max-h-[90vh] overflow-hidden antialiased transform-gpu outline-none ${className}`}
                         // 【修复 1 补充】强制保留硬件加速，防止动画结束时字体重新渲染
                         style={{
                             WebkitFontSmoothing: 'antialiased',
@@ -143,9 +143,9 @@ const Modal = ({
                     >
                         {/* 头部标题与关闭按钮 */}
                         {(title || !hideCloseButton) && (
-                            <div className="flex-shrink-0 flex items-center justify-between px-6 py-5 border-b border-slate-100 ">
+                            <div className="flex-shrink-0 flex items-center justify-between px-6 py-5 border-b border-border">
                                 {typeof title === 'string' ? (
-                                    <h3 id={titleId} className="text-lg font-black text-slate-800  tracking-tight">
+                                    <h3 id={titleId} className="text-title font-black text-ink tracking-tight">
                                         {title}
                                     </h3>
                                 ) : (
@@ -156,7 +156,7 @@ const Modal = ({
                                     <button
                                         onClick={onClose}
                                         aria-label={t('common.aria.close', 'Close')}
-                                        className="p-2 -mr-2 text-slate-400 hover:text-rose-500 hover:bg-rose-50  rounded-full transition-all active:scale-90"
+                                        className="p-2 -mr-2 text-ink-faint hover:text-danger hover:bg-danger-soft rounded-full transition-all active:scale-90"
                                     >
                                         <X className="w-5 h-5" />
                                     </button>
@@ -165,13 +165,13 @@ const Modal = ({
                         )}
 
                         {/* 主体自适应滚动区域 */}
-                        <div className="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar p-6 text-slate-600 ">
+                        <div className="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar p-6 text-ink-muted">
                             {children}
                         </div>
 
                         {/* 底部按钮栏（若提供） */}
                         {footer && (
-                            <div className="flex-shrink-0 px-6 py-5 border-t border-slate-100  bg-slate-50/50 /30 flex items-center justify-end gap-3 rounded-b-3xl">
+                            <div className="flex-shrink-0 px-6 py-5 border-t border-border bg-surface/50 flex items-center justify-end gap-3 rounded-b-3xl">
                                 {footer}
                             </div>
                         )}

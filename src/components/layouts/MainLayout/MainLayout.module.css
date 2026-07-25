@@ -3,8 +3,8 @@
 
 .navbar {
     @apply fixed top-0 left-0 w-full z-[100] backdrop-blur-md transition-all;
-    @apply bg-background-light/80;
-    @apply border-b border-surface-light;
+    @apply bg-canvas/80;
+    @apply border-b border-border;
 }
 
 .container {
@@ -20,7 +20,7 @@
 }
 
 .logoText {
-    @apply text-lg sm:text-xl font-bold text-black;
+    @apply text-lg sm:text-xl font-bold text-ink;
 }
 
 .desktopNav {
@@ -32,8 +32,8 @@
 }
 
 .navLink {
-    @apply text-gray-700 px-3 py-2 rounded-md text-sm font-medium transition-colors;
-    @apply hover:text-primary;
+    @apply text-ink-secondary px-3 py-2 rounded-md text-sm font-medium transition-colors;
+    @apply hover:text-accent;
 }
 
 .actionsArea {
@@ -42,21 +42,21 @@
 
 .iconButton {
     @apply p-2 rounded-full transition-colors;
-    @apply hover:bg-surface-light;
-    @apply text-gray-700;
+    @apply hover:bg-surface;
+    @apply text-ink-secondary;
 }
 
 .menuButton {
-    @apply md:hidden p-2 rounded-md text-gray-700;
-    @apply hover:bg-surface-light;
+    @apply md:hidden p-2 rounded-md text-ink-secondary;
+    @apply hover:bg-surface;
     @apply transition-colors;
 }
 
 /* 移动端菜单 */
 .mobileMenu {
     @apply fixed top-16 left-0 right-0 z-[90];
-    @apply bg-background-light;
-    @apply border-b border-surface-light;
+    @apply bg-canvas;
+    @apply border-b border-border;
     @apply transform transition-transform duration-300 ease-in-out;
     @apply max-h-[calc(100vh-64px)] overflow-y-auto;
     @apply md:hidden;
@@ -81,28 +81,28 @@
 
 .mobileNavLink {
     @apply px-4 py-3 rounded-lg text-base font-medium transition-colors;
-    @apply text-gray-700;
-    @apply hover:bg-surface-light;
-    @apply hover:text-primary;
+    @apply text-ink-secondary;
+    @apply hover:bg-surface;
+    @apply hover:text-accent;
 }
 
 .mobileNavLinkActive {
-    @apply bg-primary/10 text-primary;
+    @apply bg-accent-soft text-accent-fg;
 }
 
 .mobileMenuActions {
-    @apply flex flex-col space-y-2 pt-4 border-t border-surface-light;
+    @apply flex flex-col space-y-2 pt-4 border-t border-border;
 }
 
 .mobileActionButton {
     @apply px-4 py-3 rounded-lg text-base font-medium transition-colors;
-    @apply text-gray-700;
-    @apply hover:bg-surface-light;
+    @apply text-ink-secondary;
+    @apply hover:bg-surface;
     @apply w-full text-left;
 }
 
 .mobileMenuOverlay {
-    @apply fixed inset-0 bg-black/30 z-30;
+    @apply fixed inset-0 bg-ink/30 z-30;
     @apply md:hidden;
     top: 64px;
 }
@@ -112,36 +112,36 @@
 }
 
 .footerTitle {
-    @apply text-lg font-bold mb-4 text-gray-900 ;
+    @apply text-lg font-bold mb-4 text-ink;
 }
 
 .footer {
-    @apply bg-surface-light py-12 mt-auto;
+    @apply bg-surface py-12 mt-auto;
 }
 
 .footerText {
-    @apply text-gray-600 text-sm;
+    @apply text-ink-muted text-sm;
 }
 
 .footerSectionTitle {
-    @apply font-semibold mb-4 text-gray-900 ;
+    @apply font-semibold mb-4 text-ink;
 }
 
 .footerList {
-    @apply space-y-2 text-sm text-gray-600;
+    @apply space-y-2 text-sm text-ink-muted;
 }
 
 .footerLink {
-    @apply hover:text-primary transition-colors cursor-pointer;
+    @apply hover:text-accent transition-colors cursor-pointer;
 }
 
 .footerBottom {
-    @apply border-t border-gray-200 mt-8 pt-8 text-center text-sm text-gray-500;
+    @apply border-t border-border mt-8 pt-8 text-center text-sm text-ink-muted;
 }
 
 .layoutContainer {
     @apply min-h-screen flex flex-col font-sans;
-    @apply bg-background-light text-gray-900 ;
+    @apply bg-canvas text-ink;
 }
 
 .mainContent {
@@ -151,8 +151,8 @@
 /* ── 语言下拉选择器 ── */
 
 .langDropdown {
-    @apply absolute right-0 min-w-[180px] rounded-xl border border-slate-200/80;
-    @apply bg-white/95 backdrop-blur-xl shadow-xl shadow-slate-200/50;
+    @apply absolute right-0 min-w-[180px] rounded-xl border border-border/80;
+    @apply bg-canvas/95 backdrop-blur-xl shadow-xl shadow-border/50;
     @apply opacity-0 scale-95 -translate-y-1 pointer-events-none;
     @apply transition-all duration-200 ease-out;
     z-index: 110;
@@ -164,13 +164,13 @@
 
 .langOption {
     @apply w-full flex items-center justify-between px-3 py-2 text-left;
-    @apply hover:bg-slate-50 transition-all duration-150;
+    @apply hover:bg-surface transition-all duration-150;
     @apply opacity-0 translate-y-1;
     animation: langOptionIn 0.25s ease-out forwards;
 }
 
 .langOptionActive {
-    @apply bg-primary/5;
+    @apply bg-accent-soft;
 }
 
 @keyframes langOptionIn {
@@ -215,5 +215,3 @@
 .langSpinOutReverse {
     animation: langSpinOut 0.35s ease-in forwards;
 }
-
-

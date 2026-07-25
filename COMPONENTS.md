@@ -2,6 +2,43 @@
 
 页面开发、重构或评审前先阅读本目录；优先复用已登记组件。新增通用组件或调整其公开 API 时，必须同步更新本文件。
 
+## 颜色与字体（Design Tokens）
+
+单一真相源：[`src/styles/index.css`](src/styles/index.css) `@theme`（与 [`tailwind.config.js`](tailwind.config.js) 对齐）。
+
+### 颜色原则
+
+- **中性为主**：页面底、卡片、边框、正文用 `canvas` / `surface` / `border` / `ink*`。
+- **主题色只做点缀**：`accent`（`#0284c7`）仅用于头像、徽标、主 CTA、链接、焦点环、选中细态；禁止大面积 `bg-accent` / `bg-primary` 铺底。
+- **新代码优先 `accent`**；`primary` 是 accent 的兼容别名，勿再扩展新的 `primary-*` 用法。
+- **状态色**：`success` / `warning` / `danger` / `info`（可用 `*-soft` 底、`*-fg` 字）。
+
+| Token | 用途 |
+| --- | --- |
+| `accent` / `accent-soft` / `accent-fg` | 主题点缀 |
+| `ink` / `ink-secondary` / `ink-muted` / `ink-faint` | 文字层级 |
+| `canvas` / `surface` / `surface-muted` | 背景 |
+| `border` / `border-strong` | 描边 |
+| `success` / `warning` / `danger` / `info` | 状态 |
+
+禁止：业务里随意写 `sky-*`、`#36f`、硬编码灰阶 hex（演示页故意多彩的样本除外）。
+
+### 字体原则
+
+- UI：`font-sans` → Plus Jakarta Sans
+- 代码：`font-mono` → JetBrains Mono
+- 字号阶梯（勿再写 `text-[9px]` / `text-[10px]` / `text-[11px]`）：
+
+| 类名 | 用途 |
+| --- | --- |
+| `text-display` | 品牌 / 大标题 |
+| `text-title` | 区块标题 |
+| `text-body` | 正文（默认） |
+| `text-caption` | 辅助说明 |
+| `text-micro` | 表格标签、徽标 |
+
+字重：正文辅文 `font-medium`，标题 `font-semibold` / `font-bold`；`font-black` 仅品牌字标。
+
 ## 通用交互
 
 | 组件 | 路径 | 适用场景 | 关键 API / 说明 |
@@ -56,3 +93,4 @@
 1. 先在本目录按交互、布局和业务能力查找候选组件。
 2. 阅读候选组件源码与同类页面的实际调用，确认 API 和样式边界。
 3. 只有现有组件无法满足且无法合理扩展时，才新增组件；新增后更新本目录。
+4. 样式一律使用上文 Design Tokens；评审时拒绝新增随意色值与任意字号。

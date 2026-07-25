@@ -5,7 +5,7 @@ const EMPTY_OPTIONS = [];
 
 const DownIcon = () => (
   <svg width="1rem" height="1rem" viewBox="0 0 16 16" fill="none">
-    <path d="M4 6L8 10L12 6" stroke="#999999" strokeWidth="1.66667" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M4 6L8 10L12 6" stroke="currentColor" strokeWidth="1.66667" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );
 
@@ -245,7 +245,7 @@ const CustomSelect = ({
                 key={option.value}
                 id={`option-${option.value}`}
                 aria-selected={option.value === value}
-                className={`${styles.option} ${value === option.value ? styles.selected : ''} ${dropdownAlignClass} ${index === highlightedIndex ? 'bg-primary/10' : ''}`}
+                className={`${styles.option} ${value === option.value ? styles.selected : ''} ${dropdownAlignClass} ${index === highlightedIndex ? 'bg-accent/10' : ''}`}
                 onClick={() => handleSelect(option.value)}
                 onMouseEnter={() => setHighlightedIndex(index)}
               >

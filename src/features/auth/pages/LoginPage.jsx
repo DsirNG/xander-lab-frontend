@@ -89,12 +89,12 @@ const LoginPage = () => {
     };
 
     return (
-        <div className="min-h-screen flex flex-col items-center justify-center p-4 sm:p-6 bg-[#fcfcfd] overflow-hidden selection:bg-primary/30">
+        <div className="min-h-screen flex flex-col items-center justify-center p-4 sm:p-6 bg-surface overflow-hidden selection:bg-accent/30">
             {/* 高级艺术背景 */}
             <div className="absolute inset-0 pointer-events-none z-0">
                 {/*<DigitalOrbit />*/}
                 <FloatingParticles />
-                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-white/80" />
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-canvas/80" />
             </div>
 
             {/* 品牌悬浮顶栏 */}
@@ -105,23 +105,23 @@ const LoginPage = () => {
             >
                 <Link to="/" className="group flex items-center gap-3">
                     <div className="relative">
-                        <div className="absolute inset-0 bg-primary blur-md opacity-20 group-hover:opacity-40 transition-opacity" />
-                        <div className="relative p-2.5 rounded-2xl bg-white border border-slate-200 shadow-xl group-hover:scale-110 transition-transform duration-500">
+                        <div className="absolute inset-0 bg-accent blur-md opacity-20 group-hover:opacity-40 transition-opacity" />
+                        <div className="relative p-2.5 rounded-2xl bg-canvas border border-border shadow-xl group-hover:scale-110 transition-transform duration-500">
                         </div>
                     </div>
                     <div className="flex flex-col">
-                        <span className="font-black tracking-tighter text-2xl text-slate-900 leading-none">XANDER LAB</span>
-                        <span className="text-[10px] font-bold text-slate-400 leading-none mt-1 tracking-[0.2em]">UNIFIED AUTH</span>
+                        <span className="font-black tracking-tighter text-2xl text-ink leading-none">XANDER LAB</span>
+                        <span className="text-micro font-bold text-ink-faint leading-none mt-1 tracking-[0.2em]">UNIFIED AUTH</span>
                     </div>
                 </Link>
 
                 <div className="flex items-center gap-2">
-                    <button className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold text-slate-500 hover:text-primary hover:bg-white shadow-sm transition-all border border-transparent hover:border-slate-100">
+                    <button className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold text-ink-muted hover:text-accent hover:bg-canvas shadow-sm transition-all border border-transparent hover:border-border">
                         <Globe className="w-4 h-4" />
-                        System Status: <span className="text-emerald-500 animate-pulse font-black uppercase">Secure</span>
+                        System Status: <span className="text-success animate-pulse font-black uppercase">Secure</span>
                     </button>
-                    <div className="w-px h-4 bg-slate-200 mx-2 hidden sm:block" />
-                    <a href="https://github.com" className="p-3 text-slate-400 hover:text-primary transition-colors">
+                    <div className="w-px h-4 bg-border mx-2 hidden sm:block" />
+                    <a href="https://github.com" className="p-3 text-ink-faint hover:text-accent transition-colors">
                         <Github className="w-6 h-6" />
                     </a>
                 </div>
@@ -135,33 +135,33 @@ const LoginPage = () => {
                 className="relative z-10 w-full max-w-[480px]"
             >
                 {/* 装饰发光背景 */}
-                {/*<div className="absolute -top-20 -right-20 w-64 h-64 bg-primary/10 rounded-full blur-[100px] animate-pulse" />*/}
-                {/*<div className="absolute -bottom-20 -left-20 w-64 h-64 bg-primary/10 rounded-full blur-[100px] animate-pulse delay-700" />*/}
+                {/*<div className="absolute -top-20 -right-20 w-64 h-64 bg-accent/10 rounded-full blur-[100px] animate-pulse" />*/}
+                {/*<div className="absolute -bottom-20 -left-20 w-64 h-64 bg-accent/10 rounded-full blur-[100px] animate-pulse delay-700" />*/}
 
-                <div className="relative bg-white/70 backdrop-blur-xl border border-white/40 rounded-[3.5rem] overflow-hidden">
+                <div className="relative bg-canvas/70 backdrop-blur-xl border border-canvas/40 rounded-[3.5rem] overflow-hidden">
 
                     <div className="p-6 sm:p-10 md:p-14 relative z-10">
                         {/* 装饰图标 */}
                         {/*<div className="absolute top-0 right-0 p-8 opacity-10">*/}
-                        {/*    <Cpu className="w-16 h-16 text-primary" />*/}
+                        {/*    <Cpu className="w-16 h-16 text-accent" />*/}
                         {/*</div>*/}
 
                         {/* 引导标题 */}
                         <div className="mb-12">
                             <div className="flex items-center gap-2 mb-4">
-                                <Sparkles className="w-4 h-4 text-primary animate-bounce" />
-                                <span className="text-[10px] font-black text-primary uppercase tracking-[0.3em]">Identity Gateway</span>
+                                <Sparkles className="w-4 h-4 text-accent animate-bounce" />
+                                <span className="text-micro font-black text-accent uppercase tracking-[0.3em]">Identity Gateway</span>
                             </div>
-                            <h1 className="text-4xl font-black text-slate-900 tracking-tight mb-4">
-                                {t('auth.login.loginAccess')}<span className="text-primary text-5xl">.</span>
+                            <h1 className="text-4xl font-black text-ink tracking-tight mb-4">
+                                {t('auth.login.loginAccess')}<span className="text-accent text-5xl">.</span>
                             </h1>
-                            <p className="text-slate-500 text-sm font-medium leading-relaxed">
+                            <p className="text-ink-muted text-sm font-medium leading-relaxed">
                                 {t('auth.login.loginDesc')}
                             </p>
                         </div>
 
                         {/* 模式选择 Tab */}
-                        <div className="grid grid-cols-2 p-1.5 bg-slate-100/50 rounded-2xl mb-10 border border-slate-200/50">
+                        <div className="grid grid-cols-2 p-1.5 bg-surface-muted/50 rounded-2xl mb-10 border border-border/50">
                             {[
                                 { id: 'code', label: t('auth.login.codeAuth'), icon: Shield },
                                 { id: 'password', label: t('auth.login.passwordAuth'), icon: Fingerprint }
@@ -172,7 +172,7 @@ const LoginPage = () => {
                                     className={`relative flex items-center justify-center gap-2 py-3.5 text-xs font-black rounded-xl transition-all duration-500 overflow-hidden ${
                                         loginType === tab.id
                                             ? 'text-white'
-                                            : 'text-slate-500 hover:text-slate-700'
+                                            : 'text-ink-muted hover:text-ink-secondary'
                                     }`}
                                 >
                                     <tab.icon className="w-4 h-4 relative z-10" />
@@ -180,7 +180,7 @@ const LoginPage = () => {
                                     {loginType === tab.id && (
                                         <motion.div
                                             layoutId="active-pill-immersive"
-                                            className="absolute inset-0 bg-primary shadow-lg shadow-primary/20 pointer-events-none"
+                                            className="absolute inset-0 bg-accent shadow-lg shadow-accent/20 pointer-events-none"
                                             transition={{ type: "tween", duration: 0.3, ease: "easeInOut" }}
                                         />
                                     )}
@@ -201,12 +201,12 @@ const LoginPage = () => {
                                     <div className="space-y-5">
                                         {/* 账号/邮箱输入 */}
                                         <div className="group">
-                                            <label htmlFor="account" className="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-2 px-1 block">
+                                            <label htmlFor="account" className="text-caption font-black text-ink-faint uppercase tracking-widest mb-2 px-1 block">
                                                 {loginType === 'password' ? t('auth.login.accountLabel') : t('auth.login.emailLabel')}
                                             </label>
                                             <div className="relative">
                                                 <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
-                                                    <Mail className="w-4 h-4 text-slate-300 group-focus-within:text-primary transition-colors" />
+                                                    <Mail className="w-4 h-4 text-ink-faint group-focus-within:text-accent transition-colors" />
                                                 </div>
                                                 <input
                                                     type={loginType === 'code' ? 'email' : 'text'}
@@ -215,7 +215,7 @@ const LoginPage = () => {
                                                     required
                                                     value={formData.account}
                                                     onChange={handleChange}
-                                                    className="block w-full pl-12 pr-6 py-4.5 bg-white/50 border border-slate-200 rounded-3xl text-[14px] font-bold text-slate-900 placeholder:text-slate-300 focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all shadow-inner"
+                                                    className="block w-full pl-12 pr-6 py-4.5 bg-canvas/50 border border-border rounded-3xl text-body font-bold text-ink placeholder:text-ink-faint focus:outline-none focus:ring-4 focus:ring-accent/10 focus:border-accent transition-all shadow-inner"
                                                     placeholder={loginType === 'password' ? t('auth.login.accountPlaceholder') : t('auth.login.emailPlaceholder')}
                                                 />
                                             </div>
@@ -224,12 +224,12 @@ const LoginPage = () => {
                                         {/* 密码输入（仅密码模式） */}
                                         {loginType === 'password' && (
                                             <div className="group">
-                                                <label htmlFor="password" className="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-2 px-1 block">
+                                                <label htmlFor="password" className="text-caption font-black text-ink-faint uppercase tracking-widest mb-2 px-1 block">
                                                     {t('auth.login.passwordLabel')}
                                                 </label>
                                                 <div className="relative">
                                                     <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
-                                                        <Lock className="w-4 h-4 text-slate-300 group-focus-within:text-primary transition-colors" />
+                                                        <Lock className="w-4 h-4 text-ink-faint group-focus-within:text-accent transition-colors" />
                                                     </div>
                                                     <input
                                                         type="password"
@@ -238,7 +238,7 @@ const LoginPage = () => {
                                                         required
                                                         value={formData.password}
                                                         onChange={handleChange}
-                                                        className="block w-full pl-12 pr-6 py-4.5 bg-white/50 border border-slate-200 rounded-3xl text-[14px] font-bold text-slate-900 placeholder:text-slate-300 focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all shadow-inner"
+                                                        className="block w-full pl-12 pr-6 py-4.5 bg-canvas/50 border border-border rounded-3xl text-body font-bold text-ink placeholder:text-ink-faint focus:outline-none focus:ring-4 focus:ring-accent/10 focus:border-accent transition-all shadow-inner"
                                                         placeholder={t('auth.login.passwordPlaceholder')}
                                                     />
                                                 </div>
@@ -248,13 +248,13 @@ const LoginPage = () => {
                                         {/* 验证码输入（仅验证码模式） */}
                                         {loginType === 'code' && (
                                             <div className="group">
-                                                <label htmlFor="code" className="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-2 px-1 block">
+                                                <label htmlFor="code" className="text-caption font-black text-ink-faint uppercase tracking-widest mb-2 px-1 block">
                                                     {t('auth.login.codeLabel')}
                                                 </label>
                                                 <div className="flex gap-2">
                                                     <div className="relative flex-1">
                                                         <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
-                                                            <ShieldCheck className="w-4 h-4 text-slate-300 group-focus-within:text-primary transition-colors" />
+                                                            <ShieldCheck className="w-4 h-4 text-ink-faint group-focus-within:text-accent transition-colors" />
                                                         </div>
                                                         <input
                                                             type="text"
@@ -264,7 +264,7 @@ const LoginPage = () => {
                                                             maxLength={6}
                                                             value={formData.code}
                                                             onChange={handleChange}
-                                                            className="block w-full pl-12 pr-6 py-4.5 bg-white/50 border border-slate-200 rounded-3xl text-[14px] font-bold text-slate-900 placeholder:text-slate-300 focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all shadow-inner"
+                                                            className="block w-full pl-12 pr-6 py-4.5 bg-canvas/50 border border-border rounded-3xl text-body font-bold text-ink placeholder:text-ink-faint focus:outline-none focus:ring-4 focus:ring-accent/10 focus:border-accent transition-all shadow-inner"
                                                             placeholder={t('auth.login.codePlaceholder')}
                                                         />
                                                     </div>
@@ -272,7 +272,7 @@ const LoginPage = () => {
                                                         type="button"
                                                         disabled={countdown > 0 || sendingCode}
                                                         onClick={handleSendCode}
-                                                        className="px-6 rounded-3xl bg-slate-900 text-white text-xs font-black hover:scale-105 active:scale-95 disabled:opacity-30 transition-all shadow-xl shadow-slate-900/10 whitespace-nowrap"
+                                                        className="px-6 rounded-3xl bg-ink text-white text-xs font-black hover:scale-105 active:scale-95 disabled:opacity-30 transition-all shadow-xl shadow-ink/10 whitespace-nowrap"
                                                     >
                                                         {sendingCode ? (
                                                             <Loader2 className="w-4 h-4 animate-spin" aria-label={t('auth.login.sendCode')} />
@@ -290,7 +290,7 @@ const LoginPage = () => {
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className="group relative w-full flex items-center justify-center py-5 bg-primary text-white rounded-[1.75rem] font-black text-sm  shadow-primary/30 hover:bg-primary-dark transition-all duration-500 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 scale-fix"
+                                className="group relative w-full flex items-center justify-center py-5 bg-accent text-white rounded-[1.75rem] font-black text-sm  shadow-accent/30 hover:bg-accent-700 transition-all duration-500 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 scale-fix"
                             >
                                 <span className="relative z-10 flex items-center gap-2">
                                     {loading ? (
@@ -306,7 +306,7 @@ const LoginPage = () => {
                             </button>
                             {/* 验证码模式的自动注册提示 - 绝对定位不占空间 */}
                             {loginType === 'code' && (
-                                <p className="absolute top-full left-0 right-0 mt-2 text-[11px] text-slate-400 text-center font-medium px-2">
+                                <p className="absolute top-full left-0 right-0 mt-2 text-caption text-ink-faint text-center font-medium px-2">
                                     {t('auth.login.autoRegisterHint')}
                                 </p>
                             )}
@@ -314,18 +314,18 @@ const LoginPage = () => {
                         </form>
                     </div>
 
-                    <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
+                    <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent/30 to-transparent" />
                 </div>
 
                 {/* 底部导航 */}
                 <div className="mt-12 flex flex-col items-center gap-6">
-                    <div className="flex items-center gap-8 text-xs font-black text-slate-400">
-                        <Link to="/" className="group flex items-center gap-2 hover:text-primary transition-all">
+                    <div className="flex items-center gap-8 text-xs font-black text-ink-faint">
+                        <Link to="/" className="group flex items-center gap-2 hover:text-accent transition-all">
                             <ChevronLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
                             {t('auth.login.backToLobby')}
                         </Link>
-                        <div className="w-1 h-1 rounded-full bg-slate-300" />
-                        <Link to="/blog" className="hover:text-primary transition-all">
+                        <div className="w-1 h-1 rounded-full bg-border-strong" />
+                        <Link to="/blog" className="hover:text-accent transition-all">
                             {t('auth.login.techBlog')}
                         </Link>
                     </div>
@@ -333,7 +333,7 @@ const LoginPage = () => {
             </motion.div>
 
             <footer className="fixed bottom-0 left-0 right-0 p-10 text-center pointer-events-none">
-                <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.5em]">
+                <p className="text-micro font-black text-ink-faint uppercase tracking-[0.5em]">
                     Xander Lab // System Protocol
                 </p>
             </footer>
@@ -350,14 +350,14 @@ const DigitalOrbit = () => {
             <motion.div
                 animate={{ rotate: 360 }}
                 transition={{ duration: 100, repeat: Infinity, ease: "linear" }}
-                className="absolute w-[500px] sm:w-[700px] md:w-[1000px] h-[500px] sm:h-[700px] md:h-[1000px] border border-slate-100 rounded-full [will-change:transform]"
+                className="absolute w-[500px] sm:w-[700px] md:w-[1000px] h-[500px] sm:h-[700px] md:h-[1000px] border border-border rounded-full [will-change:transform]"
             />
             <motion.div
                 animate={{ rotate: -360 }}
                 transition={{ duration: 80, repeat: Infinity, ease: "linear" }}
-                className="absolute w-[350px] sm:w-[500px] md:w-[700px] h-[350px] sm:h-[500px] md:h-[700px] border border-dashed border-slate-100/30 rounded-full [will-change:transform]"
+                className="absolute w-[350px] sm:w-[500px] md:w-[700px] h-[350px] sm:h-[500px] md:h-[700px] border border-dashed border-border/30 rounded-full [will-change:transform]"
             />
-            <div className="absolute w-[200px] sm:w-[300px] md:w-[400px] h-[200px] sm:h-[300px] md:h-[400px] border border-slate-50 rounded-full" />
+            <div className="absolute w-[200px] sm:w-[300px] md:w-[400px] h-[200px] sm:h-[300px] md:h-[400px] border border-surface rounded-full" />
         </div>
     );
 };
@@ -398,7 +398,7 @@ const FloatingParticles = () => {
                         repeat: Infinity,
                         ease: "easeInOut"
                     }}
-                    className="absolute text-primary"
+                    className="absolute text-accent"
                 >
                     <p.Icon size={p.size} strokeWidth={0.5} />
                 </motion.div>

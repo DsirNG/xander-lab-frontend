@@ -384,30 +384,30 @@ const BlogAgent = () => {
   );
 
   return (
-    <div className="flex h-dvh flex-col bg-slate-50 text-slate-900">
-      <header className="sticky top-0 z-20 flex h-14 shrink-0 items-center justify-between border-b border-slate-200 bg-white/95 px-4 backdrop-blur sm:px-6">
+    <div className="flex h-dvh flex-col bg-surface text-ink">
+      <header className="sticky top-0 z-20 flex h-14 shrink-0 items-center justify-between border-b border-border bg-canvas/95 px-4 backdrop-blur sm:px-6">
         <button
           type="button"
           onClick={() => navigate('/blog/')}
-          className="flex items-center gap-2 rounded-xl px-2 py-2 text-sm font-semibold text-slate-500 transition hover:bg-slate-100 hover:text-slate-950"
+          className="flex items-center gap-2 rounded-xl px-2 py-2 text-sm font-semibold text-ink-muted transition hover:bg-surface-muted hover:text-ink"
         >
           <ArrowLeft className="h-4 w-4" />
           {t('blog.agent.back')}
         </button>
         <div className="flex items-center gap-2 text-sm font-black tracking-tight">
-          <span className="grid h-8 w-8 place-items-center rounded-lg bg-primary text-white">
+          <span className="grid h-8 w-8 place-items-center rounded-lg bg-accent text-white">
             <Bot className="h-4 w-4" />
           </span>
           {t('blog.agent.title')}
         </div>
         <div className="flex items-center gap-1">
-          <button type="button" onClick={() => setMobileSessionsOpen(true)} className="rounded-xl p-2 text-slate-500 hover:bg-slate-100 lg:hidden" aria-label={t('blog.agent.conversations')}>
+          <button type="button" onClick={() => setMobileSessionsOpen(true)} className="rounded-xl p-2 text-ink-muted hover:bg-surface-muted lg:hidden" aria-label={t('blog.agent.conversations')}>
             <MessageSquareText className="h-4 w-4" />
           </button>
           <button
             type="button"
             onClick={handleNewTask}
-            className="inline-flex items-center gap-1.5 rounded-xl px-2 py-2 text-sm font-semibold text-slate-500 transition hover:bg-slate-100 hover:text-slate-950"
+            className="inline-flex items-center gap-1.5 rounded-xl px-2 py-2 text-sm font-semibold text-ink-muted transition hover:bg-surface-muted hover:text-ink"
           >
             <Plus className="h-4 w-4" />
             <span className="hidden sm:inline">{t('blog.agent.newTask')}</span>
@@ -428,7 +428,7 @@ const BlogAgent = () => {
             onNew={handleNewTask}
           />
           {mobileSessionsOpen && (
-            <div className="absolute inset-0 z-40 flex bg-slate-950/40 lg:hidden">
+            <div className="absolute inset-0 z-40 flex bg-ink/40 lg:hidden">
               <AgentSessionList
                 mobile
                 sessions={sessions}
@@ -444,7 +444,7 @@ const BlogAgent = () => {
                   handleNewTask();
                 }}
               />
-              <button type="button" onClick={() => setMobileSessionsOpen(false)} className="m-3 grid h-10 w-10 place-items-center rounded-full bg-white text-slate-700" aria-label={t('common.aria.close', 'Close')}>
+              <button type="button" onClick={() => setMobileSessionsOpen(false)} className="m-3 grid h-10 w-10 place-items-center rounded-full bg-canvas text-ink-secondary" aria-label={t('common.aria.close', 'Close')}>
                 <X className="h-5 w-5" />
               </button>
             </div>
@@ -453,12 +453,12 @@ const BlogAgent = () => {
             <div className="min-h-0 flex-1 overflow-y-auto px-4 py-5 sm:px-6">
               {messages.length === 0 ? (
                 <div className="mx-auto flex max-w-xl flex-col items-start gap-4 pt-8 sm:pt-16">
-                  <div className="grid h-12 w-12 place-items-center rounded-2xl bg-primary/10 text-primary">
+                  <div className="grid h-12 w-12 place-items-center rounded-2xl bg-accent/10 text-accent">
                     <Sparkles className="h-5 w-5" />
                   </div>
                   <div>
                     <h1 className="text-2xl font-black tracking-tight">{t('blog.agent.headline')}</h1>
-                    <p className="mt-2 text-sm leading-6 text-slate-500">{t('blog.agent.description')}</p>
+                    <p className="mt-2 text-sm leading-6 text-ink-muted">{t('blog.agent.description')}</p>
                   </div>
                 </div>
               ) : (
@@ -499,10 +499,10 @@ const BlogAgent = () => {
               )}
             </div>
 
-            <div className="shrink-0 border-t border-slate-200 bg-white px-4 py-3 sm:px-6">
+            <div className="shrink-0 border-t border-border bg-canvas px-4 py-3 sm:px-6">
               <div className="mx-auto max-w-2xl">
-                {hasFinishedTurn && <p className="mb-2 text-xs text-slate-500">{t('blog.agent.multiTurnHint')}</p>}
-                <div className="flex items-end gap-2 rounded-2xl border border-slate-200 bg-slate-50 p-2 focus-within:border-primary focus-within:bg-white focus-within:ring-4 focus-within:ring-primary/10">
+                {hasFinishedTurn && <p className="mb-2 text-xs text-ink-muted">{t('blog.agent.multiTurnHint')}</p>}
+                <div className="flex items-end gap-2 rounded-2xl border border-border bg-surface p-2 focus-within:border-accent focus-within:bg-canvas focus-within:ring-4 focus-within:ring-accent/10">
                   <textarea
                     value={input}
                     onChange={(event) => setInput(event.target.value)}
@@ -515,13 +515,13 @@ const BlogAgent = () => {
                         if (!inputLocked) handleSubmit();
                       }
                     }}
-                    className="max-h-40 min-h-[52px] flex-1 resize-none bg-transparent px-2 py-2 text-sm leading-6 outline-none placeholder:text-slate-400 disabled:opacity-60"
+                    className="max-h-40 min-h-[52px] flex-1 resize-none bg-transparent px-2 py-2 text-sm leading-6 outline-none placeholder:text-ink-faint disabled:opacity-60"
                   />
                   <button
                     type="button"
                     onClick={handleSubmit}
                     disabled={isRunning || !input.trim()}
-                    className="inline-flex h-10 shrink-0 items-center gap-2 rounded-xl bg-slate-950 px-4 text-sm font-black text-white transition hover:bg-primary disabled:cursor-wait disabled:opacity-60"
+                    className="inline-flex h-10 shrink-0 items-center gap-2 rounded-xl bg-ink px-4 text-sm font-black text-white transition hover:bg-accent disabled:cursor-wait disabled:opacity-60"
                   >
                     {isRunning ? (
                       <Loader2 className="h-4 w-4 animate-spin" />
@@ -540,13 +540,13 @@ const BlogAgent = () => {
           </section>
 
           {showPreview && !isMobile && (
-            <aside className="hidden min-h-0 w-[52%] border-l border-slate-200 lg:block">
+            <aside className="hidden min-h-0 w-[52%] border-l border-border lg:block">
               {previewPanel}
             </aside>
           )}
 
           {showPreview && isMobile && (
-            <div className="absolute inset-0 z-30 bg-white">
+            <div className="absolute inset-0 z-30 bg-canvas">
               {previewPanel}
             </div>
           )}

@@ -94,18 +94,18 @@ export function isTerminalStatus(status) {
 export function getStatusColor(status) {
   switch (status) {
     case 'ready':
-      return 'text-emerald-700 bg-emerald-50 border-emerald-100';
+      return 'text-success-fg bg-success-soft border-success/20';
     case 'failed':
-      return 'text-red-700 bg-red-50 border-red-100';
+      return 'text-danger-fg bg-danger-soft border-danger/20';
     case 'building':
     case 'installing':
     case 'extracting':
     case 'preparing':
     case 'publishing':
     case 'queued':
-      return 'text-amber-700 bg-amber-50 border-amber-100';
+      return 'text-warning-fg bg-warning-soft border-warning/20';
     default:
-      return 'text-slate-600 bg-slate-50 border-slate-100';
+      return 'text-ink-muted bg-surface border-border';
   }
 }
 

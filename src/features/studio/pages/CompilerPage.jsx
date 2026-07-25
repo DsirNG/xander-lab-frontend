@@ -86,21 +86,21 @@ function FileTreeNode({ node, depth, isActive, onOpenFile }) {
       <button
         type="button"
         onClick={handleClick}
-        className={`flex w-full items-center gap-1.5 rounded-lg px-2 py-1.5 text-left text-sm transition-colors ${
+        className={`flex w-full items-center gap-1.5 rounded-lg px-2 py-1.5 text-left text-body transition-colors ${
           isActive && isFile
-            ? 'bg-primary/10 font-bold text-primary'
-            : 'text-slate-600 hover:bg-slate-100'
+            ? 'bg-accent/10 font-bold text-accent'
+            : 'text-ink-muted hover:bg-surface-muted'
         } ${!isFile || !isReadable ? 'cursor-default' : 'cursor-pointer'}`}
         style={{ paddingLeft: `${8 + depth * 16}px` }}
       >
         {isDir && (
           <ChevronRight
-            className={`h-3 w-3 shrink-0 text-slate-400 transition-transform duration-150 ${
+            className={`h-3 w-3 shrink-0 text-ink-faint transition-transform duration-150 ${
               expanded ? 'rotate-90' : ''
             }`}
           />
         )}
-        <Icon className="h-4 w-4 shrink-0 text-slate-400" />
+        <Icon className="h-4 w-4 shrink-0 text-ink-faint" />
         <span className="truncate">{node.name}</span>
       </button>
 
@@ -264,24 +264,24 @@ export default function CompilerPage() {
   }, [isReady, loadFileTree]);
 
   return (
-    <div className="flex h-screen flex-col bg-slate-50">
+    <div className="flex h-screen flex-col bg-surface">
       {/* 顶部栏 */}
-      <div className="shrink-0 border-b border-slate-200 bg-white">
+      <div className="shrink-0 border-b border-border bg-canvas">
         <div className="flex items-center justify-between px-4 py-3 sm:px-6">
           <div className="flex min-w-0 items-center gap-3">
             <Link
               to="/studio"
-              className="inline-flex items-center gap-2 text-xs font-bold text-slate-400 transition-colors hover:text-primary"
+              className="inline-flex items-center gap-2 text-caption font-bold text-ink-faint transition-colors hover:text-accent"
             >
               <ArrowLeft className="h-3.5 w-3.5" />
               返回 Studio
             </Link>
-            <div className="h-5 w-px bg-slate-200" />
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-900 text-white">
+            <div className="h-5 w-px bg-border" />
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-ink text-white">
               <Code2 className="h-4 w-4" />
             </div>
             <div className="min-w-0">
-              <h1 className="truncate text-base font-bold text-slate-950">
+              <h1 className="truncate text-base font-bold text-ink">
                 {project?.name || '编译器'}
               </h1>
             </div>
@@ -304,16 +304,16 @@ export default function CompilerPage() {
                     onClick={() => setIsShareOpen((open) => !open)}
                     aria-expanded={isShareOpen}
                     aria-haspopup="dialog"
-                    className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-slate-600 transition-colors hover:text-primary"
+                    className="inline-flex items-center gap-2 rounded-lg border border-border bg-canvas px-3 py-1.5 text-caption font-bold text-ink-muted transition-colors hover:text-accent"
                   >
                     <Link2 className="h-3.5 w-3.5" /> 分享
                   </button>
                   {isShareOpen ? (
-                    <div role="dialog" aria-label="分享项目" className="absolute right-0 top-full z-40 mt-2 w-80 rounded-xl border border-slate-200 bg-white p-3 shadow-xl">
-                      <p className="mb-2 text-xs font-bold text-slate-700">公开源码链接</p>
+                    <div role="dialog" aria-label="分享项目" className="absolute right-0 top-full z-40 mt-2 w-80 rounded-xl border border-border bg-canvas p-3 shadow-xl">
+                      <p className="mb-2 text-caption font-bold text-ink-secondary">公开源码链接</p>
                       <div className="flex items-center gap-2">
-                        <input value={shareUrl} readOnly onFocus={(event) => event.currentTarget.select()} className="min-w-0 flex-1 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-2 text-xs text-slate-600 outline-none" aria-label="公开源码链接" />
-                        <button type="button" onClick={handleCopyShareLink} className="inline-flex shrink-0 items-center gap-1 rounded-lg bg-primary px-2.5 py-2 text-xs font-bold text-white hover:bg-primary/90">
+                        <input value={shareUrl} readOnly onFocus={(event) => event.currentTarget.select()} className="min-w-0 flex-1 rounded-lg border border-border bg-surface px-2.5 py-2 text-caption text-ink-muted outline-none" aria-label="公开源码链接" />
+                        <button type="button" onClick={handleCopyShareLink} className="inline-flex shrink-0 items-center gap-1 rounded-lg bg-accent px-2.5 py-2 text-caption font-bold text-white hover:bg-accent-700">
                           {isShareCopied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
                           {isShareCopied ? '已复制' : '复制'}
                         </button>
@@ -321,18 +321,18 @@ export default function CompilerPage() {
                     </div>
                   ) : null}
                 </div>
-                <button type="button" disabled={isDownloadingSource} onClick={handleDownloadSource} className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-slate-600 transition-colors hover:text-primary disabled:cursor-not-allowed disabled:opacity-50">
+                <button type="button" disabled={isDownloadingSource} onClick={handleDownloadSource} className="inline-flex items-center gap-2 rounded-lg border border-border bg-canvas px-3 py-1.5 text-caption font-bold text-ink-muted transition-colors hover:text-accent disabled:cursor-not-allowed disabled:opacity-50">
                   {isDownloadingSource ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Download className="h-3.5 w-3.5" />} 下载 ZIP
                 </button>
               </>
             )}
-            <span className={`rounded-full border px-3 py-1 text-xs font-bold ${getStatusColor(project?.status)}`}>
+            <span className={`rounded-full border px-3 py-1 text-caption font-bold ${getStatusColor(project?.status)}`}>
               {getStatusLabel(project?.status)}
             </span>
             <button
               type="button"
               onClick={loadProject}
-              className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-slate-500 transition-colors hover:text-primary"
+              className="inline-flex items-center gap-2 rounded-lg border border-border bg-canvas px-3 py-1.5 text-caption font-bold text-ink-muted transition-colors hover:text-accent"
             >
               <RefreshCw className="h-3.5 w-3.5" />
               刷新
@@ -344,12 +344,12 @@ export default function CompilerPage() {
       {/* 主内容区 - flex:1 占满剩余空间 */}
       <div className="flex min-h-0 flex-1 gap-0">
         {/* 文件树 - 固定宽度，独立滚动 */}
-        <aside className="flex w-72 shrink-0 flex-col border-r border-slate-200 bg-white">
-          <div className="shrink-0 border-b border-slate-100 px-4 py-2.5">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+        <aside className="flex w-72 shrink-0 flex-col border-r border-border bg-canvas">
+          <div className="shrink-0 border-b border-border px-4 py-2.5">
+            <p className="text-micro font-bold uppercase tracking-widest text-ink-faint">
               File Tree
             </p>
-            <h2 className="text-sm font-bold text-slate-900">文件目录</h2>
+            <h2 className="text-body font-bold text-ink">文件目录</h2>
           </div>
           <div className="min-h-0 flex-1 overflow-auto p-2">
             {treeNodes.length > 0 ? (
@@ -360,7 +360,7 @@ export default function CompilerPage() {
                 onOpenFile={handleOpenFile}
               />
             ) : (
-              <div className="flex h-full items-center justify-center px-4 text-center text-sm text-slate-400">
+              <div className="flex h-full items-center justify-center px-4 text-center text-body text-ink-faint">
                 {isReady ? '暂无文件目录' : '构建完成后显示'}
               </div>
             )}
@@ -368,20 +368,20 @@ export default function CompilerPage() {
         </aside>
 
         {/* 代码查看区 - flex:1 占满剩余空间，独立滚动 */}
-        <section className="flex min-w-0 flex-1 flex-col bg-white">
-          <div className="shrink-0 flex items-center justify-between gap-3 border-b border-slate-100 px-4 py-2.5">
+        <section className="flex min-w-0 flex-1 flex-col bg-canvas">
+          <div className="shrink-0 flex items-center justify-between gap-3 border-b border-border px-4 py-2.5">
             <div className="flex min-w-0 items-center gap-2">
-              <File className="h-4 w-4 shrink-0 text-slate-400" />
-              <span className="truncate text-sm font-bold text-slate-800">
+              <File className="h-4 w-4 shrink-0 text-ink-faint" />
+              <span className="truncate text-body font-bold text-ink-secondary">
                 {activeFilePath || '选择一个文件'}
               </span>
             </div>
             {isLoadingFile && (
-              <Loader2 className="h-4 w-4 animate-spin text-primary" />
+              <Loader2 className="h-4 w-4 animate-spin text-accent" />
             )}
           </div>
 
-          <pre className="min-h-0 flex-1 overflow-auto bg-slate-950 p-5 text-[13px] leading-6 text-slate-100">
+          <pre className="min-h-0 flex-1 overflow-auto bg-ink p-5 text-body leading-6 text-surface">
             <code className="whitespace-pre font-mono">
               {fileContent || '从左侧文件树选择一个文件后，这里会展示文件内容。'}
             </code>
@@ -394,7 +394,7 @@ export default function CompilerPage() {
         type="button"
         disabled={!isReady}
         onClick={() => setIsPreviewOpen(true)}
-        className="fixed bottom-6 right-6 z-30 inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-5 py-3 text-sm font-black text-white shadow-2xl shadow-primary/30 transition-all hover:-translate-y-0.5 hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-40"
+        className="fixed bottom-6 right-6 z-30 inline-flex items-center justify-center gap-2 rounded-lg bg-accent px-5 py-3 text-body font-black text-white shadow-2xl shadow-accent/30 transition-all hover:-translate-y-0.5 hover:bg-accent-700 disabled:cursor-not-allowed disabled:opacity-40"
       >
         {isReady ? <Play className="h-4 w-4" /> : <Loader2 className="h-4 w-4 animate-spin" />}
         {isReady ? '预览' : '等待构建'}
@@ -402,14 +402,14 @@ export default function CompilerPage() {
 
       {/* 预览弹窗 */}
       {isPreviewOpen && (
-        <div className="fixed inset-0 z-50 bg-slate-950/60 p-4 backdrop-blur-sm">
-          <div className="mx-auto flex h-full max-w-[1400px] flex-col overflow-hidden rounded-lg bg-white shadow-2xl">
-            <div className="flex items-center justify-between gap-3 border-b border-slate-200 px-4 py-3">
+        <div className="fixed inset-0 z-50 bg-ink/60 p-4 backdrop-blur-sm">
+          <div className="mx-auto flex h-full max-w-[1400px] flex-col overflow-hidden rounded-lg bg-canvas shadow-2xl">
+            <div className="flex items-center justify-between gap-3 border-b border-border px-4 py-3">
               <div className="min-w-0">
-                <p className="text-xs font-bold uppercase tracking-widest text-slate-400">
+                <p className="text-caption font-bold uppercase tracking-widest text-ink-faint">
                   Preview
                 </p>
-                <h2 className="truncate text-sm font-black text-slate-900">
+                <h2 className="truncate text-body font-black text-ink">
                   {project?.name}
                 </h2>
               </div>
@@ -418,7 +418,7 @@ export default function CompilerPage() {
                   href={previewUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 rounded-lg border border-slate-200 px-3 py-2 text-xs font-bold text-slate-500 transition-colors hover:text-primary"
+                  className="inline-flex items-center gap-2 rounded-lg border border-border px-3 py-2 text-caption font-bold text-ink-muted transition-colors hover:text-accent"
                 >
                   <ExternalLink className="h-3.5 w-3.5" />
                   新窗口
@@ -426,7 +426,7 @@ export default function CompilerPage() {
                 <button
                   type="button"
                   onClick={() => setIsPreviewOpen(false)}
-                  className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 text-slate-500 transition-colors hover:bg-slate-50 hover:text-slate-900"
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border text-ink-muted transition-colors hover:bg-surface hover:text-ink"
                   aria-label="关闭预览"
                 >
                   <X className="h-4 w-4" />
@@ -438,12 +438,12 @@ export default function CompilerPage() {
                 <iframe
                   src={previewUrl}
                   title="项目预览"
-                  className="absolute inset-0 h-full w-full border-0 bg-white"
+                  className="absolute inset-0 h-full w-full border-0 bg-canvas"
                 />
               ) : (
-                <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-slate-50">
-                  <Loader2 className="h-10 w-10 animate-spin text-primary" />
-                  <p className="text-sm font-medium text-slate-500">正在加载预览...</p>
+                <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-surface">
+                  <Loader2 className="h-10 w-10 animate-spin text-accent" />
+                  <p className="text-body font-medium text-ink-muted">正在加载预览...</p>
                 </div>
               )}
             </div>

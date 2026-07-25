@@ -3,17 +3,24 @@ import { CheckCircle2, AlertCircle, Info, XCircle, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 const defaultIcons = {
-    success: <CheckCircle2 className="w-5 h-5 text-emerald-500" />,
-    error: <XCircle className="w-5 h-5 text-rose-500" />,
-    info: <Info className="w-5 h-5 text-blue-500" />,
-    warning: <AlertCircle className="w-5 h-5 text-amber-500" />,
+    success: <CheckCircle2 className="w-5 h-5 text-success" />,
+    error: <XCircle className="w-5 h-5 text-danger" />,
+    info: <Info className="w-5 h-5 text-info" />,
+    warning: <AlertCircle className="w-5 h-5 text-warning" />,
 };
 
 const defaultStyles = {
-    success: 'bg-white/95 border-emerald-100/50 shadow-emerald-500/10',
-    error: 'bg-white/95 border-rose-100/50 shadow-rose-500/10',
-    info: 'bg-white/95 border-blue-100/50 shadow-blue-500/10',
-    warning: 'bg-white/95 border-amber-100/50 shadow-amber-500/10',
+    success: 'bg-canvas/95 border-success/20 shadow-success/10',
+    error: 'bg-canvas/95 border-danger/20 shadow-danger/10',
+    info: 'bg-canvas/95 border-info/20 shadow-info/10',
+    warning: 'bg-canvas/95 border-warning/20 shadow-warning/10',
+};
+
+const progressStyles = {
+    success: 'bg-success',
+    error: 'bg-danger',
+    warning: 'bg-warning',
+    info: 'bg-info',
 };
 
 const ToastItem = ({ toast, onRemove }) => {
@@ -92,7 +99,7 @@ const ToastItem = ({ toast, onRemove }) => {
             </div>
 
             <div className="flex-1 min-w-0">
-                <div className="text-[13px] font-black text-slate-800  px-1 leading-normal break-words">
+                <div className="text-body font-black text-ink px-1 leading-normal break-words">
                     {message}
                 </div>
             </div>
@@ -100,7 +107,7 @@ const ToastItem = ({ toast, onRemove }) => {
             {showClose && (
                 <button
                     onClick={() => setIsExiting(true)}
-                    className="flex-shrink-0 p-1 opacity-0 group-hover:opacity-100 rounded-full hover:bg-slate-100  text-slate-400  transition-all duration-300"
+                    className="flex-shrink-0 p-1 opacity-0 group-hover:opacity-100 rounded-full hover:bg-surface-muted text-ink-faint transition-all duration-300"
                     aria-label={t('common.aria.closeNotification', 'Close notification')}
                 >
                     <X className="w-3.5 h-3.5" />
@@ -109,12 +116,9 @@ const ToastItem = ({ toast, onRemove }) => {
 
             {/* C-End Style Progress Bar */}
             {duration !== Infinity && !isExiting && showProgress && (
-                <div className="absolute bottom-1.5 left-1/2 -translate-x-1/2 h-[3px] w-12 bg-slate-100  rounded-full overflow-hidden opacity-40">
+                <div className="absolute bottom-1.5 left-1/2 -translate-x-1/2 h-[3px] w-12 bg-surface-muted rounded-full overflow-hidden opacity-40">
                     <div
-                        className={`h-full animate-progress rounded-full origin-left ${type === 'success' ? 'bg-emerald-500' :
-                            type === 'error' ? 'bg-rose-500' :
-                                type === 'warning' ? 'bg-amber-500' : 'bg-blue-500'
-                            }`}
+                        className={`h-full animate-progress rounded-full origin-left ${progressStyles[type] || progressStyles.info}`}
                         style={{
                             animationDuration: `${duration}ms`,
                             animationPlayState: (isPaused && pauseOnHover) ? 'paused' : 'running'

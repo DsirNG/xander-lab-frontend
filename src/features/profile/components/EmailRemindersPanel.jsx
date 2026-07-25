@@ -37,24 +37,24 @@ const EMPTY_STATS = {
 
 const STATUS_STYLES = {
     PENDING: {
-        badge: 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-100',
-        rowIcon: 'bg-sky-50 text-sky-600',
+        badge: 'bg-success-soft text-success-fg ring-1 ring-success/20',
+        rowIcon: 'bg-success-soft text-success',
     },
     PAUSED: {
-        badge: 'bg-amber-50 text-amber-700 ring-1 ring-amber-100',
-        rowIcon: 'bg-amber-50 text-amber-600',
+        badge: 'bg-warning-soft text-warning-fg ring-1 ring-warning/20',
+        rowIcon: 'bg-warning-soft text-warning',
     },
     SENDING: {
-        badge: 'bg-violet-50 text-violet-700 ring-1 ring-violet-100',
-        rowIcon: 'bg-violet-50 text-violet-600',
+        badge: 'bg-info-soft text-info-fg ring-1 ring-info/20',
+        rowIcon: 'bg-accent-soft text-accent',
     },
     SENT: {
-        badge: 'bg-sky-50 text-sky-700 ring-1 ring-sky-100',
-        rowIcon: 'bg-slate-50 text-slate-500',
+        badge: 'bg-surface text-ink-muted ring-1 ring-border',
+        rowIcon: 'bg-surface text-ink-muted',
     },
     FAILED: {
-        badge: 'bg-rose-50 text-rose-700 ring-1 ring-rose-100',
-        rowIcon: 'bg-rose-50 text-rose-600',
+        badge: 'bg-danger-soft text-danger-fg ring-1 ring-danger/20',
+        rowIcon: 'bg-danger-soft text-danger',
     },
 };
 
@@ -273,7 +273,7 @@ const EmailRemindersPanel = () => {
             label: t('profile.emailReminders.stats.total'),
             hint: t('profile.emailReminders.stats.totalHint'),
             icon: Send,
-            iconClass: 'bg-sky-50 text-sky-600',
+            iconClass: 'bg-accent-soft text-accent',
         },
         {
             key: 'active',
@@ -281,7 +281,7 @@ const EmailRemindersPanel = () => {
             label: t('profile.emailReminders.stats.active'),
             hint: t('profile.emailReminders.stats.activeHint'),
             icon: Clock3,
-            iconClass: 'bg-emerald-50 text-emerald-600',
+            iconClass: 'bg-success-soft text-success',
         },
         {
             key: 'sent',
@@ -289,7 +289,7 @@ const EmailRemindersPanel = () => {
             label: t('profile.emailReminders.stats.sent'),
             hint: t('profile.emailReminders.stats.sentHint'),
             icon: CheckCircle2,
-            iconClass: 'bg-blue-50 text-blue-600',
+            iconClass: 'bg-info-soft text-info',
         },
         {
             key: 'pending',
@@ -297,7 +297,7 @@ const EmailRemindersPanel = () => {
             label: t('profile.emailReminders.stats.pending'),
             hint: t('profile.emailReminders.stats.pendingHint'),
             icon: CirclePause,
-            iconClass: 'bg-amber-50 text-amber-600',
+            iconClass: 'bg-warning-soft text-warning',
         },
     ];
 
@@ -306,14 +306,14 @@ const EmailRemindersPanel = () => {
             <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto p-4 sm:gap-4 sm:p-5">
                 <header className="flex shrink-0 flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <div className="flex min-w-0 items-start gap-2.5">
-                        <span className="mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-xl bg-sky-50 text-sky-600">
+                        <span className="mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-xl bg-accent-soft text-accent">
                             <CalendarClock className="h-4 w-4" />
                         </span>
                         <div className="min-w-0">
-                            <h2 className="text-sm font-black tracking-tight text-slate-800">
+                            <h2 className="text-sm font-black tracking-tight text-ink">
                                 {t('profile.emailReminders.title')}
                             </h2>
-                            <p className="mt-0.5 text-[11px] font-medium text-slate-400">
+                            <p className="mt-0.5 text-caption font-medium text-ink-faint">
                                 {t('profile.emailReminders.description')}
                             </p>
                         </div>
@@ -321,7 +321,7 @@ const EmailRemindersPanel = () => {
                     <button
                         type="button"
                         onClick={() => setIsCreateOpen(true)}
-                        className="inline-flex h-8 shrink-0 items-center justify-center gap-1.5 rounded-lg bg-primary px-3 text-xs font-bold text-white shadow-sm shadow-primary/20 transition hover:brightness-105"
+                        className="inline-flex h-8 shrink-0 items-center justify-center gap-1.5 rounded-lg bg-accent px-3 text-xs font-bold text-white shadow-sm shadow-accent/20 transition hover:brightness-105"
                     >
                         <Plus className="h-3.5 w-3.5" />
                         {t('profile.emailReminders.createNew')}
@@ -334,17 +334,17 @@ const EmailRemindersPanel = () => {
                         return (
                             <div
                                 key={card.key}
-                                className="min-w-0 rounded-xl border border-slate-200 bg-white px-2 py-2.5 sm:px-3"
+                                className="min-w-0 rounded-xl border border-border bg-canvas px-2 py-2.5 sm:px-3"
                             >
                                 <div className="flex items-start justify-between gap-1.5 sm:gap-2">
                                     <div className="min-w-0">
-                                        <p className="truncate text-base font-black tracking-tight text-slate-800 sm:text-lg">
+                                        <p className="truncate text-base font-black tracking-tight text-ink sm:text-lg">
                                             {card.value}
-                                            <span className="ml-1 text-[10px] font-bold text-slate-500 sm:text-[11px]">
+                                            <span className="ml-1 text-micro font-bold text-ink-muted sm:text-caption">
                                                 {card.label}
                                             </span>
                                         </p>
-                                        <p className="mt-0.5 truncate text-[9px] font-medium text-slate-400 sm:text-[10px]">{card.hint}</p>
+                                        <p className="mt-0.5 truncate text-micro font-medium text-ink-faint">{card.hint}</p>
                                     </div>
                                     <span className={`hidden h-8 w-8 shrink-0 place-items-center rounded-lg sm:grid ${card.iconClass}`}>
                                         <Icon className="h-3.5 w-3.5" />
@@ -355,9 +355,9 @@ const EmailRemindersPanel = () => {
                     })}
                 </div>
 
-                <section className="flex min-h-[min(280px,42vh)] min-w-0 flex-1 flex-col overflow-hidden rounded-xl border border-slate-200 bg-white">
-                    <div className="flex shrink-0 flex-col gap-2 border-b border-slate-100 px-3 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-4">
-                        <h3 className="text-xs font-black text-slate-800">
+                <section className="flex min-h-[min(280px,42vh)] min-w-0 flex-1 flex-col overflow-hidden rounded-xl border border-border bg-canvas">
+                    <div className="flex shrink-0 flex-col gap-2 border-b border-border px-3 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-4">
+                        <h3 className="text-xs font-black text-ink">
                             {t('profile.emailReminders.taskList')}
                         </h3>
                         <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center">
@@ -370,13 +370,13 @@ const EmailRemindersPanel = () => {
                                 />
                             </div>
                             <label className="relative block w-full min-w-0 sm:w-52">
-                                <Search className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-300" />
+                                <Search className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-ink-faint" />
                                 <input
                                     type="search"
                                     value={searchQuery}
                                     onChange={(event) => setSearchQuery(event.target.value)}
                                     placeholder={t('profile.emailReminders.searchPlaceholder')}
-                                    className="h-8 w-full rounded-lg border border-slate-200 bg-white pl-8 pr-2.5 text-xs font-medium text-slate-700 outline-none transition placeholder:text-slate-300 focus:border-primary focus:ring-2 focus:ring-primary/10"
+                                    className="h-8 w-full rounded-lg border border-border bg-canvas pl-8 pr-2.5 text-xs font-medium text-ink-secondary outline-none transition placeholder:text-ink-faint focus:border-accent focus:ring-2 focus:ring-accent/10"
                                 />
                             </label>
                         </div>
@@ -392,28 +392,28 @@ const EmailRemindersPanel = () => {
                             </div>
                         ) : loadError ? (
                             <div className="flex min-h-[220px] flex-col items-center justify-center px-6 text-center">
-                                <AlertCircle className="mb-2 h-7 w-7 text-rose-400" />
-                                <p className="text-xs font-bold text-rose-700">
+                                <AlertCircle className="mb-2 h-7 w-7 text-danger" />
+                                <p className="text-xs font-bold text-danger-fg">
                                     {t('profile.emailReminders.loadError')}
                                 </p>
-                                <p className="mt-1 max-w-sm text-[11px] font-medium text-rose-500">{loadError}</p>
+                                <p className="mt-1 max-w-sm text-caption font-medium text-danger">{loadError}</p>
                                 <button
                                     type="button"
                                     onClick={() => loadReminders()}
-                                    className="mt-3 rounded-lg bg-rose-600 px-3 py-1.5 text-[11px] font-bold text-white transition hover:bg-rose-700"
+                                    className="mt-3 rounded-lg bg-danger px-3 py-1.5 text-caption font-bold text-white transition hover:bg-danger-fg"
                                 >
                                     {t('profile.emailReminders.retry')}
                                 </button>
                             </div>
                         ) : reminders.length === 0 ? (
                             <div className="flex min-h-[220px] flex-col items-center justify-center px-6 text-center">
-                                <span className="mb-3 grid h-11 w-11 place-items-center rounded-xl bg-slate-50 text-slate-300">
+                                <span className="mb-3 grid h-11 w-11 place-items-center rounded-xl bg-surface text-ink-faint">
                                     <CalendarClock className="h-5 w-5" />
                                 </span>
-                                <p className="text-xs font-bold text-slate-700">
+                                <p className="text-xs font-bold text-ink-secondary">
                                     {t('profile.emailReminders.emptyTitle')}
                                 </p>
-                                <p className="mt-1 max-w-xs text-[11px] font-medium leading-5 text-slate-400">
+                                <p className="mt-1 max-w-xs text-caption font-medium leading-5 text-ink-faint">
                                     {t('profile.emailReminders.emptyHint')}
                                 </p>
                             </div>
@@ -426,8 +426,8 @@ const EmailRemindersPanel = () => {
                                     <col className="w-[14%]" />
                                     <col className="w-[12%]" />
                                 </colgroup>
-                                <thead className="sticky top-0 z-10 bg-slate-50/95 backdrop-blur-sm">
-                                    <tr className="border-b border-slate-100 text-[10px] font-bold uppercase tracking-wide text-slate-400">
+                                <thead className="sticky top-0 z-10 bg-surface/95 backdrop-blur-sm">
+                                    <tr className="border-b border-border text-micro font-bold uppercase tracking-wide text-ink-faint">
                                         <th className="px-3 py-2 sm:px-4">{t('profile.emailReminders.taskName')}</th>
                                         <th className="px-2 py-2">{t('profile.emailReminders.recipientEmail')}</th>
                                         <th className="px-2 py-2">{t('profile.emailReminders.scheduleColumn')}</th>
@@ -435,7 +435,7 @@ const EmailRemindersPanel = () => {
                                         <th className="px-3 py-2 text-right sm:px-4">{t('profile.emailReminders.actions')}</th>
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y divide-slate-100">
+                                <tbody className="divide-y divide-border">
                                     {reminders.map((reminder) => {
                                         const status = normalizeStatus(reminder.status);
                                         const statusStyle = STATUS_STYLES[status];
@@ -447,17 +447,17 @@ const EmailRemindersPanel = () => {
                                         const scheduleText = formatSchedule(reminder);
 
                                         return (
-                                            <tr key={reminder.id} className="hover:bg-slate-50/70">
+                                            <tr key={reminder.id} className="hover:bg-surface/70">
                                                 <td className="px-3 py-2.5 sm:px-4">
                                                     <div className="flex min-w-0 items-center gap-2">
                                                         <span className={`grid h-7 w-7 shrink-0 place-items-center rounded-lg ${statusStyle.rowIcon}`}>
                                                             <Mail className="h-3.5 w-3.5" />
                                                         </span>
                                                         <div className="min-w-0 flex-1">
-                                                            <p className="truncate text-xs font-bold text-slate-800" title={reminder.subject}>
+                                                            <p className="truncate text-xs font-bold text-ink" title={reminder.subject}>
                                                                 {reminder.subject}
                                                             </p>
-                                                            <p className="mt-0.5 truncate text-[10px] font-medium text-slate-400">
+                                                            <p className="mt-0.5 truncate text-micro font-medium text-ink-faint">
                                                                 {t(`profile.emailReminders.frequencies.${frequency.toLowerCase()}`)}
                                                                 {reminder.timezone ? ` · ${reminder.timezone}` : ''}
                                                             </p>
@@ -465,22 +465,22 @@ const EmailRemindersPanel = () => {
                                                     </div>
                                                 </td>
                                                 <td className="px-2 py-2.5">
-                                                    <span className="block truncate text-xs font-medium text-slate-500" title={reminder.recipientEmail}>
+                                                    <span className="block truncate text-xs font-medium text-ink-muted" title={reminder.recipientEmail}>
                                                         {reminder.recipientEmail}
                                                     </span>
                                                 </td>
                                                 <td className="px-2 py-2.5">
-                                                    <span className="block truncate text-xs font-medium text-slate-500" title={scheduleText}>
+                                                    <span className="block truncate text-xs font-medium text-ink-muted" title={scheduleText}>
                                                         {scheduleText}
                                                     </span>
                                                     {frequency !== 'ONCE' ? (
-                                                        <span className="mt-0.5 block truncate text-[10px] text-slate-400" title={formatDate(reminder.scheduledAt)}>
+                                                        <span className="mt-0.5 block truncate text-micro text-ink-faint" title={formatDate(reminder.scheduledAt)}>
                                                             {t('profile.emailReminders.nextRun', { time: formatDate(reminder.scheduledAt) })}
                                                         </span>
                                                     ) : null}
                                                 </td>
                                                 <td className="px-2 py-2.5">
-                                                    <span className={`inline-flex max-w-full truncate items-center rounded-full px-2 py-0.5 text-[10px] font-bold ${statusStyle.badge}`}>
+                                                    <span className={`inline-flex max-w-full truncate items-center rounded-full px-2 py-0.5 text-micro font-bold ${statusStyle.badge}`}>
                                                         {t(`profile.emailReminders.status.${status.toLowerCase()}`)}
                                                     </span>
                                                 </td>
@@ -497,7 +497,7 @@ const EmailRemindersPanel = () => {
                                                                 aria-label={status === 'PAUSED'
                                                                     ? t('profile.emailReminders.resume')
                                                                     : t('profile.emailReminders.pause')}
-                                                                className="grid h-7 w-7 place-items-center rounded-md text-slate-400 transition hover:bg-sky-50 hover:text-sky-600 disabled:opacity-50"
+                                                                className="grid h-7 w-7 place-items-center rounded-md text-ink-faint transition hover:bg-accent-soft hover:text-accent disabled:opacity-50"
                                                             >
                                                                 {isStatusLoading ? (
                                                                     <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -515,7 +515,7 @@ const EmailRemindersPanel = () => {
                                                                     type="button"
                                                                     onClick={() => setPendingDeleteId(null)}
                                                                     disabled={isDeleting}
-                                                                    className="h-7 rounded-md px-1.5 text-[10px] font-bold text-slate-500 transition hover:bg-slate-100"
+                                                                    className="h-7 rounded-md px-1.5 text-micro font-bold text-ink-muted transition hover:bg-surface-muted"
                                                                 >
                                                                     {t('profile.emailReminders.cancelDelete')}
                                                                 </button>
@@ -523,7 +523,7 @@ const EmailRemindersPanel = () => {
                                                                     type="button"
                                                                     onClick={() => handleDelete(reminder.id)}
                                                                     disabled={isDeleting}
-                                                                    className="inline-flex h-7 items-center gap-1 rounded-md bg-rose-600 px-2 text-[10px] font-bold text-white transition hover:bg-rose-700 disabled:opacity-60"
+                                                                    className="inline-flex h-7 items-center gap-1 rounded-md bg-danger px-2 text-micro font-bold text-white transition hover:bg-danger-fg disabled:opacity-60"
                                                                 >
                                                                     {isDeleting
                                                                         ? <Loader2 className="h-3 w-3 animate-spin" />
@@ -538,7 +538,7 @@ const EmailRemindersPanel = () => {
                                                                 disabled={Boolean(actionKey)}
                                                                 title={t('profile.emailReminders.delete')}
                                                                 aria-label={t('profile.emailReminders.delete')}
-                                                                className="grid h-7 w-7 place-items-center rounded-md text-slate-400 transition hover:bg-rose-50 hover:text-rose-500 disabled:opacity-50"
+                                                                className="grid h-7 w-7 place-items-center rounded-md text-ink-faint transition hover:bg-danger-soft hover:text-danger disabled:opacity-50"
                                                             >
                                                                 <Trash2 className="h-3.5 w-3.5" />
                                                             </button>
@@ -554,9 +554,9 @@ const EmailRemindersPanel = () => {
                     </div>
 
                     {total > 0 ? (
-                        <div className="flex shrink-0 flex-col gap-2 border-t border-slate-100 px-3 py-2.5 sm:flex-row sm:items-center sm:justify-between sm:px-4">
+                        <div className="flex shrink-0 flex-col gap-2 border-t border-border px-3 py-2.5 sm:flex-row sm:items-center sm:justify-between sm:px-4">
                             <div className="flex flex-wrap items-center gap-2">
-                                <p className="text-[10px] font-medium text-slate-400">
+                                <p className="text-micro font-medium text-ink-faint">
                                     {t('profile.emailReminders.pageInfo', {
                                         from: (page - 1) * pageSize + 1,
                                         to: Math.min(page * pageSize, total),
@@ -577,7 +577,7 @@ const EmailRemindersPanel = () => {
                                     type="button"
                                     onClick={() => setPage((current) => Math.max(1, current - 1))}
                                     disabled={page <= 1}
-                                    className="grid h-7 w-7 place-items-center rounded-md border border-slate-200 text-slate-500 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40"
+                                    className="grid h-7 w-7 place-items-center rounded-md border border-border text-ink-muted transition hover:bg-surface disabled:cursor-not-allowed disabled:opacity-40"
                                     aria-label={t('profile.emailReminders.prevPage')}
                                 >
                                     <ChevronLeft className="h-3.5 w-3.5" />
@@ -598,16 +598,16 @@ const EmailRemindersPanel = () => {
                                     }, [])
                                     .map((item, index) => (
                                         item === 'ellipsis' ? (
-                                            <span key={`ellipsis-${index}`} className="px-1 text-[10px] text-slate-300">…</span>
+                                            <span key={`ellipsis-${index}`} className="px-1 text-micro text-ink-faint">…</span>
                                         ) : (
                                             <button
                                                 key={item}
                                                 type="button"
                                                 onClick={() => setPage(item)}
-                                                className={`grid h-7 w-7 place-items-center rounded-md text-[10px] font-bold transition ${
+                                                className={`grid h-7 w-7 place-items-center rounded-md text-micro font-bold transition ${
                                                     page === item
-                                                        ? 'bg-primary text-white'
-                                                        : 'border border-slate-200 text-slate-500 hover:bg-slate-50'
+                                                        ? 'bg-accent text-white'
+                                                        : 'border border-border text-ink-muted hover:bg-surface'
                                                 }`}
                                             >
                                                 {item}
@@ -618,7 +618,7 @@ const EmailRemindersPanel = () => {
                                     type="button"
                                     onClick={() => setPage((current) => Math.min(totalPages, current + 1))}
                                     disabled={page >= totalPages}
-                                    className="grid h-7 w-7 place-items-center rounded-md border border-slate-200 text-slate-500 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40"
+                                    className="grid h-7 w-7 place-items-center rounded-md border border-border text-ink-muted transition hover:bg-surface disabled:cursor-not-allowed disabled:opacity-40"
                                     aria-label={t('profile.emailReminders.nextPage')}
                                 >
                                     <ChevronRight className="h-3.5 w-3.5" />
@@ -628,13 +628,13 @@ const EmailRemindersPanel = () => {
                     ) : null}
                 </section>
 
-                <div className="flex shrink-0 items-start gap-2 rounded-xl border border-sky-100 bg-sky-50/80 px-3 py-2.5">
-                    <ShieldCheck className="mt-0.5 h-3.5 w-3.5 shrink-0 text-sky-600" />
+                <div className="flex shrink-0 items-start gap-2 rounded-xl border border-accent-100 bg-accent-soft/80 px-3 py-2.5">
+                    <ShieldCheck className="mt-0.5 h-3.5 w-3.5 shrink-0 text-accent" />
                     <div className="min-w-0">
-                        <p className="text-[11px] font-bold text-sky-800">
+                        <p className="text-caption font-bold text-accent-fg">
                             {t('profile.emailReminders.tipTitle')}
                         </p>
-                        <p className="mt-0.5 text-[10px] font-medium leading-4 text-sky-700/80">
+                        <p className="mt-0.5 text-micro font-medium leading-4 text-accent-800/80">
                             {t('profile.emailReminders.tipBody')}
                         </p>
                     </div>

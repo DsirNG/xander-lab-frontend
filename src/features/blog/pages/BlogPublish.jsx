@@ -141,20 +141,20 @@ const BlogPublish = () => {
     };
 
     return (
-        <div className="h-dvh bg-slate-50 flex flex-col overflow-hidden font-sans">
+        <div className="h-dvh bg-surface flex flex-col overflow-hidden font-sans">
             {/* 顶部导航栏 / Header */}
-            <header className="h-16 shrink-0 border-b border-slate-200/60 flex items-center justify-between gap-2 px-3 sm:px-6 bg-white z-20 shadow-sm relative">
+            <header className="h-16 shrink-0 border-b border-border/60 flex items-center justify-between gap-2 px-3 sm:px-6 bg-canvas z-20 shadow-sm relative">
                 <div className="flex min-w-0 items-center gap-2 sm:gap-4">
                     <button
                         onClick={() => navigate('/blog/')}
-                        className="p-2 -ml-2 text-slate-400 hover:bg-slate-100  rounded-xl transition-all group"
+                        className="p-2 -ml-2 text-ink-faint hover:bg-surface-muted rounded-xl transition-all group"
                         title={t('blog.backToBlog')}
                     >
                         <ChevronLeft className="w-5 h-5 transition-transform" />
                     </button>
-                    <div className="hidden sm:block h-4 w-px bg-slate-200"></div>
-                    <span className="truncate text-xs font-black uppercase tracking-widest text-slate-900 flex items-center gap-2">
-                        {/*<span className="w-2 h-2 rounded-full bg-primary animate-pulse ring-4 ring-primary/20"></span>*/}
+                    <div className="hidden sm:block h-4 w-px bg-border"></div>
+                    <span className="truncate text-xs font-black uppercase tracking-widest text-ink flex items-center gap-2">
+                        {/*<span className="w-2 h-2 rounded-full bg-accent animate-pulse ring-4 ring-accent/20"></span>*/}
                         {t('blog.publishTitle')}
                     </span>
                 </div>
@@ -164,14 +164,14 @@ const BlogPublish = () => {
                         onClick={handleSaveDraft}
                         disabled={loading}
                         title={t('blog.saveDraft')}
-                        className="flex p-2 sm:px-5 text-xs font-bold text-slate-500 hover:text-slate-900 transition-colors items-center gap-2 rounded-xl hover:bg-slate-100 disabled:opacity-50"
+                        className="flex p-2 sm:px-5 text-xs font-bold text-ink-muted hover:text-ink transition-colors items-center gap-2 rounded-xl hover:bg-surface-muted disabled:opacity-50"
                     >
                         <Save className="w-4 h-4" /> <span className="hidden md:inline">{t('blog.saveDraft')}</span>
                     </button>
                     {/* 移动端设置面板切换按钮 */}
                     <button
                         onClick={toggleSettings}
-                        className="lg:hidden p-2 text-slate-500 hover:text-primary hover:bg-slate-100 rounded-xl transition-all"
+                        className="lg:hidden p-2 text-ink-muted hover:text-accent hover:bg-surface-muted rounded-xl transition-all"
                         title={t('blog.publishSettings', 'Document Settings')}
                     >
                         {isSettingsOpen ? <X className="w-5 h-5" /> : <Settings className="w-5 h-5" />}
@@ -179,7 +179,7 @@ const BlogPublish = () => {
                     <button
                         onClick={handlePublish}
                         disabled={loading}
-                        className="px-3 sm:px-6 py-2 bg-slate-900 hover:bg-primary text-white rounded-xl text-xs font-black shadow-lg shadow-primary/0 hover:shadow-primary/30 transition-all active:scale-95 disabled:opacity-50 flex items-center gap-2"
+                        className="px-3 sm:px-6 py-2 bg-ink hover:bg-accent text-white rounded-xl text-xs font-black shadow-lg shadow-accent/0 hover:shadow-accent/30 transition-all active:scale-95 disabled:opacity-50 flex items-center gap-2"
                     >
                         {loading ? (
                             <><Loader2 className="w-4 h-4 animate-spin" /> {t('blog.publishing')}</>
@@ -192,18 +192,18 @@ const BlogPublish = () => {
 
             <div className="flex-1 flex overflow-hidden relative">
                 {/* 主编辑区 / Left Pane - Editor & Preview */}
-                <main className="flex-1 min-w-0 flex flex-col relative bg-white rounded-tr-[0.5rem] border-r border-t border-slate-200 lg:border-r lg:border-t shadow-[10px_0_30px_-15px_rgba(0,0,0,0.05)] z-10 transition-all overflow-hidden mt-2 ml-2">
+                <main className="flex-1 min-w-0 flex flex-col relative bg-canvas rounded-tr-[0.5rem] border-r border-t border-border lg:border-r lg:border-t shadow-[10px_0_30px_-15px_rgba(0,0,0,0.05)] z-10 transition-all overflow-hidden mt-2 ml-2">
                     <div className="absolute top-3 right-3 sm:top-6 sm:right-8 z-20">
-                        <div className="flex bg-slate-100/80 backdrop-blur-md p-1 rounded-2xl border border-slate-200/50 shadow-sm">
+                        <div className="flex bg-surface-muted/80 backdrop-blur-md p-1 rounded-2xl border border-border/50 shadow-sm">
                             <button
                                 onClick={() => { setIsPreview(false); setTimeout(() => contentTextareaRef.current?.focus(), 10); }}
-                                className={`flex items-center gap-2 px-3 sm:px-5 py-2 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all ${!isPreview ? 'bg-white  text-primary shadow-sm scale-100' : 'text-slate-500 hover:text-slate-700  hover:bg-slate-200/50 '}`}
+                                className={`flex items-center gap-2 px-3 sm:px-5 py-2 rounded-xl text-caption font-black uppercase tracking-widest transition-all ${!isPreview ? 'bg-canvas text-accent shadow-sm scale-100' : 'text-ink-muted hover:text-ink-secondary hover:bg-surface-muted/50 '}`}
                             >
                                 <Edit3 className="w-4 h-4" /> <span className="hidden sm:inline">{t('blog.edit', 'Edit')}</span>
                             </button>
                             <button
                                 onClick={() => setIsPreview(true)}
-                                className={`flex items-center gap-2 px-3 sm:px-5 py-2 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all ${isPreview ? 'bg-white  text-primary shadow-sm scale-100' : 'text-slate-500 hover:text-slate-700  hover:bg-slate-200/50 '}`}
+                                className={`flex items-center gap-2 px-3 sm:px-5 py-2 rounded-xl text-caption font-black uppercase tracking-widest transition-all ${isPreview ? 'bg-canvas text-accent shadow-sm scale-100' : 'text-ink-muted hover:text-ink-secondary hover:bg-surface-muted/50 '}`}
                             >
                                 <Eye className="w-4 h-4" /> <span className="hidden sm:inline">{t('blog.preview', 'Preview')}</span>
                             </button>
@@ -215,7 +215,7 @@ const BlogPublish = () => {
                             {/* 标题 */}
                             <div className="relative group">
                                 {!isPreview && (
-                                    <div className="absolute -left-10 top-5 text-slate-200 pointer-events-none transition-colors group-focus-within:text-primary">
+                                    <div className="absolute -left-10 top-5 text-border-strong pointer-events-none transition-colors group-focus-within:text-accent">
                                         <Type className="w-6 h-6" />
                                     </div>
                                 )}
@@ -224,7 +224,7 @@ const BlogPublish = () => {
                                     onChange={e => setFormData({ ...formData, title: e.target.value })}
                                     placeholder={t('blog.titlePlaceholder')}
                                     rows={1}
-                                    className={`w-full text-3xl sm:text-4xl md:text-5xl font-black bg-transparent border-none outline-none text-slate-900 resize-none break-words ${isPreview ? 'hidden' : 'placeholder:text-slate-200'}`}
+                                    className={`w-full text-3xl sm:text-4xl md:text-5xl font-black bg-transparent border-none outline-none text-ink resize-none break-words ${isPreview ? 'hidden' : 'placeholder:text-border-strong'}`}
                                     onInput={(e) => {
                                         e.target.style.height = 'auto';
                                         e.target.style.height = e.target.scrollHeight + 'px';
@@ -247,16 +247,16 @@ const BlogPublish = () => {
 
                             {/* 预览区 */}
                             {isPreview && (
-                                <div className="prose prose-slate max-w-none pt-2 mb-20">
+                                <div className="prose max-w-none pt-2 mb-20">
                                     {formData.title && (
-                                        <h1 className="text-4xl md:text-5xl font-black mb-12 text-slate-900  leading-tight">
+                                        <h1 className="text-4xl md:text-5xl font-black mb-12 text-ink leading-tight">
                                             {formData.title}
                                         </h1>
                                     )}
                                     {formData.content ? (
                                         <BlogMarkdown content={formData.content} />
                                     ) : (
-                                        <div className="flex flex-col items-center justify-center py-40 text-slate-300">
+                                        <div className="flex flex-col items-center justify-center py-40 text-ink-faint">
                                             <Info className="w-16 h-16 mb-6 opacity-30" />
                                             <p className="text-sm font-bold uppercase tracking-widest italic">{t('blog.noContent', 'No content yet')}</p>
                                         </div>
@@ -277,47 +277,40 @@ const BlogPublish = () => {
                 )}
 
                 {/* 侧边栏 / Right Pane - Configuration */}
-                <aside className={`
-                    fixed lg:static
-                    top-[64px] right-0 bottom-0
-                    w-[min(20rem,100vw)] lg:w-[420px] shrink-0
-                    bg-slate-50 flex flex-col z-40
-                    transform transition-transform duration-300 ease-in-out
-                    ${isSettingsOpen ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'}
-                `}>
+                <aside className={`fixed lg:static top-[64px] right-0 bottom-0 w-[min(20rem,100vw)] lg:w-[420px] shrink-0 bg-surface flex flex-col z-40 transform transition-transform duration-300 ease-in-out ${isSettingsOpen ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'}`}>
                     <div className="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar p-6 lg:p-10 space-y-12 pb-32">
 
                         {/* 状态与控制面板 */}
                         <div>
-                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400  mb-8 block flex items-center gap-3">
-                                <span className="h-px bg-slate-200  flex-1"></span>
+                            <span className="text-micro font-black uppercase tracking-[0.2em] text-ink-faint mb-8 block flex items-center gap-3">
+                                <span className="h-px bg-border flex-1"></span>
                                 DOCUMENT SETTINGS
-                                <span className="h-px bg-slate-200  flex-1"></span>
+                                <span className="h-px bg-border flex-1"></span>
                             </span>
 
                             {/* 分类 / Category */}
                             <section className="space-y-4 mb-10">
-                                <div className="flex items-center gap-2 text-slate-500 group">
-                                    <Layout className="w-4 h-4 group-hover:text-primary transition-colors" />
-                                    <span className="text-[10px] font-black uppercase tracking-widest">{t('blog.categoryLabel')}</span>
+                                <div className="flex items-center gap-2 text-ink-muted group">
+                                    <Layout className="w-4 h-4 group-hover:text-accent transition-colors" />
+                                    <span className="text-micro font-black uppercase tracking-widest">{t('blog.categoryLabel')}</span>
                                 </div>
                                 <CustomSelect
                                     options={categories}
                                     value={formData.categoryId}
                                     onChange={val => setFormData({ ...formData, categoryId: val })}
                                     placeholder={t('blog.categoryPlaceholder')}
-                                    className="w-full shadow-sm bg-white  rounded-2xl"
+                                    className="w-full shadow-sm bg-canvas rounded-2xl"
                                 />
                             </section>
 
                             {/* 标签 / Tags */}
                             <section className="space-y-4 mb-10 relative">
                                 <div className="flex items-center justify-between group mb-2">
-                                    <div className="flex items-center gap-2 text-slate-500">
-                                        <TagIcon className="w-4 h-4 group-hover:text-primary transition-colors" />
-                                        <span className="text-[10px] font-black uppercase tracking-widest">{t('blog.tagLabel')}</span>
+                                    <div className="flex items-center gap-2 text-ink-muted">
+                                        <TagIcon className="w-4 h-4 group-hover:text-accent transition-colors" />
+                                        <span className="text-micro font-black uppercase tracking-widest">{t('blog.tagLabel')}</span>
                                     </div>
-                                    <span className="text-[10px] text-slate-400 font-medium">Press Enter ↵</span>
+                                    <span className="text-micro text-ink-faint font-medium">Press Enter ↵</span>
                                 </div>
                                 <CreatableMultiSelect
                                     value={formData.tags}
@@ -329,11 +322,11 @@ const BlogPublish = () => {
                             {/* 摘要 / Abstract */}
                             <section className="space-y-4">
                                 <div className="flex items-center justify-between group">
-                                    <div className="flex items-center gap-2 text-slate-500">
-                                        <AlignLeft className="w-4 h-4 group-hover:text-primary transition-colors" />
-                                        <span className="text-[10px] font-black uppercase tracking-widest">{t('blog.summaryLabel')}</span>
+                                    <div className="flex items-center gap-2 text-ink-muted">
+                                        <AlignLeft className="w-4 h-4 group-hover:text-accent transition-colors" />
+                                        <span className="text-micro font-black uppercase tracking-widest">{t('blog.summaryLabel')}</span>
                                     </div>
-                                    <span className={`text-[10px] font-medium ${formData.summary.length > 200 ? 'text-rose-500' : 'text-slate-400'}`}>
+                                    <span className={`text-micro font-medium ${formData.summary.length > 200 ? 'text-danger' : 'text-ink-faint'}`}>
                                         {formData.summary.length} / 200
                                     </span>
                                 </div>
@@ -341,7 +334,7 @@ const BlogPublish = () => {
                                     value={formData.summary}
                                     onChange={e => setFormData({ ...formData, summary: e.target.value })}
                                     placeholder={t('blog.summaryPlaceholder')}
-                                    className="w-full bg-white  border border-slate-200/60  rounded-2xl px-5 py-4 text-sm leading-relaxed outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all resize-none h-40 shadow-sm text-slate-800  placeholder:text-slate-400 custom-scrollbar"
+                                    className="w-full bg-canvas border border-border/60 rounded-2xl px-5 py-4 text-sm leading-relaxed outline-none focus:border-accent focus:ring-4 focus:ring-accent/10 transition-all resize-none h-40 shadow-sm text-ink placeholder:text-ink-faint custom-scrollbar"
                                 />
                             </section>
                         </div>
@@ -349,7 +342,7 @@ const BlogPublish = () => {
                     </div>
 
                     {/* 底部渐变遮罩，改善侧边栏滚动视觉效果 */}
-                    <div className="absolute bottom-0 left-0 w-full h-12 bg-gradient-to-t from-slate-50 to-transparent pointer-events-none z-10"></div>
+                    <div className="absolute bottom-0 left-0 w-full h-12 bg-gradient-to-t from-surface to-transparent pointer-events-none z-10"></div>
                 </aside>
             </div>
         </div>
