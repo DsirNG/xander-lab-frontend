@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 import { Github, Menu, Languages, X, User as UserIcon, LogOut, ChevronDown, Check } from 'lucide-react';
 import styles from './MainLayout.module.css';
 import { authService } from '@features/auth/services/authService';
-import ProfileCenterModal from '@features/profile/components/ProfileCenterModal';
 
 const LANGUAGES = ['zh', 'en', 'fr', 'ja', 'ru', 'vi'];
 const LANG_LABELS = { zh: '中文', en: 'EN', fr: 'FR', ja: '日本語', ru: 'RU', vi: 'VI' };
@@ -14,7 +13,6 @@ const Navbar = () => {
     const { t, i18n } = useTranslation();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [userInfo, setUserInfo] = useState(authService.getLocalUserInfo());
-    const [isProfileOpen, setIsProfileOpen] = useState(false);
     const [isLangDropdownOpen, setIsLangDropdownOpen] = useState(false);
     const [animDirection, setAnimDirection] = useState(0); // 1 = spin up, -1 = spin down
     const [isAnimating, setIsAnimating] = useState(false);
@@ -25,7 +23,6 @@ const Navbar = () => {
         try {
             await authService.logout();
             setUserInfo(null);
-            setIsProfileOpen(false);
             setIsMobileMenuOpen(false);
             window.location.href = '/'; // 登出后回首页
         } catch (err) {
@@ -64,7 +61,6 @@ const Navbar = () => {
     useEffect(() => {
         const checkAuth = () => {
             setUserInfo(null);
-            setIsProfileOpen(false);
         };
         window.addEventListener('auth:logout', checkAuth);
         return () => window.removeEventListener('auth:logout', checkAuth);
@@ -203,9 +199,8 @@ const Navbar = () => {
                             <div className="hidden sm:flex items-center ml-2 pl-2 border-l border-slate-200 ">
                                 {userInfo ? (
                                     <div className="flex items-center gap-3">
-                                        <button
-                                            type="button"
-                                            onClick={() => setIsProfileOpen(true)}
+                                        <Link
+                                            to="/profile"
                                             className="flex flex-col items-end rounded-xl px-2 py-1 text-right transition hover:bg-primary/5 focus:outline-none focus:ring-2 focus:ring-primary/20"
                                             title={t('profile.open')}
                                             aria-label={t('profile.open')}
@@ -216,7 +211,7 @@ const Navbar = () => {
                                             <span className="text-[9px] text-slate-400 leading-tight">
                                                 {userInfo.role}
                                             </span>
-                                        </button>
+                                        </Link>
                                         <button
                                             onClick={handleLogout}
                                             className="w-8 h-8 rounded-full bg-slate-100  flex items-center justify-center text-slate-500 hover:text-rose-500 hover:bg-rose-50 transition-all"
@@ -301,17 +296,14 @@ const Navbar = () => {
 
                         {userInfo ? (
                             <>
-                                <button
-                                    type="button"
-                                    onClick={() => {
-                                        setIsMobileMenuOpen(false);
-                                        setIsProfileOpen(true);
-                                    }}
+                                <Link
+                                    to="/profile"
+                                    onClick={() => setIsMobileMenuOpen(false)}
                                     className={`${styles.mobileActionButton} flex items-center space-x-2 text-primary`}
                                 >
                                     <UserIcon aria-hidden="true" className="w-4 h-4" />
                                     <span className="text-sm font-medium">{t('profile.open')} ({userInfo.nickname || userInfo.username})</span>
-                                </button>
+                                </Link>
                                 <button
                                     type="button"
                                     onClick={handleLogout}
@@ -342,14 +334,6 @@ const Navbar = () => {
                     onClick={() => setIsMobileMenuOpen(false)}
                 />
             )}
-
-            {userInfo ? (
-                <ProfileCenterModal
-                    isOpen={isProfileOpen}
-                    onClose={() => setIsProfileOpen(false)}
-                    userInfo={userInfo}
-                />
-            ) : null}
         </>
     );
 };
