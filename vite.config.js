@@ -44,13 +44,13 @@ export default defineConfig({
     port: 3000,
     proxy: {
       '/api': {
-        target: 'http://xander.dsircity.top',
+        target: 'https://xander.dsircity.top',
         // target: 'http://localhost:30002',
         changeOrigin: true,
         // rewrite: (path) => path.replace(/^\/api/, ''),
       },
       '/studio-api': {
-        target: 'http://localhost:30003',
+        target: 'https://xander.dsircity.top',
         changeOrigin: true,
         secure: false,
         timeout: 600000, // 10 minutes for large file uploads
