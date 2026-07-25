@@ -1,13 +1,19 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Github, Menu, Languages, X, User as UserIcon, LogOut, ChevronDown, Check } from 'lucide-react';
+import { Github, Menu, Languages, X, User as UserIcon, ChevronDown, Check } from 'lucide-react';
 import styles from './MainLayout.module.css';
 import { authService } from '@features/auth/services/authService';
 
 const LANGUAGES = ['zh', 'en', 'fr', 'ja', 'ru', 'vi'];
 const LANG_LABELS = { zh: '中文', en: 'EN', fr: 'FR', ja: '日本語', ru: 'RU', vi: 'VI' };
 const LANG_FULL = { zh: '简体中文', en: 'English', fr: 'Français', ja: '日本語', ru: 'Русский', vi: 'Tiếng Việt' };
+
+const getDisplayName = (userInfo) => userInfo?.nickname || userInfo?.username || '';
+const getAvatarText = (userInfo) => {
+    const name = getDisplayName(userInfo);
+    return name ? name.slice(0, 2).toUpperCase() : 'XL';
+};
 
 const Navbar = () => {
     const { t, i18n } = useTranslation();
@@ -18,17 +24,6 @@ const Navbar = () => {
     const [isAnimating, setIsAnimating] = useState(false);
     const langDropdownRef = useRef(null);
     const location = useLocation();
-
-    const handleLogout = async () => {
-        try {
-            await authService.logout();
-            setUserInfo(null);
-            setIsMobileMenuOpen(false);
-            window.location.href = '/'; // 登出后回首页
-        } catch (err) {
-            console.error('Logout failed', err);
-        }
-    };
 
     // 切换语言（带旋转动画）
     const changeLanguage = useCallback((lng) => {
@@ -56,6 +51,9 @@ const Navbar = () => {
     };
 
     const currentLang = LANG_LABELS[i18n.language] || 'EN';
+    const displayName = getDisplayName(userInfo);
+    const avatarText = getAvatarText(userInfo);
+    const roleLabel = userInfo?.role || '';
 
     // 监听全局登出事件
     useEffect(() => {
@@ -195,32 +193,31 @@ const Navbar = () => {
                                 <Github aria-hidden="true" className="w-5 h-5" />
                             </a>
 
-                            {/* 用户区域 */}
+                            {/* 用户区域：头像 + 名字，进入个人中心；退出仅在个人中心 */}
                             <div className="hidden sm:flex items-center ml-2 pl-2 border-l border-slate-200 ">
                                 {userInfo ? (
-                                    <div className="flex items-center gap-3">
-                                        <Link
-                                            to="/profile"
-                                            className="flex flex-col items-end rounded-xl px-2 py-1 text-right transition hover:bg-primary/5 focus:outline-none focus:ring-2 focus:ring-primary/20"
-                                            title={t('profile.open')}
-                                            aria-label={t('profile.open')}
-                                        >
-                                            <span className="text-[10px] font-bold text-slate-900  leading-tight">
-                                                {userInfo.nickname || userInfo.username}
+                                    <Link
+                                        to="/profile"
+                                        className="flex items-center gap-2 rounded-xl px-1.5 py-1 transition hover:bg-sky-50 focus:outline-none focus:ring-2 focus:ring-sky-200"
+                                        title={t('profile.open')}
+                                        aria-label={t('profile.open')}
+                                    >
+                                        <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-sky-600 text-[10px] font-black uppercase text-white">
+                                            {avatarText}
+                                        </span>
+                                        <span className="min-w-0 text-left">
+                                            <span className="flex max-w-[9rem] items-center gap-1.5">
+                                                <span className="truncate text-xs font-bold text-slate-800">
+                                                    {displayName}
+                                                </span>
+                                                {roleLabel ? (
+                                                    <span className="shrink-0 rounded bg-sky-50 px-1.5 py-0.5 text-[9px] font-bold uppercase text-sky-600 ring-1 ring-sky-100">
+                                                        {roleLabel}
+                                                    </span>
+                                                ) : null}
                                             </span>
-                                            <span className="text-[9px] text-slate-400 leading-tight">
-                                                {userInfo.role}
-                                            </span>
-                                        </Link>
-                                        <button
-                                            onClick={handleLogout}
-                                            className="w-8 h-8 rounded-full bg-slate-100  flex items-center justify-center text-slate-500 hover:text-rose-500 hover:bg-rose-50 transition-all"
-                                            title={t('nav.logout')}
-                                            aria-label={t('nav.logout')}
-                                        >
-                                            <LogOut aria-hidden="true" className="w-4 h-4" />
-                                        </button>
-                                    </div>
+                                        </span>
+                                    </Link>
                                 ) : (
                                     <Link
                                         to="/login"
@@ -295,24 +292,30 @@ const Navbar = () => {
                         </a>
 
                         {userInfo ? (
-                            <>
-                                <Link
-                                    to="/profile"
-                                    onClick={() => setIsMobileMenuOpen(false)}
-                                    className={`${styles.mobileActionButton} flex items-center space-x-2 text-primary`}
-                                >
-                                    <UserIcon aria-hidden="true" className="w-4 h-4" />
-                                    <span className="text-sm font-medium">{t('profile.open')} ({userInfo.nickname || userInfo.username})</span>
-                                </Link>
-                                <button
-                                    type="button"
-                                    onClick={handleLogout}
-                                    className={`${styles.mobileActionButton} flex items-center space-x-2 text-rose-500`}
-                                >
-                                    <LogOut aria-hidden="true" className="w-4 h-4" />
-                                    <span className="text-sm font-medium">{t('nav.logout')}</span>
-                                </button>
-                            </>
+                            <Link
+                                to="/profile"
+                                onClick={() => setIsMobileMenuOpen(false)}
+                                className={`${styles.mobileActionButton} flex items-center gap-2.5 text-left`}
+                            >
+                                <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-sky-600 text-[10px] font-black uppercase text-white">
+                                    {avatarText}
+                                </span>
+                                <span className="min-w-0 flex-1">
+                                    <span className="flex flex-wrap items-center gap-1.5">
+                                        <span className="truncate text-sm font-bold text-slate-800">
+                                            {displayName}
+                                        </span>
+                                        {roleLabel ? (
+                                            <span className="rounded bg-sky-50 px-1.5 py-0.5 text-[10px] font-bold uppercase text-sky-600 ring-1 ring-sky-100">
+                                                {roleLabel}
+                                            </span>
+                                        ) : null}
+                                    </span>
+                                    <span className="mt-0.5 block text-xs font-medium text-slate-400">
+                                        {t('profile.open')}
+                                    </span>
+                                </span>
+                            </Link>
                         ) : (
                             <Link
                                 to="/login"

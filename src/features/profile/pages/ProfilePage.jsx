@@ -135,7 +135,7 @@ const ProfilePage = () => {
                     })}
                 </nav>
 
-                <div className="hidden border-t border-slate-100 p-3 lg:block">
+                <div className="border-t border-slate-100 p-3">
                     <button
                         type="button"
                         onClick={handleLogout}
