@@ -84,8 +84,8 @@ const ProfilePage = () => {
     };
 
     return (
-        <div className="mx-auto flex h-[calc(100vh-4rem)] min-h-[calc(100vh-4rem)] w-full max-w-7xl flex-col overflow-hidden bg-slate-50/40 lg:flex-row">
-            <aside className="flex w-full shrink-0 flex-col border-b border-slate-200 bg-white lg:w-[220px] lg:border-b-0 lg:border-r">
+        <div className="mx-auto flex min-h-[calc(100vh-4rem)] w-full max-w-7xl flex-col bg-slate-50/40 lg:h-[calc(100vh-4rem)] lg:max-h-[calc(100vh-4rem)] lg:flex-row lg:overflow-hidden">
+            <aside className="flex w-full shrink-0 flex-col border-b border-slate-200 bg-white lg:h-full lg:w-[220px] lg:border-b-0 lg:border-r">
                 <div className="border-b border-slate-100 px-4 py-4">
                     <div className="mb-3">
                         <h1 className="text-base font-black tracking-tight text-slate-800">
@@ -113,7 +113,7 @@ const ProfilePage = () => {
                     </div>
                 </div>
 
-                <nav className="flex gap-1 overflow-x-auto px-2 py-3 lg:flex-1 lg:flex-col lg:overflow-y-auto lg:px-3">
+                <nav className="flex gap-1 overflow-x-auto px-2 py-3 lg:min-h-0 lg:flex-1 lg:flex-col lg:overflow-y-auto lg:px-3">
                     {NAV_ITEMS.map((item) => {
                         const Icon = item.icon;
                         const isActive = activeNav === item.id;

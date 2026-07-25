@@ -320,7 +320,7 @@ const EmailRemindersPanel = () => {
 
     return (
         <div className="relative flex min-h-0 flex-1 flex-col">
-            <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-hidden p-4 sm:p-5">
+            <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto p-4 sm:gap-4 sm:p-5">
                 <header className="flex shrink-0 flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <div className="flex min-w-0 items-start gap-2.5">
                         <span className="mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-xl bg-sky-50 text-sky-600">
@@ -372,7 +372,7 @@ const EmailRemindersPanel = () => {
                     })}
                 </div>
 
-                <section className="flex min-h-[320px] min-w-0 flex-1 flex-col overflow-hidden rounded-xl border border-slate-200 bg-white">
+                <section className="flex min-h-[min(280px,42vh)] min-w-0 flex-1 flex-col overflow-hidden rounded-xl border border-slate-200 bg-white">
                     <div className="flex shrink-0 flex-col gap-2 border-b border-slate-100 px-3 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-4">
                         <h3 className="text-xs font-black text-slate-800">
                             {t('profile.emailReminders.taskList')}
@@ -398,7 +398,7 @@ const EmailRemindersPanel = () => {
                         </div>
                     </div>
 
-                    <div className="min-h-[240px] min-w-0 flex-1 overflow-auto">
+                    <div className="min-h-[min(200px,30vh)] min-w-0 flex-1 overflow-auto">
                         {isLoading ? (
                             <div className="flex min-h-[220px] items-center justify-center">
                                 <LoadingSpinner
