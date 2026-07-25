@@ -81,6 +81,12 @@ export default {
   common: {
     confirm: 'Confirmer',
     cancel: 'Annuler',
+    pagination: {
+      pageInfo: '{{from}}-{{to}} sur {{total}}',
+      pageSizeOption: '{{size}} par page',
+      prevPage: 'Précédent',
+      nextPage: 'Suivant'
+    },
     backHome: 'Retour à l\'accueil',
     backToInfra: 'Retour à l\'infrastructure',
     backToComponents: 'Retour aux composants',

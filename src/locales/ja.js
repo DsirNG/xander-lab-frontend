@@ -81,6 +81,12 @@ export default {
   common: {
     confirm: '確認',
     cancel: 'キャンセル',
+    pagination: {
+      pageInfo: '{{from}}-{{to}} / 全 {{total}} 件',
+      pageSizeOption: '{{size}} 件/ページ',
+      prevPage: '前へ',
+      nextPage: '次へ'
+    },
     backHome: 'ホームに戻る',
     backToInfra: 'インフラに戻る',
     backToComponents: 'コンポーネントに戻る',

@@ -47,6 +47,7 @@
 | `CreatableMultiSelect` | `@components/common/CreatableMultiSelect` | 标签、多选项，且允许输入新项 | `value: string[]`、`onChange`、`options`、`placeholder`。 |
 | `Modal` | `@components/common/Modal` | 确认、编辑、表单弹窗 | `isOpen`、`onClose`、`title`、`footer`、`width`；已实现 Portal、焦点管理与背景滚动锁定。 |
 | `ConfirmModal` | `@components/common/ConfirmModal` | 删除、退出登录等二次确认 | 基于 `Modal`；`isOpen`、`onClose`、`onConfirm`、`title`、`message`/`children`、`confirmText`、`cancelText`、`confirming`、`danger`（默认 true）。 |
+| `Pagination` | `@components/common/Pagination` | 列表底部分页 | `page`、`pageSize`、`total`、`pageSizeOptions`（默认 `[5,10,15,20]`）、`onPageChange`、`onPageSizeChange`、`disabled`、`hideWhenEmpty`；文案走 `common.pagination.*`。 |
 | `Toast` | `@components/common/Toast` | 用户操作结果反馈 | 优先由 `http.js` 处理请求错误；页面主动提示使用 `window.__toast` 或现有 Toast 上下文，勿自行造 toast。 |
 | `TourSpotlight` | `@components/common/TourSpotlight` | 新功能引导和聚焦提示 | `targetConfig`、`onSkip`。 |
 | `LoadingSpinner` | `@components/common/LoadingSpinner` | 页面或局部加载态 | `fullScreen`、`text`、`size: sm/md/lg`。 |

@@ -4,8 +4,6 @@ import {
     AlertCircle,
     CalendarClock,
     CheckCircle2,
-    ChevronLeft,
-    ChevronRight,
     CirclePause,
     Clock3,
     Loader2,
@@ -21,11 +19,11 @@ import {
 import ConfirmModal from '@components/common/ConfirmModal';
 import CustomSelect from '@components/common/CustomSelect';
 import LoadingSpinner from '@components/common/LoadingSpinner';
+import Pagination from '@components/common/Pagination';
 import { useToast } from '@hooks/useToast';
 import { emailReminderService } from '../services/emailReminderService';
 import EmailReminderCreateModal from './EmailReminderCreateModal';
 
-const PAGE_SIZE_OPTIONS = [5, 10, 15, 20];
 const DEFAULT_PAGE_SIZE = 10;
 const SEARCH_DEBOUNCE_MS = 300;
 
@@ -95,7 +93,7 @@ const EmailRemindersPanel = () => {
     const [reminders, setReminders] = useState([]);
     const [stats, setStats] = useState(EMPTY_STATS);
     const [total, setTotal] = useState(0);
-    const [totalPages, setTotalPages] = useState(1);
+
     const [isLoading, setIsLoading] = useState(false);
     const [isCreateOpen, setIsCreateOpen] = useState(false);
     const [actionKey, setActionKey] = useState('');
@@ -184,7 +182,7 @@ const EmailRemindersPanel = () => {
             );
             setReminders(records);
             setTotal(nextTotal);
-            setTotalPages(nextPages);
+
             setStats(getListStats(result));
             if (page > nextPages) {
                 setPage(nextPages);
@@ -216,21 +214,10 @@ const EmailRemindersPanel = () => {
         { value: 'FAILED', label: t('profile.emailReminders.status.failed') },
     ]), [t]);
 
-    const pageSizeOptions = useMemo(() => (
-        PAGE_SIZE_OPTIONS.map((size) => ({
-            value: String(size),
-            label: t('profile.emailReminders.pageSizeOption', { size }),
-        }))
-    ), [t]);
-
     const handleStatusFilterChange = (value) => {
         setStatusFilter(value);
     };
 
-    const handlePageSizeChange = (value) => {
-        const nextSize = Number(value);
-        setPageSize(PAGE_SIZE_OPTIONS.includes(nextSize) ? nextSize : DEFAULT_PAGE_SIZE);
-    };
 
     const handleStatusChange = async (reminder) => {
         const status = normalizeStatus(reminder.status);
@@ -533,79 +520,14 @@ const EmailRemindersPanel = () => {
                         )}
                     </div>
 
-                    {total > 0 ? (
-                        <div className="flex shrink-0 flex-col gap-2 border-t border-border px-3 py-2.5 sm:flex-row sm:items-center sm:justify-between sm:px-4">
-                            <div className="flex flex-wrap items-center gap-2">
-                                <p className="text-micro font-medium text-ink-faint">
-                                    {t('profile.emailReminders.pageInfo', {
-                                        from: (page - 1) * pageSize + 1,
-                                        to: Math.min(page * pageSize, total),
-                                        total,
-                                    })}
-                                </p>
-                                <div className="w-[7.5rem]">
-                                    <CustomSelect
-                                        size="sm"
-                                        options={pageSizeOptions}
-                                        value={String(pageSize)}
-                                        onChange={handlePageSizeChange}
-                                    />
-                                </div>
-                            </div>
-                            <div className="flex items-center gap-1">
-                                <button
-                                    type="button"
-                                    onClick={() => setPage((current) => Math.max(1, current - 1))}
-                                    disabled={page <= 1}
-                                    className="grid h-7 w-7 place-items-center rounded-md border border-border text-ink-muted transition hover:bg-surface disabled:cursor-not-allowed disabled:opacity-40"
-                                    aria-label={t('profile.emailReminders.prevPage')}
-                                >
-                                    <ChevronLeft className="h-3.5 w-3.5" />
-                                </button>
-                                {Array.from({ length: totalPages }, (_, index) => index + 1)
-                                    .filter((pageNumber) => (
-                                        totalPages <= 5
-                                        || pageNumber === 1
-                                        || pageNumber === totalPages
-                                        || Math.abs(pageNumber - page) <= 1
-                                    ))
-                                    .reduce((acc, pageNumber, index, list) => {
-                                        if (index > 0 && pageNumber - list[index - 1] > 1) {
-                                            acc.push('ellipsis');
-                                        }
-                                        acc.push(pageNumber);
-                                        return acc;
-                                    }, [])
-                                    .map((item, index) => (
-                                        item === 'ellipsis' ? (
-                                            <span key={`ellipsis-${index}`} className="px-1 text-micro text-ink-faint">…</span>
-                                        ) : (
-                                            <button
-                                                key={item}
-                                                type="button"
-                                                onClick={() => setPage(item)}
-                                                className={`grid h-7 w-7 place-items-center rounded-md text-micro font-bold transition ${
-                                                    page === item
-                                                        ? 'bg-accent text-white'
-                                                        : 'border border-border text-ink-muted hover:bg-surface'
-                                                }`}
-                                            >
-                                                {item}
-                                            </button>
-                                        )
-                                    ))}
-                                <button
-                                    type="button"
-                                    onClick={() => setPage((current) => Math.min(totalPages, current + 1))}
-                                    disabled={page >= totalPages}
-                                    className="grid h-7 w-7 place-items-center rounded-md border border-border text-ink-muted transition hover:bg-surface disabled:cursor-not-allowed disabled:opacity-40"
-                                    aria-label={t('profile.emailReminders.nextPage')}
-                                >
-                                    <ChevronRight className="h-3.5 w-3.5" />
-                                </button>
-                            </div>
-                        </div>
-                    ) : null}
+                    <Pagination
+                        page={page}
+                        pageSize={pageSize}
+                        total={total}
+                        disabled={isLoading}
+                        onPageChange={setPage}
+                        onPageSizeChange={setPageSize}
+                    />
                 </section>
 
                 <div className="flex shrink-0 items-start gap-2 rounded-xl border border-accent-100 bg-accent-soft/80 px-3 py-2.5">

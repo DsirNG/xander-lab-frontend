@@ -81,6 +81,12 @@ export default {
   common: {
     confirm: 'Xác nhận',
     cancel: 'Hủy',
+    pagination: {
+      pageInfo: '{{from}}-{{to}} / {{total}}',
+      pageSizeOption: '{{size}} mỗi trang',
+      prevPage: 'Trước',
+      nextPage: 'Sau'
+    },
     backHome: 'Về trang chủ',
     backToInfra: 'Quay lại Hạ tầng',
     backToComponents: 'Quay lại Thành phần',

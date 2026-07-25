@@ -81,6 +81,12 @@ export default {
   common: {
     confirm: 'Подтвердить',
     cancel: 'Отмена',
+    pagination: {
+      pageInfo: '{{from}}-{{to}} из {{total}}',
+      pageSizeOption: '{{size}} на странице',
+      prevPage: 'Назад',
+      nextPage: 'Далее'
+    },
     backHome: 'На главную',
     backToInfra: 'Назад к инфраструктуре',
     backToComponents: 'Назад к компонентам',

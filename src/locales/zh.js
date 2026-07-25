@@ -89,6 +89,12 @@ export default {
   common: {
     confirm: '确认',
     cancel: '取消',
+    pagination: {
+      pageInfo: '第 {{from}}-{{to}} 条，共 {{total}} 条',
+      pageSizeOption: '每页 {{size}} 条',
+      prevPage: '上一页',
+      nextPage: '下一页'
+    },
     backHome: '返回首页',
     backToInfra: '返回基础模块',
     backToComponents: '返回组件库',

@@ -1,10 +1,8 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
     AlertCircle,
-    ChevronLeft,
-    ChevronRight,
     Eye,
     FilePenLine,
     FileText,
@@ -16,12 +14,11 @@ import {
     Trash2,
 } from 'lucide-react';
 import ConfirmModal from '@components/common/ConfirmModal';
-import CustomSelect from '@components/common/CustomSelect';
 import LoadingSpinner from '@components/common/LoadingSpinner';
+import Pagination from '@components/common/Pagination';
 import { useToast } from '@hooks/useToast';
 import { blogService, BLOG_STATUS } from '@features/blog/services/blogService';
 
-const PAGE_SIZE_OPTIONS = [5, 10, 15, 20];
 const DEFAULT_PAGE_SIZE = 10;
 const SEARCH_DEBOUNCE_MS = 300;
 
@@ -65,21 +62,6 @@ const BlogManagePanel = () => {
     const requestSeq = useRef(0);
 
     const activeTab = TABS.find((item) => item.id === tab) || TABS[0];
-
-    const pageSizeOptions = useMemo(
-        () =>
-            PAGE_SIZE_OPTIONS.map((size) => ({
-                value: String(size),
-                label: t('profile.blogManage.pageSizeOption', { size }),
-            })),
-        [t]
-    );
-
-    const handlePageSizeChange = (value) => {
-        const nextSize = Number(value);
-        setPageSize(PAGE_SIZE_OPTIONS.includes(nextSize) ? nextSize : DEFAULT_PAGE_SIZE);
-        setPage(1);
-    };
 
     const loadPosts = useCallback(async ({ showLoading = true } = {}) => {
         abortRef.current?.abort();
@@ -169,9 +151,6 @@ const BlogManagePanel = () => {
         }
     };
 
-    const totalPages = Math.max(1, Math.ceil(total / pageSize) || 1);
-    const from = total === 0 ? 0 : (page - 1) * pageSize + 1;
-    const to = Math.min(page * pageSize, total);
     const confirming = Boolean(actionKey) && Boolean(confirmAction);
 
     return (
@@ -378,44 +357,17 @@ const BlogManagePanel = () => {
                 )}
             </div>
 
-            {total > 0 ? (
-                <div className="flex shrink-0 flex-col gap-2 border-t border-border px-3 py-2.5 sm:flex-row sm:items-center sm:justify-between sm:px-4">
-                    <div className="flex flex-wrap items-center gap-2">
-                        <p className="text-micro font-medium text-ink-faint">
-                            {t('profile.blogManage.pageInfo', { from, to, total })}
-                        </p>
-                        <div className="w-[7.5rem]">
-                            <CustomSelect
-                                size="sm"
-                                options={pageSizeOptions}
-                                value={String(pageSize)}
-                                onChange={handlePageSizeChange}
-                            />
-                        </div>
-                    </div>
-                    <div className="flex items-center gap-1">
-                        <button
-                            type="button"
-                            disabled={page <= 1 || loading}
-                            onClick={() => setPage((p) => Math.max(1, p - 1))}
-                            className="inline-flex h-8 items-center gap-1 rounded-lg px-2 text-micro font-bold text-ink-muted transition hover:bg-surface-muted disabled:opacity-40"
-                        >
-                            <ChevronLeft className="h-3.5 w-3.5" />
-                            {t('profile.blogManage.prevPage')}
-                        </button>
-                        <span className="px-2 text-micro font-bold text-ink-faint">{page} / {totalPages}</span>
-                        <button
-                            type="button"
-                            disabled={page >= totalPages || loading}
-                            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                            className="inline-flex h-8 items-center gap-1 rounded-lg px-2 text-micro font-bold text-ink-muted transition hover:bg-surface-muted disabled:opacity-40"
-                        >
-                            {t('profile.blogManage.nextPage')}
-                            <ChevronRight className="h-3.5 w-3.5" />
-                        </button>
-                    </div>
-                </div>
-            ) : null}
+            <Pagination
+                page={page}
+                pageSize={pageSize}
+                total={total}
+                disabled={loading}
+                onPageChange={setPage}
+                onPageSizeChange={(size) => {
+                    setPageSize(size);
+                    setPage(1);
+                }}
+            />
 
             <ConfirmModal
                 isOpen={Boolean(confirmAction)}
