@@ -28,7 +28,7 @@ const PUBLIC_PAGES = {
   },
 };
 
-const PRIVATE_PATHS = ['/login', '/studio', '/components/share', '/blog/publish', '/profile'];
+const PRIVATE_PATHS = ['/login', '/studio', '/components/share', '/blog/publish', '/profile', '/lab/img2three'];
 
 function normalisePathname(pathname) {
   if (pathname === '/') return pathname;

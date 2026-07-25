@@ -51,6 +51,7 @@
 | `Toast` | `@components/common/Toast` | 用户操作结果反馈 | 优先由 `http.js` 处理请求错误；页面主动提示使用 `window.__toast` 或现有 Toast 上下文，勿自行造 toast。 |
 | `TourSpotlight` | `@components/common/TourSpotlight` | 新功能引导和聚焦提示 | `targetConfig`、`onSkip`。 |
 | `LoadingSpinner` | `@components/common/LoadingSpinner` | 页面或局部加载态 | `fullScreen`、`text`、`size: sm/md/lg`。 |
+| `ThreeViewer` | `@features/img2three/components/ThreeViewer` | 受限 sceneSpec 的 WebGL 预览 | `sceneSpec`、`onReady({exportGlb})`；勿执行模型返回的 TS。 |
 | `ErrorBoundary` | `@components/common/ErrorBoundary` | 路由或高风险子树兜底 | 使用在页面/模块边界，不替代请求错误处理。 |
 
 ## 内容与展示

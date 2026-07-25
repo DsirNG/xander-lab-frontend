@@ -35,6 +35,7 @@ const ComponentUploadPage = React.lazy(() => import('@features/studio/pages/Comp
 const CompilerPage = React.lazy(() => import('@features/studio/pages/CompilerPage'));
 const PublicSourcePage = React.lazy(() => import('@features/studio/pages/PublicSourcePage'));
 const ProfilePage = React.lazy(() => import('@features/profile/pages/ProfilePage'));
+const Img2ThreePage = React.lazy(() => import('@features/img2three/pages/Img2ThreePage'));
 
 // 配置数据
 import { getInfraConfig } from '@features/infra/constants';
@@ -167,6 +168,14 @@ export const createRouter = () => {
         {
           path: 'studio',
           element: <LazyPage><StudioPage /></LazyPage>,
+        },
+        {
+          path: 'lab/img2three',
+          element: <LazyPage><Img2ThreePage /></LazyPage>,
+        },
+        {
+          path: 'lab/img2three/:taskId',
+          element: <LazyPage><Img2ThreePage /></LazyPage>,
         },
         {
           path: 'profile',

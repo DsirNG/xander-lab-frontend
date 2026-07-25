@@ -147,6 +147,7 @@ const Navbar = () => {
         { path: '/', label: t('nav.home') },
         { path: '/components', label: t('nav.components') },
         { path: '/blog/', label: t('nav.blog') },
+        { path: '/lab/img2three', label: t('nav.img2three') },
         { path: '/studio', label: t('nav.studio') },
     ];
 
