@@ -32,8 +32,17 @@
 }
 
 .navLink {
-    @apply text-ink-secondary px-3 py-2 rounded-md text-sm font-medium transition-colors;
+    @apply relative text-ink-secondary px-3 py-2 rounded-md text-sm font-medium transition-colors;
     @apply hover:text-accent;
+}
+
+.navLinkActive {
+    @apply text-accent font-semibold;
+}
+
+.navLinkActive::after {
+    content: '';
+    @apply absolute left-3 right-3 -bottom-0.5 h-0.5 rounded-full bg-accent;
 }
 
 .actionsArea {
@@ -87,7 +96,7 @@
 }
 
 .mobileNavLinkActive {
-    @apply bg-accent-soft text-accent-fg;
+    @apply bg-accent-soft text-accent-fg font-semibold;
 }
 
 .mobileMenuActions {

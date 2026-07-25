@@ -124,11 +124,11 @@ const ProfilePage = () => {
                                 onClick={() => handleNavClick(item)}
                                 className={`flex shrink-0 items-center gap-2 rounded-lg px-2.5 py-2 text-left text-xs font-semibold transition lg:w-full ${
                                     isActive
-                                        ? 'bg-accent-soft text-accent-fg'
+                                        ? 'bg-accent-soft text-ink'
                                         : 'text-ink-muted hover:bg-surface hover:text-ink-secondary'
                                 }`}
                             >
-                                <Icon className={`h-3.5 w-3.5 shrink-0 ${isActive ? 'text-accent' : 'text-ink-faint'}`} />
+                                <Icon className={`h-3.5 w-3.5 shrink-0 ${isActive ? 'text-ink-secondary' : 'text-ink-faint'}`} />
                                 <span className="whitespace-nowrap">{t(`profile.nav.${item.id}`)}</span>
                             </button>
                         );

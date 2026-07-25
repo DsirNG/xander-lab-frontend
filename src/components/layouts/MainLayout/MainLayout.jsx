@@ -112,6 +112,18 @@ const Navbar = () => {
         { path: '/studio', label: t('nav.studio') },
     ];
 
+    const normalizePath = (path) => {
+        const value = String(path || '/').replace(/\/+$/, '');
+        return value || '/';
+    };
+
+    const isNavActive = (linkPath) => {
+        const current = normalizePath(location.pathname);
+        const target = normalizePath(linkPath);
+        if (target === '/') return current === '/';
+        return current === target || current.startsWith(`${target}/`);
+    };
+
     return (
         <>
             <nav aria-label={t('common.aria.mainNav', 'Main navigation')} className={styles.navbar}>
@@ -125,15 +137,19 @@ const Navbar = () => {
 
                         <div className={styles.desktopNav}>
                             <div className={styles.navLinks}>
-                                {navLinks.map((link) => (
-                                    <Link
-                                        key={link.path}
-                                        to={link.path}
-                                        className={styles.navLink}
-                                    >
-                                        {link.label}
-                                    </Link>
-                                ))}
+                                {navLinks.map((link) => {
+                                    const active = isNavActive(link.path);
+                                    return (
+                                        <Link
+                                            key={link.path}
+                                            to={link.path}
+                                            className={`${styles.navLink} ${active ? styles.navLinkActive : ''}`}
+                                            aria-current={active ? 'page' : undefined}
+                                        >
+                                            {link.label}
+                                        </Link>
+                                    );
+                                })}
                             </div>
                         </div>
 
@@ -198,9 +214,14 @@ const Navbar = () => {
                                 {userInfo ? (
                                     <Link
                                         to="/profile"
-                                        className="flex items-center gap-2 rounded-xl px-1.5 py-1 transition hover:bg-accent-soft focus:outline-none focus:ring-2 focus:ring-accent-200"
+                                        className={`flex items-center gap-2 rounded-xl px-1.5 py-1 transition focus:outline-none focus:ring-2 focus:ring-accent-200 ${
+                                            isNavActive('/profile')
+                                                ? 'bg-accent-soft'
+                                                : 'hover:bg-accent-soft'
+                                        }`}
                                         title={t('profile.open')}
                                         aria-label={t('profile.open')}
+                                        aria-current={isNavActive('/profile') ? 'page' : undefined}
                                     >
                                         <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-accent text-micro font-black uppercase text-white">
                                             {avatarText}
@@ -259,16 +280,20 @@ const Navbar = () => {
             >
                 <div className={styles.mobileMenuContent}>
                     <div className={styles.mobileNavLinks}>
-                        {navLinks.map((link) => (
-                            <Link
-                                key={link.path}
-                                to={link.path}
-                                className={`${styles.mobileNavLink} ${location.pathname === link.path ? styles.mobileNavLinkActive : ''}`}
-                                onClick={() => setIsMobileMenuOpen(false)}
-                            >
-                                {link.label}
-                            </Link>
-                        ))}
+                        {navLinks.map((link) => {
+                            const active = isNavActive(link.path);
+                            return (
+                                <Link
+                                    key={link.path}
+                                    to={link.path}
+                                    className={`${styles.mobileNavLink} ${active ? styles.mobileNavLinkActive : ''}`}
+                                    aria-current={active ? 'page' : undefined}
+                                    onClick={() => setIsMobileMenuOpen(false)}
+                                >
+                                    {link.label}
+                                </Link>
+                            );
+                        })}
                     </div>
 
                     <div className={styles.mobileMenuActions}>
@@ -295,7 +320,10 @@ const Navbar = () => {
                             <Link
                                 to="/profile"
                                 onClick={() => setIsMobileMenuOpen(false)}
-                                className={`${styles.mobileActionButton} flex items-center gap-2.5 text-left`}
+                                className={`${styles.mobileActionButton} flex items-center gap-2.5 text-left ${
+                                    isNavActive('/profile') ? 'bg-accent-soft' : ''
+                                }`}
+                                aria-current={isNavActive('/profile') ? 'page' : undefined}
                             >
                                 <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-accent text-micro font-black uppercase text-white">
                                     {avatarText}
