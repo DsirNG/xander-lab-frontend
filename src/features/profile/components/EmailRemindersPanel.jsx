@@ -18,6 +18,7 @@ import {
     ShieldCheck,
     Trash2,
 } from 'lucide-react';
+import ConfirmModal from '@components/common/ConfirmModal';
 import CustomSelect from '@components/common/CustomSelect';
 import LoadingSpinner from '@components/common/LoadingSpinner';
 import { useToast } from '@hooks/useToast';
@@ -99,7 +100,7 @@ const EmailRemindersPanel = () => {
     const [isCreateOpen, setIsCreateOpen] = useState(false);
     const [actionKey, setActionKey] = useState('');
     const [loadError, setLoadError] = useState('');
-    const [pendingDeleteId, setPendingDeleteId] = useState(null);
+    const [pendingDelete, setPendingDelete] = useState(null);
     const [statusFilter, setStatusFilter] = useState('ALL');
     const [searchQuery, setSearchQuery] = useState('');
     const [debouncedSearch, setDebouncedSearch] = useState('');
@@ -247,12 +248,14 @@ const EmailRemindersPanel = () => {
         }
     };
 
-    const handleDelete = async (id) => {
+    const handleDelete = async () => {
+        if (!pendingDelete?.id) return;
+        const id = pendingDelete.id;
         const key = `delete-${id}`;
         setActionKey(key);
         try {
             await emailReminderService.remove(id);
-            setPendingDeleteId(null);
+            setPendingDelete(null);
             toast.success(t('profile.emailReminders.deleted'));
             if (reminders.length <= 1 && page > 1) {
                 setPage((current) => Math.max(1, current - 1));
@@ -442,7 +445,6 @@ const EmailRemindersPanel = () => {
                                         const canToggle = status === 'PENDING' || status === 'PAUSED';
                                         const canDelete = status !== 'SENDING';
                                         const isStatusLoading = actionKey === `status-${reminder.id}`;
-                                        const isDeleting = actionKey === `delete-${reminder.id}`;
                                         const frequency = normalizeFrequency(reminder.frequency);
                                         const scheduleText = formatSchedule(reminder);
 
@@ -509,32 +511,10 @@ const EmailRemindersPanel = () => {
                                                             </button>
                                                         ) : null}
 
-                                                        {canDelete && pendingDeleteId === reminder.id ? (
-                                                            <>
-                                                                <button
-                                                                    type="button"
-                                                                    onClick={() => setPendingDeleteId(null)}
-                                                                    disabled={isDeleting}
-                                                                    className="h-7 rounded-md px-1.5 text-micro font-bold text-ink-muted transition hover:bg-surface-muted"
-                                                                >
-                                                                    {t('profile.emailReminders.cancelDelete')}
-                                                                </button>
-                                                                <button
-                                                                    type="button"
-                                                                    onClick={() => handleDelete(reminder.id)}
-                                                                    disabled={isDeleting}
-                                                                    className="inline-flex h-7 items-center gap-1 rounded-md bg-danger px-2 text-micro font-bold text-white transition hover:bg-danger-fg disabled:opacity-60"
-                                                                >
-                                                                    {isDeleting
-                                                                        ? <Loader2 className="h-3 w-3 animate-spin" />
-                                                                        : <Trash2 className="h-3 w-3" />}
-                                                                    {t('profile.emailReminders.confirmDelete')}
-                                                                </button>
-                                                            </>
-                                                        ) : canDelete ? (
+                                                        {canDelete ? (
                                                             <button
                                                                 type="button"
-                                                                onClick={() => setPendingDeleteId(reminder.id)}
+                                                                onClick={() => setPendingDelete(reminder)}
                                                                 disabled={Boolean(actionKey)}
                                                                 title={t('profile.emailReminders.delete')}
                                                                 aria-label={t('profile.emailReminders.delete')}
@@ -640,6 +620,21 @@ const EmailRemindersPanel = () => {
                     </div>
                 </div>
             </div>
+
+            <ConfirmModal
+                isOpen={Boolean(pendingDelete)}
+                onClose={() => {
+                    if (actionKey.startsWith('delete-')) return;
+                    setPendingDelete(null);
+                }}
+                onConfirm={handleDelete}
+                confirming={Boolean(pendingDelete) && actionKey === `delete-${pendingDelete?.id}`}
+                title={t('profile.emailReminders.confirmDeleteTitle')}
+                message={t('profile.emailReminders.confirmDeleteMessage', {
+                    name: pendingDelete?.subject || pendingDelete?.taskName || pendingDelete?.recipientEmail || '',
+                })}
+                confirmText={t('profile.emailReminders.delete')}
+            />
 
             <EmailReminderCreateModal
                 isOpen={isCreateOpen}

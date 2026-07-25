@@ -1,18 +1,19 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
     Send, Save, Tag as TagIcon,
     ChevronLeft, Layout, Type, AlignLeft, Loader2,
     Eye, Edit3, Info, Settings, X
 } from 'lucide-react';
-import { blogService } from '../services/blogService';
+import { blogService, BLOG_STATUS } from '../services/blogService';
 import BlogMarkdown from '../components/BlogMarkdown';
 import BlogMarkdownComposer from '../components/BlogMarkdownComposer';
 import { useToast } from '@/hooks/useToast';
 import useIsMobile from '@hooks/useIsMobile';
 import CustomSelect from '@/components/common/CustomSelect';
 import CreatableMultiSelect from '@/components/common/CreatableMultiSelect';
+import LoadingSpinner from '@components/common/LoadingSpinner';
 
 const DRAFT_STORAGE_KEY = 'xander-lab:blog-publish-draft';
 const PUBLISH_REQUEST_STORAGE_KEY = 'xander-lab:blog-publish-request';
@@ -21,13 +22,17 @@ const createPublishRequestId = () => globalThis.crypto?.randomUUID?.()
     || `publish-${Date.now()}-${Math.random().toString(36).slice(2)}`;
 
 /**
- * 博客发布页面
- * Blog Publish Page - Premium Split Layout (Left: Editor, Right: Settings)
+ * 博客发布 / 编辑页面
  */
 const BlogPublish = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
     const toast = useToast();
+    const [searchParams] = useSearchParams();
+    const editId = searchParams.get('id');
+    const isEditMode = Boolean(editId);
+
+    const [pageLoading, setPageLoading] = useState(isEditMode);
     const [loading, setLoading] = useState(false);
     const [categories, setCategories] = useState([]);
     const [availableTags, setAvailableTags] = useState([]);
@@ -40,7 +45,6 @@ const BlogPublish = () => {
         tags: []
     });
 
-    // --- 移动端设置面板控制 ---
     const isMobile = useIsMobile();
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
     const toggleSettings = () => setIsSettingsOpen(prev => !prev);
@@ -52,6 +56,7 @@ const BlogPublish = () => {
     const contentTextareaRef = useRef(null);
 
     useEffect(() => {
+        if (isEditMode) return;
         try {
             const draft = JSON.parse(localStorage.getItem(DRAFT_STORAGE_KEY));
             if (draft && typeof draft === 'object') {
@@ -60,7 +65,8 @@ const BlogPublish = () => {
         } catch {
             localStorage.removeItem(DRAFT_STORAGE_KEY);
         }
-    }, []);
+    }, [isEditMode]);
+
     useEffect(() => {
         const controller = new AbortController();
         const fetchData = async () => {
@@ -72,23 +78,48 @@ const BlogPublish = () => {
 
                 const formattedOptions = catData.map(c => ({ value: String(c.id), label: c.name }));
                 setCategories(formattedOptions);
-                if (formattedOptions.length > 0) {
+
+                if (isEditMode) {
+                    const post = await blogService.getMyBlogById(editId, { signal: controller.signal });
+                    setFormData({
+                        title: post.title || '',
+                        categoryId: post.category != null ? String(post.category) : (formattedOptions[0]?.value || ''),
+                        summary: post.summary || '',
+                        content: post.content || '',
+                        tags: Array.isArray(post.tags) ? post.tags : [],
+                    });
+                } else if (formattedOptions.length > 0) {
                     setFormData(prev => ({
                         ...prev,
                         categoryId: prev.categoryId || formattedOptions[0].value
                     }));
                 }
 
-                // tagData is typically [{ name: 'React', count: 5 }, ...]
-                setAvailableTags(tagData.map(t => t.name));
+                setAvailableTags(tagData.map(item => item.name));
             } catch (err) {
                 if (err.name === 'CanceledError' || err.code === 'ERR_CANCELED') return;
                 console.error('Failed to fetch data:', err);
+                if (isEditMode) {
+                    toast.error(err.message || t('blog.articleNotFound'));
+                    navigate('/profile', { replace: true });
+                }
+            } finally {
+                setPageLoading(false);
             }
         };
         fetchData();
         return () => controller.abort();
-    }, []);
+        // eslint-disable-next-line react-hooks/exhaustive-deps -- load once per edit id
+    }, [editId, isEditMode, navigate]);
+
+    const buildPayload = (publish) => ({
+        title: formData.title,
+        summary: formData.summary,
+        content: formData.content,
+        categoryId: formData.categoryId,
+        tags: formData.tags,
+        publish,
+    });
 
     const handlePublish = async () => {
         if (!formData.title || !formData.content || !formData.categoryId) {
@@ -97,17 +128,30 @@ const BlogPublish = () => {
         }
 
         setLoading(true);
-        const requestId = localStorage.getItem(PUBLISH_REQUEST_STORAGE_KEY) || createPublishRequestId();
-        localStorage.setItem(PUBLISH_REQUEST_STORAGE_KEY, requestId);
         try {
-            await blogService.publishBlog(formData, { headers: { 'Idempotency-Key': requestId }, timeout: 0 });
+            if (isEditMode) {
+                await blogService.updateBlog(editId, buildPayload(true));
+                await blogService.updateBlogStatus(editId, BLOG_STATUS.PUBLISHED);
+                toast.success(t('blog.publishSuccess'));
+                navigate('/profile');
+                return;
+            }
+
+            const requestId = localStorage.getItem(PUBLISH_REQUEST_STORAGE_KEY) || createPublishRequestId();
+            localStorage.setItem(PUBLISH_REQUEST_STORAGE_KEY, requestId);
+            await blogService.publishBlog(buildPayload(true), { headers: { 'Idempotency-Key': requestId }, timeout: 0 });
             localStorage.removeItem(DRAFT_STORAGE_KEY);
             localStorage.removeItem(PUBLISH_REQUEST_STORAGE_KEY);
             toast.success(t('blog.publishSuccess'));
             navigate('/blog/');
         } catch (err) {
+            if (isEditMode) {
+                toast.error(err.message || t('blog.publishError'));
+                return;
+            }
             const isUncertain = err.code === 'ECONNABORTED' || !err.response;
             if (isUncertain) {
+                const requestId = localStorage.getItem(PUBLISH_REQUEST_STORAGE_KEY);
                 for (let attempt = 0; attempt < 5; attempt += 1) {
                     if (attempt) await new Promise((resolve) => setTimeout(resolve, 1000));
                     try {
@@ -130,32 +174,65 @@ const BlogPublish = () => {
         }
     };
 
-    const handleSaveDraft = () => {
+    const handleSaveDraft = async () => {
+        if (!formData.title || !formData.content || !formData.categoryId) {
+            toast.warning(t('blog.fillRequired'));
+            return;
+        }
+
+        setLoading(true);
         try {
-            localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(formData));
-            toast.success(t('blog.saveDraftSuccess'));
-        } catch (error) {
-            console.error('Failed to save blog draft:', error);
-            toast.error(t('blog.saveDraftError'));
+            if (isEditMode) {
+                await blogService.updateBlog(editId, buildPayload(false));
+                await blogService.updateBlogStatus(editId, BLOG_STATUS.DRAFT);
+                toast.success(t('blog.saveDraftServerSuccess'));
+                navigate('/profile');
+                return;
+            }
+
+            await blogService.publishBlog(buildPayload(false));
+            localStorage.removeItem(DRAFT_STORAGE_KEY);
+            toast.success(t('blog.saveDraftServerSuccess'));
+            navigate('/profile');
+        } catch (err) {
+            // Fallback: keep local draft for new posts only
+            if (!isEditMode) {
+                try {
+                    localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(formData));
+                    toast.warning(t('blog.saveDraftLocalFallback'));
+                    return;
+                } catch (error) {
+                    console.error('Failed to save blog draft:', error);
+                }
+            }
+            toast.error(err.message || t('blog.saveDraftError'));
+        } finally {
+            setLoading(false);
         }
     };
 
+    const handleBack = () => {
+        navigate(isEditMode ? '/profile' : '/blog/');
+    };
+
+    if (pageLoading) {
+        return <LoadingSpinner fullScreen text={t('blog.loading')} />;
+    }
+
     return (
         <div className="h-dvh bg-surface flex flex-col overflow-hidden font-sans">
-            {/* 顶部导航栏 / Header */}
             <header className="h-16 shrink-0 border-b border-border/60 flex items-center justify-between gap-2 px-3 sm:px-6 bg-canvas z-20 shadow-sm relative">
                 <div className="flex min-w-0 items-center gap-2 sm:gap-4">
                     <button
-                        onClick={() => navigate('/blog/')}
+                        onClick={handleBack}
                         className="p-2 -ml-2 text-ink-faint hover:bg-surface-muted rounded-xl transition-all group"
-                        title={t('blog.backToBlog')}
+                        title={isEditMode ? t('blog.backToManage') : t('blog.backToBlog')}
                     >
                         <ChevronLeft className="w-5 h-5 transition-transform" />
                     </button>
                     <div className="hidden sm:block h-4 w-px bg-border"></div>
                     <span className="truncate text-xs font-black uppercase tracking-widest text-ink flex items-center gap-2">
-                        {/*<span className="w-2 h-2 rounded-full bg-accent animate-pulse ring-4 ring-accent/20"></span>*/}
-                        {t('blog.publishTitle')}
+                        {isEditMode ? t('blog.editTitle') : t('blog.publishTitle')}
                     </span>
                 </div>
 
@@ -168,7 +245,6 @@ const BlogPublish = () => {
                     >
                         <Save className="w-4 h-4" /> <span className="hidden md:inline">{t('blog.saveDraft')}</span>
                     </button>
-                    {/* 移动端设置面板切换按钮 */}
                     <button
                         onClick={toggleSettings}
                         className="lg:hidden p-2 text-ink-muted hover:text-accent hover:bg-surface-muted rounded-xl transition-all"
@@ -191,7 +267,6 @@ const BlogPublish = () => {
             </header>
 
             <div className="flex-1 flex overflow-hidden relative">
-                {/* 主编辑区 / Left Pane - Editor & Preview */}
                 <main className="flex-1 min-w-0 flex flex-col relative bg-canvas rounded-tr-[0.5rem] border-r border-t border-border lg:border-r lg:border-t shadow-[10px_0_30px_-15px_rgba(0,0,0,0.05)] z-10 transition-all overflow-hidden mt-2 ml-2">
                     <div className="absolute top-3 right-3 sm:top-6 sm:right-8 z-20">
                         <div className="flex bg-surface-muted/80 backdrop-blur-md p-1 rounded-2xl border border-border/50 shadow-sm">
@@ -212,7 +287,6 @@ const BlogPublish = () => {
 
                     <div className="flex-1 overflow-y-auto custom-scrollbar flex justify-center scroll-smooth">
                         <div className="w-full max-w-4xl px-5 sm:px-8 md:px-16 pt-20 pb-10 flex flex-col gap-10 min-h-full">
-                            {/* 标题 */}
                             <div className="relative group">
                                 {!isPreview && (
                                     <div className="absolute -left-10 top-5 text-border-strong pointer-events-none transition-colors group-focus-within:text-accent">
@@ -232,7 +306,6 @@ const BlogPublish = () => {
                                 />
                             </div>
 
-                            {/* 内容区 */}
                             <div className={`flex-1 relative group ${isPreview ? 'hidden' : 'flex'}`}>
                                 <div className="w-full">
                                 <BlogMarkdownComposer
@@ -245,7 +318,6 @@ const BlogPublish = () => {
                                 </div>
                             </div>
 
-                            {/* 预览区 */}
                             {isPreview && (
                                 <div className="prose max-w-none pt-2 mb-20">
                                     {formData.title && (
@@ -267,7 +339,6 @@ const BlogPublish = () => {
                     </div>
                 </main>
 
-                {/* 移动端遮罩层 */}
                 {isSettingsOpen && (
                     <div
                         className="lg:hidden fixed inset-0 bg-black/30 z-30"
@@ -276,11 +347,8 @@ const BlogPublish = () => {
                     />
                 )}
 
-                {/* 侧边栏 / Right Pane - Configuration */}
                 <aside className={`fixed lg:static top-[64px] right-0 bottom-0 w-[min(20rem,100vw)] lg:w-[420px] shrink-0 bg-surface flex flex-col z-40 transform transition-transform duration-300 ease-in-out ${isSettingsOpen ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'}`}>
                     <div className="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar p-6 lg:p-10 space-y-12 pb-32">
-
-                        {/* 状态与控制面板 */}
                         <div>
                             <span className="text-micro font-black uppercase tracking-[0.2em] text-ink-faint mb-8 block flex items-center gap-3">
                                 <span className="h-px bg-border flex-1"></span>
@@ -288,7 +356,6 @@ const BlogPublish = () => {
                                 <span className="h-px bg-border flex-1"></span>
                             </span>
 
-                            {/* 分类 / Category */}
                             <section className="space-y-4 mb-10">
                                 <div className="flex items-center gap-2 text-ink-muted group">
                                     <Layout className="w-4 h-4 group-hover:text-accent transition-colors" />
@@ -303,7 +370,6 @@ const BlogPublish = () => {
                                 />
                             </section>
 
-                            {/* 标签 / Tags */}
                             <section className="space-y-4 mb-10 relative">
                                 <div className="flex items-center justify-between group mb-2">
                                     <div className="flex items-center gap-2 text-ink-muted">
@@ -319,7 +385,6 @@ const BlogPublish = () => {
                                 />
                             </section>
 
-                            {/* 摘要 / Abstract */}
                             <section className="space-y-4">
                                 <div className="flex items-center justify-between group">
                                     <div className="flex items-center gap-2 text-ink-muted">
@@ -338,10 +403,7 @@ const BlogPublish = () => {
                                 />
                             </section>
                         </div>
-
                     </div>
-
-                    {/* 底部渐变遮罩，改善侧边栏滚动视觉效果 */}
                     <div className="absolute bottom-0 left-0 w-full h-12 bg-gradient-to-t from-surface to-transparent pointer-events-none z-10"></div>
                 </aside>
             </div>

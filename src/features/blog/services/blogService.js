@@ -6,33 +6,62 @@
  * @module blog/services
  */
 
-import { get, post } from '@api';
+import { delete as del, get, patch, post, put } from '@api';
 
 const BASE = '/api/blog';
 
+export const BLOG_STATUS = {
+  DRAFT: 0,
+  PUBLISHED: 1,
+  TRASH: -1,
+};
+
 export const blogService = {
   /**
-   * 发布博客
+   * 发布博客或保存草稿（publish=false）
    * POST /api/blog/posts
-   *
-   * @param {Object} blogData - { title, summary, content, categoryId, tags }
-   * @param {Object} [config] - 额外 axios 配置（如 { signal }）
-   * @returns {Promise<number>} 文章ID
    */
   publishBlog: (blogData, config) => {
     return post(`${BASE}/posts`, blogData, config);
   },
   getPublishStatus: (requestId, config) => get(`${BASE}/posts/publish-status`, { requestId }, config),
+
+  /**
+   * 我的文章管理列表
+   * GET /api/blog/posts/mine?status=&search=&page=&size=
+   * status 不传 = 草稿+已发布；0 草稿；1 已发布；-1 回收站
+   */
+  getMyBlogs: ({ status, search = '', page = 1, size = 10 } = {}, config) => {
+    const params = Object.fromEntries(
+      Object.entries({ status, search, page, size }).filter(
+        ([, v]) => v !== '' && v !== undefined && v !== null
+      )
+    );
+    return get(`${BASE}/posts/mine`, params, config);
+  },
+
+  /** GET /api/blog/posts/mine/{id} */
+  getMyBlogById: (id, config) => get(`${BASE}/posts/mine/${id}`, undefined, config),
+
+  /** PUT /api/blog/posts/{id} */
+  updateBlog: (id, blogData, config) => put(`${BASE}/posts/${id}`, blogData, config),
+
+  /** PATCH /api/blog/posts/{id}/status */
+  updateBlogStatus: (id, status, config) =>
+    patch(`${BASE}/posts/${id}/status`, { status }, config),
+
+  /** DELETE /api/blog/posts/{id} — soft delete → trash */
+  softDeleteBlog: (id, config) => del(`${BASE}/posts/${id}`, undefined, config),
+
+  /** DELETE /api/blog/posts/{id}/permanent — only from trash */
+  permanentlyDeleteBlog: (id, config) =>
+    del(`${BASE}/posts/${id}/permanent`, undefined, config),
+
   /**
    * 获取博客列表（支持搜索、分类、标签筛选，支持分页）
    * GET /api/blog/posts?search=&category=&tag=&page=1&size=10
-   *
-   * @param {Object} params - 查询参数 { search, category, tag, page, size }
-   * @param {Object} [config] - 额外 axios 配置（如 { signal }）
-   * @returns {Promise<Object>} 分页对象 { records: [], total: 0, current: 1, ... }
    */
   getBlogs: ({ search = '', category = '', tag = '', page = 1, size = 10 } = {}, config) => {
-    // 过滤空值参数
     const params = Object.fromEntries(
       Object.entries({ search, category, tag, page, size }).filter(
         ([, v]) => v !== '' && v !== undefined && v !== null
@@ -41,72 +70,26 @@ export const blogService = {
     return get(`${BASE}/posts`, params, config);
   },
 
-  /**
-   * 获取最新发布的文章（前N条）
-   * GET /api/blog/posts/recent?limit=N
-   *
-   * @param {number} limit
-   * @param {Object} [config] - 额外 axios 配置（如 { signal }）
-   * @returns {Promise<Array>}
-   */
   getRecentBlogs: (limit = 5, config) => {
     return get(`${BASE}/posts/recent`, { limit }, config);
   },
 
-  /**
-   * 获取博客详情
-   * GET /api/blog/posts/{id}
-   *
-   * @param {string|number} id
-   * @param {Object} [config] - 额外 axios 配置（如 { signal }）
-   * @returns {Promise<Object>}
-   */
   getBlogById: (id, config) => {
     return get(`${BASE}/posts/${id}`, undefined, config);
   },
 
-  /**
-   * 获取所有分类（含文章数量）
-   * GET /api/blog/categories
-   *
-   * @param {Object} [config] - 额外 axios 配置（如 { signal }）
-   * @returns {Promise<Array>}
-   */
   getCategories: (config) => {
     return get(`${BASE}/categories`, undefined, config);
   },
 
-  /**
-   * 获取所有标签（含文章数量，按数量降序）
-   * GET /api/blog/tags
-   *
-   * @param {Object} [config] - 额外 axios 配置（如 { signal }）
-   * @returns {Promise<Array<{ name: string, count: number }>>}
-   */
   getAllTags: (config) => {
     return get(`${BASE}/tags`, undefined, config);
   },
 
-  /**
-   * 获取热门标签（前N个）
-   * GET /api/blog/tags/popular?limit=N
-   *
-   * @param {number} limit
-   * @param {Object} [config] - 额外 axios 配置（如 { signal }）
-   * @returns {Promise<Array<{ name: string, count: number }>>}
-   */
   getPopularTags: (limit = 8, config) => {
     return get(`${BASE}/tags/popular`, { limit }, config);
   },
 
-  /**
-   * 记录文章阅读（后端按 userId/IP 去重防刷，24h 冷却期）
-   * POST /api/blog/posts/{id}/view
-   *
-   * @param {string|number} id - 文章ID
-   * @param {Object} [config] - 额外 axios 配置
-   * @returns {Promise<{ counted: boolean }>} counted=true 有效阅读，false 冷却期内重复
-   */
   recordView: (id, config) => {
     return post(`${BASE}/posts/${id}/view`, undefined, config);
   },

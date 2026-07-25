@@ -12,6 +12,7 @@ const ShareModals = ({
     // Modal visibility
     addModalOpen,
     deleteModalOpen,
+    deleteScenarioModalOpen,
     helpModalOpen,
     editScenarioModalOpen,
     tourWelcomeOpen,
@@ -20,6 +21,8 @@ const ShareModals = ({
     onAddFileSubmit,
     onCloseDeleteModal,
     onConfirmDeleteFile,
+    onCloseDeleteScenarioModal,
+    onConfirmDeleteScenario,
     onCloseHelpModal,
     onApplySample,
     onCloseEditScenarioModal,
@@ -31,6 +34,7 @@ const ShareModals = ({
     newFileName,
     setNewFileName,
     fileToDeleteIdx,
+    scenarioToDeleteIdx,
     helpType,
     editScenTitleZh,
     setEditScenTitleZh,
@@ -38,6 +42,7 @@ const ShareModals = ({
     setEditScenTitleEn,
     // Data
     libFiles,
+    scenarios = [],
     // Tour
     currentTourTarget,
 }) => {
@@ -108,6 +113,37 @@ const ShareModals = ({
                             {fileToDeleteIdx !== null ? libFiles[fileToDeleteIdx].name : ''}
                         </span>
                         <p className="text-caption text-ink-faint mt-2">{t('components.share.modals.deleteLoseWarning')}</p>
+                    </div>
+                </div>
+            </Modal>
+
+            {/* --- Delete Scenario Modal --- */}
+            <Modal
+                isOpen={deleteScenarioModalOpen}
+                onClose={onCloseDeleteScenarioModal}
+                title={t('components.share.modals.deleteScenarioConfirm')}
+                width="max-w-[360px]"
+                footer={
+                    <>
+                        <button onClick={onCloseDeleteScenarioModal} className="px-5 py-2.5 rounded-xl text-caption font-bold text-ink-muted hover:bg-surface-muted transition-all">{t('components.share.modals.cancel')}</button>
+                        <button onClick={onConfirmDeleteScenario} className="px-6 py-2.5 rounded-xl text-caption font-bold text-white bg-danger hover:bg-danger-fg shadow-lg shadow-danger/20 active:scale-95 transition-all flex items-center gap-2">
+                            <Trash2 className="w-3.5 h-3.5" /> {t('components.share.modals.confirmDelete')}
+                        </button>
+                    </>
+                }
+            >
+                <div className="py-2 text-body font-medium flex items-start gap-4 text-ink-muted">
+                    <div className="w-10 h-10 rounded-full bg-danger-soft text-danger shrink-0 flex items-center justify-center border border-danger/30">
+                        <Trash2 className="w-5 h-5" />
+                    </div>
+                    <div>
+                        {t('components.share.modals.deleteScenarioWarning')}<br />
+                        <span className="text-ink font-black italic border-b border-danger/30 mt-2 inline-block">
+                            {scenarioToDeleteIdx !== null
+                                ? (scenarios[scenarioToDeleteIdx]?.titleZh || scenarios[scenarioToDeleteIdx]?.titleEn || '')
+                                : ''}
+                        </span>
+                        <p className="text-caption text-ink-faint mt-2">{t('components.share.modals.deleteScenarioLoseWarning')}</p>
                     </div>
                 </div>
             </Modal>
@@ -222,6 +258,7 @@ ShareModals.propTypes = {
     // Modal visibility
     addModalOpen: PropTypes.bool.isRequired,
     deleteModalOpen: PropTypes.bool.isRequired,
+    deleteScenarioModalOpen: PropTypes.bool,
     helpModalOpen: PropTypes.bool.isRequired,
     editScenarioModalOpen: PropTypes.bool.isRequired,
     tourWelcomeOpen: PropTypes.bool.isRequired,
@@ -230,6 +267,8 @@ ShareModals.propTypes = {
     onAddFileSubmit: PropTypes.func.isRequired,
     onCloseDeleteModal: PropTypes.func.isRequired,
     onConfirmDeleteFile: PropTypes.func.isRequired,
+    onCloseDeleteScenarioModal: PropTypes.func,
+    onConfirmDeleteScenario: PropTypes.func,
     onCloseHelpModal: PropTypes.func.isRequired,
     onApplySample: PropTypes.func.isRequired,
     onCloseEditScenarioModal: PropTypes.func.isRequired,
@@ -241,6 +280,7 @@ ShareModals.propTypes = {
     newFileName: PropTypes.string.isRequired,
     setNewFileName: PropTypes.func.isRequired,
     fileToDeleteIdx: PropTypes.number,
+    scenarioToDeleteIdx: PropTypes.number,
     helpType: PropTypes.string.isRequired,
     editScenTitleZh: PropTypes.string.isRequired,
     setEditScenTitleZh: PropTypes.func.isRequired,
@@ -248,6 +288,7 @@ ShareModals.propTypes = {
     setEditScenTitleEn: PropTypes.func.isRequired,
     // Data
     libFiles: PropTypes.array.isRequired,
+    scenarios: PropTypes.array,
     // Tour
     currentTourTarget: PropTypes.object,
 };

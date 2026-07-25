@@ -46,6 +46,7 @@
 | `CustomSelect` | `@components/common/CustomSelect` | 单选枚举、状态和权限切换 | `options: { value, label }[]`、`value`、`onChange`、`size: md/sm`（`sm` 为紧凑表单高度，匹配 `h-9`）；支持键盘、点击外部关闭与自动向上展开。禁止新写原生 `select`。 |
 | `CreatableMultiSelect` | `@components/common/CreatableMultiSelect` | 标签、多选项，且允许输入新项 | `value: string[]`、`onChange`、`options`、`placeholder`。 |
 | `Modal` | `@components/common/Modal` | 确认、编辑、表单弹窗 | `isOpen`、`onClose`、`title`、`footer`、`width`；已实现 Portal、焦点管理与背景滚动锁定。 |
+| `ConfirmModal` | `@components/common/ConfirmModal` | 删除、退出登录等二次确认 | 基于 `Modal`；`isOpen`、`onClose`、`onConfirm`、`title`、`message`/`children`、`confirmText`、`cancelText`、`confirming`、`danger`（默认 true）。 |
 | `Toast` | `@components/common/Toast` | 用户操作结果反馈 | 优先由 `http.js` 处理请求错误；页面主动提示使用 `window.__toast` 或现有 Toast 上下文，勿自行造 toast。 |
 | `TourSpotlight` | `@components/common/TourSpotlight` | 新功能引导和聚焦提示 | `targetConfig`、`onSkip`。 |
 | `LoadingSpinner` | `@components/common/LoadingSpinner` | 页面或局部加载态 | `fullScreen`、`text`、`size: sm/md/lg`。 |
@@ -55,7 +56,7 @@
 
 | 组件 | 路径 | 适用场景 | 关键 API / 说明 |
 | --- | --- | --- | --- |
-| `CodeBlock` | `@components/common/CodeBlock` | 静态代码展示与复制 | `code` 或 `children`、`language`、`className`。 |
+| `CodeBlock` | `@components/common/CodeBlock` | 代码展示；`html`/`htm`/`svg` 支持代码与预览切换 | `code` 或 `children`、`language`、`className`、`defaultMode: 'code' \| 'preview'`；工具栏含语言标签、代码/预览切换、复制。预览用沙箱 iframe（`allow-scripts`）。 |
 | `BrowserWindow` | `@components/common/BrowserWindow` | 在文档/案例中模拟浏览器预览 | 适合演示内容外壳，不用于真实 iframe 安全隔离。 |
 | `PhaseCard` | `@components/common/PhaseCard` | 阶段、流程、时间线卡片 | `phase`、`index`、`color`。 |
 

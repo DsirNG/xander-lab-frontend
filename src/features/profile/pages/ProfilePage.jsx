@@ -8,20 +8,24 @@ import {
     KeyRound,
     LogOut,
     Mail,
+    NotebookPen,
     Settings2,
     Shield,
     SlidersHorizontal,
     UserRound,
 } from 'lucide-react';
+import ConfirmModal from '@components/common/ConfirmModal';
+import LoadingSpinner from '@components/common/LoadingSpinner';
 import { useToast } from '@hooks/useToast';
 import { authService } from '@features/auth/services/authService';
+import BlogManagePanel from '../components/BlogManagePanel';
 import EmailRemindersPanel from '../components/EmailRemindersPanel';
-import LoadingSpinner from '@components/common/LoadingSpinner';
 
 const NAV_ITEMS = [
     { id: 'account', icon: UserRound, enabled: false },
     { id: 'security', icon: Shield, enabled: false },
     { id: 'notifications', icon: Bell, enabled: false },
+    { id: 'blogManage', icon: NotebookPen, enabled: true },
     { id: 'emailReminders', icon: CalendarClock, enabled: true },
     { id: 'templates', icon: Mail, enabled: false },
     { id: 'history', icon: FileText, enabled: false },
@@ -34,8 +38,10 @@ const ProfilePage = () => {
     const toast = useToast();
     const navigate = useNavigate();
     const [userInfo, setUserInfo] = useState(() => authService.getLocalUserInfo());
-    const [activeNav, setActiveNav] = useState('emailReminders');
+    const [activeNav, setActiveNav] = useState('blogManage');
     const [authChecking, setAuthChecking] = useState(!userInfo);
+    const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
+    const [loggingOut, setLoggingOut] = useState(false);
 
     useEffect(() => {
         const info = authService.getLocalUserInfo();
@@ -57,7 +63,7 @@ const ProfilePage = () => {
     }, [navigate]);
 
     if (authChecking || !userInfo) {
-        return <LoadingSpinner fullScreen text={t('profile.emailReminders.loading')} />;
+        return <LoadingSpinner fullScreen text={t('profile.loading')} />;
     }
 
     const displayName = userInfo.nickname || userInfo.username || t('profile.account');
@@ -74,12 +80,14 @@ const ProfilePage = () => {
     };
 
     const handleLogout = async () => {
+        setLoggingOut(true);
         try {
             await authService.logout();
             setUserInfo(null);
             window.location.href = '/';
         } catch (err) {
             console.error('Logout failed', err);
+            setLoggingOut(false);
         }
     };
 
@@ -138,7 +146,7 @@ const ProfilePage = () => {
                 <div className="border-t border-border p-3">
                     <button
                         type="button"
-                        onClick={handleLogout}
+                        onClick={() => setLogoutConfirmOpen(true)}
                         className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-xs font-semibold text-ink-muted transition hover:bg-danger-soft hover:text-danger"
                     >
                         <LogOut className="h-3.5 w-3.5" />
@@ -148,7 +156,9 @@ const ProfilePage = () => {
             </aside>
 
             <div className="flex min-h-0 min-w-0 flex-1 flex-col bg-canvas">
-                {activeNav === 'emailReminders' ? (
+                {activeNav === 'blogManage' ? (
+                    <BlogManagePanel />
+                ) : activeNav === 'emailReminders' ? (
                     <EmailRemindersPanel />
                 ) : (
                     <div className="flex flex-1 flex-col items-center justify-center gap-2 px-6 py-16 text-center">
@@ -162,6 +172,17 @@ const ProfilePage = () => {
                     </div>
                 )}
             </div>
+
+            <ConfirmModal
+                isOpen={logoutConfirmOpen}
+                onClose={() => !loggingOut && setLogoutConfirmOpen(false)}
+                onConfirm={handleLogout}
+                confirming={loggingOut}
+                danger
+                title={t('profile.logoutConfirmTitle')}
+                message={t('profile.logoutConfirmMessage')}
+                confirmText={t('nav.logout')}
+            />
         </div>
     );
 };

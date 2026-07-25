@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Menu } from 'lucide-react';
 import LiveDemoSandbox from './codeComponent/demo/LiveDemoSandbox';
 import ComponentService from '../services/componentService';
@@ -14,6 +15,7 @@ import { INIT_FILES, INIT_CSS, INIT_WRAPPER, INIT_SCENARIOS, INIT_META } from '.
 const ComponentShare = () => {
     const navigate = useNavigate();
     const toast = useToast();
+    const { t } = useTranslation();
 
     // --- 基础信息状态 ---
     const [meta, setMeta] = useState({ titleZh: '', titleEn: '', version: '1.0.0', descriptionZh: '', descriptionEn: '' });
@@ -96,6 +98,8 @@ const ComponentShare = () => {
     const [newFileName, setNewFileName] = useState('NewComponent.jsx');
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
     const [fileToDeleteIdx, setFileToDeleteIdx] = useState(null);
+    const [deleteScenarioModalOpen, setDeleteScenarioModalOpen] = useState(false);
+    const [scenarioToDeleteIdx, setScenarioToDeleteIdx] = useState(null);
 
     const combinedLibCode = useMemo(() => libFiles.map(f => `/* === FILE: ${f.name} === */\n${f.content}`).join('\n\n'), [libFiles]);
 
@@ -175,8 +179,23 @@ const ComponentShare = () => {
     };
 
     const handleDeleteScenario = (i) => {
-        setScenarios(scenarios.filter(x => x.id !== scenarios[i].id));
-        setActiveSIdx(0);
+        if (scenarios.length <= 1) {
+            toast.warning(t('components.share.modals.keepOneScenario', '至少保留一个场景'));
+            return;
+        }
+        setScenarioToDeleteIdx(i);
+        setDeleteScenarioModalOpen(true);
+    };
+
+    const confirmDeleteScenario = () => {
+        if (scenarioToDeleteIdx === null) return;
+        const idx = scenarioToDeleteIdx;
+        const next = scenarios.filter((_, i) => i !== idx);
+        setScenarios(next);
+        if (activeSIdx === idx) setActiveSIdx(Math.max(0, idx - 1));
+        else if (activeSIdx > idx) setActiveSIdx(activeSIdx - 1);
+        setDeleteScenarioModalOpen(false);
+        setScenarioToDeleteIdx(null);
     };
 
     const handleOpenAddFile = () => { setNewFileName('NewComponent.jsx'); setAddModalOpen(true); };
@@ -249,20 +268,27 @@ const ComponentShare = () => {
 
             <ShareModals
                 addModalOpen={addModalOpen} deleteModalOpen={deleteModalOpen}
+                deleteScenarioModalOpen={deleteScenarioModalOpen}
                 helpModalOpen={helpModalOpen} editScenarioModalOpen={editScenarioModalOpen}
                 tourWelcomeOpen={tourStep === -2}
                 onCloseAddModal={() => setAddModalOpen(false)} onAddFileSubmit={handleAddFileSubmit}
                 onCloseDeleteModal={() => setDeleteModalOpen(false)} onConfirmDeleteFile={confirmDeleteFile}
+                onCloseDeleteScenarioModal={() => setDeleteScenarioModalOpen(false)}
+                onConfirmDeleteScenario={confirmDeleteScenario}
                 onCloseHelpModal={() => setHelpModalOpen(false)} onApplySample={handleApplySample}
                 onCloseEditScenarioModal={() => setEditScenarioModalOpen(false)} onEditScenarioSubmit={handleEditScenarioSubmit}
                 onTourWelcomeSkip={() => { setTourStep(-1); localStorage.setItem('hasSeenTourXanderLab', 'true'); toast.info("已跳过向导。如果后续需要，您随时可以点击页面右上角的「新手向导」按钮重新进入。"); }}
                 onTourWelcomeStart={() => setTourStep(0)}
                 onTourSpotlightSkip={handleTourSpotlightSkip}
                 newFileName={newFileName} setNewFileName={setNewFileName}
-                fileToDeleteIdx={fileToDeleteIdx} helpType={helpType}
+                fileToDeleteIdx={fileToDeleteIdx}
+                scenarioToDeleteIdx={scenarioToDeleteIdx}
+                helpType={helpType}
                 editScenTitleZh={editScenTitleZh} setEditScenTitleZh={setEditScenTitleZh}
                 editScenTitleEn={editScenTitleEn} setEditScenTitleEn={setEditScenTitleEn}
-                libFiles={libFiles} currentTourTarget={currentTourTarget}
+                libFiles={libFiles}
+                scenarios={scenarios}
+                currentTourTarget={currentTourTarget}
             />
         </div>
     );
