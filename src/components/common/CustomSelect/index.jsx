@@ -16,6 +16,7 @@ const DownIcon = () => (
  * @param {function} onChange - 值改变回调
  * @param {string} placeholder - 占位符文字
  * @param {string} className - 额外的类名
+ * @param {string} size - 尺寸: 'md'(默认) | 'sm'(紧凑，匹配表单 h-9)
  * @param {string} align - [Deprecated] 统一对齐方式，建议使用 textAlign 和 dropdownAlign
  * @param {string} textAlign - 触发器文字对齐方式: 'left' | 'center' | 'right'，默认 'left'
  * @param {string} dropdownAlign - 下拉选项对齐方式: 'left' | 'center' | 'right'，默认 'left'
@@ -27,6 +28,7 @@ const CustomSelect = ({
   onChange,
   placeholder = '请选择',
   className = '',
+  size = 'md',
   align = 'left',
   textAlign,
   dropdownAlign,
@@ -47,35 +49,50 @@ const CustomSelect = ({
   const selectedOption = options.find(opt => opt.value === value);
   const displayText = selectedOption ? selectedOption.label : placeholder;
 
-  // 检测边界并决定下拉框方向
+  // 获取触发器在视口与各 overflow 祖先内的可用上下空间
+  const getAvailableSpace = useCallback((triggerEl) => {
+    const triggerRect = triggerEl.getBoundingClientRect();
+    let topBound = 0;
+    let bottomBound = window.innerHeight;
+
+    let parent = triggerEl.parentElement;
+    while (parent && parent !== document.documentElement) {
+      const { overflowY } = window.getComputedStyle(parent);
+      if (overflowY === 'auto' || overflowY === 'scroll' || overflowY === 'hidden' || overflowY === 'clip') {
+        const parentRect = parent.getBoundingClientRect();
+        topBound = Math.max(topBound, parentRect.top);
+        bottomBound = Math.min(bottomBound, parentRect.bottom);
+      }
+      parent = parent.parentElement;
+    }
+
+    return {
+      spaceAbove: Math.max(0, triggerRect.top - topBound),
+      spaceBelow: Math.max(0, bottomBound - triggerRect.bottom),
+      triggerRect,
+    };
+  }, []);
+
+  // 检测边界并决定下拉框方向（同时考虑视口与 overflow 裁剪祖先）
   const checkBoundary = useCallback(() => {
     if (!selectRef.current || !isOpen) return;
 
-    const triggerRect = selectRef.current.getBoundingClientRect();
-    const viewportHeight = window.innerHeight;
-    const spaceBelow = viewportHeight - triggerRect.bottom;
-    const spaceAbove = triggerRect.top;
+    const { spaceAbove, spaceBelow } = getAvailableSpace(selectRef.current);
+    const optionHeightPx = size === 'sm' ? 32 : 40;
+    const measuredHeight = dropdownRef.current?.getBoundingClientRect().height;
+    const dropdownHeight = measuredHeight && measuredHeight > 0
+      ? measuredHeight
+      : Math.min(options.length * optionHeightPx + 12, 15 * 16 + 12);
 
-    // 估算下拉框高度（最大高度 15rem + padding）
-    const estimatedDropdownHeight = Math.min(
-      options.length * 2.5 + 0.5, // 每个选项约 2.5rem + padding
-      15 + 0.5 // 最大高度 15rem + padding
-    ) * 16; // 转换为像素（假设 1rem = 16px）
-
-    // 如果下方空间不足，且上方空间足够，则向上展开
-    const shouldUpward = spaceBelow < estimatedDropdownHeight && spaceAbove >= estimatedDropdownHeight;
-
-    // 如果下拉框已渲染，使用实际高度进行二次检测
-    if (dropdownRef.current) {
-      const dropdownRect = dropdownRef.current.getBoundingClientRect();
-      const actualBottomPosition = triggerRect.bottom + dropdownRect.height;
-      const actualShouldUpward = actualBottomPosition > viewportHeight && spaceAbove >= dropdownRect.height;
-
-      setIsUpward(actualShouldUpward);
-    } else {
-      setIsUpward(shouldUpward);
+    const overflowsBelow = spaceBelow < dropdownHeight + 8;
+    let shouldUpward = false;
+    if (overflowsBelow) {
+      // 下方不够时：上方够就上翻；两边都不够则选更大一侧
+      shouldUpward = spaceAbove >= dropdownHeight + 8 || spaceAbove > spaceBelow;
     }
-  }, [isOpen, options.length]);
+
+    setIsUpward(shouldUpward);
+  }, [getAvailableSpace, isOpen, options.length, size]);
 
   // 点击外部关闭下拉框
   useEffect(() => {
@@ -197,7 +214,7 @@ const CustomSelect = ({
     : undefined;
 
   return (
-    <div className={`${styles.customSelect} ${className}`} ref={selectRef}>
+    <div className={`${styles.customSelect} ${size === 'sm' ? styles.sm : ''} ${className}`} ref={selectRef}>
       <button
         type="button"
         role="combobox"

@@ -6,7 +6,7 @@
 
 | 组件 | 路径 | 适用场景 | 关键 API / 说明 |
 | --- | --- | --- | --- |
-| `CustomSelect` | `@components/common/CustomSelect` | 单选枚举、状态和权限切换 | `options: { value, label }[]`、`value`、`onChange`；支持键盘、点击外部关闭与自动向上展开。禁止新写原生 `select`。 |
+| `CustomSelect` | `@components/common/CustomSelect` | 单选枚举、状态和权限切换 | `options: { value, label }[]`、`value`、`onChange`、`size: md/sm`（`sm` 为紧凑表单高度，匹配 `h-9`）；支持键盘、点击外部关闭与自动向上展开。禁止新写原生 `select`。 |
 | `CreatableMultiSelect` | `@components/common/CreatableMultiSelect` | 标签、多选项，且允许输入新项 | `value: string[]`、`onChange`、`options`、`placeholder`。 |
 | `Modal` | `@components/common/Modal` | 确认、编辑、表单弹窗 | `isOpen`、`onClose`、`title`、`footer`、`width`；已实现 Portal、焦点管理与背景滚动锁定。 |
 | `Toast` | `@components/common/Toast` | 用户操作结果反馈 | 优先由 `http.js` 处理请求错误；页面主动提示使用 `window.__toast` 或现有 Toast 上下文，勿自行造 toast。 |
