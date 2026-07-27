@@ -754,6 +754,12 @@ export default {
     invalidImage: 'JPEG、PNG、WebP、GIF 画像を選択してください',
     dropHint: 'JPG、PNG、WebP、GIF に対応（10MB まで推奨）',
     newTask: '新しいタスク',
+    history: '生成履歴',
+    historyLoading: '生成履歴を読み込み中',
+    historyEmpty: '生成履歴はまだありません。',
+    historyLoadFailed: '生成履歴を読み込めませんでした',
+    untitledTask: '無題のモデル',
+    status: { created: '待機中', running: '生成中', ready: '完了', failed: '失敗' },
     back: '戻る',
   },
   footer: {

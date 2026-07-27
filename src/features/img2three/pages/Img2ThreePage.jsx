@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import {
   ArrowLeft,
   Download,
+  History,
   ImagePlus,
   Loader2,
   Sparkles,
@@ -56,6 +57,9 @@ const Img2ThreePage = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [initialLoading, setInitialLoading] = useState(Boolean(taskId));
   const [dragActive, setDragActive] = useState(false);
+  const [historyVisible, setHistoryVisible] = useState(false);
+  const [historyLoading, setHistoryLoading] = useState(false);
+  const [historyTasks, setHistoryTasks] = useState([]);
 
   const viewerApiRef = useRef(null);
   const streamStartedRef = useRef(false);
@@ -231,6 +235,20 @@ const Img2ThreePage = () => {
     navigate('/lab/img2three', { replace: true });
   };
 
+  const handleToggleHistory = async () => {
+    const nextVisible = !historyVisible;
+    setHistoryVisible(nextVisible);
+    if (!nextVisible) return;
+    setHistoryLoading(true);
+    try {
+      setHistoryTasks(await img2threeService.listTasks({ _silent: true }));
+    } catch (err) {
+      toast.error(err?.message || t('img2three.historyLoadFailed'));
+    } finally {
+      setHistoryLoading(false);
+    }
+  };
+
   if (initialLoading) {
     return <LoadingSpinner fullScreen text={t('img2three.restoring')} />;
   }
@@ -246,6 +264,15 @@ const Img2ThreePage = () => {
           <h1 className="mt-1 text-title font-bold text-ink">{t('img2three.title')}</h1>
           <p className="mt-2 max-w-2xl text-body text-ink-secondary">{t('img2three.subtitle')}</p>
         </div>
+        <div className="flex flex-wrap gap-2">
+          <button
+            type="button"
+            onClick={handleToggleHistory}
+            className="inline-flex items-center gap-2 rounded-xl border border-border bg-surface px-4 py-2 text-sm font-semibold text-ink-secondary transition hover:border-accent hover:text-accent"
+          >
+            <History className="h-4 w-4" aria-hidden="true" />
+            {t('img2three.history')}
+          </button>
         {taskId ? (
           <button
             type="button"
@@ -256,7 +283,34 @@ const Img2ThreePage = () => {
             {t('img2three.newTask')}
           </button>
         ) : null}
+        </div>
       </div>
+
+      {historyVisible ? (
+        <section className="mb-6 rounded-2xl border border-border bg-surface p-4 shadow-sm">
+          <div className="mb-3 flex items-center justify-between gap-3">
+            <h2 className="text-body font-semibold text-ink">{t('img2three.history')}</h2>
+            {historyLoading ? <Loader2 className="h-4 w-4 animate-spin text-accent" aria-label={t('img2three.historyLoading')} /> : null}
+          </div>
+          {!historyLoading && historyTasks.length === 0 ? <p className="text-caption text-ink-muted">{t('img2three.historyEmpty')}</p> : null}
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {historyTasks.map((item) => (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => navigate(`/lab/img2three/${item.id}`)}
+                className="flex min-w-0 items-center gap-3 rounded-xl border border-border p-3 text-left transition hover:border-accent"
+              >
+                {item.referenceMediaUrl ? <img src={item.referenceMediaUrl} alt="" className="h-12 w-12 shrink-0 rounded-lg object-cover" /> : null}
+                <span className="min-w-0">
+                  <span className="block truncate text-sm font-semibold text-ink">{item.title || t('img2three.untitledTask')}</span>
+                  <span className="mt-1 block text-caption text-ink-muted">{t(`img2three.status.${item.status}`, { defaultValue: item.status })}</span>
+                </span>
+              </button>
+            ))}
+          </div>
+        </section>
+      ) : null}
 
       {!taskId && !isReady ? (
         <section className="rounded-2xl border border-border bg-surface p-6 shadow-sm">

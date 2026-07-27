@@ -754,6 +754,12 @@ export default {
     invalidImage: 'Veuillez choisir une image JPEG, PNG, WebP ou GIF',
     dropHint: 'JPG, PNG, WebP et GIF pris en charge, jusqu’à 10 Mo',
     newTask: 'Nouvelle tâche',
+    history: 'Historique des générations',
+    historyLoading: 'Chargement de l’historique',
+    historyEmpty: 'Aucune génération pour le moment.',
+    historyLoadFailed: 'Impossible de charger l’historique',
+    untitledTask: 'Modèle sans titre',
+    status: { created: 'En attente', running: 'Génération', ready: 'Terminé', failed: 'Échec' },
     back: 'Retour',
   },
   footer: {

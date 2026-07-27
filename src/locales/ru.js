@@ -754,6 +754,12 @@ export default {
     invalidImage: 'Выберите изображение JPEG, PNG, WebP или GIF',
     dropHint: 'Поддерживаются JPG, PNG, WebP и GIF до 10 МБ',
     newTask: 'Новая задача',
+    history: 'История генераций',
+    historyLoading: 'Загрузка истории генераций',
+    historyEmpty: 'Генераций пока нет.',
+    historyLoadFailed: 'Не удалось загрузить историю',
+    untitledTask: 'Модель без названия',
+    status: { created: 'В очереди', running: 'Генерация', ready: 'Готово', failed: 'Ошибка' },
     back: 'Назад',
   },
   footer: {

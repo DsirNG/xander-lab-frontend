@@ -754,6 +754,12 @@ export default {
     invalidImage: 'Vui lòng chọn ảnh JPEG, PNG, WebP hoặc GIF',
     dropHint: 'Hỗ trợ JPG, PNG, WebP, GIF, tối đa 10MB',
     newTask: 'Tác vụ mới',
+    history: 'Lịch sử tạo mô hình',
+    historyLoading: 'Đang tải lịch sử',
+    historyEmpty: 'Chưa có lần tạo nào.',
+    historyLoadFailed: 'Không thể tải lịch sử',
+    untitledTask: 'Mô hình chưa đặt tên',
+    status: { created: 'Đang chờ', running: 'Đang tạo', ready: 'Hoàn tất', failed: 'Thất bại' },
     back: 'Quay lại',
   },
   footer: {

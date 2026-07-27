@@ -779,6 +779,12 @@ export default {
     invalidImage: '请选择 JPEG、PNG、WebP 或 GIF 图片',
     dropHint: '支持 JPG、PNG、WebP、GIF，建议不超过 10MB',
     newTask: '新建任务',
+    history: '生成历史',
+    historyLoading: '正在加载生成历史',
+    historyEmpty: '还没有生成记录。',
+    historyLoadFailed: '无法加载生成历史',
+    untitledTask: '未命名模型',
+    status: { created: '等待生成', running: '生成中', ready: '已完成', failed: '生成失败' },
     back: '返回',
   },
   footer: {

@@ -762,6 +762,12 @@ export default {
     invalidImage: 'Please choose a JPEG, PNG, WebP, or GIF image',
     dropHint: 'Supports JPG, PNG, WebP, and GIF up to 10MB',
     newTask: 'New task',
+    history: 'Generation history',
+    historyLoading: 'Loading generation history',
+    historyEmpty: 'No generations yet.',
+    historyLoadFailed: 'Could not load generation history',
+    untitledTask: 'Untitled model',
+    status: { created: 'Queued', running: 'Generating', ready: 'Ready', failed: 'Failed' },
     back: 'Back',
   },
   footer: {
@@ -777,4 +783,3 @@ export default {
     feedback: 'Welcome to point out errors and suggestions!'
   }
 };
-
