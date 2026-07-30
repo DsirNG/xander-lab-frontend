@@ -50,6 +50,7 @@ const Img2ThreePage = () => {
 
   const [uploading, setUploading] = useState(false);
   const [running, setRunning] = useState(false);
+  const [recovering, setRecovering] = useState(false);
   const [stageLabel, setStageLabel] = useState('');
   const [task, setTask] = useState(null);
   const [error, setError] = useState('');
@@ -101,14 +102,25 @@ const Img2ThreePage = () => {
       if (streamError) throw new Error(streamError);
       toast.success(t('img2three.ready'));
     } catch (err) {
-      const message = err?.message || t('img2three.failed');
-      setError(message);
+      let latest = null;
       try {
-        const latest = await img2threeService.getTask(id, { _silent: true });
+        latest = await img2threeService.getTask(id, { _silent: true });
         setTask(latest);
       } catch {
         // keep original stream error
       }
+      if (latest?.status === 'running') {
+        setError('');
+        return;
+      }
+      if (latest?.status === 'ready') {
+        setError('');
+        setStageLabel('');
+        toast.success(t('img2three.ready'));
+        return;
+      }
+      const message = latest?.errorMessage || err?.message || t('img2three.failed');
+      setError(message);
       toast.error(message);
     } finally {
       setRunning(false);
@@ -146,7 +158,7 @@ const Img2ThreePage = () => {
         if (!active) return;
         setTask(data);
         setError(data?.status === 'failed' ? (data.errorMessage || t('img2three.failed')) : '');
-        if ((data?.status === 'created' || data?.status === 'running') && !streamStartedRef.current) {
+        if (data?.status === 'created' && !streamStartedRef.current) {
           runStream(taskId);
         }
       } catch (err) {
@@ -162,6 +174,57 @@ const Img2ThreePage = () => {
     loadTask();
     return () => { active = false; };
   }, [taskId, runStream, t, toast]);
+
+  useEffect(() => {
+    if (!taskId || task?.status !== 'running' || running) return undefined;
+
+    let active = true;
+    let timerId;
+    setRecovering(true);
+    setError('');
+
+    const poll = async () => {
+      try {
+        while (active) {
+          await new Promise((resolve) => {
+            timerId = window.setTimeout(resolve, 2000);
+          });
+          if (!active) return;
+
+          const latest = await img2threeService.getTask(taskId, { _silent: true });
+          if (!active) return;
+          setTask(latest);
+
+          if (latest?.status === 'ready') {
+            setStageLabel('');
+            toast.success(t('img2three.ready'));
+            return;
+          }
+          if (latest?.status === 'failed') {
+            const message = latest.errorMessage || t('img2three.failed');
+            setError(message);
+            toast.error(message);
+            return;
+          }
+          if (latest?.status !== 'running') return;
+        }
+      } catch (err) {
+        if (!active) return;
+        const message = err?.message || t('img2three.failed');
+        setError(message);
+        toast.error(message);
+      } finally {
+        if (active) setRecovering(false);
+      }
+    };
+
+    poll();
+    return () => {
+      active = false;
+      window.clearTimeout(timerId);
+      setRecovering(false);
+    };
+  }, [running, task?.status, taskId, t, toast]);
 
   useEffect(() => () => {
     if (filePreviewUrl?.startsWith('blob:')) {
@@ -254,7 +317,7 @@ const Img2ThreePage = () => {
   }
 
   const isReady = task?.status === 'ready' && task?.sceneSpec;
-  const isBusy = uploading || running;
+  const isBusy = uploading || running || recovering;
 
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
