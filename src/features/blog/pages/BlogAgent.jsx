@@ -13,6 +13,53 @@ import AgentPreviewPanel from '../components/agent/AgentPreviewPanel';
 import AgentSessionList from '../components/agent/AgentSessionList';
 
 const RESULT_MESSAGE_ID = 'result';
+const TASK_RECOVERY_POLL_MS = 2000;
+const TASK_RECOVERY_MAX_BACKOFF_MS = 10000;
+const TASK_TERMINAL_STATUSES = new Set(['ready', 'failed']);
+const eventCursorKey = (id) => `xander-lab:blog-agent:event-cursor:${id}`;
+const streamTextKey = (id) => `xander-lab:blog-agent:stream-text:${id}`;
+
+const createAbortError = () => Object.assign(new Error('Request cancelled'), { name: 'AbortError' });
+const isAbortError = (error) => error?.name === 'AbortError'
+  || error?.name === 'CanceledError'
+  || error?.code === 'ERR_CANCELED';
+const waitForRecovery = (delay, signal) => new Promise((resolve, reject) => {
+  if (signal?.aborted) {
+    reject(createAbortError());
+    return;
+  }
+  const onAbort = () => {
+    window.clearTimeout(timeout);
+    reject(createAbortError());
+  };
+  const timeout = window.setTimeout(() => {
+    signal?.removeEventListener('abort', onAbort);
+    resolve();
+  }, delay);
+  signal?.addEventListener('abort', onAbort, { once: true });
+});
+const readSessionValue = (key, fallback = '') => {
+  try {
+    return sessionStorage.getItem(key) ?? fallback;
+  } catch {
+    return fallback;
+  }
+};
+const writeSessionValue = (key, value) => {
+  try {
+    sessionStorage.setItem(key, value);
+  } catch {
+    // Recovery still works from the task snapshot when storage is unavailable.
+  }
+};
+const removeSessionValue = (key) => {
+  try {
+    sessionStorage.removeItem(key);
+  } catch {
+    // Ignore unavailable browser storage.
+  }
+};
+
 const buildStoredMessages = (stored = []) => {
   const result = [];
   let process = null;
@@ -63,6 +110,8 @@ const BlogAgent = () => {
   const streamBufferRef = useRef('');
   const streamErrorRef = useRef(null);
   const streamFrameRef = useRef(null);
+  const activeRunAbortRef = useRef(null);
+  const eventCursorRef = useRef({ taskId: null, eventId: 0 });
   const chatEndRef = useRef(null);
   const isRunningRef = useRef(false);
   isRunningRef.current = isRunning;
@@ -80,6 +129,96 @@ const BlogAgent = () => {
       setSessionsLoading(false);
     }
   }, []);
+
+  const applyTaskSnapshot = useCallback((data) => {
+    if (!data?.task) return;
+    setTaskData(data);
+    setLiveStage(data.task.stage || 'analyze');
+    if (data.task.status === 'ready') {
+      setSelectedResultId(RESULT_MESSAGE_ID);
+      setPreviewOpen(true);
+    }
+  }, []);
+
+  const rememberEventId = useCallback((id, rawEventId) => {
+    const eventId = Number(rawEventId);
+    if (!Number.isSafeInteger(eventId) || eventId <= 0) return true;
+    if (eventCursorRef.current.taskId !== String(id)) {
+      eventCursorRef.current = {
+        taskId: String(id),
+        eventId: Number(readSessionValue(eventCursorKey(id), '0')) || 0,
+      };
+    }
+    if (eventId <= eventCursorRef.current.eventId) return false;
+    eventCursorRef.current.eventId = eventId;
+    writeSessionValue(eventCursorKey(id), String(eventId));
+    return true;
+  }, []);
+
+  const applyStreamEvent = useCallback((id, { id: eventId, event, data }) => {
+    if (!rememberEventId(id, eventId)) return;
+    if (event === 'delta') {
+      streamBufferRef.current += data;
+      writeSessionValue(streamTextKey(id), streamBufferRef.current);
+      if (!streamFrameRef.current) {
+        streamFrameRef.current = requestAnimationFrame(() => {
+          startTransition(() => setStreamText(streamBufferRef.current));
+          streamFrameRef.current = null;
+        });
+      }
+    } else if (event === 'stage') {
+      const [stage, message] = String(data).split('|', 2);
+      setLiveStage(stage);
+      setLiveLogs((current) => [...current, message || stage]);
+      setTaskData((current) => current
+        ? { ...current, task: { ...current.task, stage, status: 'running' } }
+        : current);
+    } else if (event === 'complete') {
+      applyTaskSnapshot(data);
+      removeSessionValue(streamTextKey(id));
+    } else if (event === 'error') {
+      streamErrorRef.current = typeof data === 'string' ? data : t('blog.agent.failed');
+    }
+  }, [applyTaskSnapshot, rememberEventId, t]);
+
+  const recoverTaskUntilTerminal = useCallback(async (id, signal, initialSnapshot = null) => {
+    let snapshot = initialSnapshot;
+    let retryDelay = TASK_RECOVERY_POLL_MS;
+
+    while (!signal?.aborted) {
+      if (snapshot) {
+        applyTaskSnapshot(snapshot);
+        if (TASK_TERMINAL_STATUSES.has(snapshot?.task?.status)) return snapshot;
+        snapshot = null;
+      }
+      try {
+        const afterEventId = Number(readSessionValue(eventCursorKey(id), '0')) || 0;
+        await blogAgentService.subscribeTaskEvents(
+          id,
+          afterEventId,
+          (event) => applyStreamEvent(id, event),
+          { _silent: true, signal },
+        );
+        retryDelay = TASK_RECOVERY_POLL_MS;
+      } catch (error) {
+        if (signal?.aborted || isAbortError(error)) throw createAbortError();
+        if (error?.status && error.status < 500) throw error;
+        retryDelay = Math.min(retryDelay * 2, TASK_RECOVERY_MAX_BACKOFF_MS);
+      }
+      try {
+        snapshot = await blogAgentService.getTask(id, { _silent: true, signal });
+        applyTaskSnapshot(snapshot);
+        if (TASK_TERMINAL_STATUSES.has(snapshot?.task?.status)) return snapshot;
+        snapshot = null;
+      } catch (error) {
+        if (signal?.aborted || isAbortError(error)) throw createAbortError();
+        if (error?.status && error.status < 500) throw error;
+        retryDelay = Math.min(retryDelay * 2, TASK_RECOVERY_MAX_BACKOFF_MS);
+      }
+      await waitForRecovery(retryDelay, signal);
+    }
+    throw createAbortError();
+  }, [applyStreamEvent, applyTaskSnapshot]);
 
   useEffect(() => {
     loadSessions();
@@ -107,29 +246,47 @@ const BlogAgent = () => {
 
     setIsTaskLoading(true);
     let active = true;
+    const controller = new AbortController();
     const load = async () => {
       try {
-        const data = await blogAgentService.getTask(taskId, { _silent: true });
+        const data = await blogAgentService.getTask(taskId, { _silent: true, signal: controller.signal });
         if (!active) return;
-        setTaskData(data);
+        applyTaskSnapshot(data);
         setPendingUserInput(data?.task?.input || '');
         setLiveUserInput('');
         setLiveLogs([]);
-        setLiveStage(data?.task?.stage || 'analyze');
-        if (data?.task?.status === 'ready') {
-          setSelectedResultId(RESULT_MESSAGE_ID);
-          setPreviewOpen(true);
+        setIsTaskLoading(false);
+        if (data?.task?.status === 'running') {
+          const restoredStreamText = readSessionValue(streamTextKey(taskId));
+          streamBufferRef.current = restoredStreamText;
+          setStreamText(restoredStreamText);
+          eventCursorRef.current = {
+            taskId: String(taskId),
+            eventId: Number(readSessionValue(eventCursorKey(taskId), '0')) || 0,
+          };
+          setIsRunning(true);
+          setStartedAt((current) => current || Date.now());
+          const recovered = await recoverTaskUntilTerminal(taskId, controller.signal, data);
+          if (!active) return;
+          setEndedAt(Date.now());
+          if (recovered?.task?.status === 'ready') loadSessions();
         }
       } catch (error) {
-        if (active) toast.error(error.message || t('blog.agent.failed'));
+        if (active && !isAbortError(error)) toast.error(error.message || t('blog.agent.failed'));
       } finally {
-        if (active) setIsTaskLoading(false);
+        if (active) {
+          setIsTaskLoading(false);
+          setIsRunning(false);
+        }
       }
     };
     load();
-    return () => { active = false; };
-    // 仅在 taskId 变化时恢复；本地流式跑完不重复拉取，避免闪全屏 loading
-  }, [taskId, t, toast]);
+    return () => {
+      active = false;
+      controller.abort();
+    };
+    // 本地流式执行由事件回调更新；重新进入 running 任务时使用快照恢复。
+  }, [applyTaskSnapshot, loadSessions, recoverTaskUntilTerminal, taskId, t, toast]);
 
   const statusText = useMemo(() => {
     if (!task) return t('blog.agent.waiting');
@@ -192,6 +349,11 @@ const BlogAgent = () => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
   }, [messages.length, streamText, isRunning]);
 
+  useEffect(() => () => {
+    activeRunAbortRef.current?.abort();
+    if (streamFrameRef.current) cancelAnimationFrame(streamFrameRef.current);
+  }, []);
+
   const handleGenerate = async () => {
     if (!input.trim()) {
       toast.warning(t('blog.agent.inputRequired'));
@@ -211,31 +373,22 @@ const BlogAgent = () => {
     setSelectedResultId(null);
     streamBufferRef.current = '';
     streamErrorRef.current = null;
+    activeRunAbortRef.current?.abort();
+    const controller = new AbortController();
+    activeRunAbortRef.current = controller;
     let createdTaskId = null;
     try {
       const created = await blogAgentService.createTask({ input: submitted });
       createdTaskId = created.id;
+      removeSessionValue(eventCursorKey(created.id));
+      removeSessionValue(streamTextKey(created.id));
+      eventCursorRef.current = { taskId: String(created.id), eventId: 0 };
       navigate(`/blog/agent/${created.id}`, { replace: true });
-      await blogAgentService.runTaskStream(created.id, ({ event, data }) => {
-        if (event === 'delta') {
-          streamBufferRef.current += data;
-          if (!streamFrameRef.current) {
-            streamFrameRef.current = requestAnimationFrame(() => {
-              startTransition(() => setStreamText(streamBufferRef.current));
-              streamFrameRef.current = null;
-            });
-          }
-        } else if (event === 'stage') {
-          const [stage, message] = String(data).split('|', 2);
-          setLiveStage(stage);
-          setLiveLogs((current) => [...current, message || stage]);
-          setTaskData((current) => current ? { ...current, task: { ...current.task, stage, status: 'running' } } : current);
-        } else if (event === 'complete') {
-          setTaskData(data);
-        } else if (event === 'error') {
-          streamErrorRef.current = typeof data === 'string' ? data : t('blog.agent.failed');
-        }
-      });
+      await blogAgentService.runTaskStream(
+        created.id,
+        (event) => applyStreamEvent(created.id, event),
+        { signal: controller.signal },
+      );
       if (streamFrameRef.current) cancelAnimationFrame(streamFrameRef.current);
       if (streamBufferRef.current) setStreamText(streamBufferRef.current);
       if (streamErrorRef.current) throw new Error(streamErrorRef.current);
@@ -248,17 +401,31 @@ const BlogAgent = () => {
       loadSessions();
       toast.success(t('blog.agent.complete'));
     } catch (error) {
+      if (controller.signal.aborted || isAbortError(error)) return;
       setEndedAt(Date.now());
+      let finalError = error;
       if (createdTaskId) {
         try {
-          setTaskData(await blogAgentService.getTask(createdTaskId, { _silent: true }));
-        } catch {
-          // 保留原始生成错误，任务仍可从左侧会话列表重新进入。
+          const recovered = await recoverTaskUntilTerminal(createdTaskId, controller.signal);
+          if (recovered?.task?.status === 'ready') {
+            setEndedAt(Date.now());
+            setInput('');
+            setLiveUserInput('');
+            setLiveLogs([]);
+            loadSessions();
+            toast.success(t('blog.agent.complete'));
+            return;
+          }
+          finalError = new Error(recovered?.task?.errorMessage || error.message);
+        } catch (recoveryError) {
+          if (controller.signal.aborted || isAbortError(recoveryError)) return;
+          finalError = recoveryError;
         }
       }
       loadSessions();
-      toast.error(error.message || t('blog.agent.failed'));
+      toast.error(finalError.message || t('blog.agent.failed'));
     } finally {
+      if (activeRunAbortRef.current === controller) activeRunAbortRef.current = null;
       setIsRunning(false);
     }
   };
@@ -275,21 +442,17 @@ const BlogAgent = () => {
     setEndedAt(null);
     streamBufferRef.current = '';
     streamErrorRef.current = null;
+    removeSessionValue(streamTextKey(task.id));
+    activeRunAbortRef.current?.abort();
+    const controller = new AbortController();
+    activeRunAbortRef.current = controller;
     try {
-      await blogAgentService.reviseTaskStream(task.id, submitted, ({ event, data }) => {
-        if (event === 'delta') {
-          streamBufferRef.current += data;
-        } else if (event === 'stage') {
-          const [stage, message] = String(data).split('|', 2);
-          setLiveStage(stage);
-          setLiveLogs((current) => [...current, message || stage]);
-          setTaskData((current) => ({ ...current, task: { ...current.task, stage, status: 'running' } }));
-        } else if (event === 'complete') {
-          setTaskData(data);
-        } else if (event === 'error') {
-          streamErrorRef.current = typeof data === 'string' ? data : t('blog.agent.failed');
-        }
-      });
+      await blogAgentService.reviseTaskStream(
+        task.id,
+        submitted,
+        (event) => applyStreamEvent(task.id, event),
+        { signal: controller.signal },
+      );
       if (streamErrorRef.current) throw new Error(streamErrorRef.current);
       setEndedAt(Date.now());
       setInput('');
@@ -300,15 +463,29 @@ const BlogAgent = () => {
       loadSessions();
       toast.success(t('blog.agent.revisionComplete'));
     } catch (error) {
+      if (controller.signal.aborted || isAbortError(error)) return;
       setEndedAt(Date.now());
+      let finalError = error;
       try {
-        setTaskData(await blogAgentService.getTask(task.id, { _silent: true }));
-      } catch {
-        // 后端会保留上一版本；恢复失败时仍保留当前页面内容。
+        const recovered = await recoverTaskUntilTerminal(task.id, controller.signal);
+        if (recovered?.task?.status === 'ready' && !recovered.task.errorMessage) {
+          setEndedAt(Date.now());
+          setInput('');
+          setLiveUserInput('');
+          setLiveLogs([]);
+          loadSessions();
+          toast.success(t('blog.agent.revisionComplete'));
+          return;
+        }
+        finalError = new Error(recovered?.task?.errorMessage || error.message);
+      } catch (recoveryError) {
+        if (controller.signal.aborted || isAbortError(recoveryError)) return;
+        finalError = recoveryError;
       }
       loadSessions();
-      toast.error(error.message || t('blog.agent.failed'));
+      toast.error(finalError.message || t('blog.agent.failed'));
     } finally {
+      if (activeRunAbortRef.current === controller) activeRunAbortRef.current = null;
       setIsRunning(false);
     }
   };
@@ -350,6 +527,9 @@ const BlogAgent = () => {
   };
 
   const handleNewTask = () => {
+    activeRunAbortRef.current?.abort();
+    activeRunAbortRef.current = null;
+    setIsRunning(false);
     setInput('');
     setTaskData(null);
     setPendingUserInput('');

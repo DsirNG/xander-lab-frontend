@@ -454,11 +454,13 @@ instance.interceptors.response.use(
         // ── 9.2.2 自动重试（网络错误 / 5xx） ──
         const shouldRetry =
             config &&
+            !config._skipRetry &&
             !response && // 网络错误（无响应）
             config._retryCount < MAX_RETRY;
 
         const shouldRetry5xx =
             config &&
+            !config._skipRetry &&
             response?.status >= 500 &&
             (config._retryCount ?? 0) < MAX_RETRY;
 
@@ -541,15 +543,15 @@ export function post(url, data, config) {
 }
 
 /**
- * Send a POST request whose response is Server-Sent Events, while preserving
- * the shared axios instance's auth, retry, and error handling behaviour.
+ * Creates an incremental SSE parser for Axios XHR download progress events.
  */
-export function postStream(url, data, { onEvent, ...config } = {}) {
+function createSseReader(onEvent) {
     let offset = 0;
     let buffer = '';
 
     const dispatch = (rawEvent) => {
         const lines = rawEvent.split(/\r?\n/);
+        const id = lines.find((line) => line.startsWith('id:'))?.slice(3).trim();
         const event = lines.find((line) => line.startsWith('event:'))?.slice(6).trim() || 'message';
         const dataLine = lines
             .filter((line) => line.startsWith('data:'))
@@ -558,24 +560,18 @@ export function postStream(url, data, { onEvent, ...config } = {}) {
             .map((line) => line.slice(5).replace(/^ /, ''))
             .join('\n');
         if (!dataLine || !onEvent) return;
+        if (event === 'delta' || event === 'stage' || event === 'error') {
+            onEvent({ id, event, data: dataLine });
+            return;
+        }
         try {
-            onEvent({ event, data: JSON.parse(dataLine) });
+            onEvent({ id, event, data: JSON.parse(dataLine) });
         } catch {
-            onEvent({ event, data: dataLine });
+            onEvent({ id, event, data: dataLine });
         }
     };
 
-    return instance.post(url, data, {
-        ...config,
-        dedupe: false,
-        timeout: 0,
-        responseType: 'text',
-        // Spring uses the Accept header to select a handler. Declare SSE
-        // explicitly instead of inheriting the default application/json.
-        headers: {
-            ...config.headers,
-            Accept: 'text/event-stream',
-        },
+    return {
         onDownloadProgress: (progressEvent) => {
             const responseText = progressEvent.event?.target?.responseText;
             if (typeof responseText !== 'string') return;
@@ -585,8 +581,54 @@ export function postStream(url, data, { onEvent, ...config } = {}) {
             buffer = chunks.pop() || '';
             chunks.forEach(dispatch);
         },
+        flush: () => {
+            if (buffer) dispatch(buffer);
+            buffer = '';
+        },
+    };
+}
+
+/**
+ * Send a POST request whose response is Server-Sent Events, while preserving
+ * the shared axios instance's auth and error handling behaviour.
+ */
+export function postStream(url, data, { onEvent, ...config } = {}) {
+    const reader = createSseReader(onEvent);
+    return instance.post(url, data, {
+        ...config,
+        dedupe: false,
+        _skipRetry: true,
+        timeout: 0,
+        responseType: 'text',
+        // Spring uses the Accept header to select a handler. Declare SSE
+        // explicitly instead of inheriting the default application/json.
+        headers: {
+            ...config.headers,
+            Accept: 'text/event-stream',
+        },
+        onDownloadProgress: reader.onDownloadProgress,
     }).then((response) => {
-        if (buffer) dispatch(buffer);
+        reader.flush();
+        return response;
+    });
+}
+
+/** Subscribe to a resumable SSE endpoint with authorization headers. */
+export function getStream(url, { onEvent, ...config } = {}) {
+    const reader = createSseReader(onEvent);
+    return instance.get(url, {
+        ...config,
+        dedupe: false,
+        _skipRetry: true,
+        timeout: 0,
+        responseType: 'text',
+        headers: {
+            ...config.headers,
+            Accept: 'text/event-stream',
+        },
+        onDownloadProgress: reader.onDownloadProgress,
+    }).then((response) => {
+        reader.flush();
         return response;
     });
 }
@@ -825,6 +867,7 @@ export { instance as axiosInstance };
 /** 默认导出：常用方法集合 */
 const http = {
     get,
+    getStream,
     post,
     postStream,
     put,

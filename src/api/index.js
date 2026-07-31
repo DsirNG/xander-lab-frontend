@@ -11,6 +11,7 @@
 export {
   default,
   get,
+  getStream,
   post,
   postStream,
   put,
