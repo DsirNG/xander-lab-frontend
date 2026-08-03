@@ -471,16 +471,27 @@ const Footer = () => {
     );
 };
 
-const MainLayout = () => {
+import { PureReadingProvider, usePureReading } from '@/context/PureReadingContext';
+
+const MainLayoutContent = () => {
     const location = useLocation();
+    const { isPureReading } = usePureReading();
 
     return (
         <div className={styles.layoutContainer}>
-            <Navbar key={location.pathname} />
-            <main id="main-content" tabIndex={-1} className={styles.mainContent}>
+            {!isPureReading && <Navbar key={location.pathname} />}
+            <main id="main-content" tabIndex={-1} className={`${styles.mainContent} ${isPureReading ? '!pt-0' : ''}`}>
                 <Outlet />
             </main>
         </div>
+    );
+};
+
+const MainLayout = () => {
+    return (
+        <PureReadingProvider>
+            <MainLayoutContent />
+        </PureReadingProvider>
     );
 };
 

@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams, Link } from 'react-router-dom';
-import { Calendar, Clock, User, Tag, ChevronLeft, Eye } from 'lucide-react';
+import { Calendar, Clock, User, Tag, ChevronLeft, Eye, BookOpen, Minimize2 } from 'lucide-react';
 import SEOHead from '@components/seo/SEOHead';
 import { blogService } from '../services/blogService';
 import BlogMarkdown from '../components/BlogMarkdown';
+import { usePureReading } from '@/context/PureReadingContext';
 
 /**
  * Markdown 自定义渲染组件映射
@@ -93,6 +94,7 @@ const BlogDetail = () => {
     const [blog, setBlog] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const { isPureReading, togglePureReading } = usePureReading();
 
     useEffect(() => {
         const controller = new AbortController();
@@ -212,7 +214,25 @@ const BlogDetail = () => {
     }
 
     return (
-        <article className="max-w-3xl">
+        <article className="max-w-3xl w-full">
+            {/* 浮动退出纯净阅读按钮 */}
+            {isPureReading && (
+                <div className="fixed top-5 right-6 z-50 flex items-center gap-2">
+                    <button
+                        type="button"
+                        onClick={togglePureReading}
+                        className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full bg-ink/90 text-canvas hover:bg-ink backdrop-blur-md shadow-lg text-xs font-bold transition-all hover:scale-105 border border-white/20 active:scale-95 cursor-pointer"
+                        title={t('blog.pureReadingHint', '纯净阅读模式 (按 Esc 退出)')}
+                    >
+                        <Minimize2 className="w-4 h-4 text-accent" />
+                        <span>{t('blog.exitPureReading', '退出纯净阅读')}</span>
+                        <kbd className="hidden sm:inline-block px-1.5 py-0.5 text-[10px] font-mono bg-canvas/20 rounded text-canvas/80 ml-1">
+                            ESC
+                        </kbd>
+                    </button>
+                </div>
+            )}
+
             {/* SEO: 每篇博客独立的 meta 信息和结构化数据 */}
             <SEOHead
                 title={blog.title}
@@ -240,13 +260,42 @@ const BlogDetail = () => {
                 }}
             />
 
-            <Link
-                to="/blog/"
-                className="inline-flex items-center text-xs font-medium text-ink-muted hover:text-accent transition-colors mb-6"
-            >
-                <ChevronLeft aria-hidden="true" className="w-4 h-4 mr-0.5" />
-                {t('blog.backToBlog')}
-            </Link>
+            <div className="flex items-center justify-between mb-6">
+                <Link
+                    to="/blog/"
+                    className="inline-flex items-center text-xs font-medium text-ink-muted hover:text-accent transition-colors"
+                >
+                    <ChevronLeft aria-hidden="true" className="w-4 h-4 mr-0.5" />
+                    {t('blog.backToBlog')}
+                </Link>
+
+            {/* 窗口固定纯净阅读按钮 (非纯净模式下固定悬浮在窗口右下角) */}
+            {!isPureReading && (
+                <div className="fixed bottom-8 right-8 z-40">
+                    <button
+                        type="button"
+                        onClick={togglePureReading}
+                        className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-surface/90 text-ink hover:text-accent hover:border-accent backdrop-blur-md shadow-xl border border-border text-xs font-bold transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer group"
+                        title={t('blog.pureReadingHint', '纯净阅读模式 (按 Esc 退出)')}
+                    >
+                        <BookOpen className="w-4 h-4 text-accent group-hover:scale-110 transition-transform" />
+                        <span>{t('blog.pureReading', '纯净阅读')}</span>
+                    </button>
+                </div>
+            )}
+
+            {!isPureReading && (
+                <button
+                    type="button"
+                    onClick={togglePureReading}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-muted text-ink-secondary hover:bg-accent/10 hover:text-accent text-xs font-bold transition-all shadow-xs border border-border/60 cursor-pointer"
+                    title={t('blog.pureReadingHint', '纯净阅读模式 (按 Esc 退出)')}
+                >
+                    <BookOpen className="w-3.5 h-3.5 text-accent" />
+                    <span>{t('blog.pureReading', '纯净阅读')}</span>
+                </button>
+            )}
+            </div>
 
             {/* 文章头部 */}
             <header className="mb-8">
