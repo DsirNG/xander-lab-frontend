@@ -38,7 +38,7 @@ else
     USE_COMPOSE=true
 fi
 
-SEO_API_BASE=${SEO_API_BASE:-http://host.docker.internal:30002}
+SEO_API_BASE=${SEO_API_BASE:-http://host.docker.internal:30002/api}
 
 echo -e "${YELLOW}Step 1: Building Docker image...${NC}"
 if [ "$USE_COMPOSE" = true ]; then

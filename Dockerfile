@@ -18,7 +18,7 @@ RUN npm config set registry https://registry.npmmirror.com && \
 COPY . .
 
 # Optional private API endpoint used only while generating SEO artifacts.
-ARG SEO_API_BASE=http://host.docker.internal:30002
+ARG SEO_API_BASE=http://host.docker.internal:30002/api
 ENV SEO_API_BASE=${SEO_API_BASE}
 # Docker hosts without IPv6 connectivity can otherwise fail when Cloudflare's
 # IPv6 address is selected first during SEO prerendering.

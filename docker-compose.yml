@@ -8,7 +8,7 @@ services:
       args:
         # Read the Spring Boot service directly during the image build. This
         # avoids relying on public DNS / Cloudflare from the Docker builder.
-        SEO_API_BASE: ${SEO_API_BASE:-http://host.docker.internal:30002}
+        SEO_API_BASE: ${SEO_API_BASE:-http://host.docker.internal:30002/api}
       extra_hosts:
         - "host.docker.internal:host-gateway"
     container_name: xander-lab-frontend

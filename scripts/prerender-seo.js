@@ -22,7 +22,7 @@ const __dirname = path.dirname(__filename);
 // ============ 配置 ============
 const SITE_URL = 'https://xander.dsircity.top';
 // 构建环境可通过 SEO_API_BASE 覆盖默认公网 API。生产 Docker 构建默认由
-// docker-compose 注入 host.docker.internal:30002，以直连部署机 Spring Boot 服务。
+// docker-compose 注入 host.docker.internal:30002/api，以直连部署机 Spring Boot 服务。
 const API_BASE = process.env.SEO_API_BASE || 'https://xander.dsircity.top/api';
 const API_TIMEOUT_MS = 15_000;
 const API_RETRY_COUNT = 3;
