@@ -66,6 +66,18 @@ export const authService = {
     },
 
     /**
+     * 应用启动时校验当前浏览器保存的会话。
+     * /me 发生 401 时由共享 HTTP 层携带当前 refresh token 静默刷新并重试；
+     * 刷新失败时也由该层统一清理当前会话并派发 auth:logout。
+     */
+    checkCurrentSession: async () => {
+        if (!tokenStorage.getToken() && !tokenStorage.getRefreshToken()) return null;
+        const userInfo = await get(`${BASE}/me`, undefined, { _silent: true, dedupe: false });
+        if (userInfo) localStorage.setItem('user_info', JSON.stringify(userInfo));
+        return userInfo;
+    },
+
+    /**
      * 获取本地存储的用户信息
      */
     getLocalUserInfo: () => {

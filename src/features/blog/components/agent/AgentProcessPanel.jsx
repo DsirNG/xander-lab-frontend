@@ -96,6 +96,7 @@ const AgentProcessPanel = ({
             <div className="max-h-56 space-y-1.5 overflow-auto rounded-xl bg-ink p-3 text-caption leading-6 text-border-strong">
               {logs.map((log, index) => <p key={`${log}-${index}`}><span className="mr-2 text-accent">●</span>{log}</p>)}
               {isRunning && logs.length === 0 && <p className="text-ink-faint">{t('blog.agent.waitingForStage')}</p>}
+              {streamText && <p className="whitespace-pre-wrap break-words text-border-strong">{streamText}</p>}
             </div>
           )}
 

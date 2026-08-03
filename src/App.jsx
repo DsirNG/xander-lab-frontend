@@ -12,6 +12,7 @@ import { createRouter } from './router'
 import { ToastProvider, ToastContainer } from './components/common/Toast'
 import { useToast } from './hooks/useToast'
 import ErrorBoundary from './components/common/ErrorBoundary'
+import { authService } from './features/auth/services/authService'
 
 /**
  * 全局 Toast 桥接
@@ -24,6 +25,20 @@ function ToastBridge() {
   useEffect(() => {
     window.__toast = (type, msg) => toast[type]?.(msg)
     return () => { delete window.__toast }
+  }, [])
+
+  return null
+}
+
+/**
+ * 启动时只验证当前浏览器保存的登录态。
+ * 网络暂时不可用时保留本地会话；真正过期会由 HTTP 层刷新或统一登出。
+ */
+function SessionHealthCheck() {
+  useEffect(() => {
+    authService.checkCurrentSession().catch(() => {
+      // 401/刷新失败已由 HTTP 拦截器处理；网络错误不应误登出用户。
+    })
   }, [])
 
   return null
@@ -44,6 +59,7 @@ function App() {
       <ErrorBoundary>
         <ToastProvider>
           <ToastBridge />
+          <SessionHealthCheck />
           <RouterProvider router={router} />
           <ToastContainer />
         </ToastProvider>

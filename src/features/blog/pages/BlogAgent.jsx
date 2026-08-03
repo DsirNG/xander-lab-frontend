@@ -83,6 +83,10 @@ const buildStoredMessages = (stored = []) => {
   return result;
 };
 
+const getStoredProcessLogs = (stored = []) => stored
+  .filter((message) => message.kind === 'process' && message.content)
+  .map((message) => message.content);
+
 const BlogAgent = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -269,7 +273,7 @@ const BlogAgent = () => {
         applyTaskSnapshot(data);
         setPendingUserInput(data?.task?.input || '');
         setLiveUserInput('');
-        setLiveLogs([]);
+        setLiveLogs(data?.task?.status === 'running' ? getStoredProcessLogs(data.messages) : []);
         setIsTaskLoading(false);
         if (data?.task?.status === 'running') {
           const restoredStreamText = readSessionValue(streamTextKey(taskId));
@@ -313,6 +317,13 @@ const BlogAgent = () => {
 
   const messages = useMemo(() => {
     const list = buildStoredMessages(taskData?.messages);
+    // A running task has one authoritative live process card. Historical process
+    // records are used to seed its logs after refresh, not rendered as a second card.
+    if (isTaskActive) {
+      for (let index = list.length - 1; index >= 0; index -= 1) {
+        if (list[index].kind === 'process') list.splice(index, 1);
+      }
+    }
     if (task?.status === 'failed') {
       const latestProcess = list.findLast?.((message) => message.kind === 'process')
         || [...list].reverse().find((message) => message.kind === 'process');
@@ -377,6 +388,7 @@ const BlogAgent = () => {
       return;
     }
     const submitted = input.trim();
+    setInput('');
     setIsRunning(true);
     setTaskData(null);
     setStreamText('');
@@ -456,6 +468,7 @@ const BlogAgent = () => {
   const handleRevise = async () => {
     if (!task?.id || !input.trim()) return;
     const submitted = input.trim();
+    setInput('');
     activeStreamTaskIdRef.current = task.id;
     setIsRunning(true);
     setLiveUserInput(submitted);
