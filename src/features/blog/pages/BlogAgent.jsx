@@ -84,6 +84,7 @@ const BlogAgent = () => {
   const [pendingUserInput, setPendingUserInput] = useState('');
   const [previewOpen, setPreviewOpen] = useState(false);
   const [selectedResultId, setSelectedResultId] = useState(null);
+  const [selectedVersionId, setSelectedVersionId] = useState(null);
   const [sessions, setSessions] = useState([]);
   const [sessionsLoading, setSessionsLoading] = useState(true);
   const [liveLogs, setLiveLogs] = useState([]);
@@ -94,14 +95,20 @@ const BlogAgent = () => {
   const streamErrorRef = useRef(null);
   const streamFrameRef = useRef(null);
   const activeRunAbortRef = useRef(null);
+  const activeStreamTaskIdRef = useRef(null);
+  const currentTaskIdRef = useRef(taskId);
   const toastRef = useRef(toast);
   const eventCursorRef = useRef({ taskId: null, eventId: 0 });
   const chatEndRef = useRef(null);
   const isRunningRef = useRef(false);
   isRunningRef.current = isRunning;
   toastRef.current = toast;
+  currentTaskIdRef.current = taskId;
   const task = taskData?.task;
-  const isTaskActive = isRunning || task?.status === 'running';
+  const selectedVersion = taskData?.versions?.find((version) => String(version.id) === String(selectedVersionId));
+  const isActiveStreamForCurrentTask = isRunning
+    && String(activeStreamTaskIdRef.current) === String(taskId);
+  const isTaskActive = isActiveStreamForCurrentTask || task?.status === 'running';
   const hasFinishedTurn = Boolean(task) && !isTaskActive && task.status === 'ready';
   const inputLocked = isTaskActive;
 
@@ -121,6 +128,7 @@ const BlogAgent = () => {
     setTaskData(data);
     setLiveStage(data.task.stage || 'analyze');
     if (data.task.status === 'ready') {
+      setSelectedVersionId(data.versions?.[0]?.id ?? null);
       setSelectedResultId(RESULT_MESSAGE_ID);
       setPreviewOpen(true);
     }
@@ -156,11 +164,11 @@ const BlogAgent = () => {
       const [stage, message] = String(data).split('|', 2);
       setLiveStage(stage);
       setLiveLogs((current) => [...current, message || stage]);
-      setTaskData((current) => current
+      setTaskData((current) => current && String(current.task?.id) === String(id)
         ? { ...current, task: { ...current.task, stage, status: 'running' } }
         : current);
     } else if (event === 'complete') {
-      applyTaskSnapshot(data);
+      if (String(currentTaskIdRef.current) === String(id)) applyTaskSnapshot(data);
       removeSessionValue(streamTextKey(id));
     } else if (event === 'error') {
       streamErrorRef.current = typeof data === 'string' ? data : t('blog.agent.failed');
@@ -205,11 +213,12 @@ const BlogAgent = () => {
       setLiveStage('analyze');
       setPreviewOpen(false);
       setSelectedResultId(null);
+      setSelectedVersionId(null);
       return undefined;
     }
 
     // 本页正在跑流时由 stream 更新状态，不额外 getTask
-    if (isRunningRef.current) {
+    if (isRunningRef.current && String(activeStreamTaskIdRef.current) === String(taskId)) {
       setIsTaskLoading(false);
       return undefined;
     }
@@ -279,7 +288,9 @@ const BlogAgent = () => {
     if (list.length === 0 && (pendingUserInput || task?.input)) {
       list.push({ id: 'user', role: 'user', content: pendingUserInput || task.input });
     }
-    if (liveUserInput) list.push({ id: 'live-user', role: 'user', content: liveUserInput });
+    if (liveUserInput && !list.some((message) => message.role === 'user' && message.content === liveUserInput)) {
+      list.push({ id: 'live-user', role: 'user', content: liveUserInput });
+    }
     if (isTaskActive) {
       const processStatus = isTaskActive
         ? 'running'
@@ -306,7 +317,7 @@ const BlogAgent = () => {
         id: RESULT_MESSAGE_ID,
         role: 'assistant',
         kind: 'result',
-        title: task.title,
+          title: task.title,
         summary: task.summary,
         taskId: task.id,
       });
@@ -350,6 +361,7 @@ const BlogAgent = () => {
     try {
       const created = await blogAgentService.createTask({ input: submitted });
       createdTaskId = created.id;
+      activeStreamTaskIdRef.current = created.id;
       removeSessionValue(eventCursorKey(created.id));
       removeSessionValue(streamTextKey(created.id));
       eventCursorRef.current = { taskId: String(created.id), eventId: 0 };
@@ -395,7 +407,10 @@ const BlogAgent = () => {
       loadSessions();
       toast.error(finalError.message || t('blog.agent.failed'));
     } finally {
-      if (activeRunAbortRef.current === controller) activeRunAbortRef.current = null;
+      if (activeRunAbortRef.current === controller) {
+        activeRunAbortRef.current = null;
+        activeStreamTaskIdRef.current = null;
+      }
       setIsRunning(false);
     }
   };
@@ -403,6 +418,7 @@ const BlogAgent = () => {
   const handleRevise = async () => {
     if (!task?.id || !input.trim()) return;
     const submitted = input.trim();
+    activeStreamTaskIdRef.current = task.id;
     setIsRunning(true);
     setLiveUserInput(submitted);
     setLiveLogs([]);
@@ -455,7 +471,10 @@ const BlogAgent = () => {
       loadSessions();
       toast.error(finalError.message || t('blog.agent.failed'));
     } finally {
-      if (activeRunAbortRef.current === controller) activeRunAbortRef.current = null;
+      if (activeRunAbortRef.current === controller) {
+        activeRunAbortRef.current = null;
+        activeStreamTaskIdRef.current = null;
+      }
       setIsRunning(false);
     }
   };
@@ -482,8 +501,8 @@ const BlogAgent = () => {
     try {
       localStorage.setItem('xander-lab:blog-publish-draft', JSON.stringify({
         title: task.title,
-        summary: task.summary,
-        content: task.content,
+        summary: selectedVersion?.summary || task.summary,
+        content: selectedVersion?.content || task.content,
         categoryId: task.categoryId,
         tags: taskData.tags || [],
       }));
@@ -499,6 +518,7 @@ const BlogAgent = () => {
   const handleNewTask = () => {
     activeRunAbortRef.current?.abort();
     activeRunAbortRef.current = null;
+    activeStreamTaskIdRef.current = null;
     setIsRunning(false);
     setInput('');
     setTaskData(null);
@@ -508,6 +528,7 @@ const BlogAgent = () => {
     setEndedAt(null);
     setPreviewOpen(false);
     setSelectedResultId(null);
+    setSelectedVersionId(null);
     setLiveUserInput('');
     setLiveLogs([]);
     setLiveStage('analyze');
@@ -523,12 +544,14 @@ const BlogAgent = () => {
   const previewPanel = (
     <AgentPreviewPanel
       taskData={taskData}
+      selectedVersionId={selectedVersionId}
       statusText={statusText}
       isPublishing={isPublishing}
       isSavingDraft={isSavingDraft}
       onPublish={handlePublish}
       onCreateDraft={handleCreateDraft}
       onViewPublished={() => task?.publishedPostId && navigate(`/blog/${task.publishedPostId}`)}
+      onSelectVersion={setSelectedVersionId}
       onClose={() => setPreviewOpen(false)}
     />
   );
@@ -573,7 +596,7 @@ const BlogAgent = () => {
             sessions={sessions}
             activeId={taskId}
             loading={sessionsLoading}
-            disabled={isRunning}
+            disableNew={isRunning}
             onSelect={(id) => navigate(`/blog/agent/${id}`)}
             onNew={handleNewTask}
           />
@@ -584,7 +607,7 @@ const BlogAgent = () => {
                 sessions={sessions}
                 activeId={taskId}
                 loading={sessionsLoading}
-                disabled={isRunning}
+                disableNew={isRunning}
                 onSelect={(id) => {
                   setMobileSessionsOpen(false);
                   navigate(`/blog/agent/${id}`);

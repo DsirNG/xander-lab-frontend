@@ -2,7 +2,7 @@ import React from 'react';
 import { MessageSquareText, Plus } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
-const AgentSessionList = ({ sessions, activeId, loading, disabled = false, mobile = false, onSelect, onNew }) => {
+const AgentSessionList = ({ sessions, activeId, loading, disableNew = false, mobile = false, onSelect, onNew }) => {
   const { t } = useTranslation();
 
   return (
@@ -11,7 +11,7 @@ const AgentSessionList = ({ sessions, activeId, loading, disabled = false, mobil
         <button
           type="button"
           onClick={onNew}
-          disabled={disabled}
+          disabled={disableNew}
           className="flex w-full items-center justify-center gap-2 rounded-xl bg-ink px-3 py-2.5 text-sm font-black text-white transition hover:bg-accent disabled:cursor-wait disabled:opacity-50"
         >
           <Plus className="h-4 w-4" />
@@ -31,7 +31,6 @@ const AgentSessionList = ({ sessions, activeId, loading, disabled = false, mobil
             key={session.id}
             type="button"
             onClick={() => onSelect(session.id)}
-            disabled={disabled}
             className={`mb-1 flex w-full items-start gap-2 rounded-xl px-3 py-2.5 text-left transition disabled:cursor-wait disabled:opacity-50 ${
               String(activeId) === String(session.id) ? 'bg-accent/10 text-accent' : 'text-ink-secondary hover:bg-surface'
             }`}

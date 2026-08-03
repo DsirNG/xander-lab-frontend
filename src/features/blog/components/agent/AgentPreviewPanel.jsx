@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   BookOpenCheck,
@@ -21,26 +21,29 @@ const asArray = (value) => (Array.isArray(value) ? value : []);
  */
 const AgentPreviewPanel = ({
   taskData,
+  selectedVersionId,
   statusText,
   isPublishing,
   isSavingDraft,
   onPublish,
   onCreateDraft,
   onViewPublished,
+  onSelectVersion,
   onClose,
 }) => {
   const { t } = useTranslation();
   const [metaOpen, setMetaOpen] = useState(false);
   const task = taskData?.task;
+  const versions = asArray(taskData?.versions);
+  const selectedVersion = versions.find((version) => String(version.id) === String(selectedVersionId));
+  const article = selectedVersion || task;
+  const isLatestVersion = !selectedVersion || String(selectedVersion.id) === String(versions[0]?.id);
   const contentBoundary = taskData?.contentBoundary || {};
   const knowledgeGraph = taskData?.knowledgeGraph || {};
   const graphNodes = asArray(knowledgeGraph.nodes);
   const graphEdges = asArray(knowledgeGraph.edges);
   const illustrations = asArray(taskData?.illustrations);
-  const graphLabels = useMemo(
-    () => new Map(graphNodes.map((node) => [node.id, node.label || node.id])),
-    [graphNodes],
-  );
+  const graphLabels = new Map(graphNodes.map((node) => [node.id, node.label || node.id]));
 
   if (!task) {
     return (
@@ -56,10 +59,29 @@ const AgentPreviewPanel = ({
         <div className="min-w-0 flex-1">
           <p className="text-xs font-bold uppercase tracking-widest text-accent">{t('blog.agent.article')}</p>
           <h2 className="mt-1 truncate text-lg font-black tracking-tight text-ink">
-            {task.title || t('blog.agent.untitled')}
+            {article.title || t('blog.agent.untitled')}
           </h2>
-          {task.summary && (
-            <p className="mt-1 line-clamp-2 text-xs leading-5 text-ink-muted">{task.summary}</p>
+          {article.summary && (
+            <p className="mt-1 line-clamp-2 text-xs leading-5 text-ink-muted">{article.summary}</p>
+          )}
+          {versions.length > 0 && (
+            <div className="mt-3 flex flex-wrap items-center gap-1.5">
+              {versions.map((version) => (
+                <button
+                  key={version.id}
+                  type="button"
+                  onClick={() => onSelectVersion(version.id)}
+                  className={`rounded-lg px-2 py-1 text-xs font-bold transition ${
+                    String(selectedVersion?.id) === String(version.id)
+                      ? 'bg-accent text-white'
+                      : 'bg-surface text-ink-muted hover:bg-accent/10 hover:text-accent'
+                  }`}
+                  title={version.changeNote || version.createdAt}
+                >
+                  V{version.versionNo}
+                </button>
+              ))}
+            </div>
           )}
         </div>
         <div className="flex flex-wrap items-center gap-2">
@@ -74,7 +96,7 @@ const AgentPreviewPanel = ({
           ) : (
             task.status === 'ready' && (
               <>
-                <button
+                {isLatestVersion && <button
                   type="button"
                   onClick={onCreateDraft}
                   disabled={isSavingDraft}
@@ -82,7 +104,7 @@ const AgentPreviewPanel = ({
                 >
                   {isSavingDraft ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <FileText className="h-3.5 w-3.5" />}
                   {t('blog.agent.toDraft')}
-                </button>
+                </button>}
                 <button
                   type="button"
                   onClick={onPublish}
@@ -109,8 +131,8 @@ const AgentPreviewPanel = ({
       </header>
 
       <div className="min-h-0 flex-1 overflow-y-auto px-4 py-5 sm:px-6">
-        {task.content ? (
-          <BlogMarkdown content={task.content} className="prose-headings:font-black" />
+        {article.content ? (
+          <BlogMarkdown content={article.content} className="prose-headings:font-black" />
         ) : (
           <p className="text-sm text-ink-muted">{statusText}</p>
         )}
