@@ -5,6 +5,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      # The prerender step reads the production blog API. On the Linux deploy
+      # host, use its network so Docker DNS/NAT does not become a dependency.
+      network: host
       args:
         SEO_API_BASE: ${SEO_API_BASE:-}
     container_name: xander-lab-frontend

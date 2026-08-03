@@ -20,6 +20,9 @@ COPY . .
 # Optional private API endpoint used only while generating SEO artifacts.
 ARG SEO_API_BASE
 ENV SEO_API_BASE=${SEO_API_BASE}
+# Docker hosts without IPv6 connectivity can otherwise fail when Cloudflare's
+# IPv6 address is selected first during SEO prerendering.
+ENV NODE_OPTIONS=--dns-result-order=ipv4first
 
 # Build the application
 RUN npm run build:seo

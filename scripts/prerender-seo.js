@@ -86,13 +86,21 @@ async function fetchAllBlogs() {
         return response.json();
       } catch (error) {
         lastError = error;
+        const cause = error.cause;
+        const detail = cause
+          ? ` (${cause.code || cause.name || 'network error'}: ${cause.message || cause})`
+          : '';
         if (attempt < API_RETRY_COUNT) {
-          console.warn(`  博客 API 第 ${attempt} 次请求失败：${error.message}，正在重试...`);
+          console.warn(`  博客 API 第 ${attempt} 次请求失败：${error.message}${detail}，正在重试...`);
         }
       }
     }
 
-    throw new Error(`博客 API 连续 ${API_RETRY_COUNT} 次请求失败：${lastError.message}`);
+    const finalCause = lastError.cause;
+    const finalDetail = finalCause
+      ? ` (${finalCause.code || finalCause.name || 'network error'}: ${finalCause.message || finalCause})`
+      : '';
+    throw new Error(`博客 API 连续 ${API_RETRY_COUNT} 次请求失败：${lastError.message}${finalDetail}`);
   }
 
   // 先获取第一页，确定总数
