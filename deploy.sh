@@ -38,11 +38,16 @@ else
     USE_COMPOSE=true
 fi
 
+SEO_API_BASE=${SEO_API_BASE:-http://host.docker.internal:30002}
+
 echo -e "${YELLOW}Step 1: Building Docker image...${NC}"
 if [ "$USE_COMPOSE" = true ]; then
-    docker-compose build --no-cache
+    docker-compose build --no-cache --build-arg SEO_API_BASE="$SEO_API_BASE"
 else
-    docker build -t $IMAGE_NAME:latest .
+    docker build \
+        --add-host host.docker.internal:host-gateway \
+        --build-arg SEO_API_BASE="$SEO_API_BASE" \
+        -t $IMAGE_NAME:latest .
 fi
 
 echo -e "${YELLOW}Step 2: Replacing existing container...${NC}"
