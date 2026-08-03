@@ -13,8 +13,6 @@ import AgentPreviewPanel from '../components/agent/AgentPreviewPanel';
 import AgentSessionList from '../components/agent/AgentSessionList';
 
 const RESULT_MESSAGE_ID = 'result';
-const TASK_RECOVERY_POLL_MS = 2000;
-const TASK_RECOVERY_MAX_BACKOFF_MS = 10000;
 const TASK_TERMINAL_STATUSES = new Set(['ready', 'failed']);
 const eventCursorKey = (id) => `xander-lab:blog-agent:event-cursor:${id}`;
 const streamTextKey = (id) => `xander-lab:blog-agent:stream-text:${id}`;
@@ -23,21 +21,6 @@ const createAbortError = () => Object.assign(new Error('Request cancelled'), { n
 const isAbortError = (error) => error?.name === 'AbortError'
   || error?.name === 'CanceledError'
   || error?.code === 'ERR_CANCELED';
-const waitForRecovery = (delay, signal) => new Promise((resolve, reject) => {
-  if (signal?.aborted) {
-    reject(createAbortError());
-    return;
-  }
-  const onAbort = () => {
-    window.clearTimeout(timeout);
-    reject(createAbortError());
-  };
-  const timeout = window.setTimeout(() => {
-    signal?.removeEventListener('abort', onAbort);
-    resolve();
-  }, delay);
-  signal?.addEventListener('abort', onAbort, { once: true });
-});
 const readSessionValue = (key, fallback = '') => {
   try {
     return sessionStorage.getItem(key) ?? fallback;
@@ -111,13 +94,16 @@ const BlogAgent = () => {
   const streamErrorRef = useRef(null);
   const streamFrameRef = useRef(null);
   const activeRunAbortRef = useRef(null);
+  const toastRef = useRef(toast);
   const eventCursorRef = useRef({ taskId: null, eventId: 0 });
   const chatEndRef = useRef(null);
   const isRunningRef = useRef(false);
   isRunningRef.current = isRunning;
+  toastRef.current = toast;
   const task = taskData?.task;
-  const hasFinishedTurn = Boolean(task) && !isRunning && task.status === 'ready';
-  const inputLocked = isRunning;
+  const isTaskActive = isRunning || task?.status === 'running';
+  const hasFinishedTurn = Boolean(task) && !isTaskActive && task.status === 'ready';
+  const inputLocked = isTaskActive;
 
   const loadSessions = useCallback(async () => {
     setSessionsLoading(true);
@@ -181,41 +167,27 @@ const BlogAgent = () => {
     }
   }, [applyTaskSnapshot, rememberEventId, t]);
 
-  const recoverTaskUntilTerminal = useCallback(async (id, signal, initialSnapshot = null) => {
-    let snapshot = initialSnapshot;
-    let retryDelay = TASK_RECOVERY_POLL_MS;
+  const recoverTaskOnce = useCallback(async (id, signal, initialSnapshot = null) => {
+    const snapshot = initialSnapshot || await blogAgentService.getTask(id, { _silent: true, signal });
+    applyTaskSnapshot(snapshot);
+    if (TASK_TERMINAL_STATUSES.has(snapshot?.task?.status)) return snapshot;
 
-    while (!signal?.aborted) {
-      if (snapshot) {
-        applyTaskSnapshot(snapshot);
-        if (TASK_TERMINAL_STATUSES.has(snapshot?.task?.status)) return snapshot;
-        snapshot = null;
-      }
-      try {
-        const afterEventId = Number(readSessionValue(eventCursorKey(id), '0')) || 0;
-        await blogAgentService.subscribeTaskEvents(
-          id,
-          afterEventId,
-          (event) => applyStreamEvent(id, event),
-          { _silent: true, signal },
-        );
-      } catch (error) {
-        if (signal?.aborted || isAbortError(error)) throw createAbortError();
-        if (error?.status && error.status < 500) throw error;
-      }
-      try {
-        snapshot = await blogAgentService.getTask(id, { _silent: true, signal });
-        applyTaskSnapshot(snapshot);
-        if (TASK_TERMINAL_STATUSES.has(snapshot?.task?.status)) return snapshot;
-        snapshot = null;
-      } catch (error) {
-        if (signal?.aborted || isAbortError(error)) throw createAbortError();
-        if (error?.status && error.status < 500) throw error;
-      }
-      await waitForRecovery(retryDelay, signal);
-      retryDelay = Math.min(retryDelay * 2, TASK_RECOVERY_MAX_BACKOFF_MS);
+    const afterEventId = Number(readSessionValue(eventCursorKey(id), '0')) || 0;
+    try {
+      await blogAgentService.subscribeTaskEvents(
+        id,
+        afterEventId,
+        (event) => applyStreamEvent(id, event),
+        { _silent: true, signal },
+      );
+    } catch (error) {
+      if (signal?.aborted || isAbortError(error)) throw createAbortError();
+      if (error?.status && error.status < 500) throw error;
     }
-    throw createAbortError();
+
+    const finalSnapshot = await blogAgentService.getTask(id, { _silent: true, signal });
+    applyTaskSnapshot(finalSnapshot);
+    return finalSnapshot;
   }, [applyStreamEvent, applyTaskSnapshot]);
 
   useEffect(() => {
@@ -264,13 +236,13 @@ const BlogAgent = () => {
           };
           setIsRunning(true);
           setStartedAt((current) => current || Date.now());
-          const recovered = await recoverTaskUntilTerminal(taskId, controller.signal, data);
+          const recovered = await recoverTaskOnce(taskId, controller.signal, data);
           if (!active) return;
           setEndedAt(Date.now());
           if (recovered?.task?.status === 'ready') loadSessions();
         }
       } catch (error) {
-        if (active && !isAbortError(error)) toast.error(error.message || t('blog.agent.failed'));
+        if (active && !isAbortError(error)) toastRef.current.error(error.message || t('blog.agent.failed'));
       } finally {
         if (active) {
           setIsTaskLoading(false);
@@ -284,7 +256,7 @@ const BlogAgent = () => {
       controller.abort();
     };
     // 本地流式执行由事件回调更新；重新进入 running 任务时使用快照恢复。
-  }, [applyTaskSnapshot, loadSessions, recoverTaskUntilTerminal, taskId, t, toast]);
+  }, [applyTaskSnapshot, loadSessions, recoverTaskOnce, taskId, t]);
 
   const statusText = useMemo(() => {
     if (!task) return t('blog.agent.waiting');
@@ -308,8 +280,8 @@ const BlogAgent = () => {
       list.push({ id: 'user', role: 'user', content: pendingUserInput || task.input });
     }
     if (liveUserInput) list.push({ id: 'live-user', role: 'user', content: liveUserInput });
-    if (isRunning) {
-      const processStatus = isRunning
+    if (isTaskActive) {
+      const processStatus = isTaskActive
         ? 'running'
         : task?.status === 'failed'
           ? 'failed'
@@ -341,7 +313,7 @@ const BlogAgent = () => {
     }
 
     return list;
-  }, [taskData?.messages, pendingUserInput, task, isRunning, streamText, startedAt, endedAt, liveLogs, liveStage, liveUserInput]);
+  }, [taskData?.messages, pendingUserInput, task, isTaskActive, streamText, startedAt, endedAt, liveLogs, liveStage, liveUserInput]);
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
@@ -404,7 +376,7 @@ const BlogAgent = () => {
       let finalError = error;
       if (createdTaskId) {
         try {
-          const recovered = await recoverTaskUntilTerminal(createdTaskId, controller.signal);
+          const recovered = await recoverTaskOnce(createdTaskId, controller.signal);
           if (recovered?.task?.status === 'ready') {
             setEndedAt(Date.now());
             setInput('');
@@ -465,7 +437,7 @@ const BlogAgent = () => {
       setEndedAt(Date.now());
       let finalError = error;
       try {
-        const recovered = await recoverTaskUntilTerminal(task.id, controller.signal);
+        const recovered = await recoverTaskOnce(task.id, controller.signal);
         if (recovered?.task?.status === 'ready' && !recovered.task.errorMessage) {
           setEndedAt(Date.now());
           setInput('');
@@ -698,15 +670,15 @@ const BlogAgent = () => {
                   <button
                     type="button"
                     onClick={handleSubmit}
-                    disabled={isRunning || !input.trim()}
+                    disabled={inputLocked || !input.trim()}
                     className="inline-flex h-10 shrink-0 items-center gap-2 rounded-xl bg-ink px-4 text-sm font-black text-white transition hover:bg-accent disabled:cursor-wait disabled:opacity-60"
                   >
-                    {isRunning ? (
+                    {isTaskActive ? (
                       <Loader2 className="h-4 w-4 animate-spin" />
                     ) : (
                       <Send className="h-4 w-4" />
                     )}
-                    {isRunning
+                    {isTaskActive
                       ? t('blog.agent.running')
                       : hasFinishedTurn
                         ? t('blog.agent.revise')
