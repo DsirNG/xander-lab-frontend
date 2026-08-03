@@ -14,6 +14,8 @@ import AgentSessionList from '../components/agent/AgentSessionList';
 
 const RESULT_MESSAGE_ID = 'result';
 const TASK_TERMINAL_STATUSES = new Set(['ready', 'failed']);
+const RECONNECT_BASE_DELAY = 600;
+const RECONNECT_MAX_DELAY = 8000;
 const eventCursorKey = (id) => `xander-lab:blog-agent:event-cursor:${id}`;
 const streamTextKey = (id) => `xander-lab:blog-agent:stream-text:${id}`;
 
@@ -21,6 +23,21 @@ const createAbortError = () => Object.assign(new Error('Request cancelled'), { n
 const isAbortError = (error) => error?.name === 'AbortError'
   || error?.name === 'CanceledError'
   || error?.code === 'ERR_CANCELED';
+const waitForReconnect = (delay, signal) => new Promise((resolve, reject) => {
+  if (signal?.aborted) {
+    reject(createAbortError());
+    return;
+  }
+  const timer = window.setTimeout(() => {
+    signal?.removeEventListener('abort', onAbort);
+    resolve();
+  }, delay);
+  const onAbort = () => {
+    window.clearTimeout(timer);
+    reject(createAbortError());
+  };
+  signal?.addEventListener('abort', onAbort, { once: true });
+});
 const readSessionValue = (key, fallback = '') => {
   try {
     return sessionStorage.getItem(key) ?? fallback;
@@ -175,27 +192,46 @@ const BlogAgent = () => {
     }
   }, [applyTaskSnapshot, rememberEventId, t]);
 
-  const recoverTaskOnce = useCallback(async (id, signal, initialSnapshot = null) => {
-    const snapshot = initialSnapshot || await blogAgentService.getTask(id, { _silent: true, signal });
-    applyTaskSnapshot(snapshot);
-    if (TASK_TERMINAL_STATUSES.has(snapshot?.task?.status)) return snapshot;
+  const recoverTaskReliably = useCallback(async (id, signal, initialSnapshot = null) => {
+    let snapshot = initialSnapshot;
+    let reconnectAttempt = 0;
+    const applySnapshotIfCurrent = (data) => {
+      if (String(currentTaskIdRef.current) === String(id)) applyTaskSnapshot(data);
+    };
 
-    const afterEventId = Number(readSessionValue(eventCursorKey(id), '0')) || 0;
-    try {
-      await blogAgentService.subscribeTaskEvents(
-        id,
-        afterEventId,
-        (event) => applyStreamEvent(id, event),
-        { _silent: true, signal },
-      );
-    } catch (error) {
-      if (signal?.aborted || isAbortError(error)) throw createAbortError();
-      if (error?.status && error.status < 500) throw error;
+    while (!signal?.aborted) {
+      try {
+        snapshot = snapshot || await blogAgentService.getTask(id, { _silent: true, signal });
+        applySnapshotIfCurrent(snapshot);
+        if (TASK_TERMINAL_STATUSES.has(snapshot?.task?.status)) return snapshot;
+
+        const afterEventId = Number(readSessionValue(eventCursorKey(id), '0')) || 0;
+        await blogAgentService.subscribeTaskEvents(
+          id,
+          afterEventId,
+          (event) => applyStreamEvent(id, event),
+          { _silent: true, signal },
+        );
+
+        // A normally closed stream can still race the task completion event.
+        // Always confirm task state before deciding whether to reconnect.
+        snapshot = await blogAgentService.getTask(id, { _silent: true, signal });
+        applySnapshotIfCurrent(snapshot);
+        if (TASK_TERMINAL_STATUSES.has(snapshot?.task?.status)) return snapshot;
+      } catch (error) {
+        if (signal?.aborted || isAbortError(error)) throw createAbortError();
+        // Authentication and client errors cannot be repaired by reconnecting.
+        if (error?.status && error.status < 500) throw error;
+      }
+
+      reconnectAttempt += 1;
+      const delay = Math.min(RECONNECT_BASE_DELAY * (2 ** (reconnectAttempt - 1)), RECONNECT_MAX_DELAY);
+      await waitForReconnect(delay, signal);
+      // Fetch a fresh snapshot before each resumed SSE subscription.
+      snapshot = null;
     }
 
-    const finalSnapshot = await blogAgentService.getTask(id, { _silent: true, signal });
-    applyTaskSnapshot(finalSnapshot);
-    return finalSnapshot;
+    throw createAbortError();
   }, [applyStreamEvent, applyTaskSnapshot]);
 
   useEffect(() => {
@@ -245,7 +281,7 @@ const BlogAgent = () => {
           };
           setIsRunning(true);
           setStartedAt((current) => current || Date.now());
-          const recovered = await recoverTaskOnce(taskId, controller.signal, data);
+          const recovered = await recoverTaskReliably(taskId, controller.signal, data);
           if (!active) return;
           setEndedAt(Date.now());
           if (recovered?.task?.status === 'ready') loadSessions();
@@ -265,7 +301,7 @@ const BlogAgent = () => {
       controller.abort();
     };
     // 本地流式执行由事件回调更新；重新进入 running 任务时使用快照恢复。
-  }, [applyTaskSnapshot, loadSessions, recoverTaskOnce, taskId, t]);
+  }, [applyTaskSnapshot, loadSessions, recoverTaskReliably, taskId, t]);
 
   const statusText = useMemo(() => {
     if (!task) return t('blog.agent.waiting');
@@ -371,8 +407,10 @@ const BlogAgent = () => {
         (event) => applyStreamEvent(created.id, event),
         { signal: controller.signal },
       );
+      const recovered = await recoverTaskReliably(created.id, controller.signal);
       if (streamFrameRef.current) cancelAnimationFrame(streamFrameRef.current);
       if (streamBufferRef.current) setStreamText(streamBufferRef.current);
+      if (recovered?.task?.status === 'failed') throw new Error(recovered.task.errorMessage || t('blog.agent.failed'));
       if (streamErrorRef.current) throw new Error(streamErrorRef.current);
       setEndedAt(Date.now());
       setSelectedResultId(RESULT_MESSAGE_ID);
@@ -388,7 +426,7 @@ const BlogAgent = () => {
       let finalError = error;
       if (createdTaskId) {
         try {
-          const recovered = await recoverTaskOnce(createdTaskId, controller.signal);
+          const recovered = await recoverTaskReliably(createdTaskId, controller.signal);
           if (recovered?.task?.status === 'ready') {
             setEndedAt(Date.now());
             setInput('');
@@ -439,6 +477,8 @@ const BlogAgent = () => {
         (event) => applyStreamEvent(task.id, event),
         { signal: controller.signal },
       );
+      const recovered = await recoverTaskReliably(task.id, controller.signal);
+      if (recovered?.task?.status === 'failed') throw new Error(recovered.task.errorMessage || t('blog.agent.failed'));
       if (streamErrorRef.current) throw new Error(streamErrorRef.current);
       setEndedAt(Date.now());
       setInput('');
@@ -453,7 +493,7 @@ const BlogAgent = () => {
       setEndedAt(Date.now());
       let finalError = error;
       try {
-        const recovered = await recoverTaskOnce(task.id, controller.signal);
+        const recovered = await recoverTaskReliably(task.id, controller.signal);
         if (recovered?.task?.status === 'ready' && !recovered.task.errorMessage) {
           setEndedAt(Date.now());
           setInput('');
