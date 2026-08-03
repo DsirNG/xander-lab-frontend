@@ -5,6 +5,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        SEO_API_BASE: ${SEO_API_BASE:-}
     container_name: xander-lab-frontend
     restart: unless-stopped
     ports:

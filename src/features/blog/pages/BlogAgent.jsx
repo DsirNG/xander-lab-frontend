@@ -199,11 +199,9 @@ const BlogAgent = () => {
           (event) => applyStreamEvent(id, event),
           { _silent: true, signal },
         );
-        retryDelay = TASK_RECOVERY_POLL_MS;
       } catch (error) {
         if (signal?.aborted || isAbortError(error)) throw createAbortError();
         if (error?.status && error.status < 500) throw error;
-        retryDelay = Math.min(retryDelay * 2, TASK_RECOVERY_MAX_BACKOFF_MS);
       }
       try {
         snapshot = await blogAgentService.getTask(id, { _silent: true, signal });
@@ -213,9 +211,9 @@ const BlogAgent = () => {
       } catch (error) {
         if (signal?.aborted || isAbortError(error)) throw createAbortError();
         if (error?.status && error.status < 500) throw error;
-        retryDelay = Math.min(retryDelay * 2, TASK_RECOVERY_MAX_BACKOFF_MS);
       }
       await waitForRecovery(retryDelay, signal);
+      retryDelay = Math.min(retryDelay * 2, TASK_RECOVERY_MAX_BACKOFF_MS);
     }
     throw createAbortError();
   }, [applyStreamEvent, applyTaskSnapshot]);

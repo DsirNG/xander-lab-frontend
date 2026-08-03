@@ -21,9 +21,10 @@ const __dirname = path.dirname(__filename);
 
 // ============ 配置 ============
 const SITE_URL = 'https://xander.dsircity.top';
-// 直接请求本地 Spring Boot 后端（不走 nginx 代理，避免 /api 前缀剥脱问题）
-// Docker 构建时后端运行在同一台宿主机的 30002 端口
-const API_BASE = 'https://xander.dsircity.top/api';
+// 构建环境可通过 SEO_API_BASE 覆盖默认公网 API，例如部署机可配置为内网后端地址。
+const API_BASE = process.env.SEO_API_BASE || 'https://xander.dsircity.top/api';
+const API_TIMEOUT_MS = 15_000;
+const API_RETRY_COUNT = 3;
 const DIST_DIR = path.join(__dirname, '..', 'dist');
 const INDEX_HTML_PATH = path.join(DIST_DIR, 'index.html');
 const OG_IMAGE = `${SITE_URL}/og-image.png`;
@@ -73,39 +74,48 @@ function escapeHtml(str) {
  * @returns {Promise<Array>} 博客列表
  */
 async function fetchAllBlogs() {
-  try {
-    // 先获取第一页，确定总数
-    const firstRes = await fetch(`${API_BASE}/blog/posts?page=1&size=100`);
-    if (!firstRes.ok) {
-      console.warn(`  API 返回 ${firstRes.status}，跳过博客预渲染`);
-      return [];
-    }
-    const firstJson = await firstRes.json();
-    const data = firstJson.data || firstJson;
-    const records = data.records || [];
-    const total = data.total || records.length;
+  async function requestJson(url) {
+    let lastError;
 
-    // 如果第一页已经拿全了
-    if (records.length >= total) return records;
-
-    // 否则继续翻页（理论上 100 条/页够用了）
-    const allRecords = [...records];
-    let page = 2;
-    while (allRecords.length < total) {
-      const res = await fetch(`${API_BASE}/blog/posts?page=${page}&size=100`);
-      if (!res.ok) break;
-      const json = await res.json();
-      const pageData = json.data || json;
-      const pageRecords = pageData.records || [];
-      if (pageRecords.length === 0) break;
-      allRecords.push(...pageRecords);
-      page++;
+    for (let attempt = 1; attempt <= API_RETRY_COUNT; attempt++) {
+      try {
+        const response = await fetch(url, { signal: AbortSignal.timeout(API_TIMEOUT_MS) });
+        if (!response.ok) {
+          throw new Error(`API 返回 HTTP ${response.status}`);
+        }
+        return response.json();
+      } catch (error) {
+        lastError = error;
+        if (attempt < API_RETRY_COUNT) {
+          console.warn(`  博客 API 第 ${attempt} 次请求失败：${error.message}，正在重试...`);
+        }
+      }
     }
-    return allRecords;
-  } catch (err) {
-    console.warn(`  无法连接 API (${err.message})，跳过博客预渲染`);
-    return [];
+
+    throw new Error(`博客 API 连续 ${API_RETRY_COUNT} 次请求失败：${lastError.message}`);
   }
+
+  // 先获取第一页，确定总数
+  const firstJson = await requestJson(`${API_BASE}/blog/posts?page=1&size=100`);
+  const data = firstJson.data || firstJson;
+  const records = data.records || [];
+  const total = data.total || records.length;
+
+  // 如果第一页已经拿全了
+  if (records.length >= total) return records;
+
+  // 否则继续翻页（理论上 100 条/页够用了）
+  const allRecords = [...records];
+  let page = 2;
+  while (allRecords.length < total) {
+    const json = await requestJson(`${API_BASE}/blog/posts?page=${page}&size=100`);
+    const pageData = json.data || json;
+    const pageRecords = pageData.records || [];
+    if (pageRecords.length === 0) break;
+    allRecords.push(...pageRecords);
+    page++;
+  }
+  return allRecords;
 }
 
 /**
@@ -417,7 +427,6 @@ async function main() {
 }
 
 main().catch(err => {
-  console.error('❌ 预渲染失败:', err.message);
-  // 预渲染失败不应阻断构建，以 0 退出
-  process.exit(0);
+  console.error('❌ 预渲染失败，已阻止发布以保留现有 sitemap:', err.message);
+  process.exit(1);
 });

@@ -17,6 +17,10 @@ RUN npm config set registry https://registry.npmmirror.com && \
 # Copy source code
 COPY . .
 
+# Optional private API endpoint used only while generating SEO artifacts.
+ARG SEO_API_BASE
+ENV SEO_API_BASE=${SEO_API_BASE}
+
 # Build the application
 RUN npm run build:seo
 

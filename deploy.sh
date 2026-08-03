@@ -38,16 +38,16 @@ else
     USE_COMPOSE=true
 fi
 
-echo -e "${YELLOW}Step 1: Stopping existing container...${NC}"
-docker stop $CONTAINER_NAME 2>/dev/null || true
-docker rm $CONTAINER_NAME 2>/dev/null || true
-
-echo -e "${YELLOW}Step 2: Building Docker image...${NC}"
+echo -e "${YELLOW}Step 1: Building Docker image...${NC}"
 if [ "$USE_COMPOSE" = true ]; then
     docker-compose build --no-cache
 else
     docker build -t $IMAGE_NAME:latest .
 fi
+
+echo -e "${YELLOW}Step 2: Replacing existing container...${NC}"
+docker stop $CONTAINER_NAME 2>/dev/null || true
+docker rm $CONTAINER_NAME 2>/dev/null || true
 
 echo -e "${YELLOW}Step 3: Starting container...${NC}"
 if [ "$USE_COMPOSE" = true ]; then
