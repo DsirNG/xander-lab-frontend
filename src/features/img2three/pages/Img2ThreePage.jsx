@@ -11,12 +11,13 @@ import {
   Upload,
 } from 'lucide-react';
 import LoadingSpinner from '@components/common/LoadingSpinner';
-import ThreeViewer from '../components/ThreeViewer';
 import { img2threeService } from '../services/img2threeService';
 import { authService } from '@features/auth/services/authService';
 import { useToast } from '@/hooks/useToast';
 
 const ACCEPTED_IMAGE_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/gif']);
+const MAX_IMAGE_SIZE_BYTES = 10 * 1024 * 1024;
+const ThreeViewer = React.lazy(() => import('../components/ThreeViewer'));
 const STAGE_KEYS = {
   analyze: 'stageAnalyze',
   spec: 'stageSpec',
@@ -61,9 +62,13 @@ const Img2ThreePage = () => {
   const [historyVisible, setHistoryVisible] = useState(false);
   const [historyLoading, setHistoryLoading] = useState(false);
   const [historyTasks, setHistoryTasks] = useState([]);
+  const [exportingGlb, setExportingGlb] = useState(false);
+  const [viewerReadyTaskId, setViewerReadyTaskId] = useState(null);
+  const [viewerError, setViewerError] = useState('');
 
   const viewerApiRef = useRef(null);
-  const streamStartedRef = useRef(false);
+  const startedStreamTaskIdsRef = useRef(new Set());
+  const activeStreamTaskIdRef = useRef(null);
   const isRunningRef = useRef(false);
   isRunningRef.current = running;
 
@@ -76,17 +81,33 @@ const Img2ThreePage = () => {
 
   const handleViewerReady = useCallback((api) => {
     viewerApiRef.current = api;
-  }, []);
+    setViewerReadyTaskId(String(taskId || task?.id || ''));
+    setViewerError('');
+  }, [task?.id, taskId]);
+
+  const handleViewerError = useCallback((viewerFailure) => {
+    viewerApiRef.current = null;
+    setViewerReadyTaskId(null);
+    const message = typeof viewerFailure === 'string'
+      ? viewerFailure
+      : viewerFailure?.message;
+    setViewerError(message || t('img2three.previewFailed'));
+  }, [t]);
 
   const runStream = useCallback(async (id) => {
-    if (isRunningRef.current) return;
+    const normalizedId = String(id || '');
+    if (!normalizedId || startedStreamTaskIdsRef.current.has(normalizedId)) return;
+    if (activeStreamTaskIdRef.current && activeStreamTaskIdRef.current !== normalizedId) return;
+
+    startedStreamTaskIdsRef.current.add(normalizedId);
+    activeStreamTaskIdRef.current = normalizedId;
+    isRunningRef.current = true;
     setRunning(true);
     setError('');
-    streamStartedRef.current = true;
     let streamError = null;
 
     try {
-      await img2threeService.runTaskStream(id, ({ event, data }) => {
+      await img2threeService.runTaskStream(normalizedId, ({ event, data }) => {
         if (event === 'stage') {
           const { stage, message } = parseStageEvent(data);
           setStageLabel(message);
@@ -104,7 +125,7 @@ const Img2ThreePage = () => {
     } catch (err) {
       let latest = null;
       try {
-        latest = await img2threeService.getTask(id, { _silent: true });
+        latest = await img2threeService.getTask(normalizedId, { _silent: true });
         setTask(latest);
       } catch {
         // keep original stream error
@@ -123,6 +144,10 @@ const Img2ThreePage = () => {
       setError(message);
       toast.error(message);
     } finally {
+      if (activeStreamTaskIdRef.current === normalizedId) {
+        activeStreamTaskIdRef.current = null;
+        isRunningRef.current = false;
+      }
       setRunning(false);
     }
   }, [t, toast]);
@@ -139,7 +164,9 @@ const Img2ThreePage = () => {
       setTask(null);
       setError('');
       setStageLabel('');
-      streamStartedRef.current = false;
+      viewerApiRef.current = null;
+      setViewerReadyTaskId(null);
+      setViewerError('');
       return undefined;
     }
 
@@ -150,7 +177,6 @@ const Img2ThreePage = () => {
 
     let active = true;
     setInitialLoading(true);
-    streamStartedRef.current = false;
 
     const loadTask = async () => {
       try {
@@ -158,7 +184,7 @@ const Img2ThreePage = () => {
         if (!active) return;
         setTask(data);
         setError(data?.status === 'failed' ? (data.errorMessage || t('img2three.failed')) : '');
-        if (data?.status === 'created' && !streamStartedRef.current) {
+        if (data?.status === 'created') {
           runStream(taskId);
         }
       } catch (err) {
@@ -237,6 +263,10 @@ const Img2ThreePage = () => {
       toast.warning(t('img2three.invalidImage'));
       return false;
     }
+    if (file.size > MAX_IMAGE_SIZE_BYTES) {
+      toast.warning(t('img2three.fileTooLarge'));
+      return false;
+    }
     setSelectedFile(file);
     setFilePreviewUrl((current) => {
       if (current?.startsWith('blob:')) URL.revokeObjectURL(current);
@@ -257,9 +287,10 @@ const Img2ThreePage = () => {
     try {
       const created = await img2threeService.createTask(selectedFile);
       setTask(created);
+      const streamPromise = runStream(String(created.id));
       navigate(`/lab/img2three/${created.id}`, { replace: true });
       setUploading(false);
-      await runStream(String(created.id));
+      await streamPromise;
     } catch (err) {
       setUploading(false);
       const message = err?.message || t('img2three.failed');
@@ -279,12 +310,16 @@ const Img2ThreePage = () => {
   };
 
   const handleDownloadGlb = async () => {
+    if (exportingGlb) return;
+    setExportingGlb(true);
     try {
       const blob = await viewerApiRef.current?.exportGlb?.();
       if (!blob) throw new Error(t('img2three.failed'));
       downloadBlob(blob, `${task?.title || 'model'}.glb`);
     } catch (err) {
       toast.error(err?.message || t('img2three.failed'));
+    } finally {
+      setExportingGlb(false);
     }
   };
 
@@ -294,7 +329,10 @@ const Img2ThreePage = () => {
     setTask(null);
     setError('');
     setStageLabel('');
-    streamStartedRef.current = false;
+    viewerApiRef.current = null;
+    setViewerReadyTaskId(null);
+    setViewerError('');
+    setExportingGlb(false);
     navigate('/lab/img2three', { replace: true });
   };
 
@@ -318,6 +356,8 @@ const Img2ThreePage = () => {
 
   const isReady = task?.status === 'ready' && task?.sceneSpec;
   const isBusy = uploading || running || recovering;
+  const viewerTaskId = String(taskId || task?.id || '');
+  const viewerReady = Boolean(viewerTaskId) && viewerReadyTaskId === viewerTaskId && !viewerError;
 
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
@@ -491,21 +531,36 @@ const Img2ThreePage = () => {
               <button
                 type="button"
                 onClick={handleDownloadGlb}
-                className="inline-flex items-center gap-2 rounded-xl bg-accent px-4 py-2 text-sm font-bold text-white transition hover:bg-accent-fg"
+                disabled={exportingGlb || !viewerReady}
+                className="inline-flex items-center gap-2 rounded-xl bg-accent px-4 py-2 text-sm font-bold text-white transition hover:bg-accent-fg disabled:cursor-not-allowed disabled:opacity-60"
               >
-                <Download className="h-4 w-4" aria-hidden="true" />
-                {t('img2three.downloadGlb')}
+                {exportingGlb ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> : <Download className="h-4 w-4" aria-hidden="true" />}
+                {exportingGlb ? t('img2three.exportingGlb') : t('img2three.downloadGlb')}
               </button>
             </div>
           </div>
 
           <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
-            <div className="overflow-hidden rounded-2xl border border-border bg-surface shadow-sm">
-              <ThreeViewer
-                sceneSpec={task.sceneSpec}
-                className="h-[min(70vh,560px)] w-full"
-                onReady={handleViewerReady}
-              />
+            <div className="space-y-3">
+              {viewerError ? (
+                <div role="alert" className="rounded-xl border border-danger/30 bg-danger/5 px-4 py-3 text-sm text-danger">
+                  {viewerError}
+                </div>
+              ) : null}
+              <div className="overflow-hidden rounded-2xl border border-border bg-surface shadow-sm">
+                <React.Suspense fallback={(
+                  <div className="grid h-[min(70vh,560px)] place-items-center">
+                    <LoadingSpinner size="md" text={t('img2three.preview')} />
+                  </div>
+                )}>
+                  <ThreeViewer
+                    sceneSpec={task.sceneSpec}
+                    className="h-[min(70vh,560px)] w-full"
+                    onReady={handleViewerReady}
+                    onError={handleViewerError}
+                  />
+                </React.Suspense>
+              </div>
             </div>
             <aside className="rounded-2xl border border-border bg-surface p-4 shadow-sm">
               <h3 className="text-sm font-semibold text-ink">{t('img2three.reference')}</h3>
