@@ -3,6 +3,7 @@ import { ExternalLink, Plug, RefreshCw, ShieldCheck, ShieldOff } from 'lucide-re
 import { useTranslation } from 'react-i18next'
 import { useToast } from '@hooks/useToast'
 import { mcpService } from '../services/mcpService'
+import CsdnAuthorizationPanel from './CsdnAuthorizationPanel'
 
 /** Profile control for the browser-only MCP authorization handoff. */
 const McpAuthorizationPanel = () => {
@@ -93,6 +94,7 @@ const McpAuthorizationPanel = () => {
           <code className="mt-2 block break-all rounded-lg bg-surface px-3 py-2 text-caption text-ink-secondary">{window.location.origin}/api/mcp</code>
           <button type="button" onClick={copyEndpoint} className="mt-3 text-caption font-bold text-accent hover:underline">{t('profile.mcp.copyEndpoint', 'Copy endpoint')}</button>
         </div>
+        <CsdnAuthorizationPanel />
       </div>
     </section>
   )
