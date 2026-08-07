@@ -4,7 +4,7 @@ const path = require('path');
 const xml2js = require('xml2js');
 
 // 配置常量
-const API_KEY = '7a05bd37ef5d47a3b0a1157e8421a998';
+const API_KEY = 'e37f04dea21c4c038138db8ada5e62bc';
 const HOST = 'xander.dsircity.top';
 const SITEMAP_PATH = path.join(__dirname, 'public', 'sitemap.xml');
 const API_KEY_FILE_PATH = path.join(__dirname, 'public', `${API_KEY}.txt`);

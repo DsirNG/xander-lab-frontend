@@ -4,7 +4,7 @@ const path = require('path');
 
 // 配置常量
 const HOST = 'xander.dsircity.top';
-const API_KEY_FILE = '7a05bd37ef5d47a3b0a1157e8421a998.txt';
+const API_KEY_FILE = 'e37f04dea21c4c038138db8ada5e62bc.txt';
 
 // 从文件读取API密钥
 function getApiKey() {

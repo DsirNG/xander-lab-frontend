@@ -8,6 +8,8 @@
     "build": "vite build",
     "build:seo": "vite build && npm run seo:generate",
     "seo:generate": "node scripts/generate-meta.js && node scripts/prerender-seo.js",
+    "seo:indexnow": "node scripts/indexnow-submit.mjs",
+    "seo:indexnow:dry": "node scripts/indexnow-submit.mjs --dry-run",
     "lint": "eslint .",
     "test": "node --test src/**/*.test.js",
     "preview": "vite preview"
