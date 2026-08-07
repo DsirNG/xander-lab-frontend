@@ -17,6 +17,7 @@ IMAGE_NAME="xander-lab-frontend"
 CONTAINER_NAME="xander-lab-frontend"
 PORT=30001
 ENVIRONMENT=${1:-production}
+INDEXNOW_ENABLED=${INDEXNOW_ENABLED:-true}
 
 echo -e "${GREEN}========================================${NC}"
 echo -e "${GREEN}  Xander Lab Frontend Deployment${NC}"
@@ -102,6 +103,19 @@ else
     echo -e "${RED}✗ Container failed to start${NC}"
     echo -e "${RED}Check logs with: docker logs $CONTAINER_NAME${NC}"
     exit 1
+fi
+
+# Notify Bing after the new container is live. IndexNow is intentionally run
+# after deployment so the submitted sitemap and key file are publicly reachable.
+if [ "$INDEXNOW_ENABLED" = "true" ]; then
+    echo -e "${YELLOW}Submitting sitemap URLs to IndexNow...${NC}"
+    if npm run seo:indexnow; then
+        echo -e "${GREEN}IndexNow submission completed${NC}"
+    else
+        echo -e "${YELLOW}Warning: IndexNow submission failed; deployment remains active${NC}"
+    fi
+else
+    echo -e "${YELLOW}IndexNow submission skipped (INDEXNOW_ENABLED=$INDEXNOW_ENABLED)${NC}"
 fi
 
 echo ""
