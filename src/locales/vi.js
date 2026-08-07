@@ -256,6 +256,7 @@ export default {
       description: 'Kết nối CSDN một lần để bật tính năng tự động/lên lịch xuất bản.',
       authorized: 'Đã kết nối CSDN',
       checking: 'Đang kiểm tra trạng thái kết nối...',
+      generatingQr: 'Đang tạo mã QR đăng nhập CSDN...',
       startFailed: 'Không thể bắt đầu ủy quyền CSDN',
       disconnected: 'Đã ngắt kết nối CSDN',
       disconnectFailed: 'Không thể ngắt kết nối CSDN',

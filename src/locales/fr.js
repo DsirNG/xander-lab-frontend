@@ -256,6 +256,7 @@ export default {
       description: 'Connectez CSDN une fois pour activer la publication programmée pour votre compte.',
       authorized: 'CSDN connecté',
       checking: 'Vérification de l\'état de la connexion...',
+      generatingQr: 'Génération du code QR de connexion CSDN...',
       startFailed: 'Impossible de démarrer l\'autorisation CSDN',
       disconnected: 'CSDN déconnecté',
       disconnectFailed: 'Impossible de déconnecter CSDN',

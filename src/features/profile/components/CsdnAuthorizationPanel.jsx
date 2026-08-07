@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { CheckCircle2, Link2, LoaderCircle, QrCode, ShieldOff, Unplug } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
+import Modal from '@components/common/Modal'
 import { useToast } from '@hooks/useToast'
 import { csdnService } from '../services/mcpService'
 
@@ -12,6 +13,7 @@ const CsdnAuthorizationPanel = () => {
   const [state, setState] = useState('loading')
   const [qrCode, setQrCode] = useState(null)
   const [busy, setBusy] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   const loadStatus = useCallback(async () => {
     setState('loading')
@@ -28,8 +30,23 @@ const CsdnAuthorizationPanel = () => {
     return () => timerRef.current && window.clearInterval(timerRef.current)
   }, [loadStatus])
 
+  const handleCloseModal = () => {
+    if (timerRef.current) {
+      window.clearInterval(timerRef.current)
+      timerRef.current = null
+    }
+    setQrCode(null)
+    setBusy(false)
+    if (state === 'PENDING') {
+      setState('NOT_AUTHORIZED')
+    }
+    setIsModalOpen(false)
+  }
+
   const start = async () => {
+    setIsModalOpen(true)
     setBusy(true)
+    setQrCode(null)
     try {
       const result = await csdnService.startAuthorization()
       setQrCode(result?.qrCodeDataUrl || null)
@@ -39,9 +56,11 @@ const CsdnAuthorizationPanel = () => {
           const status = await csdnService.getAuthorizationStatus()
           if (status?.status === 'AUTHORIZED') {
             window.clearInterval(timerRef.current)
+            timerRef.current = null
             setQrCode(null)
             setState('AUTHORIZED')
             setBusy(false)
+            setIsModalOpen(false)
             toast.success(t('profile.csdn.authorized'))
           }
         } catch {
@@ -50,6 +69,7 @@ const CsdnAuthorizationPanel = () => {
       }, 2500)
     } catch (error) {
       setBusy(false)
+      setIsModalOpen(false)
       toast.error(error?.message || t('profile.csdn.startFailed'))
     }
   }
@@ -68,8 +88,14 @@ const CsdnAuthorizationPanel = () => {
   }
 
   const loading = state === 'loading'
-  const pending = state === 'PENDING'
   const authorized = state === 'AUTHORIZED'
+
+  const titleNode = (
+    <div className="flex items-center gap-2">
+      <QrCode className="h-5 w-5 text-accent" />
+      <h3 className="text-title font-black text-ink">{t('profile.csdn.title')}</h3>
+    </div>
+  )
 
   return (
     <div className="mt-4 rounded-xl border border-border bg-surface p-5">
@@ -97,27 +123,61 @@ const CsdnAuthorizationPanel = () => {
         </div>
       )}
 
-      {!loading && pending && qrCode && (
-        <div className="mt-4 flex flex-col items-center gap-3 rounded-lg border border-border bg-canvas p-4">
-          <img src={qrCode} alt={t('profile.csdn.qrAlt')} className="h-52 w-52 rounded-md bg-white object-contain" />
-          <p className="text-caption text-ink-muted">{t('profile.csdn.scanHint')}</p>
-          <LoaderCircle className="h-4 w-4 animate-spin text-accent" aria-label={t('profile.csdn.waiting')} />
-        </div>
-      )}
-
-      {!loading && !authorized && !pending && state !== 'UNAVAILABLE' && (
-        <button type="button" onClick={start} disabled={busy} className="mt-4 inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-2.5 text-sm font-bold text-white hover:bg-accent/90 disabled:opacity-50">
+      {!loading && !authorized && state !== 'UNAVAILABLE' && (
+        <button
+          type="button"
+          onClick={start}
+          disabled={busy}
+          className="mt-4 inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-2.5 text-sm font-bold text-white hover:bg-accent/90 disabled:opacity-50"
+        >
           {busy ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <QrCode className="h-4 w-4" />}
           {t('profile.csdn.connect')}
         </button>
       )}
+
       {!loading && authorized && (
-        <button type="button" onClick={disconnect} disabled={busy} className="mt-4 inline-flex items-center gap-2 rounded-lg border border-border px-4 py-2.5 text-sm font-bold text-ink-muted hover:bg-canvas disabled:opacity-50">
+        <button
+          type="button"
+          onClick={disconnect}
+          disabled={busy}
+          className="mt-4 inline-flex items-center gap-2 rounded-lg border border-border px-4 py-2.5 text-sm font-bold text-ink-muted hover:bg-canvas disabled:opacity-50"
+        >
           {busy ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <Unplug className="h-4 w-4" />}
           {t('profile.csdn.disconnect')}
         </button>
       )}
-      {!loading && state === 'UNAVAILABLE' && <p className="mt-4 text-caption text-warning">{t('profile.csdn.unavailable')}</p>}
+
+      {!loading && state === 'UNAVAILABLE' && (
+        <p className="mt-4 text-caption text-warning">{t('profile.csdn.unavailable')}</p>
+      )}
+
+      <Modal isOpen={isModalOpen} onClose={handleCloseModal} title={titleNode} width="max-w-md">
+        {!qrCode ? (
+          <div className="flex min-h-56 flex-col items-center justify-center gap-3 py-6 text-center">
+            <LoaderCircle className="h-8 w-8 animate-spin text-accent" />
+            <p className="text-sm font-bold text-ink-secondary">
+              {t('profile.csdn.generatingQr')}
+            </p>
+          </div>
+        ) : (
+          <div className="flex flex-col items-center gap-4 py-2 text-center">
+            <div className="rounded-2xl border border-border bg-white p-3 shadow-sm">
+              <img
+                src={qrCode}
+                alt={t('profile.csdn.qrAlt')}
+                className="h-60 w-60 object-contain"
+              />
+            </div>
+            <p className="text-caption font-medium text-ink-muted">
+              {t('profile.csdn.scanHint')}
+            </p>
+            <div className="flex items-center gap-2 text-caption font-bold text-accent">
+              <LoaderCircle className="h-4 w-4 animate-spin" />
+              <span>{t('profile.csdn.waiting')}</span>
+            </div>
+          </div>
+        )}
+      </Modal>
     </div>
   )
 }

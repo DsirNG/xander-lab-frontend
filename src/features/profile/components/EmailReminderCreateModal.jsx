@@ -337,7 +337,12 @@ const EmailReminderCreateModal = ({ isOpen, onClose, onCreated }) => {
     };
 
     return (
-        <div className="fixed inset-0 z-[1100] flex items-center justify-center bg-ink/45 p-3 backdrop-blur-[1px] sm:p-6">
+        <div
+            className="fixed inset-0 z-[1100] flex items-center justify-center bg-ink/45 p-3 backdrop-blur-[1px] sm:p-6"
+            onClick={(e) => {
+                if (e.target === e.currentTarget) handleClose();
+            }}
+        >
             <div
                 role="dialog"
                 aria-modal="true"
@@ -654,7 +659,12 @@ const EmailReminderCreateModal = ({ isOpen, onClose, onCreated }) => {
             </div>
 
             {isTemplatePickerOpen ? (
-                <div className="fixed inset-0 z-[1200] flex items-center justify-center bg-ink/45 p-3 sm:p-6">
+                <div
+                    className="fixed inset-0 z-[1200] flex items-center justify-center bg-ink/45 p-3 sm:p-6"
+                    onClick={(e) => {
+                        if (e.target === e.currentTarget) setIsTemplatePickerOpen(false);
+                    }}
+                >
                     <div
                         role="dialog"
                         aria-modal="true"

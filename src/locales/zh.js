@@ -282,6 +282,7 @@ export default {
       description: '绑定 CSDN 账号后，支持将文章一键同步发布至 CSDN。',
       authorized: 'CSDN 已连接',
       checking: '正在检查连接状态...',
+      generatingQr: '正在生成 CSDN 登录二维码...',
       startFailed: '无法发起 CSDN 授权',
       disconnected: 'CSDN 已断开连接',
       disconnectFailed: '无法断开 CSDN 连接',

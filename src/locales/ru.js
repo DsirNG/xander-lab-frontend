@@ -256,6 +256,7 @@ export default {
       description: 'Подключите CSDN один раз для включения отложенной публикации.',
       authorized: 'CSDN подключен',
       checking: 'Проверка состояния подключения...',
+      generatingQr: 'Создание QR-кода входа CSDN...',
       startFailed: 'Не удалось запустить авторизацию CSDN',
       disconnected: 'CSDN отключен',
       disconnectFailed: 'Не удалось отключить CSDN',

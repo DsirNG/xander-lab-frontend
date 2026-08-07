@@ -108,12 +108,10 @@ const Modal = ({
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.2 }}
                     className="fixed inset-0 z-[1000] flex items-center justify-center p-4 sm:p-6"
+                    onClick={closeOnOutsideClick ? onClose : undefined}
                 >
-                    {/* 背景遮罩 (因为父级有了透明度动画，这里改回普通 div 即可) */}
-                    <div
-                        className="absolute inset-0 bg-ink/60"
-                        onClick={closeOnOutsideClick ? onClose : undefined}
-                    />
+                    {/* 背景遮罩 */}
+                    <div className="absolute inset-0 bg-ink/60" />
 
                     {/* 弹窗内容 */}
                     <motion.div

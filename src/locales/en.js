@@ -264,6 +264,7 @@ export default {
       description: 'Connect CSDN once to enable scheduled publishing for your account.',
       authorized: 'CSDN connected',
       checking: 'Checking connection status...',
+      generatingQr: 'Generating CSDN login QR code...',
       startFailed: 'Unable to start CSDN authorization',
       disconnected: 'CSDN disconnected',
       disconnectFailed: 'Unable to disconnect CSDN',
