@@ -192,7 +192,8 @@ export default {
       templates: 'Шаблоны писем',
       history: 'История задач',
       apiKeys: 'API-ключи',
-      preferences: 'Настройки'
+      preferences: 'Настройки',
+      mcp: 'Авторизация MCP'
     },
     blogManage: {
       title: 'Управление блогом',
@@ -209,7 +210,18 @@ export default {
       emptyTrashHint: 'Удалённые статьи появляются здесь.',
       untitled: 'Без названия',
       status: { draft: 'Черновик', published: 'Опубликовано', trash: 'Корзина' },
-      actions: { edit: 'Редактировать', publish: 'Опубликовать', unpublish: 'В черновики', trash: 'В корзину', restore: 'Восстановить как черновик', permanentDelete: 'Удалить навсегда', view: 'Просмотр' },
+      actions: { edit: 'Редактировать', publish: 'Опубликовать', unpublish: 'В черновики', trash: 'В корзину', restore: 'Восстановить как черновик', permanentDelete: 'Удалить навсегда', view: 'Просмотр', syncCsdn: 'Синхронизировать с CSDN' },
+      csdn: {
+        dialogTitle: 'Синхронизация с CSDN',
+        syncing: 'Публикация в CSDN...',
+        checking: 'Проверка авторизации CSDN...',
+        scanHint: 'Отсканируйте для авторизации. Статья будет синхронизирована автоматически после входа.',
+        synced: 'Синхронизировано с CSDN',
+        viewPost: 'Просмотреть статью CSDN',
+        syncFailed: 'Не удалось синхронизировать статью с CSDN',
+        authorizationFailed: 'Не удалось запустить авторизацию CSDN',
+        qrAlt: 'QR-код входа CSDN'
+      },
       confirmTrashTitle: 'Переместить в корзину',
       confirmTrashMessage: 'Переместить «{{title}}» в корзину? Позже можно восстановить.',
       confirmPermanentTitle: 'Удалить навсегда',
@@ -223,6 +235,35 @@ export default {
       pageSizeOption: '{{size}} на странице',
       prevPage: 'Назад',
       nextPage: 'Далее'
+    },
+    mcp: {
+      title: 'Авторизация MCP',
+      description: 'Авторизуйте клиент MCP для создания, чтения, обновления и публикации статей блога.',
+      checking: 'Проверка авторизации...',
+      authorized: 'Авторизовано',
+      unavailable: 'Сервер MCP недоступен',
+      notAuthorized: 'Не авторизовано',
+      authorizedHint: 'Ваш клиент MCP может использовать инструменты блога.',
+      notAuthorizedHint: 'Пройдите разовую авторизацию в браузере перед использованием инструментов MCP.',
+      authorize: 'Авторизовать MCP',
+      endpointLabel: 'Конечная точка MCP',
+      copyEndpoint: 'Копировать конечную точку',
+      endpointCopied: 'Конечная точка MCP скопирована',
+      copyFailed: 'Не удалось скопировать конечную точку MCP'
+    },
+    csdn: {
+      title: 'Публикация в CSDN',
+      description: 'Подключите CSDN один раз для включения отложенной публикации.',
+      authorized: 'CSDN подключен',
+      startFailed: 'Не удалось запустить авторизацию CSDN',
+      disconnected: 'CSDN отключен',
+      disconnectFailed: 'Не удалось отключить CSDN',
+      qrAlt: 'QR-код входа CSDN',
+      scanHint: 'Отсканируйте через приложение CSDN или WeChat. Срок действия QR-кода скоро истечет.',
+      waiting: 'Ожидание авторизации',
+      connect: 'Подключить CSDN',
+      disconnect: 'Отключить',
+      unavailable: 'Служба авторизации CSDN недоступна'
     },
     emailReminders: {
       title: 'Отложенная почта',

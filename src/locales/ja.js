@@ -192,7 +192,8 @@ export default {
       templates: 'メールテンプレート',
       history: 'タスク履歴',
       apiKeys: 'API キー',
-      preferences: '環境設定'
+      preferences: '環境設定',
+      mcp: 'MCP 認証'
     },
     blogManage: {
       title: 'ブログ管理',
@@ -209,7 +210,18 @@ export default {
       emptyTrashHint: '削除した記事はここに表示されます。',
       untitled: '無題',
       status: { draft: '下書き', published: '公開済み', trash: 'ゴミ箱' },
-      actions: { edit: '編集', publish: '公開', unpublish: '下書きに戻す', trash: 'ゴミ箱へ', restore: '下書きとして復元', permanentDelete: '完全に削除', view: '表示' },
+      actions: { edit: '編集', publish: '公開', unpublish: '下書きに戻す', trash: 'ゴミ箱へ', restore: '下書きとして復元', permanentDelete: '完全に削除', view: '表示', syncCsdn: 'CSDN へ同期' },
+      csdn: {
+        dialogTitle: 'CSDN へ記事を同期',
+        syncing: 'CSDN へ投稿中...',
+        checking: 'CSDN 認証状態を確認中...',
+        scanHint: 'スキャンして認証してください。ログイン後、記事が自動同期されます。',
+        synced: 'CSDN へ同期完了',
+        viewPost: 'CSDN 記事を表示',
+        syncFailed: 'この記事を CSDN に同期できません',
+        authorizationFailed: 'CSDN 認証を開始できません',
+        qrAlt: 'CSDN ログイン QR コード'
+      },
       confirmTrashTitle: 'ゴミ箱へ移動',
       confirmTrashMessage: '「{{title}}」をゴミ箱に移動しますか？後で復元できます。',
       confirmPermanentTitle: '完全に削除',
@@ -223,6 +235,35 @@ export default {
       pageSizeOption: '1ページ {{size}} 件',
       prevPage: '前へ',
       nextPage: '次へ'
+    },
+    mcp: {
+      title: 'MCP 認証',
+      description: 'MCP クライアントを認証し、ブログ記事の作成・読み取り・更新・公開を許可します。',
+      checking: '認証状態を確認中...',
+      authorized: '認証済み',
+      unavailable: 'MCP サーバー利用不可',
+      notAuthorized: '未認証',
+      authorizedHint: 'MCP クライアントでブログツールを利用できます。',
+      notAuthorizedHint: 'MCP ツールを使用する前に、ブラウザでワンタイム認証を完了してください。',
+      authorize: 'MCP を認証',
+      endpointLabel: 'MCP エンドポイント',
+      copyEndpoint: 'エンドポイントをコピー',
+      endpointCopied: 'MCP エンドポイントをコピーしました',
+      copyFailed: 'MCP エンドポイントのコピーに失敗しました'
+    },
+    csdn: {
+      title: 'CSDN 同期設定',
+      description: 'CSDN アカウントを連携すると、記事の一括・予約投稿が可能になります。',
+      authorized: 'CSDN 連携済み',
+      startFailed: 'CSDN 認証を開始できません',
+      disconnected: 'CSDN 連携解除',
+      disconnectFailed: 'CSDN 連携解除に失敗しました',
+      qrAlt: 'CSDN ログイン QR コード',
+      scanHint: 'CSDN アプリまたは WeChat でスキャンしてください。QR コードはまもなく期限切れになります。',
+      waiting: '認証待ち中',
+      connect: 'CSDN に連携',
+      disconnect: '連携解除',
+      unavailable: 'CSDN 認証サービスは利用できません'
     },
     emailReminders: {
       title: '予約メール',

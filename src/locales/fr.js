@@ -192,7 +192,8 @@ export default {
       templates: 'Modèles d’e-mail',
       history: 'Historique des tâches',
       apiKeys: 'Clés API',
-      preferences: 'Préférences'
+      preferences: 'Préférences',
+      mcp: 'Autorisation MCP'
     },
     blogManage: {
       title: 'Gestion du blog',
@@ -209,7 +210,18 @@ export default {
       emptyTrashHint: 'Les articles supprimés apparaissent ici.',
       untitled: 'Sans titre',
       status: { draft: 'Brouillon', published: 'Publié', trash: 'Corbeille' },
-      actions: { edit: 'Modifier', publish: 'Publier', unpublish: 'Passer en brouillon', trash: 'Mettre à la corbeille', restore: 'Restaurer en brouillon', permanentDelete: 'Supprimer définitivement', view: 'Voir' },
+      actions: { edit: 'Modifier', publish: 'Publier', unpublish: 'Passer en brouillon', trash: 'Mettre à la corbeille', restore: 'Restaurer en brouillon', permanentDelete: 'Supprimer définitivement', view: 'Voir', syncCsdn: 'Synchroniser avec CSDN' },
+      csdn: {
+        dialogTitle: 'Synchroniser avec CSDN',
+        syncing: 'Publication sur CSDN en cours...',
+        checking: 'Vérification de l\'autorisation CSDN...',
+        scanHint: 'Scannez pour autoriser. L\'article sera synchronisé automatiquement après la connexion.',
+        synced: 'Synchronisé avec CSDN',
+        viewPost: 'Voir l\'article CSDN',
+        syncFailed: 'Impossible de synchroniser cet article avec CSDN',
+        authorizationFailed: 'Impossible de démarrer l\'autorisation CSDN',
+        qrAlt: 'Code QR de connexion CSDN'
+      },
       confirmTrashTitle: 'Mettre à la corbeille',
       confirmTrashMessage: 'Mettre « {{title}} » à la corbeille ? Vous pourrez le restaurer plus tard.',
       confirmPermanentTitle: 'Supprimer définitivement',
@@ -223,6 +235,35 @@ export default {
       pageSizeOption: '{{size}} par page',
       prevPage: 'Précédent',
       nextPage: 'Suivant'
+    },
+    mcp: {
+      title: 'Autorisation MCP',
+      description: 'Autorisez le client MCP à créer, lire, mettre à jour et publier le contenu de votre blog.',
+      checking: 'Vérification de l\'autorisation...',
+      authorized: 'Autorisé',
+      unavailable: 'Serveur MCP indisponible',
+      notAuthorized: 'Non autorisé',
+      authorizedHint: 'Votre client MCP peut utiliser les outils de blog.',
+      notAuthorizedHint: 'Effectuez l\'autorisation unique dans le navigateur avant d\'utiliser les outils MCP.',
+      authorize: 'Autoriser MCP',
+      endpointLabel: 'Point d\'accès MCP',
+      copyEndpoint: 'Copier le point d\'accès',
+      endpointCopied: 'Point d\'accès MCP copié',
+      copyFailed: 'Impossible de copier le point d\'accès MCP'
+    },
+    csdn: {
+      title: 'Publication CSDN',
+      description: 'Connectez CSDN une fois pour activer la publication programmée pour votre compte.',
+      authorized: 'CSDN connecté',
+      startFailed: 'Impossible de démarrer l\'autorisation CSDN',
+      disconnected: 'CSDN déconnecté',
+      disconnectFailed: 'Impossible de déconnecter CSDN',
+      qrAlt: 'Code QR de connexion CSDN',
+      scanHint: 'Scannez avec l\'application CSDN ou WeChat. Ce code QR expire rapidement.',
+      waiting: 'En attente d\'autorisation',
+      connect: 'Connecter CSDN',
+      disconnect: 'Déconnecter',
+      unavailable: 'Service d\'autorisation CSDN indisponible.'
     },
     emailReminders: {
       title: 'E-mail programmé',

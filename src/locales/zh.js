@@ -200,7 +200,8 @@ export default {
       templates: '邮件模板',
       history: '任务记录',
       apiKeys: 'API 密钥',
-      preferences: '偏好设置'
+      preferences: '偏好设置',
+      mcp: 'MCP 授权'
     },
     blogManage: {
       title: '博客管理',
@@ -233,7 +234,19 @@ export default {
         trash: '移入回收站',
         restore: '恢复为草稿',
         permanentDelete: '彻底删除',
-        view: '查看'
+        view: '查看',
+        syncCsdn: '同步至 CSDN'
+      },
+      csdn: {
+        dialogTitle: '同步文章至 CSDN',
+        syncing: '正在同步发布至 CSDN...',
+        checking: '正在检查 CSDN 授权状态...',
+        scanHint: '扫码授权，登录成功后将自动同步文章。',
+        synced: '已同步至 CSDN',
+        viewPost: '查看 CSDN 文章',
+        syncFailed: '无法将此文章同步至 CSDN',
+        authorizationFailed: '无法发起 CSDN 授权',
+        qrAlt: 'CSDN 登录二维码'
       },
       confirmTrashTitle: '移入回收站',
       confirmTrashMessage: '确定将「{{title}}」移入回收站？之后可在回收站恢复。',
@@ -248,6 +261,35 @@ export default {
       pageSizeOption: '每页 {{size}} 条',
       prevPage: '上一页',
       nextPage: '下一页'
+    },
+    mcp: {
+      title: 'MCP 授权',
+      description: '授权 MCP 客户端，支持对博客内容进行创建、读取、更新和发布。',
+      checking: '正在检查授权...',
+      authorized: '已授权',
+      unavailable: 'MCP 服务不可用',
+      notAuthorized: '未授权',
+      authorizedHint: '您的 MCP 客户端可以使用博客工具。',
+      notAuthorizedHint: '在使用 MCP 工具之前，请先在浏览器中完成一次性授权。',
+      authorize: '授权 MCP',
+      endpointLabel: 'MCP 端点',
+      copyEndpoint: '复制端点',
+      endpointCopied: '已复制 MCP 端点',
+      copyFailed: '无法复制 MCP 端点'
+    },
+    csdn: {
+      title: 'CSDN 自动同步',
+      description: '绑定 CSDN 账号后，支持将文章一键同步发布至 CSDN。',
+      authorized: 'CSDN 已连接',
+      startFailed: '无法发起 CSDN 授权',
+      disconnected: 'CSDN 已断开连接',
+      disconnectFailed: '无法断开 CSDN 连接',
+      qrAlt: 'CSDN 登录二维码',
+      scanHint: '使用 CSDN App 或微信扫码授权。二维码将会在短时间内失效。',
+      waiting: '等待授权中',
+      connect: '连接 CSDN',
+      disconnect: '断开连接',
+      unavailable: 'CSDN 授权服务暂不可用'
     },
     emailReminders: {
       title: '定时邮箱',

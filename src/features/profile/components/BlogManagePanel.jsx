@@ -265,7 +265,7 @@ const BlogManagePanel = () => {
                                             </span>
                                             {isCsdnSynced ? (
                                                 <span
-                                                    title={t('profile.blogManage.csdn.synced', 'Synced to CSDN')}
+                                                    title={t('profile.blogManage.csdn.synced')}
                                                     className="inline-flex items-center gap-1 rounded-full bg-success-soft px-2 py-0.5 text-micro font-bold text-success-fg ring-1 ring-success/20"
                                                 >
                                                     <CheckCircle2 className="h-3 w-3" />
@@ -292,10 +292,10 @@ const BlogManagePanel = () => {
                                         {status !== BLOG_STATUS.TRASH ? (
                                             <button
                                                 type="button"
-                                                title={t('profile.blogManage.actions.syncCsdn', 'Sync to CSDN')}
+                                                title={t('profile.blogManage.actions.syncCsdn')}
                                                 disabled={Boolean(actionKey)}
                                                 onClick={() => setCsdnPost(post)}
-                                                className="grid h-8 w-8 place-items-center rounded-lg text-ink-faint transition hover:bg-orange-50 hover:text-orange-600 disabled:opacity-50"
+                                                className="grid h-8 w-8 place-items-center rounded-lg text-ink-faint transition hover:bg-accent-soft hover:text-accent disabled:opacity-50"
                                             >
                                                 <CloudUpload className="h-3.5 w-3.5" />
                                             </button>
@@ -421,7 +421,7 @@ const BlogManagePanel = () => {
                         setPosts((current) => current.map((post) => (
                             post.id === csdnPost.id ? { ...post, csdnSynced: true } : post
                         )));
-                        toast.success(t('profile.blogManage.csdn.synced', 'Synced to CSDN'));
+                        toast.success(t('profile.blogManage.csdn.synced'));
                         loadPosts({ showLoading: false });
                     }}
                 />

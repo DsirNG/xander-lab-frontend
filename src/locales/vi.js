@@ -192,7 +192,8 @@ export default {
       templates: 'Mẫu email',
       history: 'Lịch sử tác vụ',
       apiKeys: 'Khóa API',
-      preferences: 'Tùy chọn'
+      preferences: 'Tùy chọn',
+      mcp: 'Ủy quyền MCP'
     },
     blogManage: {
       title: 'Quản lý blog',
@@ -209,7 +210,18 @@ export default {
       emptyTrashHint: 'Bài viết đã xóa mềm sẽ xuất hiện ở đây.',
       untitled: 'Chưa có tiêu đề',
       status: { draft: 'Bản nháp', published: 'Đã xuất bản', trash: 'Thùng rác' },
-      actions: { edit: 'Chỉnh sửa', publish: 'Xuất bản', unpublish: 'Chuyển thành nháp', trash: 'Chuyển vào thùng rác', restore: 'Khôi phục thành nháp', permanentDelete: 'Xóa vĩnh viễn', view: 'Xem' },
+      actions: { edit: 'Chỉnh sửa', publish: 'Xuất bản', unpublish: 'Chuyển thành nháp', trash: 'Chuyển vào thùng rác', restore: 'Khôi phục thành nháp', permanentDelete: 'Xóa vĩnh viễn', view: 'Xem', syncCsdn: 'Đồng bộ sang CSDN' },
+      csdn: {
+        dialogTitle: 'Đồng bộ bài viết sang CSDN',
+        syncing: 'Đang xuất bản sang CSDN...',
+        checking: 'Đang kiểm tra ủy quyền CSDN...',
+        scanHint: 'Quét mã để ủy quyền. Bài viết sẽ tự động đồng bộ sau khi đăng nhập.',
+        synced: 'Đã đồng bộ sang CSDN',
+        viewPost: 'Xem bài viết CSDN',
+        syncFailed: 'Không thể đồng bộ bài viết này sang CSDN',
+        authorizationFailed: 'Không thể bắt đầu ủy quyền CSDN',
+        qrAlt: 'Mã QR đăng nhập CSDN'
+      },
       confirmTrashTitle: 'Chuyển vào thùng rác',
       confirmTrashMessage: 'Chuyển «{{title}}» vào thùng rác? Bạn có thể khôi phục sau.',
       confirmPermanentTitle: 'Xóa vĩnh viễn',
@@ -223,6 +235,35 @@ export default {
       pageSizeOption: '{{size}} / trang',
       prevPage: 'Trang trước',
       nextPage: 'Trang sau'
+    },
+    mcp: {
+      title: 'Ủy quyền MCP',
+      description: 'Ủy quyền cho client MCP để tạo, đọc, cập nhật và xuất bản bài viết blog.',
+      checking: 'Đang kiểm tra ủy quyền...',
+      authorized: 'Đã ủy quyền',
+      unavailable: 'Máy chủ MCP không khả dụng',
+      notAuthorized: 'Chưa ủy quyền',
+      authorizedHint: 'Client MCP của bạn có thể sử dụng các công cụ blog.',
+      notAuthorizedHint: 'Hoàn thành ủy quyền một lần trên trình duyệt trước khi dùng công cụ MCP.',
+      authorize: 'Ủy quyền MCP',
+      endpointLabel: 'Endpoint MCP',
+      copyEndpoint: 'Sao chép endpoint',
+      endpointCopied: 'Đã sao chép endpoint MCP',
+      copyFailed: 'Không thể sao chép endpoint MCP'
+    },
+    csdn: {
+      title: 'Xuất bản CSDN',
+      description: 'Kết nối CSDN một lần để bật tính năng tự động/lên lịch xuất bản.',
+      authorized: 'Đã kết nối CSDN',
+      startFailed: 'Không thể bắt đầu ủy quyền CSDN',
+      disconnected: 'Đã ngắt kết nối CSDN',
+      disconnectFailed: 'Không thể ngắt kết nối CSDN',
+      qrAlt: 'Mã QR đăng nhập CSDN',
+      scanHint: 'Quét bằng ứng dụng CSDN hoặc WeChat. Mã QR sẽ hết hạn sớm.',
+      waiting: 'Đang chờ ủy quyền',
+      connect: 'Kết nối CSDN',
+      disconnect: 'Ngắt kết nối',
+      unavailable: 'Dịch vụ ủy quyền CSDN không khả dụng'
     },
     emailReminders: {
       title: 'Email hẹn giờ',

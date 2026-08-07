@@ -200,7 +200,8 @@ export default {
       templates: 'Email Templates',
       history: 'Task History',
       apiKeys: 'API Keys',
-      preferences: 'Preferences'
+      preferences: 'Preferences',
+      mcp: 'MCP Authorization'
     },
     blogManage: {
       title: 'Blog management',
@@ -217,7 +218,18 @@ export default {
       emptyTrashHint: 'Soft-deleted posts appear here.',
       untitled: 'Untitled',
       status: { draft: 'Draft', published: 'Published', trash: 'Trash' },
-      actions: { edit: 'Edit', publish: 'Publish', unpublish: 'Move to draft', trash: 'Move to trash', restore: 'Restore as draft', permanentDelete: 'Delete permanently', view: 'View' },
+      actions: { edit: 'Edit', publish: 'Publish', unpublish: 'Move to draft', trash: 'Move to trash', restore: 'Restore as draft', permanentDelete: 'Delete permanently', view: 'View', syncCsdn: 'Sync to CSDN' },
+      csdn: {
+        dialogTitle: 'Sync to CSDN',
+        syncing: 'Publishing to CSDN...',
+        checking: 'Checking CSDN authorization...',
+        scanHint: 'Scan to authorize. The post will sync automatically after login.',
+        synced: 'Synced to CSDN',
+        viewPost: 'View CSDN post',
+        syncFailed: 'Unable to sync this post to CSDN',
+        authorizationFailed: 'Unable to start CSDN authorization',
+        qrAlt: 'CSDN login QR code'
+      },
       confirmTrashTitle: 'Move to trash',
       confirmTrashMessage: 'Move "{{title}}" to the recycle bin? You can restore it later.',
       confirmPermanentTitle: 'Delete permanently',
@@ -231,6 +243,35 @@ export default {
       pageSizeOption: '{{size}} per page',
       prevPage: 'Previous',
       nextPage: 'Next'
+    },
+    mcp: {
+      title: 'MCP Authorization',
+      description: 'Authorize the MCP client to create, read, update, and publish your blog content.',
+      checking: 'Checking authorization...',
+      authorized: 'Authorized',
+      unavailable: 'MCP server unavailable',
+      notAuthorized: 'Not authorized',
+      authorizedHint: 'Your MCP client can use the blog tools.',
+      notAuthorizedHint: 'Complete the one-time browser authorization before using MCP tools.',
+      authorize: 'Authorize MCP',
+      endpointLabel: 'MCP Endpoint',
+      copyEndpoint: 'Copy endpoint',
+      endpointCopied: 'MCP endpoint copied',
+      copyFailed: 'Unable to copy MCP endpoint'
+    },
+    csdn: {
+      title: 'CSDN Publishing',
+      description: 'Connect CSDN once to enable scheduled publishing for your account.',
+      authorized: 'CSDN connected',
+      startFailed: 'Unable to start CSDN authorization',
+      disconnected: 'CSDN disconnected',
+      disconnectFailed: 'Unable to disconnect CSDN',
+      qrAlt: 'CSDN login QR code',
+      scanHint: 'Scan with the CSDN app or WeChat. This QR code expires shortly.',
+      waiting: 'Waiting for authorization',
+      connect: 'Connect CSDN',
+      disconnect: 'Disconnect',
+      unavailable: 'CSDN authorization service is unavailable.'
     },
     emailReminders: {
       title: 'Scheduled Email',
