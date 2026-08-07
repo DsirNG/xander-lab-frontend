@@ -22,7 +22,7 @@ let axios, xml2js;
 try {
   axios = await import('axios');
   xml2js = await import('xml2js');
-} catch (error) {
+} catch {
   console.error('❌ 缺少必要依赖，请运行: npm install axios xml2js');
   process.exit(1);
 }
@@ -219,7 +219,7 @@ class SearchEngineSubmitter {
   /**
    * 向Google Search Console提交（需要手动操作）
    */
-  static async submitToGoogle(urls) {
+  static async submitToGoogle(_urls) {
     Logger.header('Google Search Console 提交');
     Logger.info('Google不支持IndexNow协议，请通过以下方式提交:');
     Logger.info('1. 登录 Google Search Console');

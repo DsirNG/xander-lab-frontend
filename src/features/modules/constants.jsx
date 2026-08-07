@@ -3,7 +3,6 @@ import React from 'react';
 import {
     Move as MoveIcon
 } from 'lucide-react';
-import { motion } from 'framer-motion';
 
 // 导入代码示例
 import {

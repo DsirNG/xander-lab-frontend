@@ -35,6 +35,7 @@ const SidebarItem = React.memo(({ item, active, onClick, subtitleKey = 'tag' }) 
         <ChevronRight className={`w-4 h-4 flex-shrink-0 ${active ? 'rotate-90' : ''}`} />
     </Link>
 ));
+SidebarItem.displayName = 'SidebarItem';
 
 const SidebarLayout = ({
     title,

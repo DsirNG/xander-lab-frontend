@@ -221,7 +221,7 @@ const SingleFileTransferDemo = () => {
 
                                     <div className="mt-auto flex flex-wrap gap-2 overflow-hidden">
                                         <AnimatePresence>
-                                            {folder.items.map((item, i) => (
+                                            {folder.items.map((item) => (
                                                 <motion.div
                                                     key={`${folder.id}-${item.id}`}
                                                     initial={{ scale: 0.8, opacity: 0 }}

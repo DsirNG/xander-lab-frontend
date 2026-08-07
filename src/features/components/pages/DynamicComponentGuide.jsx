@@ -4,7 +4,7 @@ import {
     FileCode,
     ArrowLeft, Boxes, Layout
 } from 'lucide-react';
-import { Link, useParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import ComponentService from '../services/componentService';
 import CodeBlock from '@/components/common/CodeBlock';
 
@@ -73,7 +73,7 @@ const DynamicComponentGuide = ({ componentId, initialData }) => {
         fetchDetail();
 
         return () => controller.abort();
-    }, [componentId, i18n.language]);
+    }, [componentId, i18n.language, initialData]);
 
     if (loading) return <div className="p-20 text-center text-ink-faint animate-pulse">{t('components.guide.parsingArchitecture')}</div>;
     if (!data) return <div className="p-20 text-center text-danger">{t('components.guide.loadFailed')}</div>;

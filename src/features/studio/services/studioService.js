@@ -83,7 +83,7 @@ export function downloadPublicProjectSource(projectId, name) {
  * 返回后端提供的预览 URL（子域名格式 http://<projectId>.localhost:3010/）
  * *.localhost 在大多数系统上默认解析到 127.0.0.1，iframe 可直接加载
  */
-export function convertPreviewUrl(previewUrl, _projectId) {
+export function convertPreviewUrl(previewUrl) {
   return previewUrl || '';
 }
 

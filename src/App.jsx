@@ -25,7 +25,7 @@ function ToastBridge() {
   useEffect(() => {
     window.__toast = (type, msg) => toast[type]?.(msg)
     return () => { delete window.__toast }
-  }, [])
+  }, [toast])
 
   return null
 }

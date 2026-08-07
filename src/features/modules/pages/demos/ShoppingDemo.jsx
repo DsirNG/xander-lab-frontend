@@ -14,7 +14,7 @@ const ShoppingDemo = () => {
     // ----------------------------------------------------------------------------------
     // Scenario D-1: Add to Cart
     // ----------------------------------------------------------------------------------
-    const [products, setProducts] = useState([
+    const [products] = useState([
         { id: 'p1', name: 'Smart Phone', price: '$899', icon: Smartphone, color: 'text-blue-500' },
         { id: 'p2', name: 'Smart Watch', price: '$299', icon: Watch, color: 'text-orange-500' },
         { id: 'p3', name: 'Headphones', price: '$199', icon: Headphones, color: 'text-purple-500' },

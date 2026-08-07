@@ -5,7 +5,7 @@ import { Calendar, Clock, User, Tag, ChevronLeft, Eye, BookOpen, Minimize2 } fro
 import SEOHead from '@components/seo/SEOHead';
 import { blogService } from '../services/blogService';
 import BlogMarkdown from '../components/BlogMarkdown';
-import { usePureReading } from '@/context/PureReadingContext';
+import usePureReading from '@/hooks/usePureReading';
 
 /**
  * Markdown 自定义渲染组件映射

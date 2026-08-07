@@ -85,7 +85,7 @@ const ComponentShare = () => {
             window.addEventListener('click', handleFinish, true);
             return () => window.removeEventListener('click', handleFinish, true);
         }
-    }, [tourStep]);
+    }, [tourStep, toast]);
 
     // --- 场景编辑状态 ---
     const [editScenarioModalOpen, setEditScenarioModalOpen] = useState(false);

@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
     FileText,
     Image as ImageIcon,
@@ -287,7 +286,7 @@ const MultiFileTransferDemo = () => {
 
                                 <div className="space-y-2 h-[100px] flex flex-col justify-end">
                                     <AnimatePresence>
-                                        {folder.items.slice(-2).map((item, i) => (
+                                        {folder.items.slice(-2).map((item) => (
                                             <motion.div
                                                 key={item.id}
                                                 initial={{ x: 20, opacity: 0 }}

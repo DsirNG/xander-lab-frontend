@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { createPortal } from 'react-dom';
-import { ToastContext } from './ToastContext';
+import ToastContext from './toastContextValue';
 import ToastItem from './ToastItem';
 
 const ToastContainer = () => {

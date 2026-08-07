@@ -71,7 +71,6 @@ const KanbanDemo = () => {
                 // Add to target
                 // If same column, we need to handle the index carefully because we just removed one
                 if (sourceColId === targetColId) {
-                    const targetIndex = sourceItems.findIndex(i => i.id === target.id); // Find index in the MODIFIED list
                     // If target was after source, the index naturally shifts, so this logic usually holds but check.
                     // Actually, simpler to treat as fresh lists.
 

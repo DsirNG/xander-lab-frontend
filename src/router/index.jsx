@@ -6,14 +6,14 @@
  * @created 2026-02-05
  */
 
-import React, { Suspense } from 'react';
+import React from 'react';
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 
 // Layouts (始终需要，保持静态导入)
 import MainLayout from '@components/layouts/MainLayout';
 import BlogLayout from '@features/blog/layouts/BlogLayout';
 import RouteSEOLayout from '@components/seo/RouteSEOLayout';
-import ProtectedRoute from '@features/auth/components/ProtectedRoute';
+import { LazyPage, ProtectedPage } from './RouteElements';
 
 // Features (路由级懒加载)
 const HomePage = React.lazy(() => import('@features/home/pages/HomePage'));
@@ -43,23 +43,9 @@ import { getInfraConfig } from '@features/infra/constants';
 import { getModuleConfig } from '@features/modules/constants';
 
 // 通用组件
-import LoadingSpinner from '@components/common/LoadingSpinner';
 const NotFoundPage = React.lazy(() => import('@features/home/pages/NotFoundPage'));
 
 // 通用 Suspense 包裹器
-const LazyPage = ({ children }) => (
-  <Suspense fallback={<LoadingSpinner fullScreen />}>
-    {children}
-  </Suspense>
-);
-
-const protectedPage = (page) => (
-  <ProtectedRoute>
-    <LazyPage>{page}</LazyPage>
-  </ProtectedRoute>
-);
-
-
 /**
  * 创建路由配置
  * 路由结构仅依赖语言无关的 ID 和 detailPages，翻译由页面组件内部解析。
@@ -104,11 +90,7 @@ export const createRouter = () => {
                 },
                 ...(system.detailPages || []).map(detailPage => ({
                   path: detailPage.type,
-                  element: (
-                    <Suspense fallback={<LoadingSpinner fullScreen />}>
-                      <detailPage.component />
-                    </Suspense>
-                  ),
+                  element: <LazyPage><detailPage.component /></LazyPage>,
                 })),
               ],
             })),
@@ -131,11 +113,7 @@ export const createRouter = () => {
                 },
                 ...(module.detailPages || []).map(detailPage => ({
                   path: detailPage.type,
-                  element: (
-                    <Suspense fallback={<LoadingSpinner fullScreen />}>
-                      <detailPage.component />
-                    </Suspense>
-                  ),
+                  element: <LazyPage><detailPage.component /></LazyPage>,
                 })),
               ],
             })),
@@ -174,7 +152,7 @@ export const createRouter = () => {
         },
         {
           path: 'studio',
-          element: protectedPage(<StudioPage />),
+          element: <ProtectedPage page={<StudioPage />} />,
         },
         {
           path: 'lab/img2three',
@@ -186,7 +164,7 @@ export const createRouter = () => {
         },
         {
           path: 'profile',
-          element: protectedPage(<ProfilePage />),
+          element: <ProtectedPage page={<ProfilePage />} />,
         },
         {
           path: '*',
@@ -200,28 +178,28 @@ export const createRouter = () => {
     },
     {
       path: 'blog/publish',
-      element: protectedPage(<BlogPublish />),
+      element: <ProtectedPage page={<BlogPublish />} />,
     },
     {
       path: 'blog/agent',
-      element: protectedPage(<BlogAgent />),
+      element: <ProtectedPage page={<BlogAgent />} />,
     },
     {
       path: 'blog/agent/:taskId',
-      element: protectedPage(<BlogAgent />),
+      element: <ProtectedPage page={<BlogAgent />} />,
     },
     // 工作室路由 - 独立页面，不使用 MainLayout
     {
       path: 'studio/project',
-      element: protectedPage(<ProjectUploadPage />),
+      element: <ProtectedPage page={<ProjectUploadPage />} />,
     },
     {
       path: 'studio/component',
-      element: protectedPage(<ComponentUploadPage />),
+      element: <ProtectedPage page={<ComponentUploadPage />} />,
     },
     {
       path: 'studio/compiler/:projectId',
-      element: protectedPage(<CompilerPage />),
+      element: <ProtectedPage page={<CompilerPage />} />,
     },
     {
       path: 'studio/source/:projectId',

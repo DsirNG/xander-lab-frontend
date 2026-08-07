@@ -7,6 +7,19 @@ export const TEMPLATE_IDS = ['classic', 'minimal', 'card', 'notice'];
 
 export const TEMPLATE_NONE = 'none';
 
+export const TIMEZONE_OPTIONS = [
+    { value: 'Asia/Shanghai', label: '(GMT+08:00) 北京, 上海, 香港', offset: '+08:00' },
+    { value: 'Asia/Tokyo', label: '(GMT+09:00) 东京', offset: '+09:00' },
+    { value: 'Asia/Singapore', label: '(GMT+08:00) 新加坡', offset: '+08:00' },
+    { value: 'Asia/Seoul', label: '(GMT+09:00) 首尔', offset: '+09:00' },
+    { value: 'UTC', label: '(GMT+00:00) UTC', offset: '+00:00' },
+    { value: 'Europe/London', label: '(GMT+00:00) 伦敦', offset: '+00:00' },
+    { value: 'Europe/Paris', label: '(GMT+01:00) 巴黎', offset: '+01:00' },
+    { value: 'America/New_York', label: '(GMT-05:00) 纽约', offset: '-05:00' },
+    { value: 'America/Los_Angeles', label: '(GMT-08:00) 洛杉矶', offset: '-08:00' },
+    { value: 'Australia/Sydney', label: '(GMT+10:00) 悉尼', offset: '+10:00' },
+];
+
 export const HTML_STARTERS = {
     classic: [
         '<p style="margin:0 0 14px;">你好，</p>',

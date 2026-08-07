@@ -46,7 +46,7 @@ async function extractUrlsFromSitemap() {
     console.log(`📋 从 sitemap.xml 成功提取 ${urls.length} 个URL`);
     return urls;
 
-  } catch (error) {
+    } catch (error) {
     console.error('❌ 解析 sitemap.xml 失败:', error.message);
     console.log('🔄 使用默认URL列表...');
     return getDefaultUrls();
@@ -100,7 +100,7 @@ function validateEnvironment() {
   // 检查axios是否可用
   try {
     require.resolve('axios');
-  } catch (error) {
+    } catch {
     console.error('❌ axios 未安装，请运行: npm install axios');
     return false;
   }
@@ -108,7 +108,7 @@ function validateEnvironment() {
   // 检查xml2js是否可用
   try {
     require.resolve('xml2js');
-  } catch (error) {
+  } catch {
     console.error('❌ xml2js 未安装，请运行: npm install xml2js');
     return false;
   }

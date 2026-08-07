@@ -1,6 +1,5 @@
-import React, { createContext, useState, useCallback, useMemo } from 'react';
-
-export const ToastContext = createContext(null);
+import React, { useState, useCallback, useMemo } from 'react';
+import ToastContext from './toastContextValue';
 
 /**
  * Toast 状态提供者

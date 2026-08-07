@@ -40,7 +40,7 @@ const createFunction = (code, scope, exportsObj, sandboxRequire) => {
     }
 };
 
-async function compileAndRun(code, libraryCode = '', wrapperCode = '', cssCode = '') {
+async function compileAndRun(code, libraryCode = '', wrapperCode = '') {
     const Babel = await loadBabel();
     const stylesProxy = new Proxy({}, { get: (t, p) => typeof p === 'string' ? p : p });
 

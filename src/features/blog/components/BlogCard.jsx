@@ -57,6 +57,7 @@ const BlogCard = memo(({ blog }) => {
         </Link>
     );
 });
+BlogCard.displayName = 'BlogCard';
 
 BlogCard.propTypes = {
     blog: PropTypes.shape({

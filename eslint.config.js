@@ -39,15 +39,15 @@ export default defineConfig([
         'warn',
         { allowConstantExport: true },
       ],
-      'no-unused-vars': ['warn', { varsIgnorePattern: '^[A-Z_]', argsIgnorePattern: '^_' }],
+      'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]', argsIgnorePattern: '^_' }],
       'react/prop-types': 'off',
       // Existing responsive/layout effects intentionally close transient UI.
       // These synchronize UI with media-query and route changes.
       'react-hooks/set-state-in-effect': 'off',
-      'react-hooks/purity': 'warn',
-      'react/display-name': 'warn',
-      'react/no-unescaped-entities': 'warn',
-      'react/jsx-no-comment-textnodes': 'warn',
+      'react-hooks/purity': 'error',
+      'react/display-name': 'error',
+      'react/no-unescaped-entities': 'error',
+      'react/jsx-no-comment-textnodes': 'error',
     },
   },
   {
@@ -65,7 +65,7 @@ export default defineConfig([
     },
     rules: {
       ...js.configs.recommended.rules,
-      'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+      'no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
     },
   },
   {
@@ -77,7 +77,7 @@ export default defineConfig([
     },
     rules: {
       ...js.configs.recommended.rules,
-      'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+      'no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
     },
   },
 ])

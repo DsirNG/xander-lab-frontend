@@ -161,7 +161,7 @@ const CreatableMultiSelect = ({
                                     addItem(inputValue.trim());
                                 }}
                             >
-                                <span>创建项 "{inputValue}"</span>
+                                <span>创建项 &quot;{inputValue}&quot;</span>
                                 <span className="text-micro uppercase tracking-wider bg-surface-muted px-1.5 py-0.5 rounded font-bold">Enter</span>
                             </div>
                         )}

@@ -1,11 +1,6 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-
-const PureReadingContext = createContext({
-    isPureReading: false,
-    setIsPureReading: () => {},
-    togglePureReading: () => {},
-});
+import PureReadingContext from './pureReadingContextValue';
 
 export const PureReadingProvider = ({ children }) => {
     const [isPureReading, setIsPureReading] = useState(false);
@@ -41,7 +36,3 @@ export const PureReadingProvider = ({ children }) => {
         </PureReadingContext.Provider>
     );
 };
-
-export const usePureReading = () => useContext(PureReadingContext);
-
-export default PureReadingContext;

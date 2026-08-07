@@ -38,9 +38,6 @@ export function FileTreeNodes({ nodes, depth, activePath, onOpenFile }) {
   return (
     <>
       {nodes.map((node) => {
-        const isDir = node.type === 'dir';
-        const isFile = node.type === 'file';
-        const isReadable = node.readable !== false;
         const isActive = node.path === activePath;
 
         return (

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import {
     GitCommit,
     Database,
@@ -6,7 +6,6 @@ import {
     Globe,
     X
 } from 'lucide-react';
-import { motion } from 'framer-motion';
 
 // Simple Bezier Curve Calculation
 const getBezierPath = (start, end) => {
@@ -107,7 +106,7 @@ const FlowchartDemo = () => {
             // Avoid duplicates
             if (!connections.find(c => c.from === dragStartNode && c.to === targetNodeId)) {
                 setConnections([...connections, {
-                    id: `${dragStartNode}-${targetNodeId}-${Date.now()}`,
+                    id: `${dragStartNode}-${targetNodeId}`,
                     from: dragStartNode,
                     to: targetNodeId
                 }]);

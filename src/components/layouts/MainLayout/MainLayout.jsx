@@ -471,7 +471,8 @@ const Footer = () => {
     );
 };
 
-import { PureReadingProvider, usePureReading } from '@/context/PureReadingContext';
+import { PureReadingProvider } from '@/context/PureReadingContext';
+import usePureReading from '@/hooks/usePureReading';
 
 const MainLayoutContent = () => {
     const location = useLocation();

@@ -48,7 +48,7 @@ const ToastGuide = ({ componentId }) => {
                             <Zap className="w-7 h-7 text-primary" />
                         </div>
                         <h1 className="text-4xl font-black italic tracking-tighter text-slate-900  uppercase">
-                            {t('components.toast.guide.title').split(' // ')[0]} // <span className="text-primary">{t('components.toast.guide.title').split(' // ')[1]}</span>
+                            {t('components.toast.guide.title').split(' // ')[0]} {' // '} <span className="text-primary">{t('components.toast.guide.title').split(' // ')[1]}</span>
                         </h1>
                     </div>
                     <p className="text-lg text-slate-500  max-w-3xl font-medium leading-relaxed italic">

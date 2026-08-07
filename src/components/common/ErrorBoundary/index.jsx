@@ -82,4 +82,7 @@ class ErrorBoundary extends React.Component {
   }
 }
 
-export default withTranslation()(ErrorBoundary);
+const TranslatedErrorBoundary = withTranslation()(ErrorBoundary);
+TranslatedErrorBoundary.displayName = 'TranslatedErrorBoundary';
+
+export default TranslatedErrorBoundary;
