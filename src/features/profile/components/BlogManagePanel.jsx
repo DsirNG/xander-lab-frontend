@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
     AlertCircle,
+    CheckCircle2,
     CloudUpload,
     Eye,
     FilePenLine,
@@ -252,6 +253,7 @@ const BlogManagePanel = () => {
                                     ? 'trash'
                                     : 'draft';
                             const isBusy = Boolean(actionKey) && actionKey.includes(String(post.id));
+                            const isCsdnSynced = post.csdnSynced === true;
 
                             return (
                                 <li key={post.id} className="flex flex-col gap-3 bg-canvas px-3 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-4">
@@ -261,6 +263,15 @@ const BlogManagePanel = () => {
                                             <span className={`inline-flex rounded-full px-2 py-0.5 text-micro font-bold ${STATUS_STYLES[status] || STATUS_STYLES[BLOG_STATUS.DRAFT]}`}>
                                                 {t(`profile.blogManage.status.${statusKey}`)}
                                             </span>
+                                            {isCsdnSynced ? (
+                                                <span
+                                                    title={t('profile.blogManage.csdn.synced', 'Synced to CSDN')}
+                                                    className="inline-flex items-center gap-1 rounded-full bg-success-soft px-2 py-0.5 text-micro font-bold text-success-fg ring-1 ring-success/20"
+                                                >
+                                                    <CheckCircle2 className="h-3 w-3" />
+                                                    CSDN
+                                                </span>
+                                            ) : null}
                                         </div>
                                         <p className="mt-1 line-clamp-1 text-caption font-medium text-ink-faint">
                                             {post.summary || post.categoryName || '—'}
@@ -406,7 +417,13 @@ const BlogManagePanel = () => {
                 <CsdnSyncDialog
                     post={csdnPost}
                     onClose={() => setCsdnPost(null)}
-                    onSuccess={() => toast.success(t('profile.blogManage.csdn.synced', 'Synced to CSDN'))}
+                    onSuccess={() => {
+                        setPosts((current) => current.map((post) => (
+                            post.id === csdnPost.id ? { ...post, csdnSynced: true } : post
+                        )));
+                        toast.success(t('profile.blogManage.csdn.synced', 'Synced to CSDN'));
+                        loadPosts({ showLoading: false });
+                    }}
                 />
             )}
         </div>
