@@ -9,6 +9,7 @@ import {
     LogOut,
     Mail,
     NotebookPen,
+    Plug,
     Settings2,
     Shield,
     SlidersHorizontal,
@@ -20,6 +21,7 @@ import { useToast } from '@hooks/useToast';
 import { authService } from '@features/auth/services/authService';
 import BlogManagePanel from '../components/BlogManagePanel';
 import EmailRemindersPanel from '../components/EmailRemindersPanel';
+import McpAuthorizationPanel from '../components/McpAuthorizationPanel';
 
 const NAV_ITEMS = [
     { id: 'account', icon: UserRound, enabled: false },
@@ -30,6 +32,7 @@ const NAV_ITEMS = [
     { id: 'templates', icon: Mail, enabled: false },
     { id: 'history', icon: FileText, enabled: false },
     { id: 'apiKeys', icon: KeyRound, enabled: false },
+    { id: 'mcp', icon: Plug, enabled: true },
     { id: 'preferences', icon: SlidersHorizontal, enabled: false },
 ];
 
@@ -160,6 +163,8 @@ const ProfilePage = () => {
                     <BlogManagePanel />
                 ) : activeNav === 'emailReminders' ? (
                     <EmailRemindersPanel />
+                ) : activeNav === 'mcp' ? (
+                    <McpAuthorizationPanel />
                 ) : (
                     <div className="flex flex-1 flex-col items-center justify-center gap-2 px-6 py-16 text-center">
                         <span className="grid h-12 w-12 place-items-center rounded-2xl bg-surface text-ink-faint">
