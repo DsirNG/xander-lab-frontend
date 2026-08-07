@@ -1,6 +1,6 @@
 import React, { useMemo, useState, memo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import SyntaxHighlighter from '@components/common/SyntaxHighlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { Code2, Copy, Check, FileCode2, Play } from 'lucide-react';
 

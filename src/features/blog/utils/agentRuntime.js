@@ -8,6 +8,11 @@ export const TASK_TERMINAL_STATUSES = new Set(['ready', 'failed'])
 export const RECONNECT_BASE_DELAY = 600
 export const RECONNECT_MAX_DELAY = 8000
 
+export const getReconnectDelay = (attempt) => Math.min(
+  RECONNECT_BASE_DELAY * (2 ** Math.max(0, attempt - 1)),
+  RECONNECT_MAX_DELAY,
+)
+
 export const eventCursorKey = (id) => `xander-lab:blog-agent:event-cursor:${id}`
 export const streamTextKey = (id) => `xander-lab:blog-agent:stream-text:${id}`
 

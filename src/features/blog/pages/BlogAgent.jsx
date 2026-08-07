@@ -14,8 +14,7 @@ import AgentSessionList from '../components/agent/AgentSessionList';
 import {
   RESULT_MESSAGE_ID,
   TASK_TERMINAL_STATUSES,
-  RECONNECT_BASE_DELAY,
-  RECONNECT_MAX_DELAY,
+  getReconnectDelay,
   eventCursorKey,
   streamTextKey,
   createAbortError,
@@ -170,7 +169,7 @@ const BlogAgent = () => {
       }
 
       reconnectAttempt += 1;
-      const delay = Math.min(RECONNECT_BASE_DELAY * (2 ** (reconnectAttempt - 1)), RECONNECT_MAX_DELAY);
+      const delay = getReconnectDelay(reconnectAttempt);
       await waitForReconnect(delay, signal);
       // Fetch a fresh snapshot before each resumed SSE subscription.
       snapshot = null;

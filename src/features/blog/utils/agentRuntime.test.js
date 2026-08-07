@@ -4,6 +4,7 @@ import {
   buildStoredMessages,
   createAbortError,
   getStoredProcessLogs,
+  getReconnectDelay,
   isAbortError,
 } from './agentRuntime.js'
 
@@ -19,6 +20,13 @@ test('groups adjacent process messages and preserves user/result messages', () =
   assert.equal(messages[0].stage, 'write')
   assert.equal(messages[1].content, 'focus on hooks')
   assert.equal(messages[2].kind, 'result')
+})
+
+test('uses capped exponential delays for stream reconnection', () => {
+  assert.equal(getReconnectDelay(1), 600)
+  assert.equal(getReconnectDelay(2), 1200)
+  assert.equal(getReconnectDelay(5), 8000)
+  assert.equal(getReconnectDelay(20), 8000)
 })
 
 test('extracts process logs and recognizes cancellation variants', () => {
