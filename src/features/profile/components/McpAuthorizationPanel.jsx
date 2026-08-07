@@ -1,7 +1,8 @@
-import { Check, Copy, Plug } from 'lucide-react'
-import { useState } from 'react'
+import { Check, Copy, Plug, ShieldCheck, Unplug, X } from 'lucide-react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useToast } from '@hooks/useToast'
+import { mcpOAuthService } from '../services/mcpService'
 import CsdnAuthorizationPanel from './CsdnAuthorizationPanel'
 
 /** Profile surface for user-owned CSDN authorization used by external MCP clients. */
@@ -9,11 +10,61 @@ const McpAuthorizationPanel = () => {
   const { t } = useTranslation()
   const toast = useToast()
   const [copiedEndpoint, setCopiedEndpoint] = useState(null)
+  const [oauthRequest, setOauthRequest] = useState(null)
+  const [oauthBusy, setOauthBusy] = useState(false)
+  const [clients, setClients] = useState([])
+  const [revokingClient, setRevokingClient] = useState(null)
   const baseUrl = window.location.origin
   const endpoints = [
     { id: 'blog', name: t('profile.mcp.blogEndpoint'), url: `${baseUrl}/api/mcp` },
     { id: 'csdn', name: t('profile.mcp.csdnEndpoint'), url: `${baseUrl}/api/mcp/csdn` },
+    { id: 'dual', name: t('profile.mcp.dualEndpoint'), url: `${baseUrl}/api/mcp/dual` },
   ]
+
+  useEffect(() => {
+    const requestId = new URLSearchParams(window.location.search).get('mcpOAuthRequest')
+    if (!requestId) return undefined
+    let active = true
+    mcpOAuthService.getAuthorizationRequest(requestId)
+      .then((request) => active && setOauthRequest({ ...request, requestId }))
+      .catch((error) => active && toast.error(error?.message || t('profile.mcp.consentLoadFailed')))
+    return () => { active = false }
+  }, [t, toast])
+
+  useEffect(() => {
+    let active = true
+    mcpOAuthService.listClients()
+      .then((items) => active && setClients(Array.isArray(items) ? items : []))
+      .catch(() => { /* The profile remains usable when no OAuth table is deployed yet. */ })
+    return () => { active = false }
+  }, [])
+
+  const completeOAuthRequest = async (approve) => {
+    if (!oauthRequest || oauthBusy) return
+    setOauthBusy(true)
+    try {
+      const result = approve
+        ? await mcpOAuthService.approveAuthorization(oauthRequest.requestId)
+        : await mcpOAuthService.denyAuthorization(oauthRequest.requestId)
+      window.location.assign(result.redirectUrl)
+    } catch (error) {
+      toast.error(error?.message || t('profile.mcp.consentFailed'))
+      setOauthBusy(false)
+    }
+  }
+
+  const revokeClient = async (clientId) => {
+    setRevokingClient(clientId)
+    try {
+      await mcpOAuthService.revokeClient(clientId)
+      setClients((current) => current.filter((client) => client.clientId !== clientId))
+      toast.success(t('profile.mcp.clientRevoked'))
+    } catch (error) {
+      toast.error(error?.message || t('profile.mcp.clientRevokeFailed'))
+    } finally {
+      setRevokingClient(null)
+    }
+  }
 
   const copyEndpoint = async ({ id, url }) => {
     try {
@@ -42,6 +93,47 @@ const McpAuthorizationPanel = () => {
           </span>
         </div>
 
+        {oauthRequest && (
+          <div className="mb-4 rounded-xl border border-accent/30 bg-accent-soft/40 p-5">
+            <div className="flex items-start gap-3">
+              <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-accent" />
+              <div className="min-w-0 flex-1">
+                <h3 className="text-body font-bold text-ink">{t('profile.mcp.consentTitle')}</h3>
+                <p className="mt-1 text-caption text-ink-muted">
+                  {t('profile.mcp.consentDescription', { client: oauthRequest.clientName })}
+                </p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {[...oauthRequest.scopes].map((scope) => (
+                    <span key={scope} className="rounded-md bg-surface px-2 py-1 font-mono text-micro font-bold text-ink-secondary">
+                      {scope}
+                    </span>
+                  ))}
+                </div>
+                <div className="mt-4 flex flex-wrap gap-2">
+                  <button
+                    type="button"
+                    onClick={() => completeOAuthRequest(true)}
+                    disabled={oauthBusy}
+                    className="inline-flex items-center gap-2 rounded-lg bg-accent px-3.5 py-2 text-caption font-bold text-white hover:bg-accent/90 disabled:opacity-50"
+                  >
+                    <Check className="h-4 w-4" />
+                    {t('profile.mcp.consentApprove')}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => completeOAuthRequest(false)}
+                    disabled={oauthBusy}
+                    className="inline-flex items-center gap-2 rounded-lg border border-border px-3.5 py-2 text-caption font-bold text-ink-muted hover:bg-surface disabled:opacity-50"
+                  >
+                    <X className="h-4 w-4" />
+                    {t('profile.mcp.consentDeny')}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         <div className="border-y border-border py-4">
           <h3 className="text-body font-bold text-ink">{t('profile.mcp.endpointsTitle')}</h3>
           <div className="mt-3 space-y-2">
@@ -68,6 +160,32 @@ const McpAuthorizationPanel = () => {
             })}
           </div>
         </div>
+
+        {clients.length > 0 && (
+          <div className="border-b border-border py-4">
+            <h3 className="text-body font-bold text-ink">{t('profile.mcp.clientsTitle')}</h3>
+            <div className="mt-3 space-y-2">
+              {clients.map((client) => (
+                <div key={client.clientId} className="flex items-center gap-3 rounded-lg border border-border bg-surface px-3 py-2.5">
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-caption font-bold text-ink">{client.clientName}</p>
+                    <p className="mt-0.5 truncate font-mono text-micro text-ink-faint">{client.scopes?.join(' ')}</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => revokeClient(client.clientId)}
+                    disabled={revokingClient === client.clientId}
+                    className="grid h-8 w-8 shrink-0 place-items-center rounded-md text-ink-muted hover:bg-danger-soft hover:text-danger disabled:opacity-50"
+                    aria-label={t('profile.mcp.revokeClient')}
+                    title={t('profile.mcp.revokeClient')}
+                  >
+                    {revokingClient === client.clientId ? <Unplug className="h-4 w-4 animate-pulse" /> : <X className="h-4 w-4" />}
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         <CsdnAuthorizationPanel />
       </div>

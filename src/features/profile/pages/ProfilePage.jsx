@@ -41,7 +41,9 @@ const ProfilePage = () => {
     const toast = useToast();
     const navigate = useNavigate();
     const [userInfo, setUserInfo] = useState(() => authService.getLocalUserInfo());
-    const [activeNav, setActiveNav] = useState('blogManage');
+    const [activeNav, setActiveNav] = useState(() => (
+        new URLSearchParams(window.location.search).has('mcpOAuthRequest') ? 'mcp' : 'blogManage'
+    ));
     const [authChecking, setAuthChecking] = useState(!userInfo);
     const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
     const [loggingOut, setLoggingOut] = useState(false);
@@ -49,7 +51,10 @@ const ProfilePage = () => {
     useEffect(() => {
         const info = authService.getLocalUserInfo();
         if (!info) {
-            navigate('/login', { replace: true, state: { from: { pathname: '/profile' } } });
+            navigate('/login', {
+                replace: true,
+                state: { from: { pathname: '/profile', search: window.location.search } },
+            });
             return;
         }
         setUserInfo(info);

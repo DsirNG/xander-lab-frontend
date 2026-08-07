@@ -21,7 +21,8 @@ const LoginPage = () => {
     const location = useLocation();
     const toast = useToast();
     const { t } = useTranslation();
-    const from = location.state?.from?.pathname || '/';
+    const fromPath = location.state?.from?.pathname || '/';
+    const fromSearch = location.state?.from?.search || '';
 
     const [loading, setLoading] = useState(false);
     const [loginType, setLoginType] = useState('code');
@@ -80,7 +81,7 @@ const LoginPage = () => {
         try {
             await authService.login({ ...formData, type: loginType });
             toast.success(t('auth.login.authSuccess'));
-            navigate(from, { replace: true });
+            navigate(`${fromPath}${fromSearch}`, { replace: true });
         } catch (err) {
             toast.error(err.message || t('auth.login.authFailed'));
         } finally {
