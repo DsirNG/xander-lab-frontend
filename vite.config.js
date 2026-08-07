@@ -8,7 +8,7 @@ const projectRoot = fileURLToPath(new URL('.', import.meta.url))
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, projectRoot, 'VITE_')
-  const apiProxyTarget = env.VITE_API_PROXY_TARGET?.trim() || 'http://localhost:30002'
+  const apiProxyTarget = env.VITE_API_PROXY_TARGET?.trim() || 'https://xander.dsircity.top'
 
   return {
     plugins: [react()],

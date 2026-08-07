@@ -14,6 +14,7 @@ const CsdnAuthorizationPanel = () => {
   const [busy, setBusy] = useState(false)
 
   const loadStatus = useCallback(async () => {
+    setState('loading')
     try {
       const result = await csdnService.getAuthorizationStatus()
       setState(result?.status || 'NOT_AUTHORIZED')
@@ -66,6 +67,7 @@ const CsdnAuthorizationPanel = () => {
     }
   }
 
+  const loading = state === 'loading'
   const pending = state === 'PENDING'
   const authorized = state === 'AUTHORIZED'
 
@@ -79,10 +81,23 @@ const CsdnAuthorizationPanel = () => {
           <h3 className="text-sm font-bold text-ink">{t('profile.csdn.title')}</h3>
           <p className="mt-1 text-caption text-ink-muted">{t('profile.csdn.description')}</p>
         </div>
-        {authorized ? <CheckCircle2 className="h-5 w-5 text-success" /> : <ShieldOff className="h-5 w-5 text-ink-faint" />}
+        {loading ? (
+          <LoaderCircle className="h-5 w-5 animate-spin text-accent" />
+        ) : authorized ? (
+          <CheckCircle2 className="h-5 w-5 text-success" />
+        ) : (
+          <ShieldOff className="h-5 w-5 text-ink-faint" />
+        )}
       </div>
 
-      {pending && qrCode && (
+      {loading && (
+        <div className="mt-4 flex items-center gap-2 rounded-lg bg-canvas px-3.5 py-2.5 text-caption font-semibold text-ink-muted">
+          <LoaderCircle className="h-4 w-4 animate-spin text-accent" />
+          <span>{t('profile.csdn.checking')}</span>
+        </div>
+      )}
+
+      {!loading && pending && qrCode && (
         <div className="mt-4 flex flex-col items-center gap-3 rounded-lg border border-border bg-canvas p-4">
           <img src={qrCode} alt={t('profile.csdn.qrAlt')} className="h-52 w-52 rounded-md bg-white object-contain" />
           <p className="text-caption text-ink-muted">{t('profile.csdn.scanHint')}</p>
@@ -90,19 +105,19 @@ const CsdnAuthorizationPanel = () => {
         </div>
       )}
 
-      {!authorized && !pending && state !== 'UNAVAILABLE' && (
+      {!loading && !authorized && !pending && state !== 'UNAVAILABLE' && (
         <button type="button" onClick={start} disabled={busy} className="mt-4 inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-2.5 text-sm font-bold text-white hover:bg-accent/90 disabled:opacity-50">
-          <QrCode className="h-4 w-4" />
+          {busy ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <QrCode className="h-4 w-4" />}
           {t('profile.csdn.connect')}
         </button>
       )}
-      {authorized && (
+      {!loading && authorized && (
         <button type="button" onClick={disconnect} disabled={busy} className="mt-4 inline-flex items-center gap-2 rounded-lg border border-border px-4 py-2.5 text-sm font-bold text-ink-muted hover:bg-canvas disabled:opacity-50">
-          <Unplug className="h-4 w-4" />
+          {busy ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <Unplug className="h-4 w-4" />}
           {t('profile.csdn.disconnect')}
         </button>
       )}
-      {state === 'UNAVAILABLE' && <p className="mt-4 text-caption text-warning">{t('profile.csdn.unavailable')}</p>}
+      {!loading && state === 'UNAVAILABLE' && <p className="mt-4 text-caption text-warning">{t('profile.csdn.unavailable')}</p>}
     </div>
   )
 }

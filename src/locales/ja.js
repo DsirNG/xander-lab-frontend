@@ -255,6 +255,7 @@ export default {
       title: 'CSDN 同期設定',
       description: 'CSDN アカウントを連携すると、記事の一括・予約投稿が可能になります。',
       authorized: 'CSDN 連携済み',
+      checking: '接続状態を確認中...',
       startFailed: 'CSDN 認証を開始できません',
       disconnected: 'CSDN 連携解除',
       disconnectFailed: 'CSDN 連携解除に失敗しました',

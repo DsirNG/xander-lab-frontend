@@ -255,6 +255,7 @@ export default {
       title: 'Публикация в CSDN',
       description: 'Подключите CSDN один раз для включения отложенной публикации.',
       authorized: 'CSDN подключен',
+      checking: 'Проверка состояния подключения...',
       startFailed: 'Не удалось запустить авторизацию CSDN',
       disconnected: 'CSDN отключен',
       disconnectFailed: 'Не удалось отключить CSDN',

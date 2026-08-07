@@ -1,14 +1,12 @@
 import { useCallback, useEffect, useState } from 'react'
 import { ExternalLink, Plug, RefreshCw, ShieldCheck, ShieldOff } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { useToast } from '@hooks/useToast'
 import { mcpService } from '../services/mcpService'
 import CsdnAuthorizationPanel from './CsdnAuthorizationPanel'
 
 /** Profile control for the browser-only MCP authorization handoff. */
 const McpAuthorizationPanel = () => {
   const { t } = useTranslation()
-  const toast = useToast()
   const [status, setStatus] = useState('loading')
 
   const loadStatus = useCallback(async () => {
@@ -27,15 +25,6 @@ const McpAuthorizationPanel = () => {
 
   const openAuthorization = () => {
     window.open(mcpService.getAuthorizationUrl(), '_blank', 'noopener,noreferrer')
-  }
-
-  const copyEndpoint = async () => {
-    try {
-      await navigator.clipboard.writeText(`${window.location.origin}/api/mcp`)
-      toast.success(t('profile.mcp.endpointCopied'))
-    } catch {
-      toast.error(t('profile.mcp.copyFailed'))
-    }
   }
 
   const isAuthorized = status === 'authorized'
@@ -89,11 +78,6 @@ const McpAuthorizationPanel = () => {
           )}
         </div>
 
-        <div className="mt-4 rounded-xl border border-border bg-canvas p-5">
-          <p className="text-caption font-bold uppercase tracking-wider text-ink-faint">{t('profile.mcp.endpointLabel')}</p>
-          <code className="mt-2 block break-all rounded-lg bg-surface px-3 py-2 text-caption text-ink-secondary">{window.location.origin}/api/mcp</code>
-          <button type="button" onClick={copyEndpoint} className="mt-3 text-caption font-bold text-accent hover:underline">{t('profile.mcp.copyEndpoint')}</button>
-        </div>
         <CsdnAuthorizationPanel />
       </div>
     </section>

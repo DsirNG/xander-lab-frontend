@@ -263,6 +263,7 @@ export default {
       title: 'CSDN Publishing',
       description: 'Connect CSDN once to enable scheduled publishing for your account.',
       authorized: 'CSDN connected',
+      checking: 'Checking connection status...',
       startFailed: 'Unable to start CSDN authorization',
       disconnected: 'CSDN disconnected',
       disconnectFailed: 'Unable to disconnect CSDN',
