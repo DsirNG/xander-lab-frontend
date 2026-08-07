@@ -21,6 +21,12 @@
 import axios from 'axios';
 import { ENV_CONFIG } from '@config/env';
 import i18n from '@locales/index';
+import {
+    MAX_RETRY,
+    getRetryDelay,
+    isSafeRetryMethod,
+    shouldRetryRequest,
+} from './httpPolicy';
 
 // ─────────────────────────────────────────────
 // 1. 常量 & 配置
@@ -33,7 +39,6 @@ const DEFAULT_TIMEOUT = ENV_CONFIG.TIMEOUT;
 const DEFAULT_DOWNLOAD_TIMEOUT = 10 * 60 * 1000;
 
 /** Methods that can be retried and deduplicated without replaying mutations. */
-const SAFE_RETRY_METHODS = new Set(['get', 'head', 'options']);
 
 /** API 基础路径 */
 const BASE_URL = ENV_CONFIG.BASE_URL;
@@ -50,10 +55,8 @@ const USER_INFO_KEY = 'user_info';
 const REFRESH_URL = '/auth/refresh';
 
 /** 最大自动重试次数（网络错误 / 5xx） */
-const MAX_RETRY = 2;
 
 /** 重试间隔基数（ms），指数退避：delay = BASE_RETRY_DELAY * 2^attempt */
-const BASE_RETRY_DELAY = 500;
 
 /**
  * 全局 Toast 提示（由 App.jsx 的 ToastBridge 注册 window.__toast）
@@ -315,7 +318,7 @@ instance.interceptors.request.use(
         // 8.1 防重复请求（幂等锁）
         // 默认行为：(GET, POST, PUT, DELETE, PATCH）防重复
         const method = config.method?.toLowerCase();
-        const shouldDedupe = config.dedupe ?? SAFE_RETRY_METHODS.has(method);
+        const shouldDedupe = config.dedupe ?? isSafeRetryMethod(method);
 
         if (shouldDedupe) {
             addPendingRequest(config);
@@ -462,26 +465,12 @@ instance.interceptors.response.use(
         }
 
         // ── 9.2.2 自动重试（网络错误 / 5xx） ──
-        const method = config?.method?.toLowerCase();
-        const retryAllowed =
-            SAFE_RETRY_METHODS.has(method) || config?._retryIdempotent === true;
         const shouldRetry =
-            config &&
-            retryAllowed &&
-            !config._skipRetry &&
-            !response && // 网络错误（无响应）
-            config._retryCount < MAX_RETRY;
+            shouldRetryRequest(config, response);
 
-        const shouldRetry5xx =
-            config &&
-            retryAllowed &&
-            !config._skipRetry &&
-            response?.status >= 500 &&
-            (config._retryCount ?? 0) < MAX_RETRY;
-
-        if (shouldRetry || shouldRetry5xx) {
+        if (shouldRetry) {
             config._retryCount = (config._retryCount ?? 0) + 1;
-            const delay = BASE_RETRY_DELAY * Math.pow(2, config._retryCount - 1);
+            const delay = getRetryDelay(config._retryCount);
 
             if (IS_DEV) {
                 console.warn(

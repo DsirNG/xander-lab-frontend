@@ -1,4 +1,4 @@
-import React, { startTransition, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ArrowLeft, Bot, Loader2, MessageSquareText, Plus, Send, Sparkles, X } from 'lucide-react';
@@ -11,21 +11,8 @@ import AgentProcessPanel from '../components/agent/AgentProcessPanel';
 import AgentResultCard from '../components/agent/AgentResultCard';
 import AgentPreviewPanel from '../components/agent/AgentPreviewPanel';
 import AgentSessionList from '../components/agent/AgentSessionList';
-import {
-  RESULT_MESSAGE_ID,
-  TASK_TERMINAL_STATUSES,
-  getReconnectDelay,
-  eventCursorKey,
-  streamTextKey,
-  createAbortError,
-  isAbortError,
-  waitForReconnect,
-  readSessionValue,
-  writeSessionValue,
-  removeSessionValue,
-  buildStoredMessages,
-  getStoredProcessLogs,
-} from '../utils/agentRuntime';
+import { RESULT_MESSAGE_ID, buildStoredMessages } from '../utils/agentRuntime';
+import useBlogAgentTask from '../hooks/useBlogAgentTask';
 
 const BlogAgent = () => {
   const { t } = useTranslation();
@@ -34,44 +21,15 @@ const BlogAgent = () => {
   const toast = useToast();
   const isMobile = useIsMobile(1024);
   const [input, setInput] = useState('');
-  const [taskData, setTaskData] = useState(null);
-  const [isRunning, setIsRunning] = useState(false);
   const [isSavingDraft, setIsSavingDraft] = useState(false);
   const [isPublishing, setIsPublishing] = useState(false);
-  const [isTaskLoading, setIsTaskLoading] = useState(Boolean(taskId));
-  const [streamText, setStreamText] = useState('');
-  const [startedAt, setStartedAt] = useState(null);
-  const [endedAt, setEndedAt] = useState(null);
-  const [pendingUserInput, setPendingUserInput] = useState('');
   const [previewOpen, setPreviewOpen] = useState(false);
   const [selectedResultId, setSelectedResultId] = useState(null);
   const [selectedVersionId, setSelectedVersionId] = useState(null);
   const [sessions, setSessions] = useState([]);
   const [sessionsLoading, setSessionsLoading] = useState(true);
-  const [liveLogs, setLiveLogs] = useState([]);
-  const [liveStage, setLiveStage] = useState('analyze');
-  const [liveUserInput, setLiveUserInput] = useState('');
   const [mobileSessionsOpen, setMobileSessionsOpen] = useState(false);
-  const streamBufferRef = useRef('');
-  const streamErrorRef = useRef(null);
-  const streamFrameRef = useRef(null);
-  const activeRunAbortRef = useRef(null);
-  const activeStreamTaskIdRef = useRef(null);
-  const currentTaskIdRef = useRef(taskId);
-  const toastRef = useRef(toast);
-  const eventCursorRef = useRef({ taskId: null, eventId: 0 });
   const chatEndRef = useRef(null);
-  const isRunningRef = useRef(false);
-  isRunningRef.current = isRunning;
-  toastRef.current = toast;
-  currentTaskIdRef.current = taskId;
-  const task = taskData?.task;
-  const selectedVersion = taskData?.versions?.find((version) => String(version.id) === String(selectedVersionId));
-  const isActiveStreamForCurrentTask = isRunning
-    && String(activeStreamTaskIdRef.current) === String(taskId);
-  const isTaskActive = isActiveStreamForCurrentTask || task?.status === 'running';
-  const hasFinishedTurn = Boolean(task) && !isTaskActive && task.status === 'ready';
-  const inputLocked = isTaskActive;
 
   const loadSessions = useCallback(async () => {
     setSessionsLoading(true);
@@ -84,168 +42,42 @@ const BlogAgent = () => {
     }
   }, []);
 
-  const applyTaskSnapshot = useCallback((data) => {
-    if (!data?.task) return;
-    setTaskData(data);
-    setLiveStage(data.task.stage || 'analyze');
-    if (data.task.status === 'ready') {
-      setSelectedVersionId(data.versions?.[0]?.id ?? null);
-      setSelectedResultId(RESULT_MESSAGE_ID);
-      setPreviewOpen(true);
-    }
+  const handleTaskReady = useCallback((data) => {
+    setSelectedVersionId(data.versions?.[0]?.id ?? null);
+    setSelectedResultId(RESULT_MESSAGE_ID);
+    setPreviewOpen(true);
   }, []);
 
-  const rememberEventId = useCallback((id, rawEventId) => {
-    const eventId = Number(rawEventId);
-    if (!Number.isSafeInteger(eventId) || eventId <= 0) return true;
-    if (eventCursorRef.current.taskId !== String(id)) {
-      eventCursorRef.current = {
-        taskId: String(id),
-        eventId: Number(readSessionValue(eventCursorKey(id), '0')) || 0,
-      };
-    }
-    if (eventId <= eventCursorRef.current.eventId) return false;
-    eventCursorRef.current.eventId = eventId;
-    writeSessionValue(eventCursorKey(id), String(eventId));
-    return true;
-  }, []);
+  const {
+    taskData,
+    setTaskData,
+    isRunning,
+    isTaskLoading,
+    streamText,
+    startedAt,
+    endedAt,
+    pendingUserInput,
+    liveLogs,
+    liveStage,
+    liveUserInput,
+    generate,
+    revise,
+    reset,
+  } = useBlogAgentTask({
+    taskId,
+    onReady: handleTaskReady,
+    onSessionsChanged: loadSessions,
+  });
 
-  const applyStreamEvent = useCallback((id, { id: eventId, event, data }) => {
-    if (!rememberEventId(id, eventId)) return;
-    if (event === 'delta') {
-      streamBufferRef.current += data;
-      writeSessionValue(streamTextKey(id), streamBufferRef.current);
-      if (!streamFrameRef.current) {
-        streamFrameRef.current = requestAnimationFrame(() => {
-          startTransition(() => setStreamText(streamBufferRef.current));
-          streamFrameRef.current = null;
-        });
-      }
-    } else if (event === 'stage') {
-      const [stage, message] = String(data).split('|', 2);
-      setLiveStage(stage);
-      setLiveLogs((current) => [...current, message || stage]);
-      setTaskData((current) => current && String(current.task?.id) === String(id)
-        ? { ...current, task: { ...current.task, stage, status: 'running' } }
-        : current);
-    } else if (event === 'complete') {
-      if (String(currentTaskIdRef.current) === String(id)) applyTaskSnapshot(data);
-      removeSessionValue(streamTextKey(id));
-    } else if (event === 'error') {
-      streamErrorRef.current = typeof data === 'string' ? data : t('blog.agent.failed');
-    }
-  }, [applyTaskSnapshot, rememberEventId, t]);
-
-  const recoverTaskReliably = useCallback(async (id, signal, initialSnapshot = null) => {
-    let snapshot = initialSnapshot;
-    let reconnectAttempt = 0;
-    const applySnapshotIfCurrent = (data) => {
-      if (String(currentTaskIdRef.current) === String(id)) applyTaskSnapshot(data);
-    };
-
-    while (!signal?.aborted) {
-      try {
-        snapshot = snapshot || await blogAgentService.getTask(id, { _silent: true, signal });
-        applySnapshotIfCurrent(snapshot);
-        if (TASK_TERMINAL_STATUSES.has(snapshot?.task?.status)) return snapshot;
-
-        const afterEventId = Number(readSessionValue(eventCursorKey(id), '0')) || 0;
-        await blogAgentService.subscribeTaskEvents(
-          id,
-          afterEventId,
-          (event) => applyStreamEvent(id, event),
-          { _silent: true, signal },
-        );
-
-        // A normally closed stream can still race the task completion event.
-        // Always confirm task state before deciding whether to reconnect.
-        snapshot = await blogAgentService.getTask(id, { _silent: true, signal });
-        applySnapshotIfCurrent(snapshot);
-        if (TASK_TERMINAL_STATUSES.has(snapshot?.task?.status)) return snapshot;
-      } catch (error) {
-        if (signal?.aborted || isAbortError(error)) throw createAbortError();
-        // Authentication and client errors cannot be repaired by reconnecting.
-        if (error?.status && error.status < 500) throw error;
-      }
-
-      reconnectAttempt += 1;
-      const delay = getReconnectDelay(reconnectAttempt);
-      await waitForReconnect(delay, signal);
-      // Fetch a fresh snapshot before each resumed SSE subscription.
-      snapshot = null;
-    }
-
-    throw createAbortError();
-  }, [applyStreamEvent, applyTaskSnapshot]);
+  const task = taskData?.task;
+  const selectedVersion = taskData?.versions?.find((version) => String(version.id) === String(selectedVersionId));
+  const isTaskActive = isRunning || task?.status === 'running';
+  const hasFinishedTurn = Boolean(task) && !isTaskActive && task.status === 'ready';
+  const inputLocked = isTaskActive;
 
   useEffect(() => {
     loadSessions();
   }, [loadSessions]);
-
-  useEffect(() => {
-    if (!taskId) {
-      setIsTaskLoading(false);
-      setTaskData(null);
-      setPendingUserInput('');
-      setStreamText('');
-      setStartedAt(null);
-      setEndedAt(null);
-      setLiveStage('analyze');
-      setPreviewOpen(false);
-      setSelectedResultId(null);
-      setSelectedVersionId(null);
-      return undefined;
-    }
-
-    // 本页正在跑流时由 stream 更新状态，不额外 getTask
-    if (isRunningRef.current && String(activeStreamTaskIdRef.current) === String(taskId)) {
-      setIsTaskLoading(false);
-      return undefined;
-    }
-
-    setIsTaskLoading(true);
-    let active = true;
-    const controller = new AbortController();
-    const load = async () => {
-      try {
-        const data = await blogAgentService.getTask(taskId, { _silent: true, signal: controller.signal });
-        if (!active) return;
-        applyTaskSnapshot(data);
-        setPendingUserInput(data?.task?.input || '');
-        setLiveUserInput('');
-        setLiveLogs(data?.task?.status === 'running' ? getStoredProcessLogs(data.messages) : []);
-        setIsTaskLoading(false);
-        if (data?.task?.status === 'running') {
-          const restoredStreamText = readSessionValue(streamTextKey(taskId));
-          streamBufferRef.current = restoredStreamText;
-          setStreamText(restoredStreamText);
-          eventCursorRef.current = {
-            taskId: String(taskId),
-            eventId: Number(readSessionValue(eventCursorKey(taskId), '0')) || 0,
-          };
-          setIsRunning(true);
-          setStartedAt((current) => current || Date.now());
-          const recovered = await recoverTaskReliably(taskId, controller.signal, data);
-          if (!active) return;
-          setEndedAt(Date.now());
-          if (recovered?.task?.status === 'ready') loadSessions();
-        }
-      } catch (error) {
-        if (active && !isAbortError(error)) toastRef.current.error(error.message || t('blog.agent.failed'));
-      } finally {
-        if (active) {
-          setIsTaskLoading(false);
-          setIsRunning(false);
-        }
-      }
-    };
-    load();
-    return () => {
-      active = false;
-      controller.abort();
-    };
-    // 本地流式执行由事件回调更新；重新进入 running 任务时使用快照恢复。
-  }, [applyTaskSnapshot, loadSessions, recoverTaskReliably, taskId, t]);
 
   const statusText = useMemo(() => {
     if (!task) return t('blog.agent.waiting');
@@ -317,11 +149,6 @@ const BlogAgent = () => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
   }, [messages.length, streamText, isRunning]);
 
-  useEffect(() => () => {
-    activeRunAbortRef.current?.abort();
-    if (streamFrameRef.current) cancelAnimationFrame(streamFrameRef.current);
-  }, []);
-
   const handleGenerate = async () => {
     if (!input.trim()) {
       toast.warning(t('blog.agent.inputRequired'));
@@ -329,147 +156,16 @@ const BlogAgent = () => {
     }
     const submitted = input.trim();
     setInput('');
-    setIsRunning(true);
-    setTaskData(null);
-    setStreamText('');
-    setPendingUserInput(submitted);
-    setLiveUserInput(submitted);
-    setLiveLogs([]);
-    setLiveStage('analyze');
-    setStartedAt(Date.now());
-    setEndedAt(null);
     setPreviewOpen(false);
     setSelectedResultId(null);
-    streamBufferRef.current = '';
-    streamErrorRef.current = null;
-    activeRunAbortRef.current?.abort();
-    const controller = new AbortController();
-    activeRunAbortRef.current = controller;
-    let createdTaskId = null;
-    try {
-      const created = await blogAgentService.createTask({ input: submitted });
-      createdTaskId = created.id;
-      activeStreamTaskIdRef.current = created.id;
-      removeSessionValue(eventCursorKey(created.id));
-      removeSessionValue(streamTextKey(created.id));
-      eventCursorRef.current = { taskId: String(created.id), eventId: 0 };
-      navigate(`/blog/agent/${created.id}`, { replace: true });
-      await blogAgentService.runTaskStream(
-        created.id,
-        (event) => applyStreamEvent(created.id, event),
-        { signal: controller.signal },
-      );
-      const recovered = await recoverTaskReliably(created.id, controller.signal);
-      if (streamFrameRef.current) cancelAnimationFrame(streamFrameRef.current);
-      if (streamBufferRef.current) setStreamText(streamBufferRef.current);
-      if (recovered?.task?.status === 'failed') throw new Error(recovered.task.errorMessage || t('blog.agent.failed'));
-      if (streamErrorRef.current) throw new Error(streamErrorRef.current);
-      setEndedAt(Date.now());
-      setSelectedResultId(RESULT_MESSAGE_ID);
-      setPreviewOpen(true);
-      setInput('');
-      setLiveUserInput('');
-      setLiveLogs([]);
-      loadSessions();
-      toast.success(t('blog.agent.complete'));
-    } catch (error) {
-      if (controller.signal.aborted || isAbortError(error)) return;
-      setEndedAt(Date.now());
-      let finalError = error;
-      if (createdTaskId) {
-        try {
-          const recovered = await recoverTaskReliably(createdTaskId, controller.signal);
-          if (recovered?.task?.status === 'ready') {
-            setEndedAt(Date.now());
-            setInput('');
-            setLiveUserInput('');
-            setLiveLogs([]);
-            loadSessions();
-            toast.success(t('blog.agent.complete'));
-            return;
-          }
-          finalError = new Error(recovered?.task?.errorMessage || error.message);
-        } catch (recoveryError) {
-          if (controller.signal.aborted || isAbortError(recoveryError)) return;
-          finalError = recoveryError;
-        }
-      }
-      loadSessions();
-      toast.error(finalError.message || t('blog.agent.failed'));
-    } finally {
-      if (activeRunAbortRef.current === controller) {
-        activeRunAbortRef.current = null;
-        activeStreamTaskIdRef.current = null;
-      }
-      setIsRunning(false);
-    }
+    await generate(submitted);
   };
 
   const handleRevise = async () => {
     if (!task?.id || !input.trim()) return;
     const submitted = input.trim();
     setInput('');
-    activeStreamTaskIdRef.current = task.id;
-    setIsRunning(true);
-    setLiveUserInput(submitted);
-    setLiveLogs([]);
-    setLiveStage('analyze');
-    setStreamText('');
-    setStartedAt(Date.now());
-    setEndedAt(null);
-    streamBufferRef.current = '';
-    streamErrorRef.current = null;
-    removeSessionValue(streamTextKey(task.id));
-    activeRunAbortRef.current?.abort();
-    const controller = new AbortController();
-    activeRunAbortRef.current = controller;
-    try {
-      await blogAgentService.reviseTaskStream(
-        task.id,
-        submitted,
-        (event) => applyStreamEvent(task.id, event),
-        { signal: controller.signal },
-      );
-      const recovered = await recoverTaskReliably(task.id, controller.signal);
-      if (recovered?.task?.status === 'failed') throw new Error(recovered.task.errorMessage || t('blog.agent.failed'));
-      if (streamErrorRef.current) throw new Error(streamErrorRef.current);
-      setEndedAt(Date.now());
-      setInput('');
-      setLiveUserInput('');
-      setLiveLogs([]);
-      setSelectedResultId(RESULT_MESSAGE_ID);
-      setPreviewOpen(true);
-      loadSessions();
-      toast.success(t('blog.agent.revisionComplete'));
-    } catch (error) {
-      if (controller.signal.aborted || isAbortError(error)) return;
-      setEndedAt(Date.now());
-      let finalError = error;
-      try {
-        const recovered = await recoverTaskReliably(task.id, controller.signal);
-        if (recovered?.task?.status === 'ready' && !recovered.task.errorMessage) {
-          setEndedAt(Date.now());
-          setInput('');
-          setLiveUserInput('');
-          setLiveLogs([]);
-          loadSessions();
-          toast.success(t('blog.agent.revisionComplete'));
-          return;
-        }
-        finalError = new Error(recovered?.task?.errorMessage || error.message);
-      } catch (recoveryError) {
-        if (controller.signal.aborted || isAbortError(recoveryError)) return;
-        finalError = recoveryError;
-      }
-      loadSessions();
-      toast.error(finalError.message || t('blog.agent.failed'));
-    } finally {
-      if (activeRunAbortRef.current === controller) {
-        activeRunAbortRef.current = null;
-        activeStreamTaskIdRef.current = null;
-      }
-      setIsRunning(false);
-    }
+    await revise(task.id, submitted);
   };
 
   const handleSubmit = () => hasFinishedTurn ? handleRevise() : handleGenerate();
@@ -509,22 +205,11 @@ const BlogAgent = () => {
   };
 
   const handleNewTask = () => {
-    activeRunAbortRef.current?.abort();
-    activeRunAbortRef.current = null;
-    activeStreamTaskIdRef.current = null;
-    setIsRunning(false);
+    reset();
     setInput('');
-    setTaskData(null);
-    setPendingUserInput('');
-    setStreamText('');
-    setStartedAt(null);
-    setEndedAt(null);
     setPreviewOpen(false);
     setSelectedResultId(null);
     setSelectedVersionId(null);
-    setLiveUserInput('');
-    setLiveLogs([]);
-    setLiveStage('analyze');
     navigate('/blog/agent', { replace: true });
   };
 
