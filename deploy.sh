@@ -109,7 +109,9 @@ fi
 # after deployment so the submitted sitemap and key file are publicly reachable.
 if [ "$INDEXNOW_ENABLED" = "true" ]; then
     echo -e "${YELLOW}Submitting sitemap URLs to IndexNow...${NC}"
-    if npm run seo:indexnow; then
+    INDEXNOW_SITEMAP_TMP="/tmp/xander-lab-sitemap.xml"
+    if curl -fsS "http://localhost:$PORT/sitemap.xml" -o "$INDEXNOW_SITEMAP_TMP" && \
+       INDEXNOW_SITEMAP="$INDEXNOW_SITEMAP_TMP" npm run seo:indexnow; then
         echo -e "${GREEN}IndexNow submission completed${NC}"
     else
         echo -e "${YELLOW}Warning: IndexNow submission failed; deployment remains active${NC}"

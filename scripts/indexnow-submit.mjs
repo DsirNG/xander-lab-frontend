@@ -6,7 +6,7 @@ import axios from 'axios';
 const ROOT = process.cwd();
 const HOST = process.env.INDEXNOW_HOST || 'xander.dsircity.top';
 const KEY_FILE = process.env.INDEXNOW_KEY_FILE || 'e37f04dea21c4c038138db8ada5e62bc.txt';
-const SITEMAP = process.env.INDEXNOW_SITEMAP || path.join(ROOT, 'public', 'sitemap.xml');
+const SITEMAP = process.env.INDEXNOW_SITEMAP || path.join(ROOT, 'dist', 'sitemap.xml');
 const KEY_PATH = path.isAbsolute(KEY_FILE) ? KEY_FILE : path.join(ROOT, 'public', KEY_FILE);
 const ENDPOINT = process.env.INDEXNOW_ENDPOINT || 'https://api.indexnow.org/indexnow';
 const BATCH_SIZE = 10_000;
