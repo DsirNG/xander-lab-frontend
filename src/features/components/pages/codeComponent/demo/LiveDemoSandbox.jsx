@@ -7,7 +7,7 @@ import {
 
 // ─── 注入项目内部组件 ──────────────────────────────────────────────
 import CustomSelect from '@/components/common/CustomSelect';
-import * as LucideIcons from 'lucide-react';
+import LucideIcons from '@/features/components/registries/sandboxIconRegistry';
 
 // ─── 动态加载 Babel（~2.5MB，不打入首屏 bundle）─────────────────
 let _babel = null;
