@@ -11,81 +11,22 @@ import AgentProcessPanel from '../components/agent/AgentProcessPanel';
 import AgentResultCard from '../components/agent/AgentResultCard';
 import AgentPreviewPanel from '../components/agent/AgentPreviewPanel';
 import AgentSessionList from '../components/agent/AgentSessionList';
-
-const RESULT_MESSAGE_ID = 'result';
-const TASK_TERMINAL_STATUSES = new Set(['ready', 'failed']);
-const RECONNECT_BASE_DELAY = 600;
-const RECONNECT_MAX_DELAY = 8000;
-const eventCursorKey = (id) => `xander-lab:blog-agent:event-cursor:${id}`;
-const streamTextKey = (id) => `xander-lab:blog-agent:stream-text:${id}`;
-
-const createAbortError = () => Object.assign(new Error('Request cancelled'), { name: 'AbortError' });
-const isAbortError = (error) => error?.name === 'AbortError'
-  || error?.name === 'CanceledError'
-  || error?.code === 'ERR_CANCELED';
-const waitForReconnect = (delay, signal) => new Promise((resolve, reject) => {
-  if (signal?.aborted) {
-    reject(createAbortError());
-    return;
-  }
-  const timer = window.setTimeout(() => {
-    signal?.removeEventListener('abort', onAbort);
-    resolve();
-  }, delay);
-  const onAbort = () => {
-    window.clearTimeout(timer);
-    reject(createAbortError());
-  };
-  signal?.addEventListener('abort', onAbort, { once: true });
-});
-const readSessionValue = (key, fallback = '') => {
-  try {
-    return sessionStorage.getItem(key) ?? fallback;
-  } catch {
-    return fallback;
-  }
-};
-const writeSessionValue = (key, value) => {
-  try {
-    sessionStorage.setItem(key, value);
-  } catch {
-    // Recovery still works from the task snapshot when storage is unavailable.
-  }
-};
-const removeSessionValue = (key) => {
-  try {
-    sessionStorage.removeItem(key);
-  } catch {
-    // Ignore unavailable browser storage.
-  }
-};
-
-const buildStoredMessages = (stored = []) => {
-  const result = [];
-  let process = null;
-  stored.forEach((message) => {
-    if (message.kind === 'process') {
-      if (!process) {
-        process = { id: `process-${message.id}`, role: 'assistant', kind: 'process', status: 'ready', logs: [], stage: message.stage };
-        result.push(process);
-      }
-      process.logs.push(message.content);
-      process.stage = message.stage || process.stage;
-      return;
-    }
-    process = null;
-    if (message.role === 'user') {
-      result.push({ id: `message-${message.id}`, role: 'user', content: message.content });
-    } else if (message.kind === 'result') {
-      result.push({ id: `result-${message.id}`, role: 'assistant', kind: 'result', title: message.content });
-    }
-  });
-  return result;
-};
-
-const getStoredProcessLogs = (stored = []) => stored
-  .filter((message) => message.kind === 'process' && message.content)
-  .map((message) => message.content);
+import {
+  RESULT_MESSAGE_ID,
+  TASK_TERMINAL_STATUSES,
+  RECONNECT_BASE_DELAY,
+  RECONNECT_MAX_DELAY,
+  eventCursorKey,
+  streamTextKey,
+  createAbortError,
+  isAbortError,
+  waitForReconnect,
+  readSessionValue,
+  writeSessionValue,
+  removeSessionValue,
+  buildStoredMessages,
+  getStoredProcessLogs,
+} from '../utils/agentRuntime';
 
 const BlogAgent = () => {
   const { t } = useTranslation();

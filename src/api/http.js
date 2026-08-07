@@ -29,6 +29,12 @@ import i18n from '@locales/index';
 /** 默认超时（毫秒） */
 const DEFAULT_TIMEOUT = ENV_CONFIG.TIMEOUT;
 
+/** Large file transfers must still terminate when the peer stalls. */
+const DEFAULT_DOWNLOAD_TIMEOUT = 10 * 60 * 1000;
+
+/** Methods that can be retried and deduplicated without replaying mutations. */
+const SAFE_RETRY_METHODS = new Set(['get', 'head', 'options']);
+
 /** API 基础路径 */
 const BASE_URL = ENV_CONFIG.BASE_URL;
 
@@ -166,11 +172,11 @@ const pendingRequests = new Map();
  * @param {import('axios').InternalAxiosRequestConfig} config
  * @returns {string}
  */
-function buildRequestKey(config) {
+export function buildRequestKey(config) {
     let { method = '', url = '', params, data } = config;
     // 转换 data 为对象以保持 key 的一致性
     if (typeof data === 'string') {
-        try { data = JSON.parse(data); } catch (e) { /* ignore */ }
+        try { data = JSON.parse(data); } catch { /* Preserve non-JSON request bodies. */ }
     }
     return [
         method.toLowerCase(),
@@ -209,6 +215,8 @@ function addPendingRequest(config) {
     }
 
     config.signal = controller.signal;
+    config._pendingRequestKey = key;
+    config._pendingController = controller;
     pendingRequests.set(key, controller);
 }
 
@@ -217,8 +225,10 @@ function addPendingRequest(config) {
  * @param {import('axios').InternalAxiosRequestConfig} config
  */
 function removePendingRequest(config) {
-    const key = buildRequestKey(config);
-    pendingRequests.delete(key);
+    const key = config?._pendingRequestKey ?? buildRequestKey(config);
+    if (pendingRequests.get(key) === config?._pendingController) {
+        pendingRequests.delete(key);
+    }
 }
 
 // ─────────────────────────────────────────────
@@ -304,8 +314,8 @@ instance.interceptors.request.use(
     (config) => {
         // 8.1 防重复请求（幂等锁）
         // 默认行为：(GET, POST, PUT, DELETE, PATCH）防重复
-        const isWrite = ['get', 'post', 'put', 'delete', 'patch'].includes(config.method?.toLowerCase());
-        const shouldDedupe = config.dedupe ?? isWrite;
+        const method = config.method?.toLowerCase();
+        const shouldDedupe = config.dedupe ?? SAFE_RETRY_METHODS.has(method);
 
         if (shouldDedupe) {
             addPendingRequest(config);
@@ -442,7 +452,7 @@ instance.interceptors.response.use(
                 notifyRefreshSubscribers(newToken);
                 config.headers['Authorization'] = `Bearer ${newToken}`;
                 return instance(config);
-            } catch (refreshError) {
+            } catch {
                 isRefreshing = false;
                 forceLoggedOut();
                 const expired = sessionExpiredError();
@@ -452,14 +462,19 @@ instance.interceptors.response.use(
         }
 
         // ── 9.2.2 自动重试（网络错误 / 5xx） ──
+        const method = config?.method?.toLowerCase();
+        const retryAllowed =
+            SAFE_RETRY_METHODS.has(method) || config?._retryIdempotent === true;
         const shouldRetry =
             config &&
+            retryAllowed &&
             !config._skipRetry &&
             !response && // 网络错误（无响应）
             config._retryCount < MAX_RETRY;
 
         const shouldRetry5xx =
             config &&
+            retryAllowed &&
             !config._skipRetry &&
             response?.status >= 500 &&
             (config._retryCount ?? 0) < MAX_RETRY;
@@ -767,7 +782,7 @@ export async function download(url, options = {}) {
         params,
         data,
         responseType: 'blob',
-        timeout: 0,
+        timeout: DEFAULT_DOWNLOAD_TIMEOUT,
         dedupe: false,
         onDownloadProgress: onProgress
             ? (progressEvent) => {

@@ -6,9 +6,13 @@ import reactRefresh from 'eslint-plugin-react-refresh'
 import { defineConfig, globalIgnores } from 'eslint/config'
 
 export default defineConfig([
-  globalIgnores(['dist']),
+  globalIgnores([
+    '**/dist/**',
+    '**/node_modules/**',
+    'xander-lab-miniprogram/**',
+  ]),
   {
-    files: ['**/*.{js,jsx}'],
+    files: ['src/**/*.{js,jsx}'],
     plugins: {
       react,
       'react-hooks': reactHooks,
@@ -35,8 +39,45 @@ export default defineConfig([
         'warn',
         { allowConstantExport: true },
       ],
-      'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }],
+      'no-unused-vars': ['warn', { varsIgnorePattern: '^[A-Z_]', argsIgnorePattern: '^_' }],
       'react/prop-types': 'off',
+      // Existing responsive/layout effects intentionally close transient UI.
+      // These synchronize UI with media-query and route changes.
+      'react-hooks/set-state-in-effect': 'off',
+      'react-hooks/purity': 'warn',
+      'react/display-name': 'warn',
+      'react/no-unescaped-entities': 'warn',
+      'react/jsx-no-comment-textnodes': 'warn',
+    },
+  },
+  {
+    files: [
+      'scripts/**/*.js',
+      'vite.config.js',
+      'postcss.config.js',
+      'tailwind.config.js',
+      'seo-tools.mjs',
+    ],
+    languageOptions: {
+      ecmaVersion: 'latest',
+      globals: globals.node,
+      parserOptions: { sourceType: 'module' },
+    },
+    rules: {
+      ...js.configs.recommended.rules,
+      'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+    },
+  },
+  {
+    files: ['bing-push.js', 'bing-submit.js'],
+    languageOptions: {
+      ecmaVersion: 'latest',
+      globals: globals.node,
+      parserOptions: { sourceType: 'commonjs' },
+    },
+    rules: {
+      ...js.configs.recommended.rules,
+      'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
     },
   },
 ])

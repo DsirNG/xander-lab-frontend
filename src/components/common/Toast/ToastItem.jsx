@@ -41,7 +41,7 @@ const ToastItem = ({ toast, onRemove }) => {
 
     // 核心物理时间管理
     const remainingTimeRef = useRef(duration);
-    const lastStartTimeRef = useRef(Date.now());
+    const lastStartTimeRef = useRef(0);
     const timerRef = useRef(null);
 
     // 倒计时逻辑

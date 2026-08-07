@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
@@ -362,24 +362,28 @@ const DigitalOrbit = () => {
     );
 };
 
+const PARTICLE_ICONS = [Cpu, Zap, Shield, Sparkles];
+const PARTICLES = [
+    { x: 8, y: 18, duration: 17, size: 96 },
+    { x: 24, y: 72, duration: 21, size: 132 },
+    { x: 41, y: 35, duration: 19, size: 104 },
+    { x: 58, y: 81, duration: 23, size: 156 },
+    { x: 73, y: 14, duration: 20, size: 118 },
+    { x: 87, y: 59, duration: 24, size: 172 },
+    { x: 34, y: 92, duration: 18, size: 88 },
+    { x: 65, y: 47, duration: 22, size: 144 },
+].map((particle, index) => ({
+    ...particle,
+    Icon: PARTICLE_ICONS[index % PARTICLE_ICONS.length],
+}));
+
 /**
  * 漂浮粒子集
  */
 const FloatingParticles = () => {
-    const icons = [Cpu, Zap, Shield, Sparkles];
-    const particles = useMemo(() =>
-        Array.from({ length: 8 }, (_, i) => ({
-            x: Math.random() * 100,
-            y: Math.random() * 100,
-            duration: 15 + Math.random() * 10,
-            size: 80 + Math.random() * 100,
-            Icon: icons[i % icons.length]
-        })),
-    []);
-
     return (
         <div className="absolute inset-0 pointer-events-none">
-            {particles.map((p, i) => (
+            {PARTICLES.map((p, i) => (
                 <motion.div
                     key={i}
                     initial={{

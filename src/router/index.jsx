@@ -13,6 +13,7 @@ import { createBrowserRouter, Navigate } from 'react-router-dom';
 import MainLayout from '@components/layouts/MainLayout';
 import BlogLayout from '@features/blog/layouts/BlogLayout';
 import RouteSEOLayout from '@components/seo/RouteSEOLayout';
+import ProtectedRoute from '@features/auth/components/ProtectedRoute';
 
 // Features (路由级懒加载)
 const HomePage = React.lazy(() => import('@features/home/pages/HomePage'));
@@ -50,6 +51,12 @@ const LazyPage = ({ children }) => (
   <Suspense fallback={<LoadingSpinner fullScreen />}>
     {children}
   </Suspense>
+);
+
+const protectedPage = (page) => (
+  <ProtectedRoute>
+    <LazyPage>{page}</LazyPage>
+  </ProtectedRoute>
 );
 
 
@@ -167,7 +174,7 @@ export const createRouter = () => {
         },
         {
           path: 'studio',
-          element: <LazyPage><StudioPage /></LazyPage>,
+          element: protectedPage(<StudioPage />),
         },
         {
           path: 'lab/img2three',
@@ -179,7 +186,7 @@ export const createRouter = () => {
         },
         {
           path: 'profile',
-          element: <LazyPage><ProfilePage /></LazyPage>,
+          element: protectedPage(<ProfilePage />),
         },
         {
           path: '*',
@@ -193,28 +200,28 @@ export const createRouter = () => {
     },
     {
       path: 'blog/publish',
-      element: <LazyPage><BlogPublish /></LazyPage>,
+      element: protectedPage(<BlogPublish />),
     },
     {
       path: 'blog/agent',
-      element: <LazyPage><BlogAgent /></LazyPage>,
+      element: protectedPage(<BlogAgent />),
     },
     {
       path: 'blog/agent/:taskId',
-      element: <LazyPage><BlogAgent /></LazyPage>,
+      element: protectedPage(<BlogAgent />),
     },
     // 工作室路由 - 独立页面，不使用 MainLayout
     {
       path: 'studio/project',
-      element: <LazyPage><ProjectUploadPage /></LazyPage>,
+      element: protectedPage(<ProjectUploadPage />),
     },
     {
       path: 'studio/component',
-      element: <LazyPage><ComponentUploadPage /></LazyPage>,
+      element: protectedPage(<ComponentUploadPage />),
     },
     {
       path: 'studio/compiler/:projectId',
-      element: <LazyPage><CompilerPage /></LazyPage>,
+      element: protectedPage(<CompilerPage />),
     },
     {
       path: 'studio/source/:projectId',

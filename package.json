@@ -6,9 +6,10 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "build:seo": "vite build && npm run postbuild",
-    "postbuild": "node scripts/generate-meta.js && node scripts/prerender-seo.js",
+    "build:seo": "vite build && npm run seo:generate",
+    "seo:generate": "node scripts/generate-meta.js && node scripts/prerender-seo.js",
     "lint": "eslint .",
+    "test": "node --test src/**/*.test.js",
     "preview": "vite preview"
   },
   "dependencies": {
