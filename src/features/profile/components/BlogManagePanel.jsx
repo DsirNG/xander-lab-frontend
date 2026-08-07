@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
     AlertCircle,
+    CloudUpload,
     Eye,
     FilePenLine,
     FileText,
@@ -18,6 +19,7 @@ import LoadingSpinner from '@components/common/LoadingSpinner';
 import Pagination from '@components/common/Pagination';
 import { useToast } from '@hooks/useToast';
 import { blogService, BLOG_STATUS } from '@features/blog/services/blogService';
+import CsdnSyncDialog from './CsdnSyncDialog';
 
 const DEFAULT_PAGE_SIZE = 10;
 const SEARCH_DEBOUNCE_MS = 300;
@@ -57,6 +59,7 @@ const BlogManagePanel = () => {
     const [loadError, setLoadError] = useState(false);
     const [actionKey, setActionKey] = useState('');
     const [confirmAction, setConfirmAction] = useState(null);
+    const [csdnPost, setCsdnPost] = useState(null);
 
     const abortRef = useRef(null);
     const requestSeq = useRef(0);
@@ -278,6 +281,18 @@ const BlogManagePanel = () => {
                                         {status !== BLOG_STATUS.TRASH ? (
                                             <button
                                                 type="button"
+                                                title={t('profile.blogManage.actions.syncCsdn', 'Sync to CSDN')}
+                                                disabled={Boolean(actionKey)}
+                                                onClick={() => setCsdnPost(post)}
+                                                className="grid h-8 w-8 place-items-center rounded-lg text-ink-faint transition hover:bg-orange-50 hover:text-orange-600 disabled:opacity-50"
+                                            >
+                                                <CloudUpload className="h-3.5 w-3.5" />
+                                            </button>
+                                        ) : null}
+
+                                        {status !== BLOG_STATUS.TRASH ? (
+                                            <button
+                                                type="button"
                                                 title={t('profile.blogManage.actions.edit')}
                                                 onClick={() => navigate(`/blog/publish?id=${post.id}`)}
                                                 className="grid h-8 w-8 place-items-center rounded-lg text-ink-faint transition hover:bg-accent-soft hover:text-accent"
@@ -387,6 +402,13 @@ const BlogManagePanel = () => {
                     ? t('profile.blogManage.actions.permanentDelete')
                     : t('profile.blogManage.actions.trash')}
             />
+            {csdnPost && (
+                <CsdnSyncDialog
+                    post={csdnPost}
+                    onClose={() => setCsdnPost(null)}
+                    onSuccess={() => toast.success(t('profile.blogManage.csdn.synced', 'Synced to CSDN'))}
+                />
+            )}
         </div>
     );
 };

@@ -43,6 +43,9 @@ export const blogService = {
   /** GET /api/blog/posts/mine/{id} */
   getMyBlogById: (id, config) => get(`${BASE}/posts/mine/${id}`, undefined, config),
 
+  /** POST /api/blog/posts/{id}/sync/csdn */
+  syncToCsdn: (id, config) => post(`${BASE}/posts/${id}/sync/csdn`, undefined, config),
+
   /** PUT /api/blog/posts/{id} */
   updateBlog: (id, blogData, config) => put(`${BASE}/posts/${id}`, blogData, config),
 
