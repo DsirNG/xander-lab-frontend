@@ -29,7 +29,18 @@ i18n
   .use(initReactI18next)
   .init({
     resources,
+    // 只使用纯语言代码，避免 zh-CN/en-US 这类带国家后缀的值污染 i18n.language
+    load: 'languageOnly',
+    // 显式声明受支持的语言，检测到的 zh-CN 会规范化为 zh，en-US 规范化为 en
+    supportedLngs: ['en', 'zh', 'fr', 'ja', 'ru', 'vi'],
+    nonExplicitSupportedLngs: false,
     fallbackLng: 'en',
+    detection: {
+      order: ['localStorage', 'navigator'],
+      // 与 languageService 共用同一 localStorage key，避免两套状态脱节
+      lookupLocalStorage: 'language',
+      caches: ['localStorage'],
+    },
     interpolation: {
       escapeValue: false, // react already safes from xss
     },
