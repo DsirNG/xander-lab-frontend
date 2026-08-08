@@ -23,7 +23,7 @@ export const themeService = {
 // 语言服务
 export const languageService = {
   getLanguage: () => {
-    return localStorage.getItem('language') || 'en';
+    return localStorage.getItem('language') || 'zh';
   },
   setLanguage: (language) => {
     localStorage.setItem('language', language);

@@ -29,9 +29,9 @@ i18n
   .use(initReactI18next)
   .init({
     resources,
-    // 只使用纯语言代码，避免 zh-CN/en-US 这类带国家后缀的值污染 i18n.language
+    // load: 'languageOnly' 只影响资源加载层级，并不会把 i18n.language 归一为纯语言代码
     load: 'languageOnly',
-    // 显式声明受支持的语言，检测到的 zh-CN 会规范化为 zh，en-US 规范化为 en
+    // 显式声明受支持的语言
     supportedLngs: ['en', 'zh', 'fr', 'ja', 'ru', 'vi'],
     nonExplicitSupportedLngs: false,
     fallbackLng: 'zh',
@@ -40,6 +40,10 @@ i18n
       // 与 languageService 共用同一 localStorage key，避免两套状态脱节
       lookupLocalStorage: 'language',
       caches: ['localStorage'],
+      // 关键：把检测到的 zh-CN/en-US 归一为 zh/en。
+      // 否则 i18n.language 仍是 'zh-CN'，LANG_LABELS['zh-CN'] 取不到值，
+      // MainLayout 的语言标签会回落成 'EN'。
+      convertDetectedLanguage: (lng) => lng.split('-')[0].toLowerCase(),
     },
     interpolation: {
       escapeValue: false, // react already safes from xss
