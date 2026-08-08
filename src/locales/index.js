@@ -34,7 +34,7 @@ i18n
     // 显式声明受支持的语言，检测到的 zh-CN 会规范化为 zh，en-US 规范化为 en
     supportedLngs: ['en', 'zh', 'fr', 'ja', 'ru', 'vi'],
     nonExplicitSupportedLngs: false,
-    fallbackLng: 'en',
+    fallbackLng: 'zh',
     detection: {
       order: ['localStorage', 'navigator'],
       // 与 languageService 共用同一 localStorage key，避免两套状态脱节
