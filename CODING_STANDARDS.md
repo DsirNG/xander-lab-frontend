@@ -14,7 +14,7 @@
 
 ### 基本规则
 
-- **缩进**: 使用 2 个空格
+- **缩进**: 使用 4 个空格
 - **引号**: 使用单引号 `'`（JSX 属性使用双引号）
 - **分号**: 语句末尾不使用分号（遵循项目 ESLint 配置）
 - **尾随逗号**: 多行对象/数组使用尾随逗号
@@ -23,8 +23,8 @@
 ```javascript
 // ✅ 好的
 const obj = {
-  name: 'John',
-  age: 30,
+        name: 'John',
+        age: 30,
 }
 
 // ❌ 不好的
@@ -36,7 +36,7 @@ const obj = {name: "John", age: 30};
 ```javascript
 // ✅ 函数参数之间添加空格
 function example(param1, param2) {
-  // ...
+        // ...
 }
 
 // ✅ 运算符两侧添加空格
@@ -47,13 +47,13 @@ const obj = { key: 'value' }
 
 // ✅ 逻辑块之间添加空行
 const Component = () => {
-  const [state, setState] = useState()
-  
-  useEffect(() => {
-    // ...
-  }, [])
-  
-  return <div>Content</div>
+        const [state, setState] = useState()
+    
+        useEffect(() => {
+                // ...
+        }, [])
+    
+        return <div>Content</div>
 }
 ```
 
@@ -181,39 +181,39 @@ import styles from './Component.module.css'
  * @param {string} props.title - 标题
  */
 const Component = ({ title, children }) => {
-  // 1. Hooks 声明
-  const [state, setState] = useState(initialState)
-  const { t } = useTranslation()
+    // 1. Hooks 声明
+    const [state, setState] = useState(initialState)
+    const { t } = useTranslation()
   
-  // 2. 派生状态
-  const derivedValue = useMemo(() => {
-    return computeValue(state)
-  }, [state])
+    // 2. 派生状态
+    const derivedValue = useMemo(() => {
+        return computeValue(state)
+    }, [state])
   
-  // 3. 副作用
-  useEffect(() => {
-    // 副作用逻辑
-    return () => {
-      // 清理函数
-    }
-  }, [])
+    // 3. 副作用
+    useEffect(() => {
+        // 副作用逻辑
+        return () => {
+            // 清理函数
+        }
+    }, [])
   
-  // 4. 事件处理器
-  const handleClick = useCallback(() => {
-    // 处理逻辑
-  }, [])
+    // 4. 事件处理器
+    const handleClick = useCallback(() => {
+        // 处理逻辑
+    }, [])
   
-  // 5. 条件渲染辅助
-  if (loading) return <Loading />
-  if (error) return <Error />
+    // 5. 条件渲染辅助
+    if (loading) return <Loading />
+    if (error) return <Error />
   
-  // 6. 主渲染
-  return (
-    <div className={styles.container}>
-      <h1>{title}</h1>
-      {children}
-    </div>
-  )
+    // 6. 主渲染
+    return (
+        <div className={styles.container}>
+            <h1>{title}</h1>
+            {children}
+        </div>
+    )
 }
 
 export default Component
@@ -227,14 +227,14 @@ const Component = ({ title, onClick }) => { }
 
 // ✅ 提供默认值
 const Component = ({ 
-  title = 'Default Title',
-  showIcon = true,
+    title = 'Default Title',
+    showIcon = true,
 }) => { }
 
 // ✅ 使用 PropTypes 或 TypeScript
 Component.propTypes = {
-  title: PropTypes.string.isRequired,
-  onClick: PropTypes.func,
+    title: PropTypes.string.isRequired,
+    onClick: PropTypes.func,
 }
 
 // ✅ JSDoc 注释
@@ -250,19 +250,19 @@ Component.propTypes = {
 ```javascript
 // ✅ 自定义 Hook 以 use 开头
 const useUserData = (userId) => {
-  const [data, setData] = useState(null)
-  // ...
-  return { data, loading, error }
+    const [data, setData] = useState(null)
+    // ...
+    return { data, loading, error }
 }
 
 // ✅ 依赖数组完整
 useEffect(() => {
-  fetchData(id)
+    fetchData(id)
 }, [id]) // 包含所有使用的外部变量
 
 // ✅ 使用 useCallback 优化函数
 const handleSubmit = useCallback((data) => {
-  // 处理逻辑
+    // 处理逻辑
 }, [dependency])
 ```
 
@@ -277,9 +277,9 @@ const handleSubmit = useCallback((data) => {
 
 // ✅ 复杂条件提取为变量或函数
 const content = () => {
-  if (isLoading) return <Spinner />
-  if (error) return <Error />
-  return <Content />
+    if (isLoading) return <Spinner />
+    if (error) return <Error />
+    return <Content />
 }
 
 return <div>{content()}</div>
@@ -290,12 +290,12 @@ return <div>{content()}</div>
 ```javascript
 // ✅ 使用稳定的 key
 {items.map(item => (
-  <Item key={item.id} data={item} />
+    <Item key={item.id} data={item} />
 ))}
 
 // ❌ 避免使用 index 作为 key（当列表会变化时）
 {items.map((item, index) => (
-  <Item key={index} data={item} />
+    <Item key={index} data={item} />
 ))}
 ```
 
@@ -313,17 +313,17 @@ return <div>{content()}</div>
 
 /* ✅ 使用嵌套（如果使用预处理器） */
 .card {
-  padding: 1rem;
+    padding: 1rem;
   
-  &:hover {
-    transform: scale(1.05);
-  }
+    &:hover {
+        transform: scale(1.05);
+    }
 }
 
 /* ✅ 使用 CSS 变量 */
 .button {
-  background-color: var(--color-primary);
-  color: var(--color-text);
+    background-color: var(--color-primary);
+    color: var(--color-text);
 }
 ```
 
@@ -335,17 +335,17 @@ return <div>{content()}</div>
 
 // ✅ 复杂样式使用 @apply
 .customButton {
-  @apply px-4 py-2 rounded-lg bg-primary text-white;
-  @apply hover:bg-primary-dark transition-colors;
+    @apply px-4 py-2 rounded-lg bg-primary text-white;
+    @apply hover:bg-primary-dark transition-colors;
 }
 
 // ✅ 使用 clsx 或 cn 处理条件类名
 import { cn } from '@utils'
 
 <div className={cn(
-  'base-classes',
-  isActive && 'active-classes',
-  className
+    'base-classes',
+    isActive && 'active-classes',
+    className
 )} />
 ```
 
@@ -365,44 +365,25 @@ import { cn } from '@utils'
 
 ### Commit Message 格式
 
-```
-<type>(<scope>): <subject>
-
-<body>
-
-<footer>
-```
-
-### Type 类型
+提交标题使用中文并以 `【dxd】` 为前缀；正文以 `desc:` 开头描述改动内容。
 
 ```
-feat:     新功能
-fix:      Bug 修复
-docs:     文档更新
-style:    代码格式（不影响功能）
-refactor: 重构
-perf:     性能优化
-test:     测试相关
-chore:    构建/工具链相关
+【dxd】<主题>
+
+desc: <改动说明>
 ```
 
 ### 示例
 
 ```bash
 # ✅ 好的提交信息
-feat(home): 添加英雄区动画效果
-fix(api): 修复用户登录超时问题
-docs(readme): 更新安装说明
-refactor(utils): 重构防抖函数实现
+【dxd】拆分 MainLayout：Navbar 抽为独立组件，删除从未渲染的 Footer
+【dxd】拆分 LoginPage：FloatingParticles 抽为独立组件，删除未用 DigitalOrbit
 
 # ✅ 包含详细说明
-feat(drag-drop): 实现拖拽预览功能
+【dxd】重构路由配置按业务域分组，提升可读性
 
-- 添加自定义预览元素支持
-- 实现透明 ghost image 技术
-- 添加拖拽提示文本
-
-Closes #123
+desc: 路由由单一文件平铺改为按 features 域分组，每组导出独立配置
 ```
 
 ### 分支命名
@@ -448,7 +429,7 @@ refactor/api-layer
  * @throws {Error} 错误说明
  */
 const functionName = (param1, options = {}) => {
-  // 实现
+    // 实现
 }
 ```
 
@@ -489,13 +470,13 @@ const functionName = (param1, options = {}) => {
 ```javascript
 // ✅ 明确的错误处理
 try {
-  const data = await fetchData()
-  return data
+    const data = await fetchData()
+    return data
 } catch (error) {
-  console.error('Failed to fetch data:', error)
-  // 显示用户友好的错误信息
-  showErrorToast(t('errors.fetchFailed'))
-  return null
+    console.error('Failed to fetch data:', error)
+    // 显示用户友好的错误信息
+    showErrorToast(t('errors.fetchFailed'))
+    return null
 }
 ```
 
@@ -504,16 +485,16 @@ try {
 ```javascript
 // ✅ 使用错误边界捕获组件错误
 class ErrorBoundary extends React.Component {
-  componentDidCatch(error, errorInfo) {
-    logError(error, errorInfo)
-  }
-  
-  render() {
-    if (this.state.hasError) {
-      return <ErrorFallback />
+    componentDidCatch(error, errorInfo) {
+        logError(error, errorInfo)
     }
-    return this.props.children
-  }
+  
+    render() {
+        if (this.state.hasError) {
+            return <ErrorFallback />
+        }
+        return this.props.children
+    }
 }
 ```
 
@@ -526,17 +507,17 @@ class ErrorBoundary extends React.Component {
 ```javascript
 // ✅ 使用 React.memo 避免不必要的重渲染
 const ExpensiveComponent = React.memo(({ data }) => {
-  // 渲染逻辑
+    // 渲染逻辑
 })
 
 // ✅ 使用 useMemo 缓存计算结果
 const expensiveValue = useMemo(() => {
-  return computeExpensiveValue(a, b)
+    return computeExpensiveValue(a, b)
 }, [a, b])
 
 // ✅ 使用 useCallback 缓存函数
 const handleClick = useCallback(() => {
-  doSomething(id)
+    doSomething(id)
 }, [id])
 
 // ✅ 代码分割
@@ -555,10 +536,10 @@ const LazyComponent = React.lazy(() => import('./Component'))
 
 // ✅ 使用 srcset 响应式图片
 <img
-  srcset="small.jpg 480w, medium.jpg 800w, large.jpg 1200w"
-  sizes="(max-width: 600px) 480px, 800px"
-  src="medium.jpg"
-  alt="Description"
+    srcset="small.jpg 480w, medium.jpg 800w, large.jpg 1200w"
+    sizes="(max-width: 600px) 480px, 800px"
+    src="medium.jpg"
+    alt="Description"
 />
 ```
 
@@ -577,7 +558,7 @@ const LazyComponent = React.lazy(() => import('./Component'))
 
 // ✅ 验证用户输入
 const sanitizeInput = (input) => {
-  return input.replace(/<script>/g, '')
+    return input.replace(/<script>/g, '')
 }
 ```
 
@@ -592,16 +573,16 @@ utils.test.js
 
 // ✅ 测试结构
 describe('Component', () => {
-  it('should render correctly', () => {
-    // Arrange
-    const props = { title: 'Test' }
+    it('should render correctly', () => {
+        // Arrange
+        const props = { title: 'Test' }
     
-    // Act
-    render(<Component {...props} />)
+        // Act
+        render(<Component {...props} />)
     
-    // Assert
-    expect(screen.getByText('Test')).toBeInTheDocument()
-  })
+        // Assert
+        expect(screen.getByText('Test')).toBeInTheDocument()
+    })
 })
 ```
 
@@ -613,14 +594,14 @@ describe('Component', () => {
 
 ```json
 {
-  "editor.formatOnSave": true,
-  "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true
-  },
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "[javascript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  }
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": true
+    },
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "[javascript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    }
 }
 ```
 
