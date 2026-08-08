@@ -52,103 +52,114 @@ export const createRouter = () => {
   // 获取业务配置数据（路由结构仅需 id / detailPages 等静态字段）
   const featureModules = getModuleConfig();
 
-
-  // 动态生成路由配置
-  const routerConfig = [{
-    element: <RouteSEOLayout />,
+  // ─── 业务路由：模块展示（MainLayout 内） ───
+  const moduleRoutes = {
+    path: 'modules',
+    element: <LazyPage><ModuleList /></LazyPage>,
     children: [
+      {
+        index: true,
+        element: <Navigate to="drag-drop" replace />,
+      },
+      ...featureModules.map(module => ({
+        path: module.id,
+        children: [
+          {
+            index: true,
+            element: <LazyPage><ModuleContent module={module} /></LazyPage>,
+          },
+          ...(module.detailPages || []).map(detailPage => ({
+            path: detailPage.type,
+            element: <LazyPage><detailPage.component /></LazyPage>,
+          })),
+        ],
+      })),
+    ],
+  };
+
+  // ─── 业务路由：组件库（MainLayout 内） ───
+  const componentRoutes = {
+    path: 'components',
+    element: <LazyPage><ComponentList /></LazyPage>,
+    children: [
+      {
+        path: ':componentId/*',
+        element: <LazyPage><ComponentDetailWrapper /></LazyPage>,
+      },
+    ],
+  };
+
+  // ─── 业务路由：博客（MainLayout 内，独立 BlogLayout） ───
+  const blogRoutes = {
+    path: 'blog',
+    element: <BlogLayout />,
+    children: [
+      {
+        index: true,
+        element: <LazyPage><BlogHome /></LazyPage>,
+      },
+      {
+        path: 'tags',
+        element: <LazyPage><BlogTags /></LazyPage>,
+      },
+      {
+        path: ':id',
+        element: <LazyPage><BlogDetail /></LazyPage>,
+      },
+    ],
+  };
+
+  // ─── 业务路由：实验室（MainLayout 内） ───
+  const labRoutes = [
     {
-      path: '/login',
-      element: <LazyPage><LoginPage /></LazyPage>,
+      path: 'lab/img2three',
+      element: <LazyPage><Img2ThreePage /></LazyPage>,
     },
     {
-      path: '/',
-      element: <MainLayout />,
-      children: [
-        {
-          index: true,
-          element: <LazyPage><HomePage /></LazyPage>,
-        },
-        {
-          path: 'modules',
-          element: <LazyPage><ModuleList /></LazyPage>,
-          children: [
-            {
-              index: true,
-              element: <Navigate to="drag-drop" replace />,
-            },
-            ...featureModules.map(module => ({
-              path: module.id,
-              children: [
-                {
-                  index: true,
-                  element: <LazyPage><ModuleContent module={module} /></LazyPage>,
-                },
-                ...(module.detailPages || []).map(detailPage => ({
-                  path: detailPage.type,
-                  element: <LazyPage><detailPage.component /></LazyPage>,
-                })),
-              ],
-            })),
-          ],
-        },
-        {
-          path: 'components',
-          element: <LazyPage><ComponentList /></LazyPage>,
-          children: [
-            {
-              path: ':componentId/*',
-              element: <LazyPage><ComponentDetailWrapper /></LazyPage>,
-            },
-          ],
-        },
-
-        // 博客路由 - 独立 Layout
-        {
-          path: 'blog',
-          element: <BlogLayout />,
-          children: [
-            {
-              index: true,
-              element: <LazyPage><BlogHome /></LazyPage>,
-            },
-            {
-              path: 'tags',
-              element: <LazyPage><BlogTags /></LazyPage>,
-            },
-
-            {
-              path: ':id',
-              element: <LazyPage><BlogDetail /></LazyPage>,
-            },
-          ],
-        },
-        {
-          path: 'studio',
-          element: <ProtectedPage page={<StudioPage />} />,
-        },
-        {
-          path: 'lab/img2three',
-          element: <LazyPage><Img2ThreePage /></LazyPage>,
-        },
-        {
-          path: 'lab/img2three/:taskId',
-          element: <LazyPage><Img2ThreePage /></LazyPage>,
-        },
-        {
-          path: 'profile',
-          element: <ProtectedPage page={<ProfilePage />} />,
-        },
-        {
-          path: '*',
-          element: <LazyPage><NotFoundPage /></LazyPage>,
-        },
-      ],
+      path: 'lab/img2three/:taskId',
+      element: <LazyPage><Img2ThreePage /></LazyPage>,
     },
+  ];
+
+  // ─── 平台主站（MainLayout 包裹） ───
+  const mainLayoutRoutes = {
+    path: '/',
+    element: <MainLayout />,
+    children: [
+      {
+        index: true,
+        element: <LazyPage><HomePage /></LazyPage>,
+      },
+      moduleRoutes,
+      componentRoutes,
+      blogRoutes,
+      {
+        path: 'studio',
+        element: <ProtectedPage page={<StudioPage />} />,
+      },
+      ...labRoutes,
+      {
+        path: 'profile',
+        element: <ProtectedPage page={<ProfilePage />} />,
+      },
+      {
+        path: '*',
+        element: <LazyPage><NotFoundPage /></LazyPage>,
+      },
+    ],
+  };
+
+  // ─── 独立路由（不使用 MainLayout） ───
+  // 分享组件工作台
+  const shareRoutes = [
     {
       path: 'components/share',
       element: <LazyPage><ComponentShare /></LazyPage>,
     },
+  ];
+
+  // 博客发布/代理（独立页面）
+  const blogStandaloneRoutes = [
     {
       path: 'blog/publish',
       element: <ProtectedPage page={<BlogPublish />} />,
@@ -161,7 +172,10 @@ export const createRouter = () => {
       path: 'blog/agent/:taskId',
       element: <ProtectedPage page={<BlogAgent />} />,
     },
-    // 工作室路由 - 独立页面，不使用 MainLayout
+  ];
+
+  // 工作室编辑器（独立页面）
+  const studioRoutes = [
     {
       path: 'studio/project',
       element: <ProtectedPage page={<ProjectUploadPage />} />,
@@ -178,6 +192,20 @@ export const createRouter = () => {
       path: 'studio/source/:projectId',
       element: <LazyPage><PublicSourcePage /></LazyPage>,
     },
+  ];
+
+  // 组装完整路由
+  const routerConfig = [{
+    element: <RouteSEOLayout />,
+    children: [
+      {
+        path: '/login',
+        element: <LazyPage><LoginPage /></LazyPage>,
+      },
+      mainLayoutRoutes,
+      ...shareRoutes,
+      ...blogStandaloneRoutes,
+      ...studioRoutes,
     ],
   }];
 
