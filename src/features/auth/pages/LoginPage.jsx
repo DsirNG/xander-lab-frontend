@@ -4,11 +4,12 @@ import { useTranslation } from 'react-i18next';
 import {
     Mail, Lock, ShieldCheck, ArrowRight, Loader2,
     ChevronLeft, Github, Globe, Sparkles,
-    Fingerprint, Shield, Zap, Cpu
+    Fingerprint, Shield
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { authService } from '../services/authService';
 import { useToast } from '../../../hooks/useToast';
+import FloatingParticles from '../components/FloatingParticles';
 
 /**
  * 登录/注册页面
@@ -338,76 +339,6 @@ const LoginPage = () => {
                     Xander Lab // System Protocol
                 </p>
             </footer>
-        </div>
-    );
-};
-
-/**
- * 极简数字轨道背景
- */
-const DigitalOrbit = () => {
-    return (
-        <div className="relative w-full h-full overflow-hidden flex items-center justify-center">
-            <motion.div
-                animate={{ rotate: 360 }}
-                transition={{ duration: 100, repeat: Infinity, ease: "linear" }}
-                className="absolute w-[500px] sm:w-[700px] md:w-[1000px] h-[500px] sm:h-[700px] md:h-[1000px] border border-border rounded-full [will-change:transform]"
-            />
-            <motion.div
-                animate={{ rotate: -360 }}
-                transition={{ duration: 80, repeat: Infinity, ease: "linear" }}
-                className="absolute w-[350px] sm:w-[500px] md:w-[700px] h-[350px] sm:h-[500px] md:h-[700px] border border-dashed border-border/30 rounded-full [will-change:transform]"
-            />
-            <div className="absolute w-[200px] sm:w-[300px] md:w-[400px] h-[200px] sm:h-[300px] md:h-[400px] border border-surface rounded-full" />
-        </div>
-    );
-};
-
-const PARTICLE_ICONS = [Cpu, Zap, Shield, Sparkles];
-const PARTICLES = [
-    { x: 8, y: 18, duration: 17, size: 96 },
-    { x: 24, y: 72, duration: 21, size: 132 },
-    { x: 41, y: 35, duration: 19, size: 104 },
-    { x: 58, y: 81, duration: 23, size: 156 },
-    { x: 73, y: 14, duration: 20, size: 118 },
-    { x: 87, y: 59, duration: 24, size: 172 },
-    { x: 34, y: 92, duration: 18, size: 88 },
-    { x: 65, y: 47, duration: 22, size: 144 },
-].map((particle, index) => ({
-    ...particle,
-    Icon: PARTICLE_ICONS[index % PARTICLE_ICONS.length],
-}));
-
-/**
- * 漂浮粒子集
- */
-const FloatingParticles = () => {
-    return (
-        <div className="absolute inset-0 pointer-events-none">
-            {PARTICLES.map((p, i) => (
-                <motion.div
-                    key={i}
-                    initial={{
-                        x: p.x + "%",
-                        y: p.y + "%",
-                        opacity: 0
-                    }}
-                    animate={{
-                        y: [null, "-20%", "20%"],
-                        opacity: [0, 0.15, 0],
-                        rotate: [0, 360],
-                        scale: [0.8, 1, 0.8]
-                    }}
-                    transition={{
-                        duration: p.duration,
-                        repeat: Infinity,
-                        ease: "easeInOut"
-                    }}
-                    className="absolute text-accent"
-                >
-                    <p.Icon size={p.size} strokeWidth={0.5} />
-                </motion.div>
-            ))}
         </div>
     );
 };
