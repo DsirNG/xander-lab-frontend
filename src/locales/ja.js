@@ -467,7 +467,7 @@ export default {
     title: 'インフラ',
     subtitle: 'コアシステム',
     anchored: {
-      title: 'Anchored Overlay',
+      title: 'Anchored Overlay (アンカー・オーバーレイ)',
       tag: 'ポジショニングと物理学',
       desc: 'アンカーに対する浮動要素の位置決めを行う基盤システム。',
       phases: {

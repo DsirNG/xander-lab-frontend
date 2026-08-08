@@ -467,7 +467,7 @@ export default {
     title: 'Hạ tầng',
     subtitle: 'Hệ thống cốt lõi',
     anchored: {
-      title: 'Anchored Overlay',
+      title: 'Anchored Overlay (lớp phủ neo)',
       tag: 'Định vị và Vật lý',
       desc: 'Hệ thống định vị cơ bản cho phần tử nổi so với neo.',
       phases: {

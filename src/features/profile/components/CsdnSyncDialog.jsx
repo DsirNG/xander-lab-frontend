@@ -14,13 +14,14 @@ const CsdnSyncDialog = ({ post, isOpen = true, onClose, onSuccess }) => {
   const [qrCode, setQrCode] = useState(null)
   const [result, setResult] = useState(null)
   const [error, setError] = useState('')
+  const postId = post?.id
 
   const syncPost = useCallback(async () => {
     if (syncingRef.current) return
     syncingRef.current = true
     setPhase('syncing')
     try {
-      const response = await blogService.syncToCsdn(post.id)
+      const response = await blogService.syncToCsdn(postId)
       setResult(response)
       setPhase('done')
       onSuccess?.(response)
@@ -28,10 +29,10 @@ const CsdnSyncDialog = ({ post, isOpen = true, onClose, onSuccess }) => {
       setError(err?.message || t('profile.blogManage.csdn.syncFailed'))
       setPhase('error')
     }
-  }, [onSuccess, post?.id, t])
+  }, [onSuccess, postId, t])
 
   useEffect(() => {
-    if (!post?.id || !isOpen) return
+    if (!postId || !isOpen) return
     let active = true
     const begin = async () => {
       try {
@@ -67,7 +68,7 @@ const CsdnSyncDialog = ({ post, isOpen = true, onClose, onSuccess }) => {
       active = false
       if (timerRef.current) window.clearInterval(timerRef.current)
     }
-  }, [isOpen, post?.id, syncPost, t])
+  }, [isOpen, postId, syncPost, t])
 
   if (!post) return null
 

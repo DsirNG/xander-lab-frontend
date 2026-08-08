@@ -467,7 +467,7 @@ export default {
     title: 'Infrastructure',
     subtitle: 'Systèmes principaux',
     anchored: {
-      title: 'Anchored Overlay',
+      title: 'Anchored Overlay (overlay ancré)',
       tag: 'Positionnement et physique',
       desc: 'Le système fondamental de positionnement des éléments flottants par rapport aux ancres.',
       phases: {

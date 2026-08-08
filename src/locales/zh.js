@@ -493,7 +493,7 @@ export default {
     title: '基础模块',
     subtitle: '核心系统',
     anchored: {
-      title: 'Anchored Overlay',
+      title: 'Anchored Overlay (锚点浮层)',
       tag: '定位与物理学',
       desc: '锚定浮层的底层定位系统，解决"在哪里出现"与"如何稳定"的基本命题。',
       phases: {

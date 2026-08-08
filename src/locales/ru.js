@@ -467,7 +467,7 @@ export default {
     title: 'Инфраструктура',
     subtitle: 'Основные системы',
     anchored: {
-      title: 'Anchored Overlay',
+      title: 'Anchored Overlay (якорная накладка)',
       tag: 'Позиционирование и физика',
       desc: 'Базовая система позиционирования плавающих элементов относительно якорей.',
       phases: {

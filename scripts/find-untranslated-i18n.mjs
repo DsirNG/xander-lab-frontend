@@ -32,6 +32,8 @@ const skipPatterns = [
   /^AZURE_/, /^AccessKey/, /^OAuth/, /^Client /, /^Webhook URL/,
   /^API URL$/, /^Well-Known/, /^Worker URL$/, /^Uptime Kuma/,
   /^New API$/, /^Baidu V2$/, /^Zhipu V4$/, /^Quota:/,
+  // 值本身即为技术术语或占位符，无需本地化
+  /^name@/, /^HTML$/, /^CSDN /, /^Info \(/,
 ]
 
 const brandNames = new Set([
@@ -40,6 +42,24 @@ const brandNames = new Set([
   'Markdown', 'CSS', 'HTML', 'JSX', 'TSX', 'API', 'DOM',
   'RAF', 'ARIA', 'Context API', 'Hooks', 'Toast', 'Popover',
   'Tooltip', 'Dropdown', 'Kanban', 'Flowchart',
+  'Img2Three', 'Img2Three.js', 'CSDN MCP',
+])
+
+// 值保持与 en.js 相同是刻意为之的键（语言本身同形的词、技术占位符）
+const identicalAllowedKeys = new Set([
+  'nav.infra',
+  'nav.modules',
+  'nav.blog',
+  'nav.studio',
+  'blog.editor.code',
+  'blog.editor.imageGif',
+  'blog.agent.conversations',
+  'profile.nav.notifications',
+  'profile.emailReminders.actions',
+  'profile.emailReminders.pageSizeOption',
+  'hero.performance',
+  'infra.title',
+  'components.toast.tag',
 ])
 
 const locales = ['zh', 'fr', 'ja', 'ru', 'vi']
@@ -56,13 +76,13 @@ async function main() {
     for (const [key, enVal] of Object.entries(enFlat)) {
       const locVal = locFlat[key]
       if (locVal === undefined) continue
-      if (locVal === enVal) {
-        if (brandNames.has(key)) continue
-        if (skipPatterns.some(p => p.test(key))) continue
-        if (typeof enVal === 'string' && enVal.length < 4) continue
-        if (/[a-zA-Z]{3,}/.test(String(enVal))) {
-          untranslated[key] = enVal
-        }
+      if (locVal !== enVal) continue
+      if (brandNames.has(key) || brandNames.has(String(enVal))) continue
+      if (skipPatterns.some(p => p.test(key) || p.test(String(enVal)))) continue
+      if (identicalAllowedKeys.has(key)) continue
+      if (typeof enVal === 'string' && enVal.length < 4) continue
+      if (/[a-zA-Z]{3,}/.test(String(enVal))) {
+        untranslated[key] = enVal
       }
     }
 
