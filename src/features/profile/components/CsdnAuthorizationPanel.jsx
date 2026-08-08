@@ -10,6 +10,7 @@ const CsdnAuthorizationPanel = () => {
   const { t } = useTranslation()
   const toast = useToast()
   const timerRef = useRef(null)
+  const cancelPendingRef = useRef(false)
   const [state, setState] = useState('loading')
   const [qrCode, setQrCode] = useState(null)
   const [busy, setBusy] = useState(false)
@@ -27,14 +28,21 @@ const CsdnAuthorizationPanel = () => {
 
   useEffect(() => {
     loadStatus()
-    return () => timerRef.current && window.clearInterval(timerRef.current)
+    return () => {
+      if (timerRef.current) window.clearInterval(timerRef.current)
+      // Release the short-lived Selenium session if this panel unmounts mid-flow.
+      cancelPendingRef.current = true
+      csdnService.cancelAuthorization().catch(() => {})
+    }
   }, [loadStatus])
 
   const handleCloseModal = () => {
+    cancelPendingRef.current = true
     if (timerRef.current) {
       window.clearInterval(timerRef.current)
       timerRef.current = null
     }
+    csdnService.cancelAuthorization().catch(() => {})
     setQrCode(null)
     setBusy(false)
     if (state === 'PENDING') {
@@ -44,11 +52,20 @@ const CsdnAuthorizationPanel = () => {
   }
 
   const start = async () => {
+    cancelPendingRef.current = false
     setIsModalOpen(true)
     setBusy(true)
     setQrCode(null)
     try {
       const result = await csdnService.startAuthorization()
+      if (cancelPendingRef.current) {
+        // The modal was closed while the session was starting; release it now.
+        csdnService.cancelAuthorization().catch(() => {})
+        setState('NOT_AUTHORIZED')
+        setBusy(false)
+        setIsModalOpen(false)
+        return
+      }
       setQrCode(result?.qrCodeDataUrl || null)
       setState('PENDING')
       timerRef.current = window.setInterval(async () => {
@@ -151,7 +168,7 @@ const CsdnAuthorizationPanel = () => {
         <p className="mt-4 text-caption text-warning">{t('profile.csdn.unavailable')}</p>
       )}
 
-      <Modal isOpen={isModalOpen} onClose={handleCloseModal} title={titleNode} width="max-w-md">
+      <Modal isOpen={isModalOpen} onClose={handleCloseModal} title={titleNode} width="max-w-md" closeOnOutsideClick={false}>
         {!qrCode ? (
           <div className="flex min-h-56 flex-col items-center justify-center gap-3 py-6 text-center">
             <LoaderCircle className="h-8 w-8 animate-spin text-accent" />
