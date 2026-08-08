@@ -40,7 +40,7 @@ const Img2ThreePage = React.lazy(() => import('@features/img2three/pages/Img2Thr
 import { getModuleConfig } from '@features/modules/constants';
 
 // 通用组件
-const NotFoundPage = React.lazy(() => import('@features/home/pages/NotFoundPage'));
+const NotFoundPage = React.lazy(() => import('@components/common/NotFoundPage'));
 
 // 通用 Suspense 包裹器
 /**
