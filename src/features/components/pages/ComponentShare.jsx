@@ -6,11 +6,11 @@ import LiveDemoSandbox from '../components/demo/LiveDemoSandbox';
 import ComponentService from '../services/componentService';
 import { useToast } from '@/hooks/useToast';
 import useIsMobile from '@hooks/useIsMobile';
-import ShareHeader from './share/ShareHeader';
-import ShareSidebar from './share/ShareSidebar';
-import ShareDrawer from './share/ShareDrawer';
-import ShareModals from './share/ShareModals';
-import { INIT_FILES, INIT_CSS, INIT_WRAPPER, INIT_SCENARIOS, INIT_META } from './share/sharePresets';
+import ShareHeader from '../components/share/ShareHeader';
+import ShareSidebar from '../components/share/ShareSidebar';
+import ShareDrawer from '../components/share/ShareDrawer';
+import ShareModals from '../components/share/ShareModals';
+import { INIT_FILES, INIT_CSS, INIT_WRAPPER, INIT_SCENARIOS, INIT_META } from '../components/share/sharePresets';
 
 const ComponentShare = () => {
     const navigate = useNavigate();
