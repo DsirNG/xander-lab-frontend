@@ -116,15 +116,6 @@
     top: 64px;
 }
 
-.layoutContainer {
-    @apply min-h-screen flex flex-col font-sans;
-    @apply bg-canvas text-ink;
-}
-
-.mainContent {
-    @apply flex-grow pt-16;
-}
-
 /* ── 语言下拉选择器 ── */
 
 .langDropdown {

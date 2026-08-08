@@ -828,16 +828,5 @@ export default {
     untitledTask: 'Mô hình chưa đặt tên',
     status: { created: 'Đang chờ', running: 'Đang tạo', ready: 'Hoàn tất', failed: 'Thất bại' },
     back: 'Quay lại',
-  },
-  footer: {
-    desc: 'Nền tảng chia sẻ kiến thức ghi lại kinh nghiệm dự án và cung cấp thành phần tái sử dụng, Hooks và tài nguyên học tập.',
-    resources: 'Tài nguyên',
-    Infrastructure: 'Hạ tầng',
-    components: 'Thành phần',
-    hooks: 'Hooks',
-    docs: 'Tài liệu',
-    connect: 'Kết nối',
-    rights: 'Bảo lưu mọi quyền.',
-    feedback: 'Chào đón mọi góp ý và đề xuất!'
   }
 };

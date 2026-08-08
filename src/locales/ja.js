@@ -828,16 +828,5 @@ export default {
     untitledTask: '無題のモデル',
     status: { created: '待機中', running: '生成中', ready: '完了', failed: '失敗' },
     back: '戻る',
-  },
-  footer: {
-    desc: 'プロジェクト経験を記録し、再利用可能なコンポーネント、Hooks、学習リソースを提供する知識共有プラットフォーム。',
-    resources: 'リソース',
-    Infrastructure: 'インフラ',
-    components: 'コンポーネント',
-    hooks: 'Hooks',
-    docs: 'ドキュメント',
-    connect: '接続',
-    rights: '全著作権所有。',
-    feedback: 'エラーや提案をお気軽にお知らせください！'
   }
 };

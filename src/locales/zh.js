@@ -854,14 +854,5 @@ export default {
     untitledTask: '未命名模型',
     status: { created: '等待生成', running: '生成中', ready: '已完成', failed: '生成失败' },
     back: '返回',
-  },
-  footer: {
-    desc: '知识分享与学习平台，记录项目实践经验，提供可复用的组件、Hooks 和学习资源。欢迎指出错误和不足，共同进步！',
-    resources: '资源',
-    Infrastructure: '基础设施',
-    docs: '文档',
-    connect: '链接',
-    rights: '保留所有权利。',
-    feedback: '如有错误或建议，欢迎指正！'
   }
 };

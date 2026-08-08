@@ -836,16 +836,5 @@ export default {
     untitledTask: 'Untitled model',
     status: { created: 'Queued', running: 'Generating', ready: 'Ready', failed: 'Failed' },
     back: 'Back',
-  },
-  footer: {
-    desc: 'A knowledge sharing and learning platform that documents project experiences and provides reusable components, Hooks, and learning resources. Welcome to point out errors and suggestions for improvement!',
-    resources: 'Resources',
-    Infrastructure: 'Infrastructure',
-    components: 'Components',
-    hooks: 'Hooks',
-    docs: 'Documentation',
-    connect: 'Connect',
-    rights: 'All rights reserved.',
-    feedback: 'Welcome to point out errors and suggestions!'
   }
 };
