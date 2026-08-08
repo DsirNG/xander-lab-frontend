@@ -1,11 +1,13 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeft, Bot, Loader2, MessageSquareText, Plus, Send, Sparkles, X } from 'lucide-react';
+import { Sparkles, X } from 'lucide-react';
 import { blogAgentService } from '../services/blogAgentService';
 import { useToast } from '@/hooks/useToast';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 import useIsMobile from '@/hooks/useIsMobile';
+import AgentHeader from '../components/agent/AgentHeader';
+import AgentChatInput from '../components/agent/AgentChatInput';
 import AgentChatMessage from '../components/agent/AgentChatMessage';
 import AgentProcessPanel from '../components/agent/AgentProcessPanel';
 import AgentResultCard from '../components/agent/AgentResultCard';
@@ -236,35 +238,12 @@ const BlogAgent = () => {
 
   return (
     <div className="flex h-dvh flex-col bg-surface text-ink">
-      <header className="sticky top-0 z-20 flex h-14 shrink-0 items-center justify-between border-b border-border bg-canvas/95 px-4 backdrop-blur sm:px-6">
-        <button
-          type="button"
-          onClick={() => navigate('/blog/')}
-          className="flex items-center gap-2 rounded-xl px-2 py-2 text-sm font-semibold text-ink-muted transition hover:bg-surface-muted hover:text-ink"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          {t('blog.agent.back')}
-        </button>
-        <div className="flex items-center gap-2 text-sm font-black tracking-tight">
-          <span className="grid h-8 w-8 place-items-center rounded-lg bg-accent text-white">
-            <Bot className="h-4 w-4" />
-          </span>
-          {t('blog.agent.title')}
-        </div>
-        <div className="flex items-center gap-1">
-          <button type="button" onClick={() => setMobileSessionsOpen(true)} className="rounded-xl p-2 text-ink-muted hover:bg-surface-muted lg:hidden" aria-label={t('blog.agent.conversations')}>
-            <MessageSquareText className="h-4 w-4" />
-          </button>
-          <button
-            type="button"
-            onClick={handleNewTask}
-            className="inline-flex items-center gap-1.5 rounded-xl px-2 py-2 text-sm font-semibold text-ink-muted transition hover:bg-surface-muted hover:text-ink"
-          >
-            <Plus className="h-4 w-4" />
-            <span className="hidden sm:inline">{t('blog.agent.newTask')}</span>
-          </button>
-        </div>
-      </header>
+      <AgentHeader
+        t={t}
+        onBack={() => navigate('/blog/')}
+        onNewTask={handleNewTask}
+        onOpenSessions={() => setMobileSessionsOpen(true)}
+      />
 
       {isTaskLoading ? (
         <LoadingSpinner fullScreen text={t('blog.agent.restoring')} />
@@ -350,44 +329,15 @@ const BlogAgent = () => {
               )}
             </div>
 
-            <div className="shrink-0 border-t border-border bg-canvas px-4 py-3 sm:px-6">
-              <div className="mx-auto max-w-2xl">
-                {hasFinishedTurn && <p className="mb-2 text-xs text-ink-muted">{t('blog.agent.multiTurnHint')}</p>}
-                <div className="flex items-end gap-2 rounded-2xl border border-border bg-surface p-2 focus-within:border-accent focus-within:bg-canvas focus-within:ring-4 focus-within:ring-accent/10">
-                  <textarea
-                    value={input}
-                    onChange={(event) => setInput(event.target.value)}
-                    disabled={inputLocked}
-                    rows={2}
-                    placeholder={inputLocked ? t('blog.agent.inputLockedPlaceholder') : t('blog.agent.inputPlaceholder')}
-                    onKeyDown={(event) => {
-                      if (event.key === 'Enter' && !event.shiftKey) {
-                        event.preventDefault();
-                        if (!inputLocked) handleSubmit();
-                      }
-                    }}
-                    className="max-h-40 min-h-[52px] flex-1 resize-none bg-transparent px-2 py-2 text-sm leading-6 outline-none placeholder:text-ink-faint disabled:opacity-60"
-                  />
-                  <button
-                    type="button"
-                    onClick={handleSubmit}
-                    disabled={inputLocked || !input.trim()}
-                    className="inline-flex h-10 shrink-0 items-center gap-2 rounded-xl bg-ink px-4 text-sm font-black text-white transition hover:bg-accent disabled:cursor-wait disabled:opacity-60"
-                  >
-                    {isTaskActive ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : (
-                      <Send className="h-4 w-4" />
-                    )}
-                    {isTaskActive
-                      ? t('blog.agent.running')
-                      : hasFinishedTurn
-                        ? t('blog.agent.revise')
-                        : t('blog.agent.generate')}
-                  </button>
-                </div>
-              </div>
-            </div>
+            <AgentChatInput
+              t={t}
+              input={input}
+              setInput={setInput}
+              isTaskActive={isTaskActive}
+              hasFinishedTurn={hasFinishedTurn}
+              inputLocked={inputLocked}
+              onSubmit={handleSubmit}
+            />
           </section>
 
           {showPreview && !isMobile && (
