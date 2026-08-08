@@ -11,6 +11,7 @@ const CsdnAuthorizationPanel = () => {
   const toast = useToast()
   const timerRef = useRef(null)
   const cancelPendingRef = useRef(false)
+  const qrCodeRef = useRef(null)
   const [state, setState] = useState('loading')
   const [qrCode, setQrCode] = useState(null)
   const [busy, setBusy] = useState(false)
@@ -44,6 +45,7 @@ const CsdnAuthorizationPanel = () => {
     }
     csdnService.cancelAuthorization().catch(() => {})
     setQrCode(null)
+    qrCodeRef.current = null
     setBusy(false)
     if (state === 'PENDING') {
       setState('NOT_AUTHORIZED')
@@ -67,10 +69,16 @@ const CsdnAuthorizationPanel = () => {
         return
       }
       setQrCode(result?.qrCodeDataUrl || null)
+      qrCodeRef.current = result?.qrCodeDataUrl || null
       setState('PENDING')
       timerRef.current = window.setInterval(async () => {
         try {
           const status = await csdnService.getAuthorizationStatus()
+          // Backend reloads the CSDN page when the QR expires and returns a fresh one.
+          if (status?.qrCodeDataUrl && status.qrCodeDataUrl !== qrCodeRef.current) {
+            qrCodeRef.current = status.qrCodeDataUrl
+            setQrCode(status.qrCodeDataUrl)
+          }
           if (status?.status === 'AUTHORIZED') {
             window.clearInterval(timerRef.current)
             timerRef.current = null
