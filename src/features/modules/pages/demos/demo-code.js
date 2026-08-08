@@ -44,22 +44,6 @@ export const MULTI_FILE_CODE = `// Advanced batch selection and drag preview log
 // ... (Similar to single file but with multi-select state)
 `;
 
-export const SORTABLE_CODE = `const SortableListDemo = () => {
-    const [items, setItems] = useState(['Prototyping', 'Development', ...]);
-    
-    // ... useDragDrop hook with reorder logic
-    
-    return (
-        <div className="space-y-2">
-            {items.map((item) => (
-                <div draggable className="cursor-move ...">
-                    {item}
-                </div>
-            ))}
-        </div>
-    );
-};`;
-
 export const KANBAN_CODE = `const KanbanDemo = () => {
     const [columns, setColumns] = useState({
         todo: { title: 'To Do', items: [...] },
