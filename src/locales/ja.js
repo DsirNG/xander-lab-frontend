@@ -278,6 +278,9 @@ export default {
       scanHint: 'CSDN アプリまたは WeChat でスキャンしてください。QR コードはまもなく期限切れになります。',
       waiting: '認証待ち中',
       expired: 'QR コードの有効期限が切れました。もう一度お試しください。',
+      queued: '待機中',
+      queuePosition: '現在 {{position}} 番目です',
+      estimatedWait: '推定待ち時間：約 {{wait}} 秒',
       connect: 'CSDN に連携',
       disconnect: '連携解除',
       unavailable: 'CSDN 認証サービスは利用できません'

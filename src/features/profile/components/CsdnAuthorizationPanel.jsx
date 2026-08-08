@@ -19,13 +19,28 @@ const CsdnAuthorizationPanel = () => {
   const [state, setState] = useState('loading')
   const [qrCode, setQrCode] = useState(null)
   const [secondsLeft, setSecondsLeft] = useState(null)
+  const [queuePosition, setQueuePosition] = useState(null)
+  const [estimatedWait, setEstimatedWait] = useState(null)
   const [busy, setBusy] = useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false)
+
+  const clearTimers = useCallback(() => {
+    if (timerRef.current) window.clearInterval(timerRef.current)
+    if (countdownRef.current) window.clearInterval(countdownRef.current)
+    timerRef.current = null
+    countdownRef.current = null
+  }, [])
 
   const loadStatus = useCallback(async () => {
     setState('loading')
     try {
       const result = await csdnService.getAuthorizationStatus()
+      if (result?.status === 'QUEUED') {
+        // A queue entry from a previous session is stale once the modal is closed; leave it.
+        csdnService.cancelAuthorization().catch(() => {})
+        setState('NOT_AUTHORIZED')
+        return
+      }
       setState(result?.status || 'NOT_AUTHORIZED')
     } catch {
       setState('UNAVAILABLE')
@@ -33,19 +48,18 @@ const CsdnAuthorizationPanel = () => {
   }, [])
 
   const expireQr = useCallback(() => {
-    if (timerRef.current) window.clearInterval(timerRef.current)
-    if (countdownRef.current) window.clearInterval(countdownRef.current)
-    timerRef.current = null
-    countdownRef.current = null
+    clearTimers()
     csdnService.cancelAuthorization().catch(() => {})
     setQrCode(null)
     qrCodeRef.current = null
     setSecondsLeft(null)
+    setQueuePosition(null)
+    setEstimatedWait(null)
     setBusy(false)
     setState('NOT_AUTHORIZED')
     setIsModalOpen(false)
     toast.warning(t('profile.csdn.expired'))
-  }, [t, toast])
+  }, [clearTimers, t, toast])
 
   useEffect(() => {
     if (secondsLeft === 0) expireQr()
@@ -54,34 +68,71 @@ const CsdnAuthorizationPanel = () => {
   useEffect(() => {
     loadStatus()
     return () => {
-      if (timerRef.current) window.clearInterval(timerRef.current)
-      if (countdownRef.current) window.clearInterval(countdownRef.current)
+      clearTimers()
       // Release the short-lived Selenium session if this panel unmounts mid-flow.
       cancelPendingRef.current = true
       csdnService.cancelAuthorization().catch(() => {})
     }
-  }, [loadStatus])
+  }, [loadStatus, clearTimers])
 
   const handleCloseModal = () => {
     cancelPendingRef.current = true
-    if (timerRef.current) {
-      window.clearInterval(timerRef.current)
-      timerRef.current = null
-    }
-    if (countdownRef.current) {
-      window.clearInterval(countdownRef.current)
-      countdownRef.current = null
-    }
+    clearTimers()
     csdnService.cancelAuthorization().catch(() => {})
     setQrCode(null)
     qrCodeRef.current = null
     setSecondsLeft(null)
+    setQueuePosition(null)
+    setEstimatedWait(null)
     setBusy(false)
-    if (state === 'PENDING') {
+    if (state === 'PENDING' || state === 'QUEUED') {
       setState('NOT_AUTHORIZED')
     }
     setIsModalOpen(false)
   }
+
+  const pollStatus = useCallback(async () => {
+    try {
+      const status = await csdnService.getAuthorizationStatus()
+      if (status?.status === 'AUTHORIZED') {
+        clearTimers()
+        setQrCode(null)
+        qrCodeRef.current = null
+        setSecondsLeft(null)
+        setQueuePosition(null)
+        setEstimatedWait(null)
+        setState('AUTHORIZED')
+        setBusy(false)
+        setIsModalOpen(false)
+        toast.success(t('profile.csdn.authorized'))
+        return
+      }
+      if (status?.status === 'QUEUED') {
+        setQueuePosition(status.queuePosition ?? null)
+        setEstimatedWait(status.estimatedWaitSeconds ?? null)
+        setState('QUEUED')
+        return
+      }
+      if (status?.status === 'PENDING') {
+        // Backend reloads the CSDN page when the QR expires and returns a fresh one.
+        if (status.qrCodeDataUrl && status.qrCodeDataUrl !== qrCodeRef.current) {
+          qrCodeRef.current = status.qrCodeDataUrl
+          setQrCode(status.qrCodeDataUrl)
+        }
+        setState('PENDING')
+        // Start the scan countdown only once a QR is actually shown (i.e. after a queue takeover).
+        if (countdownRef.current == null) {
+          const expiresIn = Number(status.expiresInSeconds) > 0 ? Number(status.expiresInSeconds) : DEFAULT_EXPIRES_IN_SECONDS
+          setSecondsLeft(Math.max(1, expiresIn - QR_EXPIRY_BUFFER_SECONDS))
+          countdownRef.current = window.setInterval(() => {
+            setSecondsLeft((prev) => (prev == null ? prev : Math.max(0, prev - 1)))
+          }, 1000)
+        }
+      }
+    } catch {
+      // Keep the current QR/queue state visible while the short-lived authorization session is active.
+    }
+  }, [clearTimers, t, toast])
 
   const start = async () => {
     cancelPendingRef.current = false
@@ -89,6 +140,8 @@ const CsdnAuthorizationPanel = () => {
     setBusy(true)
     setQrCode(null)
     setSecondsLeft(null)
+    setQueuePosition(null)
+    setEstimatedWait(null)
     try {
       const result = await csdnService.startAuthorization()
       if (cancelPendingRef.current) {
@@ -97,6 +150,15 @@ const CsdnAuthorizationPanel = () => {
         setState('NOT_AUTHORIZED')
         setBusy(false)
         setIsModalOpen(false)
+        return
+      }
+      if (result?.status === 'QUEUED') {
+        // The single slot is busy with another user; poll until the slot frees and we take over.
+        setQueuePosition(result.queuePosition ?? null)
+        setEstimatedWait(result.estimatedWaitSeconds ?? null)
+        setState('QUEUED')
+        setBusy(false)
+        timerRef.current = window.setInterval(pollStatus, 2500)
         return
       }
       setQrCode(result?.qrCodeDataUrl || null)
@@ -108,30 +170,7 @@ const CsdnAuthorizationPanel = () => {
       countdownRef.current = window.setInterval(() => {
         setSecondsLeft((prev) => (prev == null ? prev : Math.max(0, prev - 1)))
       }, 1000)
-      timerRef.current = window.setInterval(async () => {
-        try {
-          const status = await csdnService.getAuthorizationStatus()
-          // Backend reloads the CSDN page when the QR expires and returns a fresh one.
-          if (status?.qrCodeDataUrl && status.qrCodeDataUrl !== qrCodeRef.current) {
-            qrCodeRef.current = status.qrCodeDataUrl
-            setQrCode(status.qrCodeDataUrl)
-          }
-          if (status?.status === 'AUTHORIZED') {
-            window.clearInterval(timerRef.current)
-            window.clearInterval(countdownRef.current)
-            timerRef.current = null
-            countdownRef.current = null
-            setQrCode(null)
-            setSecondsLeft(null)
-            setState('AUTHORIZED')
-            setBusy(false)
-            setIsModalOpen(false)
-            toast.success(t('profile.csdn.authorized'))
-          }
-        } catch {
-          // Keep the QR state visible while the short-lived authorization session is active.
-        }
-      }, 2500)
+      timerRef.current = window.setInterval(pollStatus, 2500)
     } catch (error) {
       setBusy(false)
       setIsModalOpen(false)
@@ -217,7 +256,22 @@ const CsdnAuthorizationPanel = () => {
       )}
 
       <Modal isOpen={isModalOpen} onClose={handleCloseModal} title={titleNode} width="max-w-md" closeOnOutsideClick={false}>
-        {!qrCode ? (
+        {state === 'QUEUED' ? (
+          <div className="flex min-h-56 flex-col items-center justify-center gap-3 py-6 text-center">
+            <LoaderCircle className="h-8 w-8 animate-spin text-accent" />
+            <p className="text-sm font-bold text-ink-secondary">{t('profile.csdn.queued')}</p>
+            {queuePosition != null && (
+              <p className="text-caption font-medium text-ink-muted">
+                {t('profile.csdn.queuePosition', { position: queuePosition })}
+              </p>
+            )}
+            {estimatedWait != null && (
+              <p className="text-caption font-medium text-ink-muted">
+                {t('profile.csdn.estimatedWait', { wait: Math.max(0, estimatedWait) })}
+              </p>
+            )}
+          </div>
+        ) : !qrCode ? (
           <div className="flex min-h-56 flex-col items-center justify-center gap-3 py-6 text-center">
             <LoaderCircle className="h-8 w-8 animate-spin text-accent" />
             <p className="text-sm font-bold text-ink-secondary">

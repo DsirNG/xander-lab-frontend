@@ -278,6 +278,9 @@ export default {
       scanHint: 'Quét bằng ứng dụng CSDN hoặc WeChat. Mã QR sẽ hết hạn sớm.',
       waiting: 'Đang chờ ủy quyền',
       expired: 'Mã QR đã hết hạn. Vui lòng thử lại.',
+      queued: 'Đang chờ',
+      queuePosition: 'Bạn ở vị trí số {{position}} trong hàng đợi',
+      estimatedWait: 'Ước tính chờ khoảng {{wait}} giây',
       connect: 'Kết nối CSDN',
       disconnect: 'Ngắt kết nối',
       unavailable: 'Dịch vụ ủy quyền CSDN không khả dụng'

@@ -304,6 +304,9 @@ export default {
       scanHint: '使用 CSDN App 或微信扫码授权。二维码将会在短时间内失效。',
       waiting: '等待授权中',
       expired: '二维码已过期，请重新获取',
+      queued: '排队等待中',
+      queuePosition: '当前排在第 {{position}} 位',
+      estimatedWait: '预计等待约 {{wait}} 秒',
       connect: '连接 CSDN',
       disconnect: '断开连接',
       unavailable: 'CSDN 授权服务暂不可用'

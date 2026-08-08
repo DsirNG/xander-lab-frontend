@@ -278,6 +278,9 @@ export default {
       scanHint: 'Отсканируйте через приложение CSDN или WeChat. Срок действия QR-кода скоро истечет.',
       waiting: 'Ожидание авторизации',
       expired: 'Срок действия QR-кода истек. Попробуйте еще раз.',
+      queued: 'В очереди',
+      queuePosition: 'Вы {{position}}-й в очереди',
+      estimatedWait: 'Ожидание: около {{wait}} сек',
       connect: 'Подключить CSDN',
       disconnect: 'Отключить',
       unavailable: 'Служба авторизации CSDN недоступна'
