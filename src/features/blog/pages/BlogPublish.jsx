@@ -2,17 +2,15 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
-    Send, Save, Tag as TagIcon,
-    ChevronLeft, Layout, Type, AlignLeft, Loader2,
-    Eye, Edit3, Info, Settings, X
+    Type, AlignLeft, Eye, Edit3, Info
 } from 'lucide-react';
 import { blogService, BLOG_STATUS } from '../services/blogService';
 import BlogMarkdown from '../components/BlogMarkdown';
 import BlogMarkdownComposer from '../components/BlogMarkdownComposer';
+import PublishHeader from '../components/PublishHeader';
+import PublishSettings from '../components/PublishSettings';
 import { useToast } from '@/hooks/useToast';
 import useIsMobile from '@hooks/useIsMobile';
-import CustomSelect from '@/components/common/CustomSelect';
-import CreatableMultiSelect from '@/components/common/CreatableMultiSelect';
 import LoadingSpinner from '@components/common/LoadingSpinner';
 
 const DRAFT_STORAGE_KEY = 'xander-lab:blog-publish-draft';
@@ -221,50 +219,16 @@ const BlogPublish = () => {
 
     return (
         <div className="h-dvh bg-surface flex flex-col overflow-hidden font-sans">
-            <header className="h-16 shrink-0 border-b border-border/60 flex items-center justify-between gap-2 px-3 sm:px-6 bg-canvas z-20 shadow-sm relative">
-                <div className="flex min-w-0 items-center gap-2 sm:gap-4">
-                    <button
-                        onClick={handleBack}
-                        className="p-2 -ml-2 text-ink-faint hover:bg-surface-muted rounded-xl transition-all group"
-                        title={isEditMode ? t('blog.backToManage') : t('blog.backToBlog')}
-                    >
-                        <ChevronLeft className="w-5 h-5 transition-transform" />
-                    </button>
-                    <div className="hidden sm:block h-4 w-px bg-border"></div>
-                    <span className="truncate text-xs font-black uppercase tracking-widest text-ink flex items-center gap-2">
-                        {isEditMode ? t('blog.editTitle') : t('blog.publishTitle')}
-                    </span>
-                </div>
-
-                <div className="flex shrink-0 items-center gap-1 sm:gap-3">
-                    <button
-                        onClick={handleSaveDraft}
-                        disabled={loading}
-                        title={t('blog.saveDraft')}
-                        className="flex p-2 sm:px-5 text-xs font-bold text-ink-muted hover:text-ink transition-colors items-center gap-2 rounded-xl hover:bg-surface-muted disabled:opacity-50"
-                    >
-                        <Save className="w-4 h-4" /> <span className="hidden md:inline">{t('blog.saveDraft')}</span>
-                    </button>
-                    <button
-                        onClick={toggleSettings}
-                        className="lg:hidden p-2 text-ink-muted hover:text-accent hover:bg-surface-muted rounded-xl transition-all"
-                        title={t('blog.publishSettings', 'Document Settings')}
-                    >
-                        {isSettingsOpen ? <X className="w-5 h-5" /> : <Settings className="w-5 h-5" />}
-                    </button>
-                    <button
-                        onClick={handlePublish}
-                        disabled={loading}
-                        className="px-3 sm:px-6 py-2 bg-ink hover:bg-accent text-white rounded-xl text-xs font-black shadow-lg shadow-accent/0 hover:shadow-accent/30 transition-all active:scale-95 disabled:opacity-50 flex items-center gap-2"
-                    >
-                        {loading ? (
-                            <><Loader2 className="w-4 h-4 animate-spin" /> {t('blog.publishing')}</>
-                        ) : (
-                            <><Send className="w-4 h-4" /> {t('blog.publishNow')}</>
-                        )}
-                    </button>
-                </div>
-            </header>
+            <PublishHeader
+                t={t}
+                isEditMode={isEditMode}
+                loading={loading}
+                isSettingsOpen={isSettingsOpen}
+                onBack={handleBack}
+                onSaveDraft={handleSaveDraft}
+                onToggleSettings={toggleSettings}
+                onPublish={handlePublish}
+            />
 
             <div className="flex-1 flex overflow-hidden relative">
                 <main className="flex-1 min-w-0 flex flex-col relative bg-canvas rounded-tr-[0.5rem] border-r border-t border-border lg:border-r lg:border-t shadow-[10px_0_30px_-15px_rgba(0,0,0,0.05)] z-10 transition-all overflow-hidden mt-2 ml-2">
@@ -339,73 +303,15 @@ const BlogPublish = () => {
                     </div>
                 </main>
 
-                {isSettingsOpen && (
-                    <div
-                        className="lg:hidden fixed inset-0 bg-black/30 z-30"
-                        style={{ top: '64px' }}
-                        onClick={toggleSettings}
-                    />
-                )}
-
-                <aside className={`fixed lg:static top-[64px] right-0 bottom-0 w-[min(20rem,100vw)] lg:w-[420px] shrink-0 bg-surface flex flex-col z-40 transform transition-transform duration-300 ease-in-out ${isSettingsOpen ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'}`}>
-                    <div className="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar p-6 lg:p-10 space-y-12 pb-32">
-                        <div>
-                            <span className="text-micro font-black uppercase tracking-[0.2em] text-ink-faint mb-8 block flex items-center gap-3">
-                                <span className="h-px bg-border flex-1"></span>
-                                DOCUMENT SETTINGS
-                                <span className="h-px bg-border flex-1"></span>
-                            </span>
-
-                            <section className="space-y-4 mb-10">
-                                <div className="flex items-center gap-2 text-ink-muted group">
-                                    <Layout className="w-4 h-4 group-hover:text-accent transition-colors" />
-                                    <span className="text-micro font-black uppercase tracking-widest">{t('blog.categoryLabel')}</span>
-                                </div>
-                                <CustomSelect
-                                    options={categories}
-                                    value={formData.categoryId}
-                                    onChange={val => setFormData({ ...formData, categoryId: val })}
-                                    placeholder={t('blog.categoryPlaceholder')}
-                                    className="w-full shadow-sm bg-canvas rounded-2xl"
-                                />
-                            </section>
-
-                            <section className="space-y-4 mb-10 relative">
-                                <div className="flex items-center justify-between group mb-2">
-                                    <div className="flex items-center gap-2 text-ink-muted">
-                                        <TagIcon className="w-4 h-4 group-hover:text-accent transition-colors" />
-                                        <span className="text-micro font-black uppercase tracking-widest">{t('blog.tagLabel')}</span>
-                                    </div>
-                                    <span className="text-micro text-ink-faint font-medium">Press Enter ↵</span>
-                                </div>
-                                <CreatableMultiSelect
-                                    value={formData.tags}
-                                    onChange={(newTags) => setFormData({ ...formData, tags: newTags })}
-                                    options={availableTags}
-                                />
-                            </section>
-
-                            <section className="space-y-4">
-                                <div className="flex items-center justify-between group">
-                                    <div className="flex items-center gap-2 text-ink-muted">
-                                        <AlignLeft className="w-4 h-4 group-hover:text-accent transition-colors" />
-                                        <span className="text-micro font-black uppercase tracking-widest">{t('blog.summaryLabel')}</span>
-                                    </div>
-                                    <span className={`text-micro font-medium ${formData.summary.length > 200 ? 'text-danger' : 'text-ink-faint'}`}>
-                                        {formData.summary.length} / 200
-                                    </span>
-                                </div>
-                                <textarea
-                                    value={formData.summary}
-                                    onChange={e => setFormData({ ...formData, summary: e.target.value })}
-                                    placeholder={t('blog.summaryPlaceholder')}
-                                    className="w-full bg-canvas border border-border/60 rounded-2xl px-5 py-4 text-sm leading-relaxed outline-none focus:border-accent focus:ring-4 focus:ring-accent/10 transition-all resize-none h-40 shadow-sm text-ink placeholder:text-ink-faint custom-scrollbar"
-                                />
-                            </section>
-                        </div>
-                    </div>
-                    <div className="absolute bottom-0 left-0 w-full h-12 bg-gradient-to-t from-surface to-transparent pointer-events-none z-10"></div>
-                </aside>
+                <PublishSettings
+                    t={t}
+                    isSettingsOpen={isSettingsOpen}
+                    categories={categories}
+                    formData={formData}
+                    setFormData={setFormData}
+                    availableTags={availableTags}
+                    onToggleSettings={toggleSettings}
+                />
             </div>
         </div>
     );
