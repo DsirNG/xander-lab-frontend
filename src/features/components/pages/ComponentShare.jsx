@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Menu } from 'lucide-react';
-import LiveDemoSandbox from './codeComponent/demo/LiveDemoSandbox';
+import LiveDemoSandbox from '../components/demo/LiveDemoSandbox';
 import ComponentService from '../services/componentService';
 import { useToast } from '@/hooks/useToast';
 import useIsMobile from '@hooks/useIsMobile';

@@ -1,5 +1,5 @@
 import React from 'react';
-import { BasicDemo, AlignmentDemo, StatusDemo } from '../pages/codeComponent/demo/demo';
+import { BasicDemo, AlignmentDemo, StatusDemo } from '../components/demo/demo';
 import {
     ToastBasicDemo,
     ToastHoverDemo,
@@ -7,8 +7,8 @@ import {
     ToastActionDemo,
     ToastStackDemo,
     ToastNoHoverDemo
-} from '../pages/codeComponent/demo/ToastDemo';
-import LiveDemoSandbox from '../pages/codeComponent/demo/LiveDemoSandbox';
+} from '../components/demo/ToastDemo';
+import LiveDemoSandbox from '../components/demo/LiveDemoSandbox';
 import TagInputDemo from '@/components/common/CreatableMultiSelect/demo.jsx';
 
 /**
