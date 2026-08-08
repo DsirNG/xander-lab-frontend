@@ -6,14 +6,19 @@ import { useToast } from '@hooks/useToast'
 import { csdnService } from '../services/mcpService'
 
 /** User-facing CSDN QR authorization flow backed by one short-lived Selenium session. */
+const QR_EXPIRY_BUFFER_SECONDS = 5
+const DEFAULT_EXPIRES_IN_SECONDS = 35
+
 const CsdnAuthorizationPanel = () => {
   const { t } = useTranslation()
   const toast = useToast()
   const timerRef = useRef(null)
+  const countdownRef = useRef(null)
   const cancelPendingRef = useRef(false)
   const qrCodeRef = useRef(null)
   const [state, setState] = useState('loading')
   const [qrCode, setQrCode] = useState(null)
+  const [secondsLeft, setSecondsLeft] = useState(null)
   const [busy, setBusy] = useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false)
 
@@ -27,10 +32,30 @@ const CsdnAuthorizationPanel = () => {
     }
   }, [])
 
+  const expireQr = useCallback(() => {
+    if (timerRef.current) window.clearInterval(timerRef.current)
+    if (countdownRef.current) window.clearInterval(countdownRef.current)
+    timerRef.current = null
+    countdownRef.current = null
+    csdnService.cancelAuthorization().catch(() => {})
+    setQrCode(null)
+    qrCodeRef.current = null
+    setSecondsLeft(null)
+    setBusy(false)
+    setState('NOT_AUTHORIZED')
+    setIsModalOpen(false)
+    toast.warning(t('profile.csdn.expired'))
+  }, [t, toast])
+
+  useEffect(() => {
+    if (secondsLeft === 0) expireQr()
+  }, [secondsLeft, expireQr])
+
   useEffect(() => {
     loadStatus()
     return () => {
       if (timerRef.current) window.clearInterval(timerRef.current)
+      if (countdownRef.current) window.clearInterval(countdownRef.current)
       // Release the short-lived Selenium session if this panel unmounts mid-flow.
       cancelPendingRef.current = true
       csdnService.cancelAuthorization().catch(() => {})
@@ -43,9 +68,14 @@ const CsdnAuthorizationPanel = () => {
       window.clearInterval(timerRef.current)
       timerRef.current = null
     }
+    if (countdownRef.current) {
+      window.clearInterval(countdownRef.current)
+      countdownRef.current = null
+    }
     csdnService.cancelAuthorization().catch(() => {})
     setQrCode(null)
     qrCodeRef.current = null
+    setSecondsLeft(null)
     setBusy(false)
     if (state === 'PENDING') {
       setState('NOT_AUTHORIZED')
@@ -58,6 +88,7 @@ const CsdnAuthorizationPanel = () => {
     setIsModalOpen(true)
     setBusy(true)
     setQrCode(null)
+    setSecondsLeft(null)
     try {
       const result = await csdnService.startAuthorization()
       if (cancelPendingRef.current) {
@@ -71,6 +102,12 @@ const CsdnAuthorizationPanel = () => {
       setQrCode(result?.qrCodeDataUrl || null)
       qrCodeRef.current = result?.qrCodeDataUrl || null
       setState('PENDING')
+      // Backend keeps the slot alive a little longer than we show the QR, so our cancel always wins.
+      const expiresIn = Number(result?.expiresInSeconds) > 0 ? Number(result.expiresInSeconds) : DEFAULT_EXPIRES_IN_SECONDS
+      setSecondsLeft(Math.max(1, expiresIn - QR_EXPIRY_BUFFER_SECONDS))
+      countdownRef.current = window.setInterval(() => {
+        setSecondsLeft((prev) => (prev == null ? prev : Math.max(0, prev - 1)))
+      }, 1000)
       timerRef.current = window.setInterval(async () => {
         try {
           const status = await csdnService.getAuthorizationStatus()
@@ -81,8 +118,11 @@ const CsdnAuthorizationPanel = () => {
           }
           if (status?.status === 'AUTHORIZED') {
             window.clearInterval(timerRef.current)
+            window.clearInterval(countdownRef.current)
             timerRef.current = null
+            countdownRef.current = null
             setQrCode(null)
+            setSecondsLeft(null)
             setState('AUTHORIZED')
             setBusy(false)
             setIsModalOpen(false)
@@ -198,7 +238,7 @@ const CsdnAuthorizationPanel = () => {
             </p>
             <div className="flex items-center gap-2 text-caption font-bold text-accent">
               <LoaderCircle className="h-4 w-4 animate-spin" />
-              <span>{t('profile.csdn.waiting')}</span>
+              <span>{secondsLeft != null ? `${t('profile.csdn.waiting')} ${secondsLeft}s` : t('profile.csdn.waiting')}</span>
             </div>
           </div>
         )}

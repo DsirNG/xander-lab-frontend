@@ -277,6 +277,7 @@ export default {
       qrAlt: 'Code QR de connexion CSDN',
       scanHint: 'Scannez avec l\'application CSDN ou WeChat. Ce code QR expire rapidement.',
       waiting: 'En attente d\'autorisation',
+      expired: 'Le code QR a expiré. Veuillez réessayer.',
       connect: 'Connecter CSDN',
       disconnect: 'Déconnecter',
       unavailable: 'Service d\'autorisation CSDN indisponible.'

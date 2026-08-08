@@ -303,6 +303,7 @@ export default {
       qrAlt: 'CSDN 登录二维码',
       scanHint: '使用 CSDN App 或微信扫码授权。二维码将会在短时间内失效。',
       waiting: '等待授权中',
+      expired: '二维码已过期，请重新获取',
       connect: '连接 CSDN',
       disconnect: '断开连接',
       unavailable: 'CSDN 授权服务暂不可用'

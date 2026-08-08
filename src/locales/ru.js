@@ -277,6 +277,7 @@ export default {
       qrAlt: 'QR-код входа CSDN',
       scanHint: 'Отсканируйте через приложение CSDN или WeChat. Срок действия QR-кода скоро истечет.',
       waiting: 'Ожидание авторизации',
+      expired: 'Срок действия QR-кода истек. Попробуйте еще раз.',
       connect: 'Подключить CSDN',
       disconnect: 'Отключить',
       unavailable: 'Служба авторизации CSDN недоступна'

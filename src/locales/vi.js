@@ -277,6 +277,7 @@ export default {
       qrAlt: 'Mã QR đăng nhập CSDN',
       scanHint: 'Quét bằng ứng dụng CSDN hoặc WeChat. Mã QR sẽ hết hạn sớm.',
       waiting: 'Đang chờ ủy quyền',
+      expired: 'Mã QR đã hết hạn. Vui lòng thử lại.',
       connect: 'Kết nối CSDN',
       disconnect: 'Ngắt kết nối',
       unavailable: 'Dịch vụ ủy quyền CSDN không khả dụng'
