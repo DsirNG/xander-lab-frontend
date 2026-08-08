@@ -452,7 +452,6 @@ const Footer = () => {
                         <h4 className={styles.footerSectionTitle}>{t('footer.resources')}</h4>
                         <ul className={styles.footerList}>
                             <li><Link to="/modules" className={styles.footerLink}>{t('footer.Infrastructure')}</Link></li>
-                            <li><Link to="/hooks" className={styles.footerLink}>{t('footer.Modules')}</Link></li>
                         </ul>
                     </div>
                     <div>

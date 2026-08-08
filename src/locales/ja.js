@@ -833,7 +833,6 @@ export default {
     desc: 'プロジェクト経験を記録し、再利用可能なコンポーネント、Hooks、学習リソースを提供する知識共有プラットフォーム。',
     resources: 'リソース',
     Infrastructure: 'インフラ',
-    Modules: 'モジュール',
     components: 'コンポーネント',
     hooks: 'Hooks',
     docs: 'ドキュメント',

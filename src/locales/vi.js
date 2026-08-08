@@ -833,7 +833,6 @@ export default {
     desc: 'Nền tảng chia sẻ kiến thức ghi lại kinh nghiệm dự án và cung cấp thành phần tái sử dụng, Hooks và tài nguyên học tập.',
     resources: 'Tài nguyên',
     Infrastructure: 'Hạ tầng',
-    Modules: 'Mô-đun',
     components: 'Thành phần',
     hooks: 'Hooks',
     docs: 'Tài liệu',

@@ -833,7 +833,6 @@ export default {
     desc: 'Une plateforme de partage de connaissances qui documente les expériences de projet et fournit des composants réutilisables, des Hooks et des ressources d\'apprentissage.',
     resources: 'Ressources',
     Infrastructure: 'Infrastructure',
-    Modules: 'Modules',
     components: 'Composants',
     hooks: 'Hooks',
     docs: 'Documentation',

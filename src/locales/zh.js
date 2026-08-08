@@ -859,7 +859,6 @@ export default {
     desc: '知识分享与学习平台，记录项目实践经验，提供可复用的组件、Hooks 和学习资源。欢迎指出错误和不足，共同进步！',
     resources: '资源',
     Infrastructure: '基础设施',
-    Modules: '模块',
     docs: '文档',
     connect: '链接',
     rights: '保留所有权利。',

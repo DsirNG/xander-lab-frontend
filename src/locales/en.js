@@ -841,7 +841,6 @@ export default {
     desc: 'A knowledge sharing and learning platform that documents project experiences and provides reusable components, Hooks, and learning resources. Welcome to point out errors and suggestions for improvement!',
     resources: 'Resources',
     Infrastructure: 'Infrastructure',
-    Modules: 'Modules',
     components: 'Components',
     hooks: 'Hooks',
     docs: 'Documentation',
