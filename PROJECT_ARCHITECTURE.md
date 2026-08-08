@@ -10,128 +10,141 @@
 - **构建工具**: Vite 7.2.4
 - **样式**: TailwindCSS 4.1.18 + CSS Modules
 - **路由**: React Router DOM 7.12.0
-- **国际化**: i18next 25.7.4
+- **国际化**: i18next 25.7.4 (+ react-i18next 16.5.2)
 - **动画**: Framer Motion 12.26.2
 - **图标**: Lucide React 0.562.0
+- **HTTP**: axios 1.13.5（经 `src/api/http.js` 统一封装）
 
 ## 目录结构
 
 ```
 src/
-├── api/                  # API 接口层
-│   └── index.js          # API 请求封装和配置
+├── api/                  # API 请求层
+│   ├── http.js           # axios 统一封装（拦截器、鉴权、错误提示）
+│   ├── httpPolicy.js     # 请求排队 / 去重策略
+│   └── index.js          # API 接口定义
 │
 ├── assets/               # 静态资源
-│   ├── images/           # 图片资源
-│   ├── icons/            # 图标资源
-│   └── react.svg         # React Logo
+│   └── images/           # 图片资源
 │
-├── components/           # 通用组件
+├── components/           # 通用组件（跨业务域）
 │   ├── common/           # 基础通用组件
-│   │   └── BrowserWindow/  # 浏览器窗口组件
-│   │       ├── BrowserWindow.jsx
-│   │       ├── BrowserWindow.module.css
-│   │       └── index.js
-│   └── layouts/          # 布局组件
-│       └── MainLayout/   # 主布局
-│           ├── MainLayout.jsx
-│           ├── MainLayout.module.css
-│           └── index.js
+│   │   ├── BrowserWindow/
+│   │   ├── Toast/
+│   │   ├── Modal/
+│   │   ├── LoadingSpinner/
+│   │   ├── NotFoundPage/
+│   │   └── ...           # ConfirmModal / Pagination / CustomSelect 等
+│   ├── layouts/          # 布局组件
+│   │   ├── MainLayout/   # 主布局（含 Navbar）
+│   │   ├── ContentLayout/  # 内容页布局
+│   │   └── SidebarLayout/  # 侧栏布局
+│   └── seo/              # SEO 组件（SEOHead）
 │
-├── config/               # 配置文件
-│   └── index.js          # 应用配置（名称、版本、主题等）
+├── config/               # 应用配置
+│   └── env.js            # 环境变量读取
 │
-├── constants/            # 常量定义
-│   └── index.js          # 路由路径、存储键名、事件名称等
+├── context/              # 全局 Context
+│   ├── PureReadingContext.jsx
+│   └── pureReadingContextValue.js
 │
-├── features/             # 功能模块（按业务领域划分）
-│   ├── home/             # 首页模块
-│   │   └── pages/
-│   │       ├── HomePage.jsx
-│   │       ├── HomePage.module.css
-│   │       └── index.js
-│   ├── infra/            # 基础设施模块
-│   │   └── pages/
-│   │       ├── InfraList.jsx
-│   │       ├── InfraContent.jsx
-│   │       └── AnchoredOverlay.jsx
+├── features/             # 业务功能模块（按业务域划分）
+│   ├── auth/             # 登录/鉴权
+│   ├── blog/             # 博客（列表/详情/发布/智能体/标签）
+│   ├── components/       # 组件展示
+│   ├── home/             # 首页
+│   ├── img2three/        # 图片转三维
 │   ├── modules/          # 功能模块展示
-│   │   └── pages/
-│   │       ├── ModuleList.jsx
-│   │       ├── ModuleContent.jsx
-│   │       ├── DragDropSystem.jsx
-│   │       └── demos/    # 演示组件
-│   └── components/       # 组件展示模块
-│       └── pages/
-│           └── ComponentsPage.jsx
+│   ├── profile/          # 个人中心
+│   └── studio/           # 工作室（上传/编译器/公共源码）
 │
-├── hooks/                # 自定义 Hooks
-│   └── useDragDrop.ts    # 拖拽功能 Hook
+├── hooks/                # 通用自定义 Hooks
+│   ├── useIsMobile.js
+│   ├── useToast.js
+│   ├── usePureReading.js
+│   └── useDragDrop.ts
 │
-├── locales/              # 国际化
+├── locales/              # 国际化翻译
 │   ├── index.js          # i18n 配置
-│   ├── en.js             # 英语翻译
-│   └── zh.js             # 中文翻译
+│   ├── zh.js / en.js / fr.js / ja.js / ru.js / vi.js
 │
 ├── router/               # 路由配置
-│   └── index.jsx         # 路由配置和实例
-│
-├── services/             # 业务服务层
-│   └── index.js          # 主题服务、语言服务等
+│   ├── index.jsx         # 路由实例与组件挂载
+│   └── RouteElements.jsx # 路由表（按业务域分组）
 │
 ├── styles/               # 全局样式
-│   └── index.css         # 全局样式和 TailwindCSS 配置
+│   └── index.css         # 全局样式与 TailwindCSS 配置
 │
-├── types/                # TypeScript 类型定义
-│   └── index.d.ts        # 通用类型定义
+├── utils/                # 通用工具函数
+│   └── index.js          # 类名合并、防抖、节流、存储等
 │
-├── utils/                # 工具函数
-│   └── index.js          # 通用工具函数（类名合并、防抖、节流、存储等）
-│
-├── App.jsx               # 应用根组件
+├── App.jsx               # 应用根组件（含 ToastBridge）
 └── main.jsx              # 应用入口文件
 ```
+
+## 路径别名
+
+`vite.config.js` 与 `jsconfig.json` 中配置，均指向 `src/`：
+
+| 别名 | 指向 |
+|---|---|
+| `@` | `src/` |
+| `@components` | `src/components` |
+| `@features` | `src/features` |
+| `@hooks` | `src/hooks` |
+| `@utils` | `src/utils` |
+| `@config` | `src/config` |
+| `@api` | `src/api` |
+| `@locales` | `src/locales` |
+| `@styles` | `src/styles` |
+| `@router` | `src/router` |
 
 ## 架构设计原则
 
 ### 1. 分层架构
 
 - **表现层 (Presentation Layer)**: `components/` 和 `features/*/pages/`
-- **业务逻辑层 (Business Logic Layer)**: `services/` 和 `hooks/`
-- **数据访问层 (Data Access Layer)**: `api/`
-- **配置层 (Configuration Layer)**: `config/` 和 `constants/`
+- **业务逻辑层 (Business Logic Layer)**: `features/*/services/`、`features/*/hooks/` 和 `hooks/`
+- **数据访问层 (Data Access Layer)**: `api/`（统一基于 `http.js` 封装的 axios 实例）
+- **配置层 (Configuration Layer)**: `config/`、`context/` 和 `constants/`
 
 ### 2. 模块化设计
 
 #### Features 目录组织
 每个 feature 模块都是独立的业务领域，包含：
 - `pages/`: 页面组件
-- `components/`: 功能专属组件（可选）
+- `components/`: 功能专属组件（可选，如 `blog/components/agent/`）
 - `hooks/`: 功能专属 Hooks（可选）
+- `services/`: 功能专属 API 服务（可选）
 - `utils/`: 功能专属工具（可选）
 
 #### Components 目录组织
-- `common/`: 通用基础组件（Button, Input, Modal 等）
-- `business/`: 业务组件（BrowserWindow 等）
-- `layouts/`: 布局组件（MainLayout 等）
+- `common/`: 通用基础组件（Modal, Toast, LoadingSpinner 等）
+- `layouts/`: 布局组件（MainLayout, ContentLayout, SidebarLayout）
+- `seo/`: SEO 相关组件
 
 每个组件都采用文件夹组织方式：
 ```
 ComponentName/
 ├── ComponentName.jsx        # 组件逻辑
-├── ComponentName.module.css # 组件样式
+├── ComponentName.module.css # 组件样式（可选）
 └── index.js                 # 导出文件
 ```
 
+#### 服务层说明
+- 全局 API 请求统一走 `src/api/http.js` 导出的 axios 封装，禁止原生 `fetch` 或另建 axios 实例。
+- 业务服务的接口方法按 feature 域组织在 `features/*/services/` 下（如 `blog/services/blogService.js`）。
+
 ### 3. 路径别名
 
-使用 `@` 前缀的路径别名提高代码可维护性：
+使用 `@` 前缀的路径别名提高代码可维护性，指向 `src/` 各子目录：
 
 ```javascript
 import MainLayout from '@components/layouts/MainLayout';
 import HomePage from '@features/home/pages/HomePage';
-import { storage } from '@utils';
-import { APP_CONFIG } from '@config';
+import { useToast } from '@hooks/useToast';
+import { APP_CONFIG } from '@config/env';
+import { blogService } from '@features/blog/services/blogService';
 ```
 
 配置文件：
@@ -208,14 +221,16 @@ export default MainComponent;
 
 当前项目使用：
 - **本地状态**: React `useState`, `useReducer`
-- **全局状态**: React Context (未来可扩展 Redux/Zustand)
-- **服务端状态**: 自定义 API 层（未来可扩展 React Query）
+- **全局状态**: React Context（`src/context/PureReadingContext.jsx` 等）
+- **服务端状态**: 自定义 API 层（`src/api/`）
 
 ### 7. 国际化 (i18n)
 
 #### 配置
 - 配置文件: `src/locales/index.js`
-- 语言文件: `src/locales/en.js`, `src/locales/zh.js`
+- 语言文件: `src/locales/zh.js`, `en.js`, `fr.js`, `ja.js`, `ru.js`, `vi.js`（六种语言）
+
+> 新增任意 i18n key 时，必须同步更新全部六种语言文件。
 
 #### 使用
 ```javascript
@@ -237,9 +252,9 @@ const Component = () => {
 
 ### 8. 类型安全
 
-#### TypeScript 类型定义
-- 通用类型: `src/types/index.d.ts`
-- 组件 Props 使用 JSDoc 或 TypeScript 定义
+#### 类型定义
+- 项目以 JavaScript 为主，类型通过 JSDoc 注释表达
+- 少量 TS 文件（如 `src/hooks/useDragDrop.ts`）使用 TypeScript
 
 ```javascript
 /**
@@ -322,14 +337,20 @@ const Component = ({ children, className }) => { ... };
 # 开发
 npm run dev
 
-# 构建
-npm run build
+# 构建（含 SEO 静态生成）
+npm run build:seo
 
 # 预览
 npm run preview
 
 # Lint
 npm run lint
+
+# 测试
+npm run test
+
+# SEO 提交（IndexNow）
+npm run seo:indexnow
 ```
 
 ## 环境变量
@@ -352,9 +373,14 @@ const apiUrl = import.meta.env.VITE_API_BASE_URL;
 - 及时更新文档
 - Code Review 确保质量
 
+## Git 提交规范
+
+- 提交标题使用中文并以 `【dxd】` 为前缀，正文以 `desc:` 开头（详见 `AGENTS.md`）
+- 只 stage 当前任务相关文件，不提交凭据、环境配置或无关用户改动
+
 ---
 
-**最后更新**: 2026-02-05
+**最后更新**: 2026-08-08
 **维护者**: Xander Lab Team
 
 
