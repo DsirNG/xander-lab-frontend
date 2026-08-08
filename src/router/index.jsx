@@ -17,8 +17,6 @@ import { LazyPage, ProtectedPage } from './RouteElements';
 
 // Features (路由级懒加载)
 const HomePage = React.lazy(() => import('@features/home/pages/HomePage'));
-const InfraList = React.lazy(() => import('@features/infra/pages/InfraList'));
-const InfraContent = React.lazy(() => import('@features/infra/pages/InfraContent'));
 const ModuleList = React.lazy(() => import('@features/modules/pages/ModuleList'));
 const ModuleContent = React.lazy(() => import('@features/modules/pages/ModuleContent'));
 const ComponentList = React.lazy(() => import('@features/components/pages/ComponentList'));
@@ -39,7 +37,6 @@ const ProfilePage = React.lazy(() => import('@features/profile/pages/ProfilePage
 const Img2ThreePage = React.lazy(() => import('@features/img2three/pages/Img2ThreePage'));
 
 // 配置数据
-import { getInfraConfig } from '@features/infra/constants';
 import { getModuleConfig } from '@features/modules/constants';
 
 // 通用组件
@@ -53,7 +50,6 @@ const NotFoundPage = React.lazy(() => import('@features/home/pages/NotFoundPage'
  */
 export const createRouter = () => {
   // 获取业务配置数据（路由结构仅需 id / detailPages 等静态字段）
-  const infraSystems = getInfraConfig();
   const featureModules = getModuleConfig();
 
 
@@ -72,29 +68,6 @@ export const createRouter = () => {
         {
           index: true,
           element: <LazyPage><HomePage /></LazyPage>,
-        },
-        {
-          path: 'infra',
-          element: <LazyPage><InfraList /></LazyPage>,
-          children: [
-            {
-              index: true,
-              element: <Navigate to="/" replace />,
-            },
-            ...infraSystems.map(system => ({
-              path: system.id,
-              children: [
-                {
-                  index: true,
-                  element: <LazyPage><InfraContent system={system} /></LazyPage>,
-                },
-                ...(system.detailPages || []).map(detailPage => ({
-                  path: detailPage.type,
-                  element: <LazyPage><detailPage.component /></LazyPage>,
-                })),
-              ],
-            })),
-          ],
         },
         {
           path: 'modules',
