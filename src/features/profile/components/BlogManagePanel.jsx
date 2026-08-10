@@ -168,7 +168,7 @@ const BlogManagePanel = () => {
                 </div>
                 <button
                     type="button"
-                    onClick={() => navigate('/blog/publish')}
+                    onClick={() => navigate('/workspace/publish')}
                     className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-ink px-3.5 py-2 text-xs font-bold text-white transition hover:bg-accent"
                 >
                     <Plus className="h-3.5 w-3.5" />
@@ -305,7 +305,7 @@ const BlogManagePanel = () => {
                                             <button
                                                 type="button"
                                                 title={t('profile.blogManage.actions.edit')}
-                                                onClick={() => navigate(`/blog/publish?id=${post.id}`)}
+                                                onClick={() => navigate(`/workspace/publish?id=${post.id}`)}
                                                 className="grid h-8 w-8 place-items-center rounded-lg text-ink-faint transition hover:bg-accent-soft hover:text-accent"
                                             >
                                                 <FilePenLine className="h-3.5 w-3.5" />

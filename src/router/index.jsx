@@ -145,22 +145,6 @@ export const createRouter = () => {
     },
   ];
 
-  // 博客发布/代理（独立页面）
-  const blogStandaloneRoutes = [
-    {
-      path: 'blog/publish',
-      element: <ProtectedPage page={<BlogPublish />} />,
-    },
-    {
-      path: 'blog/agent',
-      element: <ProtectedPage page={<BlogAgent />} />,
-    },
-    {
-      path: 'blog/agent/:taskId',
-      element: <ProtectedPage page={<BlogAgent />} />,
-    },
-  ];
-
   // ─── 工作台（后台功能集中地：左侧菜单 + 右侧内容，需登录） ───
   const workspaceRoutes = [
     {
@@ -197,6 +181,19 @@ export const createRouter = () => {
         },
       ],
     },
+    // 发文 / 博客智能体（独立全屏页面，进入后展开为完整创作界面）
+    {
+      path: '/workspace/publish',
+      element: <ProtectedPage page={<BlogPublish />} />,
+    },
+    {
+      path: '/workspace/agent',
+      element: <ProtectedPage page={<BlogAgent />} />,
+    },
+    {
+      path: '/workspace/agent/:taskId',
+      element: <ProtectedPage page={<BlogAgent />} />,
+    },
     // 工作室深层全屏页面（上传/编译器，独立于侧边栏布局）
     {
       path: '/workspace/studio/project',
@@ -226,7 +223,6 @@ export const createRouter = () => {
       },
       mainLayoutRoutes,
       ...shareRoutes,
-      ...blogStandaloneRoutes,
       ...workspaceRoutes,
     ],
   }];

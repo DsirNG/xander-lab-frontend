@@ -233,7 +233,7 @@ const useBlogAgentTask = ({ taskId, onReady, onSessionsChanged }) => {
       removeSessionValue(eventCursorKey(created.id))
       removeSessionValue(streamTextKey(created.id))
       eventCursorRef.current = { taskId: String(created.id), eventId: 0 }
-      navigate(`/blog/agent/${created.id}`, { replace: true })
+      navigate(`/workspace/agent/${created.id}`, { replace: true })
       await blogAgentService.runTaskStream(
         created.id,
         (event) => applyStreamEvent(created.id, event),

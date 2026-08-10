@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Bot, Grid, List, Filter, X, Loader2, Plus } from 'lucide-react';
+import { useSearchParams } from 'react-router-dom';
+import { Grid, List, Filter, X, Loader2 } from 'lucide-react';
 import { blogService } from '../services/blogService';
 import BlogCard from '../components/BlogCard';
 import SEOHead from '@components/seo/SEOHead';
@@ -28,7 +28,6 @@ const getHasMore = (data, loadedCount = 0) => {
  */
 const BlogHome = () => {
     const { t } = useTranslation();
-    const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
     const [blogs, setBlogs] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -174,23 +173,6 @@ const BlogHome = () => {
                 </div>
 
                 <div className="flex items-center gap-3">
-                    <button
-                        onClick={() => navigate('/blog/agent')}
-                        className="flex items-center px-4 py-2 text-xs font-black text-accent bg-accent/10 rounded-full hover:bg-accent hover:text-white transition-all"
-                    >
-                        <Bot className="w-4 h-4 mr-1" />
-                        {t('blog.agent.title')}
-                    </button>
-                    <button
-                        onClick={() => navigate('publish')}
-                        className="flex items-center px-4 py-2 text-xs font-black text-white bg-accent rounded-full hover:bg-ink transition-all shadow-lg shadow-accent/20 active:scale-95"
-                    >
-                        <Plus className="w-4 h-4 mr-1" />
-                        {t('blog.publish')}
-                    </button>
-
-                    <div className="h-6 w-px bg-border hidden md:block mx-1" />
-
                     {(search || category || tag) && (
                         <button
                             onClick={clearFilters}

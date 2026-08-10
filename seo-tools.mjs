@@ -126,7 +126,6 @@ class SitemapGenerator {
 
     // 博客相关页面
     this.addUrl('/blog/tags', { changefreq: 'weekly', priority: 0.6 });
-    this.addUrl('/blog/publish', { changefreq: 'yearly', priority: 0.3 });
 
     // 特殊功能页面
     this.addUrl('/login', { changefreq: 'yearly', priority: 0.1 });

@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
+  Bot,
   CalendarClock,
   Code2,
   LayoutDashboard,
   LogOut,
   Mail,
   NotebookPen,
+  Send,
   Settings,
   Sparkles,
 } from 'lucide-react';
@@ -16,11 +18,13 @@ import { authService } from '@features/auth/services/authService';
 import ProfileModal from './components/ProfileModal';
 
 const MENU = [
+  { to: '/workspace/agent', icon: Bot, labelKey: 'blog.agent.title' },
+  { to: '/workspace/publish', icon: Send, labelKey: 'blog.publish' },
   { to: '/workspace/plans', icon: CalendarClock, labelKey: 'nav.plans' },
-  { to: '/workspace/img2three', icon: Sparkles, labelKey: 'nav.img2three' },
-  { to: '/workspace/studio', icon: Code2, labelKey: 'nav.studio' },
   { to: '/workspace/blog-manage', icon: NotebookPen, labelKey: 'profile.blogManage.title' },
   { to: '/workspace/email-reminders', icon: Mail, labelKey: 'profile.emailReminders.title' },
+  { to: '/workspace/img2three', icon: Sparkles, labelKey: 'nav.img2three' },
+  { to: '/workspace/studio', icon: Code2, labelKey: 'nav.studio' },
 ];
 
 const WorkspaceLayoutInner = () => {

@@ -20,7 +20,7 @@ const PUBLIC_PAGES = {
   },
 };
 
-const PRIVATE_PATHS = ['/login', '/workspace', '/components/share', '/blog/publish', '/blog/agent', '/profile'];
+const PRIVATE_PATHS = ['/login', '/workspace', '/components/share', '/profile'];
 
 // 页面自身渲染了独立 SEOHead 的路径前缀，RouteSEO 不重复注入
 const PAGE_OWNED_SEO_PREFIXES = ['/blog/'];

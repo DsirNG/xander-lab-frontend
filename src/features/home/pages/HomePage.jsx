@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import styles from './HomePage.module.css';
 
 const featureDefinitions = [
-  { key: 'agent', to: '/blog/agent', icon: CalendarClock },
+  { key: 'agent', to: '/workspace/agent', icon: CalendarClock },
   { key: 'email', to: '/profile', icon: Mail },
   { key: 'demo', to: '/workspace/studio/component', icon: Code2 },
 ];

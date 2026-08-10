@@ -39,7 +39,6 @@ const URL_LIST = [
 
   // 博客相关页面
   `https://${HOST}/blog/tags`,
-  `https://${HOST}/blog/publish`,
 
   // 特殊功能页面
   `https://${HOST}/components/share`,

@@ -198,7 +198,7 @@ const BlogAgent = () => {
         tags: taskData.tags || [],
       }));
       toast.success(t('blog.agent.draftCreated'));
-      navigate('/blog/publish');
+      navigate('/workspace/publish');
     } catch (error) {
       toast.error(error.message || t('blog.agent.failed'));
     } finally {
@@ -212,7 +212,7 @@ const BlogAgent = () => {
     setPreviewOpen(false);
     setSelectedResultId(null);
     setSelectedVersionId(null);
-    navigate('/blog/agent', { replace: true });
+    navigate('/workspace/agent', { replace: true });
   };
 
   const handleSelectResult = () => {
@@ -240,7 +240,7 @@ const BlogAgent = () => {
     <div className="flex h-dvh flex-col bg-surface text-ink">
       <AgentHeader
         t={t}
-        onBack={() => navigate('/blog/')}
+        onBack={() => navigate('/workspace/agent')}
         onNewTask={handleNewTask}
         onOpenSessions={() => setMobileSessionsOpen(true)}
       />
@@ -254,7 +254,7 @@ const BlogAgent = () => {
             activeId={taskId}
             loading={sessionsLoading}
             disableNew={isRunning}
-            onSelect={(id) => navigate(`/blog/agent/${id}`)}
+            onSelect={(id) => navigate(`/workspace/agent/${id}`)}
             onNew={handleNewTask}
           />
           {mobileSessionsOpen && (
@@ -267,7 +267,7 @@ const BlogAgent = () => {
                 disableNew={isRunning}
                 onSelect={(id) => {
                   setMobileSessionsOpen(false);
-                  navigate(`/blog/agent/${id}`);
+                  navigate(`/workspace/agent/${id}`);
                 }}
                 onNew={() => {
                   setMobileSessionsOpen(false);
