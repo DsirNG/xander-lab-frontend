@@ -836,5 +836,21 @@ export default {
     untitledTask: 'Untitled model',
     status: { created: 'Queued', running: 'Generating', ready: 'Ready', failed: 'Failed' },
     back: 'Back',
+  },
+
+  home: {
+    version: 'v1.0.0 In Development',
+    hero: { filled: 'Build', outline: 'Share & Automate', description: 'Share frontend demos, schedule blog generation and publishing, and keep everyday reminders on time.', explore: 'Explore tools', studio: 'Open Studio' },
+    tools: {
+      agent: { label: 'Blog Agent', title: 'Scheduled Blog Agent', description: 'Set a topic and schedule. The Agent writes at the time you choose, then synchronizes the article to connected platforms.', action: 'Explore Blog Agent' },
+      email: { label: 'Email task', title: 'Scheduled email', description: 'Create recurring reminders and scheduled emails independently, then let the platform deliver them on time.', action: 'Explore scheduled email' },
+      demo: { label: 'Component Demo', title: 'Share component demos', description: 'Share reusable frontend components with source code, a runnable preview, and a link that is ready to send.', action: 'Explore component demos' }
+    },
+    previews: {
+      agent: { newTask: 'New task', saved: 'Saved', topic: 'Topic', topicValue: 'Building accessible components', schedule: 'Schedule', scheduleValue: 'Every Monday · 09:00', article: 'Article', generating: 'Generating', nextRun: '● Next run: May 26, 2026', synced: 'Synced' },
+      email: { to: 'To', subscribers: 'Subscribers', subject: 'Weekly update from Xander Lab', greeting: 'Hi there,', body: "Here's your weekly update.", signature: 'The Xander Lab Team', schedule: 'Every Friday' },
+      demo: { preview: 'Preview', code: 'Code', button: 'Button', primary: 'Primary', secondary: 'Secondary', ghost: 'Ghost' }
+    },
+    articles: { title: 'Latest Articles', all: 'View all articles', items: { accessibility: { date: 'May 18, 2026', title: 'Building Accessible Components', tag: 'Development' }, designTokens: { date: 'May 11, 2026', title: 'Design Tokens in Practice', tag: 'Design' }, automation: { date: 'May 4, 2026', title: 'Automate Your Workflow with Schedules', tag: 'Productivity' } } }
   }
 };

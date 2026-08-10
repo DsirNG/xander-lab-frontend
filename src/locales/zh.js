@@ -854,5 +854,21 @@ export default {
     untitledTask: '未命名模型',
     status: { created: '等待生成', running: '生成中', ready: '已完成', failed: '生成失败' },
     back: '返回',
+  },
+
+  home: {
+    version: 'v1.0.0 开发中',
+    hero: { filled: '构建', outline: '分享与自动化', description: '分享前端 Demo，定时生成并发布博客，也让日常提醒准时发生。', explore: '探索工具', studio: '打开 Studio' },
+    tools: {
+      agent: { label: '博客 Agent', title: '定时博客 Agent', description: '设置主题与执行时间，Agent 将自动生成文章，并同步发布至已连接的平台。', action: '了解博客 Agent' },
+      email: { label: '邮件任务', title: '定时邮件', description: '独立创建循环提醒或定时邮件任务，让平台在约定时间完成发送。', action: '了解定时邮件' },
+      demo: { label: '组件 Demo', title: '分享组件 Demo', description: '为可复用的前端组件提供源码、在线预览和可直接发送的一键分享链接。', action: '浏览组件 Demo' }
+    },
+    previews: {
+      agent: { newTask: '新建任务', saved: '已保存', topic: '主题', topicValue: '构建可访问的组件', schedule: '执行时间', scheduleValue: '每周一 · 09:00', article: '文章', generating: '生成中', nextRun: '● 下次执行：2026 年 5 月 26 日', synced: '已同步' },
+      email: { to: '收件人', subscribers: '订阅者', subject: 'Xander Lab 每周更新', greeting: '你好，', body: '这是本周的最新内容。', signature: 'Xander Lab 团队', schedule: '每周五' },
+      demo: { preview: '预览', code: '代码', button: '按钮', primary: '主要按钮', secondary: '次要按钮', ghost: '幽灵按钮' }
+    },
+    articles: { title: '最新技术文章', all: '查看全部文章', items: { accessibility: { date: '2026 年 5 月 18 日', title: '构建可访问的组件', tag: '开发' }, designTokens: { date: '2026 年 5 月 11 日', title: '设计 Token 的实践方式', tag: '设计' }, automation: { date: '2026 年 5 月 4 日', title: '用定时任务自动化日常工作', tag: '效率' } } }
   }
 };

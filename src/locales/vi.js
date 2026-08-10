@@ -828,5 +828,21 @@ export default {
     untitledTask: 'Mô hình chưa đặt tên',
     status: { created: 'Đang chờ', running: 'Đang tạo', ready: 'Hoàn tất', failed: 'Thất bại' },
     back: 'Quay lại',
+  },
+
+  home: {
+    version: 'v1.0.0 đang phát triển',
+    hero: { filled: 'Xây dựng', outline: 'Chia sẻ & tự động hóa', description: 'Chia sẻ demo frontend, lên lịch tạo và xuất bản blog, đồng thời giữ các lời nhắc đúng giờ.', explore: 'Khám phá công cụ', studio: 'Mở Studio' },
+    tools: {
+      agent: { label: 'Blog Agent', title: 'Blog Agent theo lịch', description: 'Đặt chủ đề và thời gian; Agent sẽ viết bài và đồng bộ đến các nền tảng đã kết nối.', action: 'Khám phá Blog Agent' },
+      email: { label: 'Tác vụ email', title: 'Email theo lịch', description: 'Tạo lời nhắc và email lặp lại độc lập, sau đó để nền tảng gửi đúng lúc.', action: 'Khám phá email theo lịch' },
+      demo: { label: 'Demo thành phần', title: 'Chia sẻ demo thành phần', description: 'Chia sẻ thành phần frontend có mã nguồn, bản xem trước chạy được và liên kết một chạm.', action: 'Khám phá demo' }
+    },
+    previews: {
+      agent: { newTask: 'Tác vụ mới', saved: 'Đã lưu', topic: 'Chủ đề', topicValue: 'Xây dựng thành phần dễ tiếp cận', schedule: 'Lịch chạy', scheduleValue: 'Mỗi thứ Hai · 09:00', article: 'Bài viết', generating: 'Đang tạo', nextRun: '● Lần chạy tiếp theo: 26 tháng 5, 2026', synced: 'Đã đồng bộ' },
+      email: { to: 'Đến', subscribers: 'Người đăng ký', subject: 'Cập nhật tuần từ Xander Lab', greeting: 'Xin chào,', body: 'Đây là cập nhật tuần này.', signature: 'Đội ngũ Xander Lab', schedule: 'Mỗi thứ Sáu' },
+      demo: { preview: 'Xem trước', code: 'Mã nguồn', button: 'Nút', primary: 'Chính', secondary: 'Phụ', ghost: 'Trong suốt' }
+    },
+    articles: { title: 'Bài viết mới nhất', all: 'Xem tất cả bài viết', items: { accessibility: { date: '18 tháng 5, 2026', title: 'Xây dựng thành phần dễ tiếp cận', tag: 'Phát triển' }, designTokens: { date: '11 tháng 5, 2026', title: 'Design token trong thực tế', tag: 'Thiết kế' }, automation: { date: '4 tháng 5, 2026', title: 'Tự động hóa công việc bằng lịch', tag: 'Năng suất' } } }
   }
 };

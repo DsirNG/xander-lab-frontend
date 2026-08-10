@@ -828,5 +828,21 @@ export default {
     untitledTask: 'Modèle sans titre',
     status: { created: 'En attente', running: 'Génération', ready: 'Terminé', failed: 'Échec' },
     back: 'Retour',
+  },
+
+  home: {
+    version: 'v1.0.0 en développement',
+    hero: { filled: 'Créer', outline: 'Partager & automatiser', description: 'Partagez des démos frontend, planifiez la génération et la publication de blogs, et gardez vos rappels à l’heure.', explore: 'Explorer les outils', studio: 'Ouvrir Studio' },
+    tools: {
+      agent: { label: 'Agent de blog', title: 'Agent de blog planifié', description: 'Définissez un sujet et une heure. L’agent écrit puis synchronise l’article vers les plateformes connectées.', action: 'Découvrir l’agent de blog' },
+      email: { label: 'Tâche e-mail', title: 'E-mail planifié', description: 'Créez des rappels et des e-mails récurrents indépendamment, puis laissez la plateforme les envoyer à temps.', action: 'Découvrir les e-mails planifiés' },
+      demo: { label: 'Démo de composant', title: 'Partager des démos', description: 'Partagez des composants réutilisables avec le code source, un aperçu exécutable et un lien prêt à envoyer.', action: 'Découvrir les démos' }
+    },
+    previews: {
+      agent: { newTask: 'Nouvelle tâche', saved: 'Enregistré', topic: 'Sujet', topicValue: 'Créer des composants accessibles', schedule: 'Planification', scheduleValue: 'Chaque lundi · 09:00', article: 'Article', generating: 'Génération', nextRun: '● Prochaine exécution : 26 mai 2026', synced: 'Synchronisé' },
+      email: { to: 'À', subscribers: 'Abonnés', subject: 'Mise à jour hebdomadaire de Xander Lab', greeting: 'Bonjour,', body: 'Voici notre mise à jour de la semaine.', signature: 'L’équipe Xander Lab', schedule: 'Chaque vendredi' },
+      demo: { preview: 'Aperçu', code: 'Code', button: 'Bouton', primary: 'Principal', secondary: 'Secondaire', ghost: 'Fantôme' }
+    },
+    articles: { title: 'Derniers articles', all: 'Voir tous les articles', items: { accessibility: { date: '18 mai 2026', title: 'Créer des composants accessibles', tag: 'Développement' }, designTokens: { date: '11 mai 2026', title: 'Les design tokens en pratique', tag: 'Design' }, automation: { date: '4 mai 2026', title: 'Automatiser votre travail planifié', tag: 'Productivité' } } }
   }
 };

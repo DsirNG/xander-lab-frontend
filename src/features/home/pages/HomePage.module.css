@@ -1,108 +1,56 @@
 @import "tailwindcss";
 @reference "../../../styles/index.css";
 
-.pageWrapper {
-  @apply  bg-canvas selection:bg-ink selection:text-canvas;
-}
-
-.heroSection {
-  @apply relative  overflow-hidden;
-}
-
-.gridOverlay {
-  @apply absolute inset-0 pointer-events-none opacity-[0.05];
-  background-image: radial-gradient(circle, currentColor 1px, transparent 1px);
-  background-size: 32px 32px;
-}
-
-.container {
-  @apply max-w-6xl p-4 mx-auto px-6 relative z-10;
-}
-
-.heroMain {
-  @apply flex flex-col items-center text-center;
-}
-
-.announcement {
-  @apply flex items-center gap-3 px-3 py-1.5 rounded-full border border-border
-  bg-canvas/50  backdrop-blur-md mb-6 sm:mb-8 md:mb-12 text-body font-medium
-  hover:bg-surface-muted transition-all cursor-pointer;
-}
-
-.versionTag {
-  @apply px-2 py-0.5 rounded-full bg-ink  text-canvas text-micro font-black;
-}
-
-/* 极具压迫感的大标题，打破平庸感 */
-.megaTitle {
-  @apply text-4xl sm:text-6xl md:text-9xl font-black tracking-tighter mb-6 sm:mb-8 md:mb-10 text-accent leading-[0.85];
-}
-
-/* 镂空文字：设计感的核心，AI 很少会主动用这种排版 */
-.outlineText {
-  @apply block text-transparent;
-  -webkit-text-stroke: 1.5px rgba(15, 23, 42, 0.8);
-}
-
-
-
-.subtext {
-  @apply max-w-2xl text-lg md:text-2xl text-ink-muted mb-14 font-light leading-relaxed;
-}
-
-.ctaWrapper {
-  @apply flex flex-col sm:flex-row gap-6 items-center;
-}
-
-.mainButton {
-  @apply px-8 sm:px-12 py-3 sm:py-4 bg-accent text-white rounded-none font-bold
-  hover:bg-accent-600 transition-all duration-300 shadow-[8px_8px_0_rgba(15,23,42,0.1)];
-}
-
-.ghostButton {
-  @apply flex items-center px-6 sm:px-10 py-3 sm:py-4 text-ink  font-bold border-b-2 border-transparent hover:border-ink transition-all;
-}
-
-.visualCanvas {
-  @apply absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 -z-10 w-full h-full;
-}
-
-.abstractGlow {
-  @apply absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
-  w-[600px] h-[400px] bg-accent/10
-  blur-[150px] rounded-[100%];
-}
-
-/* ===== Features 区块 ===== */
-.featuresSection {
-  @apply relative py-16 sm:py-24 border-t border-border;
-}
-
-.featuresHeader {
-  @apply max-w-3xl mx-auto text-center mb-12;
-}
-
-.featuresTitle {
-  @apply text-2xl sm:text-3xl md:text-4xl font-black text-ink tracking-tight mb-4;
-}
-
-.featuresDesc {
-  @apply text-base md:text-lg text-ink-muted font-light leading-relaxed;
-}
-
-.featuresGrid {
-  @apply max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 px-6;
-}
-
-.featureCard {
-  @apply p-6 rounded-2xl bg-surface border border-border
-  transition-all duration-300 hover:border-accent/40 hover:shadow-[8px_8px_0_rgba(15,23,42,0.05)];
-}
-
-.featureTitle {
-  @apply text-lg font-bold text-ink mb-2;
-}
-
-.featureDesc {
-  @apply text-sm text-ink-muted leading-relaxed;
-}
+.page { @apply overflow-hidden bg-canvas text-ink; }
+.hero { @apply relative min-h-[calc(100vh-4rem)] border-b border-border; }
+.gridOverlay { @apply absolute inset-0 opacity-[0.045] pointer-events-none; background-image: radial-gradient(circle, currentColor 1px, transparent 1px); background-size: 28px 28px; }
+.heroContent { @apply relative z-10 mx-auto flex min-h-[calc(100vh-4rem)] max-w-5xl items-center justify-center px-6 py-20 text-center; }
+.version { @apply mx-auto mb-10 w-fit rounded-full border border-border px-4 py-1.5 text-caption font-medium text-ink-secondary; }
+.hero h1 { @apply flex flex-col text-6xl font-black leading-[0.82] tracking-tighter text-accent sm:text-8xl lg:text-[9.5rem]; }
+.outline { @apply text-transparent; -webkit-text-stroke: 1.5px rgb(51 65 85 / 0.8); }
+.heroDescription { @apply mx-auto mt-9 max-w-2xl text-lg leading-relaxed text-ink-muted sm:text-2xl; }
+.heroActions { @apply mt-10 flex flex-col items-center justify-center gap-5 sm:flex-row; }
+.primaryButton { @apply inline-flex items-center justify-center bg-accent px-8 py-4 text-body font-bold text-white shadow-[8px_8px_0_rgb(15_23_42_/_0.12)] transition hover:bg-accent-700 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-4; }
+.textAction, .toolAction { @apply inline-flex items-center gap-2 font-bold text-ink transition hover:text-accent focus:outline-none focus:ring-2 focus:ring-accent; }
+.tools { @apply mx-auto max-w-5xl px-6; }
+.toolSection { @apply grid min-h-[30rem] items-center gap-12 border-b border-border py-16 lg:grid-cols-[0.72fr_1.28fr] lg:gap-20; }
+.toolSectionReverse { @apply lg:grid-cols-[1.2fr_0.8fr]; }
+.toolSectionReverse .toolCopy { @apply lg:order-2; }
+.toolSectionReverse > :last-child { @apply lg:order-1; }
+.toolCopy { @apply max-w-sm; }
+.toolIndex { @apply block font-mono text-title font-bold text-accent; }
+.toolLabel { @apply mt-5 inline-flex items-center gap-2 text-micro font-bold uppercase tracking-[0.18em] text-ink-faint; }
+.toolCopy h2 { @apply mt-4 text-4xl font-black tracking-tight sm:text-5xl; }
+.toolCopy p { @apply mt-5 text-body leading-7 text-ink-muted; }
+.toolAction { @apply mt-8 text-accent; }
+.agentPreview, .emailPreview, .demoPreview { @apply border border-border bg-canvas shadow-[12px_12px_0_rgb(15_23_42_/_0.04)]; }
+.agentPreview { @apply mx-auto w-full max-w-2xl p-5; }
+.previewBar { @apply flex items-center justify-between border-b border-border pb-3 text-caption font-bold text-ink-secondary; }
+.saved, .syncLine span:last-child { @apply text-success-fg; }
+.field { @apply mt-4 rounded-md border border-border bg-surface px-3 py-2; }
+.field span { @apply block text-micro font-bold uppercase tracking-wider text-ink-faint; }
+.field strong { @apply mt-1 block text-caption text-ink-secondary; }
+.previewRow { @apply grid gap-3 sm:grid-cols-2; }
+.syncLine { @apply mt-5 flex justify-between border-t border-border pt-3 text-micro font-medium text-ink-muted; }
+.emailPreview { @apply mx-auto w-full max-w-xl p-6; }
+.mailMeta { @apply flex gap-3 border-b border-border pb-3 text-micro text-ink-faint; }
+.mailMeta strong { @apply text-ink-secondary; }
+.mailSubject { @apply border-b border-border py-3 text-caption font-bold; }
+.mailBody { @apply min-h-48 py-7 text-caption leading-6 text-ink-muted; }
+.mailSchedule { @apply flex items-center gap-2 border-t border-border pt-3 text-micro font-bold text-ink-secondary; }
+.mailSchedule span:last-child { @apply ml-auto; }
+.demoPreview { @apply mx-auto w-full max-w-2xl overflow-hidden; }
+.demoPreview .previewBar { @apply px-4 pt-4; }
+.demoBody { @apply grid min-h-64 md:grid-cols-2; }
+.demoControls { @apply flex flex-col gap-3 border-b border-border p-5 md:border-b-0 md:border-r; }
+.demoControls span { @apply mb-2 text-caption font-bold; }
+.demoControls button { @apply border border-border bg-canvas px-3 py-2 text-left text-caption font-medium transition hover:border-accent hover:text-accent; }
+.demoControls button:first-of-type { @apply border-accent bg-accent text-white; }
+.demoBody pre { @apply m-0 overflow-auto bg-surface p-5 font-mono text-micro leading-6 text-ink-secondary; }
+.articles { @apply mx-auto max-w-5xl px-6 py-16; }
+.articlesHeader { @apply flex items-end justify-between gap-6 border-b border-border pb-5; }
+.articlesHeader h2 { @apply text-3xl font-black tracking-tight; }
+.articleRow { @apply grid gap-2 border-b border-border py-5 text-caption transition hover:bg-surface sm:grid-cols-[10rem_1fr_auto] sm:items-center; }
+.articleRow span, .articleRow em { @apply not-italic text-ink-faint; }
+.articleRow strong { @apply text-ink-secondary; }
+@media (max-width: 640px) { .hero h1 { @apply text-6xl; } .outline { -webkit-text-stroke: 1px rgb(51 65 85 / 0.8); } .toolSection { @apply py-14; } }

@@ -828,5 +828,21 @@ export default {
     untitledTask: '無題のモデル',
     status: { created: '待機中', running: '生成中', ready: '完了', failed: '失敗' },
     back: '戻る',
+  },
+
+  home: {
+    version: 'v1.0.0 開発中',
+    hero: { filled: 'つくる', outline: '共有と自動化', description: 'フロントエンドのデモを共有し、ブログ生成・公開を予約し、日々のリマインダーを時間通りに届けます。', explore: 'ツールを見る', studio: 'Studio を開く' },
+    tools: {
+      agent: { label: 'ブログ Agent', title: '予約ブログ Agent', description: 'テーマと実行時刻を設定すると、Agent が記事を生成し、接続済みのプラットフォームへ同期します。', action: 'ブログ Agent を見る' },
+      email: { label: 'メールタスク', title: '予約メール', description: '繰り返しリマインダーや予約メールを個別に作成し、決めた時刻に送信できます。', action: '予約メールを見る' },
+      demo: { label: 'コンポーネント Demo', title: 'コンポーネント Demo を共有', description: '再利用可能なコンポーネントにソース、実行可能なプレビュー、共有リンクを添えられます。', action: 'Demo を見る' }
+    },
+    previews: {
+      agent: { newTask: '新しいタスク', saved: '保存済み', topic: 'テーマ', topicValue: 'アクセシブルなコンポーネントを作る', schedule: 'スケジュール', scheduleValue: '毎週月曜 · 09:00', article: '記事', generating: '生成中', nextRun: '● 次回実行：2026年5月26日', synced: '同期済み' },
+      email: { to: '宛先', subscribers: '購読者', subject: 'Xander Lab 週間アップデート', greeting: 'こんにちは、', body: '今週のアップデートをお届けします。', signature: 'Xander Lab チーム', schedule: '毎週金曜' },
+      demo: { preview: 'プレビュー', code: 'コード', button: 'ボタン', primary: 'プライマリ', secondary: 'セカンダリ', ghost: 'ゴースト' }
+    },
+    articles: { title: '最新記事', all: 'すべての記事を見る', items: { accessibility: { date: '2026年5月18日', title: 'アクセシブルなコンポーネントを作る', tag: '開発' }, designTokens: { date: '2026年5月11日', title: 'デザイントークンの実践', tag: 'デザイン' }, automation: { date: '2026年5月4日', title: '予約で日常業務を自動化する', tag: '生産性' } } }
   }
 };
