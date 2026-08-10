@@ -33,14 +33,18 @@ export const ToastProvider = ({ children }) => {
         }]);
     }, []);
 
-    const contextValue = useMemo(() => ({
+    const toastApi = useMemo(() => ({
         success: (msg, opts) => addToast(msg, 'success', opts),
         error: (msg, opts) => addToast(msg, 'error', opts),
         info: (msg, opts) => addToast(msg, 'info', opts),
         warning: (msg, opts) => addToast(msg, 'warning', opts),
         remove: removeToast,
-        toasts
-    }), [addToast, removeToast, toasts]);
+    }), [addToast, removeToast]);
+
+    const contextValue = useMemo(() => ({
+        ...toastApi,
+        toasts,
+    }), [toastApi, toasts]);
 
     return (
         <div key="toast-provider-wrapper">
