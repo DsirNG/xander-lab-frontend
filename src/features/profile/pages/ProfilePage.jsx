@@ -3,12 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
     Bell,
-    CalendarClock,
     FileText,
     KeyRound,
     LogOut,
     Mail,
-    NotebookPen,
     Plug,
     Settings2,
     Shield,
@@ -19,16 +17,12 @@ import ConfirmModal from '@components/common/ConfirmModal';
 import LoadingSpinner from '@components/common/LoadingSpinner';
 import { useToast } from '@hooks/useToast';
 import { authService } from '@features/auth/services/authService';
-import BlogManagePanel from '../components/BlogManagePanel';
-import EmailRemindersPanel from '../components/EmailRemindersPanel';
 import McpAuthorizationPanel from '../components/McpAuthorizationPanel';
 
 const NAV_ITEMS = [
     { id: 'account', icon: UserRound, enabled: false },
     { id: 'security', icon: Shield, enabled: false },
     { id: 'notifications', icon: Bell, enabled: false },
-    { id: 'blogManage', icon: NotebookPen, enabled: true },
-    { id: 'emailReminders', icon: CalendarClock, enabled: true },
     { id: 'templates', icon: Mail, enabled: false },
     { id: 'history', icon: FileText, enabled: false },
     { id: 'apiKeys', icon: KeyRound, enabled: false },
@@ -42,7 +36,7 @@ const ProfilePage = () => {
     const navigate = useNavigate();
     const [userInfo, setUserInfo] = useState(() => authService.getLocalUserInfo());
     const [activeNav, setActiveNav] = useState(() => (
-        new URLSearchParams(window.location.search).has('mcpOAuthRequest') ? 'mcp' : 'blogManage'
+        new URLSearchParams(window.location.search).has('mcpOAuthRequest') ? 'mcp' : 'mcp'
     ));
     const [authChecking, setAuthChecking] = useState(!userInfo);
     const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
@@ -164,11 +158,7 @@ const ProfilePage = () => {
             </aside>
 
             <div className="flex min-h-0 min-w-0 flex-1 flex-col bg-canvas">
-                {activeNav === 'blogManage' ? (
-                    <BlogManagePanel />
-                ) : activeNav === 'emailReminders' ? (
-                    <EmailRemindersPanel />
-                ) : activeNav === 'mcp' ? (
+                {activeNav === 'mcp' ? (
                     <McpAuthorizationPanel />
                 ) : (
                     <div className="flex flex-1 flex-col items-center justify-center gap-2 px-6 py-16 text-center">

@@ -24,7 +24,7 @@ import {
 
 const entryCards = [
   {
-    to: '/studio/project',
+    to: '/workspace/studio/project',
     title: '项目 zip 上传',
     eyebrow: 'Project Package',
     description: '上传完整前端项目包，适合已有工程、模板项目和需要保留目录结构的代码。',
@@ -33,7 +33,7 @@ const entryCards = [
     meta: ['zip', 'package.json', '自动构建'],
   },
   {
-    to: '/studio/component',
+    to: '/workspace/studio/component',
     title: '组件上传 / 新建',
     eyebrow: 'Component Sandbox',
     description: '上传或新建组件文件，支持 tsx、jsx、js、vue 等格式，适合快速验证片段。',
@@ -157,7 +157,7 @@ export default function StudioPage() {
                 <button
                   key={project.id}
                   type="button"
-                  onClick={() => navigate(`/studio/compiler/${project.id}`)}
+                  onClick={() => navigate(`/workspace/studio/compiler/${project.id}`)}
                   className="group flex w-full items-center justify-between gap-3 rounded-lg border border-border bg-canvas px-3 py-3 text-left transition-colors hover:border-accent/30 hover:bg-accent/5"
                 >
                   <div className="min-w-0">

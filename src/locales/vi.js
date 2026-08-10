@@ -242,6 +242,13 @@ export default {
       techBlog: 'Blog kỹ thuật'
     }
   },
+  workspace: {
+    title: 'Không gian làm việc',
+    subtitle: 'Trung tâm các công cụ tự động hóa và sáng tạo: đăng bài hẹn giờ, ảnh thành 3D, studio, quản lý blog và email hẹn giờ.',
+    settings: 'Cài đặt cá nhân',
+    studioDesc: 'Tải lên dự án hoặc thành phần, biên dịch và xem trước trực tuyến',
+    open: 'Vào',
+  },
   profile: {
     title: 'Trung tâm cá nhân',
     subtitle: 'Quản lý tài khoản và quy trình tự động hóa',
@@ -249,7 +256,7 @@ export default {
     account: 'Tài khoản đang đăng nhập',
     loading: 'Đang tải trung tâm cá nhân…',
     comingSoon: 'Sắp ra mắt',
-    comingSoonHint: 'Mô-đun này đang được chuẩn bị. Hiện bạn có thể dùng quản lý blog và email hẹn giờ.',
+    comingSoonHint: 'Mô-đun này đang được chuẩn bị. Các công cụ chức năng có trong Không gian làm việc.',
     logoutConfirmTitle: 'Đăng xuất',
     logoutConfirmMessage: 'Bạn có chắc muốn đăng xuất khỏi tài khoản này?',
     nav: {

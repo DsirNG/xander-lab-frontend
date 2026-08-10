@@ -242,6 +242,13 @@ export default {
       techBlog: '技術ブログ'
     }
   },
+  workspace: {
+    title: 'ワークスペース',
+    subtitle: '予約投稿、画像→3D、スタジオ、ブログ管理、予約メールなど、自動化・作成ツールを一元管理します。',
+    settings: '個人設定',
+    studioDesc: 'プロジェクトやコンポーネントをアップロードし、ビルドしてオンラインでプレビュー',
+    open: '入る',
+  },
   profile: {
     title: '個人センター',
     subtitle: 'アカウントと自動化フローを管理',
@@ -249,7 +256,7 @@ export default {
     account: 'ログイン中のアカウント',
     loading: '個人センターを読み込み中…',
     comingSoon: '近日公開',
-    comingSoonHint: 'このモジュールは準備中です。現在はブログ管理と予約メールをご利用いただけます。',
+    comingSoonHint: 'このモジュールは準備中です。機能ツールはワークスペースからご利用ください。',
     logoutConfirmTitle: 'ログアウト',
     logoutConfirmMessage: 'このアカウントからログアウトしてもよろしいですか？',
     nav: {

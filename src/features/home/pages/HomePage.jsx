@@ -8,7 +8,7 @@ import styles from './HomePage.module.css';
 const featureDefinitions = [
   { key: 'agent', to: '/blog/agent', icon: CalendarClock },
   { key: 'email', to: '/profile', icon: Mail },
-  { key: 'demo', to: '/studio/component', icon: Code2 },
+  { key: 'demo', to: '/workspace/studio/component', icon: Code2 },
 ];
 
 function AgentPreview() {
@@ -48,7 +48,7 @@ function Hero() {
       <p className={styles.version}>{t('home.version')}</p>
       <h1><span>{t('home.hero.filled')}</span><span className={styles.outline}>{t('home.hero.outline')}</span></h1>
       <p className={styles.heroDescription}>{t('home.hero.description')}</p>
-      <div className={styles.heroActions}><a href="#tools" className={styles.primaryButton}>{t('home.hero.explore')}</a><Link to="/studio" className={styles.textAction}>{t('home.hero.studio')} <ArrowRight size={19} /></Link></div>
+      <div className={styles.heroActions}><a href="#tools" className={styles.primaryButton}>{t('home.hero.explore')}</a><Link to="/workspace/studio" className={styles.textAction}>{t('home.hero.studio')} <ArrowRight size={19} /></Link></div>
     </motion.div>
   </div></section>;
 }

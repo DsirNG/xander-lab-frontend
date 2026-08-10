@@ -132,7 +132,7 @@ export default function CompilerPage() {
   const isReady = project?.status === 'ready';
   const previewUrl = project ? convertPreviewUrl(project.previewUrl, project.id) : '';
   const visibility = project?.visibility || 'private';
-  const shareUrl = project ? `${window.location.origin}/studio/source/${project.id}` : '';
+  const shareUrl = project ? `${window.location.origin}/workspace/studio/source/${project.id}` : '';
 
   const closeShareMenu = useCallback(() => setIsShareOpen(false), []);
   useClickOutside(shareMenuRef, closeShareMenu, isShareOpen);
@@ -267,7 +267,7 @@ export default function CompilerPage() {
         <div className="flex items-center justify-between px-4 py-3 sm:px-6">
           <div className="flex min-w-0 items-center gap-3">
             <Link
-              to="/studio"
+              to="/workspace/studio"
               className="inline-flex items-center gap-2 text-caption font-bold text-ink-faint transition-colors hover:text-accent"
             >
               <ArrowLeft className="h-3.5 w-3.5" />

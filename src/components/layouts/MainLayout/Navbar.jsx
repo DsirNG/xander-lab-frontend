@@ -148,9 +148,6 @@ const Navbar = () => {
         { path: '/', label: t('nav.home') },
         { path: '/components', label: t('nav.components') },
         { path: '/blog/', label: t('nav.blog') },
-        { path: '/blog/plans', label: t('nav.plans', '定时发文') },
-        { path: '/lab/img2three', label: t('nav.img2three') },
-        { path: '/studio', label: t('nav.studio') },
     ];
 
     const normalizePath = (path) => {
@@ -269,15 +266,15 @@ const Navbar = () => {
                             <div className="hidden sm:flex items-center ml-2 pl-2 border-l border-border ">
                                 {userInfo ? (
                                     <Link
-                                        to="/profile"
+                                        to="/workspace"
                                         className={`flex items-center gap-2 rounded-xl px-1.5 py-1 transition focus:outline-none focus:ring-2 focus:ring-accent-200 ${
-                                            isNavActive('/profile')
+                                            isNavActive('/workspace')
                                                 ? 'bg-accent-soft'
                                                 : 'hover:bg-accent-soft'
                                         }`}
-                                        title={t('profile.open')}
-                                        aria-label={t('profile.open')}
-                                        aria-current={isNavActive('/profile') ? 'page' : undefined}
+                                        title={t('workspace.title')}
+                                        aria-label={t('workspace.title')}
+                                        aria-current={isNavActive('/workspace') ? 'page' : undefined}
                                     >
                                         <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-accent text-micro font-black uppercase text-white">
                                             {avatarText}
@@ -388,12 +385,12 @@ const Navbar = () => {
 
                         {userInfo ? (
                             <Link
-                                to="/profile"
+                                to="/workspace"
                                 onClick={() => setIsMobileMenuOpen(false)}
                                 className={`${styles.mobileActionButton} flex items-center gap-2.5 text-left ${
-                                    isNavActive('/profile') ? 'bg-accent-soft' : ''
+                                    isNavActive('/workspace') ? 'bg-accent-soft' : ''
                                 }`}
-                                aria-current={isNavActive('/profile') ? 'page' : undefined}
+                                aria-current={isNavActive('/workspace') ? 'page' : undefined}
                             >
                                 <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-accent text-micro font-black uppercase text-white">
                                     {avatarText}
@@ -410,7 +407,7 @@ const Navbar = () => {
                                         ) : null}
                                     </span>
                                     <span className="mt-0.5 block text-xs font-medium text-ink-faint">
-                                        {t('profile.open')}
+                                        {t('workspace.title')}
                                     </span>
                                 </span>
                             </Link>

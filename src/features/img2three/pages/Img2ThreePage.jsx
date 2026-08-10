@@ -154,7 +154,7 @@ const Img2ThreePage = () => {
 
   useEffect(() => {
     if (!authService.getLocalUserInfo()) {
-      navigate('/login', { replace: true, state: { from: taskId ? `/lab/img2three/${taskId}` : '/lab/img2three' } });
+      navigate('/login', { replace: true, state: { from: taskId ? `/workspace/img2three/${taskId}` : '/workspace/img2three' } });
     }
   }, [navigate, taskId]);
 
@@ -288,7 +288,7 @@ const Img2ThreePage = () => {
       const created = await img2threeService.createTask(selectedFile);
       setTask(created);
       const streamPromise = runStream(String(created.id));
-      navigate(`/lab/img2three/${created.id}`, { replace: true });
+      navigate(`/workspace/img2three/${created.id}`, { replace: true });
       setUploading(false);
       await streamPromise;
     } catch (err) {
@@ -333,7 +333,7 @@ const Img2ThreePage = () => {
     setViewerReadyTaskId(null);
     setViewerError('');
     setExportingGlb(false);
-    navigate('/lab/img2three', { replace: true });
+    navigate('/workspace/img2three', { replace: true });
   };
 
   const handleToggleHistory = async () => {
@@ -401,7 +401,7 @@ const Img2ThreePage = () => {
               <button
                 key={item.id}
                 type="button"
-                onClick={() => navigate(`/lab/img2three/${item.id}`)}
+                onClick={() => navigate(`/workspace/img2three/${item.id}`)}
                 className="flex min-w-0 items-center gap-3 rounded-xl border border-border p-3 text-left transition hover:border-accent"
               >
                 {item.referenceMediaUrl ? <img src={item.referenceMediaUrl} alt="" className="h-12 w-12 shrink-0 rounded-lg object-cover" /> : null}

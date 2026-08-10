@@ -40,7 +40,7 @@ Xander Lab 由三个服务组成：
 ## 国际化与路由
 
 - 项目支持 zh / en / fr / ja / ru / vi。新增任意 i18n key 时，必须同时更新 `src/locales/*.js` 的六种语言。
-- MainLayout 下包括首页、组件、博客列表、工作室首页；独立路由包括 `studio/project`、`studio/component`、`studio/compiler`、`components/share`、`blog/publish`。
+- MainLayout 下包括首页、组件、博客列表（前台展示）；功能工具统一收进 `/workspace` 工作台（需登录）：定时发文 `/workspace/plans`、图生3d `/workspace/img2three`、博客管理 `/workspace/blog-manage`、定时邮箱 `/workspace/email-reminders`、工作室 `/workspace/studio/*`。独立路由还包括 `components/share`、`blog/publish`、`blog/agent`；`/profile` 仅保留个人设置。
 - 全局处理逻辑（toast、鉴权提示等）放在 `App.jsx` 层级，不能放在 `MainLayout`。
 
 ## 本地开发与提交

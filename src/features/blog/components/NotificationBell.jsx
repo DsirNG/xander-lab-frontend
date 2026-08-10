@@ -90,7 +90,7 @@ const NotificationBell = () => {
 
           <div className="border-t border-border px-4 py-2">
             <Link
-              to="/blog/plans"
+              to="/workspace/plans"
               onClick={() => setOpen(false)}
               className="text-xs font-medium text-accent hover:underline"
             >

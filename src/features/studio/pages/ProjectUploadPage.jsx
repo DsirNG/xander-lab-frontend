@@ -27,7 +27,7 @@ export default function ProjectUploadPage() {
 
       try {
         const { project } = await uploadProject(zipFile);
-        navigate(`/studio/compiler/${project.id}`);
+        navigate(`/workspace/studio/compiler/${project.id}`);
       } catch (err) {
         setError(err.message || '项目构建失败');
       } finally {
@@ -41,7 +41,7 @@ export default function ProjectUploadPage() {
     <div className="min-h-screen bg-surface">
       <main className="mx-auto max-w-[1200px] px-4 py-6 sm:px-6 lg:px-8">
         <Link
-          to="/studio"
+          to="/workspace/studio"
           className="mb-6 inline-flex items-center gap-2 text-body font-bold text-ink-muted transition-colors hover:text-accent"
         >
           <ArrowLeft className="h-4 w-4" />

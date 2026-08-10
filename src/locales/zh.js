@@ -250,6 +250,13 @@ export default {
       techBlog: '技术博客'
     }
   },
+  workspace: {
+    title: '工作台',
+    subtitle: '集中管理你的自动化与创作工具：定时发文、图生3d、工作室、博客管理与定时邮箱。',
+    settings: '个人设置',
+    studioDesc: '上传项目或组件，构建并在线预览',
+    open: '进入',
+  },
   profile: {
     title: '个人中心',
     subtitle: '管理你的账号与自动化流程',
@@ -257,7 +264,7 @@ export default {
     account: '已登录账户',
     loading: '正在加载个人中心…',
     comingSoon: '功能即将上线',
-    comingSoonHint: '该模块正在准备中，当前可先使用博客管理与定时邮箱。',
+    comingSoonHint: '该模块正在准备中。功能工具请前往工作台。',
     logoutConfirmTitle: '退出登录',
     logoutConfirmMessage: '确定要退出当前账号吗？',
     nav: {

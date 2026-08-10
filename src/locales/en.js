@@ -250,6 +250,13 @@ export default {
       techBlog: 'Tech Blog'
     }
   },
+  workspace: {
+    title: 'Workspace',
+    subtitle: 'Central hub for your automation and creation tools: scheduled posts, image-to-3D, studio, blog management and scheduled emails.',
+    settings: 'Personal settings',
+    studioDesc: 'Upload projects or components, build and preview online',
+    open: 'Enter',
+  },
   profile: {
     title: 'Personal Center',
     subtitle: 'Manage your account and automation workflows',
@@ -257,7 +264,7 @@ export default {
     account: 'Signed-in account',
     loading: 'Loading personal center…',
     comingSoon: 'Coming soon',
-    comingSoonHint: 'This module is being prepared. You can use Blog management and Scheduled Email for now.',
+    comingSoonHint: 'This module is being prepared. Functional tools are available in the Workspace.',
     logoutConfirmTitle: 'Log out',
     logoutConfirmMessage: 'Are you sure you want to log out of this account?',
     nav: {

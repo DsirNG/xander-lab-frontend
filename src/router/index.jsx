@@ -36,6 +36,9 @@ const CompilerPage = React.lazy(() => import('@features/studio/pages/CompilerPag
 const PublicSourcePage = React.lazy(() => import('@features/studio/pages/PublicSourcePage'));
 const ProfilePage = React.lazy(() => import('@features/profile/pages/ProfilePage'));
 const Img2ThreePage = React.lazy(() => import('@features/img2three/pages/Img2ThreePage'));
+const WorkspaceHome = React.lazy(() => import('@features/workspace/pages/WorkspaceHome'));
+const BlogManagePage = React.lazy(() => import('@features/workspace/pages/BlogManagePage'));
+const EmailRemindersPage = React.lazy(() => import('@features/workspace/pages/EmailRemindersPage'));
 
 // 配置数据
 import { getModuleConfig } from '@features/modules/constants';
@@ -110,18 +113,6 @@ export const createRouter = () => {
     ],
   };
 
-  // ─── 业务路由：实验室（MainLayout 内） ───
-  const labRoutes = [
-    {
-      path: 'lab/img2three',
-      element: <LazyPage><Img2ThreePage /></LazyPage>,
-    },
-    {
-      path: 'lab/img2three/:taskId',
-      element: <LazyPage><Img2ThreePage /></LazyPage>,
-    },
-  ];
-
   // ─── 平台主站（MainLayout 包裹） ───
   const mainLayoutRoutes = {
     path: '/',
@@ -134,11 +125,6 @@ export const createRouter = () => {
       moduleRoutes,
       componentRoutes,
       blogRoutes,
-      {
-        path: 'studio',
-        element: <ProtectedPage page={<StudioPage />} />,
-      },
-      ...labRoutes,
       {
         path: 'profile',
         element: <ProtectedPage page={<ProfilePage />} />,
@@ -173,28 +159,52 @@ export const createRouter = () => {
       path: 'blog/agent/:taskId',
       element: <ProtectedPage page={<BlogAgent />} />,
     },
-    {
-      path: 'blog/plans',
-      element: <ProtectedPage page={<BlogPlans />} />,
-    },
   ];
 
-  // 工作室编辑器（独立页面）
-  const studioRoutes = [
+  // ─── 工作台（后台功能集中地，独立页面，需登录） ───
+  const workspaceRoutes = [
     {
-      path: 'studio/project',
+      path: '/workspace',
+      element: <ProtectedPage page={<WorkspaceHome />} />,
+    },
+    {
+      path: '/workspace/plans',
+      element: <ProtectedPage page={<BlogPlans />} />,
+    },
+    {
+      path: '/workspace/img2three',
+      element: <ProtectedPage page={<Img2ThreePage />} />,
+    },
+    {
+      path: '/workspace/img2three/:taskId',
+      element: <ProtectedPage page={<Img2ThreePage />} />,
+    },
+    {
+      path: '/workspace/blog-manage',
+      element: <ProtectedPage page={<BlogManagePage />} />,
+    },
+    {
+      path: '/workspace/email-reminders',
+      element: <ProtectedPage page={<EmailRemindersPage />} />,
+    },
+    {
+      path: '/workspace/studio',
+      element: <ProtectedPage page={<StudioPage />} />,
+    },
+    {
+      path: '/workspace/studio/project',
       element: <ProtectedPage page={<ProjectUploadPage />} />,
     },
     {
-      path: 'studio/component',
+      path: '/workspace/studio/component',
       element: <ProtectedPage page={<ComponentUploadPage />} />,
     },
     {
-      path: 'studio/compiler/:projectId',
+      path: '/workspace/studio/compiler/:projectId',
       element: <ProtectedPage page={<CompilerPage />} />,
     },
     {
-      path: 'studio/source/:projectId',
+      path: '/workspace/studio/source/:projectId',
       element: <LazyPage><PublicSourcePage /></LazyPage>,
     },
   ];
@@ -210,7 +220,7 @@ export const createRouter = () => {
       mainLayoutRoutes,
       ...shareRoutes,
       ...blogStandaloneRoutes,
-      ...studioRoutes,
+      ...workspaceRoutes,
     ],
   }];
 

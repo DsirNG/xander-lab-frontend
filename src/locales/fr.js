@@ -242,6 +242,13 @@ export default {
       techBlog: 'Blog technique'
     }
   },
+  workspace: {
+    title: 'Espace de travail',
+    subtitle: 'Centre de vos outils d\'automatisation et de création : publications planifiées, image vers 3D, studio, gestion du blog et e-mails programmés.',
+    settings: 'Paramètres personnels',
+    studioDesc: 'Téléversez des projets ou composants, compilez et prévisualisez en ligne',
+    open: 'Entrer',
+  },
   profile: {
     title: 'Espace personnel',
     subtitle: 'Gérez votre compte et vos flux d’automatisation',
@@ -249,7 +256,7 @@ export default {
     account: 'Compte connecté',
     loading: 'Chargement de l\'espace personnel…',
     comingSoon: 'Bientôt disponible',
-    comingSoonHint: 'Ce module est en préparation. Vous pouvez utiliser la gestion du blog et l\'e-mail programmé pour l\'instant.',
+    comingSoonHint: 'Ce module est en préparation. Les outils fonctionnels sont disponibles dans l\'Espace de travail.',
     logoutConfirmTitle: 'Déconnexion',
     logoutConfirmMessage: 'Voulez-vous vraiment vous déconnecter de ce compte ?',
     nav: {
