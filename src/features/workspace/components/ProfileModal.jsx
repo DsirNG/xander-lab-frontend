@@ -36,12 +36,12 @@ const ProfileModal = ({ open, onClose }) => {
       isOpen={open}
       onClose={onClose}
       title={t('workspace.settings')}
-      width="max-w-3xl"
+      width="max-w-4xl"
     >
-      <div className="flex flex-col gap-4">
-        <div
-          className="flex gap-1 overflow-x-auto rounded-xl border border-border bg-surface p-1"
-          role="tablist"
+      <div className="flex min-h-[420px] flex-col gap-4 lg:flex-row lg:gap-6">
+        {/* 设置分类导航：移动端横向滚动，桌面端左侧竖排 */}
+        <nav
+          className="flex shrink-0 gap-1 overflow-x-auto rounded-xl border border-border bg-surface p-1 lg:w-44 lg:flex-col lg:overflow-y-auto"
           aria-label={t('workspace.settings')}
         >
           {TABS.map((tab) => {
@@ -56,7 +56,7 @@ const ProfileModal = ({ open, onClose }) => {
                 aria-selected={active}
                 disabled={!enabled}
                 onClick={() => enabled && setActiveTab(tab.id)}
-                className={`flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
+                className={`flex shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-left text-xs font-semibold transition lg:w-full ${
                   active
                     ? 'bg-accent-soft text-ink'
                     : enabled
@@ -65,13 +65,14 @@ const ProfileModal = ({ open, onClose }) => {
                 }`}
               >
                 <Icon className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-                {t(`profile.nav.${tab.id}`)}
+                <span className="whitespace-nowrap">{t(`profile.nav.${tab.id}`)}</span>
               </button>
             );
           })}
-        </div>
+        </nav>
 
-        <div className="min-h-[360px]">
+        {/* 设置内容 */}
+        <div className="min-w-0 flex-1">
           {activeTab === 'mcp' ? (
             <McpAuthorizationPanel />
           ) : (

@@ -234,7 +234,7 @@ const BlogPlans = () => {
   );
 
   return (
-    <div className="mx-auto w-full max-w-3xl px-4 py-8">
+    <div className="mx-auto flex h-full w-full max-w-5xl flex-col px-4 py-6 sm:px-6 lg:px-8">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-bold text-ink">{t('blogPlans.title')}</h1>

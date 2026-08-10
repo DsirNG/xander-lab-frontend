@@ -360,7 +360,7 @@ const Img2ThreePage = () => {
   const viewerReady = Boolean(viewerTaskId) && viewerReadyTaskId === viewerTaskId && !viewerError;
 
   return (
-    <div className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
+    <div className="mx-auto flex h-full w-full max-w-5xl flex-col px-4 py-6 sm:px-6 lg:px-8">
       <div className="mb-8 flex flex-wrap items-start justify-between gap-4">
         <div>
           <p className="text-caption font-semibold uppercase tracking-wide text-accent">{t('nav.img2three')}</p>

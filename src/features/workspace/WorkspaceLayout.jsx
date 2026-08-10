@@ -33,7 +33,7 @@ const WorkspaceLayoutInner = () => {
   };
 
   return (
-    <div className="flex h-screen flex-col bg-surface">
+    <div className="flex h-screen flex-col bg-canvas">
       {/* 顶栏 */}
       <header className="flex h-14 shrink-0 items-center justify-between border-b border-border bg-canvas px-4 sm:px-6">
         <div className="flex items-center gap-2.5">
@@ -42,7 +42,8 @@ const WorkspaceLayoutInner = () => {
           </span>
           <span className="text-base font-black tracking-tight text-ink">{t('workspace.title')}</span>
         </div>
-        <div className="flex items-center gap-2">
+        {/* 移动端：设置/退出放顶栏 */}
+        <div className="flex items-center gap-2 lg:hidden">
           <button
             type="button"
             onClick={() => setSettingsOpen(true)}
@@ -85,30 +86,51 @@ const WorkspaceLayoutInner = () => {
 
       <div className="flex min-h-0 flex-1">
         {/* 桌面端左侧菜单 */}
-        <aside className="hidden w-60 shrink-0 flex-col gap-1 border-r border-border bg-canvas p-3 lg:flex" aria-label={t('workspace.title')}>
-          {MENU.map((item) => {
-            const Icon = item.icon;
-            return (
-              <NavLink
-                key={item.to}
-                to={item.to}
-                className={({ isActive }) =>
-                  `flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-semibold transition ${
-                    isActive
-                      ? 'bg-accent-soft text-accent'
-                      : 'text-ink-muted hover:bg-surface hover:text-ink-secondary'
-                  }`
-                }
-              >
-                <Icon className="h-4 w-4 shrink-0" aria-hidden="true" />
-                {t(item.labelKey)}
-              </NavLink>
-            );
-          })}
+        <aside className="hidden w-60 shrink-0 flex-col border-r border-border bg-canvas p-3 lg:flex" aria-label={t('workspace.title')}>
+          <div className="flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto">
+            {MENU.map((item) => {
+              const Icon = item.icon;
+              return (
+                <NavLink
+                  key={item.to}
+                  to={item.to}
+                  className={({ isActive }) =>
+                    `flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-semibold transition ${
+                      isActive
+                        ? 'bg-accent-soft text-accent'
+                        : 'text-ink-muted hover:bg-surface hover:text-ink-secondary'
+                    }`
+                  }
+                >
+                  <Icon className="h-4 w-4 shrink-0" aria-hidden="true" />
+                  {t(item.labelKey)}
+                </NavLink>
+              );
+            })}
+          </div>
+
+          <div className="mt-2 flex flex-col gap-1 border-t border-border pt-2">
+            <button
+              type="button"
+              onClick={() => setSettingsOpen(true)}
+              className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-semibold text-ink-secondary transition hover:bg-surface hover:text-ink"
+            >
+              <Settings className="h-4 w-4 shrink-0" aria-hidden="true" />
+              {t('workspace.settings')}
+            </button>
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-semibold text-ink-muted transition hover:bg-danger-soft hover:text-danger"
+            >
+              <LogOut className="h-4 w-4 shrink-0" aria-hidden="true" />
+              {t('nav.logout')}
+            </button>
+          </div>
         </aside>
 
         {/* 右侧内容 */}
-        <main className="min-h-0 flex-1 overflow-y-auto">
+        <main className="min-h-0 flex-1 overflow-y-auto bg-canvas">
           <Outlet />
         </main>
       </div>
