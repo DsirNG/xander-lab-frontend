@@ -27,6 +27,7 @@ const BlogDetail = React.lazy(() => import('@features/blog/pages/BlogDetail'));
 const BlogTags = React.lazy(() => import('@features/blog/pages/BlogTags'));
 const BlogPublish = React.lazy(() => import('@features/blog/pages/BlogPublish'));
 const BlogAgent = React.lazy(() => import('@features/blog/pages/BlogAgent'));
+const BlogPlans = React.lazy(() => import('@features/blog/pages/BlogPlans'));
 const LoginPage = React.lazy(() => import('@features/auth/pages/LoginPage'));
 const StudioPage = React.lazy(() => import('@features/studio/pages/StudioPage'));
 const ProjectUploadPage = React.lazy(() => import('@features/studio/pages/ProjectUploadPage'));
@@ -171,6 +172,10 @@ export const createRouter = () => {
     {
       path: 'blog/agent/:taskId',
       element: <ProtectedPage page={<BlogAgent />} />,
+    },
+    {
+      path: 'blog/plans',
+      element: <ProtectedPage page={<BlogPlans />} />,
     },
   ];
 

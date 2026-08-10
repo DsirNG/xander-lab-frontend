@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Github, Menu, Languages, X, User as UserIcon, ChevronDown, Check } from 'lucide-react';
 import styles from './Navbar.module.css';
 import { authService } from '@features/auth/services/authService';
+import NotificationBell from '@features/blog/components/NotificationBell';
 
 const LANGUAGES = ['zh', 'en', 'fr', 'ja', 'ru', 'vi'];
 const LANG_LABELS = { zh: '中文', en: 'EN', fr: 'FR', ja: '日本語', ru: 'RU', vi: 'VI' };
@@ -147,6 +148,7 @@ const Navbar = () => {
         { path: '/', label: t('nav.home') },
         { path: '/components', label: t('nav.components') },
         { path: '/blog/', label: t('nav.blog') },
+        { path: '/blog/plans', label: t('nav.plans', '定时发文') },
         { path: '/lab/img2three', label: t('nav.img2three') },
         { path: '/studio', label: t('nav.studio') },
     ];
@@ -263,6 +265,7 @@ const Navbar = () => {
                             </a>
 
                             {/* 用户区域：头像 + 名字，进入个人中心；退出仅在个人中心 */}
+                            {userInfo ? <NotificationBell /> : null}
                             <div className="hidden sm:flex items-center ml-2 pl-2 border-l border-border ">
                                 {userInfo ? (
                                     <Link
