@@ -13,6 +13,7 @@ import { ToastProvider, ToastContainer } from './components/common/Toast'
 import { useToast } from './hooks/useToast'
 import ErrorBoundary from './components/common/ErrorBoundary'
 import { authService } from './features/auth/services/authService'
+import { NotificationProvider } from './features/blog/context/NotificationContext'
 
 /**
  * 全局 Toast 桥接
@@ -60,7 +61,9 @@ function App() {
         <ToastProvider>
           <ToastBridge />
           <SessionHealthCheck />
-          <RouterProvider router={router} />
+          <NotificationProvider>
+            <RouterProvider router={router} />
+          </NotificationProvider>
           <ToastContainer />
         </ToastProvider>
       </ErrorBoundary>
