@@ -34,14 +34,27 @@ const NotificationBell = () => {
 
   // 订阅 SSE：收到事件时把通知标记为未读。断线后按指数退避自动重连，
   // 一旦收到事件立即重置退避；组件卸载时中止当前连接与定时重连。
+  // 企业级生命周期：token 刷新/网络恢复/标签页可见时立即重连；登出主动断开。
   useEffect(() => {
     let alive = true;
     let controller = null;
     let retryTimer = null;
     let attempt = 0;
 
-    const scheduleReconnect = () => {
+    const teardown = () => {
+      if (retryTimer) { clearTimeout(retryTimer); retryTimer = null; }
+      if (controller) { controller.abort(); controller = null; }
+    };
+
+    const scheduleReconnect = (immediate = false) => {
       if (!alive) return;
+      teardown();
+      if (immediate) {
+        attempt = 0;
+        console.log('[SSE] immediate reconnect');
+        connect();
+        return;
+      }
       const delay = Math.min(30000, 2000 * (2 ** attempt));
       attempt += 1;
       console.log(`[SSE] reconnect in ${delay}ms (attempt ${attempt})`);
@@ -50,8 +63,9 @@ const NotificationBell = () => {
 
     const connect = () => {
       if (!alive) return;
-      controller = new AbortController();
-      abortRef.current = controller;
+      const ctrl = new AbortController();
+      controller = ctrl;
+      abortRef.current = ctrl;
       console.log('[SSE] subscribing to /api/notifications/events');
 
       // 客户端心跳看门狗：服务端每 25s 推送心跳，若长时间收不到任何字节
@@ -61,7 +75,7 @@ const NotificationBell = () => {
         if (watchdog) clearTimeout(watchdog);
         watchdog = setTimeout(() => {
           console.warn('[SSE] watchdog: no data for 90s, forcing reconnect');
-          controller?.abort();
+          ctrl.abort();
         }, 90000);
       };
 
@@ -75,22 +89,24 @@ const NotificationBell = () => {
         setUnread((prev) => prev + 1);
         toast.info(`${payload.title || ''} · ${payload.message || ''}`.trim());
       }, {
-        signal: controller.signal,
+        signal: ctrl.signal,
         _silent: true,
         onProgress: () => { armWatchdog(); },
       })
         .then(() => {
           if (watchdog) clearTimeout(watchdog);
-          // 正常关闭（如服务端主动断开/心跳丢失判定）→ 重连
-          if (alive) { console.warn('[SSE] stream closed, scheduling reconnect'); scheduleReconnect(); }
+          // 仅当这是当前活跃连接且未被主动 teardown 时，断线才安排重连
+          if (alive && controller === ctrl) { console.warn('[SSE] stream closed, scheduling reconnect'); scheduleReconnect(); }
         })
         .catch((err) => {
           if (watchdog) clearTimeout(watchdog);
           if (!alive) return; // 组件卸载导致的 abort，不重连
+          // 非当前活跃连接（已被 teardown 换掉）→ 静默忽略
+          if (controller !== ctrl) return;
           const aborted = err?.code === 'ERR_CANCELED' || err?.isCancelled;
-          if (aborted && controller?.signal?.aborted) {
-            // 看门狗主动断开 → 重连
-            console.warn('[SSE] watchdog forced abort, scheduling reconnect');
+          if (aborted) {
+            // 看门狗主动断开（controller 仍指向 ctrl）→ 重连
+            console.warn('[SSE] stream cancelled, scheduling reconnect');
             scheduleReconnect();
             return;
           }
@@ -101,10 +117,46 @@ const NotificationBell = () => {
 
     connect();
 
+    // token 刷新后：旧连接持有旧 token，立即用新 token 重连
+    const onTokenRefresh = () => {
+      if (!alive) return;
+      console.log('[SSE] token refreshed, reconnecting');
+      scheduleReconnect(true);
+    };
+    // 网络恢复：立即重连
+    const onOnline = () => {
+      if (!alive) return;
+      console.log('[SSE] network online, reconnecting');
+      scheduleReconnect(true);
+    };
+    // 标签页可见：若连接已失效则立即重连
+    const onVisibility = () => {
+      if (!alive) return;
+      if (document.visibilityState === 'visible') {
+        console.log('[SSE] tab visible, reconnecting');
+        scheduleReconnect(true);
+      }
+    };
+    // 登出：主动断开，不重连
+    const onLogout = () => {
+      console.log('[SSE] logged out, disconnecting');
+      alive = false;
+      teardown();
+      abortRef.current = null;
+    };
+
+    window.addEventListener('auth:token-refreshed', onTokenRefresh);
+    window.addEventListener('online', onOnline);
+    document.addEventListener('visibilitychange', onVisibility);
+    window.addEventListener('auth:logout', onLogout);
+
     return () => {
       alive = false;
-      if (retryTimer) clearTimeout(retryTimer);
-      if (controller) controller.abort();
+      window.removeEventListener('auth:token-refreshed', onTokenRefresh);
+      window.removeEventListener('online', onOnline);
+      document.removeEventListener('visibilitychange', onVisibility);
+      window.removeEventListener('auth:logout', onLogout);
+      teardown();
       abortRef.current = null;
       console.log('[SSE] aborted on unmount');
     };

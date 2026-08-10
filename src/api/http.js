@@ -74,7 +74,10 @@ function showToast(type, message) {
 
 export const tokenStorage = {
     getToken: () => localStorage.getItem(TOKEN_KEY),
-    setToken: (token) => localStorage.setItem(TOKEN_KEY, token),
+    setToken: (token) => {
+        localStorage.setItem(TOKEN_KEY, token);
+        window.dispatchEvent(new CustomEvent('auth:token-refreshed', { detail: { token } }));
+    },
     removeToken: () => localStorage.removeItem(TOKEN_KEY),
 
     getRefreshToken: () => localStorage.getItem(REFRESH_TOKEN_KEY),
