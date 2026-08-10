@@ -618,8 +618,14 @@ export function postStream(url, data, { onEvent, ...config } = {}) {
 }
 
 /** Subscribe to a resumable SSE endpoint with authorization headers. */
-export function getStream(url, { onEvent, ...config } = {}) {
+export function getStream(url, { onEvent, onProgress, ...config } = {}) {
     const reader = createSseReader(onEvent);
+    const wrappedProgress = onProgress
+        ? (progressEvent) => {
+            onProgress(progressEvent);
+            reader.onDownloadProgress(progressEvent);
+        }
+        : reader.onDownloadProgress;
     return instance.get(url, {
         ...config,
         dedupe: false,
@@ -630,7 +636,7 @@ export function getStream(url, { onEvent, ...config } = {}) {
             ...config.headers,
             Accept: 'text/event-stream',
         },
-        onDownloadProgress: reader.onDownloadProgress,
+        onDownloadProgress: wrappedProgress,
     }).then((response) => {
         reader.flush();
         return response;

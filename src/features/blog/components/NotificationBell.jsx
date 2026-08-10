@@ -32,19 +32,82 @@ const NotificationBell = () => {
     }
   }, []);
 
-  // 订阅 SSE：收到事件时把通知标记为未读。断线由服务端心跳兜底，
-  // 前端不自动重连，下次打开铃铛会重新拉取列表。
+  // 订阅 SSE：收到事件时把通知标记为未读。断线后按指数退避自动重连，
+  // 一旦收到事件立即重置退避；组件卸载时中止当前连接与定时重连。
   useEffect(() => {
-    const controller = new AbortController();
-    abortRef.current = controller;
-    blogPlanService.subscribeNotifications((event) => {
-      if (!event || event.event !== 'notification') return;
-      const payload = event.data;
-      if (!payload?.type) return;
-      setUnread((prev) => prev + 1);
-      toast.info(`${payload.title || ''} · ${payload.message || ''}`.trim());
-    }, { signal: controller.signal, _silent: true });
-    return () => controller.abort();
+    let alive = true;
+    let controller = null;
+    let retryTimer = null;
+    let attempt = 0;
+
+    const scheduleReconnect = () => {
+      if (!alive) return;
+      const delay = Math.min(30000, 2000 * (2 ** attempt));
+      attempt += 1;
+      console.log(`[SSE] reconnect in ${delay}ms (attempt ${attempt})`);
+      retryTimer = setTimeout(connect, delay);
+    };
+
+    const connect = () => {
+      if (!alive) return;
+      controller = new AbortController();
+      abortRef.current = controller;
+      console.log('[SSE] subscribing to /api/notifications/events');
+
+      // 客户端心跳看门狗：服务端每 25s 推送心跳，若长时间收不到任何字节
+      // （如代理半开连接），主动断开并触发重连。
+      let watchdog = null;
+      const armWatchdog = () => {
+        if (watchdog) clearTimeout(watchdog);
+        watchdog = setTimeout(() => {
+          console.warn('[SSE] watchdog: no data for 90s, forcing reconnect');
+          controller?.abort();
+        }, 90000);
+      };
+
+      blogPlanService.subscribeNotifications((event) => {
+        if (!event || event.event !== 'notification') return;
+        // 收到有效事件，视为连接健康，重置退避计数。
+        attempt = 0;
+        console.log('[SSE] event received:', event);
+        const payload = event.data;
+        if (!payload?.type) return;
+        setUnread((prev) => prev + 1);
+        toast.info(`${payload.title || ''} · ${payload.message || ''}`.trim());
+      }, {
+        signal: controller.signal,
+        _silent: true,
+        onProgress: () => { armWatchdog(); },
+      })
+        .then(() => {
+          if (watchdog) clearTimeout(watchdog);
+          // 正常关闭（如服务端主动断开/心跳丢失判定）→ 重连
+          if (alive) { console.warn('[SSE] stream closed, scheduling reconnect'); scheduleReconnect(); }
+        })
+        .catch((err) => {
+          if (watchdog) clearTimeout(watchdog);
+          if (!alive) return; // 组件卸载导致的 abort，不重连
+          const aborted = err?.code === 'ERR_CANCELED' || err?.isCancelled;
+          if (aborted && controller?.signal?.aborted) {
+            // 看门狗主动断开 → 重连
+            console.warn('[SSE] watchdog forced abort, scheduling reconnect');
+            scheduleReconnect();
+            return;
+          }
+          console.error('[SSE] stream error, scheduling reconnect:', err?.code, err?.message, err?.response?.status);
+          scheduleReconnect();
+        });
+    };
+
+    connect();
+
+    return () => {
+      alive = false;
+      if (retryTimer) clearTimeout(retryTimer);
+      if (controller) controller.abort();
+      abortRef.current = null;
+      console.log('[SSE] aborted on unmount');
+    };
   }, [toast]);
 
   const markAll = async () => {
