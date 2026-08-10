@@ -18,17 +18,12 @@ const PUBLIC_PAGES = {
     title: 'React Component Showcase',
     description: 'Browse reusable React components, implementation guides, and interactive UI examples from Xander Lab.',
   },
-  '/blog/': {
-    title: 'Frontend Engineering Blog',
-    description: 'Read Xander Lab articles on frontend architecture, React engineering, and UI component design.',
-  },
-  '/blog/tags/': {
-    title: 'Blog Topics',
-    description: 'Browse Xander Lab frontend engineering articles by topic.',
-  },
 };
 
-const PRIVATE_PATHS = ['/login', '/studio', '/components/share', '/blog/publish', '/profile', '/lab/img2three'];
+const PRIVATE_PATHS = ['/login', '/studio', '/components/share', '/blog/publish', '/blog/agent', '/profile', '/lab/img2three'];
+
+// 页面自身渲染了独立 SEOHead 的路径前缀，RouteSEO 不重复注入
+const PAGE_OWNED_SEO_PREFIXES = ['/blog/'];
 
 function normalisePathname(pathname) {
   if (pathname === '/') return pathname;
@@ -46,7 +41,16 @@ export default function RouteSEO() {
     return <SEOHead {...page} canonical={canonical} />;
   }
 
-  if (isPrivate || isNotFound) {
+  if (isPrivate) {
+    return <SEOHead canonical={canonical} noindex />;
+  }
+
+  // 博客列表/详情/标签页已由页面级 SEOHead 提供独立 meta，跳过全局注入
+  if (PAGE_OWNED_SEO_PREFIXES.some(prefix => canonical.startsWith(prefix))) {
+    return null;
+  }
+
+  if (isNotFound) {
     return <SEOHead canonical={canonical} noindex />;
   }
 

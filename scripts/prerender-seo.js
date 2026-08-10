@@ -141,7 +141,6 @@ function buildBlogMetaTags(blog) {
   return `
     <!-- Prerendered SEO: Blog #${blog.id} -->
     <title>${title} | Xander Lab</title>
-    <meta name="title" content="${title} | Xander Lab" />
     <meta name="description" content="${desc}" />
     ${keywords ? `<meta name="keywords" content="${keywords}" />` : ''}
     <meta name="robots" content="index, follow" />
@@ -356,7 +355,6 @@ async function main() {
   console.log('📋 生成博客列表页...');
   const blogListMeta = `
     <title>Blog | Xander Lab</title>
-    <meta name="title" content="Blog | Xander Lab" />
     <meta name="description" content="Xander Lab 技术博客 — 前端架构、React 实践、UI 组件设计等技术文章" />
     <meta name="robots" content="index, follow" />
     <link rel="canonical" href="${SITE_URL}/blog/" />
@@ -392,7 +390,6 @@ async function main() {
   console.log('🏷️  生成标签页...');
   const tagsMeta = `
     <title>Tags | Xander Lab</title>
-    <meta name="title" content="Tags | Xander Lab" />
     <meta name="description" content="Xander Lab 博客标签 — 按主题浏览前端技术文章" />
     <meta name="robots" content="index, follow" />
     <link rel="canonical" href="${SITE_URL}/blog/tags/" />

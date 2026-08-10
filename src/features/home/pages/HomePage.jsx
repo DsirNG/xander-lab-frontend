@@ -63,10 +63,39 @@ const Hero = () => {
   )
 }
 
+const Features = () => {
+  const { t } = useTranslation()
+
+  const cards = [
+    { key: 'composable', icon: '🧩' },
+    { key: 'themable', icon: '📚' },
+    { key: 'performant', icon: '⚡' }
+  ]
+
+  return (
+    <section className={styles.featuresSection}>
+      <div className={styles.featuresHeader}>
+        <h2 className={styles.featuresTitle}>{t('features.title')}</h2>
+        <p className={styles.featuresDesc}>{t('features.desc')}</p>
+      </div>
+      <div className={styles.featuresGrid}>
+        {cards.map(({ key, icon }) => (
+          <article key={key} className={styles.featureCard}>
+            <div className="text-2xl mb-3">{icon}</div>
+            <h3 className={styles.featureTitle}>{t(`features.${key}.title`)}</h3>
+            <p className={styles.featureDesc}>{t(`features.${key}.desc`)}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+  )
+}
+
 const HomePage = () => {
   return (
     <main className={styles.pageWrapper}>
       <Hero />
+      <Features />
     </main>
   )
 }
