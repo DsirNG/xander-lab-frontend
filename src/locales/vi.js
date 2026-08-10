@@ -246,8 +246,6 @@ export default {
     title: 'Không gian làm việc',
     subtitle: 'Trung tâm các công cụ tự động hóa và sáng tạo: đăng bài hẹn giờ, ảnh thành 3D, studio, quản lý blog và email hẹn giờ.',
     settings: 'Cài đặt cá nhân',
-    studioDesc: 'Tải lên dự án hoặc thành phần, biên dịch và xem trước trực tuyến',
-    open: 'Vào',
   },
   profile: {
     title: 'Trung tâm cá nhân',

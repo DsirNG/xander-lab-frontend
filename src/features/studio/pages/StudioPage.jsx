@@ -61,7 +61,7 @@ export default function StudioPage() {
   }, [loadProjects]);
 
   return (
-    <div className="min-h-screen bg-surface">
+    <div className="min-h-full bg-surface">
       <section className="border-b border-border bg-canvas">
         <div className="mx-auto grid max-w-[1600px] gap-8 px-4 py-8 sm:px-6 lg:grid-cols-[1fr_360px] lg:px-8">
           <div className="flex min-w-0 flex-col justify-center">

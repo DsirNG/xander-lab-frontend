@@ -36,7 +36,7 @@ const CompilerPage = React.lazy(() => import('@features/studio/pages/CompilerPag
 const PublicSourcePage = React.lazy(() => import('@features/studio/pages/PublicSourcePage'));
 const ProfilePage = React.lazy(() => import('@features/profile/pages/ProfilePage'));
 const Img2ThreePage = React.lazy(() => import('@features/img2three/pages/Img2ThreePage'));
-const WorkspaceHome = React.lazy(() => import('@features/workspace/pages/WorkspaceHome'));
+const WorkspaceLayout = React.lazy(() => import('@features/workspace/WorkspaceLayout'));
 const BlogManagePage = React.lazy(() => import('@features/workspace/pages/BlogManagePage'));
 const EmailRemindersPage = React.lazy(() => import('@features/workspace/pages/EmailRemindersPage'));
 
@@ -161,36 +161,43 @@ export const createRouter = () => {
     },
   ];
 
-  // ─── 工作台（后台功能集中地，独立页面，需登录） ───
+  // ─── 工作台（后台功能集中地：左侧菜单 + 右侧内容，需登录） ───
   const workspaceRoutes = [
     {
       path: '/workspace',
-      element: <ProtectedPage page={<WorkspaceHome />} />,
+      element: <LazyPage><WorkspaceLayout /></LazyPage>,
+      children: [
+        {
+          index: true,
+          element: <Navigate to="/workspace/plans" replace />,
+        },
+        {
+          path: 'plans',
+          element: <LazyPage><BlogPlans /></LazyPage>,
+        },
+        {
+          path: 'img2three',
+          element: <LazyPage><Img2ThreePage /></LazyPage>,
+        },
+        {
+          path: 'img2three/:taskId',
+          element: <LazyPage><Img2ThreePage /></LazyPage>,
+        },
+        {
+          path: 'blog-manage',
+          element: <LazyPage><BlogManagePage /></LazyPage>,
+        },
+        {
+          path: 'email-reminders',
+          element: <LazyPage><EmailRemindersPage /></LazyPage>,
+        },
+        {
+          path: 'studio',
+          element: <LazyPage><StudioPage /></LazyPage>,
+        },
+      ],
     },
-    {
-      path: '/workspace/plans',
-      element: <ProtectedPage page={<BlogPlans />} />,
-    },
-    {
-      path: '/workspace/img2three',
-      element: <ProtectedPage page={<Img2ThreePage />} />,
-    },
-    {
-      path: '/workspace/img2three/:taskId',
-      element: <ProtectedPage page={<Img2ThreePage />} />,
-    },
-    {
-      path: '/workspace/blog-manage',
-      element: <ProtectedPage page={<BlogManagePage />} />,
-    },
-    {
-      path: '/workspace/email-reminders',
-      element: <ProtectedPage page={<EmailRemindersPage />} />,
-    },
-    {
-      path: '/workspace/studio',
-      element: <ProtectedPage page={<StudioPage />} />,
-    },
+    // 工作室深层全屏页面（上传/编译器，独立于侧边栏布局）
     {
       path: '/workspace/studio/project',
       element: <ProtectedPage page={<ProjectUploadPage />} />,

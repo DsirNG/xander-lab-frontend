@@ -254,8 +254,6 @@ export default {
     title: '工作台',
     subtitle: '集中管理你的自动化与创作工具：定时发文、图生3d、工作室、博客管理与定时邮箱。',
     settings: '个人设置',
-    studioDesc: '上传项目或组件，构建并在线预览',
-    open: '进入',
   },
   profile: {
     title: '个人中心',

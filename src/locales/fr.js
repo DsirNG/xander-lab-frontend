@@ -246,8 +246,6 @@ export default {
     title: 'Espace de travail',
     subtitle: 'Centre de vos outils d\'automatisation et de création : publications planifiées, image vers 3D, studio, gestion du blog et e-mails programmés.',
     settings: 'Paramètres personnels',
-    studioDesc: 'Téléversez des projets ou composants, compilez et prévisualisez en ligne',
-    open: 'Entrer',
   },
   profile: {
     title: 'Espace personnel',
