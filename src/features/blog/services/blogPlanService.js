@@ -25,7 +25,8 @@ export const RUN_STATUS = {
 export const blogPlanService = {
   /* ---------- 定时发文计划 ---------- */
   createPlan: (payload, config) => post('/api/blog-plans', payload, config),
-  listPlans: (config) => get('/api/blog-plans', undefined, config),
+  listPlans: ({ page = 1, size = 10 } = {}, config) =>
+    get('/api/blog-plans', { page, size }, config),
   getPlan: (id, config) => get(`/api/blog-plans/${id}`, undefined, config),
   updatePlan: (id, payload, config) => patch(`/api/blog-plans/${id}`, payload, config),
   updatePlanStatus: (id, action, config) => patch(`/api/blog-plans/${id}/status`, { action }, config),
