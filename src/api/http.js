@@ -24,7 +24,6 @@ import i18n from '@locales/index';
 import {
     MAX_RETRY,
     getRetryDelay,
-    isSafeRetryMethod,
     shouldRetryRequest,
 } from './httpPolicy';
 
@@ -145,6 +144,18 @@ const getBizErrorMessage = (code, fallback) => {
     const key = BIZ_ERROR_KEYS[code];
     return key ? i18n.t(key) : (fallback || i18n.t('http.errors.bizDefault'));
 };
+
+/** 从 Blob 错误响应（下载等二进制场景）中解析服务端 message */
+async function extractBlobErrorMessage(data) {
+    if (!data || typeof data.text !== 'function') return '';
+    try {
+        const text = await data.text();
+        const parsed = JSON.parse(text);
+        return typeof parsed?.message === 'string' ? parsed.message : '';
+    } catch {
+        return '';
+    }
+}
 
 // ─────────────────────────────────────────────
 // 4. 自定义错误类
@@ -278,9 +289,11 @@ async function refreshAccessToken() {
     if (!refreshToken) {
         throw new HttpError(i18n.t('http.errors.noRefreshToken'), 401, null, null);
     }
-    // 使用原始 axios 避免循环拦截
+    // 使用原始 axios 避免循环拦截；显式超时，避免刷新挂起时拖垮排队请求
     const response = await axios.post(`${BASE_URL}${REFRESH_URL}`, {
         refreshToken,
+    }, {
+        timeout: DEFAULT_TIMEOUT,
     });
     const body = response.data;
     const tokenData = body?.data;
@@ -319,9 +332,9 @@ const instance = axios.create({
 instance.interceptors.request.use(
     (config) => {
         // 8.1 防重复请求（幂等锁）
-        // 默认行为：(GET, POST, PUT, DELETE, PATCH）防重复
-        const method = config.method?.toLowerCase();
-        const shouldDedupe = config.dedupe ?? isSafeRetryMethod(method);
+        // 默认对所有方法防重复（GET/POST/PUT/DELETE/PATCH），
+        // 可用 config.dedupe: false 关闭（上传/下载/SSE 已默认关闭）
+        const shouldDedupe = config.dedupe ?? true;
 
         if (shouldDedupe) {
             addPendingRequest(config);
@@ -392,6 +405,13 @@ instance.interceptors.response.use(
 
     // ── 9.2 错误响应 ──
     async (error) => {
+        const { config, response } = error;
+
+        // 先清理幂等锁，再判断取消：被取消的请求同样要释放条目，避免 map 泄漏
+        if (config) {
+            removePendingRequest(config);
+        }
+
         if (axios.isCancel(error)) {
             // 返回带标准标识的 rejection，让组件 catch 能识别并静默跳过
             const cancelError = new Error('Request cancelled');
@@ -399,12 +419,6 @@ instance.interceptors.response.use(
             cancelError.code = 'ERR_CANCELED';
             cancelError.isCancelled = true;
             return Promise.reject(cancelError);
-        }
-
-        const { config, response } = error;
-
-        if (config) {
-            removePendingRequest(config);
         }
 
         // ── 9.2.1 Token 过期，无感刷新 / 强制未登录 ──
@@ -489,8 +503,11 @@ instance.interceptors.response.use(
         // ── 9.2.3 统一错误处理 ──
         const status = response?.status;
         const serverMsg = response?.data?.message;
+        // 二进制错误响应（如 blob 下载失败）没有 message 字段，异步解析兜底
+        const blobMsg = serverMsg ? '' : await extractBlobErrorMessage(response?.data);
         const message =
             serverMsg ||
+            blobMsg ||
             getHttpErrorMessage(status) ||
             error.message ||
             i18n.t('http.errors.networkError');
@@ -505,7 +522,8 @@ instance.interceptors.response.use(
         }
 
         // 全局 Toast 提示（config._silent 可静默）
-        if (!config?._silent) {
+        // _skipAuthRecovery 的 401 由调用方接管提示，这里不再重复弹窗
+        if (!config?._silent && !(status === 401 && config?._skipAuthRecovery)) {
             if (status === 401) {
                 showToast('warning', message);
             } else if (status >= 500 || !status) {
@@ -730,8 +748,12 @@ export function upload(url, fileOrFormData, options = {}) {
         Object.entries(extraData).forEach(([k, v]) => formData.append(k, v));
     }
 
+    const { headers = {}, ...restConfig } = config;
+
     return instance.post(url, formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
+        ...restConfig,
+        // 合并而非覆盖：调用方传的 headers 不会破坏 multipart 的 Content-Type
+        headers: { 'Content-Type': 'multipart/form-data', ...headers },
         onUploadProgress: onProgress
             ? (progressEvent) => {
                 const percent = progressEvent.total
@@ -744,7 +766,6 @@ export function upload(url, fileOrFormData, options = {}) {
         timeout: 0,
         // 上传请求不做防重复
         dedupe: false,
-        ...config,
     });
 }
 
@@ -791,8 +812,6 @@ export async function download(url, options = {}) {
             }
             : undefined,
         ...config,
-        // 下载时跳过业务解包，直接拿 AxiosResponse
-        rawResponse: false,
     });
 
     // 从 Content-Disposition 解析文件名
