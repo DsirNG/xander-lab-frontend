@@ -102,7 +102,7 @@ const CodeBlock = memo(({
                         code={resolvedCode}
                         language={normalizedLanguage}
                         minHeight={280}
-                        maxHeight={1200}
+                        maxHeight={600}
                         title={t('common.codeBlock.previewFrame', { language: languageLabel })}
                     />
                 </div>

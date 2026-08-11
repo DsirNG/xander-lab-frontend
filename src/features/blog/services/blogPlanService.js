@@ -47,6 +47,9 @@ export const blogPlanService = {
     patch(`/api/notifications/${id}/read`, undefined, config),
   markAllNotificationsRead: (config) =>
     patch('/api/notifications/read-all', undefined, config),
+  /** ADMIN only: sends a live diagnostic event to every active SSE connection. */
+  testSseBroadcast: (config) =>
+    patch('/api/notifications/admin/test-broadcast', undefined, config),
   /** 实时事件流：type/title/message/planId/runId */
   subscribeNotifications: (onEvent, config) =>
     getStream('/api/notifications/events', { ...config, onEvent }),
