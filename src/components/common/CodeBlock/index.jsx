@@ -1,58 +1,11 @@
-import React, { useMemo, useState, memo } from 'react';
+import React, { useState, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import SyntaxHighlighter from '@components/common/SyntaxHighlighter';
+import HtmlSandboxPreview from '@components/common/HtmlSandboxPreview';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { Code2, Copy, Check, FileCode2, Play } from 'lucide-react';
 
 const PREVIEWABLE_LANGUAGES = new Set(['html', 'htm', 'svg']);
-
-const looksLikeFullDocument = (code) => (
-    /^\s*(<!doctype\s+html|<html\b)/i.test(code)
-);
-
-const buildPreviewSrcDoc = (code, language) => {
-    const raw = String(code || '');
-    const lang = String(language || '').toLowerCase();
-
-    if (lang === 'svg' && !/<svg[\s>]/i.test(raw)) {
-        return `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>
-            html,body{margin:0;padding:16px;background:#fff;font-family:system-ui,sans-serif}
-            .wrap{display:grid;place-items:center;min-height:100%}
-          </style></head><body><div class="wrap"><svg xmlns="http://www.w3.org/2000/svg">${raw}</svg></div></body></html>`;
-    }
-
-    if (lang === 'svg' && /<svg[\s>]/i.test(raw) && !looksLikeFullDocument(raw)) {
-        return `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>
-            html,body{margin:0;padding:16px;background:#fff}
-            .wrap{display:grid;place-items:center;min-height:100%}
-            svg{max-width:100%;height:auto}
-          </style></head><body><div class="wrap">${raw}</div></body></html>`;
-    }
-
-    if (looksLikeFullDocument(raw)) {
-        return raw;
-    }
-
-    return `<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <style>
-    html, body {
-      margin: 0;
-      padding: 16px;
-      background: #fff;
-      color: #0f172a;
-      font-family: system-ui, -apple-system, Segoe UI, sans-serif;
-    }
-  </style>
-</head>
-<body>
-${raw}
-</body>
-</html>`;
-};
 
 /**
  * Shared code display with syntax highlighting, copy, and optional live preview.
@@ -74,11 +27,6 @@ const CodeBlock = memo(({
     const canPreview = PREVIEWABLE_LANGUAGES.has(normalizedLanguage);
     const activeMode = canPreview ? mode : 'code';
     const languageLabel = normalizedLanguage.toUpperCase();
-
-    const previewSrcDoc = useMemo(() => {
-        if (!canPreview) return '';
-        return buildPreviewSrcDoc(resolvedCode, normalizedLanguage);
-    }, [canPreview, normalizedLanguage, resolvedCode]);
 
     const handleCopy = async () => {
         if (!resolvedCode) return;
@@ -150,12 +98,12 @@ const CodeBlock = memo(({
 
             {activeMode === 'preview' ? (
                 <div className="bg-canvas">
-                    <iframe
+                    <HtmlSandboxPreview
+                        code={resolvedCode}
+                        language={normalizedLanguage}
+                        minHeight={280}
+                        maxHeight={1200}
                         title={t('common.codeBlock.previewFrame', { language: languageLabel })}
-                        srcDoc={previewSrcDoc}
-                        sandbox="allow-scripts allow-forms"
-                        className="block min-h-[280px] w-full border-0 bg-canvas"
-                        style={{ height: '420px' }}
                     />
                 </div>
             ) : (
