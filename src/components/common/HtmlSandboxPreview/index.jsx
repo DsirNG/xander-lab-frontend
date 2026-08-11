@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import http from '@/api/http';
 
 const previewableAsFragment = (language) => {
     const lang = String(language || '').toLowerCase();
@@ -17,14 +18,13 @@ const hasClosingHead = (raw) => /<\/head>/i.test(raw);
 const hasOpeningHtml = (raw) => /<html[\s>]/i.test(raw);
 
 /**
- * Injected into every sandboxed document before user code runs:
- * 1. A CSP meta tag that cuts all network access, forms, and base-url tricks
- *    (the only active directives are inline script/style and data/blob images).
+ * Fallback-only injection, used when the hosted preview API is unavailable.
+ * 1. A CSP meta tag cutting all network access, forms, and base-url tricks.
  * 2. A history shim: pushState/replaceState throw SecurityError inside a
  *    null-origin sandbox, so anchor navigation falls back to location.hash.
  * 3. A height reporter so the host can size the iframe to the content.
  */
-const INJECTION = `
+const FALLBACK_INJECTION = `
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; base-uri 'none'; form-action 'none'">
 <script>
 (function () {
@@ -54,7 +54,7 @@ const buildSvgSkeleton = (raw) => `<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-${INJECTION}
+${FALLBACK_INJECTION}
 <style>
   html, body { margin: 0; padding: 16px; background: #fff; font-family: system-ui, sans-serif; }
   .wrap { display: grid; place-items: center; min-height: 100%; }
@@ -71,7 +71,7 @@ const buildFragmentSkeleton = (raw) => `<!DOCTYPE html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-${INJECTION}
+${FALLBACK_INJECTION}
 <style>
   html, body { margin: 0; padding: 16px; background: #fff; color: #0f172a; font-family: system-ui, -apple-system, Segoe UI, sans-serif; }
 </style>
@@ -83,15 +83,15 @@ ${raw}
 
 const injectIntoFullDocument = (raw) => {
     if (hasClosingHead(raw)) {
-        return raw.replace(/<\/head>/i, `${INJECTION}\n</head>`);
+        return raw.replace(/<\/head>/i, `${FALLBACK_INJECTION}\n</head>`);
     }
     if (hasOpeningHtml(raw)) {
-        return raw.replace(/<html[^>]*>/i, `$&\n<head>${INJECTION}</head>`);
+        return raw.replace(/<html[^>]*>/i, `$&\n<head>${FALLBACK_INJECTION}</head>`);
     }
-    return `\n<head>${INJECTION}</head>\n${raw}`;
+    return `\n<head>${FALLBACK_INJECTION}</head>\n${raw}`;
 };
 
-const buildSrcDoc = (code, language) => {
+const buildFallbackSrcDoc = (code, language) => {
     const raw = String(code || '');
     const lang = String(language || '').toLowerCase();
 
@@ -109,11 +109,16 @@ const buildSrcDoc = (code, language) => {
 /**
  * Sandboxed preview host for single-file HTML / SVG snippets.
  *
- * The user code runs inside a `srcdoc` iframe with `sandbox="allow-scripts"`
- * (no `allow-same-origin`, so the document lives in a unique null origin) plus
- * a restrictive CSP meta tag, then reports its intrinsic height to the host.
- * The preview is isolated from the host page: no cookies, no storage, no
- * network, no popups, no form submission.
+ * Primary mode: the code is uploaded to the backend and served as a standalone
+ * page (`/blog-html/{id}/raw`) on an independent origin, loaded via iframe
+ * `src`. Isolation comes from the separate origin + strict CSP served with the
+ * page, exactly like OpenAI's oaiusercontent artifacts; history.pushState and
+ * other page APIs keep working natively. The iframe height is reported back
+ * over postMessage and verified against the page origin.
+ *
+ * Fallback mode: when the preview API is unavailable, the code runs in a
+ * `srcdoc` iframe with `sandbox="allow-scripts"` (no allow-same-origin) and a
+ * restrictive CSP meta tag instead.
  */
 const HtmlSandboxPreview = ({
     code,
@@ -124,35 +129,81 @@ const HtmlSandboxPreview = ({
     className,
 }) => {
     const frameRef = useRef(null);
+    const [pageUrl, setPageUrl] = useState(null);
+    const [useFallback, setUseFallback] = useState(false);
     const [contentHeight, setContentHeight] = useState(null);
+    const latestCodeRef = useRef(code);
+    const debounceRef = useRef(null);
 
     const srcDoc = useMemo(
-        () => (previewableAsFragment(language) ? buildSrcDoc(code, language) : ''),
+        () => (previewableAsFragment(language) ? buildFallbackSrcDoc(code, language) : ''),
         [code, language],
     );
 
+    // Create (or refresh) the hosted preview session whenever the code changes.
+    useEffect(() => {
+        if (!previewableAsFragment(language)) return undefined;
+        latestCodeRef.current = code;
+        clearTimeout(debounceRef.current);
+        debounceRef.current = setTimeout(() => {
+            const payload = code;
+            http.post('/api/blog-html/previews', { code: payload }, { _silent: true })
+                .then((data) => {
+                    if (latestCodeRef.current !== payload) return;
+                    if (typeof data?.pageUrl !== 'string' || !data.pageUrl) {
+                        setUseFallback(true);
+                        return;
+                    }
+                    setPageUrl(data.pageUrl);
+                    setUseFallback(false);
+                })
+                .catch((error) => {
+                    if (error?.name === 'CanceledError') return;
+                    if (latestCodeRef.current !== payload) return;
+                    setUseFallback(true);
+                });
+        }, 300);
+        return () => clearTimeout(debounceRef.current);
+    }, [code, language]);
+
+    const clampHeight = useCallback((value) => (
+        Math.min(Math.max(Math.round(value), minHeight), maxHeight)
+    ), [minHeight, maxHeight]);
+
     const handleMessage = useCallback((event) => {
-        if (event.source !== frameRef.current?.contentWindow) return;
+        if (useFallback || !pageUrl) return;
+        let expectedOrigin = null;
+        try {
+            expectedOrigin = new URL(pageUrl).origin;
+        } catch {
+            return;
+        }
+        // Only trust height reports from the exact hosted page origin.
+        if (event.origin !== expectedOrigin) return;
         const height = event.data?.height;
         if (typeof height !== 'number' || !Number.isFinite(height)) return;
-        setContentHeight(Math.min(Math.max(Math.round(height), minHeight), maxHeight));
-    }, [minHeight, maxHeight]);
+        setContentHeight(clampHeight(height));
+    }, [useFallback, pageUrl, clampHeight]);
 
     useEffect(() => {
         window.addEventListener('message', handleMessage);
         return () => window.removeEventListener('message', handleMessage);
     }, [handleMessage]);
 
-    return (
-        <iframe
-            ref={frameRef}
-            title={title}
-            srcDoc={srcDoc}
-            sandbox="allow-scripts"
-            className={`block w-full border-0 bg-white ${className || ''}`}
-            style={{ height: contentHeight ?? minHeight, minHeight: `${minHeight}px` }}
-        />
-    );
+    const iframeProps = {
+        ref: frameRef,
+        title,
+        className: `block w-full border-0 bg-white ${className || ''}`,
+        style: { height: contentHeight ?? minHeight, minHeight: `${minHeight}px` },
+    };
+
+    if (!useFallback && pageUrl) {
+        // Hosted mode: standalone page on an independent origin, no sandbox
+        // attribute needed (the origin itself is the isolation boundary).
+        return <iframe {...iframeProps} src={pageUrl} />;
+    }
+
+    return <iframe {...iframeProps} srcDoc={srcDoc} sandbox="allow-scripts" />;
 };
 
 HtmlSandboxPreview.displayName = 'HtmlSandboxPreview';
