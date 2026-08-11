@@ -20,7 +20,7 @@ services:
     networks:
       - xander-network
     healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://127.0.0.1:30001/"]
+      test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:30001/ > /dev/null || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 3
