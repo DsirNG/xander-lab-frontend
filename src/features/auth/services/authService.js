@@ -34,6 +34,9 @@ export const authService = {
             tokenStorage.setRefreshToken(res.refreshToken);
             // 也可以存入用户信息到 localStorage 或状态管理中
             localStorage.setItem('user_info', JSON.stringify(res.userInfo));
+            // NotificationProvider is already mounted on the login page flow;
+            // notify it immediately instead of waiting for a remount or refresh.
+            window.dispatchEvent(new CustomEvent('auth:login', { detail: { user: res.userInfo } }));
         }
         return res;
     },

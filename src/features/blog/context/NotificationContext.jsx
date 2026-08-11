@@ -85,8 +85,8 @@ export const NotificationProvider = ({ children }) => {
       if (!alive || !isLoggedInRef.current) return;
       const ctrl = new AbortController();
       controller = ctrl;
-      console.log('[SSE] subscribing to /api/notifications/events');
-      setConnected(true);
+      console.log('[SSE] connection starting: /api/notifications/events');
+      setConnected(false);
 
       let watchdog = null;
       const armWatchdog = () => {
@@ -98,6 +98,12 @@ export const NotificationProvider = ({ children }) => {
       };
 
       blogPlanService.subscribeNotifications((event) => {
+        if (event?.event === 'connected') {
+          console.log('[SSE] connection established');
+          attempt = 0;
+          setConnected(true);
+          return;
+        }
         if (!event || event.event !== 'notification') return;
         attempt = 0;
         const payload = event.data;
@@ -112,7 +118,7 @@ export const NotificationProvider = ({ children }) => {
       })
         .then(() => {
           if (watchdog) clearTimeout(watchdog);
-          if (alive && controller === ctrl) { setConnected(false); console.warn('[SSE] stream closed, scheduling reconnect'); scheduleReconnect(); }
+          if (alive && controller === ctrl) { setConnected(false); console.warn('[SSE] connection closed, scheduling reconnect'); scheduleReconnect(); }
         })
         .catch((err) => {
           if (watchdog) clearTimeout(watchdog);
@@ -126,12 +132,18 @@ export const NotificationProvider = ({ children }) => {
             return;
           }
           setConnected(false);
-          console.error('[SSE] stream error, scheduling reconnect:', err?.code, err?.message, err?.response?.status);
+          console.error('[SSE] connection failed, scheduling reconnect:', err?.code, err?.message, err?.response?.status);
           scheduleReconnect();
         });
     };
 
     const onTokenRefresh = () => { if (alive && isLoggedInRef.current) { console.log('[SSE] token refreshed, reconnecting'); scheduleReconnect(true); } };
+    const onLogin = () => {
+      if (!alive || !authService.isLoggedIn()) return;
+      isLoggedInRef.current = true;
+      console.log('[SSE] login successful, connecting');
+      scheduleReconnect(true);
+    };
     const onOnline = () => { if (alive && isLoggedInRef.current) { console.log('[SSE] network online, reconnecting'); scheduleReconnect(true); } };
     const onVisibility = () => { if (alive && isLoggedInRef.current && document.visibilityState === 'visible') { console.log('[SSE] tab visible, reconnecting'); scheduleReconnect(true); } };
     const onLogout = () => {
@@ -145,12 +157,15 @@ export const NotificationProvider = ({ children }) => {
     };
 
     // 首次登录判定
-    isLoggedInRef.current = !!authService.getLocalUserInfo();
+    // The access token is authoritative. user_info is merely a UI cache and
+    // can be absent while session restoration is still in progress.
+    isLoggedInRef.current = authService.isLoggedIn();
     if (isLoggedInRef.current) {
       connect();
     }
 
     window.addEventListener('auth:token-refreshed', onTokenRefresh);
+    window.addEventListener('auth:login', onLogin);
     window.addEventListener('online', onOnline);
     document.addEventListener('visibilitychange', onVisibility);
     window.addEventListener('auth:logout', onLogout);
@@ -158,6 +173,7 @@ export const NotificationProvider = ({ children }) => {
     return () => {
       alive = false;
       window.removeEventListener('auth:token-refreshed', onTokenRefresh);
+      window.removeEventListener('auth:login', onLogin);
       window.removeEventListener('online', onOnline);
       document.removeEventListener('visibilitychange', onVisibility);
       window.removeEventListener('auth:logout', onLogout);

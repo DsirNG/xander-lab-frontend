@@ -3,6 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { Bell, CheckCheck } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useNotifications } from '@features/blog/context/useNotifications';
+import { blogPlanService } from '@features/blog/services/blogPlanService';
+import { authService } from '@features/auth/services/authService';
 import { useToast } from '@/hooks/useToast';
 
 /**
@@ -15,7 +17,9 @@ const NotificationBell = () => {
   const toast = useToast();
   const { notifications, unread, loading, load, markAll } = useNotifications();
   const [open, setOpen] = useState(false);
+  const [broadcasting, setBroadcasting] = useState(false);
   const boxRef = useRef(null);
+  const isAdmin = authService.getLocalUserInfo()?.role === 'ADMIN';
 
   const toggleOpen = () => {
     const next = !open;
@@ -33,6 +37,18 @@ const NotificationBell = () => {
   const handleMarkAll = async () => {
     await markAll();
     toast.success(t('notifications.markedAll'));
+  };
+
+  const handleTestBroadcast = async () => {
+    setBroadcasting(true);
+    try {
+      const recipients = await blogPlanService.testSseBroadcast();
+      toast.success(`SSE 测试广播已发送（${recipients} 条连接）`);
+    } catch {
+      toast.error('SSE 测试广播发送失败');
+    } finally {
+      setBroadcasting(false);
+    }
   };
 
   const iconBadge = unread > 0
@@ -61,6 +77,11 @@ const NotificationBell = () => {
             {unread > 0 && (
               <button onClick={handleMarkAll} className="inline-flex items-center gap-1 text-xs text-accent hover:underline">
                 <CheckCheck className="h-3 w-3" /> {t('notifications.markAll')}
+              </button>
+            )}
+            {isAdmin && (
+              <button onClick={handleTestBroadcast} disabled={broadcasting} className="text-xs text-ink-secondary hover:text-accent disabled:opacity-50">
+                {broadcasting ? '广播中…' : '测试 SSE 广播'}
               </button>
             )}
           </div>
