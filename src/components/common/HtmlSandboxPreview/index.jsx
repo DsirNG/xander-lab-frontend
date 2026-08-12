@@ -49,6 +49,47 @@ const FALLBACK_INJECTION = `
   }
   setTimeout(announce, 300);
 })();
+(function () {
+  var scheduled = false;
+  function describe(element) {
+    if (!element || !element.tagName) return null;
+    return element.tagName.toLowerCase()
+      + (element.id ? '#' + element.id : '')
+      + (element.className && typeof element.className === 'string'
+        ? '.' + element.className.trim().replace(/\\s+/g, '.') : '');
+  }
+  function report(eventName, target) {
+    var scrollingElement = document.scrollingElement;
+    var payload = {
+      type: '__sandboxDebug',
+      event: eventName,
+      hash: location.hash,
+      scrollY: window.scrollY,
+      scrollTop: scrollingElement ? scrollingElement.scrollTop : null,
+      activeElement: describe(document.activeElement),
+      target: describe(target),
+      viewportHeight: window.innerHeight,
+      documentHeight: document.documentElement.scrollHeight
+    };
+    try { parent.postMessage(payload, '*'); } catch (e) {}
+  }
+  document.addEventListener('click', function (event) {
+    var link = event.target && event.target.closest ? event.target.closest('a[href]') : null;
+    if (link) report('anchor-click:' + link.getAttribute('href'), link);
+  }, true);
+  document.addEventListener('focusin', function (event) { report('focusin', event.target); }, true);
+  window.addEventListener('hashchange', function () { report('hashchange'); });
+  window.addEventListener('popstate', function () { report('popstate'); });
+  window.addEventListener('scroll', function () {
+    if (scheduled) return;
+    scheduled = true;
+    requestAnimationFrame(function () {
+      scheduled = false;
+      report('scroll');
+    });
+  }, { passive: true });
+  window.addEventListener('load', function () { report('load'); });
+})();
 </script>`;
 
 const buildSvgSkeleton = (raw) => `<!DOCTYPE html>
@@ -172,19 +213,43 @@ const HtmlSandboxPreview = ({
     ), [minHeight, maxHeight]);
 
     const handleMessage = useCallback((event) => {
-        if (useFallback || !pageUrl) return;
-        let expectedOrigin = null;
-        try {
-            expectedOrigin = new URL(pageUrl).origin;
-        } catch {
+        if (event.source !== frameRef.current?.contentWindow) return;
+        if (!useFallback && pageUrl) {
+            let expectedOrigin = null;
+            try {
+                expectedOrigin = new URL(pageUrl).origin;
+            } catch {
+                return;
+            }
+            if (event.origin !== expectedOrigin) return;
+        } else if (event.origin !== 'null') {
             return;
         }
-        // Only trust height reports from the exact hosted page origin.
-        if (event.origin !== expectedOrigin) return;
+
+        if (event.data?.type === '__sandboxDebug') {
+            const frameRect = frameRef.current?.getBoundingClientRect();
+            console.debug('[HtmlSandboxPreview]', {
+                mode: useFallback ? 'srcdoc-fallback' : 'hosted',
+                hostScrollY: window.scrollY,
+                frameTop: frameRect?.top ?? null,
+                frameHeight: frameRect?.height ?? null,
+                ...event.data,
+            });
+            return;
+        }
+
+        if (event.data?.type !== '__sandboxHeight') return;
         const height = event.data?.height;
         if (typeof height !== 'number' || !Number.isFinite(height)) return;
-        setContentHeight(clampHeight(height));
-    }, [useFallback, pageUrl, clampHeight]);
+        const nextHeight = clampHeight(height);
+        console.debug('[HtmlSandboxPreview] height', {
+            reportedHeight: height,
+            appliedHeight: nextHeight,
+            previousHeight: contentHeight,
+            hostScrollY: window.scrollY,
+        });
+        setContentHeight(nextHeight);
+    }, [useFallback, pageUrl, clampHeight, contentHeight]);
 
     useEffect(() => {
         window.addEventListener('message', handleMessage);
