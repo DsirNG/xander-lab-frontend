@@ -26,6 +26,7 @@ const hasOpeningHtml = (raw) => /<html[\s>]/i.test(raw);
  */
 const FALLBACK_INJECTION = `
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; base-uri 'none'; form-action 'none'">
+<style>html, body { overscroll-behavior: contain; }</style>
 <script>
 (function () {
   history.pushState = history.replaceState = function (state, title, url) {
