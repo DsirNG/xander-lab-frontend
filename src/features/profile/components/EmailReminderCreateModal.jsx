@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import CustomSelect from '@components/common/CustomSelect';
 import TimezoneSelect from '@components/common/TimezoneSelect';
+import TimeInput from '@components/common/TimeInput';
 import { useToast } from '@hooks/useToast';
 import { emailReminderService } from '../services/emailReminderService';
 import {
@@ -487,13 +488,12 @@ const EmailReminderCreateModal = ({ isOpen, onClose, onCreated }) => {
                                                     className="relative h-9 w-full min-w-0 cursor-pointer rounded-lg border border-border bg-canvas px-2.5 text-xs font-medium text-ink-secondary outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/10 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-0"
                                                 />
                                             ) : (
-                                                <input
-                                                    type="time"
+                                                <TimeInput
+                                                    size="sm"
                                                     required
+                                                    openOnClick
                                                     value={form.sendTime}
                                                     onChange={updateField('sendTime')}
-                                                    onClick={openDateTimePicker}
-                                                    className="relative h-9 w-full min-w-0 cursor-pointer rounded-lg border border-border bg-canvas px-2.5 text-xs font-medium text-ink-secondary outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/10 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-0"
                                                 />
                                             )}
                                         </label>

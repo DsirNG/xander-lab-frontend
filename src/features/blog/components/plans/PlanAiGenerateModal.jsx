@@ -3,6 +3,9 @@ import { useTranslation } from 'react-i18next';
 import { CalendarDays, Loader2, Sparkles } from 'lucide-react';
 import Modal from '@components/common/Modal';
 import TimezoneSelect from '@components/common/TimezoneSelect';
+import TimeInput from '@components/common/TimeInput';
+import FormField from '@components/common/FormField';
+import { formInputCls } from '@components/common/formStyles';
 import { blogPlanService } from '../../services/blogPlanService';
 import { useToast } from '@/hooks/useToast';
 
@@ -18,9 +21,6 @@ const initialForm = () => ({
   audience: '',
   tone: '',
 });
-
-const inputCls = 'w-full rounded-xl border border-border bg-canvas px-3 py-2 text-sm text-ink placeholder:text-ink-faint focus:outline-none focus:ring-2 focus:ring-accent/40';
-const labelCls = 'block text-xs font-medium text-ink-secondary mb-1';
 
 /**
  * AI 生成计划：按主题方向 + 天数，生成 N 个一次性计划，
@@ -110,48 +110,42 @@ const PlanAiGenerateModal = ({ isOpen, onClose, onSaved }) => {
       <div className="space-y-4">
         <p className="text-xs text-ink-faint">{t('blogPlans.aiGenerateDesc')}</p>
 
-        <div>
-          <label className={labelCls}>{t('blogPlans.aiSeed')}</label>
-          <input className={inputCls} value={form.topic} maxLength={500}
+        <FormField label={t('blogPlans.aiSeed')}>
+          <input className={formInputCls} value={form.topic} maxLength={500}
             onChange={(e) => setForm({ ...form, topic: e.target.value })}
             placeholder={t('blogPlans.aiSeedPlaceholder')} />
-        </div>
+        </FormField>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-          <div>
-            <label className={labelCls}>{t('blogPlans.days')}</label>
-            <input type="number" min="1" max={MAX_DAYS} className={inputCls}
+          <FormField label={t('blogPlans.days')}>
+            <input type="number" min="1" max={MAX_DAYS} className={formInputCls}
               value={form.days}
               onChange={(e) => setForm({ ...form, days: Math.min(MAX_DAYS, Math.max(1, Number(e.target.value) || 1)) })} />
-          </div>
-          <div>
-            <label className={labelCls}>{t('blogPlans.triggerTime')}</label>
-            <input type="time" step="60" className={inputCls} value={form.time}
+          </FormField>
+          <FormField label={t('blogPlans.triggerTime')}>
+            <TimeInput size="sm" value={form.time}
               onChange={(e) => setForm({ ...form, time: e.target.value })} />
-          </div>
-          <div>
-            <label className={labelCls}>{t('blogPlans.timezone')}</label>
+          </FormField>
+          <FormField label={t('blogPlans.timezone')}>
             <TimezoneSelect
               size="sm"
               value={form.timezone}
               onChange={(value) => setForm({ ...form, timezone: value })}
             />
-          </div>
+          </FormField>
         </div>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <div>
-            <label className={labelCls}>{t('blogPlans.audience')}</label>
-            <input className={inputCls} value={form.audience} maxLength={120}
+          <FormField label={t('blogPlans.audience')}>
+            <input className={formInputCls} value={form.audience} maxLength={120}
               onChange={(e) => setForm({ ...form, audience: e.target.value })}
               placeholder={t('blogPlans.audiencePlaceholder')} />
-          </div>
-          <div>
-            <label className={labelCls}>{t('blogPlans.tone')}</label>
-            <input className={inputCls} value={form.tone} maxLength={60}
+          </FormField>
+          <FormField label={t('blogPlans.tone')}>
+            <input className={formInputCls} value={form.tone} maxLength={60}
               onChange={(e) => setForm({ ...form, tone: e.target.value })}
               placeholder={t('blogPlans.tonePlaceholder')} />
-          </div>
+          </FormField>
         </div>
 
         <label className="flex items-center gap-2 text-sm text-ink-secondary">

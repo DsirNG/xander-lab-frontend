@@ -3,6 +3,9 @@ import { useTranslation } from 'react-i18next';
 import { Loader2 } from 'lucide-react';
 import Modal from '@components/common/Modal';
 import TimezoneSelect from '@components/common/TimezoneSelect';
+import TimeInput from '@components/common/TimeInput';
+import FormField from '@components/common/FormField';
+import { formInputCls } from '@components/common/formStyles';
 import { blogPlanService } from '../../services/blogPlanService';
 import { useToast } from '@/hooks/useToast';
 
@@ -16,9 +19,6 @@ const initialForm = () => ({
   audience: '',
   tone: '',
 });
-
-const inputCls = 'w-full rounded-xl border border-border bg-canvas px-3 py-2 text-sm text-ink placeholder:text-ink-faint focus:outline-none focus:ring-2 focus:ring-accent/40';
-const labelCls = 'block text-xs font-medium text-ink-secondary mb-1';
 
 /**
  * 自定义计划：单主题 + 每日单触发时间，每天 AI 自动生成一篇不重复的文章
@@ -105,43 +105,37 @@ const PlanFormModal = ({ isOpen, plan, onClose, onSaved }) => {
       footer={footer}
     >
       <div className="space-y-4">
-        <div>
-          <label className={labelCls}>{t('blogPlans.topic')}</label>
-          <input className={inputCls} value={form.topic} maxLength={500}
+        <FormField label={t('blogPlans.topic')} hint={t('blogPlans.customDailyHint')}>
+          <input className={formInputCls} value={form.topic} maxLength={500}
             onChange={(e) => setForm({ ...form, topic: e.target.value })}
             placeholder={t('blogPlans.topicPlaceholder')} />
-          <p className="mt-1 text-xs text-ink-faint">{t('blogPlans.customDailyHint')}</p>
-        </div>
+        </FormField>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <div>
-            <label className={labelCls}>{t('blogPlans.triggerTime')}</label>
-            <input type="time" step="60" className={inputCls} value={form.triggerTime}
+          <FormField label={t('blogPlans.triggerTime')}>
+            <TimeInput size="sm" value={form.triggerTime}
               onChange={(e) => setForm({ ...form, triggerTime: e.target.value })} />
-          </div>
-          <div>
-            <label className={labelCls}>{t('blogPlans.timezone')}</label>
+          </FormField>
+          <FormField label={t('blogPlans.timezone')}>
             <TimezoneSelect
               size="sm"
               value={form.timezone}
               onChange={(value) => setForm({ ...form, timezone: value })}
             />
-          </div>
+          </FormField>
         </div>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <div>
-            <label className={labelCls}>{t('blogPlans.audience')}</label>
-            <input className={inputCls} value={form.audience} maxLength={120}
+          <FormField label={t('blogPlans.audience')}>
+            <input className={formInputCls} value={form.audience} maxLength={120}
               onChange={(e) => setForm({ ...form, audience: e.target.value })}
               placeholder={t('blogPlans.audiencePlaceholder')} />
-          </div>
-          <div>
-            <label className={labelCls}>{t('blogPlans.tone')}</label>
-            <input className={inputCls} value={form.tone} maxLength={60}
+          </FormField>
+          <FormField label={t('blogPlans.tone')}>
+            <input className={formInputCls} value={form.tone} maxLength={60}
               onChange={(e) => setForm({ ...form, tone: e.target.value })}
               placeholder={t('blogPlans.tonePlaceholder')} />
-          </div>
+          </FormField>
         </div>
 
         <label className="flex items-center gap-2 text-sm text-ink-secondary">
