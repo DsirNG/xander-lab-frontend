@@ -212,7 +212,7 @@ const BlogAgent = () => {
     setPreviewOpen(false);
     setSelectedResultId(null);
     setSelectedVersionId(null);
-    navigate('/workspace/agent', { replace: true });
+    navigate('/workspace/blog-tool', { replace: true });
   };
 
   const handleSelectResult = () => {
@@ -240,7 +240,7 @@ const BlogAgent = () => {
     <div className="flex h-dvh flex-col bg-surface text-ink">
       <AgentHeader
         t={t}
-        onBack={() => navigate('/workspace/agent')}
+        onBack={() => navigate('/workspace/blog-tool')}
         onNewTask={handleNewTask}
         onOpenSessions={() => setMobileSessionsOpen(true)}
       />
@@ -254,7 +254,7 @@ const BlogAgent = () => {
             activeId={taskId}
             loading={sessionsLoading}
             disableNew={isRunning}
-            onSelect={(id) => navigate(`/workspace/agent/${id}`)}
+            onSelect={(id) => navigate(`/workspace/blog-tool/${id}`)}
             onNew={handleNewTask}
           />
           {mobileSessionsOpen && (
@@ -267,7 +267,7 @@ const BlogAgent = () => {
                 disableNew={isRunning}
                 onSelect={(id) => {
                   setMobileSessionsOpen(false);
-                  navigate(`/workspace/agent/${id}`);
+                  navigate(`/workspace/blog-tool/${id}`);
                 }}
                 onNew={() => {
                   setMobileSessionsOpen(false);

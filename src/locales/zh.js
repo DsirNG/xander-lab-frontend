@@ -79,16 +79,28 @@ export default {
     media: { insertImage: '插入图片', dropImage: '拖放或选择图片 / GIF，上传后插入到光标位置', uploadingImage: '正在上传', imageInserted: '图片已插入正文', imageUploadFailed: '图片上传失败，请重试', invalidImage: '请选择图片或 GIF 文件', imageTooLarge: '图片大小不能超过 10MB', altText: '图片说明（可访问性）', addToArticle: '插入正文', libraryTitle: '插入图片', uploadImage: '上传图片', uploadSuccess: '图片已上传到素材库', searchPlaceholder: '搜索图片名称', scopes: { recent: '最近上传', mine: '我的图片', gif: 'GIF' }, emptyTitle: '还没有可用图片', emptyHint: '上传一张图片后会保存在你的素材库中', selectHint: '选择一张图片查看详情', selectedCount: '已选择 {{count}} 张图片', cancel: '取消', insertAtCursor: '插入到当前位置' },
     editor: { toolbar: '写作工具', addBlock: '添加内容块', text: '文本', h1: 'H1', h2: 'H2', todo: '待办', list: '列表', quote: '引用', code: '代码', insertContent: '插入内容', imageGif: '图片 / GIF', video: '视频（即将支持）', divider: '分割线', table: '表格', codeBlock: '代码块', quoteBlock: '引用块' },
     agent: {
-      title: '博客智能体', back: '返回博客', headline: '把想法变成可发布的知识博客',
-      description: '输入一个主题或一篇日记。智能体会联网调研、写作并审校，给出带来源的完整文章。',
+      title: '博客生成助手', back: '返回博客', headline: '把想法变成可发布的知识博客',
+      description: '输入一个主题或一篇日记。博客生成助手会联网调研、写作并审校，给出带来源的完整文章。',
       inputLabel: '主题或日记', inputPlaceholder: '例如：最近我开始用 AI 写代码，效率更高了，但我担心自己理解代码的能力在下降……',
       inputType: '输入类型', audience: '目标读者', tone: '写作语气', defaultAudience: '对这个主题感兴趣的读者', defaultTone: '清晰、真诚、可操作',
-      generate: '调研并写作', running: '正在调研和写作…', waiting: '等待你的输入', ready: '等待审阅', failed: '智能体未能完成这次任务', complete: '文章已生成，可开始审阅',
-      workflow: '智能体工作流', guardrail: '个人经历始终标注为作者经历；外部事实必须可追溯，系统绝不会自动公开发布。',
+      generate: '调研并写作', running: '正在调研和写作…', waiting: '等待你的输入', ready: '等待审阅', failed: '博客生成助手未能完成这次任务', complete: '文章已生成，可开始审阅',
+      workflow: '博客生成助手工作流', guardrail: '个人经历始终标注为作者经历；外部事实必须可追溯，系统绝不会自动公开发布。',
       stages: { analyze: '确定文章角度', research: '调研与核验', write: '撰写完整文章', illustrate: '生成知识插图', review: '发布前审校' },
       stageDescriptions: { analyze: '识别读者、观点和需要补充的证据。', research: '联网核验文章中的外部事实。', write: '生成完整的 Markdown 知识博客。', illustrate: '按需生成插图并保存到你的素材库。', review: '检查证据、表达和发布状态。' },
-      article: '生成的文章', toDraft: '进入编辑器', draftCreated: '已创建草稿，现在可以编辑并发布。', sources: '调研来源', noSources: '这篇文章未保留外部来源。', review: '编辑审校', reviewPending: '智能体完成后会显示审校结果。', inputRequired: '请先输入主题或日记。', contentFocus: '内容边界', mustCover: '文章主干', relatedExpansion: '直接扩展', outOfScope: '不主动扩展', knowledgeGraph: '知识关系图谱', illustrations: '知识插图', illustrationStatuses: { running: '正在生成并保存插图。', complete: '插图已生成并插入文章，同时保存到你的素材库。', partial: '部分插图已生成，其余插图可以稍后补充。', failed: '插图生成失败，文章内容仍可正常审阅。', disabled: '尚未配置图片模型，本次已跳过插图。', none: '智能体判断这篇文章不需要额外插图。' },
-      processing: '处理中 {{duration}}', processed: '已处理 {{duration}}', processedDone: '已处理', processFailed: '处理失败', openPreview: '点击预览文章', previewEmpty: '选择生成的博客以预览', untitled: '未命名文章', newTask: '新任务', newConversation: '新建会话', conversations: '会话列表', noConversations: '还没有历史会话', restoring: '正在恢复智能体任务…', multiTurnHint: '继续输入修改要求，智能体会基于当前文章生成新版本。', revise: '继续修改', revisionComplete: '文章已按本轮要求更新', waitingForStage: '正在准备下一阶段…', inputLockedPlaceholder: '智能体处理中，请稍候', confirmPublish: '确认发布', viewArticle: '查看文章', showMeta: '显示调研与审校信息', hideMeta: '收起调研与审校信息'
+      article: '生成的文章', toDraft: '进入编辑器', draftCreated: '已创建草稿，现在可以编辑并发布。', sources: '调研来源', noSources: '这篇文章未保留外部来源。', review: '编辑审校', reviewPending: '博客生成助手完成后会显示审校结果。', inputRequired: '请先输入主题或日记。', contentFocus: '内容边界', mustCover: '文章主干', relatedExpansion: '直接扩展', outOfScope: '不主动扩展', knowledgeGraph: '知识关系图谱', illustrations: '知识插图', illustrationStatuses: { running: '正在生成并保存插图。', complete: '插图已生成并插入文章，同时保存到你的素材库。', partial: '部分插图已生成，其余插图可以稍后补充。', failed: '插图生成失败，文章内容仍可正常审阅。', disabled: '尚未配置图片模型，本次已跳过插图。', none: '博客生成助手判断这篇文章不需要额外插图。' },
+      processing: '处理中 {{duration}}', processed: '已处理 {{duration}}', processedDone: '已处理', processFailed: '处理失败', openPreview: '点击预览文章', previewEmpty: '选择生成的博客以预览', untitled: '未命名文章', newTask: '新任务', newConversation: '新建会话', conversations: '会话列表', noConversations: '还没有历史会话', restoring: '正在恢复博客生成任务…', multiTurnHint: '继续输入修改要求，博客生成助手会基于当前文章生成新版本。', revise: '继续修改', revisionComplete: '文章已按本轮要求更新', waitingForStage: '正在准备下一阶段…', inputLockedPlaceholder: '博客生成助手处理中，请稍候', confirmPublish: '确认发布', viewArticle: '查看文章', showMeta: '显示调研与审校信息', hideMeta: '收起调研与审校信息'
+    },
+    agentChat: {
+      title: '博客智能体', back: '返回工作台',
+      headline: '我是你的博客智能体，想做点什么？',
+      description: '我可以帮你写博客、查资料或处理其他任务。试试：「帮我写一篇关于 X 的博客」。',
+      inputPlaceholder: '告诉智能体你想做什么…',
+      inputLockedPlaceholder: '智能体执行中，请稍候',
+      send: '发送', running: '智能体执行中…', ready: '可以继续对话', failed: '本轮执行失败',
+      multiTurnHint: '继续提出要求，智能体会自动选择合适工具。',
+      inputRequired: '请先输入你想让智能体做什么。', sendFailed: '消息发送失败。', loadFailed: '对话加载失败。',
+      restoring: '正在恢复对话…', reconnecting: '连接已断开，正在重连…',
+      unknownTool: '工具', working: '处理中…', toolCalled: '已调用工具', toolResult: '工具返回结果'
     }
   },
   blogPlans: {

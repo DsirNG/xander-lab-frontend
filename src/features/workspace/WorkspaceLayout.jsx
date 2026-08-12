@@ -9,6 +9,7 @@ import {
   LogOut,
   Mail,
   NotebookPen,
+  PenLine,
   Send,
   Settings,
   Sparkles,
@@ -18,7 +19,8 @@ import { authService } from '@features/auth/services/authService';
 import ProfileModal from './components/ProfileModal';
 
 const MENU = [
-  { to: '/workspace/agent', icon: Bot, labelKey: 'blog.agent.title' },
+  { to: '/workspace/agent', icon: Bot, labelKey: 'blog.agentChat.title' },
+  { to: '/workspace/blog-tool', icon: PenLine, labelKey: 'blog.agent.title' },
   { to: '/workspace/publish', icon: Send, labelKey: 'blog.publish' },
   { to: '/workspace/plans', icon: CalendarClock, labelKey: 'nav.plans' },
   { to: '/workspace/blog-manage', icon: NotebookPen, labelKey: 'profile.blogManage.title' },

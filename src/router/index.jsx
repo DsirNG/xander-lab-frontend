@@ -27,6 +27,7 @@ const BlogDetail = React.lazy(() => import('@features/blog/pages/BlogDetail'));
 const BlogTags = React.lazy(() => import('@features/blog/pages/BlogTags'));
 const BlogPublish = React.lazy(() => import('@features/blog/pages/BlogPublish'));
 const BlogAgent = React.lazy(() => import('@features/blog/pages/BlogAgent'));
+const AgentChat = React.lazy(() => import('@features/agent/pages/AgentChat'));
 const BlogPlans = React.lazy(() => import('@features/blog/pages/BlogPlans'));
 const BlogPlanDetail = React.lazy(() => import('@features/blog/pages/BlogPlanDetail'));
 const LoginPage = React.lazy(() => import('@features/auth/pages/LoginPage'));
@@ -191,12 +192,22 @@ export const createRouter = () => {
       path: '/workspace/publish',
       element: <ProtectedPage page={<BlogPublish />} />,
     },
+    // 博客智能体（独立全屏对话页，进入后展开为完整创作界面）
     {
       path: '/workspace/agent',
+      element: <ProtectedPage page={<AgentChat />} />,
+    },
+    {
+      path: '/workspace/agent/:conversationId',
+      element: <ProtectedPage page={<AgentChat />} />,
+    },
+    // 博客生成助手（原博客智能体流水线，独立全屏页面）
+    {
+      path: '/workspace/blog-tool',
       element: <ProtectedPage page={<BlogAgent />} />,
     },
     {
-      path: '/workspace/agent/:taskId',
+      path: '/workspace/blog-tool/:taskId',
       element: <ProtectedPage page={<BlogAgent />} />,
     },
     // 工作室深层全屏页面（上传/编译器，独立于侧边栏布局）
