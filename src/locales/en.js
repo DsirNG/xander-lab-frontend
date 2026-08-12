@@ -416,7 +416,9 @@ export default {
       estimatedWait: 'Estimated wait: about {{wait}}s',
       connect: 'Connect CSDN',
       disconnect: 'Disconnect',
-      unavailable: 'CSDN authorization service is unavailable.'
+      unavailable: 'CSDN authorization service unavailable',
+      sessionExpired: 'CSDN session expired, please re-authorize to continue syncing',
+      reauthorize: 'Re-authorize CSDN'
     },
     emailReminders: {
       title: 'Scheduled Email',

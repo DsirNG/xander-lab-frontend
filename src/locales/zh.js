@@ -434,7 +434,9 @@ export default {
       estimatedWait: '预计等待约 {{wait}} 秒',
       connect: '连接 CSDN',
       disconnect: '断开连接',
-      unavailable: 'CSDN 授权服务暂不可用'
+      unavailable: 'CSDN 授权服务暂不可用',
+      sessionExpired: 'CSDN 登录已失效，请重新授权后继续同步',
+      reauthorize: '重新授权 CSDN'
     },
     emailReminders: {
       title: '定时邮箱',

@@ -408,7 +408,9 @@ export default {
       estimatedWait: 'Ước tính chờ khoảng {{wait}} giây',
       connect: 'Kết nối CSDN',
       disconnect: 'Ngắt kết nối',
-      unavailable: 'Dịch vụ ủy quyền CSDN không khả dụng'
+      unavailable: 'Dịch vụ ủy quyền CSDN không khả dụng',
+      sessionExpired: 'Phiên CSDN đã hết hạn, vui lòng cấp quyền lại để tiếp tục đồng bộ',
+      reauthorize: 'Cấp quyền lại CSDN'
     },
     emailReminders: {
       title: 'Email hẹn giờ',

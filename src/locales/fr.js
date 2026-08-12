@@ -408,7 +408,9 @@ export default {
       estimatedWait: 'Attente estimée : environ {{wait}} s',
       connect: 'Connecter CSDN',
       disconnect: 'Déconnecter',
-      unavailable: 'Service d\'autorisation CSDN indisponible.'
+      unavailable: 'Service d\'autorisation CSDN indisponible.',
+      sessionExpired: 'Session CSDN expirée, réautorisez pour continuer la synchronisation',
+      reauthorize: 'Réautoriser CSDN'
     },
     emailReminders: {
       title: 'E-mail programmé',

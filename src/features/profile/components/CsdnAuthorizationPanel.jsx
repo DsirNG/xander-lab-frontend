@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { CheckCircle2, Link2, LoaderCircle, QrCode, ShieldOff, Unplug } from 'lucide-react'
+import { CheckCircle2, Link2, LoaderCircle, QrCode, ShieldOff, TriangleAlert, Unplug } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import Modal from '@components/common/Modal'
 import { useToast } from '@hooks/useToast'
@@ -193,6 +193,7 @@ const CsdnAuthorizationPanel = () => {
 
   const loading = state === 'loading'
   const authorized = state === 'AUTHORIZED'
+  const expired = state === 'EXPIRED'
 
   const titleNode = (
     <div className="flex items-center gap-2">
@@ -215,6 +216,8 @@ const CsdnAuthorizationPanel = () => {
           <LoaderCircle className="h-5 w-5 animate-spin text-accent" />
         ) : authorized ? (
           <CheckCircle2 className="h-5 w-5 text-success" />
+        ) : expired ? (
+          <TriangleAlert className="h-5 w-5 text-warning" />
         ) : (
           <ShieldOff className="h-5 w-5 text-ink-faint" />
         )}
@@ -227,6 +230,10 @@ const CsdnAuthorizationPanel = () => {
         </div>
       )}
 
+      {!loading && expired && (
+        <p className="mt-4 text-caption font-semibold text-warning">{t('profile.csdn.sessionExpired')}</p>
+      )}
+
       {!loading && !authorized && state !== 'UNAVAILABLE' && (
         <button
           type="button"
@@ -235,11 +242,11 @@ const CsdnAuthorizationPanel = () => {
           className="mt-4 inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-2.5 text-sm font-bold text-white hover:bg-accent/90 disabled:opacity-50"
         >
           {busy ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <QrCode className="h-4 w-4" />}
-          {t('profile.csdn.connect')}
+          {expired ? t('profile.csdn.reauthorize') : t('profile.csdn.connect')}
         </button>
       )}
 
-      {!loading && authorized && (
+      {!loading && (authorized || expired) && (
         <button
           type="button"
           onClick={disconnect}

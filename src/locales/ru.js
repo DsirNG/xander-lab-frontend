@@ -408,7 +408,9 @@ export default {
       estimatedWait: 'Ожидание: около {{wait}} сек',
       connect: 'Подключить CSDN',
       disconnect: 'Отключить',
-      unavailable: 'Служба авторизации CSDN недоступна'
+      unavailable: 'Служба авторизации CSDN недоступна',
+      sessionExpired: 'Сеанс CSDN истёк, повторно авторизуйтесь, чтобы продолжить синхронизацию',
+      reauthorize: 'Повторно авторизовать CSDN'
     },
     emailReminders: {
       title: 'Отложенная почта',

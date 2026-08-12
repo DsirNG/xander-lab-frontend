@@ -408,7 +408,9 @@ export default {
       estimatedWait: '推定待ち時間：約 {{wait}} 秒',
       connect: 'CSDN に連携',
       disconnect: '連携解除',
-      unavailable: 'CSDN 認証サービスは利用できません'
+      unavailable: 'CSDN 認証サービスを利用できません',
+      sessionExpired: 'CSDN のログインが失効しました。同期を続けるには再認証してください',
+      reauthorize: 'CSDN を再認証'
     },
     emailReminders: {
       title: '予約メール',
