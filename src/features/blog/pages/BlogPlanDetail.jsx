@@ -107,8 +107,13 @@ const BlogPlanDetail = () => {
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
             <h1 className="truncate text-xl font-bold text-ink">{plan.topic}</h1>
-            <p className="mt-1 text-xs text-ink-faint">
-              {(plan.triggerTimes?.length > 0 ? plan.triggerTimes.join(' / ') : plan.triggerTime)} ({plan.timezone}) · {t('blogPlans.syncCsdn')}: {plan.syncCsdn ? t('blogPlans.yes') : t('blogPlans.no')}
+            <p className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-ink-faint">
+              <span>{(plan.triggerTimes?.length > 0 ? plan.triggerTimes.join(' / ') : plan.triggerTime)} ({plan.timezone}) · {t('blogPlans.syncCsdn')}: {plan.syncCsdn ? t('blogPlans.yes') : t('blogPlans.no')}</span>
+              {plan.runOnce && (
+                <span className="rounded-full bg-indigo-100 px-2 py-0.5 text-xs font-medium text-indigo-600 dark:bg-indigo-900/40 dark:text-indigo-300">
+                  {t('blogPlans.oneShot')}
+                </span>
+              )}
             </p>
           </div>
           <PlanStatusBadge status={plan.status} />
@@ -133,11 +138,13 @@ const BlogPlanDetail = () => {
         <div className="mt-4 flex flex-wrap items-center gap-2">
           {(plan.status === PLAN_STATUS.ACTIVE || plan.status === PLAN_STATUS.PAUSED) && (
             <>
-              <button onClick={() => actions.trigger(plan)} disabled={!!actions.busyId || plan.status === PLAN_STATUS.RUNNING}
-                className="inline-flex items-center gap-1.5 rounded-xl bg-accent px-3 py-1.5 text-xs font-bold text-white hover:opacity-90 disabled:opacity-50">
-                {actions.busyId === plan.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Zap className="h-3.5 w-3.5" />}
-                {t('blogPlans.triggerNow')}
-              </button>
+              {!plan.runOnce && (
+                <button onClick={() => actions.trigger(plan)} disabled={!!actions.busyId || plan.status === PLAN_STATUS.RUNNING}
+                  className="inline-flex items-center gap-1.5 rounded-xl bg-accent px-3 py-1.5 text-xs font-bold text-white hover:opacity-90 disabled:opacity-50">
+                  {actions.busyId === plan.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Zap className="h-3.5 w-3.5" />}
+                  {t('blogPlans.triggerNow')}
+                </button>
+              )}
               {plan.status === PLAN_STATUS.ACTIVE ? (
                 <button onClick={() => actions.pause(plan)} disabled={!!actions.busyId}
                   className="rounded-xl border border-border px-3 py-1.5 text-xs text-ink-secondary hover:bg-surface-muted disabled:opacity-50">
@@ -149,10 +156,12 @@ const BlogPlanDetail = () => {
                   {t('blogPlans.resume')}
                 </button>
               )}
-              <button onClick={() => setFormOpen(true)} disabled={!!actions.busyId}
-                className="inline-flex items-center gap-1 rounded-xl border border-border px-3 py-1.5 text-xs text-ink-secondary hover:bg-surface-muted disabled:opacity-50">
-                <Pencil className="h-3 w-3" /> {t('blogPlans.edit')}
-              </button>
+              {!plan.runOnce && (
+                <button onClick={() => setFormOpen(true)} disabled={!!actions.busyId}
+                  className="inline-flex items-center gap-1 rounded-xl border border-border px-3 py-1.5 text-xs text-ink-secondary hover:bg-surface-muted disabled:opacity-50">
+                  <Pencil className="h-3 w-3" /> {t('blogPlans.edit')}
+                </button>
+              )}
             </>
           )}
           {plan.status !== PLAN_STATUS.RUNNING && (
@@ -161,7 +170,8 @@ const BlogPlanDetail = () => {
               <Trash2 className="h-3 w-3" /> {t('blogPlans.delete')}
             </button>
           )}
-          {plan.status !== PLAN_STATUS.RUNNING && plan.status !== PLAN_STATUS.CANCELLED && (
+          {plan.status !== PLAN_STATUS.RUNNING && plan.status !== PLAN_STATUS.CANCELLED
+            && plan.status !== PLAN_STATUS.FINISHED && (
             <button onClick={() => actions.cancel(plan)} disabled={!!actions.busyId}
               className="rounded-xl border border-border px-3 py-1.5 text-xs text-ink-faint hover:bg-surface-muted disabled:opacity-50">
               {t('blogPlans.cancel')}

@@ -11,6 +11,7 @@ export const PLAN_STATUS = {
   RUNNING: 'RUNNING',
   PAUSED: 'PAUSED',
   CANCELLED: 'CANCELLED',
+  FINISHED: 'FINISHED',
 };
 
 export const RUN_STATUS = {
@@ -42,6 +43,9 @@ export const blogPlanService = {
   /** 请求智能体将种子主题细化为多日主题队列（返回去重后的主题列表） */
   generateTopics: (payload, config) =>
     post('/api/blog-plans/topics/generate', payload, config),
+  /** AI 生成计划：按主题方向 + 天数创建 N 个一次性计划，返回创建后的计划列表 */
+  aiGenerate: (payload, config) =>
+    post('/api/blog-plans/ai-generate', payload, config),
 
   /* ---------- 用户通知 ---------- */
   listNotifications: ({ page = 1, size = 20 } = {}, config) =>

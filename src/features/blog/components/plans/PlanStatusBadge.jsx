@@ -6,6 +6,7 @@ const STYLE = {
   [PLAN_STATUS.RUNNING]: 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300',
   [PLAN_STATUS.PAUSED]: 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300',
   [PLAN_STATUS.CANCELLED]: 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400',
+  [PLAN_STATUS.FINISHED]: 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300',
 };
 
 const LABEL_KEY = {
@@ -13,6 +14,7 @@ const LABEL_KEY = {
   [PLAN_STATUS.RUNNING]: 'blogPlans.statusRunning',
   [PLAN_STATUS.PAUSED]: 'blogPlans.statusPaused',
   [PLAN_STATUS.CANCELLED]: 'blogPlans.statusCancelled',
+  [PLAN_STATUS.FINISHED]: 'blogPlans.statusFinished',
 };
 
 /**
