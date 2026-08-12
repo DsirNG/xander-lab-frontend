@@ -14,6 +14,7 @@ import MainLayout from '@components/layouts/MainLayout';
 import BlogLayout from '@features/blog/layouts/BlogLayout';
 import RouteSEOLayout from '@components/seo/RouteSEOLayout';
 import { LazyPage, ProtectedPage } from './RouteElements';
+import LegacyBlogToolRedirect from './LegacyBlogToolRedirect';
 
 // Features (路由级懒加载)
 const HomePage = React.lazy(() => import('@features/home/pages/HomePage'));
@@ -26,7 +27,6 @@ const BlogHome = React.lazy(() => import('@features/blog/pages/BlogHome'));
 const BlogDetail = React.lazy(() => import('@features/blog/pages/BlogDetail'));
 const BlogTags = React.lazy(() => import('@features/blog/pages/BlogTags'));
 const BlogPublish = React.lazy(() => import('@features/blog/pages/BlogPublish'));
-const BlogAgent = React.lazy(() => import('@features/blog/pages/BlogAgent'));
 const AgentChat = React.lazy(() => import('@features/agent/pages/AgentChat'));
 const BlogPlans = React.lazy(() => import('@features/blog/pages/BlogPlans'));
 const BlogPlanDetail = React.lazy(() => import('@features/blog/pages/BlogPlanDetail'));
@@ -201,14 +201,14 @@ export const createRouter = () => {
       path: '/workspace/agent/:conversationId',
       element: <ProtectedPage page={<AgentChat />} />,
     },
-    // 博客生成助手（原博客智能体流水线，独立全屏页面）
+    // 旧博客生成助手入口仅保留历史兼容；生成能力现由 Dindor 工具调用。
     {
       path: '/workspace/blog-tool',
-      element: <ProtectedPage page={<BlogAgent />} />,
+      element: <ProtectedPage page={<LegacyBlogToolRedirect />} />,
     },
     {
       path: '/workspace/blog-tool/:taskId',
-      element: <ProtectedPage page={<BlogAgent />} />,
+      element: <ProtectedPage page={<LegacyBlogToolRedirect />} />,
     },
     // 工作室深层全屏页面（上传/编译器，独立于侧边栏布局）
     {

@@ -26,27 +26,61 @@ export const NotificationProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const [connected, setConnected] = useState(false);
   const isLoggedInRef = useRef(false);
-  const loadedRef = useRef(false);
+  const mountedRef = useRef(false);
+  const authGenerationRef = useRef(0);
+  const loadRequestRef = useRef({ id: 0, controller: null });
+
+  const invalidateLoad = useCallback(() => {
+    authGenerationRef.current += 1;
+    loadRequestRef.current.controller?.abort();
+    loadRequestRef.current = {
+      id: loadRequestRef.current.id + 1,
+      controller: null,
+    };
+  }, []);
 
   // 加载历史通知（登录态可用）
   const load = useCallback(async () => {
-    if (!isLoggedInRef.current) return;
+    if (!mountedRef.current || !isLoggedInRef.current) return;
+    loadRequestRef.current.controller?.abort();
+    const controller = new AbortController();
+    const requestId = loadRequestRef.current.id + 1;
+    const generation = authGenerationRef.current;
+    loadRequestRef.current = { id: requestId, controller };
+    const isCurrentRequest = () => (
+      mountedRef.current
+      && isLoggedInRef.current
+      && generation === authGenerationRef.current
+      && requestId === loadRequestRef.current.id
+      && loadRequestRef.current.controller === controller
+    );
     setLoading(true);
     try {
-      const data = await blogPlanService.listNotifications({ page: 1, size: 20 });
+      const data = await blogPlanService.listNotifications(
+        { page: 1, size: 20 },
+        { _silent: true, dedupe: false, signal: controller.signal },
+      );
+      if (!isCurrentRequest()) return;
       setNotifications(data?.records || []);
       setUnread(data?.unreadCount ?? 0);
-      loadedRef.current = true;
     } catch {
       // 静默失败，铃铛保持旧数据
     } finally {
-      setLoading(false);
+      if (isCurrentRequest()) {
+        loadRequestRef.current = { id: requestId, controller: null };
+        setLoading(false);
+      }
     }
   }, []);
 
   const markAll = useCallback(async () => {
+    if (!mountedRef.current || !isLoggedInRef.current) return;
+    const generation = authGenerationRef.current;
     try {
       await blogPlanService.markAllNotificationsRead();
+      if (!mountedRef.current
+        || !isLoggedInRef.current
+        || generation !== authGenerationRef.current) return;
       setUnread(0);
       setNotifications((list) => list.map((n) => ({ ...n, isRead: true })));
     } catch {
@@ -59,10 +93,12 @@ export const NotificationProvider = ({ children }) => {
     let alive = true;
     let controller = null;
     let retryTimer = null;
+    let watchdogTimer = null;
     let attempt = 0;
 
     const teardown = () => {
       if (retryTimer) { clearTimeout(retryTimer); retryTimer = null; }
+      if (watchdogTimer) { clearTimeout(watchdogTimer); watchdogTimer = null; }
       if (controller) { controller.abort(); controller = null; }
     };
 
@@ -84,20 +120,31 @@ export const NotificationProvider = ({ children }) => {
     const connect = () => {
       if (!alive || !isLoggedInRef.current) return;
       const ctrl = new AbortController();
+      const generation = authGenerationRef.current;
       controller = ctrl;
       console.log('[SSE] connection starting: /api/notifications/events');
       setConnected(false);
 
-      let watchdog = null;
       const armWatchdog = () => {
-        if (watchdog) clearTimeout(watchdog);
-        watchdog = setTimeout(() => {
+        if (watchdogTimer) clearTimeout(watchdogTimer);
+        watchdogTimer = setTimeout(() => {
           console.warn('[SSE] watchdog: no data for 90s, forcing reconnect');
           ctrl.abort();
         }, 90000);
       };
+      const isCurrentConnection = () => (
+        alive
+        && isLoggedInRef.current
+        && generation === authGenerationRef.current
+        && controller === ctrl
+      );
+
+      // Include connection setup in the timeout. A peer can accept the request
+      // without ever delivering the first progress event.
+      armWatchdog();
 
       blogPlanService.subscribeNotifications((event) => {
+        if (!isCurrentConnection()) return;
         if (event?.event === 'connected') {
           console.log('[SSE] connection established');
           attempt = 0;
@@ -114,16 +161,18 @@ export const NotificationProvider = ({ children }) => {
       }, {
         signal: ctrl.signal,
         _silent: true,
-        onProgress: () => { armWatchdog(); },
+        onProgress: () => { if (isCurrentConnection()) armWatchdog(); },
       })
         .then(() => {
-          if (watchdog) clearTimeout(watchdog);
-          if (alive && controller === ctrl) { setConnected(false); console.warn('[SSE] connection closed, scheduling reconnect'); scheduleReconnect(); }
+          if (!isCurrentConnection()) return;
+          if (watchdogTimer) { clearTimeout(watchdogTimer); watchdogTimer = null; }
+          setConnected(false);
+          console.warn('[SSE] connection closed, scheduling reconnect');
+          scheduleReconnect();
         })
         .catch((err) => {
-          if (watchdog) clearTimeout(watchdog);
-          if (!alive) return;
-          if (controller !== ctrl) return;
+          if (!isCurrentConnection()) return;
+          if (watchdogTimer) { clearTimeout(watchdogTimer); watchdogTimer = null; }
           const aborted = err?.code === 'ERR_CANCELED' || err?.isCancelled;
           if (aborted) {
             setConnected(false);
@@ -140,7 +189,11 @@ export const NotificationProvider = ({ children }) => {
     const onTokenRefresh = () => { if (alive && isLoggedInRef.current) { console.log('[SSE] token refreshed, reconnecting'); scheduleReconnect(true); } };
     const onLogin = () => {
       if (!alive || !authService.isLoggedIn()) return;
+      invalidateLoad();
       isLoggedInRef.current = true;
+      setLoading(false);
+      setUnread(0);
+      setNotifications([]);
       console.log('[SSE] login successful, connecting');
       scheduleReconnect(true);
     };
@@ -148,9 +201,11 @@ export const NotificationProvider = ({ children }) => {
     const onVisibility = () => { if (alive && isLoggedInRef.current && document.visibilityState === 'visible') { console.log('[SSE] tab visible, reconnecting'); scheduleReconnect(true); } };
     const onLogout = () => {
       console.log('[SSE] logged out, disconnecting');
-      alive = false;
-      teardown();
       isLoggedInRef.current = false;
+      invalidateLoad();
+      teardown();
+      attempt = 0;
+      setLoading(false);
       setConnected(false);
       setUnread(0);
       setNotifications([]);
@@ -159,6 +214,7 @@ export const NotificationProvider = ({ children }) => {
     // 首次登录判定
     // The access token is authoritative. user_info is merely a UI cache and
     // can be absent while session restoration is still in progress.
+    mountedRef.current = true;
     isLoggedInRef.current = authService.isLoggedIn();
     if (isLoggedInRef.current) {
       connect();
@@ -172,6 +228,9 @@ export const NotificationProvider = ({ children }) => {
 
     return () => {
       alive = false;
+      mountedRef.current = false;
+      isLoggedInRef.current = false;
+      invalidateLoad();
       window.removeEventListener('auth:token-refreshed', onTokenRefresh);
       window.removeEventListener('auth:login', onLogin);
       window.removeEventListener('online', onOnline);
@@ -179,7 +238,7 @@ export const NotificationProvider = ({ children }) => {
       window.removeEventListener('auth:logout', onLogout);
       teardown();
     };
-  }, [toast]);
+  }, [invalidateLoad, toast]);
 
   const value = useMemo(() => ({
     notifications,

@@ -20,39 +20,111 @@ import AuthSessionContext from './authSessionContextValue';
 const SESSION_CHECK_INTERVAL_MS = 5 * 60 * 1000;
 
 export const AuthSessionProvider = ({ children }) => {
-  const [userInfo, setUserInfo] = useState(() => authService.getLocalUserInfo());
-  const checkingRef = useRef(false);
+  const [userInfo, setUserInfo] = useState(() => (
+    authService.hasSessionCredentials() ? authService.getLocalUserInfo() : null
+  ));
+  const [sessionStatus, setSessionStatus] = useState(() => (
+    authService.hasSessionCredentials() ? 'checking' : 'anonymous'
+  ));
+  const mountedRef = useRef(false);
+  const sessionGenerationRef = useRef(0);
+  const refreshPromiseRef = useRef(null);
+  const refreshQueuedRef = useRef(false);
+  const refreshControllerRef = useRef(null);
 
-  const refresh = useCallback(async () => {
-    if (checkingRef.current) return;
-    if (!authService.isLoggedIn()) {
-      setUserInfo(null);
-      return;
+  const refresh = useCallback(() => {
+    // Login and token-refresh events can arrive while /me is already pending.
+    // Queue one fresh validation instead of dropping the newer credentials.
+    if (refreshPromiseRef.current) {
+      refreshQueuedRef.current = true;
+      return refreshPromiseRef.current;
     }
-    checkingRef.current = true;
-    try {
-      const info = await authService.checkCurrentSession();
-      if (info) setUserInfo(info);
-    } catch {
-      // 401/刷新失败已由 HTTP 拦截器统一处理（forceLoggedOut → auth:logout）
-    } finally {
-      checkingRef.current = false;
-    }
+
+    const run = async () => {
+      do {
+        refreshQueuedRef.current = false;
+        const generation = sessionGenerationRef.current;
+
+        if (!authService.hasSessionCredentials()) {
+          if (mountedRef.current && generation === sessionGenerationRef.current) {
+            setUserInfo(null);
+            setSessionStatus('anonymous');
+          }
+          continue;
+        }
+
+        const controller = new AbortController();
+        refreshControllerRef.current = controller;
+        try {
+          const info = await authService.checkCurrentSession({ signal: controller.signal });
+          // A logout/login/token rotation invalidates every earlier /me result.
+          if (!mountedRef.current || generation !== sessionGenerationRef.current) continue;
+          if (!authService.hasSessionCredentials() || !info) {
+            authService.setLocalUserInfo(null);
+            setUserInfo(null);
+            setSessionStatus('anonymous');
+          } else {
+            // Persistence belongs inside the same generation fence as state.
+            authService.setLocalUserInfo(info);
+            setUserInfo(info);
+            setSessionStatus('authenticated');
+          }
+        } catch {
+          if (!mountedRef.current || generation !== sessionGenerationRef.current) continue;
+          // 401/刷新失败由 HTTP 层清理凭据并派发 auth:logout。
+          // 网络失败时保留此前已验证的状态；首次恢复仍停留 checking，
+          // 不能仅凭缓存 user_info 放行受保护路由。
+          if (!authService.hasSessionCredentials()) {
+            setUserInfo(null);
+            setSessionStatus('anonymous');
+          }
+        } finally {
+          if (refreshControllerRef.current === controller) {
+            refreshControllerRef.current = null;
+          }
+        }
+      } while (mountedRef.current && refreshQueuedRef.current);
+    };
+
+    const promise = run().finally(() => {
+      if (refreshPromiseRef.current === promise) refreshPromiseRef.current = null;
+    });
+    refreshPromiseRef.current = promise;
+    return promise;
   }, []);
 
   // 挂载时校验一次（替代原 SessionHealthCheck）
   useEffect(() => {
+    mountedRef.current = true;
     refresh();
+    return () => {
+      mountedRef.current = false;
+      sessionGenerationRef.current += 1;
+      refreshControllerRef.current?.abort();
+      refreshControllerRef.current = null;
+    };
   }, [refresh]);
 
   // 登录态下周期性复检 + 可见/聚焦/刷新事件触发复检
   useEffect(() => {
     const onLogin = () => {
+      sessionGenerationRef.current += 1;
+      refreshControllerRef.current?.abort();
       setUserInfo(authService.getLocalUserInfo());
+      setSessionStatus('checking');
       refresh();
     };
-    const onLogout = () => setUserInfo(null);
-    const onTokenRefresh = () => refresh();
+    const onLogout = () => {
+      sessionGenerationRef.current += 1;
+      refreshControllerRef.current?.abort();
+      authService.setLocalUserInfo(null);
+      setUserInfo(null);
+      setSessionStatus('anonymous');
+    };
+    const onTokenRefresh = () => {
+      sessionGenerationRef.current += 1;
+      refresh();
+    };
     const onVisible = () => {
       if (document.visibilityState === 'visible') refresh();
     };
@@ -80,9 +152,10 @@ export const AuthSessionProvider = ({ children }) => {
 
   const value = useMemo(() => ({
     userInfo,
-    isAuthenticated: !!userInfo,
+    sessionStatus,
+    isAuthenticated: sessionStatus === 'authenticated',
     refresh,
-  }), [userInfo, refresh]);
+  }), [userInfo, sessionStatus, refresh]);
 
   return (
     <AuthSessionContext.Provider value={value}>

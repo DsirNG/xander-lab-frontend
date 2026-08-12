@@ -26,6 +26,7 @@ import {
     getRetryDelay,
     shouldRetryRequest,
 } from './httpPolicy';
+import { createSseReader } from './sseReader';
 
 // ─────────────────────────────────────────────
 // 1. 常量 & 配置
@@ -51,7 +52,7 @@ const REFRESH_TOKEN_KEY = 'refresh_token';
 const USER_INFO_KEY = 'user_info';
 
 /** 刷新 Token 的接口路径（相对 baseURL） */
-const REFRESH_URL = '/auth/refresh';
+const REFRESH_URL = '/api/auth/refresh';
 
 /** 最大自动重试次数（网络错误 / 5xx） */
 
@@ -73,9 +74,11 @@ function showToast(type, message) {
 
 export const tokenStorage = {
     getToken: () => localStorage.getItem(TOKEN_KEY),
-    setToken: (token) => {
+    setToken: (token, { notify = true } = {}) => {
         localStorage.setItem(TOKEN_KEY, token);
-        window.dispatchEvent(new CustomEvent('auth:token-refreshed', { detail: { token } }));
+        if (notify) {
+            window.dispatchEvent(new CustomEvent('auth:token-refreshed', { detail: { token } }));
+        }
     },
     removeToken: () => localStorage.removeItem(TOKEN_KEY),
 
@@ -306,8 +309,11 @@ async function refreshAccessToken() {
         );
     }
     const { accessToken, refreshToken: newRefreshToken } = tokenData;
-    tokenStorage.setToken(accessToken);
+    // Rotate both credentials before notifying session observers so a queued
+    // /me validation never sees a half-updated token pair.
+    tokenStorage.setToken(accessToken, { notify: false });
     if (newRefreshToken) tokenStorage.setRefreshToken(newRefreshToken);
+    window.dispatchEvent(new CustomEvent('auth:token-refreshed', { detail: { token: accessToken } }));
     return accessToken;
 }
 
@@ -565,52 +571,6 @@ export function get(url, params, config) {
  */
 export function post(url, data, config) {
     return instance.post(url, data, config);
-}
-
-/**
- * Creates an incremental SSE parser for Axios XHR download progress events.
- */
-function createSseReader(onEvent) {
-    let offset = 0;
-    let buffer = '';
-
-    const dispatch = (rawEvent) => {
-        const lines = rawEvent.split(/\r?\n/);
-        const id = lines.find((line) => line.startsWith('id:'))?.slice(3).trim();
-        const event = lines.find((line) => line.startsWith('event:'))?.slice(6).trim() || 'message';
-        const dataLine = lines
-            .filter((line) => line.startsWith('data:'))
-            // SSE removes at most one optional space after the colon. Do not
-            // trim the payload: a streamed token may itself be a space/newline.
-            .map((line) => line.slice(5).replace(/^ /, ''))
-            .join('\n');
-        if (!dataLine || !onEvent) return;
-        if (event === 'delta' || event === 'stage' || event === 'error') {
-            onEvent({ id, event, data: dataLine });
-            return;
-        }
-        try {
-            onEvent({ id, event, data: JSON.parse(dataLine) });
-        } catch {
-            onEvent({ id, event, data: dataLine });
-        }
-    };
-
-    return {
-        onDownloadProgress: (progressEvent) => {
-            const responseText = progressEvent.event?.target?.responseText;
-            if (typeof responseText !== 'string') return;
-            buffer += responseText.slice(offset);
-            offset = responseText.length;
-            const chunks = buffer.split(/\r?\n\r?\n/);
-            buffer = chunks.pop() || '';
-            chunks.forEach(dispatch);
-        },
-        flush: () => {
-            if (buffer) dispatch(buffer);
-            buffer = '';
-        },
-    };
 }
 
 /**

@@ -108,7 +108,7 @@ const AgentPreviewPanel = ({
                 <button
                   type="button"
                   onClick={onPublish}
-                  disabled={isPublishing}
+                  disabled={isPublishing || !isLatestVersion}
                   className="inline-flex items-center gap-2 rounded-xl bg-accent px-3 py-2 text-xs font-black text-white disabled:opacity-60"
                 >
                   {isPublishing ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Send className="h-3.5 w-3.5" />}

@@ -30,7 +30,7 @@ export const authService = {
         const res = await post(`${BASE}/login`, data);
         // 登录成功存入 Token
         if (res.accessToken) {
-            tokenStorage.setToken(res.accessToken);
+            tokenStorage.setToken(res.accessToken, { notify: false });
             tokenStorage.setRefreshToken(res.refreshToken);
             // 也可以存入用户信息到 localStorage 或状态管理中
             localStorage.setItem('user_info', JSON.stringify(res.userInfo));
@@ -73,11 +73,13 @@ export const authService = {
      * /me 发生 401 时由共享 HTTP 层携带当前 refresh token 静默刷新并重试；
      * 刷新失败时也由该层统一清理当前会话并派发 auth:logout。
      */
-    checkCurrentSession: async () => {
+    checkCurrentSession: async (config) => {
         if (!tokenStorage.getToken() && !tokenStorage.getRefreshToken()) return null;
-        const userInfo = await get(`${BASE}/me`, undefined, { _silent: true, dedupe: false });
-        if (userInfo) localStorage.setItem('user_info', JSON.stringify(userInfo));
-        return userInfo;
+        return get(`${BASE}/me`, undefined, {
+            _silent: true,
+            dedupe: false,
+            ...config,
+        });
     },
 
     /**
@@ -88,10 +90,21 @@ export const authService = {
         return info ? JSON.parse(info) : null;
     },
 
+    /** Persist only user information that has passed the provider's session fence. */
+    setLocalUserInfo: (info) => {
+        if (info) localStorage.setItem('user_info', JSON.stringify(info));
+        else localStorage.removeItem('user_info');
+    },
+
     /**
      * 检查是否已登录
      */
     isLoggedIn: () => {
         return !!tokenStorage.getToken();
-    }
+    },
+
+    /** Whether the browser has credentials that can restore a protected session. */
+    hasSessionCredentials: () => {
+        return !!(tokenStorage.getToken() || tokenStorage.getRefreshToken());
+    },
 };
