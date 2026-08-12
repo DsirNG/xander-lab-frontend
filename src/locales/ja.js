@@ -83,16 +83,16 @@ export default {
       processing: '処理中 {{duration}}', processed: '処理済み {{duration}}', processedDone: '処理済み', processFailed: '処理に失敗しました', openPreview: 'クリックしてプレビュー', previewEmpty: '生成記事を選択してプレビュー', untitled: '無題の記事', newTask: '新しいタスク', newConversation: '新しい会話', conversations: '会話一覧', noConversations: '履歴はありません', restoring: '生成タスクを復元中…', multiTurnHint: '変更内容を入力すると新しい記事バージョンを作成します。', revise: '記事を更新', revisionComplete: '記事を更新しました', waitingForStage: '次の段階を準備中…', inputLockedPlaceholder: 'アシスタントが処理中です…', confirmPublish: '公開する', viewArticle: '記事を見る', showMeta: '調査とレビューを表示', hideMeta: '調査とレビューを隠す'
     },
     agentChat: {
-      title: 'エージェントチャット', back: 'ワークスペースに戻る',
-      headline: 'ブログAgentです。何をしましょうか？',
-      description: 'ブログ作成、情報調査、その他のタスクを実行できます。例：「Xについてのブログを書いて」。',
-      inputPlaceholder: 'Agentにやりたいことを伝えてください…',
-      inputLockedPlaceholder: 'Agentが処理中です…',
-      send: '送信', running: 'Agentが実行中…', ready: '次のメッセージをどうぞ', failed: 'このターンは失敗しました',
+      title: 'Dindor エージェント', back: 'ワークスペースに戻る',
+      headline: 'Dindor エージェントです。何をしましょうか？',
+      description: 'ブログ作成、情報調査、その他のタスクを実行できます。例：「Xについてのブログを書いて」…',
+      inputPlaceholder: 'Dindor にやりたいことを伝えてください…',
+      inputLockedPlaceholder: 'Dindor が処理中です…',
+      send: '送信', stop: '停止', running: '実行中…', ready: '次のメッセージをどうぞ', failed: 'このターンは失敗しました',
       multiTurnHint: '続けて依頼してください。Agentが適切なツールを選択します。',
       inputRequired: 'まずAgentに依頼内容を入力してください。', sendFailed: 'メッセージを送信できませんでした。', loadFailed: '会話を読み込めませんでした。',
       restoring: '会話を復元中…', reconnecting: '接続が切れました。再接続中…',
-      unknownTool: 'ツール', working: '処理中…', toolCalled: 'ツール呼び出し', toolResult: 'ツール結果'
+      unknownTool: 'ツール', working: '処理中…', toolCalled: 'ツール呼び出し', toolResult: 'ツール結果', viewBlog: 'ブログを見る'
     }
   },
   blogPlans: {

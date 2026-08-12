@@ -91,16 +91,16 @@ export default {
       processing: 'Processing {{duration}}', processed: 'Processed {{duration}}', processedDone: 'Processed', processFailed: 'Processing failed', openPreview: 'Click to preview', previewEmpty: 'Select a generated blog to preview', untitled: 'Untitled article', newTask: 'New task', newConversation: 'New conversation', conversations: 'Conversations', noConversations: 'No previous conversations', restoring: 'Restoring generation task…', multiTurnHint: 'Describe another change and the assistant will create a new article version.', revise: 'Update article', revisionComplete: 'Article updated for this turn', waitingForStage: 'Preparing the next stage…', inputLockedPlaceholder: 'The assistant is working…', confirmPublish: 'Publish', viewArticle: 'View article', showMeta: 'Show research and review details', hideMeta: 'Hide research and review details'
     },
     agentChat: {
-      title: 'Agent Chat', back: 'Back to workspace',
-      headline: 'Hi, I am your blog agent. What would you like to do?',
+      title: 'Dindor Agent', back: 'Back to workspace',
+      headline: 'Hi, I am your Dindor agent. What would you like to do?',
       description: 'I can write blogs, research topics, or handle other tasks. Try: "write a blog about X".',
-      inputPlaceholder: 'Tell the agent what to do…',
-      inputLockedPlaceholder: 'The agent is working…',
-      send: 'Send', running: 'The agent is working…', ready: 'Ready for your next message', failed: 'The agent failed this turn',
+      inputPlaceholder: 'Tell Dindor what to do…',
+      inputLockedPlaceholder: 'Dindor is working…',
+      send: 'Send', stop: 'Stop', running: 'Working…', ready: 'Ready for your next message', failed: 'The agent failed this turn',
       multiTurnHint: 'Keep asking; the agent will pick the right tools by itself.',
       inputRequired: 'Enter what you want the agent to do first.', sendFailed: 'Could not send the message.', loadFailed: 'Could not load the conversation.',
       restoring: 'Restoring conversation…', reconnecting: 'Connection lost, reconnecting…',
-      unknownTool: 'Tool', working: 'Working…', toolCalled: 'Tool called', toolResult: 'Tool result'
+      unknownTool: 'Tool', working: 'Working…', toolCalled: 'Tool called', toolResult: 'Tool result', viewBlog: 'View blog'
     }
   },
   blogPlans: {

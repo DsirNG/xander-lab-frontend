@@ -2,8 +2,8 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
-  AlertCircle, ArrowLeft, Bot, CheckCircle2, Loader2, MessageSquareText, Plus,
-  Send, Sparkles, Wrench, X,
+  AlertCircle, ArrowLeft, Bot, CheckCircle2, FileText, Loader2, MessageSquareText, Plus,
+  Send, Sparkles, Square, Wrench, X,
 } from 'lucide-react';
 import { useToast } from '@/hooks/useToast';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
@@ -18,8 +18,9 @@ const ThoughtCard = ({ content }) => (
   </div>
 );
 
-const ToolStepCard = ({ step }) => {
-  const { t } = useTranslation();
+const ToolStepCard = ({ step, t, onViewBlog }) => {
+  const isError = step.phase === 'error';
+  const blogTaskId = step.result?.taskId;
   if (step.phase === 'progress') {
     return (
       <div className="flex items-center gap-2 px-1 py-0.5 text-xs text-ink-muted">
@@ -28,7 +29,6 @@ const ToolStepCard = ({ step }) => {
       </div>
     );
   }
-  const isError = step.phase === 'error';
   const Icon = isError ? AlertCircle : CheckCircle2;
   return (
     <div className={`rounded-xl border px-3 py-2 ${isError ? 'border-danger/30 bg-danger/5' : 'border-border bg-canvas'}`}>
@@ -37,12 +37,22 @@ const ToolStepCard = ({ step }) => {
         <span className="truncate">{step.tool || t('blog.agentChat.unknownTool')}</span>
         {step.phase === 'start' && <span className="ml-auto font-normal text-ink-faint">{t('blog.agentChat.running')}</span>}
         {step.phase === 'end' && <Icon className="ml-auto h-3.5 w-3.5 shrink-0 text-emerald-500" />}
-        {step.phase === 'error' && <Icon className="ml-auto h-3.5 w-3.5 shrink-0" />}
+        {isError && <Icon className="ml-auto h-3.5 w-3.5 shrink-0" />}
       </div>
       {(step.result || step.error) && (
         <p className={`mt-1 whitespace-pre-wrap break-all text-xs leading-5 ${isError ? 'text-danger/90' : 'text-ink-muted'}`}>
           {compactToolResult(step.result ?? step.error)}
         </p>
+      )}
+      {step.phase === 'end' && blogTaskId && (
+        <button
+          type="button"
+          onClick={() => onViewBlog(blogTaskId)}
+          className="mt-2 inline-flex items-center gap-1.5 rounded-lg border border-accent/30 bg-accent/5 px-3 py-1.5 text-xs font-bold text-accent transition hover:bg-accent/10"
+        >
+          <FileText className="h-3.5 w-3.5" />
+          {t('blog.agentChat.viewBlog')}
+        </button>
       )}
     </div>
   );
@@ -58,8 +68,9 @@ const MessageBubble = ({ role, content }) => (
   </div>
 );
 
-const HistoricalToolCard = ({ message, t }) => {
+const HistoricalToolCard = ({ message, t, onViewBlog }) => {
   const { tool, payload } = toolCallSummary(message, t);
+  const blogTaskId = message.kind === 'tool_result' ? payload?.taskId : null;
   return (
     <div className="rounded-xl border border-border bg-canvas px-3 py-2">
       <div className="flex items-center gap-2 text-xs font-bold text-ink-secondary">
@@ -74,11 +85,21 @@ const HistoricalToolCard = ({ message, t }) => {
           {compactToolResult(payload ?? message.content)}
         </p>
       )}
+      {blogTaskId && (
+        <button
+          type="button"
+          onClick={() => onViewBlog(blogTaskId)}
+          className="mt-2 inline-flex items-center gap-1.5 rounded-lg border border-accent/30 bg-accent/5 px-3 py-1.5 text-xs font-bold text-accent transition hover:bg-accent/10"
+        >
+          <FileText className="h-3.5 w-3.5" />
+          {t('blog.agentChat.viewBlog')}
+        </button>
+      )}
     </div>
   );
 };
 
-const AgentChatInputBar = ({ t, input, setInput, isActive, hasConversation, onSubmit }) => (
+const AgentChatInputBar = ({ t, input, setInput, isActive, hasConversation, onSubmit, onStop }) => (
   <div className="shrink-0 border-t border-border bg-canvas px-4 py-3 sm:px-6">
     <div className="mx-auto max-w-2xl">
       {hasConversation && !isActive && <p className="mb-2 text-xs text-ink-muted">{t('blog.agentChat.multiTurnHint')}</p>}
@@ -97,6 +118,16 @@ const AgentChatInputBar = ({ t, input, setInput, isActive, hasConversation, onSu
           }}
           className="max-h-40 min-h-[52px] flex-1 resize-none bg-transparent px-2 py-2 text-sm leading-6 outline-none placeholder:text-ink-faint disabled:opacity-60"
         />
+        {isActive && (
+          <button
+            type="button"
+            onClick={onStop}
+            className="inline-flex h-10 shrink-0 items-center gap-2 rounded-xl border border-danger/30 bg-danger/5 px-4 text-sm font-black text-danger transition hover:bg-danger/10"
+          >
+            <Square className="h-4 w-4" />
+            {t('blog.agentChat.stop')}
+          </button>
+        )}
         <button
           type="button"
           onClick={onSubmit}
@@ -122,7 +153,7 @@ const AgentChatInputBar = ({ t, input, setInput, isActive, hasConversation, onSu
   const {
     sessions, sessionsLoading, conversation, messages, loading, running,
     reconnecting, errorMessage, liveSteps,
-    sendMessage, createConversation, reset, loadSessions,
+    sendMessage, cancelTurn, createConversation, reset, loadSessions,
   } = useAgentConversation({ conversationId });
 
   useEffect(() => {
@@ -165,6 +196,10 @@ const AgentChatInputBar = ({ t, input, setInput, isActive, hasConversation, onSu
     setInput('');
     navigate('/workspace/agent', { replace: true });
   };
+
+  const handleStop = () => cancelTurn();
+
+  const handleViewBlog = (taskId) => navigate(`/workspace/blog-tool/${taskId}`);
 
   const statusLine = useMemo(() => {
     if (reconnecting) return t('blog.agentChat.reconnecting');
@@ -210,7 +245,7 @@ const AgentChatInputBar = ({ t, input, setInput, isActive, hasConversation, onSu
         </div>
       </header>
 
-      {loading ? (
+      {loading && messages.length === 0 && steps.length === 0 ? (
         <LoadingSpinner fullScreen text={t('blog.agentChat.restoring')} />
       ) : (
         <div className="relative flex min-h-0 flex-1 overflow-hidden">
@@ -281,7 +316,7 @@ const AgentChatInputBar = ({ t, input, setInput, isActive, hasConversation, onSu
                       return <ThoughtCard key={message.id} content={message.content} />;
                     }
                     if (message.kind === 'tool_call' || message.kind === 'tool_result') {
-                      return <HistoricalToolCard key={message.id} message={message} t={t} />;
+                      return <HistoricalToolCard key={message.id} message={message} t={t} onViewBlog={handleViewBlog} />;
                     }
                     if (message.kind === 'answer' || message.kind === 'message') {
                       return <MessageBubble key={message.id} role="assistant" content={message.content} />;
@@ -289,8 +324,9 @@ const AgentChatInputBar = ({ t, input, setInput, isActive, hasConversation, onSu
                     return null;
                   })}
                   {steps.map((step, index) => {
+                    if (step.type === 'user') return <MessageBubble key={`live-${index}`} role="user" content={step.content} />;
                     if (step.type === 'thought') return <ThoughtCard key={`live-${index}`} content={step.content} />;
-                    if (step.type === 'tool') return <ToolStepCard key={`live-${index}`} step={step} />;
+                    if (step.type === 'tool') return <ToolStepCard key={`live-${index}`} step={step} t={t} onViewBlog={handleViewBlog} />;
                     if (step.type === 'answer') return <MessageBubble key={`live-${index}`} role="assistant" content={step.content} />;
                     if (step.type === 'error') {
                       return (
@@ -314,6 +350,7 @@ const AgentChatInputBar = ({ t, input, setInput, isActive, hasConversation, onSu
               isActive={isActive}
               hasConversation={Boolean(conversation)}
               onSubmit={handleSubmit}
+              onStop={handleStop}
             />
           </section>
         </div>

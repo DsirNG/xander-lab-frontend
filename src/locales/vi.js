@@ -83,16 +83,16 @@ export default {
       processing: 'Đang xử lý {{duration}}', processed: 'Đã xử lý {{duration}}', processedDone: 'Đã xử lý', processFailed: 'Xử lý thất bại', openPreview: 'Nhấn để xem trước', previewEmpty: 'Chọn bài viết để xem trước', untitled: 'Bài viết chưa có tiêu đề', newTask: 'Nhiệm vụ mới', newConversation: 'Cuộc trò chuyện mới', conversations: 'Danh sách trò chuyện', noConversations: 'Chưa có lịch sử', restoring: 'Đang khôi phục nhiệm vụ…', multiTurnHint: 'Nhập yêu cầu chỉnh sửa để tạo phiên bản mới.', revise: 'Cập nhật bài viết', revisionComplete: 'Đã cập nhật bài viết', waitingForStage: 'Đang chuẩn bị bước tiếp theo…', inputLockedPlaceholder: 'Trợ lý đang xử lý…', confirmPublish: 'Xuất bản', viewArticle: 'Xem bài viết', showMeta: 'Hiện nghiên cứu và rà soát', hideMeta: 'Ẩn nghiên cứu và rà soát'
     },
     agentChat: {
-      title: 'Chat Blog Agent', back: 'Quay lại không gian làm việc',
-      headline: 'Tôi là blog agent của bạn. Bạn muốn làm gì?',
+      title: 'Dindor Agent', back: 'Quay lại không gian làm việc',
+      headline: 'Tôi là Dindor của bạn. Bạn muốn làm gì?',
       description: 'Tôi có thể viết blog, tra cứu thông tin hoặc xử lý các tác vụ khác. Thử: «viết blog về X».',
-      inputPlaceholder: 'Cho agent biết bạn muốn làm gì…',
-      inputLockedPlaceholder: 'Agent đang xử lý…',
-      send: 'Gửi', running: 'Agent đang xử lý…', ready: 'Sẵn sàng cho tin nhắn tiếp theo', failed: 'Lượt này thất bại',
+      inputPlaceholder: 'Cho Dindor biết bạn muốn làm gì…',
+      inputLockedPlaceholder: 'Dindor đang xử lý…',
+      send: 'Gửi', stop: 'Dừng', running: 'Đang xử lý…', ready: 'Sẵn sàng cho tin nhắn tiếp theo', failed: 'Lượt này thất bại',
       multiTurnHint: 'Tiếp tục yêu cầu; agent sẽ tự chọn công cụ phù hợp.',
       inputRequired: 'Hãy nhập yêu cầu cho agent trước.', sendFailed: 'Không gửi được tin nhắn.', loadFailed: 'Không tải được cuộc trò chuyện.',
       restoring: 'Đang khôi phục cuộc trò chuyện…', reconnecting: 'Mất kết nối, đang kết nối lại…',
-      unknownTool: 'Công cụ', working: 'Đang xử lý…', toolCalled: 'Công cụ được gọi', toolResult: 'Kết quả công cụ'
+      unknownTool: 'Công cụ', working: 'Đang xử lý…', toolCalled: 'Công cụ được gọi', toolResult: 'Kết quả công cụ', viewBlog: 'Xem blog'
     }
   },
   blogPlans: {

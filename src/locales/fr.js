@@ -83,16 +83,16 @@ export default {
       processing: 'Traitement {{duration}}', processed: 'Traité {{duration}}', processedDone: 'Traité', processFailed: 'Échec du traitement', openPreview: 'Cliquer pour prévisualiser', previewEmpty: 'Sélectionnez un article à prévisualiser', untitled: 'Article sans titre', newTask: 'Nouvelle tâche', newConversation: 'Nouvelle conversation', conversations: 'Conversations', noConversations: 'Aucune conversation', restoring: 'Restauration de la tâche…', multiTurnHint: 'Décrivez une modification pour créer une nouvelle version.', revise: 'Modifier l’article', revisionComplete: 'Article mis à jour', waitingForStage: 'Préparation de l’étape suivante…', inputLockedPlaceholder: 'L’assistant travaille…', confirmPublish: 'Publier', viewArticle: 'Voir l’article', showMeta: 'Afficher recherche et révision', hideMeta: 'Masquer recherche et révision'
     },
     agentChat: {
-      title: 'Chat agent', back: 'Retour à l’espace de travail',
-      headline: 'Bonjour, je suis votre agent de blog. Que puis-je faire pour vous ?',
+      title: 'Agent Dindor', back: 'Retour à l’espace de travail',
+      headline: 'Bonjour, je suis Dindor. Que puis-je faire pour vous ?',
       description: 'Je peux écrire des blogs, faire des recherches ou gérer d’autres tâches. Essayez : « écris un blog sur X ».',
-      inputPlaceholder: 'Dites à l’agent ce que vous voulez…',
-      inputLockedPlaceholder: 'L’agent travaille…',
-      send: 'Envoyer', running: 'L’agent travaille…', ready: 'Prêt pour votre prochain message', failed: 'Échec de ce tour',
+      inputPlaceholder: 'Dites à Dindor ce que vous voulez…',
+      inputLockedPlaceholder: 'Dindor travaille…',
+      send: 'Envoyer', stop: 'Arrêter', running: 'En cours…', ready: 'Prêt pour votre prochain message', failed: 'Échec de ce tour',
       multiTurnHint: 'Continuez à demander ; l’agent choisira lui-même les bons outils.',
       inputRequired: 'Saisissez d’abord la tâche demandée.', sendFailed: 'Envoi du message impossible.', loadFailed: 'Chargement de la conversation impossible.',
       restoring: 'Restauration de la conversation…', reconnecting: 'Connexion perdue, reconnexion…',
-      unknownTool: 'Outil', working: 'En cours…', toolCalled: 'Outil appelé', toolResult: 'Résultat de l’outil'
+      unknownTool: 'Outil', working: 'En cours…', toolCalled: 'Outil appelé', toolResult: 'Résultat de l’outil', viewBlog: 'Voir le blog'
     }
   },
   blogPlans: {

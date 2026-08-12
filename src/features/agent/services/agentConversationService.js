@@ -18,6 +18,8 @@ export const agentConversationService = {
   /** 发送消息并消费流式事件（一轮 agent loop） */
   sendMessageStream: (id, content, onEvent, config) =>
     postStream(`${BASE}/${id}/messages/stream`, { content }, { onEvent, ...config }),
+  /** 请求停止当前正在执行的一轮 */
+  cancel: (id, config) => post(`${BASE}/${id}/cancel`, undefined, config),
   /** 订阅可续传事件流（断线恢复用），支持 Last-Event-ID 游标 */
   subscribeEvents: (id, afterEventId, onEvent, config) =>
     getStream(`${BASE}/${id}/events`, {

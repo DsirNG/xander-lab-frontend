@@ -91,16 +91,16 @@ export default {
       processing: '处理中 {{duration}}', processed: '已处理 {{duration}}', processedDone: '已处理', processFailed: '处理失败', openPreview: '点击预览文章', previewEmpty: '选择生成的博客以预览', untitled: '未命名文章', newTask: '新任务', newConversation: '新建会话', conversations: '会话列表', noConversations: '还没有历史会话', restoring: '正在恢复博客生成任务…', multiTurnHint: '继续输入修改要求，博客生成助手会基于当前文章生成新版本。', revise: '继续修改', revisionComplete: '文章已按本轮要求更新', waitingForStage: '正在准备下一阶段…', inputLockedPlaceholder: '博客生成助手处理中，请稍候', confirmPublish: '确认发布', viewArticle: '查看文章', showMeta: '显示调研与审校信息', hideMeta: '收起调研与审校信息'
     },
     agentChat: {
-      title: '博客智能体', back: '返回工作台',
-      headline: '我是你的博客智能体，想做点什么？',
+      title: 'Dindor 智能体', back: '返回工作台',
+      headline: '我是你的 Dindor 智能体，想做点什么？',
       description: '我可以帮你写博客、查资料或处理其他任务。试试：「帮我写一篇关于 X 的博客」。',
-      inputPlaceholder: '告诉智能体你想做什么…',
-      inputLockedPlaceholder: '智能体执行中，请稍候',
-      send: '发送', running: '智能体执行中…', ready: '可以继续对话', failed: '本轮执行失败',
+      inputPlaceholder: '告诉 Dindor 你想做什么…',
+      inputLockedPlaceholder: 'Dindor 执行中，请稍候',
+      send: '发送', stop: '停止', running: '执行中…', ready: '可以继续对话', failed: '本轮执行失败',
       multiTurnHint: '继续提出要求，智能体会自动选择合适工具。',
       inputRequired: '请先输入你想让智能体做什么。', sendFailed: '消息发送失败。', loadFailed: '对话加载失败。',
       restoring: '正在恢复对话…', reconnecting: '连接已断开，正在重连…',
-      unknownTool: '工具', working: '处理中…', toolCalled: '已调用工具', toolResult: '工具返回结果'
+      unknownTool: '工具', working: '处理中…', toolCalled: '已调用工具', toolResult: '工具返回结果', viewBlog: '查看博客'
     }
   },
   blogPlans: {

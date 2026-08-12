@@ -22,6 +22,7 @@ export const useAgentConversation = ({ conversationId }) => {
   const [errorMessage, setErrorMessage] = useState(null);
   const cursorRef = useRef(0);
   const busyRef = useRef(false);
+  const pendingRef = useRef(null);
 
   const pushStep = useCallback((step) => {
     setLiveSteps((current) => [...current.slice(-LIVE_STEP_LIMIT), step]);
@@ -79,41 +80,10 @@ export const useAgentConversation = ({ conversationId }) => {
     const detail = await agentConversationService.get(id, { _silent: true }).catch(() => null);
     if (detail?.conversation) setConversation(detail.conversation);
     if (detail?.messages) setMessages(detail.messages);
+    setLiveSteps([]);
     setRunning(false);
     setReconnecting(false);
   }, [applyEvent]);
-
-  const openConversation = useCallback(async (id) => {
-    if (busyRef.current) return;
-    busyRef.current = true;
-    setLoading(true);
-    cursorRef.current = 0;
-    setErrorMessage(null);
-    setLiveSteps([]);
-    try {
-      const detail = await agentConversationService.get(id);
-      setConversation(detail?.conversation ?? null);
-      setMessages(detail?.messages ?? []);
-      if (detail?.conversation?.status === 'running') {
-        setRunning(true);
-        setReconnecting(true);
-        await subscribeFrom(id);
-      }
-    } catch (error) {
-      toast.error(error.message || t('blog.agentChat.loadFailed'));
-    } finally {
-      setLoading(false);
-      busyRef.current = false;
-    }
-  }, [subscribeFrom, toast, t]);
-
-  useEffect(() => {
-    loadSessions();
-  }, [loadSessions]);
-
-  useEffect(() => {
-    if (conversationId) openConversation(conversationId);
-  }, [conversationId, openConversation]);
 
   /** 发送一条消息并驱动一轮 agent loop；断线时自动续传。 */
   const sendMessage = useCallback(async (content) => {
@@ -123,7 +93,8 @@ export const useAgentConversation = ({ conversationId }) => {
     setRunning(true);
     setReconnecting(false);
     setErrorMessage(null);
-    setLiveSteps([]);
+    // 乐观上屏用户消息，随后 SSE 事件按序追加，避免发送后页面空白。
+    setLiveSteps([{ type: 'user', content: text }]);
     try {
       await agentConversationService.sendMessageStream(
         conversationId,
@@ -140,10 +111,60 @@ export const useAgentConversation = ({ conversationId }) => {
       return;
     }
     await refreshMessages(conversationId);
+    setLiveSteps([]);
     busyRef.current = false;
     setRunning(false);
     loadSessions();
   }, [conversationId, applyEvent, refreshMessages, subscribeFrom, loadSessions]);
+
+  /** 请求服务端停止当前一轮执行；SSE 流里会收到结束事件，UI 随之收敛。 */
+  const cancelTurn = useCallback(async () => {
+    if (!conversationId || !busyRef.current) return;
+    try {
+      await agentConversationService.cancel(conversationId, { _silent: true });
+    } catch {
+      // 服务端未在 running 状态（已自然结束）时静默。
+    }
+  }, [conversationId]);
+
+  const openConversation = useCallback(async (id) => {
+    if (busyRef.current) return;
+    busyRef.current = true;
+    setLoading(true);
+    cursorRef.current = 0;
+    setErrorMessage(null);
+    setLiveSteps([]);
+    try {
+      const detail = await agentConversationService.get(id);
+      setConversation(detail?.conversation ?? null);
+      setMessages(detail?.messages ?? []);
+      if (detail?.conversation?.status === 'running') {
+        setRunning(true);
+        setReconnecting(true);
+        await subscribeFrom(id);
+      } else {
+        // 创建会话时输入的内容尚未执行：恢复完成后自动发出，让用户看到完整的流式反馈。
+        const pending = pendingRef.current;
+        if (pending) {
+          pendingRef.current = null;
+          sendMessage(pending);
+        }
+      }
+    } catch (error) {
+      toast.error(error.message || t('blog.agentChat.loadFailed'));
+    } finally {
+      setLoading(false);
+      busyRef.current = false;
+    }
+  }, [subscribeFrom, sendMessage, toast, t]);
+
+  useEffect(() => {
+    loadSessions();
+  }, [loadSessions]);
+
+  useEffect(() => {
+    if (conversationId) openConversation(conversationId);
+  }, [conversationId, openConversation]);
 
   /** 新建会话并返回详情，页面负责跳转。 */
   const createConversation = useCallback(async (content) => {
@@ -154,6 +175,8 @@ export const useAgentConversation = ({ conversationId }) => {
     setMessages(detail?.messages ?? []);
     setLiveSteps([]);
     cursorRef.current = 0;
+    // 创建即执行：跳转到会话页后由 openConversation 自动发出本条输入。
+    pendingRef.current = text;
     await loadSessions();
     return detail;
   }, [loadSessions, t]);
@@ -166,6 +189,7 @@ export const useAgentConversation = ({ conversationId }) => {
     setRunning(false);
     setReconnecting(false);
     cursorRef.current = 0;
+    pendingRef.current = null;
   }, []);
 
   return {
@@ -181,6 +205,7 @@ export const useAgentConversation = ({ conversationId }) => {
     loadSessions,
     openConversation,
     sendMessage,
+    cancelTurn,
     createConversation,
     reset,
     refreshMessages,

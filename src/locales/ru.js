@@ -83,16 +83,16 @@ export default {
       processing: 'Обработка {{duration}}', processed: 'Обработано {{duration}}', processedDone: 'Обработано', processFailed: 'Ошибка обработки', openPreview: 'Нажмите для предпросмотра', previewEmpty: 'Выберите статью для предпросмотра', untitled: 'Статья без названия', newTask: 'Новая задача', newConversation: 'Новый диалог', conversations: 'Диалоги', noConversations: 'История пуста', restoring: 'Восстановление задачи генерации…', multiTurnHint: 'Опишите изменение, и ассистент создаст новую версию.', revise: 'Обновить статью', revisionComplete: 'Статья обновлена', waitingForStage: 'Подготовка следующего этапа…', inputLockedPlaceholder: 'Ассистент работает…', confirmPublish: 'Опубликовать', viewArticle: 'Открыть статью', showMeta: 'Показать исследование и проверку', hideMeta: 'Скрыть исследование и проверку'
     },
     agentChat: {
-      title: 'Чат агента', back: 'Назад в рабочий стол',
-      headline: 'Я ваш блог-агент. Что сделать?',
+      title: 'Dindor-агент', back: 'Назад в рабочий стол',
+      headline: 'Я ваш Dindor-агент. Что сделать?',
       description: 'Могу написать блог, исследовать тему или выполнить другие задачи. Попробуйте: «напиши блог о X».',
-      inputPlaceholder: 'Расскажите агенту, что сделать…',
-      inputLockedPlaceholder: 'Агент работает…',
-      send: 'Отправить', running: 'Агент работает…', ready: 'Готов к следующему сообщению', failed: 'Этот ход не удался',
+      inputPlaceholder: 'Расскажите Dindor, что сделать…',
+      inputLockedPlaceholder: 'Dindor работает…',
+      send: 'Отправить', stop: 'Остановить', running: 'Выполняется…', ready: 'Готов к следующему сообщению', failed: 'Этот ход не удался',
       multiTurnHint: 'Продолжайте просить; агент сам выберет нужные инструменты.',
       inputRequired: 'Сначала введите задачу для агента.', sendFailed: 'Не удалось отправить сообщение.', loadFailed: 'Не удалось загрузить диалог.',
       restoring: 'Восстановление диалога…', reconnecting: 'Соединение потеряно, переподключение…',
-      unknownTool: 'Инструмент', working: 'Выполняется…', toolCalled: 'Инструмент вызван', toolResult: 'Результат инструмента'
+      unknownTool: 'Инструмент', working: 'Выполняется…', toolCalled: 'Инструмент вызван', toolResult: 'Результат инструмента', viewBlog: 'Открыть блог'
     }
   },
   blogPlans: {
