@@ -44,6 +44,7 @@
 | 组件 | 路径 | 适用场景 | 关键 API / 说明 |
 | --- | --- | --- | --- |
 | `CustomSelect` | `@components/common/CustomSelect` | 单选枚举、状态和权限切换 | `options: { value, label }[]`、`value`、`onChange`、`size: md/sm`（`sm` 为紧凑表单高度，匹配 `h-9`）；支持键盘、点击外部关闭与自动向上展开。禁止新写原生 `select`。 |
+| `TimezoneSelect` | `@components/common/TimezoneSelect` | 所有定时类功能（定时邮箱、定时发文等）的时区选择 | 基于 `CustomSelect`；`value`、`onChange`、`size: md/sm`；预置 10 个常用 IANA 时区并实时计算 UTC 偏移；`value` 不在预置列表时以原文展示（兼容历史数据）。禁止在业务里另写时区下拉或自由输入时区文本。 |
 | `CreatableMultiSelect` | `@components/common/CreatableMultiSelect` | 标签、多选项，且允许输入新项 | `value: string[]`、`onChange`、`options`、`placeholder`。 |
 | `Modal` | `@components/common/Modal` | 确认、编辑、表单弹窗 | `isOpen`、`onClose`、`title`、`footer`、`width`；已实现 Portal、焦点管理与背景滚动锁定。 |
 | `ConfirmModal` | `@components/common/ConfirmModal` | 删除、退出登录等二次确认 | 基于 `Modal`；`isOpen`、`onClose`、`onConfirm`、`title`、`message`/`children`、`confirmText`、`cancelText`、`confirming`、`danger`（默认 true）。 |

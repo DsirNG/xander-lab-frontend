@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Loader2 } from 'lucide-react';
 import Modal from '@components/common/Modal';
+import TimezoneSelect from '@components/common/TimezoneSelect';
 import { blogPlanService } from '../../services/blogPlanService';
 import { useToast } from '@/hooks/useToast';
 
@@ -120,9 +121,11 @@ const PlanFormModal = ({ isOpen, plan, onClose, onSaved }) => {
           </div>
           <div>
             <label className={labelCls}>{t('blogPlans.timezone')}</label>
-            <input className={inputCls} value={form.timezone} maxLength={64}
-              onChange={(e) => setForm({ ...form, timezone: e.target.value })}
-              placeholder="Asia/Shanghai" />
+            <TimezoneSelect
+              size="sm"
+              value={form.timezone}
+              onChange={(value) => setForm({ ...form, timezone: value })}
+            />
           </div>
         </div>
 

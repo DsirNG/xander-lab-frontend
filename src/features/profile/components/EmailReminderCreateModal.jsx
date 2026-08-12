@@ -8,6 +8,7 @@ import {
     X,
 } from 'lucide-react';
 import CustomSelect from '@components/common/CustomSelect';
+import TimezoneSelect from '@components/common/TimezoneSelect';
 import { useToast } from '@hooks/useToast';
 import { emailReminderService } from '../services/emailReminderService';
 import {
@@ -15,7 +16,6 @@ import {
     TEMPLATE_IDS,
     TEMPLATE_NONE,
     TEMPLATE_SWATCH,
-    TIMEZONE_OPTIONS,
     buildReminderPreviewHtml,
     resolveContentType,
 } from '../utils/emailReminderTemplates';
@@ -55,22 +55,6 @@ const toDateTimeLocalValue = (date) => {
 };
 
 const pad2 = (value) => String(value).padStart(2, '0');
-
-const getZoneOffsetLabel = (timeZone, date = new Date()) => {
-    try {
-        const parts = new Intl.DateTimeFormat('en-US', {
-            timeZone,
-            timeZoneName: 'shortOffset',
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: false,
-        }).formatToParts(date);
-        const offset = parts.find((part) => part.type === 'timeZoneName')?.value || 'GMT';
-        return offset.replace('GMT', 'GMT');
-    } catch {
-        return 'GMT';
-    }
-};
 
 const wallTimeToOffsetDateTime = (dateValue, timeValue, timeZone) => {
     const [year, month, day] = dateValue.split('-').map(Number);
@@ -163,15 +147,6 @@ const EmailReminderCreateModal = ({ isOpen, onClose, onCreated }) => {
             return { value: String(day), label: t('profile.emailReminders.monthDay', { day }) };
         })
     ), [t]);
-
-    const timezoneOptions = useMemo(() => (
-        TIMEZONE_OPTIONS.map((item) => ({
-            value: item.value,
-            label: item.label.includes('GMT')
-                ? item.label
-                : `(${getZoneOffsetLabel(item.value)}) ${item.label}`,
-        }))
-    ), []);
 
     const scheduleLabel = useMemo(() => {
         const { frequency, scheduledLocal, sendTime, recurrenceDay, intervalDays } = form;
@@ -527,9 +502,8 @@ const EmailReminderCreateModal = ({ isOpen, onClose, onCreated }) => {
                                             <span className="mb-1 block text-micro font-bold text-ink-muted">
                                                 {t('profile.emailReminders.timezone')}
                                             </span>
-                                            <CustomSelect
+                                            <TimezoneSelect
                                                 size="sm"
-                                                options={timezoneOptions}
                                                 value={form.timezone}
                                                 onChange={(value) => setForm((current) => ({ ...current, timezone: value }))}
                                             />
