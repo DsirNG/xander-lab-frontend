@@ -2,8 +2,6 @@ import React, { useMemo } from 'react';
 import CustomSelect from '../CustomSelect';
 import { TIMEZONE_OPTIONS, getZoneOffsetLabel } from './timezones';
 
-export { TIMEZONE_OPTIONS } from './timezones';
-
 /**
  * TimezoneSelect - 时区下拉（CustomSelect 封装，选项含实时 UTC 偏移）
  * @param {string} value - 当前时区（IANA ZoneId，如 Asia/Shanghai）
