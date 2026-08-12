@@ -62,10 +62,17 @@ export default function StudioPage() {
   return (
     <div className="mx-auto flex h-full w-full max-w-5xl flex-col px-4 py-6 sm:px-6 lg:px-8">
       <header className="mb-6">
-        <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-accent/5 px-3 py-1 text-micro font-bold uppercase tracking-widest text-accent">
+        <button
+          type="button"
+          onClick={() => (window.history.state?.idx > 0 ? navigate(-1) : navigate('/workspace'))}
+          title="返回上一页"
+          aria-label="返回上一页"
+          className="mb-3 inline-flex items-center gap-2 rounded-full bg-accent/5 px-3 py-1 text-micro font-bold uppercase tracking-widest text-accent transition-colors hover:bg-accent/10"
+        >
+          <img src="/logo-512.png" alt="Xander Lab" className="h-5 w-5 rounded object-cover" />
           <FolderKanban className="h-3.5 w-3.5" />
           Xander Lab Studio
-        </div>
+        </button>
         <h1 className="text-xl font-black text-ink sm:text-2xl">
           选择入口，进入构建工作流
         </h1>

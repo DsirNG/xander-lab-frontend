@@ -1,10 +1,8 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import {
-  ArrowLeft,
   Check,
   ChevronRight,
-  Code2,
   Copy,
   Download,
   ExternalLink,
@@ -19,6 +17,7 @@ import {
 } from 'lucide-react';
 import CustomSelect from '@components/common/CustomSelect';
 import useClickOutside from '@hooks/useClickOutside';
+import StudioTopBar from '../components/StudioTopBar';
 import {
   convertPreviewUrl,
   downloadPublicProjectSource,
@@ -263,25 +262,12 @@ export default function CompilerPage() {
   return (
     <div className="flex h-screen flex-col bg-surface">
       {/* 顶部栏 */}
-      <div className="shrink-0 border-b border-border bg-canvas">
-        <div className="flex items-center justify-between px-4 py-3 sm:px-6">
-          <div className="flex min-w-0 items-center gap-3">
-            <Link
-              to="/workspace/studio"
-              className="inline-flex items-center gap-2 text-caption font-bold text-ink-faint transition-colors hover:text-accent"
-            >
-              <ArrowLeft className="h-3.5 w-3.5" />
-              返回 Studio
-            </Link>
-            <div className="h-5 w-px bg-border" />
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-ink text-white">
-              <Code2 className="h-4 w-4" />
-            </div>
-            <div className="min-w-0">
-              <h1 className="truncate text-base font-bold text-ink">
-                {project?.name || '编译器'}
-              </h1>
-            </div>
+      <StudioTopBar
+        title={
+          <>
+            <h1 className="truncate text-base font-bold text-ink">
+              {project?.name || '编译器'}
+            </h1>
             <div className={`hidden w-52 sm:block ${isUpdatingVisibility ? 'pointer-events-none opacity-50' : ''}`}>
               <CustomSelect
                 options={VISIBILITY_OPTIONS}
@@ -290,7 +276,9 @@ export default function CompilerPage() {
                 placeholder="项目权限"
               />
             </div>
-          </div>
+          </>
+        }
+      >
 
           <div className="flex items-center gap-2">
             {visibility === 'public' && (
@@ -335,8 +323,7 @@ export default function CompilerPage() {
               刷新
             </button>
           </div>
-        </div>
-      </div>
+      </StudioTopBar>
 
       {/* 主内容区 - flex:1 占满剩余空间 */}
       <div className="flex min-h-0 flex-1 gap-0">

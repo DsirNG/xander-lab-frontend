@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Github, Menu, Languages, X, User as UserIcon, ChevronDown, Check } from 'lucide-react';
 import styles from './Navbar.module.css';
-import { authService } from '@features/auth/services/authService';
+import { useAuthSession } from '@features/auth/context/authSessionContextValue';
 import NotificationBell from '@features/blog/components/NotificationBell';
 
 const LANGUAGES = ['zh', 'en', 'fr', 'ja', 'ru', 'vi'];
@@ -18,8 +18,8 @@ const getAvatarText = (userInfo) => {
 
 const Navbar = () => {
     const { t, i18n } = useTranslation();
+    const { userInfo } = useAuthSession();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-    const [userInfo, setUserInfo] = useState(authService.getLocalUserInfo());
     const [isLangDropdownOpen, setIsLangDropdownOpen] = useState(false);
     const [langReel, setLangReel] = useState(() => ({
         outgoing: LANG_LABELS[i18n.language] || 'EN',
@@ -93,15 +93,6 @@ const Navbar = () => {
     const displayName = getDisplayName(userInfo);
     const avatarText = getAvatarText(userInfo);
     const roleLabel = userInfo?.role || '';
-
-    // 监听全局登出事件
-    useEffect(() => {
-        const checkAuth = () => {
-            setUserInfo(null);
-        };
-        window.addEventListener('auth:logout', checkAuth);
-        return () => window.removeEventListener('auth:logout', checkAuth);
-    }, []);
 
     // 点击外部关闭菜单和语言下拉
     useEffect(() => {

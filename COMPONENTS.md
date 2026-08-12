@@ -78,6 +78,7 @@
 | 能力 | 入口路径 | 使用说明 |
 | --- | --- | --- |
 | Studio 文件树 | `@features/studio/pages/CompilerPage` 的 `FileTreeNodes` | 源码浏览树；配合 Studio 文件内容接口使用。 |
+| Studio 顶部栏 | `@features/studio/components/StudioTopBar` | 全屏 Studio 页左上角 logo（点击返回上一页）+ 标题 + 右侧操作区；`backLabel` 自定义返回文案、`showBack` 隐藏返回按钮、`fallbackTo` 兜底路由（无历史时用）。 |
 | Studio 公开源码页 | `@features/studio/pages/PublicSourcePage` | 公开项目的匿名源码浏览与下载入口，不另建重复页面。 |
 | 博客卡片 | `@features/blog/components/BlogCard` | 博客列表、推荐区使用，输入为 `blog`。 |
 | 博客侧栏 | `@features/blog/components/BlogSidebar` | 博客布局内导航，输入 `onNavigate`。 |

@@ -39,6 +39,9 @@ export const blogPlanService = {
     get(`/api/blog-plans/${planId}/runs/${runId}`, undefined, config),
   nextRun: (planId, count = 1, config) =>
     get(`/api/blog-plans/${planId}/next`, { count }, config),
+  /** 请求智能体将种子主题细化为多日主题队列（返回去重后的主题列表） */
+  generateTopics: (payload, config) =>
+    post('/api/blog-plans/topics/generate', payload, config),
 
   /* ---------- 用户通知 ---------- */
   listNotifications: ({ page = 1, size = 20 } = {}, config) =>

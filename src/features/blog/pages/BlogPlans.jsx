@@ -79,9 +79,12 @@ const BlogPlans = () => {
                       <p className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-ink-faint">
                         <span className="inline-flex items-center gap-1">
                           <CalendarClock className="h-3.5 w-3.5" />
-                          {plan.triggerTime} ({plan.timezone})
+                          {(plan.triggerTimes?.length > 0 ? plan.triggerTimes.join(' / ') : plan.triggerTime)} ({plan.timezone})
                         </span>
                         <span>{t('blogPlans.syncCsdn')}: {plan.syncCsdn ? t('blogPlans.yes') : t('blogPlans.no')}</span>
+                        {plan.topics?.length > 0 && (
+                          <span>{t('blogPlans.topicsQueue')}: {plan.topics.length}{t('blogPlans.topicsQueueUnit')}</span>
+                        )}
                         <span>{t('blogPlans.nextRun')}: {plan.nextRunAt ? new Date(plan.nextRunAt).toLocaleString() : '—'}</span>
                       </p>
                     </div>

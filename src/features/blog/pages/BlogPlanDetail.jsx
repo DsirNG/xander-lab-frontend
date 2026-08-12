@@ -108,7 +108,7 @@ const BlogPlanDetail = () => {
           <div className="min-w-0">
             <h1 className="truncate text-xl font-bold text-ink">{plan.topic}</h1>
             <p className="mt-1 text-xs text-ink-faint">
-              {plan.triggerTime} ({plan.timezone}) · {t('blogPlans.syncCsdn')}: {plan.syncCsdn ? t('blogPlans.yes') : t('blogPlans.no')}
+              {(plan.triggerTimes?.length > 0 ? plan.triggerTimes.join(' / ') : plan.triggerTime)} ({plan.timezone}) · {t('blogPlans.syncCsdn')}: {plan.syncCsdn ? t('blogPlans.yes') : t('blogPlans.no')}
             </p>
           </div>
           <PlanStatusBadge status={plan.status} />

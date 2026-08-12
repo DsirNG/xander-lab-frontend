@@ -1,7 +1,6 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
-  ArrowLeft,
   Code2,
   Copy,
   FileCode2,
@@ -10,6 +9,7 @@ import {
   UploadCloud,
 } from 'lucide-react';
 import { uploadComponent } from '../services/studioService';
+import StudioTopBar from '../components/StudioTopBar';
 
 const defaultCode = `export default function DemoComponent() {
   return (
@@ -77,14 +77,8 @@ export default function ComponentUploadPage() {
 
   return (
     <div className="min-h-screen bg-surface">
+      <StudioTopBar backLabel="返回 Studio" />
       <main className="mx-auto max-w-[1400px] px-4 py-6 sm:px-6 lg:px-8">
-        <Link
-          to="/workspace/studio"
-          className="mb-6 inline-flex items-center gap-2 text-body font-bold text-ink-muted transition-colors hover:text-accent"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          返回 Studio
-        </Link>
 
         <form onSubmit={handleBuild} className="grid gap-6 lg:grid-cols-[320px_1fr]">
           <aside className="rounded-lg border border-border bg-canvas p-5 shadow-sm">
