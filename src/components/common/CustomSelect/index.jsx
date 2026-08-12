@@ -1,7 +1,11 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import styles from './index.module.css';
 
 const EMPTY_OPTIONS = [];
+/** 浮层 z-index：高于 Modal 容器(z-[1000])，确保不被弹窗标题/遮罩覆盖 */
+const DROPDOWN_Z_INDEX = 1100;
+const DROPDOWN_MAX_HEIGHT = 15 * 16;
 
 const DownIcon = () => (
   <svg width="1rem" height="1rem" viewBox="0 0 16 16" fill="none">
@@ -11,6 +15,12 @@ const DownIcon = () => (
 
 /**
  * CustomSelect - 自定义下拉选择组件
+ * 下拉浮层通过 Portal 渲染到 document.body 并基于视口 fixed 定位，
+ * 不受弹窗滚动容器裁剪与层级影响，永远浮于弹窗标题之上。
+ *
+ * 硬性规定：默认不响应"点击空白收起"；只有显式传 closeOnOutsideClick
+ * 的调用方才允许点击外部关闭，其余只能通过选择选项 / Esc / 弹窗右上角关闭。
+ *
  * @param {Array} options - 选项数组 [{value: '', label: ''}]
  * @param {string} value - 当前选中的值
  * @param {function} onChange - 值改变回调
@@ -21,6 +31,7 @@ const DownIcon = () => (
  * @param {string} textAlign - 触发器文字对齐方式: 'left' | 'center' | 'right'，默认 'left'
  * @param {string} dropdownAlign - 下拉选项对齐方式: 'left' | 'center' | 'right'，默认 'left'
  * @param {boolean} error - 是否显示错误状态
+ * @param {boolean} closeOnOutsideClick - 是否允许点击外部收起（默认 false）
  */
 const CustomSelect = ({
   options = EMPTY_OPTIONS,
@@ -32,11 +43,13 @@ const CustomSelect = ({
   align = 'left',
   textAlign,
   dropdownAlign,
-  error = false
+  error = false,
+  closeOnOutsideClick = false
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isUpward, setIsUpward] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
+  const [position, setPosition] = useState({ top: 0, left: 0, width: 0 });
   const selectRef = useRef(null);
   const dropdownRef = useRef(null);
 
@@ -49,41 +62,19 @@ const CustomSelect = ({
   const selectedOption = options.find(opt => opt.value === value);
   const displayText = selectedOption ? selectedOption.label : placeholder;
 
-  // 获取触发器在视口与各 overflow 祖先内的可用上下空间
-  const getAvailableSpace = useCallback((triggerEl) => {
-    const triggerRect = triggerEl.getBoundingClientRect();
-    let topBound = 0;
-    let bottomBound = window.innerHeight;
+  // 基于视口计算浮层几何（fixed 定位不受 overflow 祖先裁剪）
+  const computeDropdownGeometry = useCallback(() => {
+    if (!selectRef.current) return null;
 
-    let parent = triggerEl.parentElement;
-    while (parent && parent !== document.documentElement) {
-      const { overflowY } = window.getComputedStyle(parent);
-      if (overflowY === 'auto' || overflowY === 'scroll' || overflowY === 'hidden' || overflowY === 'clip') {
-        const parentRect = parent.getBoundingClientRect();
-        topBound = Math.max(topBound, parentRect.top);
-        bottomBound = Math.min(bottomBound, parentRect.bottom);
-      }
-      parent = parent.parentElement;
-    }
-
-    return {
-      spaceAbove: Math.max(0, triggerRect.top - topBound),
-      spaceBelow: Math.max(0, bottomBound - triggerRect.bottom),
-      triggerRect,
-    };
-  }, []);
-
-  // 检测边界并决定下拉框方向（同时考虑视口与 overflow 裁剪祖先）
-  const checkBoundary = useCallback(() => {
-    if (!selectRef.current || !isOpen) return;
-
-    const { spaceAbove, spaceBelow } = getAvailableSpace(selectRef.current);
+    const triggerRect = selectRef.current.getBoundingClientRect();
+    const measuredRect = dropdownRef.current?.getBoundingClientRect();
     const optionHeightPx = size === 'sm' ? 32 : 40;
-    const measuredHeight = dropdownRef.current?.getBoundingClientRect().height;
-    const dropdownHeight = measuredHeight && measuredHeight > 0
-      ? measuredHeight
-      : Math.min(options.length * optionHeightPx + 12, 15 * 16 + 12);
+    const dropdownHeight = measuredRect?.height
+      || Math.min(options.length * optionHeightPx + 12, DROPDOWN_MAX_HEIGHT + 12);
+    const dropdownWidth = measuredRect?.width || triggerRect.width;
 
+    const spaceAbove = triggerRect.top;
+    const spaceBelow = window.innerHeight - triggerRect.bottom;
     const overflowsBelow = spaceBelow < dropdownHeight + 8;
     let shouldUpward = false;
     if (overflowsBelow) {
@@ -91,13 +82,67 @@ const CustomSelect = ({
       shouldUpward = spaceAbove >= dropdownHeight + 8 || spaceAbove > spaceBelow;
     }
 
-    setIsUpward(shouldUpward);
-  }, [getAvailableSpace, isOpen, options.length, size]);
+    const alignOffset = {
+      left: 0,
+      center: (triggerRect.width - dropdownWidth) / 2,
+      right: triggerRect.width - dropdownWidth,
+    }[finalDropdownAlign] ?? 0;
 
-  // 点击外部关闭下拉框
+    return {
+      shouldUpward,
+      top: shouldUpward ? triggerRect.top - dropdownHeight - 4 : triggerRect.bottom + 4,
+      left: triggerRect.left + alignOffset,
+      width: dropdownWidth,
+    };
+  }, [options.length, size, finalDropdownAlign]);
+
+  // 应用浮层位置
+  const applyPosition = useCallback(() => {
+    const geometry = computeDropdownGeometry();
+    if (!geometry) return;
+    setIsUpward(geometry.shouldUpward);
+    setPosition({ top: geometry.top, left: geometry.left, width: geometry.width });
+  }, [computeDropdownGeometry]);
+
+  // 打开时重算位置（双帧确保使用实际渲染尺寸）；关闭时重置方向
   useEffect(() => {
+    if (isOpen) {
+      requestAnimationFrame(() => {
+        applyPosition();
+        requestAnimationFrame(() => {
+          applyPosition();
+        });
+      });
+    } else {
+      setIsUpward(false);
+      setHighlightedIndex(-1);
+    }
+  }, [isOpen, applyPosition]);
+
+  // 滚动/窗口变化时同步浮层位置（保持与触发器对齐）
+  useEffect(() => {
+    if (!isOpen) return undefined;
+
+    const handleScroll = () => {
+      applyPosition();
+    };
+
+    window.addEventListener('scroll', handleScroll, true);
+    window.addEventListener('resize', handleScroll);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll, true);
+      window.removeEventListener('resize', handleScroll);
+    };
+  }, [isOpen, applyPosition]);
+
+  // 点击外部收起：仅显式开启 closeOnOutsideClick 时生效（项目硬性规定）
+  useEffect(() => {
+    if (!closeOnOutsideClick) return undefined;
+
     const handleClickOutside = (event) => {
-      if (selectRef.current && !selectRef.current.contains(event.target)) {
+      const contains = (el) => el && el.contains(event.target);
+      if (!contains(selectRef.current) && !contains(dropdownRef.current)) {
         setIsOpen(false);
         setHighlightedIndex(-1);
       }
@@ -107,43 +152,7 @@ const CustomSelect = ({
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, []);
-
-  // 当下拉框打开时检测边界
-  useEffect(() => {
-    if (isOpen) {
-      // 使用 requestAnimationFrame 确保 DOM 已渲染
-      requestAnimationFrame(() => {
-        checkBoundary();
-        // 再次检测，确保使用实际渲染后的尺寸
-        requestAnimationFrame(() => {
-          checkBoundary();
-        });
-      });
-    } else {
-      // 关闭时重置方向
-      setIsUpward(false);
-      setHighlightedIndex(-1);
-    }
-  }, [isOpen, checkBoundary]);
-
-  // 监听滚动事件，重新检测边界
-  useEffect(() => {
-    if (!isOpen) return;
-
-    const handleScroll = () => {
-      checkBoundary();
-    };
-
-    // 监听窗口滚动和容器滚动
-    window.addEventListener('scroll', handleScroll, true);
-    window.addEventListener('resize', handleScroll);
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll, true);
-      window.removeEventListener('resize', handleScroll);
-    };
-  }, [isOpen, checkBoundary]);
+  }, [closeOnOutsideClick]);
 
   const handleSelect = (optionValue) => {
     onChange(optionValue);
@@ -213,6 +222,31 @@ const CustomSelect = ({
     ? `option-${options[highlightedIndex].value}`
     : undefined;
 
+  const dropdown = (
+    <div
+      ref={dropdownRef}
+      className={`${styles.selectDropdown} ${isUpward ? styles.upward : ''}`}
+      style={{ position: 'fixed', top: position.top, left: position.left, width: position.width, zIndex: DROPDOWN_Z_INDEX }}
+    >
+      <div className={styles.optionsList} role="listbox">
+        {options.map((option, index) => (
+          <button
+            type="button"
+            role="option"
+            key={option.value}
+            id={`option-${option.value}`}
+            aria-selected={option.value === value}
+            className={`${styles.option} ${value === option.value ? styles.selected : ''} ${dropdownAlignClass} ${index === highlightedIndex ? 'bg-accent/10' : ''}`}
+            onClick={() => handleSelect(option.value)}
+            onMouseEnter={() => setHighlightedIndex(index)}
+          >
+            {option.label}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+
   return (
     <div className={`${styles.customSelect} ${size === 'sm' ? styles.sm : ''} ${className}`} ref={selectRef}>
       <button
@@ -232,29 +266,7 @@ const CustomSelect = ({
         </span>
       </button>
 
-      {isOpen && (
-        <div
-          ref={dropdownRef}
-          className={`${styles.selectDropdown} ${isUpward ? styles.upward : ''}`}
-        >
-          <div className={styles.optionsList} role="listbox">
-            {options.map((option, index) => (
-              <button
-                type="button"
-                role="option"
-                key={option.value}
-                id={`option-${option.value}`}
-                aria-selected={option.value === value}
-                className={`${styles.option} ${value === option.value ? styles.selected : ''} ${dropdownAlignClass} ${index === highlightedIndex ? 'bg-accent/10' : ''}`}
-                onClick={() => handleSelect(option.value)}
-                onMouseEnter={() => setHighlightedIndex(index)}
-              >
-                {option.label}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
+      {isOpen && createPortal(dropdown, document.body)}
     </div>
   );
 };

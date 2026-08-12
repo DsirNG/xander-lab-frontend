@@ -8,18 +8,20 @@ const EMPTY_ARRAY = [];
  * 支持从预设列表中选择，也支持手动输入创建新选项。
  *
  * @param {Object} props
- * @param {string[]} props.value - 已选中的数据项数组
+ * @param {string[]} [props.value=[]] - 已选中的数据项数组
  * @param {(items: string[]) => void} props.onChange - 数据项变更回调
  * @param {string[]} [props.options=[]] - 可用的推荐选项列表
  * @param {string} [props.placeholder='请选择或输入...'] - 输入框提示文字
  * @param {string} [props.className=''] - 附加的 CSS class
+ * @param {boolean} [props.closeOnOutsideClick=false] - 是否允许点击外部收起（默认 false，项目硬性规定）
  */
 const CreatableMultiSelect = ({
     value = EMPTY_ARRAY,
     onChange,
     options = EMPTY_ARRAY,
     placeholder = '请选择或输入...',
-    className = ''
+    className = '',
+    closeOnOutsideClick = false
 }) => {
     const [inputValue, setInputValue] = useState('');
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -32,8 +34,9 @@ const CreatableMultiSelect = ({
         t => !value.includes(t) && t.toLowerCase().includes(inputValue.toLowerCase())
     );
 
-    // 点击外部时关闭下拉框
+    // 点击外部时关闭下拉框（仅显式开启时生效，项目硬性规定）
     useEffect(() => {
+        if (!closeOnOutsideClick) return undefined;
         const handleClickOutside = (event) => {
             if (containerRef.current && !containerRef.current.contains(event.target)) {
                 setIsDropdownOpen(false);
@@ -42,7 +45,7 @@ const CreatableMultiSelect = ({
         };
         document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);
-    }, []);
+    }, [closeOnOutsideClick]);
 
     const handleKeyDown = (e) => {
         if (e.key === 'Enter') {

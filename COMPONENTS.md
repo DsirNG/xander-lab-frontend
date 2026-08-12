@@ -43,11 +43,11 @@
 
 | 组件 | 路径 | 适用场景 | 关键 API / 说明 |
 | --- | --- | --- | --- |
-| `CustomSelect` | `@components/common/CustomSelect` | 单选枚举、状态和权限切换 | `options: { value, label }[]`、`value`、`onChange`、`size: md/sm`（`sm` 为紧凑表单高度，匹配 `h-9`）；支持键盘、点击外部关闭与自动向上展开。禁止新写原生 `select`。 |
+| `CustomSelect` | `@components/common/CustomSelect` | 单选枚举、状态和权限切换 | `options: { value, label }[]`、`value`、`onChange`、`size: md/sm`（`sm` 为紧凑表单高度，匹配 `h-9`）、`dropdownAlign: left/center/right`；浮层走 Portal 渲染到 `document.body`（fixed 定位，z-index 1100），不受弹窗滚动容器裁剪、永不被弹窗标题覆盖。硬性规定：默认不点击空白收起，仅显式 `closeOnOutsideClick` 才允许；关闭方式 = 选择选项 / Esc / 弹窗右上角 X。禁止新写原生 `select`。 |
 | `TimezoneSelect` | `@components/common/TimezoneSelect` | 所有定时类功能（定时邮箱、定时发文等）的时区选择 | 基于 `CustomSelect`；`value`、`onChange`、`size: md/sm`；预置 10 个常用 IANA 时区并实时计算 UTC 偏移；`value` 不在预置列表时以原文展示（兼容历史数据）。禁止在业务里另写时区下拉或自由输入时区文本。 |
 | `FormField` | `@components/common/FormField` | 表单区块（label + 控件 + 可选提示） | `label`（为空则省略）、`htmlFor`、`hint`（辅助说明）、`className`（网格定位）、`children`。配合 `@components/common/formStyles` 的 `formInputCls` / `formInputSmCls` 使用，禁止在业务里另写 label/input 样式常量。 |
 | `TimeInput` | `@components/common/TimeInput` | HH:mm 时间输入（定时触发时间等） | 原生 `type="time"` 封装；`size: md/sm`、`openOnClick`（点击整块呼出选择器）、其余 props 透传；`step` 固定 60。禁止新写 `type="time"` 裸输入。 |
-| `CreatableMultiSelect` | `@components/common/CreatableMultiSelect` | 标签、多选项，且允许输入新项 | `value: string[]`、`onChange`、`options`、`placeholder`。 |
+| `CreatableMultiSelect` | `@components/common/CreatableMultiSelect` | 标签、多选项，且允许输入新项 | `value: string[]`、`onChange`、`options`、`placeholder`、`closeOnOutsideClick`（默认 false，硬性规定同 `CustomSelect`）。 |
 | `Modal` | `@components/common/Modal` | 确认、编辑、表单弹窗 | `isOpen`、`onClose`、`title`、`footer`、`width`；已实现 Portal、焦点管理与背景滚动锁定。 |
 | `ConfirmModal` | `@components/common/ConfirmModal` | 删除、退出登录等二次确认 | 基于 `Modal`；`isOpen`、`onClose`、`onConfirm`、`title`、`message`/`children`、`confirmText`、`cancelText`、`confirming`、`danger`（默认 true）。 |
 | `Pagination` | `@components/common/Pagination` | 列表底部分页 | `page`、`pageSize`、`total`、`pageSizeOptions`（默认 `[5,10,15,20]`）、`onPageChange`、`onPageSizeChange`、`disabled`、`hideWhenEmpty`；文案走 `common.pagination.*`。 |
