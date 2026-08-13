@@ -13,6 +13,7 @@ import AgentPreviewPanel from '@/features/blog/components/agent/AgentPreviewPane
 import { blogAgentService } from '@/features/blog/services/blogAgentService';
 import useIsMobile from '@/hooks/useIsMobile';
 import { useAgentConversation, compactToolResult, toolCallSummary } from '../hooks/useAgentConversation';
+import AgentMarkdown from '../components/AgentMarkdown';
 
 const ThoughtCard = ({ content }) => (
   <div className="flex items-start gap-2 rounded-xl border border-border bg-canvas px-3 py-2 text-xs leading-5 text-ink-muted">
@@ -110,10 +111,28 @@ const ToolStepCard = ({ step, t, onViewBlog }) => {
 
 const MessageBubble = ({ role, content }) => (
   <div className={`flex ${role === 'user' ? 'justify-end' : 'justify-start'}`}>
-    <div className={`max-w-[85%] whitespace-pre-wrap rounded-2xl px-4 py-2.5 text-sm leading-6 ${
+    <div className={`max-w-[90%] rounded-2xl px-4 py-2.5 text-sm leading-6 sm:max-w-[85%] ${
       role === 'user' ? 'bg-accent text-white' : 'border border-border bg-canvas text-ink'
     }`}>
-      {content}
+      {role === 'user' ? <span className="whitespace-pre-wrap">{content}</span> : <AgentMarkdown content={content} />}
+    </div>
+  </div>
+);
+
+const ThinkingIndicator = ({ label }) => (
+  <div className="flex justify-start" role="status" aria-live="polite">
+    <div className="flex min-h-10 items-center gap-2 rounded-2xl border border-border bg-canvas px-4 py-2.5 text-sm text-ink-muted shadow-sm">
+      <Sparkles className="h-4 w-4 animate-pulse text-accent" aria-hidden="true" />
+      <span>{label}</span>
+      <span className="flex items-center gap-1" aria-hidden="true">
+        {[0, 1, 2].map((index) => (
+          <span
+            key={index}
+            className="h-1.5 w-1.5 animate-bounce rounded-full bg-accent"
+            style={{ animationDelay: `${index * 140}ms` }}
+          />
+        ))}
+      </span>
     </div>
   </div>
 );
@@ -258,7 +277,7 @@ const AgentChat = () => {
 
   useEffect(() => {
     if (stickToBottomRef.current) chatEndRef.current?.scrollIntoView({ behavior: 'auto', block: 'end' });
-  }, [messages.length, steps]);
+  }, [messages, steps]);
 
   const handleSubmit = async () => {
     if (!input.trim()) {
@@ -575,6 +594,9 @@ const AgentChat = () => {
                       draft={tool.draft}
                     />
                   ))}
+                  {isActive && steps.length === 0 && (
+                    <ThinkingIndicator label={t('blog.agentChat.running')} />
+                  )}
                   <div ref={chatEndRef} />
                 </div>
               )}
