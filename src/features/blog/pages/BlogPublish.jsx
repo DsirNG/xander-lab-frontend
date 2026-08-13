@@ -97,7 +97,6 @@ const BlogPublish = () => {
                         <div className="w-full max-w-4xl px-5 sm:px-8 md:px-16 pt-20 pb-10 flex flex-col gap-10 min-h-full">
                             <PublishEditor
                                 ref={editorRef}
-                                t={t}
                                 isPreview={isPreview}
                                 onEditMode={() => {
                                     setIsPreview(false);
