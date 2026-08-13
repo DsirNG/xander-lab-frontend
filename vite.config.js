@@ -9,9 +9,24 @@ const projectRoot = fileURLToPath(new URL('.', import.meta.url))
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, projectRoot, 'VITE_')
   const apiProxyTarget = env.VITE_API_PROXY_TARGET?.trim() || 'https://xander.dsircity.top'
+  const appVersion = `${Date.now()}`
+
+  const versionManifestPlugin = {
+    name: 'version-manifest',
+    generateBundle() {
+      this.emitFile({
+        type: 'asset',
+        fileName: 'version.json',
+        source: JSON.stringify({ version: appVersion }),
+      })
+    },
+  }
 
   return {
-    plugins: [react()],
+    plugins: [react(), versionManifestPlugin],
+    define: {
+      'import.meta.env.VITE_APP_VERSION': JSON.stringify(appVersion),
+    },
     test: {
       environment: 'jsdom',
       setupFiles: './src/test/setup.js',

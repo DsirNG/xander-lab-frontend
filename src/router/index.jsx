@@ -15,6 +15,7 @@ import BlogLayout from '@features/blog/layouts/BlogLayout';
 import RouteSEOLayout from '@components/seo/RouteSEOLayout';
 import { LazyPage, ProtectedPage } from './RouteElements';
 import LegacyBlogToolRedirect from './LegacyBlogToolRedirect';
+import RouteErrorPage from '@features/appUpdate/RouteErrorPage';
 
 // Features (路由级懒加载)
 const HomePage = React.lazy(() => import('@features/home/pages/HomePage'));
@@ -232,6 +233,7 @@ export const createRouter = () => {
   // 组装完整路由
   const routerConfig = [{
     element: <RouteSEOLayout />,
+    errorElement: <RouteErrorPage />,
     children: [
       {
         path: '/login',

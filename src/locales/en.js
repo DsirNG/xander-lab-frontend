@@ -273,6 +273,11 @@ export default {
       reload: 'Reload',
       backToHome: 'Back to Home'
     },
+    appUpdate: {
+      title: 'System updated',
+      description: 'This version is no longer available. Refresh the page to continue.',
+      refresh: 'Refresh now'
+    },
     aria: {
       mainNav: 'Main navigation',
       openMenu: 'Open menu',

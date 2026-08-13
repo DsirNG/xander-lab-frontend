@@ -265,6 +265,11 @@ export default {
       reload: 'Tải lại',
       backToHome: 'Về trang chủ'
     },
+    appUpdate: {
+      title: 'Hệ thống đã cập nhật',
+      description: 'Phiên bản hiện tại không còn khả dụng. Hãy tải lại trang để tiếp tục.',
+      refresh: 'Tải lại ngay'
+    },
     aria: {
       mainNav: 'Điều hướng chính',
       openMenu: 'Mở menu',

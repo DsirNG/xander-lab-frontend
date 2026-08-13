@@ -265,6 +265,11 @@ export default {
       reload: '再読み込み',
       backToHome: 'ホームに戻る'
     },
+    appUpdate: {
+      title: 'システムが更新されました',
+      description: '現在のバージョンは利用できません。ページを再読み込みしてください。',
+      refresh: '今すぐ再読み込み'
+    },
     aria: {
       mainNav: 'メインナビゲーション',
       openMenu: 'メニューを開く',

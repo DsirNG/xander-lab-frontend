@@ -21,3 +21,11 @@
   X-Content-Type-Options: nosniff
   X-Frame-Options: DENY
   X-XSS-Protection: 1; mode=block
+
+# Build version must always be checked against the running application.
+/version.json
+  Cache-Control: no-store, no-cache, must-revalidate
+
+# Vite assets are content-hashed and can be cached permanently.
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable

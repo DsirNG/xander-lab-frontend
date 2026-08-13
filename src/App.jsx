@@ -14,6 +14,8 @@ import { useToast } from './hooks/useToast'
 import ErrorBoundary from './components/common/ErrorBoundary'
 import { AuthSessionProvider } from './features/auth/context/AuthSessionProvider'
 import { NotificationProvider } from './features/blog/context/NotificationContext'
+import AppUpdateModal from './features/appUpdate/AppUpdateModal'
+import useAppUpdate from './features/appUpdate/useAppUpdate'
 
 /**
  * 全局 Toast 桥接
@@ -40,6 +42,7 @@ function ToastBridge() {
 function App() {
   // 路由实例只创建一次，翻译由页面组件内部解析
   const router = useMemo(() => createRouter(), [])
+  const updateRequired = useAppUpdate()
 
   return (
     <HelmetProvider>
@@ -53,6 +56,7 @@ function App() {
             </NotificationProvider>
           </AuthSessionProvider>
           <ToastContainer />
+          <AppUpdateModal isOpen={updateRequired} />
         </ToastProvider>
       </ErrorBoundary>
     </HelmetProvider>

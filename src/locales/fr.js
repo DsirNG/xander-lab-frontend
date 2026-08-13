@@ -265,6 +265,11 @@ export default {
       reload: 'Recharger',
       backToHome: 'Retour à l\'accueil'
     },
+    appUpdate: {
+      title: 'Système mis à jour',
+      description: 'Cette version n’est plus disponible. Actualisez la page pour continuer.',
+      refresh: 'Actualiser maintenant'
+    },
     aria: {
       mainNav: 'Navigation principale',
       openMenu: 'Ouvrir le menu',

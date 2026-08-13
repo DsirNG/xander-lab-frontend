@@ -273,6 +273,11 @@ export default {
       reload: '重新加载',
       backToHome: '返回首页'
     },
+    appUpdate: {
+      title: '系统已更新',
+      description: '当前版本已失效，请刷新页面后继续使用。',
+      refresh: '立即刷新'
+    },
     aria: {
       mainNav: '主导航',
       openMenu: '打开菜单',
