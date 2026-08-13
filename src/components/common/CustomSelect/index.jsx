@@ -36,6 +36,7 @@ const CustomSelect = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isUpward, setIsUpward] = useState(false);
+  const [dropdownMaxHeight, setDropdownMaxHeight] = useState(240);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
   const selectRef = useRef(null);
   const dropdownRef = useRef(null);
@@ -92,6 +93,8 @@ const CustomSelect = ({
     }
 
     setIsUpward(shouldUpward);
+    const availableSpace = shouldUpward ? spaceAbove : spaceBelow;
+    setDropdownMaxHeight(Math.max(optionHeightPx + 8, Math.min(240, availableSpace - 8)));
   }, [getAvailableSpace, isOpen, options.length, size]);
 
   // 点击外部关闭下拉框
@@ -123,6 +126,7 @@ const CustomSelect = ({
     } else {
       // 关闭时重置方向
       setIsUpward(false);
+      setDropdownMaxHeight(240);
       setHighlightedIndex(-1);
     }
   }, [isOpen, checkBoundary]);
@@ -236,8 +240,9 @@ const CustomSelect = ({
         <div
           ref={dropdownRef}
           className={`${styles.selectDropdown} ${isUpward ? styles.upward : ''}`}
+          style={{ maxHeight: dropdownMaxHeight }}
         >
-          <div className={styles.optionsList} role="listbox">
+          <div className={styles.optionsList} role="listbox" style={{ maxHeight: dropdownMaxHeight }}>
             {options.map((option, index) => (
               <button
                 type="button"
