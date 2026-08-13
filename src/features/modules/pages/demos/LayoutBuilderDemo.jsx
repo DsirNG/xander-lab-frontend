@@ -90,7 +90,7 @@ const LayoutBuilderDemo = () => {
         <div className="flex w-full h-[500px] border border-slate-200  rounded-2xl overflow-hidden bg-slate-50 /30">
             {/* Sidebar Tools */}
             <div className="w-64 bg-white  border-r border-slate-200  p-4 flex flex-col">
-                <h3 className="text-xs font-black text-slate-400 uppercase tracking-wider mb-4">Components</h3>
+                <div className="text-xs font-black text-slate-400 uppercase tracking-wider mb-4">Components</div>
                 <div className="space-y-3">
                     {TOOL_ITEMS.map((tool) => (
                         <div
@@ -109,9 +109,9 @@ const LayoutBuilderDemo = () => {
                 </div>
 
                 <div className="mt-auto p-4 bg-blue-50 rounded-xl border border-blue-100">
-                    <p className="text-xs text-blue-600 leading-relaxed">
+                    <div className="text-xs text-blue-600 leading-relaxed">
                         Drag components from here to the canvas on the right to build your dashboard.
-                    </p>
+                    </div>
                 </div>
             </div>
 
@@ -196,12 +196,12 @@ const LayoutBuilderDemo = () => {
                                 {/* Content Placeholder */}
                                 <div className="flex-1 p-6 flex items-center justify-center bg-white  relative overflow-hidden">
                                     <div className="absolute inset-0 bg-gradient-to-tr from-slate-50 to-white opacity-50" />
-                                    <h4 className="relative font-bold text-slate-700  text-lg flex items-center">
+                                    <div className="relative font-bold text-slate-700  text-lg flex items-center">
                                         {item.type === 'chart-bar' && <BarChart3 className="w-6 h-6 mr-2 text-blue-500" />}
                                         {item.type === 'chart-pie' && <PieChart className="w-6 h-6 mr-2 text-purple-500" />}
                                         {item.type === 'image' && <ImageIcon className="w-6 h-6 mr-2 text-emerald-500" />}
                                         {item.content}
-                                    </h4>
+                                    </div>
                                 </div>
                             </motion.div>
                         ))}

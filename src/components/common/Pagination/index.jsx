@@ -62,9 +62,9 @@ const Pagination = ({
     return (
         <div className={`flex shrink-0 flex-col gap-2 border-t border-border px-3 py-2.5 sm:flex-row sm:items-center sm:justify-between sm:px-4 ${className}`}>
             <div className="flex flex-wrap items-center gap-2">
-                <p className="text-micro font-medium text-ink-faint">
+                <div className="text-micro font-medium text-ink-faint">
                     {t('common.pagination.pageInfo', { from, to, total })}
-                </p>
+                </div>
                 <div className="w-[7.5rem]">
                     <CustomSelect
                         size="sm"

@@ -330,9 +330,9 @@ const EmailReminderCreateModal = ({ isOpen, onClose, onCreated }) => {
                         <span className="grid h-8 w-8 place-items-center rounded-xl bg-accent-soft text-accent">
                             <CalendarClock className="h-4 w-4" />
                         </span>
-                        <h2 id="email-reminder-create-title" className="text-sm font-black text-ink">
+                        <div id="email-reminder-create-title" className="text-sm font-black text-ink">
                             {t('profile.emailReminders.addTitle')}
-                        </h2>
+                        </div>
                     </div>
                     <button
                         type="button"
@@ -348,10 +348,10 @@ const EmailReminderCreateModal = ({ isOpen, onClose, onCreated }) => {
                     <div className="grid min-h-0 flex-1 gap-0 overflow-y-auto lg:grid-cols-[minmax(0,1.4fr)_minmax(240px,0.75fr)]">
                         <div className="space-y-5 p-5">
                             <section>
-                                <h3 className="mb-3 flex items-center gap-2 text-xs font-black text-ink-secondary">
+                                <div className="mb-3 flex items-center gap-2 text-xs font-black text-ink-secondary">
                                     <span className="grid h-5 w-5 place-items-center rounded-full bg-accent-muted text-micro font-black text-accent-fg">1</span>
                                     {t('profile.emailReminders.sectionRecipient')}
-                                </h3>
+                                </div>
                                 <label className="block">
                                     <span className="mb-1 block text-micro font-bold text-ink-muted">
                                         {t('profile.emailReminders.recipientEmail')}
@@ -371,10 +371,10 @@ const EmailReminderCreateModal = ({ isOpen, onClose, onCreated }) => {
                             </section>
 
                             <section>
-                                <h3 className="mb-3 flex items-center gap-2 text-xs font-black text-ink-secondary">
+                                <div className="mb-3 flex items-center gap-2 text-xs font-black text-ink-secondary">
                                     <span className="grid h-5 w-5 place-items-center rounded-full bg-accent-muted text-micro font-black text-accent-fg">2</span>
                                     {t('profile.emailReminders.sectionContent')}
-                                </h3>
+                                </div>
                                 <div className="space-y-3">
                                     <label className="block">
                                         <span className="mb-1 block text-micro font-bold text-ink-muted">
@@ -418,22 +418,22 @@ const EmailReminderCreateModal = ({ isOpen, onClose, onCreated }) => {
                                             placeholder={t('profile.emailReminders.messagePlaceholder')}
                                             className="w-full resize-y rounded-lg border border-border bg-canvas px-3 py-2 font-mono text-xs font-medium leading-5 text-ink-secondary outline-none transition placeholder:text-ink-faint focus:border-accent focus:ring-2 focus:ring-accent/10"
                                         />
-                                        <p className="mt-1.5 text-micro font-medium leading-4 text-ink-faint">
+                                        <div className="mt-1.5 text-micro font-medium leading-4 text-ink-faint">
                                             {usesLayoutTemplate
                                                 ? t('profile.emailReminders.htmlContentHint', {
                                                     template: t(`profile.emailReminders.templates.${form.templateId}`),
                                                 })
                                                 : t('profile.emailReminders.messageInputHint')}
-                                        </p>
+                                        </div>
                                     </div>
                                 </div>
                             </section>
 
                             <section>
-                                <h3 className="mb-3 flex items-center gap-2 text-xs font-black text-ink-secondary">
+                                <div className="mb-3 flex items-center gap-2 text-xs font-black text-ink-secondary">
                                     <span className="grid h-5 w-5 place-items-center rounded-full bg-accent-muted text-micro font-black text-accent-fg">3</span>
                                     {t('profile.emailReminders.sectionSchedule')}
-                                </h3>
+                                </div>
 
                                 <div className="space-y-3">
                                     <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
@@ -540,9 +540,9 @@ const EmailReminderCreateModal = ({ isOpen, onClose, onCreated }) => {
 
                         <aside className="space-y-4 border-t border-border bg-surface/70 p-5 lg:border-l lg:border-t-0">
                             <div className="rounded-xl border border-border bg-canvas p-4">
-                                <h4 className="text-xs font-black text-ink">
+                                <div className="text-xs font-black text-ink">
                                     {t('profile.emailReminders.overviewTitle')}
-                                </h4>
+                                </div>
                                 <dl className="mt-3 space-y-2 text-caption">
                                     <div className="flex justify-between gap-3">
                                         <dt className="text-ink-faint">{t('profile.emailReminders.recipientEmail')}</dt>
@@ -647,12 +647,12 @@ const EmailReminderCreateModal = ({ isOpen, onClose, onCreated }) => {
                     >
                         <header className="flex shrink-0 items-center justify-between border-b border-border px-5 py-3.5">
                             <div>
-                                <h3 id="email-template-picker-title" className="text-sm font-black text-ink">
+                                <div id="email-template-picker-title" className="text-sm font-black text-ink">
                                     {t('profile.emailReminders.templatePickerTitle')}
-                                </h3>
-                                <p className="mt-0.5 text-micro font-medium text-ink-faint">
+                                </div>
+                                <div className="mt-0.5 text-micro font-medium text-ink-faint">
                                     {t('profile.emailReminders.templatePickerHint')}
-                                </p>
+                                </div>
                             </div>
                             <button
                                 type="button"

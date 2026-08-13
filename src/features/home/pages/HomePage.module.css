@@ -6,7 +6,7 @@
 .gridOverlay { @apply absolute inset-0 opacity-[0.045] pointer-events-none; background-image: radial-gradient(circle, currentColor 1px, transparent 1px); background-size: 28px 28px; }
 .heroContent { @apply relative z-10 mx-auto flex min-h-[calc(100vh-4rem)] max-w-5xl items-center justify-center px-6 py-20 text-center; }
 .version { @apply mx-auto mb-10 w-fit rounded-full border border-border px-4 py-1.5 text-caption font-medium text-ink-secondary; }
-.hero h1 { @apply flex flex-col text-6xl font-black leading-[0.82] tracking-tighter text-accent sm:text-8xl lg:text-[9.5rem]; }
+.heroTitle { @apply flex flex-col text-6xl font-black leading-[0.82] tracking-tighter text-accent sm:text-8xl lg:text-[9.5rem]; }
 .outline { @apply text-transparent; -webkit-text-stroke: 1.5px rgb(51 65 85 / 0.8); }
 .heroDescription { @apply mx-auto mt-9 max-w-2xl text-lg leading-relaxed text-ink-muted sm:text-2xl; }
 .heroActions { @apply mt-10 flex flex-col items-center justify-center gap-5 sm:flex-row; }
@@ -20,8 +20,8 @@
 .toolCopy { @apply max-w-sm; }
 .toolIndex { @apply block font-mono text-title font-bold text-accent; }
 .toolLabel { @apply mt-5 inline-flex items-center gap-2 text-micro font-bold uppercase tracking-[0.18em] text-ink-faint; }
-.toolCopy h2 { @apply mt-4 text-4xl font-black tracking-tight sm:text-5xl; }
-.toolCopy p { @apply mt-5 text-body leading-7 text-ink-muted; }
+.toolTitle { @apply mt-4 text-4xl font-black tracking-tight sm:text-5xl; }
+.toolDescription { @apply mt-5 text-body leading-7 text-ink-muted; }
 .toolAction { @apply mt-8 text-accent; }
 .agentPreview, .emailPreview, .demoPreview { @apply border border-border bg-canvas shadow-[12px_12px_0_rgb(15_23_42_/_0.04)]; }
 .agentPreview { @apply mx-auto w-full max-w-2xl p-5; }
@@ -49,8 +49,8 @@
 .demoBody pre { @apply m-0 overflow-auto bg-surface p-5 font-mono text-micro leading-6 text-ink-secondary; }
 .articles { @apply mx-auto max-w-5xl px-6 py-16; }
 .articlesHeader { @apply flex items-end justify-between gap-6 border-b border-border pb-5; }
-.articlesHeader h2 { @apply text-3xl font-black tracking-tight; }
+.articlesTitle { @apply text-3xl font-black tracking-tight; }
 .articleRow { @apply grid gap-2 border-b border-border py-5 text-caption transition hover:bg-surface sm:grid-cols-[10rem_1fr_auto] sm:items-center; }
 .articleRow span, .articleRow em { @apply not-italic text-ink-faint; }
 .articleRow strong { @apply text-ink-secondary; }
-@media (max-width: 640px) { .hero h1 { @apply text-6xl; } .outline { -webkit-text-stroke: 1px rgb(51 65 85 / 0.8); } .toolSection { @apply py-14; } }
+@media (max-width: 640px) { .heroTitle { @apply text-6xl; } .outline { -webkit-text-stroke: 1px rgb(51 65 85 / 0.8); } .toolSection { @apply py-14; } }

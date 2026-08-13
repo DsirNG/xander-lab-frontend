@@ -83,7 +83,7 @@ const ShareModals = ({
                     </div>
                     <div className="bg-warning-soft text-warning p-3 flex gap-3 text-caption rounded-xl font-medium border border-warning/20 ">
                         <Info className="w-4 h-4 flex-shrink-0 mt-0.5" />
-                        <p>{t('components.share.modals.fileExtensionHint')} <code className="bg-warning/10 px-1 py-0.5 rounded font-black italic">.jsx</code>, <code className="bg-warning/10 px-1 py-0.5 rounded font-black italic">.ts</code>, <code className="bg-warning/10 px-1 py-0.5 rounded font-black italic">.tsx</code>。</p>
+                        <div>{t('components.share.modals.fileExtensionHint')} <code className="bg-warning/10 px-1 py-0.5 rounded font-black italic">.jsx</code>, <code className="bg-warning/10 px-1 py-0.5 rounded font-black italic">.ts</code>, <code className="bg-warning/10 px-1 py-0.5 rounded font-black italic">.tsx</code>。</div>
                     </div>
                 </div>
             </Modal>
@@ -112,7 +112,7 @@ const ShareModals = ({
                         <span className="text-ink  font-black italic border-b border-danger/30 mt-2 inline-block">
                             {fileToDeleteIdx !== null ? libFiles[fileToDeleteIdx].name : ''}
                         </span>
-                        <p className="text-caption text-ink-faint mt-2">{t('components.share.modals.deleteLoseWarning')}</p>
+                        <div className="text-caption text-ink-faint mt-2">{t('components.share.modals.deleteLoseWarning')}</div>
                     </div>
                 </div>
             </Modal>
@@ -143,7 +143,7 @@ const ShareModals = ({
                                 ? (scenarios[scenarioToDeleteIdx]?.titleZh || scenarios[scenarioToDeleteIdx]?.titleEn || '')
                                 : ''}
                         </span>
-                        <p className="text-caption text-ink-faint mt-2">{t('components.share.modals.deleteScenarioLoseWarning')}</p>
+                        <div className="text-caption text-ink-faint mt-2">{t('components.share.modals.deleteScenarioLoseWarning')}</div>
                     </div>
                 </div>
             </Modal>

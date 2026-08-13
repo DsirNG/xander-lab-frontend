@@ -87,7 +87,7 @@ const BlogPlanDetail = () => {
   if (notFound || !plan) {
     return (
       <div className="mx-auto flex h-full w-full max-w-5xl flex-col items-center justify-center px-4 py-16 text-center">
-        <p className="text-sm font-medium text-ink-faint">{t('blogPlans.notFound')}</p>
+        <div className="text-sm font-medium text-ink-faint">{t('blogPlans.notFound')}</div>
         <button onClick={() => navigate('/workspace/plans')}
           className="mt-4 rounded-xl border border-border px-4 py-2 text-sm text-ink-secondary hover:bg-surface-muted">
           {t('blogPlans.backToList')}
@@ -106,15 +106,15 @@ const BlogPlanDetail = () => {
       <div className="mt-3 rounded-2xl border border-border bg-canvas/60 p-5 shadow-sm">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <h1 className="truncate text-xl font-bold text-ink">{plan.topic}</h1>
-            <p className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-ink-faint">
+            <div className="truncate text-xl font-bold text-ink">{plan.topic}</div>
+            <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-ink-faint">
               <span>{(plan.triggerTimes?.length > 0 ? plan.triggerTimes.join(' / ') : plan.triggerTime)} ({plan.timezone}) · {t('blogPlans.syncCsdn')}: {plan.syncCsdn ? t('blogPlans.yes') : t('blogPlans.no')}</span>
               {plan.runOnce && (
                 <span className="rounded-full bg-indigo-100 px-2 py-0.5 text-xs font-medium text-indigo-600 dark:bg-indigo-900/40 dark:text-indigo-300">
                   {t('blogPlans.oneShot')}
                 </span>
               )}
-            </p>
+            </div>
           </div>
           <PlanStatusBadge status={plan.status} />
         </div>
@@ -130,9 +130,9 @@ const BlogPlanDetail = () => {
           </div>
         </div>
         {plan.errorMessage && (
-          <p className="mt-3 rounded-xl bg-red-50 px-3 py-2 text-xs text-red-600 dark:bg-red-900/20 dark:text-red-400">
+          <div className="mt-3 rounded-xl bg-red-50 px-3 py-2 text-xs text-red-600 dark:bg-red-900/20 dark:text-red-400">
             {t('blogPlans.lastError')}: {plan.errorMessage}
-          </p>
+          </div>
         )}
 
         <div className="mt-4 flex flex-wrap items-center gap-2">
@@ -182,7 +182,7 @@ const BlogPlanDetail = () => {
 
       <div className="mt-6 flex flex-col gap-3">
         <div className="flex items-center justify-between">
-          <h2 className="text-sm font-semibold text-ink">{t('blogPlans.runHistory')}</h2>
+          <div className="text-sm font-semibold text-ink">{t('blogPlans.runHistory')}</div>
           <span className="text-xs text-ink-faint">{t('blogPlans.totalRuns', { count: runsTotal })}</span>
         </div>
 
@@ -190,7 +190,7 @@ const BlogPlanDetail = () => {
           <div className="flex justify-center py-10"><Loader2 className="h-5 w-5 animate-spin text-ink-faint" /></div>
         ) : runs.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-border py-12 text-center">
-            <p className="text-sm text-ink-faint">{t('blogPlans.noRuns')}</p>
+            <div className="text-sm text-ink-faint">{t('blogPlans.noRuns')}</div>
           </div>
         ) : (
           <div className="overflow-hidden rounded-2xl border border-border">

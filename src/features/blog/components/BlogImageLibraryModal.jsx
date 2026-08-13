@@ -195,8 +195,8 @@ const BlogImageLibraryModal = ({ isOpen, onClose, onInsert }) => {
                         ) : (
                             <div className="flex h-full min-h-[280px] flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-surface text-center">
                                 <ImageIcon className="mb-3 h-10 w-10 text-ink-faint" />
-                                <p className="font-bold text-ink-secondary">{t('blog.media.emptyTitle')}</p>
-                                <p className="mt-1 text-sm text-ink-faint">{t('blog.media.emptyHint')}</p>
+                                <div className="font-bold text-ink-secondary">{t('blog.media.emptyTitle')}</div>
+                                <div className="mt-1 text-sm text-ink-faint">{t('blog.media.emptyHint')}</div>
                             </div>
                         )}
                     </div>
@@ -210,13 +210,13 @@ const BlogImageLibraryModal = ({ isOpen, onClose, onInsert }) => {
                                     className="aspect-[4/3] w-full rounded-xl bg-canvas object-contain"
                                 />
                                 <div>
-                                    <p className="break-all text-sm font-black text-ink">{selected.originalName}</p>
-                                    <p className="mt-2 text-xs font-medium text-ink-muted">
+                                    <div className="break-all text-sm font-black text-ink">{selected.originalName}</div>
+                                    <div className="mt-2 text-xs font-medium text-ink-muted">
                                         {selected.width && selected.height ? `${selected.width} × ${selected.height}` : '—'}
                                         <span className="px-2">·</span>
                                         {formatBytes(selected.size)}
-                                    </p>
-                                    <p className="mt-1 text-xs text-ink-faint">{selected.contentType}</p>
+                                    </div>
+                                    <div className="mt-1 text-xs text-ink-faint">{selected.contentType}</div>
                                 </div>
                             </div>
                         ) : (

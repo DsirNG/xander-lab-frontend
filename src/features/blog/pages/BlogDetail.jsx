@@ -75,7 +75,7 @@ import usePureReading from '@/hooks/usePureReading';
     blockquote({ children, ...props }) {
         return (
             <blockquote
-                className="border-l-4 border-accent/50 bg-accent/5 pl-4 py-2 my-4 rounded-r-lg text-ink-secondary [&>p]:my-1"
+                className="border-l-4 border-accent/50 bg-accent/5 pl-4 py-2 my-4 rounded-r-lg text-ink-secondary [&>div]:my-1"
                 {...props}
             >
                 {children}
@@ -201,8 +201,8 @@ const BlogDetail = () => {
     if (error || !blog) {
         return (
             <div className="flex flex-col items-center justify-center min-h-[400px] text-center">
-                <h2 className="text-xl font-bold text-ink mb-2">404</h2>
-                <p className="text-sm text-ink-muted mb-5">{t('blog.articleNotFound')}</p>
+                <div className="text-xl font-bold text-ink mb-2">404</div>
+                <div className="text-sm text-ink-muted mb-5">{t('blog.articleNotFound')}</div>
                 <Link
                     to="/blog/"
                     className="px-5 py-2 text-sm bg-accent text-white rounded-lg hover:bg-accent/90 transition-colors"
@@ -303,9 +303,9 @@ const BlogDetail = () => {
                     {blog.categoryName || blog.category}
                 </span>
 
-                <h1 className="text-2xl md:text-3xl font-black text-ink mb-4 leading-tight tracking-tight">
+                <div className="text-2xl md:text-3xl font-black text-ink mb-4 leading-tight tracking-tight">
                     {blog.title}
-                </h1>
+                </div>
 
                 <div className="flex flex-wrap items-center gap-4 text-xs text-ink-muted">
                     <div className="flex items-center">
@@ -338,9 +338,9 @@ const BlogDetail = () => {
                                 <span className="text-warning text-xs font-bold font-mono">i</span>
                             </div>
                         </div>
-                        <p className="text-sm text-warning-fg leading-relaxed font-medium">
+                        <div className="text-sm text-warning-fg leading-relaxed font-medium">
                             {blog.tips}
-                        </p>
+                        </div>
                     </div>
                 </div>
             )}

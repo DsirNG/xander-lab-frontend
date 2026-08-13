@@ -25,16 +25,16 @@ const DragDropSystem = () => {
                     <div className="inline-block px-3 py-1 rounded-md bg-blue-600/10 text-blue-600 text-xs font-bold uppercase tracking-wider mb-4">
                         Interaction Layer
                     </div>
-                    <h1 className="text-5xl font-black text-slate-900  mb-6">
+                    <div className="text-5xl font-black text-slate-900  mb-6">
                         {t('modules.dragdrop.title')}
-                    </h1>
-                    <p className="text-xl text-slate-600  leading-relaxed">
+                    </div>
+                    <div className="text-xl text-slate-600  leading-relaxed">
                         {t('modules.dragdrop.desc')}
-                    </p>
+                    </div>
                 </header>
 
                 <div className="space-y-4 mb-16 px-4">
-                    <h2 className="text-sm uppercase tracking-widest text-slate-400 font-bold">{t('common.technicalNarrative')}</h2>
+                    <div className="text-sm uppercase tracking-widest text-slate-400 font-bold">{t('common.technicalNarrative')}</div>
                     <div className="h-1 w-20 bg-blue-600 rounded-full" />
                 </div>
 
@@ -46,7 +46,7 @@ const DragDropSystem = () => {
 
                 <section className="mb-24">
                     <div className="space-y-4 mb-8 px-4">
-                        <h2 className="text-sm uppercase tracking-widest text-slate-400 font-bold">{t('common.codeImplementation')}</h2>
+                        <div className="text-sm uppercase tracking-widest text-slate-400 font-bold">{t('common.codeImplementation')}</div>
                         <div className="h-1 w-20 bg-blue-600 rounded-full" />
                     </div>
 
@@ -56,9 +56,9 @@ const DragDropSystem = () => {
                         </div>
 
                         <div className="relative z-10">
-                            <h3 className="text-xl font-bold text-white mb-6 flex items-center">
+                            <div className="text-xl font-bold text-white mb-6 flex items-center">
                                 {t('common.involvedFiles')}
-                            </h3>
+                            </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 {t('modules.dragdrop.files', { returnObjects: true }).map((file, i) => (
@@ -67,8 +67,8 @@ const DragDropSystem = () => {
                                             <Box aria-hidden="true" className="w-5 h-5 text-blue-400" />
                                         </div>
                                         <div>
-                                            <p className="text-white font-mono text-sm">{file.name}</p>
-                                            <p className="text-slate-400 text-xs">{file.role}</p>
+                                            <div className="text-white font-mono text-sm">{file.name}</div>
+                                            <div className="text-slate-400 text-xs">{file.role}</div>
                                         </div>
                                     </div>
                                 ))}

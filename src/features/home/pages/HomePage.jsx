@@ -45,9 +45,9 @@ function Hero() {
   const { t } = useTranslation();
   return <section className={styles.hero}><div className={styles.gridOverlay} /><div className={styles.heroContent}>
     <motion.div initial={{ opacity: 0, y: 22 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}>
-      <p className={styles.version}>{t('home.version')}</p>
-      <h1><span>{t('home.hero.filled')}</span><span className={styles.outline}>{t('home.hero.outline')}</span></h1>
-      <p className={styles.heroDescription}>{t('home.hero.description')}</p>
+      <div className={styles.version}>{t('home.version')}</div>
+      <div className={styles.heroTitle}><span>{t('home.hero.filled')}</span><span className={styles.outline}>{t('home.hero.outline')}</span></div>
+      <div className={styles.heroDescription}>{t('home.hero.description')}</div>
       <div className={styles.heroActions}><a href="#tools" className={styles.primaryButton}>{t('home.hero.explore')}</a><Link to="/workspace/studio" className={styles.textAction}>{t('home.hero.studio')} <ArrowRight size={19} /></Link></div>
     </motion.div>
   </div></section>;
@@ -58,7 +58,7 @@ function ToolSection({ definition, index }) {
   const Preview = PreviewByFeature[definition.key];
   const Icon = definition.icon;
   return <section className={`${styles.toolSection} ${index % 2 ? styles.toolSectionReverse : ''}`}>
-    <div className={styles.toolCopy}><span className={styles.toolIndex}>0{index + 1}</span><span className={styles.toolLabel}><Icon size={15} /> {t(`home.tools.${definition.key}.label`)}</span><h2>{t(`home.tools.${definition.key}.title`)}</h2><p>{t(`home.tools.${definition.key}.description`)}</p><Link className={styles.toolAction} to={definition.to}>{t(`home.tools.${definition.key}.action`)} <ArrowRight size={17} /></Link></div>
+    <div className={styles.toolCopy}><span className={styles.toolIndex}>0{index + 1}</span><span className={styles.toolLabel}><Icon size={15} /> {t(`home.tools.${definition.key}.label`)}</span><div className={styles.toolTitle}>{t(`home.tools.${definition.key}.title`)}</div><div className={styles.toolDescription}>{t(`home.tools.${definition.key}.description`)}</div><Link className={styles.toolAction} to={definition.to}>{t(`home.tools.${definition.key}.action`)} <ArrowRight size={17} /></Link></div>
     <Preview />
   </section>;
 }
@@ -66,7 +66,7 @@ function ToolSection({ definition, index }) {
 function ArticleList() {
   const { t } = useTranslation();
   const articles = ['accessibility', 'designTokens', 'automation'];
-  return <section className={styles.articles}><div className={styles.articlesHeader}><h2>{t('home.articles.title')}</h2><Link to="/blog" className={styles.toolAction}>{t('home.articles.all')} <ArrowRight size={17} /></Link></div><div>{articles.map((article) => <Link to="/blog" className={styles.articleRow} key={article}><span>{t(`home.articles.items.${article}.date`)}</span><strong>{t(`home.articles.items.${article}.title`)}</strong><em>{t(`home.articles.items.${article}.tag`)}</em></Link>)}</div></section>;
+  return <section className={styles.articles}><div className={styles.articlesHeader}><div className={styles.articlesTitle}>{t('home.articles.title')}</div><Link to="/blog" className={styles.toolAction}>{t('home.articles.all')} <ArrowRight size={17} /></Link></div><div>{articles.map((article) => <Link to="/blog" className={styles.articleRow} key={article}><span>{t(`home.articles.items.${article}.date`)}</span><strong>{t(`home.articles.items.${article}.title`)}</strong><em>{t(`home.articles.items.${article}.tag`)}</em></Link>)}</div></section>;
 }
 
 export default function HomePage() {

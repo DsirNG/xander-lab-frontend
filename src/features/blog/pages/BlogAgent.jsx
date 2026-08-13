@@ -287,8 +287,8 @@ const BlogAgent = () => {
                     <Sparkles className="h-5 w-5" />
                   </div>
                   <div>
-                    <h1 className="text-2xl font-black tracking-tight">{t('blog.agent.headline')}</h1>
-                    <p className="mt-2 text-sm leading-6 text-ink-muted">{t('blog.agent.description')}</p>
+                    <div className="text-2xl font-black tracking-tight">{t('blog.agent.headline')}</div>
+                    <div className="mt-2 text-sm leading-6 text-ink-muted">{t('blog.agent.description')}</div>
                   </div>
                 </div>
               ) : (

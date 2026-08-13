@@ -88,10 +88,10 @@ const NotificationBell = () => {
 
           <div className="max-h-96 overflow-y-auto">
             {loading && notifications.length === 0 && (
-              <p className="px-4 py-6 text-center text-xs text-ink-faint">{t('notifications.loading')}</p>
+              <div className="px-4 py-6 text-center text-xs text-ink-faint">{t('notifications.loading')}</div>
             )}
             {!loading && notifications.length === 0 && (
-              <p className="px-4 py-10 text-center text-xs text-ink-faint">{t('notifications.empty')}</p>
+              <div className="px-4 py-10 text-center text-xs text-ink-faint">{t('notifications.empty')}</div>
             )}
             {notifications.map((n) => (
               <div key={n.id} className={`px-4 py-3 text-sm ${n.isRead ? '' : 'bg-accent-soft/50'}`}>
@@ -100,10 +100,10 @@ const NotificationBell = () => {
                   {!n.isRead && <span className="h-2 w-2 shrink-0 rounded-full bg-red-500" />}
                 </div>
                 {n.message && (
-                  <p className="mt-1 line-clamp-2 text-xs text-ink-faint">{n.message}</p>
+                  <div className="mt-1 line-clamp-2 text-xs text-ink-faint">{n.message}</div>
                 )}
                 {n.createdAt && (
-                  <p className="mt-1 text-[10px] text-ink-faint">{new Date(n.createdAt).toLocaleString()}</p>
+                  <div className="mt-1 text-[10px] text-ink-faint">{new Date(n.createdAt).toLocaleString()}</div>
                 )}
               </div>
             ))}

@@ -98,12 +98,12 @@ const ProfilePage = () => {
             <aside className="flex w-full shrink-0 flex-col border-b border-border bg-canvas lg:h-full lg:w-[220px] lg:border-b-0 lg:border-r">
                 <div className="border-b border-border px-4 py-4">
                     <div className="mb-3">
-                        <h1 className="text-base font-black tracking-tight text-ink">
+                        <div className="text-base font-black tracking-tight text-ink">
                             {t('profile.title')}
-                        </h1>
-                        <p className="mt-0.5 text-caption font-medium text-ink-faint">
+                        </div>
+                        <div className="mt-0.5 text-caption font-medium text-ink-faint">
                             {t('profile.subtitle')}
-                        </p>
+                        </div>
                     </div>
                     <div className="flex items-center gap-2.5">
                         <div className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-accent text-xs font-black uppercase text-white">
@@ -111,14 +111,14 @@ const ProfilePage = () => {
                         </div>
                         <div className="min-w-0">
                             <div className="flex flex-wrap items-center gap-1.5">
-                                <p className="truncate text-xs font-bold text-ink">{displayName}</p>
+                                <div className="truncate text-xs font-bold text-ink">{displayName}</div>
                                 <span className="rounded bg-accent-soft px-1.5 py-0.5 text-micro font-bold text-accent ring-1 ring-accent-100">
                                     {roleLabel}
                                 </span>
                             </div>
-                            <p className="mt-0.5 truncate text-micro font-medium text-ink-faint">
+                            <div className="mt-0.5 truncate text-micro font-medium text-ink-faint">
                                 {accountEmail || t('profile.account')}
-                            </p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -165,10 +165,10 @@ const ProfilePage = () => {
                         <span className="grid h-12 w-12 place-items-center rounded-2xl bg-surface text-ink-faint">
                             <Settings2 className="h-6 w-6" />
                         </span>
-                        <p className="text-sm font-bold text-ink-secondary">{t('profile.comingSoon')}</p>
-                        <p className="max-w-sm text-xs font-medium leading-5 text-ink-faint">
+                        <div className="text-sm font-bold text-ink-secondary">{t('profile.comingSoon')}</div>
+                        <div className="max-w-sm text-xs font-medium leading-5 text-ink-faint">
                             {t('profile.comingSoonHint')}
-                        </p>
+                        </div>
                     </div>
                 )}
             </div>

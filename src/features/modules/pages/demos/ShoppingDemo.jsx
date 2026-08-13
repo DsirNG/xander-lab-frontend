@@ -97,7 +97,7 @@ const ShoppingDemo = () => {
             {/* Scenario D-1: Add to Cart */}
             <div className="relative">
                 <div className="flex items-center justify-between mb-6">
-                    <h3 className="text-sm font-black text-slate-500 uppercase tracking-wider">Drag to Cart</h3>
+                    <div className="text-sm font-black text-slate-500 uppercase tracking-wider">Drag to Cart</div>
                     <div className="flex items-center space-x-2">
                         {/* Tags Source */}
                         {tags.map(tag => (
@@ -140,8 +140,8 @@ const ShoppingDemo = () => {
                             <div className={`w-12 h-12 rounded-xl mb-4 flex items-center justify-center bg-slate-100  ${product.color}`}>
                                 <product.icon className="w-6 h-6" />
                             </div>
-                            <h4 className="font-bold text-slate-800  mb-1">{product.name}</h4>
-                            <p className="text-slate-500  text-sm font-medium">{product.price}</p>
+                            <div className="font-bold text-slate-800  mb-1">{product.name}</div>
+                            <div className="text-slate-500  text-sm font-medium">{product.price}</div>
 
                             {/* Attached Tags Area */}
                             <div className="absolute top-2 right-2 flex flex-col items-end space-y-1">
@@ -198,7 +198,7 @@ const ShoppingDemo = () => {
                         animate={{ opacity: 1, y: 0 }}
                         className="absolute bottom-24 right-0 w-64 bg-white  rounded-xl shadow-2xl border border-slate-200 p-4"
                     >
-    <h4 className="text-sm font-bold border-b border-slate-100 pb-2 mb-2 text-slate-800 ">Cart Summary</h4>
+    <div className="text-sm font-bold border-b border-slate-100 pb-2 mb-2 text-slate-800 ">Cart Summary</div>
                         <div className="space-y-2 max-h-40 overflow-y-auto">
                             {cartItems.map((item, i) => (
                                 <div key={i} className="flex justify-between items-center text-sm">

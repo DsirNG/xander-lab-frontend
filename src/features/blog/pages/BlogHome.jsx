@@ -161,13 +161,13 @@ const BlogHome = () => {
             {/* 头部区域 */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border pb-5">
                 <div className="flex-1">
-                    <h1 className="text-xl font-bold text-ink tracking-tight mb-1">
+                    <div className="text-xl font-bold text-ink tracking-tight mb-1">
                         {getPageTitle()}
-                    </h1>
+                    </div>
                     <div className="flex items-center gap-2">
-                        <p className="text-xs text-ink-muted">
+                        <div className="text-xs text-ink-muted">
                             {loading ? t('blog.loading') : t('blog.foundArticles', { count: total })}
-                        </p>
+                        </div>
                         {loadingMore && <Loader2 className="w-3 h-3 text-accent animate-spin" />}
                     </div>
                 </div>
@@ -245,9 +245,9 @@ const BlogHome = () => {
                     )}
 
                     {!hasMore && blogs.length > 5 && (
-                        <p className="text-center text-xs text-ink-faint py-6">
+                        <div className="text-center text-xs text-ink-faint py-6">
                             — {t('blog.noMoreArticles')} —
-                        </p>
+                        </div>
                     )}
                 </div>
             ) : (
@@ -255,12 +255,12 @@ const BlogHome = () => {
                     <div className="w-14 h-14 bg-surface-muted rounded-full flex items-center justify-center mb-3">
                         <Filter className="w-7 h-7 text-ink-faint" />
                     </div>
-                    <h3 className="text-base font-medium text-ink mb-1">
+                    <div className="text-base font-medium text-ink mb-1">
                         {t('blog.noArticles')}
-                    </h3>
-                    <p className="text-sm text-ink-muted max-w-sm mx-auto mb-5">
+                    </div>
+                    <div className="text-sm text-ink-muted max-w-sm mx-auto mb-5">
                         {t('blog.noArticlesHint')}
-                    </p>
+                    </div>
                     {(search || category || tag) && (
                         <button
                             onClick={clearFilters}

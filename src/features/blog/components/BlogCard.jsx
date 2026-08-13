@@ -29,14 +29,14 @@ const BlogCard = memo(({ blog }) => {
             </div>
 
             {/* 标题 */}
-            <h3 className="text-base font-bold text-ink mb-1.5 group-hover:text-accent transition-colors line-clamp-1">
+            <div className="text-base font-bold text-ink mb-1.5 group-hover:text-accent transition-colors line-clamp-1">
                 {blog.title}
-            </h3>
+            </div>
 
             {/* 摘要 */}
-            <p className="text-sm text-ink-muted mb-3 line-clamp-2 leading-relaxed">
+            <div className="text-sm text-ink-muted mb-3 line-clamp-2 leading-relaxed">
                 {blog.summary}
-            </p>
+            </div>
 
             {/* 标签 + 阅读时间 */}
             <div className="flex items-center gap-2 pt-3 border-t border-border/50">

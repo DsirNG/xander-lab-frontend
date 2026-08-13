@@ -27,12 +27,12 @@ export default function CreatableMultiSelectDemo() {
     return (
         <div className="p-8 max-w-2xl mx-auto bg-slate-50 /50 rounded-3xl border border-slate-200 ">
             <div className="mb-8">
-                <h2 className="text-2xl font-black text-slate-900  mb-2 font-sans tracking-tight">
+                <div className="text-2xl font-black text-slate-900  mb-2 font-sans tracking-tight">
                     可创建多选框 (CreatableMultiSelect)
-                </h2>
-                <p className="text-sm text-slate-500 font-medium">
+                </div>
+                <div className="text-sm text-slate-500 font-medium">
                     支持预设推断与自定义输入创建，适用于标签选择、话题分类、成员添加等多种表单场景。
-                </p>
+                </div>
             </div>
 
             <div className="space-y-8">
@@ -69,7 +69,7 @@ export default function CreatableMultiSelectDemo() {
 
                     {submittedItems.length > 0 && (
                         <div className="w-full mt-4 p-4 bg-white  rounded-2xl border border-slate-100 ">
-                            <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">多选结果</h3>
+                            <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">多选结果</div>
                             <pre className="text-xs font-mono text-emerald-600  bg-emerald-50  p-4 rounded-xl overflow-x-auto">
                                 {JSON.stringify(submittedItems, null, 2)}
                             </pre>

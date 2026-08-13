@@ -13,7 +13,7 @@ const ShareHeader = ({ onPublish, onTourStart, onNavigateBack }) => {
                     <img src="https://xander.dsircity.top/favicon.png" alt="" />
                 </div>
                 <div>
-                    <h1 className="text-body font-black uppercase italic tracking-widest mb-0.5">{t('components.share.header.title')}</h1>
+                    <div className="text-body font-black uppercase italic tracking-widest mb-0.5">{t('components.share.header.title')}</div>
                     <span className="text-micro font-black text-ink-faint uppercase tracking-tighter flex items-center gap-2">
                         Architecture Synchronized // <div className="w-1.5 h-1.5 rounded-full bg-success" /> ACTIVE
                     </span>

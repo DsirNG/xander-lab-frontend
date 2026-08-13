@@ -148,7 +148,7 @@ const KanbanDemo = () => {
                     {/* Column Header */}
                     <div className="p-4 flex items-center justify-between">
                         <div className="flex items-center space-x-2">
-                            <h3 className="font-bold text-slate-700 ">{col.title}</h3>
+                            <div className="font-bold text-slate-700 ">{col.title}</div>
                             <span className="bg-slate-200  text-slate-500  px-2 py-0.5 rounded-full text-xs font-bold">
                                 {col.items.length}
                             </span>
@@ -198,9 +198,9 @@ const KanbanDemo = () => {
                                             <MoreHorizontal className="w-4 h-4" />
                                         </button>
                                     </div>
-                                    <h4 className="font-semibold text-slate-800  mb-3 text-sm leading-snug">
+                                    <div className="font-semibold text-slate-800  mb-3 text-sm leading-snug">
                                         {item.title}
-                                    </h4>
+                                    </div>
                                     <div className="flex items-center justify-between text-slate-400">
                                         <div className="flex -space-x-2">
                                             <div className="w-6 h-6 rounded-full bg-gradient-to-br from-primary-400 to-primary border-2 border-white " />

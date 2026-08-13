@@ -265,9 +265,9 @@ export default function CompilerPage() {
       <StudioTopBar
         title={
           <>
-            <h1 className="truncate text-base font-bold text-ink">
+            <div className="truncate text-base font-bold text-ink">
               {project?.name || '编译器'}
-            </h1>
+            </div>
             <div className={`hidden w-52 sm:block ${isUpdatingVisibility ? 'pointer-events-none opacity-50' : ''}`}>
               <CustomSelect
                 options={VISIBILITY_OPTIONS}
@@ -295,7 +295,7 @@ export default function CompilerPage() {
                   </button>
                   {isShareOpen ? (
                     <div role="dialog" aria-label="分享项目" className="absolute right-0 top-full z-40 mt-2 w-80 rounded-xl border border-border bg-canvas p-3 shadow-xl">
-                      <p className="mb-2 text-caption font-bold text-ink-secondary">公开源码链接</p>
+                      <div className="mb-2 text-caption font-bold text-ink-secondary">公开源码链接</div>
                       <div className="flex items-center gap-2">
                         <input value={shareUrl} readOnly onFocus={(event) => event.currentTarget.select()} className="min-w-0 flex-1 rounded-lg border border-border bg-surface px-2.5 py-2 text-caption text-ink-muted outline-none" aria-label="公开源码链接" />
                         <button type="button" onClick={handleCopyShareLink} className="inline-flex shrink-0 items-center gap-1 rounded-lg bg-accent px-2.5 py-2 text-caption font-bold text-white hover:bg-accent-700">
@@ -330,10 +330,10 @@ export default function CompilerPage() {
         {/* 文件树 - 固定宽度，独立滚动 */}
         <aside className="flex w-72 shrink-0 flex-col border-r border-border bg-canvas">
           <div className="shrink-0 border-b border-border px-4 py-2.5">
-            <p className="text-micro font-bold uppercase tracking-widest text-ink-faint">
+            <div className="text-micro font-bold uppercase tracking-widest text-ink-faint">
               File Tree
-            </p>
-            <h2 className="text-body font-bold text-ink">文件目录</h2>
+            </div>
+            <div className="text-body font-bold text-ink">文件目录</div>
           </div>
           <div className="min-h-0 flex-1 overflow-auto p-2">
             {treeNodes.length > 0 ? (
@@ -390,12 +390,12 @@ export default function CompilerPage() {
           <div className="mx-auto flex h-full max-w-[1400px] flex-col overflow-hidden rounded-lg bg-canvas shadow-2xl">
             <div className="flex items-center justify-between gap-3 border-b border-border px-4 py-3">
               <div className="min-w-0">
-                <p className="text-caption font-bold uppercase tracking-widest text-ink-faint">
+                <div className="text-caption font-bold uppercase tracking-widest text-ink-faint">
                   Preview
-                </p>
-                <h2 className="truncate text-body font-black text-ink">
+                </div>
+                <div className="truncate text-body font-black text-ink">
                   {project?.name}
-                </h2>
+                </div>
               </div>
               <div className="flex items-center gap-2">
                 <a
@@ -427,7 +427,7 @@ export default function CompilerPage() {
               ) : (
                 <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-surface">
                   <Loader2 className="h-10 w-10 animate-spin text-accent" />
-                  <p className="text-body font-medium text-ink-muted">正在加载预览...</p>
+                  <div className="text-body font-medium text-ink-muted">正在加载预览...</div>
                 </div>
               )}
             </div>

@@ -187,8 +187,8 @@ const MultiFileTransferDemo = () => {
                 <div className="lg:col-span-7 bg-white  border border-slate-200  rounded-[2.5rem] overflow-hidden shadow-2xl">
                     <div className="p-8 border-b border-slate-100  flex items-center justify-between bg-slate-50/50 /20">
                         <div>
-                            <h3 className="text-xl font-black text-slate-800 ">Workspace</h3>
-                            <p className="text-xs text-slate-400 font-medium tracking-wide">SHIPPING_DEPT / PROJECTS</p>
+                            <div className="text-xl font-black text-slate-800 ">Workspace</div>
+                            <div className="text-xs text-slate-400 font-medium tracking-wide">SHIPPING_DEPT / PROJECTS</div>
                         </div>
                         <div className="flex -space-x-2">
                             {[1, 2, 3].map(i => (
@@ -228,10 +228,10 @@ const MultiFileTransferDemo = () => {
                                             )}
                                         </div>
                                         <div className="flex-grow">
-                                            <p className={`text-sm font-bold ${isSelected ? 'text-primary' : 'text-slate-600 '}`}>
+                                            <div className={`text-sm font-bold ${isSelected ? 'text-primary' : 'text-slate-600 '}`}>
                                                 {file.name}
-                                            </p>
-                                            <p className="text-[10px] text-slate-400 font-semibold">{file.size}</p>
+                                            </div>
+                                            <div className="text-[10px] text-slate-400 font-semibold">{file.size}</div>
                                         </div>
                                         {isSelected && (
                                             <div className="bg-primary text-white text-[9px] font-black px-2 py-1 rounded-full animate-pulse">
@@ -246,7 +246,7 @@ const MultiFileTransferDemo = () => {
                         {files.length === 0 && (
                             <div className="py-12 flex flex-col items-center justify-center text-slate-300">
                                 <CheckCircle2 className="w-12 h-12 mb-4 opacity-20" />
-                                <p className="font-bold tracking-tight">STAGING CLEAR</p>
+                                <div className="font-bold tracking-tight">STAGING CLEAR</div>
                             </div>
                         )}
                     </div>
@@ -279,8 +279,8 @@ const MultiFileTransferDemo = () => {
                                         {dragDrop.dragOverItem?.id === folder.id ? <FolderOpen className="w-7 h-7" /> : <Box className="w-7 h-7" />}
                                     </div>
                                     <div className="text-right">
-                                        <p className="text-[10px] font-black text-primary mb-1">TARGET NODE</p>
-                                        <h4 className="font-black text-slate-800 ">{folder.name}</h4>
+                                        <div className="text-[10px] font-black text-primary mb-1">TARGET NODE</div>
+                                        <div className="font-black text-slate-800 ">{folder.name}</div>
                                     </div>
                                 </div>
 
@@ -298,9 +298,9 @@ const MultiFileTransferDemo = () => {
                                         ))}
                                     </AnimatePresence>
                                     {folder.items.length > 2 && (
-                                        <p className="text-[9px] text-center text-slate-400 font-bold uppercase tracking-widest pt-2">
+                                        <div className="text-[9px] text-center text-slate-400 font-bold uppercase tracking-widest pt-2">
                                             + {folder.items.length - 2} more items in vault
-                                        </p>
+                                        </div>
                                     )}
                                 </div>
                             </div>
@@ -313,7 +313,7 @@ const MultiFileTransferDemo = () => {
                                 >
                                     <div className="w-full h-full rounded-[2rem] bg-primary/10 backdrop-blur-sm border-2 border-primary border-dashed flex flex-col items-center justify-center">
                                         <Files className="w-10 h-10 text-primary mb-3 animate-bounce" />
-                                        <p className="text-primary text-sm font-black tracking-widest uppercase">Release to transfer</p>
+                                        <div className="text-primary text-sm font-black tracking-widest uppercase">Release to transfer</div>
                                     </div>
                                 </motion.div>
                             )}

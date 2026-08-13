@@ -143,9 +143,9 @@ const Modal = ({
                         {(title || !hideCloseButton) && (
                             <div className="flex-shrink-0 flex items-center justify-between px-6 py-5 border-b border-border">
                                 {typeof title === 'string' ? (
-                                    <h3 id={titleId} className="text-title font-black text-ink tracking-tight">
+                                    <div id={titleId} className="text-title font-black text-ink tracking-tight">
                                         {title}
-                                    </h3>
+                                    </div>
                                 ) : (
                                     <div className="flex-1">{title}</div>
                                 )}

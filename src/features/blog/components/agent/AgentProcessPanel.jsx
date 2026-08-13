@@ -84,8 +84,8 @@ const AgentProcessPanel = ({
                     {done ? '✓' : active ? <Loader2 className="h-3 w-3 animate-spin" /> : index + 1}
                   </span>
                   <div className="min-w-0">
-                    <p className="text-sm font-bold text-ink">{t(`blog.agent.stages.${key}`)}</p>
-                    <p className="mt-0.5 text-caption leading-5 text-ink-muted">{t(`blog.agent.stageDescriptions.${key}`)}</p>
+                    <div className="text-sm font-bold text-ink">{t(`blog.agent.stages.${key}`)}</div>
+                    <div className="mt-0.5 text-caption leading-5 text-ink-muted">{t(`blog.agent.stageDescriptions.${key}`)}</div>
                   </div>
                 </li>
               );
@@ -94,19 +94,19 @@ const AgentProcessPanel = ({
 
           {(logs.length > 0 || streamText || isRunning) && (
             <div className="max-h-56 space-y-1.5 overflow-auto rounded-xl bg-ink p-3 text-caption leading-6 text-border-strong">
-              {logs.map((log, index) => <p key={`${log}-${index}`}><span className="mr-2 text-accent">●</span>{log}</p>)}
-              {isRunning && logs.length === 0 && <p className="text-ink-faint">{t('blog.agent.waitingForStage')}</p>}
-              {streamText && <p className="whitespace-pre-wrap break-words text-border-strong">{streamText}</p>}
+              {logs.map((log, index) => <div key={`${log}-${index}`}><span className="mr-2 text-accent">●</span>{log}</div>)}
+              {isRunning && logs.length === 0 && <div className="text-ink-faint">{t('blog.agent.waitingForStage')}</div>}
+              {streamText && <div className="whitespace-pre-wrap break-words text-border-strong">{streamText}</div>}
             </div>
           )}
 
           {isFailed && (
-            <p className="rounded-xl bg-danger-soft px-3 py-2 text-sm leading-6 text-danger-fg">
+            <div className="rounded-xl bg-danger-soft px-3 py-2 text-sm leading-6 text-danger-fg">
               {errorMessage || t('blog.agent.failed')}
-            </p>
+            </div>
           )}
 
-          <p className="text-caption leading-5 text-ink-faint">{t('blog.agent.guardrail')}</p>
+          <div className="text-caption leading-5 text-ink-faint">{t('blog.agent.guardrail')}</div>
         </div>
       )}
     </div>

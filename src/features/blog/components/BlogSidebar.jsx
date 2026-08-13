@@ -76,9 +76,9 @@ const BlogSidebar = ({ onNavigate }) => {
         <div className="space-y-6">
             {/* 搜索框 */}
             <section>
-                <h3 className="text-caption font-bold uppercase tracking-widest text-ink-faint mb-3">
+                <div className="text-caption font-bold uppercase tracking-widest text-ink-faint mb-3">
                     {t('blog.search')}
-                </h3>
+                </div>
                 <form onSubmit={handleSearch} className="relative">
                     <input
                         type="text"
@@ -94,10 +94,10 @@ const BlogSidebar = ({ onNavigate }) => {
 
             {/* 分类列表 */}
             <section>
-                <h3 className="text-caption font-bold uppercase tracking-widest text-ink-faint mb-3 flex items-center">
+                <div className="text-caption font-bold uppercase tracking-widest text-ink-faint mb-3 flex items-center">
                     <Tag className="w-3.5 h-3.5 mr-1.5" />
                     {t('blog.categories')}
-                </h3>
+                </div>
                 <ul className="space-y-1">
                     <li>
                         <Link
@@ -137,10 +137,10 @@ const BlogSidebar = ({ onNavigate }) => {
             {/* 热门标签 */}
             <section>
                 <div className="flex items-center justify-between mb-3">
-                    <h3 className="text-caption font-bold uppercase tracking-widest text-ink-faint flex items-center">
+                    <div className="text-caption font-bold uppercase tracking-widest text-ink-faint flex items-center">
                         <Hash className="w-3.5 h-3.5 mr-1.5" />
                         {t('blog.popularTags')}
-                    </h3>
+                    </div>
                     <Link
                         to="/blog/tags/"
                         onClick={() => onNavigate?.()}
@@ -175,10 +175,10 @@ const BlogSidebar = ({ onNavigate }) => {
 
             {/* 最新发布 */}
             <section>
-                <h3 className="text-caption font-bold uppercase tracking-widest text-ink-faint mb-3 flex items-center">
+                <div className="text-caption font-bold uppercase tracking-widest text-ink-faint mb-3 flex items-center">
                     <BookOpen className="w-3.5 h-3.5 mr-1.5" />
                     {t('blog.recentPosts')}
-                </h3>
+                </div>
                 <div className="space-y-3">
                     {recentPosts.map((post) => (
                         <Link
@@ -187,9 +187,9 @@ const BlogSidebar = ({ onNavigate }) => {
                             onClick={() => onNavigate?.()}
                             className="block group"
                         >
-                            <h4 className="text-sm font-medium text-ink-secondary group-hover:text-accent transition-colors line-clamp-2 leading-snug mb-1">
+                            <div className="text-sm font-medium text-ink-secondary group-hover:text-accent transition-colors line-clamp-2 leading-snug mb-1">
                                 {post.title}
-                            </h4>
+                            </div>
                             <span className="text-caption text-ink-faint">
                                 {post.date} · {post.readTime}
                             </span>

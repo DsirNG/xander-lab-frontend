@@ -363,9 +363,9 @@ const Img2ThreePage = () => {
     <div className="mx-auto flex h-full w-full max-w-5xl flex-col px-4 py-6 sm:px-6 lg:px-8">
       <div className="mb-8 flex flex-wrap items-start justify-between gap-4">
         <div>
-          <p className="text-caption font-semibold uppercase tracking-wide text-accent">{t('nav.img2three')}</p>
-          <h1 className="mt-1 text-title font-bold text-ink">{t('img2three.title')}</h1>
-          <p className="mt-2 max-w-2xl text-body text-ink-secondary">{t('img2three.subtitle')}</p>
+          <div className="text-caption font-semibold uppercase tracking-wide text-accent">{t('nav.img2three')}</div>
+          <div className="mt-1 text-title font-bold text-ink">{t('img2three.title')}</div>
+          <div className="mt-2 max-w-2xl text-body text-ink-secondary">{t('img2three.subtitle')}</div>
         </div>
         <div className="flex flex-wrap gap-2">
           <button
@@ -392,10 +392,10 @@ const Img2ThreePage = () => {
       {historyVisible ? (
         <section className="mb-6 rounded-2xl border border-border bg-surface p-4 shadow-sm">
           <div className="mb-3 flex items-center justify-between gap-3">
-            <h2 className="text-body font-semibold text-ink">{t('img2three.history')}</h2>
+            <div className="text-body font-semibold text-ink">{t('img2three.history')}</div>
             {historyLoading ? <Loader2 className="h-4 w-4 animate-spin text-accent" aria-label={t('img2three.historyLoading')} /> : null}
           </div>
-          {!historyLoading && historyTasks.length === 0 ? <p className="text-caption text-ink-muted">{t('img2three.historyEmpty')}</p> : null}
+          {!historyLoading && historyTasks.length === 0 ? <div className="text-caption text-ink-muted">{t('img2three.historyEmpty')}</div> : null}
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {historyTasks.map((item) => (
               <button
@@ -452,8 +452,8 @@ const Img2ThreePage = () => {
                 <ImagePlus className="h-8 w-8" aria-hidden="true" />
               </div>
             )}
-            <p className="text-body font-semibold text-ink">{t('img2three.uploadHint')}</p>
-            <p className="mt-2 text-caption text-ink-muted">{t('img2three.dropHint')}</p>
+            <div className="text-body font-semibold text-ink">{t('img2three.uploadHint')}</div>
+            <div className="mt-2 text-caption text-ink-muted">{t('img2three.dropHint')}</div>
             <span className="mt-4 inline-flex items-center gap-2 rounded-xl bg-accent px-4 py-2 text-sm font-bold text-white">
               <Upload className="h-4 w-4" aria-hidden="true" />
               {t('img2three.chooseImage')}
@@ -471,7 +471,7 @@ const Img2ThreePage = () => {
           </label>
 
           <div className="mt-6 flex flex-wrap items-center justify-between gap-4">
-            <p className="text-caption text-ink-muted">{t('img2three.loginRequired')}</p>
+            <div className="text-caption text-ink-muted">{t('img2three.loginRequired')}</div>
             <button
               type="button"
               disabled={!selectedFile || isBusy}
@@ -508,8 +508,8 @@ const Img2ThreePage = () => {
         <section className="mt-6 space-y-6">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <h2 className="text-title font-bold text-ink">{task.title || t('img2three.preview')}</h2>
-              <p className="mt-1 text-caption text-ink-muted">{t('img2three.ready')}</p>
+              <div className="text-title font-bold text-ink">{task.title || t('img2three.preview')}</div>
+              <div className="mt-1 text-caption text-ink-muted">{t('img2three.ready')}</div>
             </div>
             <div className="flex flex-wrap gap-2">
               <button
@@ -563,7 +563,7 @@ const Img2ThreePage = () => {
               </div>
             </div>
             <aside className="rounded-2xl border border-border bg-surface p-4 shadow-sm">
-              <h3 className="text-sm font-semibold text-ink">{t('img2three.reference')}</h3>
+              <div className="text-sm font-semibold text-ink">{t('img2three.reference')}</div>
               <img
                 src={task.referenceMediaUrl || filePreviewUrl}
                 alt={t('img2three.reference')}

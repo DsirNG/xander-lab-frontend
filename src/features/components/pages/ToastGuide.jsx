@@ -15,10 +15,10 @@ import ToastIndexCode from '@/components/common/Toast/index.js?raw';
 
 const DependencyCard = ({ title, items, icon: Icon }) => (
     <div className="p-6 rounded-[2rem] bg-white  border border-slate-200  shadow-sm">
-        <h3 className="text-[10px] uppercase tracking-[0.2em] text-slate-400 font-black mb-4 flex items-center gap-2">
+        <div className="text-[10px] uppercase tracking-[0.2em] text-slate-400 font-black mb-4 flex items-center gap-2">
             {Icon && <Icon className="w-3.5 h-3.5" />}
             {title}
-        </h3>
+        </div>
         <div className="flex flex-wrap gap-2">
             {items.map((item, i) => (
                 <span key={i} className="px-3 py-1 rounded-lg bg-slate-50  text-slate-600  text-[10px] font-bold border border-slate-100 ">
@@ -47,13 +47,13 @@ const ToastGuide = ({ componentId }) => {
                         <div className="p-3 rounded-2xl bg-primary/10 border border-primary/20">
                             <Zap className="w-7 h-7 text-primary" />
                         </div>
-                        <h1 className="text-4xl font-black italic tracking-tighter text-slate-900  uppercase">
+                        <div className="text-4xl font-black italic tracking-tighter text-slate-900  uppercase">
                             {t('components.toast.guide.title').split(' // ')[0]} {' // '} <span className="text-primary">{t('components.toast.guide.title').split(' // ')[1]}</span>
-                        </h1>
+                        </div>
                     </div>
-                    <p className="text-lg text-slate-500  max-w-3xl font-medium leading-relaxed italic">
+                    <div className="text-lg text-slate-500  max-w-3xl font-medium leading-relaxed italic">
                         {t('components.toast.guide.subtitle')}
-                    </p>
+                    </div>
                 </div>
 
                 {/* Architecture Grid */}
@@ -69,13 +69,13 @@ const ToastGuide = ({ componentId }) => {
                         items={['CSS Keyframes', 'GPU Compositing', 'Bouncy Physics']}
                     />
                     <div className="p-8 rounded-[2rem] bg-primary text-white shadow-2xl shadow-primary/20 flex flex-col justify-between">
-                        <h3 className="text-[10px] uppercase tracking-[0.2em] font-black mb-4 flex items-center gap-2 opacity-80">
+                        <div className="text-[10px] uppercase tracking-[0.2em] font-black mb-4 flex items-center gap-2 opacity-80">
                             <Layers className="w-3.5 h-3.5" />
                             {t('components.toast.guide.architecture.logic')}
-                        </h3>
-                        <p className="text-xs font-bold leading-relaxed">
+                        </div>
+                        <div className="text-xs font-bold leading-relaxed">
                             {t('components.toast.guide.architecture.logicDesc')}
-                        </p>
+                        </div>
                     </div>
                 </div>
 
@@ -84,12 +84,12 @@ const ToastGuide = ({ componentId }) => {
                     {/* 1. Item Logic */}
                     <section>
                         <div className="mb-6 px-2">
-                            <h2 className="text-2xl font-black text-slate-900  mb-2 italic uppercase tracking-tighter">
+                            <div className="text-2xl font-black text-slate-900  mb-2 italic uppercase tracking-tighter">
                                 {t('components.toast.guide.sections.physics.title')}
-                            </h2>
-                            <p className="text-slate-500  text-sm font-medium">
+                            </div>
+                            <div className="text-slate-500  text-sm font-medium">
                                 {t('components.toast.guide.sections.physics.desc')}
-                            </p>
+                            </div>
                         </div>
                         <CodeBlock
                             code={ToastItemCode}
@@ -100,12 +100,12 @@ const ToastGuide = ({ componentId }) => {
                     {/* 2. Context Management */}
                     <section>
                         <div className="mb-6 px-2">
-                            <h2 className="text-2xl font-black text-slate-900  mb-2 italic uppercase tracking-tighter">
+                            <div className="text-2xl font-black text-slate-900  mb-2 italic uppercase tracking-tighter">
                                 {t('components.toast.guide.sections.orchestration.title')}
-                            </h2>
-                            <p className="text-slate-500  text-sm font-medium">
+                            </div>
+                            <div className="text-slate-500  text-sm font-medium">
                                 {t('components.toast.guide.sections.orchestration.desc')}
-                            </p>
+                            </div>
                         </div>
                         <CodeBlock
                             code={ToastContextCode}
@@ -116,12 +116,12 @@ const ToastGuide = ({ componentId }) => {
                     {/* 3. Container & Portal */}
                     <section>
                         <div className="mb-6 px-2">
-                            <h2 className="text-2xl font-black text-slate-900  mb-2 italic uppercase tracking-tighter">
+                            <div className="text-2xl font-black text-slate-900  mb-2 italic uppercase tracking-tighter">
                                 {t('components.toast.guide.sections.portal.title')}
-                            </h2>
-                            <p className="text-slate-500  text-sm font-medium">
+                            </div>
+                            <div className="text-slate-500  text-sm font-medium">
                                 {t('components.toast.guide.sections.portal.desc')}
-                            </p>
+                            </div>
                         </div>
                         <CodeBlock
                             code={ToastContainerCode}
@@ -132,12 +132,12 @@ const ToastGuide = ({ componentId }) => {
                     {/* 4. Entry Point */}
                     <section>
                         <div className="mb-6 px-2">
-                            <h2 className="text-2xl font-black text-slate-900  mb-2 italic uppercase tracking-tighter">
+                            <div className="text-2xl font-black text-slate-900  mb-2 italic uppercase tracking-tighter">
                                 {t('components.toast.guide.sections.entry.title')}
-                            </h2>
-                            <p className="text-slate-500  text-sm font-medium">
+                            </div>
+                            <div className="text-slate-500  text-sm font-medium">
                                 {t('components.toast.guide.sections.entry.desc')}
-                            </p>
+                            </div>
                         </div>
                         <CodeBlock
                             code={ToastIndexCode}

@@ -49,12 +49,12 @@ const ToolProgressPanel = ({ logs, stage, draft = '', active = false }) => {
                   {done ? '✓' : active ? <Loader2 className="h-3 w-3 animate-spin" /> : index + 1}
                 </span>
                 <div className="min-w-0">
-                  <p className="text-sm font-bold text-ink">
+                  <div className="text-sm font-bold text-ink">
                     {t(`blog.agent.stages.${key}`)}
-                  </p>
-                  <p className="mt-0.5 text-caption leading-5 text-ink-muted">
+                  </div>
+                  <div className="mt-0.5 text-caption leading-5 text-ink-muted">
                     {t(`blog.agent.stageDescriptions.${key}`)}
-                  </p>
+                  </div>
                 </div>
               </li>
             );
@@ -63,7 +63,7 @@ const ToolProgressPanel = ({ logs, stage, draft = '', active = false }) => {
         {logs.length > 0 && (
           <div className="max-h-40 space-y-1.5 overflow-auto rounded-xl bg-ink p-3 text-caption leading-6 text-border-strong">
             {logs.map((log, index) => (
-              <p key={`${log}-${index}`}><span className="mr-2 text-border-strong">●</span>{log}</p>
+              <div key={`${log}-${index}`}><span className="mr-2 text-border-strong">●</span>{log}</div>
             ))}
           </div>
         )}
@@ -99,9 +99,9 @@ const ToolStepCard = ({ step, t, onViewBlog }) => {
         {isError && <Icon className="ml-auto h-3.5 w-3.5 shrink-0" />}
       </div>
       {(step.result || step.error) && (
-        <p className={`mt-1 whitespace-pre-wrap break-all text-xs leading-5 ${isError ? 'text-danger/90' : 'text-ink-muted'}`}>
+        <div className={`mt-1 whitespace-pre-wrap break-all text-xs leading-5 ${isError ? 'text-danger/90' : 'text-ink-muted'}`}>
           {compactToolResult(step.result ?? step.error)}
-        </p>
+        </div>
       )}
       {step.phase === 'end' && blogTaskId && (
         <button
@@ -181,9 +181,9 @@ const HistoricalToolCard = ({ message, t, onViewBlog }) => {
         </span>
       </div>
       {message.kind === 'tool_result' && (
-        <p className="mt-1 whitespace-pre-wrap break-all text-xs leading-5 text-ink-muted">
+        <div className="mt-1 whitespace-pre-wrap break-all text-xs leading-5 text-ink-muted">
           {compactToolResult(payload ?? message.content)}
-        </p>
+        </div>
       )}
       {blogTaskId && (
         <button
@@ -204,7 +204,7 @@ const AgentChatInputBar = ({ t, input, setInput, isActive, creating, hasConversa
   return (
   <div className="shrink-0 border-t border-border bg-canvas px-4 py-3 sm:px-6">
     <div className="mx-auto max-w-2xl">
-      {hasConversation && !isActive && <p className="mb-2 text-xs text-ink-muted">{t('blog.agentChat.multiTurnHint')}</p>}
+      {hasConversation && !isActive && <div className="mb-2 text-xs text-ink-muted">{t('blog.agentChat.multiTurnHint')}</div>}
       <div className="flex items-end gap-2 rounded-2xl border border-border bg-surface p-2 focus-within:border-border-strong focus-within:bg-canvas focus-within:ring-4 focus-within:ring-ink/5">
         <textarea
           value={input}
@@ -463,7 +463,7 @@ const AgentChat = () => {
   ) : artifactError ? (
     <div className="flex h-full flex-col items-center justify-center gap-4 bg-canvas px-6 text-center">
       <AlertCircle className="h-8 w-8 text-danger" />
-      <p className="text-sm font-semibold text-danger">{artifactError}</p>
+      <div className="text-sm font-semibold text-danger">{artifactError}</div>
       <button
         type="button"
         onClick={handleCloseArtifact}
@@ -593,8 +593,8 @@ const AgentChat = () => {
                     <Bot className="h-5 w-5" />
                   </div>
                   <div>
-                    <h1 className="text-2xl font-black tracking-tight">{t('blog.agentChat.headline')}</h1>
-                    <p className="mt-2 text-sm leading-6 text-ink-muted">{t('blog.agentChat.description')}</p>
+                    <div className="text-2xl font-black tracking-tight">{t('blog.agentChat.headline')}</div>
+                    <div className="mt-2 text-sm leading-6 text-ink-muted">{t('blog.agentChat.description')}</div>
                   </div>
                 </div>
               ) : (

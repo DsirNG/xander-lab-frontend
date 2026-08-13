@@ -73,20 +73,36 @@
   --color-info-fg: #0369a1;
 
   /* ── Typography ── */
-  --font-sans: 'Plus Jakarta Sans', system-ui, sans-serif;
-  --font-chat: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  /* 全项目统一使用 Plus Jakarta Sans；仅代码块保留 JetBrains Mono 等宽字体。 */
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-chat: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'Cascadia Code', 'SF Mono', monospace;
 
+  /* 字号 → 字重规范（text-<token> 即包含字号/行高/默认字重）：
+     display 28/1.25/800 页面主标题
+     heading 20/1.3/800  区块标题
+     title   18/1.4/700  卡片/面板标题
+     body    14/1.5/400  正文（强调用 font-semibold）
+     caption 12/1.45/500 辅助说明
+     micro   11/1.4/500  徽标/元信息 */
   --text-display: 1.75rem;
   --text-display--line-height: 1.25;
+  --text-display--font-weight: 800;
+  --text-heading: 1.25rem;
+  --text-heading--line-height: 1.3;
+  --text-heading--font-weight: 800;
   --text-title: 1.125rem;
   --text-title--line-height: 1.4;
+  --text-title--font-weight: 700;
   --text-body: 0.875rem;
   --text-body--line-height: 1.5;
+  --text-body--font-weight: 400;
   --text-caption: 0.75rem;
   --text-caption--line-height: 1.45;
+  --text-caption--font-weight: 500;
   --text-micro: 0.6875rem;
   --text-micro--line-height: 1.4;
+  --text-micro--font-weight: 500;
 }
 
 /* Global Box Sizing */

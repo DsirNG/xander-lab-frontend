@@ -33,12 +33,12 @@ const ContentLayout = ({
             {/* 头部：标题、描述、操作按钮 */}
             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-8 sm:mb-12 gap-4 sm:gap-0">
                 <div className="max-w-2xl flex-1">
-                    <h2 className="text-display sm:text-3xl lg:text-4xl font-black text-ink mb-3 sm:mb-4">
+                    <div className="text-display sm:text-3xl lg:text-4xl font-black text-ink mb-3 sm:mb-4">
                         {item.title}
-                    </h2>
-                    <p className="text-body sm:text-lg text-ink-muted">
+                    </div>
+                    <div className="text-body sm:text-lg text-ink-muted">
                         {item.desc || item.description}
-                    </p>
+                    </div>
                 </div>
 
                 {/* 右侧按钮区域 */}
@@ -62,10 +62,10 @@ const ContentLayout = ({
 
             {/* 场景演示分隔线 */}
             <div className="space-y-4 mb-10">
-                <h4 className={`text-caption font-black uppercase tracking-[0.2em] text-${themeColor} flex items-center`}>
+                <div className={`text-caption font-black uppercase tracking-[0.2em] text-${themeColor} flex items-center`}>
                     <MousePointer2 className="w-3 h-3 mr-2" />
                     {t('common.liveScenarios')}
-                </h4>
+                </div>
                 <div className="h-px bg-border w-full" />
             </div>
 
@@ -74,7 +74,7 @@ const ContentLayout = ({
                 {React.Children.count(children) > 0 ? children : (
                     <div className="min-h-[400px] flex flex-col items-center justify-center text-ink-faint">
                         <Zap className="w-12 h-12 mb-4 opacity-20" />
-                        <p>{t('common.comingSoon')}</p>
+                        <div>{t('common.comingSoon')}</div>
                     </div>
                 )}
             </div>

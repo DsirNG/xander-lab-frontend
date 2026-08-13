@@ -51,15 +51,15 @@ export default function ProjectUploadPage() {
               <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-lg bg-accent text-white shadow-lg shadow-accent/20">
                 <FileArchive className="h-6 w-6" />
               </div>
-              <p className="text-micro font-bold uppercase tracking-widest text-accent">
+              <div className="text-micro font-bold uppercase tracking-widest text-accent">
                 Project Upload
-              </p>
-              <h1 className="mt-2 text-2xl font-black text-ink">
+              </div>
+              <div className="mt-2 text-2xl font-black text-ink">
                 上传项目 zip
-              </h1>
-              <p className="mt-2 max-w-2xl text-body leading-6 text-ink-muted">
+              </div>
+              <div className="mt-2 max-w-2xl text-body leading-6 text-ink-muted">
                 上传包含 `package.json` 的完整项目压缩包，点击构建后进入编译器页面查看文件结构和运行状态。
-              </p>
+              </div>
             </div>
 
             <label className="group flex min-h-[320px] cursor-pointer flex-col items-center justify-center rounded-lg border border-dashed border-border-strong bg-surface px-5 py-10 text-center transition-colors hover:border-accent/50 hover:bg-accent/5">
@@ -86,9 +86,9 @@ export default function ProjectUploadPage() {
             )}
 
             <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <p className="text-caption leading-5 text-ink-muted">
+              <div className="text-caption leading-5 text-ink-muted">
                 构建成功后会自动跳转到编译器。
-              </p>
+              </div>
               <button
                 type="submit"
                 disabled={!zipFile || isBuilding}
@@ -105,7 +105,7 @@ export default function ProjectUploadPage() {
           </form>
 
           <aside className="rounded-lg border border-border bg-canvas p-5 shadow-sm">
-            <h2 className="text-body font-black text-ink">构建前检查</h2>
+            <div className="text-body font-black text-ink">构建前检查</div>
             <div className="mt-4 grid gap-3">
               {['包含 package.json', '依赖安装脚本可运行', '构建输出可被预览'].map((item) => (
                 <div key={item} className="flex items-center gap-2 rounded-lg bg-surface px-3 py-3 text-body font-semibold text-ink-muted">

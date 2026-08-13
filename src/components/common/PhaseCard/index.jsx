@@ -40,12 +40,12 @@ const PhaseCard = ({ phase, index, color = 'primary' }) => {
             </div>
 
             <div className={`bg-white/50 rounded-3xl p-8 border border-slate-200 ${scheme.hoverBorder} transition-colors shadow-sm`}>
-                <h3 className="text-2xl font-bold text-slate-900 mb-2">
+                <div className="text-2xl font-bold text-slate-900 mb-2">
                     {phase.title}
-                </h3>
-                <p className="text-slate-600 mb-6 text-lg">
+                </div>
+                <div className="text-slate-600 mb-6 text-lg">
                     {phase.desc}
-                </p>
+                </div>
 
                 <ul className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     {phase.points.map((point, i) => (

@@ -198,7 +198,7 @@ const CsdnAuthorizationPanel = () => {
   const titleNode = (
     <div className="flex items-center gap-2">
       <QrCode className="h-5 w-5 text-accent" />
-      <h3 className="text-title font-black text-ink">{t('profile.csdn.title')}</h3>
+      <div className="text-title font-black text-ink">{t('profile.csdn.title')}</div>
     </div>
   )
 
@@ -209,8 +209,8 @@ const CsdnAuthorizationPanel = () => {
           <Link2 className="h-5 w-5" />
         </span>
         <div className="min-w-0 flex-1">
-          <h3 className="text-sm font-bold text-ink">{t('profile.csdn.title')}</h3>
-          <p className="mt-1 text-caption text-ink-muted">{t('profile.csdn.description')}</p>
+          <div className="text-sm font-bold text-ink">{t('profile.csdn.title')}</div>
+          <div className="mt-1 text-caption text-ink-muted">{t('profile.csdn.description')}</div>
         </div>
         {loading ? (
           <LoaderCircle className="h-5 w-5 animate-spin text-accent" />
@@ -231,7 +231,7 @@ const CsdnAuthorizationPanel = () => {
       )}
 
       {!loading && expired && (
-        <p className="mt-4 text-caption font-semibold text-warning">{t('profile.csdn.sessionExpired')}</p>
+        <div className="mt-4 text-caption font-semibold text-warning">{t('profile.csdn.sessionExpired')}</div>
       )}
 
       {!loading && !authorized && state !== 'UNAVAILABLE' && (
@@ -259,31 +259,31 @@ const CsdnAuthorizationPanel = () => {
       )}
 
       {!loading && state === 'UNAVAILABLE' && (
-        <p className="mt-4 text-caption text-warning">{t('profile.csdn.unavailable')}</p>
+        <div className="mt-4 text-caption text-warning">{t('profile.csdn.unavailable')}</div>
       )}
 
       <Modal isOpen={isModalOpen} onClose={handleCloseModal} title={titleNode} width="max-w-md" closeOnOutsideClick={false}>
         {state === 'QUEUED' ? (
           <div className="flex min-h-56 flex-col items-center justify-center gap-3 py-6 text-center">
             <LoaderCircle className="h-8 w-8 animate-spin text-accent" />
-            <p className="text-sm font-bold text-ink-secondary">{t('profile.csdn.queued')}</p>
+            <div className="text-sm font-bold text-ink-secondary">{t('profile.csdn.queued')}</div>
             {queuePosition != null && (
-              <p className="text-caption font-medium text-ink-muted">
+              <div className="text-caption font-medium text-ink-muted">
                 {t('profile.csdn.queuePosition', { position: queuePosition })}
-              </p>
+              </div>
             )}
             {estimatedWait != null && (
-              <p className="text-caption font-medium text-ink-muted">
+              <div className="text-caption font-medium text-ink-muted">
                 {t('profile.csdn.estimatedWait', { wait: Math.max(0, estimatedWait) })}
-              </p>
+              </div>
             )}
           </div>
         ) : !qrCode ? (
           <div className="flex min-h-56 flex-col items-center justify-center gap-3 py-6 text-center">
             <LoaderCircle className="h-8 w-8 animate-spin text-accent" />
-            <p className="text-sm font-bold text-ink-secondary">
+            <div className="text-sm font-bold text-ink-secondary">
               {t('profile.csdn.generatingQr')}
-            </p>
+            </div>
           </div>
         ) : (
           <div className="flex flex-col items-center gap-4 py-2 text-center">
@@ -294,9 +294,9 @@ const CsdnAuthorizationPanel = () => {
                 className="h-60 w-60 object-contain"
               />
             </div>
-            <p className="text-caption font-medium text-ink-muted">
+            <div className="text-caption font-medium text-ink-muted">
               {t('profile.csdn.scanHint')}
-            </p>
+            </div>
             <div className="flex items-center gap-2 text-caption font-bold text-accent">
               <LoaderCircle className="h-4 w-4 animate-spin" />
               <span>{secondsLeft != null ? `${t('profile.csdn.waiting')} ${secondsLeft}s` : t('profile.csdn.waiting')}</span>

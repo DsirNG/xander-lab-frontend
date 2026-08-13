@@ -51,8 +51,8 @@ const BlogPlans = () => {
     <div className="mx-auto flex h-full w-full max-w-5xl flex-col px-4 py-6 sm:px-6 lg:px-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-bold text-ink">{t('blogPlans.title')}</h1>
-          <p className="mt-1 text-sm text-ink-faint">{t('blogPlans.subtitle')}</p>
+          <div className="text-xl font-bold text-ink">{t('blogPlans.title')}</div>
+          <div className="mt-1 text-sm text-ink-faint">{t('blogPlans.subtitle')}</div>
         </div>
         <div className="flex items-center gap-2">
           <button
@@ -75,8 +75,8 @@ const BlogPlans = () => {
           <LoadingSpinner fullScreen />
         ) : plans.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-border py-14 text-center">
-            <p className="text-sm text-ink-faint">{t('blogPlans.empty')}</p>
-            <p className="mt-1 text-xs text-ink-faint">{t('blogPlans.emptyHint')}</p>
+            <div className="text-sm text-ink-faint">{t('blogPlans.empty')}</div>
+            <div className="mt-1 text-xs text-ink-faint">{t('blogPlans.emptyHint')}</div>
           </div>
         ) : (
           <>
@@ -85,8 +85,8 @@ const BlogPlans = () => {
                 <div key={plan.id} className="rounded-2xl border border-border bg-canvas/60 p-5 shadow-sm">
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
-                      <h3 className="truncate text-base font-semibold text-ink">{plan.topic}</h3>
-                      <p className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-ink-faint">
+                      <div className="truncate text-base font-semibold text-ink">{plan.topic}</div>
+                      <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-ink-faint">
                         <span className="inline-flex items-center gap-1">
                           <CalendarClock className="h-3.5 w-3.5" />
                           {(plan.triggerTimes?.length > 0 ? plan.triggerTimes.join(' / ') : plan.triggerTime)} ({plan.timezone})
@@ -101,7 +101,7 @@ const BlogPlans = () => {
                           </span>
                         )}
                         <span>{t('blogPlans.nextRun')}: {plan.nextRunAt ? new Date(plan.nextRunAt).toLocaleString() : '—'}</span>
-                      </p>
+                      </div>
                     </div>
                     <PlanStatusBadge status={plan.status} />
                   </div>

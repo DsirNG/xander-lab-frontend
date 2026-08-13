@@ -63,8 +63,8 @@ const ComponentList = () => {
     const bottomCard = (
         <div className="space-y-3">
             <div className="bg-gradient-to-br from-success/10 to-success/10 p-4 rounded-2xl border border-success/10">
-                <p className="text-micro font-bold text-success uppercase tracking-widest mb-1">UI Kit</p>
-                <p className="text-caption text-ink-muted ">{t('components.list.atomDesc', 'Atomic components for building consistent interfaces.')}</p>
+                <div className="text-micro font-bold text-success uppercase tracking-widest mb-1">UI Kit</div>
+                <div className="text-caption text-ink-muted ">{t('components.list.atomDesc', 'Atomic components for building consistent interfaces.')}</div>
             </div>
 
             <button

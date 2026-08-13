@@ -8,7 +8,7 @@ const AgentChatInput = ({ t, input, setInput, isTaskActive, hasFinishedTurn, inp
   return (
     <div className="shrink-0 border-t border-border bg-canvas px-4 py-3 sm:px-6">
       <div className="mx-auto max-w-2xl">
-        {hasFinishedTurn && <p className="mb-2 text-xs text-ink-muted">{t('blog.agent.multiTurnHint')}</p>}
+        {hasFinishedTurn && <div className="mb-2 text-xs text-ink-muted">{t('blog.agent.multiTurnHint')}</div>}
         <div className="flex items-end gap-2 rounded-2xl border border-border bg-surface p-2 focus-within:border-accent focus-within:bg-canvas focus-within:ring-4 focus-within:ring-accent/10">
           <textarea
             value={input}

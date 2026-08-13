@@ -219,7 +219,7 @@ class SandboxErrorBoundary extends React.Component {
             return (
                 <div className="flex flex-col items-center justify-center p-6 text-center">
                     <AlertTriangle className="w-6 h-6 text-red-500 mb-4" />
-                    <h3 className="text-sm font-black text-slate-900 mb-2">运行时异常</h3>
+                    <div className="text-sm font-black text-slate-900 mb-2">运行时异常</div>
                     <pre className="text-[10px] text-red-400 font-mono bg-red-50 p-4 rounded-xl border border-red-100 max-w-full overflow-auto text-left">
                         {this.state.error?.message}
                     </pre>
@@ -266,7 +266,7 @@ const SandboxPreview = React.memo(function SandboxPreview({ code, libraryCode, w
         return (
             <div className="flex flex-col items-center justify-center h-full p-6 text-center">
                 <AlertTriangle className="w-8 h-8 text-red-500 mb-4" />
-                <h3 className="text-sm font-black text-slate-900 mb-2 uppercase tracking-widest">编译阶段错误</h3>
+                <div className="text-sm font-black text-slate-900 mb-2 uppercase tracking-widest">编译阶段错误</div>
                 <pre className="text-xs text-red-500 bg-red-50 border border-red-100 rounded-2xl p-6 max-w-full overflow-auto whitespace-pre-wrap font-mono text-left shadow-inner">
                     {error}
                 </pre>

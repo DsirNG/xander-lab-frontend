@@ -13,8 +13,8 @@ const FeatureCard = ({ title, desc, icon: Icon, color }) => (
         <div className={`w-12 h-12 rounded-2xl ${color} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform`}>
             <Icon className="w-6 h-6 text-white" />
         </div>
-        <h3 className="text-lg font-black text-ink  mb-2">{title}</h3>
-        <p className="text-body text-ink-muted  leading-relaxed">{desc}</p>
+        <div className="text-lg font-black text-ink  mb-2">{title}</div>
+        <div className="text-body text-ink-muted  leading-relaxed">{desc}</div>
     </div>
 );
 
@@ -106,13 +106,13 @@ const DynamicComponentGuide = ({ componentId, initialData }) => {
                         </div>
                     </div>
 
-                    <h1 className="text-5xl md:text-6xl font-black text-ink  mb-8 tracking-tighter italic uppercase">
+                    <div className="text-5xl md:text-6xl font-black text-ink  mb-8 tracking-tighter italic uppercase">
                         {data.title} <span className="text-accent">Structure</span>
-                    </h1>
+                    </div>
 
-                    <p className="text-xl text-ink-muted  max-w-3xl leading-relaxed font-medium">
+                    <div className="text-xl text-ink-muted  max-w-3xl leading-relaxed font-medium">
                         {data.desc || t('components.guide.defaultDesc')}
-                    </p>
+                    </div>
                 </div>
 
                 {/* Implementation Layers */}
@@ -124,8 +124,8 @@ const DynamicComponentGuide = ({ componentId, initialData }) => {
                                 <Boxes className="w-6 h-6" />
                             </div>
                             <div>
-                                <h2 className="text-2xl font-black text-ink  uppercase italic tracking-tighter">Implementation Layers</h2>
-                                <p className="text-body text-ink-muted font-bold uppercase tracking-widest">Modular Logic Files</p>
+                                <div className="text-2xl font-black text-ink  uppercase italic tracking-tighter">Implementation Layers</div>
+                                <div className="text-body text-ink-muted font-bold uppercase tracking-widest">Modular Logic Files</div>
                             </div>
                         </div>
 
@@ -148,8 +148,8 @@ const DynamicComponentGuide = ({ componentId, initialData }) => {
                                     <Layout className="w-6 h-6" />
                                 </div>
                                 <div>
-                                    <h2 className="text-2xl font-black text-ink  uppercase italic tracking-tighter">Environment Wrapper</h2>
-                                    <p className="text-body text-ink-muted font-bold uppercase tracking-widest">wrapper_code.jsx</p>
+                                    <div className="text-2xl font-black text-ink  uppercase italic tracking-tighter">Environment Wrapper</div>
+                                    <div className="text-body text-ink-muted font-bold uppercase tracking-widest">wrapper_code.jsx</div>
                                 </div>
                             </div>
 
@@ -168,8 +168,8 @@ const DynamicComponentGuide = ({ componentId, initialData }) => {
                                     <FileCode className="w-6 h-6" />
                                 </div>
                                 <div>
-                                    <h2 className="text-2xl font-black text-ink  uppercase italic tracking-tighter">Styling Specification</h2>
-                                    <p className="text-body text-ink-muted font-bold uppercase tracking-widest">custom_styles.css</p>
+                                    <div className="text-2xl font-black text-ink  uppercase italic tracking-tighter">Styling Specification</div>
+                                    <div className="text-body text-ink-muted font-bold uppercase tracking-widest">custom_styles.css</div>
                                 </div>
                             </div>
 

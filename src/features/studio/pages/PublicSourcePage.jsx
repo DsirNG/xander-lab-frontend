@@ -53,8 +53,8 @@ export default function PublicSourcePage() {
         fallbackTo="/"
         title={
           <div className="min-w-0">
-            <p className="text-micro font-bold uppercase tracking-widest text-ink-faint">Open source project</p>
-            <h1 className="truncate text-base font-black text-ink">{project.name}</h1>
+            <div className="text-micro font-bold uppercase tracking-widest text-ink-faint">Open source project</div>
+            <div className="truncate text-base font-black text-ink">{project.name}</div>
           </div>
         }
       >

@@ -27,10 +27,10 @@ const SidebarItem = React.memo(({ item, active, onClick, subtitleKey = 'tag' }) 
             {item.icon}
         </div>
         <div className="flex-grow min-w-0">
-            <h4 className="font-bold text-body truncate">{item.title}</h4>
-            <p className={`text-micro uppercase tracking-widest opacity-60 truncate ${active ? 'text-accent-fg' : 'text-ink-faint'}`}>
+            <div className="font-bold text-body truncate">{item.title}</div>
+            <div className={`text-micro uppercase tracking-widest opacity-60 truncate ${active ? 'text-accent-fg' : 'text-ink-faint'}`}>
                 {item[subtitleKey] || item.id}
-            </p>
+            </div>
         </div>
         <ChevronRight className={`w-4 h-4 flex-shrink-0 ${active ? 'rotate-90' : ''}`} />
     </Link>
@@ -102,12 +102,12 @@ const SidebarLayout = ({
                 `}>
 
                     <header className="mb-4 lg:mb-6">
-                        <h1 className="text-title sm:text-display font-black text-ink mb-1 hidden lg:block">
+                        <div className="text-title sm:text-display font-black text-ink mb-1 hidden lg:block">
                             {title}
-                        </h1>
-                        <p className="text-caption text-ink-muted leading-relaxed hidden lg:block">
+                        </div>
+                        <div className="text-caption text-ink-muted leading-relaxed hidden lg:block">
                             {description}
-                        </p>
+                        </div>
                     </header>
 
                     <div className="flex-grow overflow-y-auto px-1 custom-scrollbar">

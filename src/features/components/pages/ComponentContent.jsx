@@ -69,10 +69,10 @@ const ComponentContent = ({ component }) => {
                             <Code className="w-6 h-6" />
                         </div>
                         <div className="flex-1">
-                            <h3 className="text-lg font-black text-ink-secondary  uppercase tracking-tight">
+                            <div className="text-lg font-black text-ink-secondary  uppercase tracking-tight">
                                 {t('components.content.implementationOverview')} <span className="text-accent text-caption ml-2 opacity-50 font-black">Implementation Analysis</span>
-                            </h3>
-                            <p className="text-caption text-ink-muted font-bold">{t('components.content.implementationHint')}</p>
+                            </div>
+                            <div className="text-caption text-ink-muted font-bold">{t('components.content.implementationHint')}</div>
                         </div>
                     </div>
 
@@ -117,12 +117,12 @@ const ComponentContent = ({ component }) => {
                             {/* 装饰背景 */}
                             <div className="absolute -right-8 -bottom-8 w-40 h-40 bg-canvas/10 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700" />
 
-                            <h4 className="text-2xl font-black mb-4 tracking-tighter italic uppercase leading-tight"
+                            <div className="text-2xl font-black mb-4 tracking-tighter italic uppercase leading-tight"
                                 dangerouslySetInnerHTML={{ __html: t('components.content.understandTitle') }}
                             />
-                            <p className="text-body text-ink-faint font-medium mb-8 leading-relaxed opacity-80">
+                            <div className="text-body text-ink-faint font-medium mb-8 leading-relaxed opacity-80">
                                 {t('components.content.understandDesc')}
-                            </p>
+                            </div>
                             <Link
                                 to={`/components/${component.id}/guide`}
                                 className="inline-flex items-center justify-center bg-accent text-white px-6 py-3 rounded-xl font-black text-caption hover:scale-105 active:scale-95 transition-all shadow-xl shadow-black/10"
@@ -141,8 +141,8 @@ const ComponentContent = ({ component }) => {
                             <Code className="w-5 h-5 text-accent" />
                         </div>
                         <div>
-                            <h3 className="text-xl font-black text-ink ">{t('components.content.sourceCode')}</h3>
-                            <p className="text-body text-ink-muted ">{t('components.content.sourceCodeDesc')}</p>
+                            <div className="text-xl font-black text-ink ">{t('components.content.sourceCode')}</div>
+                            <div className="text-body text-ink-muted ">{t('components.content.sourceCodeDesc')}</div>
                         </div>
                     </div>
 

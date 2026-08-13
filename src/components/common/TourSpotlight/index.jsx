@@ -87,11 +87,11 @@ const TourSpotlight = ({ targetConfig, onSkip }) => {
                     <div className="flex items-center justify-between mb-3">
                         <div className="flex items-center gap-2">
                             <Compass className="w-4 h-4 text-warning" />
-                            <h4 className="font-black text-body uppercase tracking-widest">{targetConfig.text}</h4>
+                            <div className="font-black text-body uppercase tracking-widest">{targetConfig.text}</div>
                         </div>
                         <button onClick={onSkip} className="text-accent-200 hover:text-white transition-colors text-micro uppercase font-bold tracking-widest px-2 py-1 bg-accent-700/50 rounded-lg">Skip // 退出</button>
                     </div>
-                    <p className="text-accent-50 text-caption font-medium leading-relaxed opacity-90">{targetConfig.desc}</p>
+                    <div className="text-accent-50 text-caption font-medium leading-relaxed opacity-90">{targetConfig.desc}</div>
                 </div>
             </div>
         </div>,

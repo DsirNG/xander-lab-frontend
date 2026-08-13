@@ -81,9 +81,9 @@ export const ToastHoverDemo = () => {
 
     return (
         <div className="flex flex-col gap-4">
-            <p className="text-xs text-slate-500 font-bold">
+            <div className="text-xs text-slate-500 font-bold">
                 {t('components.toast.scenarios.physics.hint')}
-            </p>
+            </div>
             <button
                 onClick={() => toast.warning(
                     t('components.toast.scenarios.physics.msg'),
@@ -109,9 +109,9 @@ export const ToastManualDemo = () => {
 
     return (
         <div className="flex flex-col gap-4">
-            <p className="text-xs text-slate-500 font-bold">
+            <div className="text-xs text-slate-500 font-bold">
                 {t('components.toast.scenarios.manual.hint')}
-            </p>
+            </div>
             <button
                 onClick={() => toast.error(
                     t('components.toast.scenarios.manual.msg'),
@@ -137,9 +137,9 @@ export const ToastActionDemo = () => {
 
     return (
         <div className="flex flex-col gap-4">
-            <p className="text-xs text-slate-500 font-bold">
+            <div className="text-xs text-slate-500 font-bold">
                 {t('components.toast.scenarios.action.hint')}
-            </p>
+            </div>
             <button
                 onClick={() => toast.success(
                     <div className="flex items-center gap-3">
@@ -169,9 +169,9 @@ export const ToastNoHoverDemo = () => {
 
     return (
         <div className="flex flex-col gap-4">
-            <p className="text-xs text-slate-500 font-bold">
+            <div className="text-xs text-slate-500 font-bold">
                 {t('components.toast.scenarios.comparison.hint')}
-            </p>
+            </div>
             <button
                 onClick={() => toast.info(
                     t('components.toast.scenarios.comparison.msg'),

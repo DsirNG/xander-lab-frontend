@@ -60,9 +60,9 @@ const ConfirmModal = ({
             )}
         >
             {children || (
-                <p className="text-body font-medium leading-relaxed text-ink-muted">
+                <div className="text-body font-medium leading-relaxed text-ink-muted">
                     {message}
-                </p>
+                </div>
             )}
         </Modal>
     );

@@ -45,10 +45,10 @@ class ErrorBoundary extends React.Component {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
               </svg>
             </div>
-            <h2 className="text-title font-bold text-ink mb-2">{t('common.errorBoundary.title')}</h2>
-            <p className="text-body text-ink-muted mb-6">
+            <div className="text-title font-bold text-ink mb-2">{t('common.errorBoundary.title')}</div>
+            <div className="text-body text-ink-muted mb-6">
               {t('common.errorBoundary.description')}
-            </p>
+            </div>
             {this.state.error && (
               <details className="text-left mb-6 bg-surface rounded-lg p-4 border border-border">
                 <summary className="text-caption font-medium text-ink-secondary cursor-pointer mb-2">

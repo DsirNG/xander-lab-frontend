@@ -145,7 +145,7 @@ const PlanFormModal = ({ isOpen, plan, onClose, onSaved }) => {
           {t('blogPlans.syncCsdn')}
         </label>
 
-        {error && <p className="text-xs text-red-600 dark:text-red-400">{error}</p>}
+        {error && <div className="text-xs text-red-600 dark:text-red-400">{error}</div>}
       </div>
     </Modal>
   );

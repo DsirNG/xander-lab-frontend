@@ -39,7 +39,7 @@ const EnhancedDemoSection = ({ title, desc, children, code, useBrowserWindow = t
             <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center space-x-3">
                     <div className="h-6 w-1 bg-blue-600 rounded-full" />
-                    <h3 className="text-lg font-bold text-slate-900 ">{title}</h3>
+                    <div className="text-lg font-bold text-slate-900 ">{title}</div>
                 </div>
                 <div className="flex items-center space-x-2">
                     {/* 重置按钮 */}
@@ -65,7 +65,7 @@ const EnhancedDemoSection = ({ title, desc, children, code, useBrowserWindow = t
             </div>
 
             {/* 描述 */}
-            <p className="text-slate-500  text-sm mb-6 max-w-2xl">{desc}</p>
+            <div className="text-slate-500  text-sm mb-6 max-w-2xl">{desc}</div>
 
             {/* 演示区域 */}
             {useBrowserWindow ? (

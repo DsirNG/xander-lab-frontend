@@ -108,7 +108,7 @@ const PlanAiGenerateModal = ({ isOpen, onClose, onSaved }) => {
       footer={footer}
     >
       <div className="space-y-4">
-        <p className="text-xs text-ink-faint">{t('blogPlans.aiGenerateDesc')}</p>
+        <div className="text-xs text-ink-faint">{t('blogPlans.aiGenerateDesc')}</div>
 
         <FormField label={t('blogPlans.aiSeed')}>
           <input className={formInputCls} value={form.topic} maxLength={500}
@@ -157,9 +157,9 @@ const PlanAiGenerateModal = ({ isOpen, onClose, onSaved }) => {
 
         {createdPlans.length > 0 && (
           <div className="rounded-xl border border-border bg-surface p-4">
-            <p className="text-xs font-bold text-ink">
+            <div className="text-xs font-bold text-ink">
               {t('blogPlans.generatedPlans', { count: createdPlans.length })}
-            </p>
+            </div>
             <div className="mt-3 max-h-56 space-y-2 overflow-y-auto">
               {createdPlans.map((plan) => (
                 <div key={plan.id} className="flex items-center gap-2 text-sm">
@@ -174,11 +174,11 @@ const PlanAiGenerateModal = ({ isOpen, onClose, onSaved }) => {
                 </div>
               ))}
             </div>
-            <p className="mt-3 text-xs text-ink-faint">{t('blogPlans.oneShotHint')}</p>
+            <div className="mt-3 text-xs text-ink-faint">{t('blogPlans.oneShotHint')}</div>
           </div>
         )}
 
-        {error && <p className="text-xs text-red-600 dark:text-red-400">{error}</p>}
+        {error && <div className="text-xs text-red-600 dark:text-red-400">{error}</div>}
       </div>
     </Modal>
   );

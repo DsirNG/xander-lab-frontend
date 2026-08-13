@@ -300,12 +300,12 @@ const EmailRemindersPanel = () => {
                             <CalendarClock className="h-4 w-4" />
                         </span>
                         <div className="min-w-0">
-                            <h2 className="text-sm font-black tracking-tight text-ink">
+                            <div className="text-sm font-black tracking-tight text-ink">
                                 {t('profile.emailReminders.title')}
-                            </h2>
-                            <p className="mt-0.5 text-caption font-medium text-ink-faint">
+                            </div>
+                            <div className="mt-0.5 text-caption font-medium text-ink-faint">
                                 {t('profile.emailReminders.description')}
-                            </p>
+                            </div>
                         </div>
                     </div>
                     <button
@@ -328,13 +328,13 @@ const EmailRemindersPanel = () => {
                             >
                                 <div className="flex items-start justify-between gap-1.5 sm:gap-2">
                                     <div className="min-w-0">
-                                        <p className="truncate text-base font-black tracking-tight text-ink sm:text-lg">
+                                        <div className="truncate text-base font-black tracking-tight text-ink sm:text-lg">
                                             {card.value}
                                             <span className="ml-1 text-micro font-bold text-ink-muted sm:text-caption">
                                                 {card.label}
                                             </span>
-                                        </p>
-                                        <p className="mt-0.5 truncate text-micro font-medium text-ink-faint">{card.hint}</p>
+                                        </div>
+                                        <div className="mt-0.5 truncate text-micro font-medium text-ink-faint">{card.hint}</div>
                                     </div>
                                     <span className={`hidden h-8 w-8 shrink-0 place-items-center rounded-lg sm:grid ${card.iconClass}`}>
                                         <Icon className="h-3.5 w-3.5" />
@@ -347,9 +347,9 @@ const EmailRemindersPanel = () => {
 
                 <section className="flex min-h-[min(280px,42vh)] min-w-0 flex-1 flex-col overflow-hidden rounded-xl border border-border bg-canvas">
                     <div className="flex shrink-0 flex-col gap-2 border-b border-border px-3 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-4">
-                        <h3 className="text-xs font-black text-ink">
+                        <div className="text-xs font-black text-ink">
                             {t('profile.emailReminders.taskList')}
-                        </h3>
+                        </div>
                         <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center">
                             <div className="w-full sm:w-32">
                                 <CustomSelect
@@ -383,10 +383,10 @@ const EmailRemindersPanel = () => {
                         ) : loadError ? (
                             <div className="flex min-h-[220px] flex-col items-center justify-center px-6 text-center">
                                 <AlertCircle className="mb-2 h-7 w-7 text-danger" />
-                                <p className="text-xs font-bold text-danger-fg">
+                                <div className="text-xs font-bold text-danger-fg">
                                     {t('profile.emailReminders.loadError')}
-                                </p>
-                                <p className="mt-1 max-w-sm text-caption font-medium text-danger">{loadError}</p>
+                                </div>
+                                <div className="mt-1 max-w-sm text-caption font-medium text-danger">{loadError}</div>
                                 <button
                                     type="button"
                                     onClick={() => loadReminders()}
@@ -400,12 +400,12 @@ const EmailRemindersPanel = () => {
                                 <span className="mb-3 grid h-11 w-11 place-items-center rounded-xl bg-surface text-ink-faint">
                                     <CalendarClock className="h-5 w-5" />
                                 </span>
-                                <p className="text-xs font-bold text-ink-secondary">
+                                <div className="text-xs font-bold text-ink-secondary">
                                     {t('profile.emailReminders.emptyTitle')}
-                                </p>
-                                <p className="mt-1 max-w-xs text-caption font-medium leading-5 text-ink-faint">
+                                </div>
+                                <div className="mt-1 max-w-xs text-caption font-medium leading-5 text-ink-faint">
                                     {t('profile.emailReminders.emptyHint')}
-                                </p>
+                                </div>
                             </div>
                         ) : (
                             <table className="w-full min-w-[720px] table-fixed text-left">
@@ -443,13 +443,13 @@ const EmailRemindersPanel = () => {
                                                             <Mail className="h-3.5 w-3.5" />
                                                         </span>
                                                         <div className="min-w-0 flex-1">
-                                                            <p className="truncate text-xs font-bold text-ink" title={reminder.subject}>
+                                                            <div className="truncate text-xs font-bold text-ink" title={reminder.subject}>
                                                                 {reminder.subject}
-                                                            </p>
-                                                            <p className="mt-0.5 truncate text-micro font-medium text-ink-faint">
+                                                            </div>
+                                                            <div className="mt-0.5 truncate text-micro font-medium text-ink-faint">
                                                                 {t(`profile.emailReminders.frequencies.${frequency.toLowerCase()}`)}
                                                                 {reminder.timezone ? ` · ${reminder.timezone}` : ''}
-                                                            </p>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </td>
@@ -533,12 +533,12 @@ const EmailRemindersPanel = () => {
                 <div className="flex shrink-0 items-start gap-2 rounded-xl border border-accent-100 bg-accent-soft/80 px-3 py-2.5">
                     <ShieldCheck className="mt-0.5 h-3.5 w-3.5 shrink-0 text-accent" />
                     <div className="min-w-0">
-                        <p className="text-caption font-bold text-accent-fg">
+                        <div className="text-caption font-bold text-accent-fg">
                             {t('profile.emailReminders.tipTitle')}
-                        </p>
-                        <p className="mt-0.5 text-micro font-medium leading-4 text-accent-800/80">
+                        </div>
+                        <div className="mt-0.5 text-micro font-medium leading-4 text-accent-800/80">
                             {t('profile.emailReminders.tipBody')}
-                        </p>
+                        </div>
                     </div>
                 </div>
             </div>

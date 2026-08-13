@@ -48,7 +48,7 @@ const AgentPreviewPanel = ({
   if (!task) {
     return (
       <div className="flex h-full flex-col items-center justify-center bg-canvas px-6 text-center">
-        <p className="text-sm font-semibold text-ink-muted">{t('blog.agent.previewEmpty')}</p>
+        <div className="text-sm font-semibold text-ink-muted">{t('blog.agent.previewEmpty')}</div>
       </div>
     );
   }
@@ -57,12 +57,12 @@ const AgentPreviewPanel = ({
     <div className="flex h-full min-h-0 flex-col bg-canvas">
       <header className="flex shrink-0 flex-wrap items-start justify-between gap-3 border-b border-border px-4 py-3 sm:px-5">
         <div className="min-w-0 flex-1">
-          <p className="text-xs font-bold uppercase tracking-widest text-accent">{t('blog.agent.article')}</p>
-          <h2 className="mt-1 truncate text-lg font-black tracking-tight text-ink">
+          <div className="text-xs font-bold uppercase tracking-widest text-accent">{t('blog.agent.article')}</div>
+          <div className="mt-1 truncate text-lg font-black tracking-tight text-ink">
             {article.title || t('blog.agent.untitled')}
-          </h2>
+          </div>
           {article.summary && (
-            <p className="mt-1 line-clamp-2 text-xs leading-5 text-ink-muted">{article.summary}</p>
+            <div className="mt-1 line-clamp-2 text-xs leading-5 text-ink-muted">{article.summary}</div>
           )}
           {versions.length > 0 && (
             <div className="mt-3 flex flex-wrap items-center gap-1.5">
@@ -132,9 +132,9 @@ const AgentPreviewPanel = ({
 
       <div className="min-h-0 flex-1 overflow-y-auto px-4 py-5 sm:px-6">
         {article.content ? (
-          <BlogMarkdown content={article.content} className="prose-headings:font-black" />
+          <BlogMarkdown content={article.content} />
         ) : (
-          <p className="text-sm text-ink-muted">{statusText}</p>
+          <div className="text-sm text-ink-muted">{statusText}</div>
         )}
 
         <div className="mt-8 border-t border-border pt-4">
@@ -155,7 +155,7 @@ const AgentPreviewPanel = ({
                 </div>
                 <div className="mt-3 space-y-3">
                   <div>
-                    <p className="text-xs font-bold text-ink-muted">{t('blog.agent.mustCover')}</p>
+                    <div className="text-xs font-bold text-ink-muted">{t('blog.agent.mustCover')}</div>
                     <div className="mt-2 flex flex-wrap gap-1.5">
                       {asArray(contentBoundary.mustCover).map((item) => (
                         <span key={item} className="rounded-lg bg-accent/10 px-2 py-1 text-xs font-semibold text-accent">
@@ -166,18 +166,18 @@ const AgentPreviewPanel = ({
                   </div>
                   {asArray(contentBoundary.relatedExpansion).length > 0 && (
                     <div>
-                      <p className="text-xs font-bold text-ink-muted">{t('blog.agent.relatedExpansion')}</p>
-                      <p className="mt-1 text-xs leading-5 text-ink-secondary">
+                      <div className="text-xs font-bold text-ink-muted">{t('blog.agent.relatedExpansion')}</div>
+                      <div className="mt-1 text-xs leading-5 text-ink-secondary">
                         {asArray(contentBoundary.relatedExpansion).join('、')}
-                      </p>
+                      </div>
                     </div>
                   )}
                   {asArray(contentBoundary.outOfScope).length > 0 && (
                     <div>
-                      <p className="text-xs font-bold text-ink-muted">{t('blog.agent.outOfScope')}</p>
-                      <p className="mt-1 text-xs leading-5 text-ink-muted">
+                      <div className="text-xs font-bold text-ink-muted">{t('blog.agent.outOfScope')}</div>
+                      <div className="mt-1 text-xs leading-5 text-ink-muted">
                         {asArray(contentBoundary.outOfScope).join('、')}
-                      </p>
+                      </div>
                     </div>
                   )}
                 </div>
@@ -189,7 +189,7 @@ const AgentPreviewPanel = ({
                     <GitFork className="h-4 w-4 text-info" />
                     {t('blog.agent.knowledgeGraph')}
                   </div>
-                  <p className="mt-2 text-xs leading-5 text-info-fg/70">{knowledgeGraph.reason}</p>
+                  <div className="mt-2 text-xs leading-5 text-info-fg/70">{knowledgeGraph.reason}</div>
                   <div className="mt-3 flex flex-wrap gap-1.5">
                     {graphNodes.map((node) => (
                       <span
@@ -224,9 +224,9 @@ const AgentPreviewPanel = ({
                     <ImageIcon className="h-4 w-4 text-info" />
                     {t('blog.agent.illustrations')}
                   </div>
-                  <p className="mt-2 text-xs leading-5 text-info-fg/70">
+                  <div className="mt-2 text-xs leading-5 text-info-fg/70">
                     {t(`blog.agent.illustrationStatuses.${task.illustrationStatus || 'none'}`)}
-                  </p>
+                  </div>
                   {illustrations.length > 0 && (
                     <div className="mt-3 grid grid-cols-2 gap-2">
                       {illustrations.map((image) => (
@@ -241,7 +241,7 @@ const AgentPreviewPanel = ({
                     </div>
                   )}
                   {task.illustrationError && (
-                    <p className="mt-3 text-xs leading-5 text-warning-fg">{task.illustrationError}</p>
+                    <div className="mt-3 text-xs leading-5 text-warning-fg">{task.illustrationError}</div>
                   )}
                 </section>
               )}
@@ -261,13 +261,13 @@ const AgentPreviewPanel = ({
                         rel="noreferrer"
                         className="block rounded-xl bg-canvas p-3 transition hover:bg-accent/5"
                       >
-                        <p className="line-clamp-2 text-sm font-bold text-ink">{source.title}</p>
-                        <p className="mt-1 text-xs text-ink-muted">{source.publisher || source.reliability}</p>
+                        <div className="line-clamp-2 text-sm font-bold text-ink">{source.title}</div>
+                        <div className="mt-1 text-xs text-ink-muted">{source.publisher || source.reliability}</div>
                         <ExternalLink className="mt-2 h-3.5 w-3.5 text-accent" />
                       </a>
                     ))
                   ) : (
-                    <p className="text-sm leading-6 text-ink-muted">{t('blog.agent.noSources')}</p>
+                    <div className="text-sm leading-6 text-ink-muted">{t('blog.agent.noSources')}</div>
                   )}
                 </div>
               </section>
@@ -277,9 +277,9 @@ const AgentPreviewPanel = ({
                   <BookOpenCheck className="h-4 w-4" />
                   {t('blog.agent.review')}
                 </div>
-                <p className="mt-3 text-sm leading-6 text-warning-fg/80">
+                <div className="mt-3 text-sm leading-6 text-warning-fg/80">
                   {task.review || t('blog.agent.reviewPending')}
-                </p>
+                </div>
               </section>
             </div>
           )}

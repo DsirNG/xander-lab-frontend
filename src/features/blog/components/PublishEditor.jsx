@@ -221,16 +221,16 @@ title={t(`blog.editor.${key}`)}
     const renderPreview = () => (
         <article className="prose mx-auto w-full max-w-3xl px-5 py-8 sm:px-8 lg:px-12 lg:py-12">
             {title && (
-                <h1 className="mb-10 text-3xl font-bold leading-tight text-ink sm:text-4xl">
+                <div className="mb-10 text-3xl font-bold leading-tight text-ink sm:text-4xl">
                     {title}
-                </h1>
+                </div>
             )}
             {content ? (
                 <BlogMarkdown content={content} />
             ) : (
                 <div className="flex min-h-[45vh] flex-col items-center justify-center text-ink-faint">
                     <Info className="mb-4 h-10 w-10 opacity-30" />
-                    <p className="text-caption font-semibold">{t('blog.noContent', 'No content yet')}</p>
+                    <div className="text-caption font-semibold">{t('blog.noContent', 'No content yet')}</div>
                 </div>
             )}
         </article>

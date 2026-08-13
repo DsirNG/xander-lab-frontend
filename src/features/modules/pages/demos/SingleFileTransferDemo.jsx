@@ -149,7 +149,7 @@ const SingleFileTransferDemo = () => {
                 {/* Left: Source Files */}
                 <div className="lg:col-span-2 space-y-4">
                     <div className="flex items-center justify-between px-2">
-                        <h4 className="text-[11px] font-black text-slate-400 uppercase tracking-widest">Available Files</h4>
+                        <div className="text-[11px] font-black text-slate-400 uppercase tracking-widest">Available Files</div>
                         <span className="text-[10px] bg-slate-100  text-slate-500 px-2 py-0.5 rounded-full font-bold">{files.length}</span>
                     </div>
 
@@ -171,8 +171,8 @@ const SingleFileTransferDemo = () => {
                                         {getFileIcon(file.type)}
                                     </div>
                                     <div className="flex-grow min-w-0">
-                                        <p className="text-sm font-bold text-slate-700  truncate">{file.name}</p>
-                                        <p className="text-[10px] text-slate-400 font-medium">{file.size}</p>
+                                        <div className="text-sm font-bold text-slate-700  truncate">{file.name}</div>
+                                        <div className="text-[10px] text-slate-400 font-medium">{file.size}</div>
                                     </div>
                                     <GripVertical className="w-4 h-4 text-slate-200  group-hover:text-slate-400 transition-colors" />
                                 </motion.div>
@@ -185,7 +185,7 @@ const SingleFileTransferDemo = () => {
                                 className="h-40 flex flex-col items-center justify-center border-2 border-dashed border-slate-100  rounded-3xl text-slate-300 "
                             >
                                 <CheckCircle2 className="w-8 h-8 mb-2 opacity-50" />
-                                <p className="text-xs font-medium">No files left</p>
+                                <div className="text-xs font-medium">No files left</div>
                             </motion.div>
                         )}
                     </div>
@@ -194,7 +194,7 @@ const SingleFileTransferDemo = () => {
                 {/* Right: Drop Targets */}
                 <div className="lg:col-span-3 space-y-4">
                     <div className="flex items-center justify-between px-2">
-                        <h4 className="text-[11px] font-black text-slate-400 uppercase tracking-widest">Cloud Storage</h4>
+                        <div className="text-[11px] font-black text-slate-400 uppercase tracking-widest">Cloud Storage</div>
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -214,10 +214,10 @@ const SingleFileTransferDemo = () => {
                                         }`}>
                                         <FolderPlus className="w-6 h-6" />
                                     </div>
-                                    <h5 className={`font-bold text-sm mb-1 ${dragDrop.dragOverItem?.id === folder.id ? 'text-sky-600' : 'text-slate-700 '}`}>
+                                    <div className={`font-bold text-sm mb-1 ${dragDrop.dragOverItem?.id === folder.id ? 'text-sky-600' : 'text-slate-700 '}`}>
                                         {folder.name}
-                                    </h5>
-                                    <p className="text-[10px] text-slate-400 mb-4">{folder.items.length} files stored</p>
+                                    </div>
+                                    <div className="text-[10px] text-slate-400 mb-4">{folder.items.length} files stored</div>
 
                                     <div className="mt-auto flex flex-wrap gap-2 overflow-hidden">
                                         <AnimatePresence>

@@ -161,10 +161,10 @@ const BlogManagePanel = () => {
         <div className="flex h-full min-h-0 flex-col">
             <div className="flex shrink-0 flex-col gap-3 border-b border-border px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
                 <div>
-                    <h2 className="text-base font-bold text-ink">{t('profile.blogManage.title')}</h2>
-                    <p className="mt-0.5 text-caption font-medium text-ink-faint">
+                    <div className="text-base font-bold text-ink">{t('profile.blogManage.title')}</div>
+                    <div className="mt-0.5 text-caption font-medium text-ink-faint">
                         {t('profile.blogManage.description')}
-                    </p>
+                    </div>
                 </div>
                 <button
                     type="button"
@@ -218,7 +218,7 @@ const BlogManagePanel = () => {
                 ) : loadError ? (
                     <div className="flex min-h-[240px] flex-col items-center justify-center gap-3 text-center">
                         <AlertCircle className="h-8 w-8 text-danger" />
-                        <p className="text-sm font-bold text-ink-secondary">{t('profile.blogManage.loadError')}</p>
+                        <div className="text-sm font-bold text-ink-secondary">{t('profile.blogManage.loadError')}</div>
                         <button
                             type="button"
                             onClick={() => loadPosts()}
@@ -232,16 +232,16 @@ const BlogManagePanel = () => {
                         <span className="grid h-12 w-12 place-items-center rounded-2xl bg-surface text-ink-faint">
                             <FileText className="h-6 w-6" />
                         </span>
-                        <p className="text-sm font-bold text-ink-secondary">
+                        <div className="text-sm font-bold text-ink-secondary">
                             {tab === 'trash'
                                 ? t('profile.blogManage.emptyTrash')
                                 : t('profile.blogManage.emptyTitle')}
-                        </p>
-                        <p className="max-w-sm text-xs font-medium text-ink-faint">
+                        </div>
+                        <div className="max-w-sm text-xs font-medium text-ink-faint">
                             {tab === 'trash'
                                 ? t('profile.blogManage.emptyTrashHint')
                                 : t('profile.blogManage.emptyHint')}
-                        </p>
+                        </div>
                     </div>
                 ) : (
                     <ul className="divide-y divide-border overflow-hidden rounded-2xl border border-border">
@@ -259,7 +259,7 @@ const BlogManagePanel = () => {
                                 <li key={post.id} className="flex flex-col gap-3 bg-canvas px-3 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-4">
                                     <div className="min-w-0 flex-1">
                                         <div className="flex flex-wrap items-center gap-2">
-                                            <h3 className="truncate text-sm font-bold text-ink">{post.title || t('profile.blogManage.untitled')}</h3>
+                                            <div className="truncate text-sm font-bold text-ink">{post.title || t('profile.blogManage.untitled')}</div>
                                             <span className={`inline-flex rounded-full px-2 py-0.5 text-micro font-bold ${STATUS_STYLES[status] || STATUS_STYLES[BLOG_STATUS.DRAFT]}`}>
                                                 {t(`profile.blogManage.status.${statusKey}`)}
                                             </span>
@@ -273,9 +273,9 @@ const BlogManagePanel = () => {
                                                 </span>
                                             ) : null}
                                         </div>
-                                        <p className="mt-1 line-clamp-1 text-caption font-medium text-ink-faint">
+                                        <div className="mt-1 line-clamp-1 text-caption font-medium text-ink-faint">
                                             {post.summary || post.categoryName || '—'}
-                                        </p>
+                                        </div>
                                     </div>
                                     <div className="flex flex-wrap items-center gap-1">
                                         {status === BLOG_STATUS.PUBLISHED ? (

@@ -25,9 +25,9 @@ export default function AppUpdateModal({ isOpen }) {
         </button>
       )}
     >
-      <p className="text-body text-ink-secondary">
+      <div className="text-body text-ink-secondary">
         {t('common.appUpdate.description')}
-      </p>
+      </div>
     </Modal>
   )
 }

@@ -82,11 +82,11 @@ const McpAuthorizationPanel = () => {
       <div className="mx-auto w-full max-w-3xl">
         <div className="mb-6 flex items-start justify-between gap-4">
           <div>
-            <p className="mb-1 text-micro font-bold uppercase tracking-[0.2em] text-accent">MCP</p>
-            <h2 className="text-title font-black text-ink">{t('profile.mcp.title')}</h2>
-            <p className="mt-2 max-w-xl text-body text-ink-muted">
+            <div className="mb-1 text-micro font-bold uppercase tracking-[0.2em] text-accent">MCP</div>
+            <div className="text-title font-black text-ink">{t('profile.mcp.title')}</div>
+            <div className="mt-2 max-w-xl text-body text-ink-muted">
               {t('profile.mcp.description')}
-            </p>
+            </div>
           </div>
           <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-accent-soft text-accent">
             <Plug className="h-5 w-5" />
@@ -98,10 +98,10 @@ const McpAuthorizationPanel = () => {
             <div className="flex items-start gap-3">
               <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-accent" />
               <div className="min-w-0 flex-1">
-                <h3 className="text-body font-bold text-ink">{t('profile.mcp.consentTitle')}</h3>
-                <p className="mt-1 text-caption text-ink-muted">
+                <div className="text-body font-bold text-ink">{t('profile.mcp.consentTitle')}</div>
+                <div className="mt-1 text-caption text-ink-muted">
                   {t('profile.mcp.consentDescription', { client: oauthRequest.clientName })}
-                </p>
+                </div>
                 <div className="mt-3 flex flex-wrap gap-2">
                   {[...oauthRequest.scopes].map((scope) => (
                     <span key={scope} className="rounded-md bg-surface px-2 py-1 font-mono text-micro font-bold text-ink-secondary">
@@ -135,7 +135,7 @@ const McpAuthorizationPanel = () => {
         )}
 
         <div className="border-y border-border py-4">
-          <h3 className="text-body font-bold text-ink">{t('profile.mcp.endpointsTitle')}</h3>
+          <div className="text-body font-bold text-ink">{t('profile.mcp.endpointsTitle')}</div>
           <div className="mt-3 space-y-2">
             {endpoints.map((endpoint) => {
               const copied = copiedEndpoint === endpoint.id
@@ -163,13 +163,13 @@ const McpAuthorizationPanel = () => {
 
         {clients.length > 0 && (
           <div className="border-b border-border py-4">
-            <h3 className="text-body font-bold text-ink">{t('profile.mcp.clientsTitle')}</h3>
+            <div className="text-body font-bold text-ink">{t('profile.mcp.clientsTitle')}</div>
             <div className="mt-3 space-y-2">
               {clients.map((client) => (
                 <div key={client.clientId} className="flex items-center gap-3 rounded-lg border border-border bg-surface px-3 py-2.5">
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-caption font-bold text-ink">{client.clientName}</p>
-                    <p className="mt-0.5 truncate font-mono text-micro text-ink-faint">{client.scopes?.join(' ')}</p>
+                    <div className="truncate text-caption font-bold text-ink">{client.clientName}</div>
+                    <div className="mt-0.5 truncate font-mono text-micro text-ink-faint">{client.scopes?.join(' ')}</div>
                   </div>
                   <button
                     type="button"

@@ -11,7 +11,7 @@ import StyleCode from '@/components/common/CustomSelect/index.module.css?raw';
 
 const DependencyCard = ({ title, items }) => (
     <div className="p-6 rounded-2xl bg-white  border border-slate-200 ">
-        <h3 className="text-sm uppercase tracking-wider text-slate-500 font-bold mb-4">{title}</h3>
+        <div className="text-sm uppercase tracking-wider text-slate-500 font-bold mb-4">{title}</div>
         <div className="flex flex-wrap gap-2">
             {items.map((item, i) => (
                 <span key={i} className="px-3 py-1 rounded-full bg-slate-100  text-slate-700  text-xs font-mono border border-slate-200">
@@ -36,13 +36,13 @@ const CustomSelectGuide = ({ componentId }) => {
 
                 {/* Header */}
                 <div className="mb-12">
-                    <h1 className="text-4xl font-black text-slate-900  mb-4">
+                    <div className="text-4xl font-black text-slate-900  mb-4">
                         CustomSelect
                         <span className="ml-4 text-lg font-normal text-slate-500 ">{t('common.componentSource')}</span>
-                    </h1>
-                    <p className="text-lg text-slate-600  max-w-3xl leading-relaxed">
+                    </div>
+                    <div className="text-lg text-slate-600  max-w-3xl leading-relaxed">
                         {t('components.customSelect.desc')}
-                    </p>
+                    </div>
                 </div>
 
                 {/* Dependencies & Info Grid */}
@@ -56,10 +56,10 @@ const CustomSelectGuide = ({ componentId }) => {
                         items={['lucide-react', 'prop-types']}
                     />
                     <div className="p-6 rounded-2xl bg-gradient-to-br from-emerald-500/10 to-teal-500/10 border border-emerald-500/20">
-                        <h3 className="text-sm uppercase tracking-wider text-emerald-600 font-bold mb-4 flex items-center">
+                        <div className="text-sm uppercase tracking-wider text-emerald-600 font-bold mb-4 flex items-center">
                             <Layers className="w-4 h-4 mr-2" />
                             {t('common.coreFeatures')}
-                        </h3>
+                        </div>
                         <ul className="space-y-2">
                             {t('components.customSelect.featureList', { returnObjects: true })?.map((feat, i) => (
                                 <li key={i} className="flex items-center text-xs font-bold text-slate-700 ">
@@ -76,8 +76,8 @@ const CustomSelectGuide = ({ componentId }) => {
                     <div>
                         <div className="flex items-end justify-between mb-4 px-2">
                             <div>
-                                <h2 className="text-2xl font-bold text-slate-900  mb-2">{t('common.logicLayer')}</h2>
-                                <p className="text-slate-500  text-sm">{t('common.logicLayerDesc')}</p>
+                                <div className="text-2xl font-bold text-slate-900  mb-2">{t('common.logicLayer')}</div>
+                                <div className="text-slate-500  text-sm">{t('common.logicLayerDesc')}</div>
                             </div>
                             <span className="text-xs font-mono text-slate-400">src/.../CustomSelect/index.jsx</span>
                         </div>
@@ -90,8 +90,8 @@ const CustomSelectGuide = ({ componentId }) => {
                     <div>
                         <div className="flex items-end justify-between mb-4 px-2">
                             <div>
-                                <h2 className="text-2xl font-bold text-slate-900  mb-2">{t('common.styleLayer')}</h2>
-                                <p className="text-slate-500  text-sm">{t('common.styleLayerDesc')}</p>
+                                <div className="text-2xl font-bold text-slate-900  mb-2">{t('common.styleLayer')}</div>
+                                <div className="text-slate-500  text-sm">{t('common.styleLayerDesc')}</div>
                             </div>
                             <span className="text-xs font-mono text-slate-400">src/.../CustomSelect/index.module.css</span>
                         </div>

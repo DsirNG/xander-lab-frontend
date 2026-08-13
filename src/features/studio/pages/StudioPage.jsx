@@ -73,12 +73,12 @@ export default function StudioPage() {
           <FolderKanban className="h-3.5 w-3.5" />
           Xander Lab Studio
         </button>
-        <h1 className="text-xl font-black text-ink sm:text-2xl">
+        <div className="text-xl font-black text-ink sm:text-2xl">
           选择入口，进入构建工作流
-        </h1>
-        <p className="mt-2 max-w-2xl text-body leading-6 text-ink-muted">
+        </div>
+        <div className="mt-2 max-w-2xl text-body leading-6 text-ink-muted">
           Studio 主页面只负责分流：完整项目走 zip 上传，独立组件走组件上传或在线新建。构建后统一进入编译器查看文件、运行预览。
-        </p>
+        </div>
       </header>
 
       <div className="grid gap-4 md:grid-cols-2">
@@ -98,15 +98,15 @@ export default function StudioPage() {
                   </div>
                   <ArrowRight className="h-5 w-5 text-ink-faint transition-transform group-hover:translate-x-1 group-hover:text-accent" />
                 </div>
-                <p className="text-micro font-bold uppercase tracking-widest text-accent">
+                <div className="text-micro font-bold uppercase tracking-widest text-accent">
                   {entry.eyebrow}
-                </p>
-                <h2 className="mt-2 text-xl font-black text-ink">
+                </div>
+                <div className="mt-2 text-xl font-black text-ink">
                   {entry.title}
-                </h2>
-                <p className="mt-3 text-body leading-6 text-ink-muted">
+                </div>
+                <div className="mt-3 text-body leading-6 text-ink-muted">
                   {entry.description}
-                </p>
+                </div>
               </div>
 
               <div className="mt-6 flex flex-wrap gap-2">
@@ -127,10 +127,10 @@ export default function StudioPage() {
       <section className="mt-6 rounded-2xl border border-border bg-surface p-5 shadow-sm">
         <div className="mb-4 flex items-center justify-between">
           <div>
-            <p className="text-micro font-bold uppercase tracking-widest text-ink-faint">
+            <div className="text-micro font-bold uppercase tracking-widest text-ink-faint">
               Recent Projects
-            </p>
-            <h2 className="mt-1 text-lg font-bold text-ink">最近项目</h2>
+            </div>
+            <div className="mt-1 text-lg font-bold text-ink">最近项目</div>
           </div>
           <Boxes className="h-5 w-5 text-ink-faint" />
         </div>
@@ -145,9 +145,9 @@ export default function StudioPage() {
                 className="group flex w-full items-center justify-between gap-3 rounded-xl border border-border bg-canvas px-3 py-3 text-left transition-colors hover:border-accent/30 hover:bg-accent/5"
               >
                 <div className="min-w-0">
-                  <p className="truncate text-body font-bold text-ink-secondary">
+                  <div className="truncate text-body font-bold text-ink-secondary">
                     {project.name}
-                  </p>
+                  </div>
                   <div className="mt-1 flex items-center gap-2">
                     <span className={`rounded-full border px-2 py-0.5 text-micro font-bold ${getStatusColor(project.status)}`}>
                       {getStatusLabel(project.status)}
@@ -164,8 +164,8 @@ export default function StudioPage() {
         ) : (
           <div className="rounded-xl border border-dashed border-border bg-canvas px-4 py-8 text-center">
             <Sparkles className="mx-auto mb-3 h-6 w-6 text-ink-faint" />
-            <p className="text-body font-semibold text-ink-muted">暂无项目</p>
-            <p className="mt-1 text-caption text-ink-faint">从左侧任一入口开始创建</p>
+            <div className="text-body font-semibold text-ink-muted">暂无项目</div>
+            <div className="mt-1 text-caption text-ink-faint">从左侧任一入口开始创建</div>
           </div>
         )}
       </section>

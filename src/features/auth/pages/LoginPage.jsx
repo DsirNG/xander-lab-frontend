@@ -154,12 +154,12 @@ const LoginPage = () => {
                                 <Sparkles className="w-4 h-4 text-accent animate-bounce" />
                                 <span className="text-micro font-black text-accent uppercase tracking-[0.3em]">Identity Gateway</span>
                             </div>
-                            <h1 className="text-4xl font-black text-ink tracking-tight mb-4">
+                            <div className="text-4xl font-black text-ink tracking-tight mb-4">
                                 {t('auth.login.loginAccess')}<span className="text-accent text-5xl">.</span>
-                            </h1>
-                            <p className="text-ink-muted text-sm font-medium leading-relaxed">
+                            </div>
+                            <div className="text-ink-muted text-sm font-medium leading-relaxed">
                                 {t('auth.login.loginDesc')}
-                            </p>
+                            </div>
                         </div>
 
                         {/* 模式选择 Tab */}
@@ -308,9 +308,9 @@ const LoginPage = () => {
                             </button>
                             {/* 验证码模式的自动注册提示 - 绝对定位不占空间 */}
                             {loginType === 'code' && (
-                                <p className="absolute top-full left-0 right-0 mt-2 text-caption text-ink-faint text-center font-medium px-2">
+                                <div className="absolute top-full left-0 right-0 mt-2 text-caption text-ink-faint text-center font-medium px-2">
                                     {t('auth.login.autoRegisterHint')}
-                                </p>
+                                </div>
                             )}
                             </div>
                         </form>
@@ -335,9 +335,9 @@ const LoginPage = () => {
             </motion.div>
 
             <footer className="fixed bottom-0 left-0 right-0 p-10 text-center pointer-events-none">
-                <p className="text-micro font-black text-ink-faint uppercase tracking-[0.5em]">
+                <div className="text-micro font-black text-ink-faint uppercase tracking-[0.5em]">
                     Xander Lab // System Protocol
-                </p>
+                </div>
             </footer>
         </div>
     );

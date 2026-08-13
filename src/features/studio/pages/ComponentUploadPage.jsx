@@ -85,15 +85,15 @@ export default function ComponentUploadPage() {
             <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-lg bg-ink text-white shadow-lg shadow-ink/15">
               <FileCode2 className="h-6 w-6" />
             </div>
-            <p className="text-micro font-bold uppercase tracking-widest text-accent">
+            <div className="text-micro font-bold uppercase tracking-widest text-accent">
               Component Upload
-            </p>
-            <h1 className="mt-2 text-2xl font-black text-ink">
+            </div>
+            <div className="mt-2 text-2xl font-black text-ink">
               组件上传 / 新建
-            </h1>
-            <p className="mt-2 text-body leading-6 text-ink-muted">
+            </div>
+            <div className="mt-2 text-body leading-6 text-ink-muted">
               支持 `tsx`、`jsx`、`js`、`vue` 等文件，也可以在线新建空白文件后粘贴代码。
-            </p>
+            </div>
 
             <div className="mt-6 grid gap-3">
               <label className="rounded-lg border border-dashed border-border-strong bg-surface p-4 transition-colors hover:border-accent/50">
@@ -173,9 +173,9 @@ export default function ComponentUploadPage() {
             )}
 
             <div className="flex flex-col gap-3 border-t border-border bg-surface px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
-              <p className="text-caption leading-5 text-ink-muted">
+              <div className="text-caption leading-5 text-ink-muted">
                 构建后会生成预览项目，并进入编译器页面继续查看文件。
-              </p>
+              </div>
               <button
                 type="submit"
                 disabled={!code.trim() || !fileName.trim() || isBuilding}

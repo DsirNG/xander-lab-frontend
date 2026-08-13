@@ -115,15 +115,15 @@ const BlogTags = () => {
                         <Hash className="w-5 h-5 text-accent" />
                     </div>
                     <div>
-                        <h1 className="text-xl font-bold text-ink tracking-tight">
+                        <div className="text-xl font-bold text-ink tracking-tight">
                             {t('blog.allTags')}
-                        </h1>
-                        <p className="text-xs text-ink-muted mt-0.5">
+                        </div>
+                        <div className="text-xs text-ink-muted mt-0.5">
                             {loading
                                 ? t('blog.loading')
                                 : t('blog.tagsCount', { count: allTags.length })
                             }
-                        </p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -169,9 +169,9 @@ const BlogTags = () => {
                 <div className="space-y-4 pt-2">
                     <div className="flex items-center gap-2 border-b border-border pb-4">
                         <FileText className="w-4 h-4 text-ink-faint" />
-                        <h2 className="text-sm font-semibold text-ink-secondary">
+                        <div className="text-sm font-semibold text-ink-secondary">
                             {t('blog.tagArticles', { tag: activeTag })}
-                        </h2>
+                        </div>
                         <span className="text-micro font-medium px-2 py-0.5 rounded-full bg-accent/10 text-accent">
                             {blogsLoading ? '...' : (filteredBlogs?.length || 0)}
                         </span>

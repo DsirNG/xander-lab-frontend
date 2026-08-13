@@ -25,20 +25,21 @@
 
 ### 字体原则
 
-- UI：`font-sans` → Plus Jakarta Sans
-- Agent 对话：`font-chat` → 接近 ChatGPT 阅读体验的系统 UI 字体栈（Inter / Segoe UI / Helvetica Neue）
-- 代码：`font-mono` → JetBrains Mono
-- 字号阶梯（勿再写 `text-[9px]` / `text-[10px]` / `text-[11px]`）：
+- **全项目统一 `font-sans` / `font-chat` → Plus Jakarta Sans**（UI 与 Agent 对话一致，仅字号字重不同）
+- 代码：`font-mono` → JetBrains Mono（仅代码块/行内代码使用，界面文字一律不用等宽字体）
+- 字号 → 字重规范（`text-<token>` 自带字号、行高与默认字重，勿再写 `text-[9px]` / `text-[10px]` / `text-[11px]` / 裸 `text-sm font-bold`）：
 
-| 类名 | 用途 |
-| --- | --- |
-| `text-display` | 品牌 / 大标题 |
-| `text-title` | 区块标题 |
-| `text-body` | 正文（默认） |
-| `text-caption` | 辅助说明 |
-| `text-micro` | 表格标签、徽标 |
+| Token | 字号 | 行高 | 字重 | 用途 |
+| --- | --- | --- | --- | --- |
+| `text-display` | 28px | 1.25 | 800 | 页面主标题 |
+| `text-heading` | 20px | 1.3 | 800 | 区块标题 |
+| `text-title` | 18px | 1.4 | 700 | 卡片/面板标题 |
+| `text-body` | 14px | 1.5 | 400 | 正文（默认） |
+| `text-caption` | 12px | 1.45 | 500 | 辅助说明 |
+| `text-micro` | 11px | 1.4 | 500 | 表格标签、徽标、元信息 |
 
-字重：正文辅文 `font-medium`，标题 `font-semibold` / `font-bold`；`font-black` 仅品牌字标。
+- 字重阶梯：`font-medium`(500) 强调辅助文字、`font-semibold`(600) 正文强调、`font-bold`(700) 卡片/面板标题、`font-black`(800) 区块/主标题。
+- 标题、段落一律用 `div` / `span` + 上述 token 类名，不用 `h1-h6` / `p` 标签。
 
 ## 通用交互
 

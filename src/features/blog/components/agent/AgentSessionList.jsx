@@ -42,7 +42,7 @@ const AgentSessionList = ({ sessions, activeId, loading, disableNew = false, mob
             </span>
           </button>
         )) : (
-          <p className="px-3 py-6 text-center text-caption leading-5 text-ink-faint">{t('blog.agent.noConversations')}</p>
+          <div className="px-3 py-6 text-center text-caption leading-5 text-ink-faint">{t('blog.agent.noConversations')}</div>
         )}
       </div>
     </aside>

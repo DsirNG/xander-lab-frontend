@@ -26,7 +26,9 @@ describe('AgentMarkdown', () => {
 
     const { container } = render(<AgentMarkdown content={content} />);
 
-    expect(screen.getByRole('heading', { name: 'Result' })).toBeInTheDocument();
+    expect(container.querySelectorAll('div').length).toBeGreaterThan(0);
+    expect(container.querySelector('h1, h2, h3, p')).not.toBeInTheDocument();
+    expect(screen.getByText('Result')).toBeInTheDocument();
     expect(screen.getAllByRole('listitem')).toHaveLength(2);
     expect(screen.getByRole('table')).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'OpenAI' })).toHaveAttribute('target', '_blank');
@@ -48,5 +50,16 @@ describe('AgentMarkdown', () => {
 
     expect(screen.queryByRole('button', { name: 'Unsafe' })).not.toBeInTheDocument();
     expect(container).toHaveTextContent('<button>Unsafe</button>');
+  });
+
+  it('unescapes model-escaped backticks so inline code renders without raw backticks', () => {
+    const content = '使用 \\`Axios + onDownloadProgress\\` 接收 SSE 流，不使用原生 \\`EventSource\\`';
+    const { container } = render(<AgentMarkdown content={content} />);
+
+    const codes = container.querySelectorAll('code');
+    expect(codes).toHaveLength(2);
+    expect(codes[0]).toHaveTextContent('Axios + onDownloadProgress');
+    expect(codes[1]).toHaveTextContent('EventSource');
+    expect(container.textContent).not.toContain('`');
   });
 });

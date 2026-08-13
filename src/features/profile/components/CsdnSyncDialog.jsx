@@ -74,8 +74,8 @@ const CsdnSyncDialog = ({ post, isOpen = true, onClose, onSuccess }) => {
 
   const titleNode = (
     <div>
-      <h3 className="text-title font-black text-ink">{t('profile.blogManage.csdn.dialogTitle')}</h3>
-      <p className="mt-1 truncate text-caption font-medium text-ink-muted">{post.title}</p>
+      <div className="text-title font-black text-ink">{t('profile.blogManage.csdn.dialogTitle')}</div>
+      <div className="mt-1 truncate text-caption font-medium text-ink-muted">{post.title}</div>
     </div>
   )
 
@@ -84,9 +84,9 @@ const CsdnSyncDialog = ({ post, isOpen = true, onClose, onSuccess }) => {
       {(phase === 'checking' || phase === 'syncing') && (
         <div className="flex min-h-48 flex-col items-center justify-center gap-3 text-center py-4">
           <LoaderCircle className="h-7 w-7 animate-spin text-accent" />
-          <p className="text-sm font-bold text-ink-secondary">
+          <div className="text-sm font-bold text-ink-secondary">
             {phase === 'syncing' ? t('profile.blogManage.csdn.syncing') : t('profile.blogManage.csdn.checking')}
-          </p>
+          </div>
         </div>
       )}
 
@@ -97,16 +97,16 @@ const CsdnSyncDialog = ({ post, isOpen = true, onClose, onSuccess }) => {
           ) : (
             <QrCode className="h-16 w-16 text-ink-faint" />
           )}
-          <p className="text-caption font-medium text-ink-muted">
+          <div className="text-caption font-medium text-ink-muted">
             {t('profile.blogManage.csdn.scanHint')}
-          </p>
+          </div>
         </div>
       )}
 
       {phase === 'done' && (
         <div className="flex min-h-48 flex-col items-center justify-center gap-3 text-center py-4">
           <CheckCircle2 className="h-10 w-10 text-success" />
-          <p className="text-sm font-bold text-ink">{t('profile.blogManage.csdn.synced')}</p>
+          <div className="text-sm font-bold text-ink">{t('profile.blogManage.csdn.synced')}</div>
           {result?.url && (
             <a href={result.url} target="_blank" rel="noreferrer" className="text-caption font-bold text-accent hover:underline">
               {t('profile.blogManage.csdn.viewPost')}

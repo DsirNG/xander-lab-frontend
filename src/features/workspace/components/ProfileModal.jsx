@@ -80,10 +80,10 @@ const ProfileModal = ({ open, onClose }) => {
               <span className="grid h-12 w-12 place-items-center rounded-2xl bg-surface text-ink-faint">
                 <Settings2 className="h-6 w-6" aria-hidden="true" />
               </span>
-              <p className="text-sm font-bold text-ink-secondary">{t('profile.comingSoon')}</p>
-              <p className="max-w-sm text-xs font-medium leading-5 text-ink-faint">
+              <div className="text-sm font-bold text-ink-secondary">{t('profile.comingSoon')}</div>
+              <div className="max-w-sm text-xs font-medium leading-5 text-ink-faint">
                 {t('profile.comingSoonHint')}
-              </p>
+              </div>
             </div>
           )}
         </div>
