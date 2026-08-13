@@ -4,8 +4,8 @@ import { describe, expect, it, vi } from 'vitest';
 import AgentMarkdown from './AgentMarkdown';
 
 vi.mock('@/components/common/CodeBlock', () => ({
-  default: ({ code, language }) => (
-    <div data-testid="code-block" data-language={language}>{code}</div>
+  default: ({ code, language, appearance }) => (
+    <div data-testid="code-block" data-language={language} data-appearance={appearance}>{code}</div>
   ),
 }));
 
@@ -38,6 +38,7 @@ describe('AgentMarkdown', () => {
     render(<AgentMarkdown content={'```html\n<button>Run</button>\n```'} />);
 
     expect(screen.getByTestId('code-block')).toHaveAttribute('data-language', 'html');
+    expect(screen.getByTestId('code-block')).toHaveAttribute('data-appearance', 'conversation');
     expect(screen.getByTestId('code-block')).toHaveTextContent('<button>Run</button>');
     expect(screen.queryByRole('button', { name: 'Run' })).not.toBeInTheDocument();
   });

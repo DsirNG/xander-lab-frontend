@@ -61,7 +61,7 @@
 
 | 组件 | 路径 | 适用场景 | 关键 API / 说明 |
 | --- | --- | --- | --- |
-| `CodeBlock` | `@components/common/CodeBlock` | 代码展示；`html`/`htm`/`svg` 支持代码与预览切换 | `code` 或 `children`、`language`、`className`、`defaultMode: 'code' \| 'preview'`；工具栏含语言标签、代码/预览切换、复制。预览使用 `HtmlSandboxPreview`。 |
+| `CodeBlock` | `@components/common/CodeBlock` | 代码展示；`html`/`htm`/`svg` 支持代码与预览切换 | `code` 或 `children`、`language`、`className`、`defaultMode: 'code' \| 'preview'`、`appearance: 'default' \| 'conversation'`（Agent 对话使用浅色代码卡）；工具栏含语言标签、代码/预览切换、复制。预览使用 `HtmlSandboxPreview`。 |
 | `HtmlSandboxPreview` | `@components/common/HtmlSandboxPreview` | 单文件 HTML / SVG 片段的沙箱预览 | `code`、`language`、`minHeight`（默认 280）、`maxHeight`（默认 1200）、`title`；默认由后端托管为独立 origin 页面（`POST /api/blog-html/previews` → iframe `src`），高度经 postMessage 按 origin 校验后自适应；API 不可用时回退 srcdoc + `sandbox="allow-scripts"` 断网沙箱。 |
 | `BrowserWindow` | `@components/common/BrowserWindow` | 在文档/案例中模拟浏览器预览 | 适合演示内容外壳，不用于真实 iframe 安全隔离。 |
 | `PhaseCard` | `@components/common/PhaseCard` | 阶段、流程、时间线卡片 | `phase`、`index`、`color`。 |

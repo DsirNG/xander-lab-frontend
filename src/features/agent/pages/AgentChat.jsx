@@ -8,7 +8,6 @@ import {
 import { useToast } from '@/hooks/useToast';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 import AgentSessionList from '@/features/blog/components/agent/AgentSessionList';
-import AgentChatMessage from '@/features/blog/components/agent/AgentChatMessage';
 import AgentPreviewPanel from '@/features/blog/components/agent/AgentPreviewPanel';
 import BlogMarkdown from '@/features/blog/components/BlogMarkdown';
 import { blogAgentService } from '@/features/blog/services/blogAgentService';
@@ -118,11 +117,11 @@ const ToolStepCard = ({ step, t, onViewBlog }) => {
   );
 };
 
-const MessageBubble = ({ role, content, isStreaming }) => (
-  <div className={`flex ${role === 'user' ? 'justify-end' : 'justify-start'}`}>
-    <div className={`max-w-[90%] rounded-2xl px-4 py-2.5 text-sm leading-6 sm:max-w-[85%] ${
-      role === 'user' ? 'bg-accent text-white' : 'border border-border bg-canvas text-ink'
-    }`}>
+const ConversationMessage = ({ role, content, isStreaming }) => (
+  <div className={`flex w-full ${role === 'user' ? 'justify-end' : 'justify-start'}`}>
+    <div className={role === 'user'
+      ? 'max-w-[85%] rounded-3xl bg-surface-muted px-4 py-2.5 text-sm leading-6 text-ink sm:max-w-[75%]'
+      : 'w-full min-w-0 py-1 text-sm leading-6 text-ink'}>
       {role === 'user' ? (
         <span className="whitespace-pre-wrap">{content}</span>
       ) : isStreaming ? (
@@ -602,7 +601,7 @@ const AgentChat = () => {
                 <div className="mx-auto flex max-w-2xl flex-col gap-3">
                   {messages.map((message) => {
                     if (message.role === 'user') {
-                      return <AgentChatMessage key={message.id} content={message.content} />;
+                      return <ConversationMessage key={message.id} role="user" content={message.content} />;
                     }
                     if (message.kind === 'thought') {
                       return <ThoughtCard key={message.id} content={message.content} />;
@@ -611,12 +610,12 @@ const AgentChat = () => {
                       return <HistoricalToolCard key={message.id} message={message} t={t} onViewBlog={handleViewBlog} />;
                     }
                     if (message.kind === 'answer' || message.kind === 'message') {
-                      return <MessageBubble key={message.id} role="assistant" content={message.content} />;
+                      return <ConversationMessage key={message.id} role="assistant" content={message.content} />;
                     }
                     return null;
                   })}
                   {steps.map((step, index) => {
-                    if (step.type === 'user') return <MessageBubble key={`live-${index}`} role="user" content={step.content} />;
+                    if (step.type === 'user') return <ConversationMessage key={`live-${index}`} role="user" content={step.content} />;
                     if (step.type === 'thought') return <ThoughtCard key={`live-${index}`} content={step.content} />;
                     if (step.type === 'tool') {
                       // progress 步骤由下方 ToolProgressPanel 聚合展示。
@@ -624,7 +623,7 @@ const AgentChat = () => {
                       return <ToolStepCard key={`live-${index}`} step={step} t={t} onViewBlog={handleViewBlog} />;
                     }
                     if (step.type === 'answer' || step.type === 'answer_delta') {
-                      return <MessageBubble key={`live-${index}`} role="assistant" content={step.content} isStreaming={step.type === 'answer_delta'} />;
+                      return <ConversationMessage key={`live-${index}`} role="assistant" content={step.content} isStreaming={step.type === 'answer_delta'} />;
                     }
                     if (step.type === 'tool_delta') return null;
                     if (step.type === 'error') {

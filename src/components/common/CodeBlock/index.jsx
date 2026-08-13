@@ -2,7 +2,7 @@ import React, { useState, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import SyntaxHighlighter from '@components/common/SyntaxHighlighter';
 import HtmlSandboxPreview from '@components/common/HtmlSandboxPreview';
-import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { oneLight, vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { Code2, Copy, Check, FileCode2, Play } from 'lucide-react';
 
 const PREVIEWABLE_LANGUAGES = new Set(['html', 'htm', 'svg']);
@@ -17,6 +17,7 @@ const CodeBlock = memo(({
     language = 'javascript',
     className,
     defaultMode = 'code',
+    appearance = 'default',
 }) => {
     const { t } = useTranslation();
     const [copied, setCopied] = useState(false);
@@ -27,6 +28,7 @@ const CodeBlock = memo(({
     const canPreview = PREVIEWABLE_LANGUAGES.has(normalizedLanguage);
     const activeMode = canPreview ? mode : 'code';
     const languageLabel = normalizedLanguage.toUpperCase();
+    const isConversation = appearance === 'conversation';
 
     const handleCopy = async () => {
         if (!resolvedCode) return;
@@ -40,7 +42,9 @@ const CodeBlock = memo(({
     };
 
     return (
-        <div className={`overflow-hidden rounded-2xl border border-border bg-canvas shadow-sm ${className || ''}`}>
+        <div className={`overflow-hidden border border-border bg-canvas ${
+            isConversation ? 'rounded-3xl shadow-none' : 'rounded-2xl shadow-sm'
+        } ${className || ''}`}>
             <div className="flex items-center justify-between gap-3 border-b border-border bg-surface px-3 py-2">
                 <div className="flex min-w-0 items-center gap-1.5 text-ink-secondary">
                     <FileCode2 className="h-3.5 w-3.5 shrink-0 text-ink-faint" aria-hidden="true" />
@@ -107,10 +111,10 @@ const CodeBlock = memo(({
                     />
                 </div>
             ) : (
-                <div className="overflow-auto bg-[#1e1e1e] max-h-[600px]">
+                <div className={`max-h-[600px] overflow-auto ${isConversation ? 'bg-surface' : 'bg-[#1e1e1e]'}`}>
                     <SyntaxHighlighter
                         language={normalizedLanguage === 'htm' ? 'html' : normalizedLanguage}
-                        style={vscDarkPlus}
+                        style={isConversation ? oneLight : vscDarkPlus}
                         customStyle={{
                             margin: 0,
                             padding: '1.25rem 1.5rem',
