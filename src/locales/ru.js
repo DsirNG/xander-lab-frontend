@@ -92,7 +92,7 @@ export default {
       multiTurnHint: 'Продолжайте просить; агент сам выберет нужные инструменты.',
       inputRequired: 'Сначала введите задачу для агента.', sendFailed: 'Не удалось отправить сообщение.', loadFailed: 'Не удалось загрузить диалог.',
       restoring: 'Восстановление диалога…', reconnecting: 'Соединение потеряно, переподключение…',
-      unknownTool: 'Инструмент', working: 'Выполняется…', toolCalled: 'Инструмент вызван', toolResult: 'Результат инструмента', viewBlog: 'Открыть блог'
+      unknownTool: 'Инструмент', working: 'Выполняется…', writing: 'Написание…', toolCalled: 'Инструмент вызван', toolResult: 'Результат инструмента', viewBlog: 'Открыть блог'
     }
   },
   blogPlans: {

@@ -100,7 +100,7 @@ export default {
       multiTurnHint: '继续提出要求，智能体会自动选择合适工具。',
       inputRequired: '请先输入你想让智能体做什么。', sendFailed: '消息发送失败。', loadFailed: '对话加载失败。',
       restoring: '正在恢复对话…', reconnecting: '连接已断开，正在重连…',
-      unknownTool: '工具', working: '处理中…', toolCalled: '已调用工具', toolResult: '工具返回结果', viewBlog: '查看博客'
+      unknownTool: '工具', working: '处理中…', writing: '正在写作…', toolCalled: '已调用工具', toolResult: '工具返回结果', viewBlog: '查看博客'
     }
   },
   blogPlans: {

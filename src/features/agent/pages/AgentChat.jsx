@@ -10,6 +10,7 @@ import LoadingSpinner from '@/components/common/LoadingSpinner';
 import AgentSessionList from '@/features/blog/components/agent/AgentSessionList';
 import AgentChatMessage from '@/features/blog/components/agent/AgentChatMessage';
 import AgentPreviewPanel from '@/features/blog/components/agent/AgentPreviewPanel';
+import BlogMarkdown from '@/features/blog/components/BlogMarkdown';
 import { blogAgentService } from '@/features/blog/services/blogAgentService';
 import useIsMobile from '@/hooks/useIsMobile';
 import { useAgentConversation, compactToolResult, toolCallSummary } from '../hooks/useAgentConversation';
@@ -24,8 +25,8 @@ const ThoughtCard = ({ content }) => (
 
 const BLOG_STAGES = ['analyze', 'research', 'write', 'illustrate', 'review'];
 
-/** 工具执行中的分步进度面板：阶段列表 + 实时日志（对齐 blog-tool 的 AgentProcessPanel）。 */
-const ToolProgressPanel = ({ logs, stage, draft = '' }) => {
+/** 工具执行中的分步进度面板：阶段列表 + 实时日志 + 文章流式预览（对齐 blog-tool 的 AgentProcessPanel）。 */
+const ToolProgressPanel = ({ logs, stage, draft = '', active = false }) => {
   const { t } = useTranslation();
   const stageIndex = BLOG_STAGES.indexOf(stage);
   return (
@@ -68,9 +69,17 @@ const ToolProgressPanel = ({ logs, stage, draft = '' }) => {
           </div>
         )}
         {draft && (
-          <p className="max-h-40 overflow-auto whitespace-pre-wrap break-words rounded-xl bg-surface-muted p-3 text-caption leading-6 text-ink-muted">
-            {draft}
-          </p>
+          <div className="overflow-hidden rounded-xl border border-border bg-surface">
+            <div className="max-h-72 overflow-auto px-4 py-3">
+              <BlogMarkdown content={draft} />
+            </div>
+            {active && (
+              <div className="flex items-center gap-2 border-t border-border bg-canvas px-4 py-2 text-caption font-bold text-accent">
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                <span>{t('blog.agentChat.writing')}</span>
+              </div>
+            )}
+          </div>
         )}
       </div>
     </div>
@@ -402,6 +411,7 @@ const AgentChat = () => {
 
   const toolProgress = useMemo(() => {
     const tools = new Map();
+    let lastDraftTool = null;
     steps.forEach((step) => {
       if (step.type === 'tool' && step.phase === 'start') {
         tools.set(step.tool || 'tool', { tool: step.tool || 'tool', active: true, logs: [], stage: undefined, draft: '' });
@@ -418,13 +428,17 @@ const AgentChat = () => {
         state.active = true;
         state.draft = step.content;
         tools.set(key, state);
+        lastDraftTool = key;
       } else if (step.type === 'tool' && (step.phase === 'end' || step.phase === 'error')) {
         const key = step.tool || 'tool';
         const state = tools.get(key);
         if (state) state.active = false;
       }
     });
-    return [...tools.values()].filter((tool) => tool.active && (tool.logs.length || tool.draft));
+    // 保留最近一次已完成写作的预览面板，直到本轮结束，避免文章刚写完预览就消失。
+    return [...tools.values()].filter(
+      (tool) => (tool.active && (tool.logs.length || tool.draft)) || (tool.draft && tool.tool === lastDraftTool),
+    );
   }, [steps]);
 
   const statusLine = useMemo(() => {
@@ -627,6 +641,7 @@ const AgentChat = () => {
                       logs={tool.logs}
                       stage={tool.stage}
                       draft={tool.draft}
+                      active={tool.active}
                     />
                   ))}
                   {isActive && !streamingAnswer && !activeToolRunning && toolProgress.length === 0 && (

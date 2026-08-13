@@ -100,7 +100,7 @@ export default {
       multiTurnHint: 'Keep asking; the agent will pick the right tools by itself.',
       inputRequired: 'Enter what you want the agent to do first.', sendFailed: 'Could not send the message.', loadFailed: 'Could not load the conversation.',
       restoring: 'Restoring conversation…', reconnecting: 'Connection lost, reconnecting…',
-      unknownTool: 'Tool', working: 'Working…', toolCalled: 'Tool called', toolResult: 'Tool result', viewBlog: 'View blog'
+      unknownTool: 'Tool', working: 'Working…', writing: 'Writing…', toolCalled: 'Tool called', toolResult: 'Tool result', viewBlog: 'View blog'
     }
   },
   blogPlans: {

@@ -92,7 +92,7 @@ export default {
       multiTurnHint: 'Continuez à demander ; l’agent choisira lui-même les bons outils.',
       inputRequired: 'Saisissez d’abord la tâche demandée.', sendFailed: 'Envoi du message impossible.', loadFailed: 'Chargement de la conversation impossible.',
       restoring: 'Restauration de la conversation…', reconnecting: 'Connexion perdue, reconnexion…',
-      unknownTool: 'Outil', working: 'En cours…', toolCalled: 'Outil appelé', toolResult: 'Résultat de l’outil', viewBlog: 'Voir le blog'
+      unknownTool: 'Outil', working: 'En cours…', writing: 'Rédaction…', toolCalled: 'Outil appelé', toolResult: 'Résultat de l’outil', viewBlog: 'Voir le blog'
     }
   },
   blogPlans: {
