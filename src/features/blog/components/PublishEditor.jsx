@@ -40,11 +40,23 @@ const PublishEditor = forwardRef(({ isPreview, onEditMode, onPreviewMode, title,
     const isMobile = useIsMobile();
 
     const textareaRef = useRef(null);
+    const previewScrollRef = useRef(null);
+    const syncLockRef = useRef(false);
     const valueRef = useRef(content);
     const selectionRef = useRef({ start: 0, end: 0 });
     const librarySelectionRef = useRef({ start: 0, end: 0 });
     const libraryViewportRef = useRef({ windowY: 0, editorY: 0 });
     const [isImageLibraryOpen, setIsImageLibraryOpen] = useState(false);
+
+    const syncScroll = (source, target) => {
+        if (!source || !target || syncLockRef.current) return;
+        const sourceMax = source.scrollHeight - source.clientHeight;
+        const targetMax = target.scrollHeight - target.clientHeight;
+        if (sourceMax <= 0 || targetMax <= 0) return;
+        syncLockRef.current = true;
+        target.scrollTop = (source.scrollTop / sourceMax) * targetMax;
+        requestAnimationFrame(() => { syncLockRef.current = false; });
+    };
 
     useImperativeHandle(forwardedRef, () => textareaRef.current, []);
 
@@ -224,12 +236,12 @@ title={t(`blog.editor.${key}`)}
     );
 
     const renderEditor = () => (
-        <section className="flex h-full min-h-0 flex-col bg-canvas">
+        <section className="relative flex h-full min-h-0 flex-col bg-canvas">
             <div className="flex h-11 shrink-0 items-center justify-between border-b border-border bg-surface px-4">
                 <span className="text-caption font-semibold text-ink-secondary">Markdown</span>
                 <span className="text-micro text-ink-faint">{content.length}</span>
             </div>
-            <div className="shrink-0 border-b border-border bg-canvas px-3 py-2">
+            <div className="sticky top-2 z-10 mx-3 -mb-12 mt-2 w-fit max-w-[calc(100%-1.5rem)] rounded-xl border border-border/80 bg-canvas/90 px-1 py-1 shadow-lg shadow-black/5 backdrop-blur-md">
                 {renderToolbar()}
             </div>
             <textarea
@@ -244,6 +256,7 @@ title={t(`blog.editor.${key}`)}
                 onSelect={(event) => rememberSelection(event.currentTarget)}
                 onClick={(event) => rememberSelection(event.currentTarget)}
                 onKeyUp={(event) => rememberSelection(event.currentTarget)}
+                onScroll={(event) => syncScroll(event.currentTarget, previewScrollRef.current)}
                 placeholder={t('blog.contentPlaceholder')}
                 className="min-h-0 flex-1 resize-none border-none bg-canvas px-5 py-6 font-mono text-sm leading-7 text-ink outline-none placeholder:text-ink-faint sm:px-8"
             />
@@ -286,7 +299,7 @@ title={t(`blog.editor.${key}`)}
                                 <div className="flex h-11 shrink-0 items-center border-b border-border px-4 text-caption font-semibold text-ink-secondary">
                                     {t('blog.preview', 'Preview')}
                                 </div>
-                                <div className="min-h-0 flex-1 overflow-y-auto custom-scrollbar">{renderPreview()}</div>
+                                <div ref={previewScrollRef} onScroll={(event) => syncScroll(event.currentTarget, textareaRef.current)} className="min-h-0 flex-1 overflow-y-auto custom-scrollbar">{renderPreview()}</div>
                             </section>
                         </div>
                     )}
