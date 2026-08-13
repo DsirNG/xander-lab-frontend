@@ -109,12 +109,18 @@ const ToolStepCard = ({ step, t, onViewBlog }) => {
   );
 };
 
-const MessageBubble = ({ role, content }) => (
+const MessageBubble = ({ role, content, isStreaming }) => (
   <div className={`flex ${role === 'user' ? 'justify-end' : 'justify-start'}`}>
     <div className={`max-w-[90%] rounded-2xl px-4 py-2.5 text-sm leading-6 sm:max-w-[85%] ${
       role === 'user' ? 'bg-accent text-white' : 'border border-border bg-canvas text-ink'
     }`}>
-      {role === 'user' ? <span className="whitespace-pre-wrap">{content}</span> : <AgentMarkdown content={content} />}
+      {role === 'user' ? (
+        <span className="whitespace-pre-wrap">{content}</span>
+      ) : isStreaming ? (
+        <span className="whitespace-pre-wrap">{content}</span>
+      ) : (
+        <AgentMarkdown content={content} />
+      )}
     </div>
   </div>
 );
@@ -573,7 +579,7 @@ const AgentChat = () => {
                       return <ToolStepCard key={`live-${index}`} step={step} t={t} onViewBlog={handleViewBlog} />;
                     }
                     if (step.type === 'answer' || step.type === 'answer_delta') {
-                      return <MessageBubble key={`live-${index}`} role="assistant" content={step.content} />;
+                      return <MessageBubble key={`live-${index}`} role="assistant" content={step.content} isStreaming={step.type === 'answer_delta'} />;
                     }
                     if (step.type === 'tool_delta') return null;
                     if (step.type === 'error') {
@@ -594,7 +600,7 @@ const AgentChat = () => {
                       draft={tool.draft}
                     />
                   ))}
-                  {isActive && steps.length === 0 && (
+                  {isActive && (steps.length === 0 || steps.every((step) => step.type === 'tool_delta' || step.type === 'progress')) && toolProgress.length === 0 && (
                     <ThinkingIndicator label={t('blog.agentChat.running')} />
                   )}
                   <div ref={chatEndRef} />

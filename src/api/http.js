@@ -529,8 +529,14 @@ instance.interceptors.response.use(
 
         // 全局 Toast 提示（config._silent 可静默）
         // _skipAuthRecovery 的 401 由调用方接管提示，这里不再重复弹窗
-        if (!config?._silent && !(status === 401 && config?._skipAuthRecovery)) {
+        // 402 积分不足需要总是提示，让用户知道需要获取积分
+        const shouldShowToast = !config?._silent
+            || status === 402
+            || (status === 401 && !config?._skipAuthRecovery);
+        if (shouldShowToast) {
             if (status === 401) {
+                showToast('warning', message);
+            } else if (status === 402) {
                 showToast('warning', message);
             } else if (status >= 500 || !status) {
                 showToast('error', message);
