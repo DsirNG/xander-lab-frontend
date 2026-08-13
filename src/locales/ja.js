@@ -75,7 +75,7 @@ export default {
     publishSettings: 'ドキュメント設定',
     edit: '編集',
     preview: 'プレビュー',
-    noContent: 'まだ内容が入力されていません',
+    noContent: 'まだ内容が入力されていません', draftRestored: '下書きを復元しました', draftAutoSaved: '下書きを自動保存しました', draftDismiss: '閉じる',
     media: { insertImage: '画像を挿入', dropImage: '画像・GIF をドロップまたは選択し、カーソル位置に挿入します。', uploadingImage: 'アップロード中', imageInserted: '本文に画像を挿入しました', imageUploadFailed: '画像をアップロードできませんでした。もう一度お試しください。', invalidImage: '画像または GIF ファイルを選択してください', imageTooLarge: '画像は 10MB 以下にしてください', altText: '画像の説明', addToArticle: '本文に挿入', libraryTitle: '画像を挿入', uploadImage: '画像をアップロード', uploadSuccess: '画像をライブラリに追加しました', searchPlaceholder: '画像名を検索', scopes: { recent: '最近', mine: '自分の画像', gif: 'GIF' }, emptyTitle: '画像がありません', emptyHint: '画像をアップロードすると個人ライブラリに保存されます', selectHint: '画像を選択して詳細を表示', selectedCount: '{{count}} 枚選択', cancel: 'キャンセル', insertAtCursor: '現在位置に挿入' },
     editor: { toolbar: '執筆ツール', addBlock: 'ブロックを追加', text: 'テキスト', h1: 'H1', h2: 'H2', h3: 'H3', todo: 'To-do', list: 'リスト', orderedList: '番号付きリスト', quote: '引用', code: 'コード', insertContent: 'コンテンツを挿入', imageGif: '画像 / GIF', video: '動画（近日対応）', divider: '区切り線', table: '表', codeBlock: 'コードブロック', quoteBlock: '引用ブロック', bold: '太字', italic: '斜体', strike: '取り消し線', addLink: 'リンクを追加', linkPrompt: 'リンクURLを入力（空欄で解除）', undo: '元に戻す', redo: 'やり直す', clearFormatting: '書式をクリア', insertTable: '表を挿入' },
     agent: {

@@ -75,7 +75,7 @@ export default {
     publishSettings: 'Document Settings',
     edit: 'Edit',
     preview: 'Preview',
-    noContent: 'No content yet',
+    noContent: 'No content yet', draftRestored: 'Draft restored', draftAutoSaved: 'Draft auto-saved', draftDismiss: 'Dismiss',
     media: { insertImage: 'Insert image', dropImage: 'Drop or choose an image / GIF, then insert it at the cursor.', uploadingImage: 'Uploading', imageInserted: 'Image inserted into the article', imageUploadFailed: 'Could not upload the image. Try again.', invalidImage: 'Choose an image or GIF file', imageTooLarge: 'Images must be 10MB or smaller', altText: 'Image description', addToArticle: 'Insert into article', libraryTitle: 'Insert image', uploadImage: 'Upload image', uploadSuccess: 'Image added to your library', searchPlaceholder: 'Search image names', scopes: { recent: 'Recent', mine: 'My images', gif: 'GIF' }, emptyTitle: 'No images yet', emptyHint: 'Upload an image to save it in your private library', selectHint: 'Select an image to view its details', selectedCount: '{{count}} image selected', cancel: 'Cancel', insertAtCursor: 'Insert at cursor' },
     editor: { toolbar: 'Writing tools', addBlock: 'Add block', text: 'Text', h1: 'H1', h2: 'H2', h3: 'H3', todo: 'To-do', list: 'List', orderedList: 'Ordered list', quote: 'Quote', code: 'Code', insertContent: 'Insert content', imageGif: 'Image / GIF', video: 'Video (coming soon)', divider: 'Divider', table: 'Table', codeBlock: 'Code block', quoteBlock: 'Quote block', bold: 'Bold', italic: 'Italic', strike: 'Strikethrough', addLink: 'Add link', linkPrompt: 'Enter link URL, leave empty to remove', undo: 'Undo', redo: 'Redo', clearFormatting: 'Clear formatting', insertTable: 'Insert table' },
     agent: {

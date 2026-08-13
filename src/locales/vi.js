@@ -75,7 +75,7 @@ export default {
     publishSettings: 'Cài đặt tài liệu',
     edit: 'Chỉnh sửa',
     preview: 'Xem trước',
-    noContent: 'Chưa nhập nội dung',
+    noContent: 'Chưa nhập nội dung', draftRestored: 'Đã khôi phục bản nháp', draftAutoSaved: 'Bản nháp đã tự động lưu', draftDismiss: 'Đóng',
     media: { insertImage: 'Chèn ảnh', dropImage: 'Kéo thả hoặc chọn ảnh / GIF, rồi chèn tại vị trí con trỏ.', uploadingImage: 'Đang tải lên', imageInserted: 'Đã chèn ảnh vào bài viết', imageUploadFailed: 'Không thể tải ảnh lên. Hãy thử lại.', invalidImage: 'Hãy chọn ảnh hoặc GIF', imageTooLarge: 'Ảnh phải nhỏ hơn hoặc bằng 10MB', altText: 'Mô tả ảnh', addToArticle: 'Chèn vào bài viết', libraryTitle: 'Chèn ảnh', uploadImage: 'Tải ảnh lên', uploadSuccess: 'Đã thêm ảnh vào thư viện', searchPlaceholder: 'Tìm theo tên ảnh', scopes: { recent: 'Gần đây', mine: 'Ảnh của tôi', gif: 'GIF' }, emptyTitle: 'Chưa có ảnh', emptyHint: 'Tải ảnh lên để lưu trong thư viện riêng', selectHint: 'Chọn ảnh để xem chi tiết', selectedCount: 'Đã chọn {{count}} ảnh', cancel: 'Hủy', insertAtCursor: 'Chèn tại con trỏ' },
     editor: { toolbar: 'Công cụ viết', addBlock: 'Thêm khối', text: 'Văn bản', h1: 'H1', h2: 'H2', h3: 'H3', todo: 'Việc cần làm', list: 'Danh sách', orderedList: 'Danh sách đánh số', quote: 'Trích dẫn', code: 'Mã', insertContent: 'Chèn nội dung', imageGif: 'Ảnh / GIF', video: 'Video (sắp có)', divider: 'Đường phân cách', table: 'Bảng', codeBlock: 'Khối mã', quoteBlock: 'Khối trích dẫn', bold: 'Đậm', italic: 'Nghiêng', strike: 'Gạch ngang', addLink: 'Thêm liên kết', linkPrompt: 'Nhập URL liên kết, bỏ trống để gỡ', undo: 'Hoàn tác', redo: 'Làm lại', clearFormatting: 'Xóa định dạng', insertTable: 'Chèn bảng' },
     agent: {

@@ -6,7 +6,7 @@ import CreatableMultiSelect from '@/components/common/CreatableMultiSelect';
 /**
  * 博客发布页右侧设置面板：分类、标签、摘要
  */
-const PublishSettings = ({ t, isSettingsOpen, categories, formData, setFormData, availableTags, onToggleSettings }) => {
+const PublishSettings = ({ t, isSettingsOpen, categories, availableTags, values, onChange, onToggleSettings }) => {
     return (
         <>
             {isSettingsOpen && (
@@ -33,8 +33,8 @@ const PublishSettings = ({ t, isSettingsOpen, categories, formData, setFormData,
                             </div>
                             <CustomSelect
                                 options={categories}
-                                value={formData.categoryId}
-                                onChange={val => setFormData({ ...formData, categoryId: val })}
+                                value={values.categoryId}
+                                onChange={val => onChange('categoryId', val)}
                                 placeholder={t('blog.categoryPlaceholder')}
                                 className="w-full shadow-sm bg-canvas rounded-2xl"
                             />
@@ -49,8 +49,8 @@ const PublishSettings = ({ t, isSettingsOpen, categories, formData, setFormData,
                                 <span className="text-micro text-ink-faint font-medium">Press Enter ↵</span>
                             </div>
                             <CreatableMultiSelect
-                                value={formData.tags}
-                                onChange={(newTags) => setFormData({ ...formData, tags: newTags })}
+                                value={values.tags}
+                                onChange={(newTags) => onChange('tags', newTags)}
                                 options={availableTags}
                             />
                         </section>
@@ -61,13 +61,13 @@ const PublishSettings = ({ t, isSettingsOpen, categories, formData, setFormData,
                                     <AlignLeft className="w-4 h-4 group-hover:text-accent transition-colors" />
                                     <span className="text-micro font-black uppercase tracking-widest">{t('blog.summaryLabel')}</span>
                                 </div>
-                                <span className={`text-micro font-medium ${formData.summary.length > 200 ? 'text-danger' : 'text-ink-faint'}`}>
-                                    {formData.summary.length} / 200
+                                <span className={`text-micro font-medium ${values.summary.length > 200 ? 'text-danger' : 'text-ink-faint'}`}>
+                                    {values.summary.length} / 200
                                 </span>
                             </div>
                             <textarea
-                                value={formData.summary}
-                                onChange={e => setFormData({ ...formData, summary: e.target.value })}
+                                value={values.summary}
+                                onChange={e => onChange('summary', e.target.value)}
                                 placeholder={t('blog.summaryPlaceholder')}
                                 className="w-full bg-canvas border border-border/60 rounded-2xl px-5 py-4 text-sm leading-relaxed outline-none focus:border-accent focus:ring-4 focus:ring-accent/10 transition-all resize-none h-40 shadow-sm text-ink placeholder:text-ink-faint custom-scrollbar"
                             />
