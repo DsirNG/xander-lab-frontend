@@ -4,7 +4,7 @@ import { Send, Save, ChevronLeft, Loader2, Settings, X } from 'lucide-react';
 /**
  * 博客发布页顶栏：返回、保存草稿、设置开关、发布按钮
  */
-const PublishHeader = ({ t, isEditMode, loading, isSettingsOpen, onBack, onSaveDraft, onToggleSettings, onPublish }) => {
+const PublishHeader = ({ t, isEditMode, loading, isSettingsOpen, draftStatus, showDraftStatus, onBack, onSaveDraft, onToggleSettings, onPublish }) => {
     return (
         <header className="h-14 shrink-0 border-b border-border flex items-center justify-between gap-2 px-3 sm:px-5 bg-canvas z-20 relative">
             <div className="flex min-w-0 items-center gap-2 sm:gap-4">
@@ -22,6 +22,12 @@ const PublishHeader = ({ t, isEditMode, loading, isSettingsOpen, onBack, onSaveD
             </div>
 
             <div className="flex shrink-0 items-center gap-1 sm:gap-3">
+                <span
+                    aria-live="polite"
+                    className={`max-w-32 truncate text-micro text-ink-faint transition-opacity sm:max-w-none ${showDraftStatus ? 'opacity-100' : 'opacity-0'}`}
+                >
+                    {draftStatus === 'restored' ? t('blog.draftRestored') : t('blog.draftAutoSaved')}
+                </span>
                 <button
                     onClick={onSaveDraft}
                     disabled={loading}

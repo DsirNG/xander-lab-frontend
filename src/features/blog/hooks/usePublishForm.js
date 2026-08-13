@@ -10,7 +10,7 @@ const AUTO_SAVE_DEBOUNCE_MS = 3000;
 const usePublishForm = ({ isEditMode }) => {
     const [formData, setFormData] = useState(EMPTY_FORM);
     const [draftStatus, setDraftStatus] = useState('none');
-    const [isDraftBarVisible, setIsDraftBarVisible] = useState(false);
+    const [isDraftStatusVisible, setIsDraftStatusVisible] = useState(false);
 
     const disabledRef = useRef(false);
     const isEditModeRef = useRef(isEditMode);
@@ -50,7 +50,7 @@ const usePublishForm = ({ isEditMode }) => {
         if (draft) {
             setFormData((current) => ({ ...current, ...draft }));
             setDraftStatus('restored');
-            setIsDraftBarVisible(true);
+            setIsDraftStatusVisible(true);
         }
     }, [isEditMode]);
 
@@ -62,7 +62,7 @@ const usePublishForm = ({ isEditMode }) => {
         saveTimerRef.current = setTimeout(() => {
             if (saveDraft(formData)) {
                 setDraftStatus('saved');
-                setIsDraftBarVisible(true);
+                setIsDraftStatusVisible(true);
             }
         }, AUTO_SAVE_DEBOUNCE_MS);
         return () => clearTimeout(saveTimerRef.current);
@@ -79,14 +79,10 @@ const usePublishForm = ({ isEditMode }) => {
         }
     }, []);
 
-    const dismissDraftBar = useCallback(() => {
-        setIsDraftBarVisible(false);
-    }, []);
-
     const consumeDraft = useCallback(() => {
         disabledRef.current = true;
         clearDraft();
-        setIsDraftBarVisible(false);
+        setIsDraftStatusVisible(false);
         setDraftStatus('none');
     }, []);
 
@@ -96,8 +92,7 @@ const usePublishForm = ({ isEditMode }) => {
         resetFromPost,
         setDefaultCategory,
         draftStatus,
-        isDraftBarVisible,
-        dismissDraftBar,
+        isDraftStatusVisible,
         consumeDraft,
     };
 };

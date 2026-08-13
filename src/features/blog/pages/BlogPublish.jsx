@@ -1,7 +1,6 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Save, X } from 'lucide-react';
 import PublishHeader from '../components/PublishHeader';
 import PublishSettings from '../components/PublishSettings';
 import PublishEditor from '../components/PublishEditor';
@@ -29,7 +28,7 @@ const BlogPublish = () => {
     const toggleSettings = () => setIsSettingsOpen(prev => !prev);
     const editorRef = useRef(null);
 
-    const { formData, setField, resetFromPost, setDefaultCategory, draftStatus, isDraftBarVisible, dismissDraftBar, consumeDraft } = usePublishForm({ isEditMode });
+    const { formData, setField, resetFromPost, setDefaultCategory, draftStatus, isDraftStatusVisible, consumeDraft } = usePublishForm({ isEditMode });
 
     const onDataReady = useCallback(({ post, formattedOptions, error }) => {
         if (error) {
@@ -70,26 +69,13 @@ const BlogPublish = () => {
                 isEditMode={isEditMode}
                 loading={loading}
                 isSettingsOpen={isSettingsOpen}
+                draftStatus={draftStatus}
+                showDraftStatus={isDraftStatusVisible && !isEditMode}
                 onBack={handleBack}
                 onSaveDraft={handleSaveDraft}
                 onToggleSettings={toggleSettings}
                 onPublish={handlePublish}
             />
-
-            {isDraftBarVisible && !isEditMode && (
-                <div className="fixed top-16 left-1/2 -translate-x-1/2 z-40 flex items-center gap-3 rounded-full border border-border bg-canvas/95 px-4 py-2 text-xs font-semibold text-ink-secondary shadow-lg backdrop-blur">
-                    <Save className="w-3.5 h-3.5 text-accent" />
-                    {draftStatus === 'restored' ? t('blog.draftRestored') : t('blog.draftAutoSaved')}
-                    <button
-                        onClick={dismissDraftBar}
-                        title={t('blog.draftDismiss')}
-                        aria-label={t('blog.draftDismiss')}
-                        className="text-ink-faint hover:text-ink transition-colors"
-                    >
-                        <X className="w-3.5 h-3.5" />
-                    </button>
-                </div>
-            )}
 
             <div className="flex-1 min-h-0 relative">
                 <main className="h-full min-w-0 overflow-hidden">

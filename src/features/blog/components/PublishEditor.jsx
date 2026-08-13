@@ -238,10 +238,8 @@ title={t(`blog.editor.${key}`)}
 
     const renderEditor = () => (
         <section className="relative flex h-full min-h-0 flex-col bg-canvas">
-            <div className="z-10 shrink-0 border-b border-border bg-canvas px-3 py-2">
-                <div className="w-fit max-w-full rounded-xl border border-border/80 bg-surface px-1 py-1 shadow-sm">
+            <div className="z-10 shrink-0 border-b border-border px-4 py-2">
                 {renderToolbar()}
-                </div>
             </div>
             <textarea
                 ref={textareaRef}
