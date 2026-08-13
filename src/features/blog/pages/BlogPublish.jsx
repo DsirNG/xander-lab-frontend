@@ -64,7 +64,7 @@ const BlogPublish = () => {
     }
 
     return (
-        <div className="h-dvh bg-surface flex flex-col overflow-hidden font-sans">
+        <div className="h-dvh bg-canvas flex flex-col overflow-hidden font-sans">
             <PublishHeader
                 t={t}
                 isEditMode={isEditMode}
@@ -91,26 +91,22 @@ const BlogPublish = () => {
                 </div>
             )}
 
-            <div className="flex-1 flex overflow-hidden relative">
-                <main className="flex-1 min-w-0 flex flex-col relative bg-canvas rounded-tr-[0.5rem] border-r border-t border-border lg:border-r lg:border-t shadow-[10px_0_30px_-15px_rgba(0,0,0,0.05)] z-10 transition-all overflow-hidden mt-2 ml-2">
-                    <div className="flex-1 overflow-y-auto custom-scrollbar flex justify-center scroll-smooth">
-                        <div className="w-full max-w-4xl px-5 sm:px-8 md:px-16 pt-20 pb-10 flex flex-col gap-10 min-h-full">
-                            <PublishEditor
-                                ref={editorRef}
-                                isPreview={isPreview}
-                                onEditMode={() => {
-                                    setIsPreview(false);
-                                    setTimeout(() => editorRef.current?.focus(), 10);
-                                }}
-                                onPreviewMode={() => setIsPreview(true)}
-                                title={formData.title}
-                                onTitleChange={(title) => setField('title', title)}
-                                content={formData.content}
-                                onContentChange={(content) => setField('content', content)}
-                                disabled={loading}
-                            />
-                        </div>
-                    </div>
+            <div className="flex-1 min-h-0 relative">
+                <main className="h-full min-w-0 overflow-hidden">
+                    <PublishEditor
+                        ref={editorRef}
+                        isPreview={isPreview}
+                        onEditMode={() => {
+                            setIsPreview(false);
+                            setTimeout(() => editorRef.current?.focus(), 10);
+                        }}
+                        onPreviewMode={() => setIsPreview(true)}
+                        title={formData.title}
+                        onTitleChange={(title) => setField('title', title)}
+                        content={formData.content}
+                        onContentChange={(content) => setField('content', content)}
+                        disabled={loading}
+                    />
                 </main>
 
                 <PublishSettings

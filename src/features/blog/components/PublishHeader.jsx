@@ -6,17 +6,17 @@ import { Send, Save, ChevronLeft, Loader2, Settings, X } from 'lucide-react';
  */
 const PublishHeader = ({ t, isEditMode, loading, isSettingsOpen, onBack, onSaveDraft, onToggleSettings, onPublish }) => {
     return (
-        <header className="h-16 shrink-0 border-b border-border/60 flex items-center justify-between gap-2 px-3 sm:px-6 bg-canvas z-20 shadow-sm relative">
+        <header className="h-14 shrink-0 border-b border-border flex items-center justify-between gap-2 px-3 sm:px-5 bg-canvas z-20 relative">
             <div className="flex min-w-0 items-center gap-2 sm:gap-4">
                 <button
                     onClick={onBack}
-                    className="p-2 -ml-2 text-ink-faint hover:bg-surface-muted rounded-xl transition-all group"
+                    className="flex h-9 w-9 items-center justify-center text-ink-muted hover:bg-surface-muted rounded-lg transition-colors"
                     title={isEditMode ? t('blog.backToManage') : t('blog.backToBlog')}
                 >
                     <ChevronLeft className="w-5 h-5 transition-transform" />
                 </button>
                 <div className="hidden sm:block h-4 w-px bg-border"></div>
-                <span className="truncate text-xs font-black uppercase tracking-widest text-ink flex items-center gap-2">
+                <span className="truncate text-sm font-semibold text-ink flex items-center gap-2">
                     {isEditMode ? t('blog.editTitle') : t('blog.publishTitle')}
                 </span>
             </div>
@@ -26,13 +26,13 @@ const PublishHeader = ({ t, isEditMode, loading, isSettingsOpen, onBack, onSaveD
                     onClick={onSaveDraft}
                     disabled={loading}
                     title={t('blog.saveDraft')}
-                    className="flex p-2 sm:px-5 text-xs font-bold text-ink-muted hover:text-ink transition-colors items-center gap-2 rounded-xl hover:bg-surface-muted disabled:opacity-50"
+                    className="flex h-9 px-2 sm:px-3 text-caption font-semibold text-ink-muted hover:text-ink transition-colors items-center gap-2 rounded-lg hover:bg-surface-muted disabled:opacity-50"
                 >
                     <Save className="w-4 h-4" /> <span className="hidden md:inline">{t('blog.saveDraft')}</span>
                 </button>
                 <button
                     onClick={onToggleSettings}
-                    className="lg:hidden p-2 text-ink-muted hover:text-accent hover:bg-surface-muted rounded-xl transition-all"
+                    className={`flex h-9 w-9 items-center justify-center rounded-lg transition-colors ${isSettingsOpen ? 'bg-accent-soft text-accent' : 'text-ink-muted hover:bg-surface-muted hover:text-ink'}`}
                     title={t('blog.publishSettings', 'Document Settings')}
                 >
                     {isSettingsOpen ? <X className="w-5 h-5" /> : <Settings className="w-5 h-5" />}
@@ -40,7 +40,7 @@ const PublishHeader = ({ t, isEditMode, loading, isSettingsOpen, onBack, onSaveD
                 <button
                     onClick={onPublish}
                     disabled={loading}
-                    className="px-3 sm:px-6 py-2 bg-ink hover:bg-accent text-white rounded-xl text-xs font-black shadow-lg shadow-accent/0 hover:shadow-accent/30 transition-all active:scale-95 disabled:opacity-50 flex items-center gap-2"
+                    className="flex h-9 items-center gap-2 rounded-lg bg-ink px-3 sm:px-4 text-caption font-semibold text-white transition-colors hover:bg-accent disabled:opacity-50"
                 >
                     {loading ? (
                         <><Loader2 className="w-4 h-4 animate-spin" /> {t('blog.publishing')}</>

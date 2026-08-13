@@ -11,18 +11,17 @@ const PublishSettings = ({ t, isSettingsOpen, categories, availableTags, values,
         <>
             {isSettingsOpen && (
                 <div
-                    className="lg:hidden fixed inset-0 bg-black/30 z-30"
-                    style={{ top: '64px' }}
+                    className="fixed inset-x-0 bottom-0 top-14 bg-black/25 z-30 backdrop-blur-[1px]"
                     onClick={onToggleSettings}
                 />
             )}
 
-            <aside className={`fixed lg:static top-[64px] right-0 bottom-0 w-[min(20rem,100vw)] lg:w-[420px] shrink-0 bg-surface flex flex-col z-40 transform transition-transform duration-300 ease-in-out ${isSettingsOpen ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'}`}>
-                <div className="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar p-6 lg:p-10 space-y-12 pb-32">
+            <aside className={`fixed top-14 right-0 bottom-0 w-[min(22rem,100vw)] border-l border-border bg-surface flex flex-col z-40 transform shadow-2xl transition-transform duration-300 ease-in-out ${isSettingsOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+                <div className="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar p-6 space-y-10 pb-24">
                     <div>
-                        <span className="text-micro font-black uppercase tracking-[0.2em] text-ink-faint mb-8 block flex items-center gap-3">
+                        <span className="text-micro font-bold uppercase text-ink-faint mb-8 flex items-center gap-3">
                             <span className="h-px bg-border flex-1"></span>
-                            DOCUMENT SETTINGS
+                            {t('blog.publishSettings', 'Document settings')}
                             <span className="h-px bg-border flex-1"></span>
                         </span>
 

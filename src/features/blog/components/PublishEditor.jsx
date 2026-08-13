@@ -206,111 +206,92 @@ title={t(`blog.editor.${key}`)}
     );
 
     const renderPreview = () => (
-        <div className={`prose max-w-none ${isMobile ? 'pt-2 mb-20' : 'pt-1 pr-4'}`}>
+        <article className="prose mx-auto w-full max-w-3xl px-5 py-8 sm:px-8 lg:px-12 lg:py-12">
             {title && (
-                <h1 className="text-4xl md:text-5xl font-black mb-12 text-ink leading-tight">
+                <h1 className="mb-10 text-3xl font-bold leading-tight text-ink sm:text-4xl">
                     {title}
                 </h1>
             )}
             {content ? (
                 <BlogMarkdown content={content} />
             ) : (
-                <div className="flex flex-col items-center justify-center py-40 text-ink-faint">
-                    <Info className="w-16 h-16 mb-6 opacity-30" />
-                    <p className="text-sm font-bold uppercase tracking-widest italic">{t('blog.noContent', 'No content yet')}</p>
+                <div className="flex min-h-[45vh] flex-col items-center justify-center text-ink-faint">
+                    <Info className="mb-4 h-10 w-10 opacity-30" />
+                    <p className="text-caption font-semibold">{t('blog.noContent', 'No content yet')}</p>
                 </div>
             )}
-        </div>
+        </article>
+    );
+
+    const renderEditor = () => (
+        <section className="flex h-full min-h-0 flex-col bg-canvas">
+            <div className="flex h-11 shrink-0 items-center justify-between border-b border-border bg-surface px-4">
+                <span className="text-caption font-semibold text-ink-secondary">Markdown</span>
+                <span className="text-micro text-ink-faint">{content.length}</span>
+            </div>
+            <div className="shrink-0 border-b border-border bg-canvas px-3 py-2">
+                {renderToolbar()}
+            </div>
+            <textarea
+                ref={textareaRef}
+                disabled={disabled}
+                value={content}
+                onChange={(event) => {
+                    valueRef.current = event.target.value;
+                    onContentChange(event.target.value);
+                    rememberSelection(event.target);
+                }}
+                onSelect={(event) => rememberSelection(event.currentTarget)}
+                onClick={(event) => rememberSelection(event.currentTarget)}
+                onKeyUp={(event) => rememberSelection(event.currentTarget)}
+                placeholder={t('blog.contentPlaceholder')}
+                className="min-h-0 flex-1 resize-none border-none bg-canvas px-5 py-6 font-mono text-sm leading-7 text-ink outline-none placeholder:text-ink-faint sm:px-8"
+            />
+        </section>
     );
 
     return (
         <>
-            {isMobile && (
-                <div className="absolute top-3 right-3 sm:top-6 sm:right-8 z-20">
-                    <div className="flex bg-surface-muted/80 backdrop-blur-md p-1 rounded-2xl border border-border/50 shadow-sm">
+            <div className="flex h-full min-h-0 flex-col">
+                <div className="flex min-h-16 shrink-0 items-center gap-3 border-b border-border bg-canvas px-4 sm:px-6">
+                    <textarea
+                        value={title}
+                        onChange={e => onTitleChange(e.target.value)}
+                        placeholder={t('blog.titlePlaceholder')}
+                        rows={1}
+                        className="min-w-0 flex-1 resize-none overflow-hidden border-none bg-transparent text-xl font-semibold text-ink outline-none placeholder:text-ink-faint sm:text-2xl"
+                    />
+                    {isMobile && <div className="flex shrink-0 bg-surface-muted p-1 rounded-lg border border-border">
                         <button
                             onClick={onEditMode}
-                            className={`flex items-center gap-2 px-3 sm:px-5 py-2 rounded-xl text-caption font-black uppercase tracking-widest transition-all ${!isPreview ? 'bg-canvas text-accent shadow-sm scale-100' : 'text-ink-muted hover:text-ink-secondary hover:bg-surface-muted/50 '}`}
+                            title={t('blog.edit', 'Edit')}
+                            className={`flex h-8 w-8 items-center justify-center rounded-md transition-colors ${!isPreview ? 'bg-canvas text-accent shadow-sm' : 'text-ink-muted'}`}
                         >
-                            <Edit3 className="w-4 h-4" /> <span className="hidden sm:inline">{t('blog.edit', 'Edit')}</span>
+                            <Edit3 className="w-4 h-4" />
                         </button>
                         <button
                             onClick={onPreviewMode}
-                            className={`flex items-center gap-2 px-3 sm:px-5 py-2 rounded-xl text-caption font-black uppercase tracking-widest transition-all ${isPreview ? 'bg-canvas text-accent shadow-sm scale-100' : 'text-ink-muted hover:text-ink-secondary hover:bg-surface-muted/50 '}`}
+                            title={t('blog.preview', 'Preview')}
+                            className={`flex h-8 w-8 items-center justify-center rounded-md transition-colors ${isPreview ? 'bg-canvas text-accent shadow-sm' : 'text-ink-muted'}`}
                         >
-                            <Eye className="w-4 h-4" /> <span className="hidden sm:inline">{t('blog.preview', 'Preview')}</span>
+                            <Eye className="w-4 h-4" />
                         </button>
-                    </div>
+                    </div>}
                 </div>
-            )}
-
-            <div className="relative group">
-                <div className="absolute -left-10 top-5 text-border-strong pointer-events-none transition-colors group-focus-within:text-accent">
-                    <Type className="w-6 h-6" />
-                </div>
-                <textarea
-                    value={title}
-                    onChange={e => onTitleChange(e.target.value)}
-                    placeholder={t('blog.titlePlaceholder')}
-                    rows={1}
-                    className={`w-full text-3xl sm:text-4xl md:text-5xl font-black bg-transparent border-none outline-none text-ink resize-none break-words ${isMobile && isPreview ? 'hidden' : 'placeholder:text-border-strong'}`}
-                    onInput={(e) => {
-                        e.target.style.height = 'auto';
-                        e.target.style.height = e.target.scrollHeight + 'px';
-                    }}
-                />
-            </div>
-
-            {isMobile ? (
-                isPreview ? (
-                    renderPreview()
-                ) : (
-                    <div className="flex-1 relative group flex flex-col gap-3">
-                        {renderToolbar()}
-                        <div className="w-full">
-                            <textarea
-                                ref={textareaRef}
-                                disabled={disabled}
-                                value={content}
-                                onChange={(event) => {
-                                    valueRef.current = event.target.value;
-                                    onContentChange(event.target.value);
-                                    rememberSelection(event.target);
-                                }}
-                                onSelect={(event) => rememberSelection(event.currentTarget)}
-                                onClick={(event) => rememberSelection(event.currentTarget)}
-                                onKeyUp={(event) => rememberSelection(event.currentTarget)}
-                                placeholder={t('blog.contentPlaceholder')}
-                                className="min-h-[60vh] w-full resize-none border-none bg-transparent text-lg font-medium leading-[1.8] text-ink-secondary outline-none placeholder:text-ink-faint"
-                            />
+                <div className="min-h-0 flex-1">
+                    {isMobile ? (isPreview ? <div className="h-full overflow-y-auto custom-scrollbar bg-surface">{renderPreview()}</div> : renderEditor()) : (
+                        <div className="grid h-full min-h-0 grid-cols-2">
+                            {renderEditor()}
+                            <section className="flex min-h-0 flex-col border-l border-border bg-surface">
+                                <div className="flex h-11 shrink-0 items-center border-b border-border px-4 text-caption font-semibold text-ink-secondary">
+                                    {t('blog.preview', 'Preview')}
+                                </div>
+                                <div className="min-h-0 flex-1 overflow-y-auto custom-scrollbar">{renderPreview()}</div>
+                            </section>
                         </div>
-                    </div>
-                )
-            ) : (
-                <div className={`flex-1 relative group grid grid-cols-2 gap-10 ${isPreview ? 'hidden' : 'grid'}`}>
-                    <div className="flex flex-col gap-3 min-w-0">
-                        {renderToolbar()}
-                        <textarea
-                            ref={textareaRef}
-                            disabled={disabled}
-                            value={content}
-                            onChange={(event) => {
-                                valueRef.current = event.target.value;
-                                onContentChange(event.target.value);
-                                rememberSelection(event.target);
-                            }}
-                            onSelect={(event) => rememberSelection(event.currentTarget)}
-                            onClick={(event) => rememberSelection(event.currentTarget)}
-                            onKeyUp={(event) => rememberSelection(event.currentTarget)}
-                            placeholder={t('blog.contentPlaceholder')}
-                            className="min-h-[60vh] w-full resize-none border-none bg-transparent text-lg font-medium leading-[1.8] text-ink-secondary outline-none placeholder:text-ink-faint"
-                        />
-                    </div>
-                    <div className="sticky top-0 self-start max-h-[calc(100dvh-13rem)] overflow-y-auto custom-scrollbar border-l border-border pl-6">
-                        {renderPreview()}
-                    </div>
+                    )}
                 </div>
-            )}
+            </div>
 
             <BlogImageLibraryModal
                 isOpen={isImageLibraryOpen}
