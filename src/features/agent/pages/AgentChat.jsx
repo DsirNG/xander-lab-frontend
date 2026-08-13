@@ -32,7 +32,7 @@ const ToolProgressPanel = ({ logs, stage, draft = '' }) => {
     <div className="overflow-hidden rounded-2xl border border-border bg-canvas shadow-sm">
       <div className="flex items-center gap-2 border-b border-border px-4 py-3 text-sm font-semibold text-ink-secondary">
         <Loader2 className="h-4 w-4 shrink-0 animate-spin text-accent" />
-        <span className="truncate">{t('blog.agentChat.running')}</span>
+        <span className="truncate">{t('blog.agentChat.callingTool')}</span>
       </div>
       <div className="space-y-4 px-4 py-4">
         <ol className="space-y-3">
@@ -86,7 +86,7 @@ const ToolStepCard = ({ step, t, onViewBlog }) => {
       <div className={`flex items-center gap-2 text-xs font-bold ${isError ? 'text-danger' : 'text-ink-secondary'}`}>
         <Wrench className="h-3.5 w-3.5 shrink-0" />
         <span className="truncate">{step.tool || t('blog.agentChat.unknownTool')}</span>
-        {step.phase === 'start' && <span className="ml-auto font-normal text-ink-faint">{t('blog.agentChat.running')}</span>}
+        {step.phase === 'start' && <span className="ml-auto font-normal text-ink-faint">{t('blog.agentChat.callingTool')}</span>}
         {step.phase === 'end' && <Icon className="ml-auto h-3.5 w-3.5 shrink-0 text-emerald-500" />}
         {isError && <Icon className="ml-auto h-3.5 w-3.5 shrink-0" />}
       </div>
@@ -117,7 +117,22 @@ const MessageBubble = ({ role, content, isStreaming }) => (
       {role === 'user' ? (
         <span className="whitespace-pre-wrap">{content}</span>
       ) : isStreaming ? (
-        <span className="whitespace-pre-wrap">{content}</span>
+        content ? (
+          <span className="whitespace-pre-wrap">
+            {content}
+            <span className="ml-0.5 inline-block h-4 w-[3px] animate-pulse rounded-sm bg-current align-middle" aria-hidden="true" />
+          </span>
+        ) : (
+          <span className="inline-flex items-center gap-1 px-1" role="status" aria-live="polite">
+            {[0, 1, 2].map((index) => (
+              <span
+                key={index}
+                className="h-1.5 w-1.5 animate-bounce rounded-full bg-current opacity-70"
+                style={{ animationDelay: `${index * 140}ms` }}
+              />
+            ))}
+          </span>
+        )
       ) : (
         <AgentMarkdown content={content} />
       )}
@@ -212,7 +227,7 @@ const AgentChatInputBar = ({ t, input, setInput, isActive, creating, hasConversa
           className="inline-flex h-10 shrink-0 items-center gap-2 rounded-xl bg-ink px-4 text-sm font-black text-white transition hover:bg-accent disabled:cursor-wait disabled:opacity-60"
         >
           {locked ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-          {locked ? t('blog.agentChat.running') : t('blog.agentChat.send')}
+          {locked ? t('blog.agentChat.working') : t('blog.agentChat.send')}
         </button>
       </div>
     </div>
@@ -280,6 +295,20 @@ const AgentChat = () => {
     if (liveSteps.length === 0) return [];
     return liveSteps;
   }, [liveSteps]);
+
+  const activeToolRunning = useMemo(() => {
+    const endedTools = new Set(
+      steps
+        .filter((step) => step.type === 'tool' && (step.phase === 'end' || step.phase === 'error'))
+        .map((step) => step.tool),
+    );
+    return steps.some((step) => step.type === 'tool' && step.phase === 'start' && !endedTools.has(step.tool));
+  }, [steps]);
+
+  const streamingAnswer = useMemo(
+    () => steps.some((step) => step.type === 'answer' || step.type === 'answer_delta'),
+    [steps],
+  );
 
   useEffect(() => {
     if (stickToBottomRef.current) chatEndRef.current?.scrollIntoView({ behavior: 'auto', block: 'end' });
@@ -369,7 +398,7 @@ const AgentChat = () => {
     }
   };
 
-  const navigationLocked = loading || creating || isActive;
+  const navigationLocked = loading || creating;
 
   const toolProgress = useMemo(() => {
     const tools = new Map();
@@ -600,8 +629,8 @@ const AgentChat = () => {
                       draft={tool.draft}
                     />
                   ))}
-                  {isActive && (steps.length === 0 || steps.every((step) => step.type === 'tool_delta' || step.type === 'progress')) && toolProgress.length === 0 && (
-                    <ThinkingIndicator label={t('blog.agentChat.running')} />
+                  {isActive && !streamingAnswer && !activeToolRunning && toolProgress.length === 0 && (
+                    <ThinkingIndicator label={t('blog.agentChat.thinking')} />
                   )}
                   <div ref={chatEndRef} />
                 </div>

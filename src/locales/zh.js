@@ -96,7 +96,7 @@ export default {
       description: '我可以帮你写博客、查资料或处理其他任务。试试：「帮我写一篇关于 X 的博客」。',
       inputPlaceholder: '告诉 Dindor 你想做什么…',
       inputLockedPlaceholder: 'Dindor 执行中，请稍候',
-      send: '发送', stop: '停止', running: '执行中…', ready: '可以继续对话', failed: '本轮执行失败',
+      send: '发送', stop: '停止', running: '执行中…', thinking: '思考中…', callingTool: '工具调用中…', ready: '可以继续对话', failed: '本轮执行失败',
       multiTurnHint: '继续提出要求，智能体会自动选择合适工具。',
       inputRequired: '请先输入你想让智能体做什么。', sendFailed: '消息发送失败。', loadFailed: '对话加载失败。',
       restoring: '正在恢复对话…', reconnecting: '连接已断开，正在重连…',

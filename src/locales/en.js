@@ -96,7 +96,7 @@ export default {
       description: 'I can write blogs, research topics, or handle other tasks. Try: "write a blog about X".',
       inputPlaceholder: 'Tell Dindor what to do…',
       inputLockedPlaceholder: 'Dindor is working…',
-      send: 'Send', stop: 'Stop', running: 'Working…', ready: 'Ready for your next message', failed: 'The agent failed this turn',
+      send: 'Send', stop: 'Stop', running: 'Working…', thinking: 'Thinking…', callingTool: 'Calling tool…', ready: 'Ready for your next message', failed: 'The agent failed this turn',
       multiTurnHint: 'Keep asking; the agent will pick the right tools by itself.',
       inputRequired: 'Enter what you want the agent to do first.', sendFailed: 'Could not send the message.', loadFailed: 'Could not load the conversation.',
       restoring: 'Restoring conversation…', reconnecting: 'Connection lost, reconnecting…',

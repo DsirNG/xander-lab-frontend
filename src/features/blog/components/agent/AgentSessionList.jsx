@@ -22,7 +22,7 @@ const AgentSessionList = ({ sessions, activeId, loading, disableNew = false, mob
         {t('blog.agent.conversations')}
       </div>
       <div className="min-h-0 flex-1 overflow-y-auto px-2 pb-3">
-        {loading ? (
+        {loading && !sessions.length ? (
           <div className="space-y-2 p-1">
             {[0, 1, 2].map((item) => <div key={item} className="h-14 animate-pulse rounded-xl bg-surface-muted" />)}
           </div>

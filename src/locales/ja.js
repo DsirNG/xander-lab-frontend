@@ -88,7 +88,7 @@ export default {
       description: 'ブログ作成、情報調査、その他のタスクを実行できます。例：「Xについてのブログを書いて」…',
       inputPlaceholder: 'Dindor にやりたいことを伝えてください…',
       inputLockedPlaceholder: 'Dindor が処理中です…',
-      send: '送信', stop: '停止', running: '実行中…', ready: '次のメッセージをどうぞ', failed: 'このターンは失敗しました',
+      send: '送信', stop: '停止', running: '実行中…', thinking: '考え中…', callingTool: 'ツール呼び出し中…', ready: '次のメッセージをどうぞ', failed: 'このターンは失敗しました',
       multiTurnHint: '続けて依頼してください。Agentが適切なツールを選択します。',
       inputRequired: 'まずAgentに依頼内容を入力してください。', sendFailed: 'メッセージを送信できませんでした。', loadFailed: '会話を読み込めませんでした。',
       restoring: '会話を復元中…', reconnecting: '接続が切れました。再接続中…',
