@@ -6,7 +6,7 @@ import {
 } from 'lucide-react';
 import { blogService, BLOG_STATUS } from '../services/blogService';
 import BlogMarkdown from '../components/BlogMarkdown';
-import BlogMarkdownComposer from '../components/BlogMarkdownComposer';
+import BlogTipTapEditor from '../components/BlogTipTapEditor';
 import PublishHeader from '../components/PublishHeader';
 import PublishSettings from '../components/PublishSettings';
 import { useToast } from '@/hooks/useToast';
@@ -272,7 +272,7 @@ const BlogPublish = () => {
 
                             <div className={`flex-1 relative group ${isPreview ? 'hidden' : 'flex'}`}>
                                 <div className="w-full">
-                                <BlogMarkdownComposer
+                                <BlogTipTapEditor
                                     ref={contentTextareaRef}
                                     value={formData.content}
                                     onChange={(content) => setFormData((current) => ({ ...current, content }))}
