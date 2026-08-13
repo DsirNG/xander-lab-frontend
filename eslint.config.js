@@ -51,6 +51,12 @@ export default defineConfig([
     },
   },
   {
+    files: ['src/**/*.test.{js,jsx}', 'src/test/**/*.js'],
+    languageOptions: {
+      globals: globals.browser,
+    },
+  },
+  {
     files: [
       'scripts/**/*.js',
       'vite.config.js',

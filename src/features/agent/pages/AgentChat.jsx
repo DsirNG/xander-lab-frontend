@@ -119,7 +119,7 @@ const MessageBubble = ({ role, content }) => (
   </div>
 );
 
-const ThinkingIndicator = ({ label }) => (
+export const ThinkingIndicator = ({ label }) => (
   <div className="flex justify-start" role="status" aria-live="polite">
     <div className="flex min-h-10 items-center gap-2 rounded-2xl border border-border bg-canvas px-4 py-2.5 text-sm text-ink-muted shadow-sm">
       <Sparkles className="h-4 w-4 animate-pulse text-accent" aria-hidden="true" />

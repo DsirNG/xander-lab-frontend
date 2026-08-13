@@ -12,6 +12,12 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [react()],
+    test: {
+      environment: 'jsdom',
+      setupFiles: './src/test/setup.js',
+      include: ['src/**/*.test.{jsx,tsx}'],
+      css: false,
+    },
     resolve: {
       alias: {
         '@': path.resolve(projectRoot, './src'),
