@@ -127,10 +127,12 @@ const MessageBubble = ({ role, content, isStreaming }) => (
         <span className="whitespace-pre-wrap">{content}</span>
       ) : isStreaming ? (
         content ? (
-          <span className="whitespace-pre-wrap">
-            {content}
-            <span className="ml-0.5 inline-block h-4 w-[3px] animate-pulse rounded-sm bg-current align-middle" aria-hidden="true" />
-          </span>
+          <div className="flex items-start gap-0.5">
+            <div className="min-w-0 flex-1">
+              <AgentMarkdown content={content} />
+            </div>
+            <span className="mt-1.5 inline-block h-4 w-[3px] shrink-0 animate-pulse rounded-sm bg-current align-middle" aria-hidden="true" />
+          </div>
         ) : (
           <span className="inline-flex items-center gap-1 px-1" role="status" aria-live="polite">
             {[0, 1, 2].map((index) => (
