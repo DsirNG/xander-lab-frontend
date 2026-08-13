@@ -105,13 +105,15 @@ const CodeBlock = memo(({
                     <HtmlSandboxPreview
                         code={resolvedCode}
                         language={normalizedLanguage}
-                        minHeight={280}
-                        maxHeight={600}
+                        minHeight={isConversation ? 480 : 280}
+                        maxHeight={isConversation ? 480 : 600}
                         title={t('common.codeBlock.previewFrame', { language: languageLabel })}
                     />
                 </div>
             ) : (
-                <div className={`max-h-[600px] overflow-auto ${isConversation ? 'bg-surface' : 'bg-[#1e1e1e]'}`}>
+                <div className={`overflow-auto ${
+                    isConversation ? 'h-[480px] bg-surface' : 'max-h-[600px] bg-[#1e1e1e]'
+                }`}>
                     <SyntaxHighlighter
                         language={normalizedLanguage === 'htm' ? 'html' : normalizedLanguage}
                         style={isConversation ? oneLight : vscDarkPlus}
