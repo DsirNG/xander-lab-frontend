@@ -79,6 +79,7 @@ export default {
             },
             fontFamily: {
                 sans: ['Plus Jakarta Sans', 'system-ui', 'sans-serif'],
+                chat: ['Inter', 'ui-sans-serif', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Helvetica Neue', 'Arial', 'sans-serif'],
                 mono: ['JetBrains Mono', 'ui-monospace', 'monospace'],
             },
             fontSize: {

@@ -26,6 +26,7 @@
 ### 字体原则
 
 - UI：`font-sans` → Plus Jakarta Sans
+- Agent 对话：`font-chat` → 接近 ChatGPT 阅读体验的系统 UI 字体栈（Inter / Segoe UI / Helvetica Neue）
 - 代码：`font-mono` → JetBrains Mono
 - 字号阶梯（勿再写 `text-[9px]` / `text-[10px]` / `text-[11px]`）：
 

@@ -488,7 +488,7 @@ const AgentChat = () => {
   );
 
   return (
-    <div className="flex h-dvh flex-col bg-surface text-ink">
+    <div className="flex h-dvh flex-col bg-surface font-chat text-ink">
       <header className="sticky top-0 z-20 flex h-14 shrink-0 items-center justify-between border-b border-border bg-canvas/95 px-4 backdrop-blur sm:px-6">
         <button
           type="button"
