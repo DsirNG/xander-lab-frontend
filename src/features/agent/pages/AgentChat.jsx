@@ -17,7 +17,7 @@ import AgentMarkdown from '../components/AgentMarkdown';
 
 const ThoughtCard = ({ content }) => (
   <div className="flex items-start gap-2 rounded-xl border border-border bg-canvas px-3 py-2 text-xs leading-5 text-ink-muted">
-    <Sparkles className="mt-0.5 h-3.5 w-3.5 shrink-0 text-accent" />
+    <Sparkles className="mt-0.5 h-3.5 w-3.5 shrink-0 text-ink-muted" />
     <span className="whitespace-pre-wrap">{content}</span>
   </div>
 );
@@ -31,7 +31,7 @@ const ToolProgressPanel = ({ logs, stage, draft = '', active = false }) => {
   return (
     <div className="overflow-hidden rounded-2xl border border-border bg-canvas shadow-sm">
       <div className="flex items-center gap-2 border-b border-border px-4 py-3 text-sm font-semibold text-ink-secondary">
-        <Loader2 className="h-4 w-4 shrink-0 animate-spin text-accent" />
+        <Loader2 className="h-4 w-4 shrink-0 animate-spin text-ink-muted" />
         <span className="truncate">{t('blog.agentChat.callingTool')}</span>
       </div>
       <div className="space-y-4 px-4 py-4">
@@ -43,13 +43,13 @@ const ToolProgressPanel = ({ logs, stage, draft = '', active = false }) => {
               <li key={key} className="flex gap-3">
                 <span
                   className={`grid h-6 w-6 shrink-0 place-items-center rounded-full text-xs font-black ${
-                    done || active ? 'bg-accent text-white' : 'bg-surface-muted text-ink-faint'
+                    done || active ? 'bg-ink text-white' : 'bg-surface-muted text-ink-faint'
                   }`}
                 >
                   {done ? '✓' : active ? <Loader2 className="h-3 w-3 animate-spin" /> : index + 1}
                 </span>
                 <div className="min-w-0">
-                  <p className={`text-sm font-bold ${active ? 'text-accent' : 'text-ink'}`}>
+                  <p className="text-sm font-bold text-ink">
                     {t(`blog.agent.stages.${key}`)}
                   </p>
                   <p className="mt-0.5 text-caption leading-5 text-ink-muted">
@@ -63,7 +63,7 @@ const ToolProgressPanel = ({ logs, stage, draft = '', active = false }) => {
         {logs.length > 0 && (
           <div className="max-h-40 space-y-1.5 overflow-auto rounded-xl bg-ink p-3 text-caption leading-6 text-border-strong">
             {logs.map((log, index) => (
-              <p key={`${log}-${index}`}><span className="mr-2 text-accent">●</span>{log}</p>
+              <p key={`${log}-${index}`}><span className="mr-2 text-border-strong">●</span>{log}</p>
             ))}
           </div>
         )}
@@ -73,7 +73,7 @@ const ToolProgressPanel = ({ logs, stage, draft = '', active = false }) => {
               <BlogMarkdown content={draft} />
             </div>
             {active && (
-              <div className="flex items-center gap-2 border-t border-border bg-canvas px-4 py-2 text-caption font-bold text-accent">
+              <div className="flex items-center gap-2 border-t border-border bg-canvas px-4 py-2 text-caption font-bold text-ink-secondary">
                 <Loader2 className="h-3.5 w-3.5 animate-spin" />
                 <span>{t('blog.agentChat.writing')}</span>
               </div>
@@ -107,7 +107,7 @@ const ToolStepCard = ({ step, t, onViewBlog }) => {
         <button
           type="button"
           onClick={() => onViewBlog(blogTaskId)}
-          className="mt-2 inline-flex items-center gap-1.5 rounded-lg border border-accent/30 bg-accent/5 px-3 py-1.5 text-xs font-bold text-accent transition hover:bg-accent/10"
+          className="mt-2 inline-flex items-center gap-1.5 rounded-lg border border-border bg-surface-muted px-3 py-1.5 text-xs font-bold text-ink-secondary transition hover:bg-border"
         >
           <FileText className="h-3.5 w-3.5" />
           {t('blog.agentChat.viewBlog')}
@@ -153,13 +153,13 @@ const ConversationMessage = ({ role, content, isStreaming }) => (
 export const ThinkingIndicator = ({ label }) => (
   <div className="flex justify-start" role="status" aria-live="polite">
     <div className="flex min-h-10 items-center gap-2 rounded-2xl border border-border bg-canvas px-4 py-2.5 text-sm text-ink-muted shadow-sm">
-      <Sparkles className="h-4 w-4 animate-pulse text-accent" aria-hidden="true" />
+      <Sparkles className="h-4 w-4 animate-pulse text-ink-muted" aria-hidden="true" />
       <span>{label}</span>
       <span className="flex items-center gap-1" aria-hidden="true">
         {[0, 1, 2].map((index) => (
           <span
             key={index}
-            className="h-1.5 w-1.5 animate-bounce rounded-full bg-accent"
+            className="h-1.5 w-1.5 animate-bounce rounded-full bg-ink-muted"
             style={{ animationDelay: `${index * 140}ms` }}
           />
         ))}
@@ -189,7 +189,7 @@ const HistoricalToolCard = ({ message, t, onViewBlog }) => {
         <button
           type="button"
           onClick={() => onViewBlog(blogTaskId)}
-          className="mt-2 inline-flex items-center gap-1.5 rounded-lg border border-accent/30 bg-accent/5 px-3 py-1.5 text-xs font-bold text-accent transition hover:bg-accent/10"
+          className="mt-2 inline-flex items-center gap-1.5 rounded-lg border border-border bg-surface-muted px-3 py-1.5 text-xs font-bold text-ink-secondary transition hover:bg-border"
         >
           <FileText className="h-3.5 w-3.5" />
           {t('blog.agentChat.viewBlog')}
@@ -205,7 +205,7 @@ const AgentChatInputBar = ({ t, input, setInput, isActive, creating, hasConversa
   <div className="shrink-0 border-t border-border bg-canvas px-4 py-3 sm:px-6">
     <div className="mx-auto max-w-2xl">
       {hasConversation && !isActive && <p className="mb-2 text-xs text-ink-muted">{t('blog.agentChat.multiTurnHint')}</p>}
-      <div className="flex items-end gap-2 rounded-2xl border border-border bg-surface p-2 focus-within:border-accent focus-within:bg-canvas focus-within:ring-4 focus-within:ring-accent/10">
+      <div className="flex items-end gap-2 rounded-2xl border border-border bg-surface p-2 focus-within:border-border-strong focus-within:bg-canvas focus-within:ring-4 focus-within:ring-ink/5">
         <textarea
           value={input}
           onChange={(event) => setInput(event.target.value)}
@@ -234,7 +234,7 @@ const AgentChatInputBar = ({ t, input, setInput, isActive, creating, hasConversa
           type="button"
           onClick={onSubmit}
           disabled={locked || !input.trim()}
-          className="inline-flex h-10 shrink-0 items-center gap-2 rounded-xl bg-ink px-4 text-sm font-black text-white transition hover:bg-accent disabled:cursor-wait disabled:opacity-60"
+          className="inline-flex h-10 shrink-0 items-center gap-2 rounded-xl bg-ink px-4 text-sm font-black text-white transition hover:bg-ink-secondary disabled:cursor-wait disabled:opacity-60"
         >
           {locked ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
           {locked ? t('blog.agentChat.working') : t('blog.agentChat.send')}
@@ -499,7 +499,7 @@ const AgentChat = () => {
           {t('blog.agentChat.back')}
         </button>
         <div className="flex min-w-0 items-center gap-2 text-sm font-black tracking-tight">
-          <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-accent text-white">
+          <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-ink text-white">
             <Bot className="h-4 w-4" />
           </span>
           <span className="truncate">{t('blog.agentChat.title')}</span>
@@ -568,7 +568,7 @@ const AgentChat = () => {
           <section className={`flex min-h-0 min-w-0 flex-1 flex-col ${showArtifact && !isMobile ? 'lg:max-w-[48%]' : ''}`}>
             {(reconnecting || errorMessage) && (
               <div className={`flex items-center gap-2 border-b px-4 py-2 text-xs font-semibold ${
-                errorMessage ? 'border-danger/20 bg-danger/5 text-danger' : 'border-accent/20 bg-accent/5 text-accent'
+                errorMessage ? 'border-danger/20 bg-danger/5 text-danger' : 'border-border bg-surface-muted text-ink-secondary'
               }`}>
                 {errorMessage ? <AlertCircle className="h-3.5 w-3.5" /> : <Loader2 className="h-3.5 w-3.5 animate-spin" />}
                 <span className="truncate">{errorMessage || statusLine}</span>
@@ -589,7 +589,7 @@ const AgentChat = () => {
                 </div>
               ) : messages.length === 0 && steps.length === 0 ? (
                 <div className="mx-auto flex max-w-xl flex-col items-start gap-4 pt-8 sm:pt-16">
-                  <div className="grid h-12 w-12 place-items-center rounded-2xl bg-accent/10 text-accent">
+                  <div className="grid h-12 w-12 place-items-center rounded-2xl bg-surface-muted text-ink-secondary">
                     <Bot className="h-5 w-5" />
                   </div>
                   <div>

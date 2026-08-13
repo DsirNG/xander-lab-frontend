@@ -16,7 +16,7 @@ const createMarkdownComponents = (codeAppearance) => ({
       );
     }
     return (
-      <code className="rounded bg-surface-muted px-1.5 py-0.5 font-mono text-[0.85em] text-accent" {...props}>
+      <code className="rounded bg-surface-muted px-1.5 py-0.5 font-mono text-[0.85em] text-ink" {...props}>
         {children}
       </code>
     );
@@ -26,7 +26,7 @@ const createMarkdownComponents = (codeAppearance) => ({
     return (
       <a
         href={href}
-        className="font-semibold text-accent underline decoration-accent/30 underline-offset-2 hover:decoration-accent"
+        className="font-semibold text-ink underline decoration-border-strong underline-offset-2 hover:decoration-ink"
         {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
         {...props}
       >
@@ -38,7 +38,7 @@ const createMarkdownComponents = (codeAppearance) => ({
     return <div className="my-3 overflow-x-auto rounded-lg border border-border"><table {...props}>{children}</table></div>;
   },
   blockquote({ children, ...props }) {
-    return <blockquote className="border-l-4 border-accent/40 pl-3 text-ink-muted" {...props}>{children}</blockquote>;
+    return <blockquote className="border-l-4 border-border-strong pl-3 text-ink-muted" {...props}>{children}</blockquote>;
   },
 });
 
