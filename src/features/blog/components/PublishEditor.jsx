@@ -24,7 +24,7 @@ const formatActions = [
 const insertActions = [
     { key: 'imageGif', icon: ImagePlus, image: true },
     { key: 'divider', icon: Minus, markdown: '\n\n---\n\n' },
-    { key: 'table', icon: Table2, markdown: '\n\n| 鏍囬 | 鍐呭 |\n| --- | --- |\n|  |  |\n\n' },
+    { key: 'table', icon: Table2, markdown: '\n\n| 标题 | 内容 |\n| --- | --- |\n|  |  |\n\n' },
     { key: 'codeBlock', icon: FileCode2, markdown: `\n\n${codeFence}\n\n${codeFence}\n\n`, cursorBack: codeFence.length + 3 },
     { key: 'quoteBlock', icon: Quote, markdown: '\n\n> \n\n', cursorBack: 2 },
 ];
@@ -32,7 +32,7 @@ const insertActions = [
 const imageAltFromName = (name) => name.replace(/\.[^/.]+$/, '').replace(/[-_]+/g, ' ').trim() || 'image';
 
 /**
- * 鍗氬鍙戝竷椤靛唴瀹圭紪杈戝尯锛氭爣棰樸€丮arkdown 缂栬緫鍣紙妗岄潰宸﹀彸鍒嗘爮瀹炴椂棰勮锛夈€佺Щ鍔ㄧ棰勮鍒囨崲
+ * 博客发布页编辑区：桌面端 Markdown 与预览双栏，移动端模式切换。
  */
 const PublishEditor = forwardRef(({ isPreview, onEditMode, onPreviewMode, title, onTitleChange, content, onContentChange, disabled }, forwardedRef) => {
     const { t } = useTranslation();
@@ -47,6 +47,7 @@ const PublishEditor = forwardRef(({ isPreview, onEditMode, onPreviewMode, title,
     const librarySelectionRef = useRef({ start: 0, end: 0 });
     const libraryViewportRef = useRef({ windowY: 0, editorY: 0 });
     const [isImageLibraryOpen, setIsImageLibraryOpen] = useState(false);
+    const lineCount = content ? content.split(/\r?\n/).length : 0;
 
     const syncScroll = (source, target) => {
         if (!source || !target || syncLockRef.current) return;
@@ -184,7 +185,7 @@ const PublishEditor = forwardRef(({ isPreview, onEditMode, onPreviewMode, title,
     ), []);
 
     const renderToolbar = () => (
-        <div className="flex flex-wrap items-center gap-1 rounded-xl border border-border bg-surface-muted/60 p-1">
+        <div className="flex flex-wrap items-center gap-1">
             {formatActions.map(({ key, icon: Icon, prefix, code }) => (
                 <button
                     key={key}
@@ -237,12 +238,10 @@ title={t(`blog.editor.${key}`)}
 
     const renderEditor = () => (
         <section className="relative flex h-full min-h-0 flex-col bg-canvas">
-            <div className="flex h-11 shrink-0 items-center justify-between border-b border-border bg-surface px-4">
-                <span className="text-caption font-semibold text-ink-secondary">Markdown</span>
-                <span className="text-micro text-ink-faint">{content.length}</span>
-            </div>
-            <div className="sticky top-2 z-10 mx-3 -mb-12 mt-2 w-fit max-w-[calc(100%-1.5rem)] rounded-xl border border-border/80 bg-canvas/90 px-1 py-1 shadow-lg shadow-black/5 backdrop-blur-md">
+            <div className="z-10 shrink-0 border-b border-border bg-canvas px-3 py-2">
+                <div className="w-fit max-w-full rounded-xl border border-border/80 bg-surface px-1 py-1 shadow-sm">
                 {renderToolbar()}
+                </div>
             </div>
             <textarea
                 ref={textareaRef}
@@ -260,6 +259,13 @@ title={t(`blog.editor.${key}`)}
                 placeholder={t('blog.contentPlaceholder')}
                 className="min-h-0 flex-1 resize-none border-none bg-canvas px-5 py-6 font-mono text-sm leading-7 text-ink outline-none placeholder:text-ink-faint sm:px-8"
             />
+            <div className="flex h-9 shrink-0 items-center justify-between border-t border-border bg-surface-muted/50 px-4 text-micro text-ink-faint">
+                <div className="flex items-center gap-5">
+                    <span>{t('blog.editor.characters', { count: content.length })}</span>
+                    <span>{t('blog.editor.lines', { count: lineCount })}</span>
+                </div>
+                <span>{t('blog.editor.markdownFormat')}</span>
+            </div>
         </section>
     );
 
@@ -292,14 +298,12 @@ title={t(`blog.editor.${key}`)}
                     </div>}
                 </div>
                 <div className="min-h-0 flex-1">
-                    {isMobile ? (isPreview ? <div className="h-full overflow-y-auto custom-scrollbar bg-surface">{renderPreview()}</div> : renderEditor()) : (
+                    {isMobile ? (isPreview ? <section className="flex h-full min-h-0 flex-col bg-surface"><div className="min-h-0 flex-1 overflow-y-auto custom-scrollbar">{renderPreview()}</div><div className="flex h-9 shrink-0 items-center justify-end border-t border-border bg-surface-muted/50 px-4 text-micro text-ink-faint">{t('blog.editor.previewMode')}</div></section> : renderEditor()) : (
                         <div className="grid h-full min-h-0 grid-cols-2">
                             {renderEditor()}
                             <section className="flex min-h-0 flex-col border-l border-border bg-surface">
-                                <div className="flex h-11 shrink-0 items-center border-b border-border px-4 text-caption font-semibold text-ink-secondary">
-                                    {t('blog.preview', 'Preview')}
-                                </div>
                                 <div ref={previewScrollRef} onScroll={(event) => syncScroll(event.currentTarget, textareaRef.current)} className="min-h-0 flex-1 overflow-y-auto custom-scrollbar">{renderPreview()}</div>
+                                <div className="flex h-9 shrink-0 items-center justify-end border-t border-border bg-surface-muted/50 px-4 text-micro text-ink-faint">{t('blog.editor.previewMode')}</div>
                             </section>
                         </div>
                     )}
