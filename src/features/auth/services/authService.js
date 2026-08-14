@@ -3,7 +3,7 @@
  * Auth Data Service
  */
 
-import { post, get, tokenStorage } from '@api';
+import { post, get, put, tokenStorage } from '@api';
 
 const BASE = '/api/auth';
 
@@ -66,6 +66,17 @@ export const authService = {
      */
     getCurrentUser: () => {
         return get(`${BASE}/me`);
+    },
+
+    /**
+     * 更新账户信息（昵称 / 头像）
+     * PUT /api/auth/profile，返回更新后的 UserInfo
+     *
+     * @param {Object} data - { nickname, avatar }
+     * @returns {Promise<Object>} UserInfo
+     */
+    updateProfile: (data) => {
+        return put(`${BASE}/profile`, data);
     },
 
     /**

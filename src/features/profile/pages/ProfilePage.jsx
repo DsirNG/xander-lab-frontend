@@ -17,10 +17,11 @@ import ConfirmModal from '@components/common/ConfirmModal';
 import LoadingSpinner from '@components/common/LoadingSpinner';
 import { useToast } from '@hooks/useToast';
 import { authService } from '@features/auth/services/authService';
+import AccountInfoPanel from '../components/AccountInfoPanel';
 import McpAuthorizationPanel from '../components/McpAuthorizationPanel';
 
 const NAV_ITEMS = [
-    { id: 'account', icon: UserRound, enabled: false },
+    { id: 'account', icon: UserRound, enabled: true },
     { id: 'security', icon: Shield, enabled: false },
     { id: 'notifications', icon: Bell, enabled: false },
     { id: 'templates', icon: Mail, enabled: false },
@@ -36,7 +37,7 @@ const ProfilePage = () => {
     const navigate = useNavigate();
     const [userInfo, setUserInfo] = useState(() => authService.getLocalUserInfo());
     const [activeNav, setActiveNav] = useState(() => (
-        new URLSearchParams(window.location.search).has('mcpOAuthRequest') ? 'mcp' : 'mcp'
+        new URLSearchParams(window.location.search).has('mcpOAuthRequest') ? 'mcp' : 'account'
     ));
     const [authChecking, setAuthChecking] = useState(!userInfo);
     const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
@@ -68,9 +69,9 @@ const ProfilePage = () => {
         return <LoadingSpinner fullScreen text={t('profile.loading')} />;
     }
 
-    const displayName = userInfo.nickname || userInfo.username || t('profile.account');
+    const displayName = userInfo.nickname || userInfo.username || t('profile.account.title');
     const accountEmail = userInfo.email || userInfo.account || '';
-    const roleLabel = userInfo.role || t('profile.account');
+    const roleLabel = userInfo.role || t('profile.account.title');
     const avatarText = displayName.slice(0, 2).toUpperCase();
 
     const handleNavClick = (item) => {
@@ -117,7 +118,7 @@ const ProfilePage = () => {
                                 </span>
                             </div>
                             <div className="mt-0.5 truncate text-micro font-medium text-ink-faint">
-                                {accountEmail || t('profile.account')}
+                                {accountEmail || t('profile.account.title')}
                             </div>
                         </div>
                     </div>
@@ -158,7 +159,11 @@ const ProfilePage = () => {
             </aside>
 
             <div className="flex min-h-0 min-w-0 flex-1 flex-col bg-canvas">
-                {activeNav === 'mcp' ? (
+                {activeNav === 'account' ? (
+                    <div className="min-h-0 overflow-y-auto p-4 sm:p-6">
+                        <AccountInfoPanel />
+                    </div>
+                ) : activeNav === 'mcp' ? (
                     <McpAuthorizationPanel />
                 ) : (
                     <div className="flex flex-1 flex-col items-center justify-center gap-2 px-6 py-16 text-center">

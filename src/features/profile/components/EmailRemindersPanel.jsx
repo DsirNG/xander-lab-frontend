@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-    AlertCircle,
     CalendarClock,
     CheckCircle2,
     CirclePause,
@@ -18,8 +17,7 @@ import {
 } from 'lucide-react';
 import ConfirmModal from '@components/common/ConfirmModal';
 import CustomSelect from '@components/common/CustomSelect';
-import LoadingSpinner from '@components/common/LoadingSpinner';
-import Pagination from '@components/common/Pagination';
+import DataTable from '@components/common/DataTable';
 import { useToast } from '@hooks/useToast';
 import { emailReminderService } from '../services/emailReminderService';
 import EmailReminderCreateModal from './EmailReminderCreateModal';
@@ -291,6 +289,130 @@ const EmailRemindersPanel = () => {
         },
     ];
 
+    const columns = useMemo(() => [
+        {
+            key: 'subject',
+            title: t('profile.emailReminders.taskName'),
+            width: '28%',
+            render: (reminder) => {
+                const status = normalizeStatus(reminder.status);
+                const statusStyle = STATUS_STYLES[status];
+                const frequency = normalizeFrequency(reminder.frequency);
+                return (
+                    <div className="flex min-w-0 items-center gap-2">
+                        <span className={`grid h-7 w-7 shrink-0 place-items-center rounded-lg ${statusStyle.rowIcon}`}>
+                            <Mail className="h-3.5 w-3.5" />
+                        </span>
+                        <div className="min-w-0 flex-1">
+                            <div className="truncate text-xs font-bold text-ink" title={reminder.subject}>
+                                {reminder.subject}
+                            </div>
+                            <div className="mt-0.5 truncate text-micro font-medium text-ink-faint">
+                                {t(`profile.emailReminders.frequencies.${frequency.toLowerCase()}`)}
+                                {reminder.timezone ? ` · ${reminder.timezone}` : ''}
+                            </div>
+                        </div>
+                    </div>
+                );
+            },
+        },
+        {
+            key: 'recipientEmail',
+            title: t('profile.emailReminders.recipientEmail'),
+            width: '22%',
+            render: (reminder) => (
+                <span className="block truncate text-xs font-medium text-ink-muted" title={reminder.recipientEmail}>
+                    {reminder.recipientEmail}
+                </span>
+            ),
+        },
+        {
+            key: 'schedule',
+            title: t('profile.emailReminders.scheduleColumn'),
+            width: '24%',
+            render: (reminder) => {
+                const frequency = normalizeFrequency(reminder.frequency);
+                const scheduleText = formatSchedule(reminder);
+                return (
+                    <>
+                        <span className="block truncate text-xs font-medium text-ink-muted" title={scheduleText}>
+                            {scheduleText}
+                        </span>
+                        {frequency !== 'ONCE' ? (
+                            <span className="mt-0.5 block truncate text-micro text-ink-faint" title={formatDate(reminder.scheduledAt)}>
+                                {t('profile.emailReminders.nextRun', { time: formatDate(reminder.scheduledAt) })}
+                            </span>
+                        ) : null}
+                    </>
+                );
+            },
+        },
+        {
+            key: 'status',
+            title: t('profile.emailReminders.statusLabel'),
+            width: '14%',
+            render: (reminder) => {
+                const status = normalizeStatus(reminder.status);
+                return (
+                    <span className={`inline-flex max-w-full truncate items-center rounded-full px-2 py-0.5 text-micro font-bold ${STATUS_STYLES[status].badge}`}>
+                        {t(`profile.emailReminders.status.${status.toLowerCase()}`)}
+                    </span>
+                );
+            },
+        },
+        {
+            key: 'actions',
+            title: t('profile.emailReminders.actions'),
+            width: '12%',
+            align: 'right',
+            render: (reminder) => {
+                const status = normalizeStatus(reminder.status);
+                const canToggle = status === 'PENDING' || status === 'PAUSED';
+                const canDelete = status !== 'SENDING';
+                const isStatusLoading = actionKey === `status-${reminder.id}`;
+                return (
+                    <div className="flex items-center justify-end gap-0.5">
+                        {canToggle ? (
+                            <button
+                                type="button"
+                                onClick={() => handleStatusChange(reminder)}
+                                disabled={Boolean(actionKey)}
+                                title={status === 'PAUSED'
+                                    ? t('profile.emailReminders.resume')
+                                    : t('profile.emailReminders.pause')}
+                                aria-label={status === 'PAUSED'
+                                    ? t('profile.emailReminders.resume')
+                                    : t('profile.emailReminders.pause')}
+                                className="grid h-7 w-7 place-items-center rounded-md text-ink-faint transition hover:bg-accent-soft hover:text-accent disabled:opacity-50"
+                            >
+                                {isStatusLoading ? (
+                                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                                ) : status === 'PAUSED' ? (
+                                    <Play className="h-3.5 w-3.5" />
+                                ) : (
+                                    <Pause className="h-3.5 w-3.5" />
+                                )}
+                            </button>
+                        ) : null}
+
+                        {canDelete ? (
+                            <button
+                                type="button"
+                                onClick={() => setPendingDelete(reminder)}
+                                disabled={Boolean(actionKey)}
+                                title={t('profile.emailReminders.delete')}
+                                aria-label={t('profile.emailReminders.delete')}
+                                className="grid h-7 w-7 place-items-center rounded-md text-ink-faint transition hover:bg-danger-soft hover:text-danger disabled:opacity-50"
+                            >
+                                <Trash2 className="h-3.5 w-3.5" />
+                            </button>
+                        ) : null}
+                    </div>
+                );
+            },
+        },
+    ], [actionKey, formatDate, formatSchedule, handleStatusChange, setPendingDelete, t]);
+
     return (
         <div className="relative flex min-h-0 flex-1 flex-col">
             <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto p-4 sm:gap-4 sm:p-5">
@@ -345,190 +467,52 @@ const EmailRemindersPanel = () => {
                     })}
                 </div>
 
-                <section className="flex min-h-[min(280px,42vh)] min-w-0 flex-1 flex-col overflow-hidden rounded-xl border border-border bg-canvas">
-                    <div className="flex shrink-0 flex-col gap-2 border-b border-border px-3 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-4">
-                        <div className="text-xs font-black text-ink">
-                            {t('profile.emailReminders.taskList')}
+                <DataTable
+                    columns={columns}
+                    rows={reminders}
+                    loading={isLoading}
+                    loadingText={t('profile.emailReminders.loading')}
+                    error={loadError}
+                    errorTitle={t('profile.emailReminders.loadError')}
+                    onRetry={loadReminders}
+                    onRetryLabel={t('profile.emailReminders.retry')}
+                    emptyTitle={t('profile.emailReminders.emptyTitle')}
+                    emptyHint={t('profile.emailReminders.emptyHint')}
+                    emptyIcon={CalendarClock}
+                    page={page}
+                    pageSize={pageSize}
+                    total={total}
+                    onPageChange={setPage}
+                    onPageSizeChange={setPageSize}
+                    paginationDisabled={isLoading}
+                    header={(
+                        <div className="flex shrink-0 flex-col gap-2 border-b border-border px-3 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-4">
+                            <div className="text-xs font-black text-ink">
+                                {t('profile.emailReminders.taskList')}
+                            </div>
+                            <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center">
+                                <div className="w-full sm:w-32">
+                                    <CustomSelect
+                                        size="sm"
+                                        options={statusOptions}
+                                        value={statusFilter}
+                                        onChange={handleStatusFilterChange}
+                                    />
+                                </div>
+                                <label className="relative block w-full min-w-0 sm:w-52">
+                                    <Search className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-ink-faint" />
+                                    <input
+                                        type="search"
+                                        value={searchQuery}
+                                        onChange={(event) => setSearchQuery(event.target.value)}
+                                        placeholder={t('profile.emailReminders.searchPlaceholder')}
+                                        className="h-8 w-full rounded-lg border border-border bg-canvas pl-8 pr-2.5 text-xs font-medium text-ink-secondary outline-none transition placeholder:text-ink-faint focus:border-accent focus:ring-2 focus:ring-accent/10"
+                                    />
+                                </label>
+                            </div>
                         </div>
-                        <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center">
-                            <div className="w-full sm:w-32">
-                                <CustomSelect
-                                    size="sm"
-                                    options={statusOptions}
-                                    value={statusFilter}
-                                    onChange={handleStatusFilterChange}
-                                />
-                            </div>
-                            <label className="relative block w-full min-w-0 sm:w-52">
-                                <Search className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-ink-faint" />
-                                <input
-                                    type="search"
-                                    value={searchQuery}
-                                    onChange={(event) => setSearchQuery(event.target.value)}
-                                    placeholder={t('profile.emailReminders.searchPlaceholder')}
-                                    className="h-8 w-full rounded-lg border border-border bg-canvas pl-8 pr-2.5 text-xs font-medium text-ink-secondary outline-none transition placeholder:text-ink-faint focus:border-accent focus:ring-2 focus:ring-accent/10"
-                                />
-                            </label>
-                        </div>
-                    </div>
-
-                    <div className="min-h-[min(200px,30vh)] min-w-0 flex-1 overflow-auto">
-                        {isLoading ? (
-                            <div className="flex min-h-[220px] items-center justify-center">
-                                <LoadingSpinner
-                                    fullScreen={false}
-                                    text={t('profile.emailReminders.loading')}
-                                />
-                            </div>
-                        ) : loadError ? (
-                            <div className="flex min-h-[220px] flex-col items-center justify-center px-6 text-center">
-                                <AlertCircle className="mb-2 h-7 w-7 text-danger" />
-                                <div className="text-xs font-bold text-danger-fg">
-                                    {t('profile.emailReminders.loadError')}
-                                </div>
-                                <div className="mt-1 max-w-sm text-caption font-medium text-danger">{loadError}</div>
-                                <button
-                                    type="button"
-                                    onClick={() => loadReminders()}
-                                    className="mt-3 rounded-lg bg-danger px-3 py-1.5 text-caption font-bold text-white transition hover:bg-danger-fg"
-                                >
-                                    {t('profile.emailReminders.retry')}
-                                </button>
-                            </div>
-                        ) : reminders.length === 0 ? (
-                            <div className="flex min-h-[220px] flex-col items-center justify-center px-6 text-center">
-                                <span className="mb-3 grid h-11 w-11 place-items-center rounded-xl bg-surface text-ink-faint">
-                                    <CalendarClock className="h-5 w-5" />
-                                </span>
-                                <div className="text-xs font-bold text-ink-secondary">
-                                    {t('profile.emailReminders.emptyTitle')}
-                                </div>
-                                <div className="mt-1 max-w-xs text-caption font-medium leading-5 text-ink-faint">
-                                    {t('profile.emailReminders.emptyHint')}
-                                </div>
-                            </div>
-                        ) : (
-                            <table className="w-full min-w-[720px] table-fixed text-left">
-                                <colgroup>
-                                    <col className="w-[28%]" />
-                                    <col className="w-[22%]" />
-                                    <col className="w-[24%]" />
-                                    <col className="w-[14%]" />
-                                    <col className="w-[12%]" />
-                                </colgroup>
-                                <thead className="sticky top-0 z-10 bg-surface/95 backdrop-blur-sm">
-                                    <tr className="border-b border-border text-micro font-bold uppercase tracking-wide text-ink-faint">
-                                        <th className="px-3 py-2 sm:px-4">{t('profile.emailReminders.taskName')}</th>
-                                        <th className="px-2 py-2">{t('profile.emailReminders.recipientEmail')}</th>
-                                        <th className="px-2 py-2">{t('profile.emailReminders.scheduleColumn')}</th>
-                                        <th className="px-2 py-2">{t('profile.emailReminders.statusLabel')}</th>
-                                        <th className="px-3 py-2 text-right sm:px-4">{t('profile.emailReminders.actions')}</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-border">
-                                    {reminders.map((reminder) => {
-                                        const status = normalizeStatus(reminder.status);
-                                        const statusStyle = STATUS_STYLES[status];
-                                        const canToggle = status === 'PENDING' || status === 'PAUSED';
-                                        const canDelete = status !== 'SENDING';
-                                        const isStatusLoading = actionKey === `status-${reminder.id}`;
-                                        const frequency = normalizeFrequency(reminder.frequency);
-                                        const scheduleText = formatSchedule(reminder);
-
-                                        return (
-                                            <tr key={reminder.id} className="hover:bg-surface/70">
-                                                <td className="px-3 py-2.5 sm:px-4">
-                                                    <div className="flex min-w-0 items-center gap-2">
-                                                        <span className={`grid h-7 w-7 shrink-0 place-items-center rounded-lg ${statusStyle.rowIcon}`}>
-                                                            <Mail className="h-3.5 w-3.5" />
-                                                        </span>
-                                                        <div className="min-w-0 flex-1">
-                                                            <div className="truncate text-xs font-bold text-ink" title={reminder.subject}>
-                                                                {reminder.subject}
-                                                            </div>
-                                                            <div className="mt-0.5 truncate text-micro font-medium text-ink-faint">
-                                                                {t(`profile.emailReminders.frequencies.${frequency.toLowerCase()}`)}
-                                                                {reminder.timezone ? ` · ${reminder.timezone}` : ''}
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td className="px-2 py-2.5">
-                                                    <span className="block truncate text-xs font-medium text-ink-muted" title={reminder.recipientEmail}>
-                                                        {reminder.recipientEmail}
-                                                    </span>
-                                                </td>
-                                                <td className="px-2 py-2.5">
-                                                    <span className="block truncate text-xs font-medium text-ink-muted" title={scheduleText}>
-                                                        {scheduleText}
-                                                    </span>
-                                                    {frequency !== 'ONCE' ? (
-                                                        <span className="mt-0.5 block truncate text-micro text-ink-faint" title={formatDate(reminder.scheduledAt)}>
-                                                            {t('profile.emailReminders.nextRun', { time: formatDate(reminder.scheduledAt) })}
-                                                        </span>
-                                                    ) : null}
-                                                </td>
-                                                <td className="px-2 py-2.5">
-                                                    <span className={`inline-flex max-w-full truncate items-center rounded-full px-2 py-0.5 text-micro font-bold ${statusStyle.badge}`}>
-                                                        {t(`profile.emailReminders.status.${status.toLowerCase()}`)}
-                                                    </span>
-                                                </td>
-                                                <td className="px-3 py-2.5 sm:px-4">
-                                                    <div className="flex items-center justify-end gap-0.5">
-                                                        {canToggle ? (
-                                                            <button
-                                                                type="button"
-                                                                onClick={() => handleStatusChange(reminder)}
-                                                                disabled={Boolean(actionKey)}
-                                                                title={status === 'PAUSED'
-                                                                    ? t('profile.emailReminders.resume')
-                                                                    : t('profile.emailReminders.pause')}
-                                                                aria-label={status === 'PAUSED'
-                                                                    ? t('profile.emailReminders.resume')
-                                                                    : t('profile.emailReminders.pause')}
-                                                                className="grid h-7 w-7 place-items-center rounded-md text-ink-faint transition hover:bg-accent-soft hover:text-accent disabled:opacity-50"
-                                                            >
-                                                                {isStatusLoading ? (
-                                                                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                                                                ) : status === 'PAUSED' ? (
-                                                                    <Play className="h-3.5 w-3.5" />
-                                                                ) : (
-                                                                    <Pause className="h-3.5 w-3.5" />
-                                                                )}
-                                                            </button>
-                                                        ) : null}
-
-                                                        {canDelete ? (
-                                                            <button
-                                                                type="button"
-                                                                onClick={() => setPendingDelete(reminder)}
-                                                                disabled={Boolean(actionKey)}
-                                                                title={t('profile.emailReminders.delete')}
-                                                                aria-label={t('profile.emailReminders.delete')}
-                                                                className="grid h-7 w-7 place-items-center rounded-md text-ink-faint transition hover:bg-danger-soft hover:text-danger disabled:opacity-50"
-                                                            >
-                                                                <Trash2 className="h-3.5 w-3.5" />
-                                                            </button>
-                                                        ) : null}
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        );
-                                    })}
-                                </tbody>
-                            </table>
-                        )}
-                    </div>
-
-                    <Pagination
-                        page={page}
-                        pageSize={pageSize}
-                        total={total}
-                        disabled={isLoading}
-                        onPageChange={setPage}
-                        onPageSizeChange={setPageSize}
-                    />
-                </section>
+                    )}
+                />
 
                 <div className="flex shrink-0 items-start gap-2 rounded-xl border border-accent-100 bg-accent-soft/80 px-3 py-2.5">
                     <ShieldCheck className="mt-0.5 h-3.5 w-3.5 shrink-0 text-accent" />

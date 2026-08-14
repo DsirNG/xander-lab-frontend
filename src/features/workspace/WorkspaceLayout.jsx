@@ -1,21 +1,20 @@
 import React, { useState } from 'react';
-import { NavLink, Outlet } from 'react-router-dom';
+import { Link, NavLink, Outlet } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
   Bot,
   CalendarClock,
   Code2,
-  LayoutDashboard,
-  LogOut,
   Mail,
   NotebookPen,
   Send,
-  Settings,
   Sparkles,
+  Zap,
 } from 'lucide-react';
 import ProtectedRoute from '@features/auth/components/ProtectedRoute';
-import { authService } from '@features/auth/services/authService';
+import NotificationBell from '@features/blog/components/NotificationBell';
 import ProfileModal from './components/ProfileModal';
+import UserMenu from './components/UserMenu';
 
 const MENU = [
   { to: '/workspace/agent', icon: Bot, labelKey: 'blog.agentChat.title' },
@@ -31,39 +30,25 @@ const WorkspaceLayoutInner = () => {
   const { t } = useTranslation();
   const [settingsOpen, setSettingsOpen] = useState(false);
 
-  const handleLogout = async () => {
-    await authService.logout();
-    window.location.href = '/';
-  };
-
   return (
     <div className="flex h-screen flex-col bg-canvas">
-      {/* 顶栏 */}
+      {/* 顶栏：左侧 Logo + 名称（点击回首页），右侧通知铃铛 + 用户区 */}
       <header className="flex h-14 shrink-0 items-center justify-between border-b border-border bg-canvas px-4 sm:px-6">
-        <div className="flex items-center gap-2.5">
-          <span className="grid h-8 w-8 place-items-center rounded-xl bg-accent text-white">
-            <LayoutDashboard className="h-4 w-4" aria-hidden="true" />
+        <Link
+          to="/"
+          className="group flex items-center gap-2.5 rounded-xl px-1.5 py-1 transition hover:bg-surface-muted focus:outline-none focus:ring-2 focus:ring-accent-200"
+          aria-label={t('workspace.backHome')}
+        >
+          <span className="grid h-8 w-8 place-items-center rounded-xl bg-accent text-white transition group-hover:brightness-110">
+            <Zap className="h-4 w-4" aria-hidden="true" />
           </span>
-          <span className="text-base font-black tracking-tight text-ink">{t('workspace.title')}</span>
-        </div>
-        {/* 移动端：设置/退出放顶栏 */}
-        <div className="flex items-center gap-2 lg:hidden">
-          <button
-            type="button"
-            onClick={() => setSettingsOpen(true)}
-            className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-canvas px-3 py-1.5 text-xs font-semibold text-ink-secondary transition hover:border-accent hover:text-accent"
-          >
-            <Settings className="h-3.5 w-3.5" aria-hidden="true" />
-            {t('workspace.settings')}
-          </button>
-          <button
-            type="button"
-            onClick={handleLogout}
-            className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-canvas px-3 py-1.5 text-xs font-semibold text-ink-muted transition hover:border-danger/40 hover:text-danger"
-          >
-            <LogOut className="h-3.5 w-3.5" aria-hidden="true" />
-            {t('nav.logout')}
-          </button>
+          <span className="hidden text-base font-black tracking-tight text-ink sm:block">Xander Lab</span>
+          <span className="text-base font-black tracking-tight text-ink sm:hidden">{t('workspace.title')}</span>
+        </Link>
+
+        <div className="flex items-center gap-1.5">
+          <NotificationBell />
+          <UserMenu onOpenSettings={() => setSettingsOpen(true)} />
         </div>
       </header>
 
@@ -111,25 +96,6 @@ const WorkspaceLayoutInner = () => {
                 </NavLink>
               );
             })}
-          </div>
-
-          <div className="mt-2 flex flex-col gap-1 border-t border-border pt-2">
-            <button
-              type="button"
-              onClick={() => setSettingsOpen(true)}
-              className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-semibold text-ink-secondary transition hover:bg-surface hover:text-ink"
-            >
-              <Settings className="h-4 w-4 shrink-0" aria-hidden="true" />
-              {t('workspace.settings')}
-            </button>
-            <button
-              type="button"
-              onClick={handleLogout}
-              className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-semibold text-ink-muted transition hover:bg-danger-soft hover:text-danger"
-            >
-              <LogOut className="h-4 w-4 shrink-0" aria-hidden="true" />
-              {t('nav.logout')}
-            </button>
           </div>
         </aside>
 

@@ -121,6 +121,13 @@ export const AuthSessionProvider = ({ children }) => {
       setUserInfo(null);
       setSessionStatus('anonymous');
     };
+    // 账户信息（昵称/头像）更新后同步到本地缓存与全局状态。
+    const onUserUpdated = (event) => {
+      const user = event?.detail?.user;
+      if (!user) return;
+      authService.setLocalUserInfo(user);
+      setUserInfo(user);
+    };
     const onTokenRefresh = () => {
       sessionGenerationRef.current += 1;
       refresh();
@@ -133,6 +140,7 @@ export const AuthSessionProvider = ({ children }) => {
 
     window.addEventListener('auth:login', onLogin);
     window.addEventListener('auth:logout', onLogout);
+    window.addEventListener('auth:user-updated', onUserUpdated);
     window.addEventListener('auth:token-refreshed', onTokenRefresh);
     document.addEventListener('visibilitychange', onVisible);
     window.addEventListener('focus', onFocus);
@@ -142,6 +150,7 @@ export const AuthSessionProvider = ({ children }) => {
     return () => {
       window.removeEventListener('auth:login', onLogin);
       window.removeEventListener('auth:logout', onLogout);
+      window.removeEventListener('auth:user-updated', onUserUpdated);
       window.removeEventListener('auth:token-refreshed', onTokenRefresh);
       document.removeEventListener('visibilitychange', onVisible);
       window.removeEventListener('focus', onFocus);

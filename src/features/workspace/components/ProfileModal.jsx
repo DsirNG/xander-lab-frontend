@@ -12,6 +12,7 @@ import {
   UserRound,
 } from 'lucide-react';
 import Modal from '@components/common/Modal';
+import AccountInfoPanel from '@features/profile/components/AccountInfoPanel';
 import McpAuthorizationPanel from '@features/profile/components/McpAuthorizationPanel';
 
 const TABS = [
@@ -25,11 +26,11 @@ const TABS = [
   { id: 'preferences', icon: SlidersHorizontal },
 ];
 
-const ENABLED_TABS = ['mcp'];
+const ENABLED_TABS = ['account', 'mcp'];
 
 const ProfileModal = ({ open, onClose }) => {
   const { t } = useTranslation();
-  const [activeTab, setActiveTab] = useState('mcp');
+  const [activeTab, setActiveTab] = useState('account');
 
   return (
     <Modal
@@ -73,7 +74,9 @@ const ProfileModal = ({ open, onClose }) => {
 
         {/* 设置内容 */}
         <div className="min-w-0 flex-1">
-          {activeTab === 'mcp' ? (
+          {activeTab === 'account' ? (
+            <AccountInfoPanel />
+          ) : activeTab === 'mcp' ? (
             <McpAuthorizationPanel />
           ) : (
             <div className="flex h-64 flex-col items-center justify-center gap-2 text-center">

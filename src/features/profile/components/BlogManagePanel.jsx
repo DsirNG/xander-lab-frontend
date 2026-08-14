@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
-    AlertCircle,
     CheckCircle2,
     CloudUpload,
     Eye,
@@ -16,8 +15,7 @@ import {
     Trash2,
 } from 'lucide-react';
 import ConfirmModal from '@components/common/ConfirmModal';
-import LoadingSpinner from '@components/common/LoadingSpinner';
-import Pagination from '@components/common/Pagination';
+import DataTable from '@components/common/DataTable';
 import { useToast } from '@hooks/useToast';
 import { blogService, BLOG_STATUS } from '@features/blog/services/blogService';
 import CsdnSyncDialog from './CsdnSyncDialog';
@@ -212,64 +210,26 @@ const BlogManagePanel = () => {
                 </div>
             </div>
 
-            <div className="min-h-0 flex-1 overflow-y-auto px-4 py-3 sm:px-6">
-                {loading ? (
-                    <div className="flex min-h-[240px] items-center justify-center">
-                        <LoadingSpinner text={t('profile.blogManage.loading')} />
-                    </div>
-                ) : loadError ? (
-                    <div className="flex min-h-[240px] flex-col items-center justify-center gap-3 text-center">
-                        <AlertCircle className="h-8 w-8 text-danger" />
-                        <div className="text-sm font-bold text-ink-secondary">{t('profile.blogManage.loadError')}</div>
-                        <button
-                            type="button"
-                            onClick={() => loadPosts()}
-                            className="rounded-xl bg-ink px-4 py-2 text-xs font-bold text-white hover:bg-accent"
-                        >
-                            {t('profile.blogManage.retry')}
-                        </button>
-                    </div>
-                ) : posts.length === 0 ? (
-                    <div className="flex min-h-[240px] flex-col items-center justify-center gap-2 text-center">
-                        <span className="grid h-12 w-12 place-items-center rounded-2xl bg-surface text-ink-faint">
-                            <FileText className="h-6 w-6" />
-                        </span>
-                        <div className="text-sm font-bold text-ink-secondary">
-                            {tab === 'trash'
-                                ? t('profile.blogManage.emptyTrash')
-                                : t('profile.blogManage.emptyTitle')}
-                        </div>
-                        <div className="max-w-sm text-xs font-medium text-ink-faint">
-                            {tab === 'trash'
-                                ? t('profile.blogManage.emptyTrashHint')
-                                : t('profile.blogManage.emptyHint')}
-                        </div>
-                    </div>
-                ) : (
-                    <ul className="divide-y divide-border overflow-hidden rounded-2xl border border-border">
-                        {posts.map((post) => {
-                            const status = Number(post.status);
-                            const statusKey = status === BLOG_STATUS.PUBLISHED
-                                ? 'published'
-                                : status === BLOG_STATUS.TRASH
-                                    ? 'trash'
-                                    : 'draft';
-                            const isBusy = Boolean(actionKey) && actionKey.includes(String(post.id));
-                            const isCsdnSynced = post.csdnSynced === true;
-                            const isJuejinSynced = post.juejinSynced === true;
-
-                            return (
-                                <li key={post.id} className="flex flex-col gap-3 bg-canvas px-3 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-4">
-                                    <div className="min-w-0 flex-1">
+            <div className="flex min-h-0 flex-1 flex-col px-4 py-3 sm:px-6">
+                <DataTable
+                    columns={[
+                        {
+                            key: 'article',
+                            title: t('profile.blogManage.articleColumn'),
+                            width: '38%',
+                            render: (post) => {
+                                const isCsdnSynced = post.csdnSynced === true;
+                                const isJuejinSynced = post.juejinSynced === true;
+                                return (
+                                    <div className="min-w-0">
                                         <div className="flex flex-wrap items-center gap-2">
-                                            <div className="truncate text-sm font-bold text-ink">{post.title || t('profile.blogManage.untitled')}</div>
-                                            <span className={`inline-flex rounded-full px-2 py-0.5 text-micro font-bold ${STATUS_STYLES[status] || STATUS_STYLES[BLOG_STATUS.DRAFT]}`}>
-                                                {t(`profile.blogManage.status.${statusKey}`)}
-                                            </span>
+                                            <div className="truncate text-xs font-bold text-ink">
+                                                {post.title || t('profile.blogManage.untitled')}
+                                            </div>
                                             {isCsdnSynced ? (
                                                 <span
                                                     title={t('profile.blogManage.csdn.synced')}
-                                                    className="inline-flex items-center gap-1 rounded-full bg-success-soft px-2 py-0.5 text-micro font-bold text-success-fg ring-1 ring-success/20"
+                                                    className="inline-flex shrink-0 items-center gap-1 rounded-full bg-success-soft px-2 py-0.5 text-micro font-bold text-success-fg ring-1 ring-success/20"
                                                 >
                                                     <CheckCircle2 className="h-3 w-3" />
                                                     CSDN
@@ -278,7 +238,7 @@ const BlogManagePanel = () => {
                                             {isJuejinSynced ? (
                                                 <span
                                                     title={t('profile.blogManage.juejin.synced')}
-                                                    className="inline-flex items-center gap-1 rounded-full bg-success-soft px-2 py-0.5 text-micro font-bold text-success-fg ring-1 ring-success/20"
+                                                    className="inline-flex shrink-0 items-center gap-1 rounded-full bg-success-soft px-2 py-0.5 text-micro font-bold text-success-fg ring-1 ring-success/20"
                                                 >
                                                     <CheckCircle2 className="h-3 w-3" />
                                                     {t('profile.blogManage.juejin.badge')}
@@ -289,7 +249,47 @@ const BlogManagePanel = () => {
                                             {post.summary || post.categoryName || '—'}
                                         </div>
                                     </div>
-                                    <div className="flex flex-wrap items-center gap-1">
+                                );
+                            },
+                        },
+                        {
+                            key: 'category',
+                            title: t('profile.blogManage.category'),
+                            width: '18%',
+                            render: (post) => (
+                                <span className="block truncate text-xs font-medium text-ink-muted" title={post.categoryName}>
+                                    {post.categoryName || '—'}
+                                </span>
+                            ),
+                        },
+                        {
+                            key: 'status',
+                            title: t('profile.blogManage.statusLabel'),
+                            width: '14%',
+                            render: (post) => {
+                                const status = Number(post.status);
+                                const statusKey = status === BLOG_STATUS.PUBLISHED
+                                    ? 'published'
+                                    : status === BLOG_STATUS.TRASH
+                                        ? 'trash'
+                                        : 'draft';
+                                return (
+                                    <span className={`inline-flex rounded-full px-2 py-0.5 text-micro font-bold ${STATUS_STYLES[status] || STATUS_STYLES[BLOG_STATUS.DRAFT]}`}>
+                                        {t(`profile.blogManage.status.${statusKey}`)}
+                                    </span>
+                                );
+                            },
+                        },
+                        {
+                            key: 'actions',
+                            title: t('profile.blogManage.actions'),
+                            width: '30%',
+                            align: 'right',
+                            render: (post) => {
+                                const status = Number(post.status);
+                                const isBusy = Boolean(actionKey) && actionKey.includes(String(post.id));
+                                return (
+                                    <div className="flex flex-wrap items-center justify-end gap-0.5">
                                         {status === BLOG_STATUS.PUBLISHED ? (
                                             <button
                                                 type="button"
@@ -400,24 +400,35 @@ const BlogManagePanel = () => {
                                             </button>
                                         )}
                                     </div>
-                                </li>
-                            );
-                        })}
-                    </ul>
-                )}
+                                );
+                            },
+                        },
+                    ]}
+                    rows={posts}
+                    loading={loading}
+                    loadingText={t('profile.blogManage.loading')}
+                    error={loadError ? t('profile.blogManage.loadError') : ''}
+                    onRetry={loadPosts}
+                    onRetryLabel={t('profile.blogManage.retry')}
+                    emptyTitle={tab === 'trash'
+                        ? t('profile.blogManage.emptyTrash')
+                        : t('profile.blogManage.emptyTitle')}
+                    emptyHint={tab === 'trash'
+                        ? t('profile.blogManage.emptyTrashHint')
+                        : t('profile.blogManage.emptyHint')}
+                    emptyIcon={FileText}
+                    minWidth="840px"
+                    page={page}
+                    pageSize={pageSize}
+                    total={total}
+                    onPageChange={setPage}
+                    onPageSizeChange={(size) => {
+                        setPageSize(size);
+                        setPage(1);
+                    }}
+                    paginationDisabled={loading}
+                />
             </div>
-
-            <Pagination
-                page={page}
-                pageSize={pageSize}
-                total={total}
-                disabled={loading}
-                onPageChange={setPage}
-                onPageSizeChange={(size) => {
-                    setPageSize(size);
-                    setPage(1);
-                }}
-            />
 
             <ConfirmModal
                 isOpen={Boolean(confirmAction)}
