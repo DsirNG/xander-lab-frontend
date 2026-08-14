@@ -1,26 +1,27 @@
 import { useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import SEOHead, { SITE_URL } from './SEOHead';
 
 const PUBLIC_PAGES = {
   '/': {
-    title: 'UI Infrastructure & Interactive Component Showcase',
-    description: 'Explore Xander Lab UI infrastructure, React components, drag-and-drop systems, anchored overlays, and frontend architecture demonstrations.',
+    titleKey: 'seo.home.title',
+    descriptionKey: 'seo.home.description',
   },
   '/infra/': {
-    title: 'UI Infrastructure Systems',
-    description: 'Learn how Xander Lab approaches reusable UI infrastructure, positioning systems, and resilient frontend architecture.',
+    titleKey: 'seo.infra.title',
+    descriptionKey: 'seo.infra.description',
   },
   '/modules/': {
-    title: 'Interactive Frontend Modules',
-    description: 'Explore practical frontend modules and interactive demonstrations built with React at Xander Lab.',
+    titleKey: 'seo.modules.title',
+    descriptionKey: 'seo.modules.description',
   },
   '/components/': {
-    title: 'React Component Showcase',
-    description: 'Browse reusable React components, implementation guides, and interactive UI examples from Xander Lab.',
+    titleKey: 'seo.components.title',
+    descriptionKey: 'seo.components.description',
   },
 };
 
-const PRIVATE_PATHS = ['/login', '/workspace', '/components/share', '/profile'];
+const PRIVATE_PATHS = ['/login', '/workspace', '/components/share'];
 
 // 页面自身渲染了独立 SEOHead 的路径前缀，RouteSEO 不重复注入
 const PAGE_OWNED_SEO_PREFIXES = ['/blog/'];
@@ -32,13 +33,14 @@ function normalisePathname(pathname) {
 
 export default function RouteSEO() {
   const { pathname } = useLocation();
+  const { t } = useTranslation();
   const canonical = normalisePathname(pathname);
   const page = PUBLIC_PAGES[canonical];
   const isPrivate = PRIVATE_PATHS.some(path => canonical === `${path}/` || canonical.startsWith(`${path}/`));
   const isNotFound = !page && !canonical.startsWith('/blog/') && !canonical.startsWith('/components/') && !canonical.startsWith('/modules/') && !canonical.startsWith('/infra/');
 
   if (page) {
-    return <SEOHead {...page} canonical={canonical} />;
+    return <SEOHead title={t(page.titleKey)} description={t(page.descriptionKey)} canonical={canonical} />;
   }
 
   if (isPrivate) {
@@ -56,8 +58,8 @@ export default function RouteSEO() {
 
   return (
     <SEOHead
-      title="Frontend Engineering Resource"
-      description="Explore Xander Lab's frontend engineering resources and interactive UI demonstrations."
+      title={t('seo.default.title')}
+      description={t('seo.default.description')}
       canonical={canonical}
     />
   );

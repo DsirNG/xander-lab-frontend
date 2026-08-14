@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import SyntaxHighlighter from '@components/common/SyntaxHighlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
@@ -19,6 +20,7 @@ import BrowserWindow from '@components/common/BrowserWindow';
  * 用于功能模块等复杂场景展示
  */
 const EnhancedDemoSection = ({ title, desc, children, code, useBrowserWindow = true }) => {
+    const { t } = useTranslation();
     const [showCode, setShowCode] = useState(false);
     const [copied, setCopied] = useState(false);
     const [resetKey, setResetKey] = useState(0);
@@ -46,10 +48,10 @@ const EnhancedDemoSection = ({ title, desc, children, code, useBrowserWindow = t
                     <button
                         onClick={handleReset}
                         className="flex items-center space-x-2 px-4 py-1.5 rounded-xl bg-slate-100  text-slate-600  text-xs font-bold hover:bg-orange-500 hover:text-white transition-all shadow-sm"
-                        title="Reset Demo"
+                        title={t('common.resetDemo')}
                     >
                         <RotateCcw aria-hidden="true" className="w-3.5 h-3.5" />
-                        <span>Reset</span>
+                        <span>{t('common.reset')}</span>
                     </button>
                     {/* 查看代码按钮 */}
                     {code && (
@@ -58,7 +60,7 @@ const EnhancedDemoSection = ({ title, desc, children, code, useBrowserWindow = t
                             className="flex items-center space-x-2 px-4 py-1.5 rounded-xl bg-slate-100  text-slate-600  text-xs font-bold hover:bg-blue-600 hover:text-white transition-all shadow-sm"
                         >
                             {showCode ? <ChevronUp aria-hidden="true" className="w-3.5 h-3.5" /> : <Code aria-hidden="true" className="w-3.5 h-3.5" />}
-                            <span>{showCode ? 'Hide Code' : 'View Code'}</span>
+                            <span>{showCode ? t('common.codeBlock.hideCode') : t('common.codeBlock.viewCode')}</span>
                         </button>
                     )}
                 </div>
@@ -101,8 +103,8 @@ const EnhancedDemoSection = ({ title, desc, children, code, useBrowserWindow = t
                             <button
                                 onClick={handleCopy}
                                 className="absolute right-6 top-6 z-20 p-2.5 rounded-xl bg-slate-800/50 text-slate-400 hover:text-white hover:bg-slate-700 transition-all backdrop-blur-md border border-white/5 opacity-0 group-hover:opacity-100 shadow-xl"
-                                title="Copy code"
-                                aria-label="Copy code"
+                                title={t('common.codeBlock.copy')}
+                                aria-label={t('common.codeBlock.copy')}
                             >
                                 {copied ? <Check aria-hidden="true" className="w-4 h-4 text-emerald-400" /> : <Copy aria-hidden="true" className="w-4 h-4" />}
                             </button>

@@ -31,14 +31,14 @@
 
 | Token | 字号 | 行高 | 字重 | 用途 |
 | --- | --- | --- | --- | --- |
-| `text-display` | 28px | 1.25 | 800 | 页面主标题 |
-| `text-heading` | 20px | 1.3 | 800 | 区块标题 |
-| `text-title` | 18px | 1.4 | 700 | 卡片/面板标题 |
+| `text-display` | 24px | 1.3 | 700 | 页面主标题 |
+| `text-heading` | 18px | 1.35 | 700 | 区块标题 |
+| `text-title` | 16px | 1.4 | 600 | 卡片/面板标题 |
 | `text-body` | 14px | 1.5 | 400 | 正文（默认） |
-| `text-caption` | 12px | 1.45 | 500 | 辅助说明 |
-| `text-micro` | 11px | 1.4 | 500 | 表格标签、徽标、元信息 |
+| `text-caption` | 12px | 1.45 | 400 | 辅助说明 |
+| `text-micro` | 11px | 1.4 | 400 | 表格标签、徽标、元信息 |
 
-- 字重阶梯：`font-medium`(500) 强调辅助文字、`font-semibold`(600) 正文强调、`font-bold`(700) 卡片/面板标题、`font-black`(800) 区块/主标题。
+- 字重阶梯：`font-medium`(500) 辅助文字、`font-semibold`(600) 正文强调、`font-bold`(700) 标题。
 - 标题、段落一律用 `div` / `span` + 上述 token 类名，不用 `h1-h6` / `p` 标签。
 
 ## 通用交互
@@ -58,6 +58,7 @@
 | `LoadingSpinner` | `@components/common/LoadingSpinner` | 页面或局部加载态 | `fullScreen`、`text`、`size: sm/md/lg`。 |
 | `ThreeViewer` | `@features/img2three/components/ThreeViewer` | legacy nodes、ObjectSculptSpec 与图片浮雕协议的受限 WebGL 预览 | `sceneSpec`、`onReady({exportGlb})`、`onError(error)`；异步构建可取消，勿执行模型返回的 TS。 |
 | `ErrorBoundary` | `@components/common/ErrorBoundary` | 路由或高风险子树兜底 | 使用在页面/模块边界，不替代请求错误处理。 |
+| `RowActionsMenu` | `@components/common/RowActionsMenu` | 列表行操作按钮组收敛为图标+浮框菜单 | `actions: { key, label, icon, onClick, disabled, danger, loading }[]`，`size: sm/md/lg`、`align: left/right`；点击图标展开浮框菜单，点击外部 / Esc 关闭，点击菜单项后自动收起并执行操作。 |
 
 ## 内容与展示
 

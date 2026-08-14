@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Russian translations
  * Русские переводы
  */
@@ -222,6 +222,8 @@ export default {
   common: {
     confirm: 'Подтвердить',
     cancel: 'Отмена',
+    close: 'Закрыть',
+    save: 'Сохранить',
     pagination: {
       pageInfo: '{{from}}-{{to}} из {{total}}',
       pageSizeOption: '{{size}} на странице',
@@ -229,6 +231,8 @@ export default {
       nextPage: 'Далее'
     },
     backHome: 'На главную',
+    reset: 'Сброс',
+    resetDemo: 'Сбросить демо',
     backToInfra: 'Назад к инфраструктуре',
     backToComponents: 'Назад к компонентам',
     goBack: 'Назад',
@@ -262,6 +266,8 @@ export default {
       copy: 'Копировать код',
       copied: 'Скопировано',
       previewFrame: 'Превью {{language}}',
+      hideCode: 'Скрыть код',
+      viewCode: 'Показать код',
     },
     errorBoundary: {
       title: 'Произошла ошибка',
@@ -312,7 +318,11 @@ export default {
       codeAuth: 'Код подтверждения',
       login: 'Войти',
       backToLobby: 'Назад',
-      techBlog: 'Технический блог'
+      techBlog: 'Технический блог',
+      unifiedAuth: 'Единая авторизация',
+      systemStatus: 'Статус системы:',
+      systemSecure: 'Безопасно',
+      identityGateway: 'Шлюз идентификации'
     }
   },
   workspace: {
@@ -1048,9 +1058,31 @@ export default {
     },
     previews: {
       agent: { newTask: 'Новая задача', saved: 'Сохранено', topic: 'Тема', topicValue: 'Доступные компоненты', schedule: 'Расписание', scheduleValue: 'Каждый понедельник · 09:00', article: 'Статья', generating: 'Создание', nextRun: '● Следующий запуск: 26 мая 2026', synced: 'Синхронизировано' },
-      email: { to: 'Кому', subscribers: 'Подписчики', subject: 'Еженедельное обновление Xander Lab', greeting: 'Здравствуйте,', body: 'Вот наше обновление за неделю.', signature: 'Команда Xander Lab', schedule: 'Каждую пятницу' },
+      email: { to: 'Кому', subscribers: 'Подписчики', cc: 'Копия', subject: 'Еженедельное обновление Xander Lab', greeting: 'Здравствуйте,', body: 'Вот наше обновление за неделю.', signature: 'Команда Xander Lab', schedule: 'Каждую пятницу' },
       demo: { preview: 'Просмотр', code: 'Код', button: 'Кнопка', primary: 'Основная', secondary: 'Вторичная', ghost: 'Призрачная' }
     },
     articles: { title: 'Последние статьи', all: 'Все статьи', items: { accessibility: { date: '18 мая 2026', title: 'Доступные компоненты', tag: 'Разработка' }, designTokens: { date: '11 мая 2026', title: 'Токены дизайна на практике', tag: 'Дизайн' }, automation: { date: '4 мая 2026', title: 'Автоматизация задач по расписанию', tag: 'Продуктивность' } } }
+  },
+  seo: {
+    home: {
+      title: 'UI-инфраструктура и интерактивные компоненты',
+      description: 'Изучите UI-инфраструктуру Xander Lab: компоненты React, системы перетаскивания, якорные оверлеи и демонстрации фронтенд-архитектуры.',
+    },
+    infra: {
+      title: 'UI-инфраструктурные системы',
+      description: 'Узнайте, как Xander Lab подходит к созданию переиспользуемой UI-инфраструктуры, систем позиционирования и отказоустойчивой фронтенд-архитектуры.',
+    },
+    modules: {
+      title: 'Интерактивные фронтенд-модули',
+      description: 'Изучите практические фронтенд-модули и интерактивные демонстрации, созданные на React в Xander Lab.',
+    },
+    components: {
+      title: 'Витрина React-компонентов',
+      description: 'Просмотрите переиспользуемые React-компоненты, руководства по внедрению и интерактивные UI-примеры от Xander Lab.',
+    },
+    default: {
+      title: 'Фронтенд-инженерные ресурсы',
+      description: 'Изучите фронтенд-инженерные ресурсы и интерактивные UI-демонстрации Xander Lab.',
+    },
   }
 };

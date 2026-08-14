@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Chinese translations
  * 中文翻译资源
  */
@@ -230,6 +230,8 @@ export default {
   common: {
     confirm: '确认',
     cancel: '取消',
+    close: '关闭',
+    save: '保存',
     pagination: {
       pageInfo: '第 {{from}}-{{to}} 条，共 {{total}} 条',
       pageSizeOption: '每页 {{size}} 条',
@@ -237,6 +239,8 @@ export default {
       nextPage: '下一页'
     },
     backHome: '返回首页',
+    reset: '重置',
+    resetDemo: '重置演示',
     backToInfra: '返回基础模块',
     backToComponents: '返回组件库',
     goBack: '返回',
@@ -270,6 +274,8 @@ export default {
       copy: '复制代码',
       copied: '已复制',
       previewFrame: '{{language}} 预览',
+      hideCode: '隐藏代码',
+      viewCode: '查看代码',
     },
     errorBoundary: {
       title: '页面出现了问题',
@@ -320,7 +326,11 @@ export default {
       codeAuth: '验证码登录',
       login: '登录',
       backToLobby: '返回大厅',
-      techBlog: '技术博客'
+      techBlog: '技术博客',
+      unifiedAuth: '统一认证',
+      systemStatus: '系统状态:',
+      systemSecure: '安全',
+      identityGateway: '身份网关'
     }
   },
   workspace: {
@@ -1075,9 +1085,31 @@ export default {
     },
     previews: {
       agent: { newTask: '新建任务', saved: '已保存', topic: '主题', topicValue: '构建可访问的组件', schedule: '执行时间', scheduleValue: '每周一 · 09:00', article: '文章', generating: '生成中', nextRun: '● 下次执行：2026 年 5 月 26 日', synced: '已同步' },
-      email: { to: '收件人', subscribers: '订阅者', subject: 'Xander Lab 每周更新', greeting: '你好，', body: '这是本周的最新内容。', signature: 'Xander Lab 团队', schedule: '每周五' },
+      email: { to: '收件人', subscribers: '订阅者', cc: '抄送', subject: 'Xander Lab 每周更新', greeting: '你好，', body: '这是本周的最新内容。', signature: 'Xander Lab 团队', schedule: '每周五' },
       demo: { preview: '预览', code: '代码', button: '按钮', primary: '主要按钮', secondary: '次要按钮', ghost: '幽灵按钮' }
     },
     articles: { title: '最新技术文章', all: '查看全部文章', items: { accessibility: { date: '2026 年 5 月 18 日', title: '构建可访问的组件', tag: '开发' }, designTokens: { date: '2026 年 5 月 11 日', title: '设计 Token 的实践方式', tag: '设计' }, automation: { date: '2026 年 5 月 4 日', title: '用定时任务自动化日常工作', tag: '效率' } } }
+  },
+  seo: {
+    home: {
+      title: 'UI 基础设施与交互组件展示',
+      description: '探索 Xander Lab 的 UI 基础设施、React 组件、拖拽系统、锚点浮层与前端架构演示。'
+    },
+    infra: {
+      title: 'UI 基础设施系统',
+      description: '了解 Xander Lab 如何构建可复用的 UI 基础设施、定位系统与健壮的前端架构。'
+    },
+    modules: {
+      title: '交互式前端模块',
+      description: '探索基于 React 构建的实用前端模块与交互演示。'
+    },
+    components: {
+      title: 'React 组件展示',
+      description: '浏览 Xander Lab 的可复用 React 组件、实现指南与交互式 UI 示例。'
+    },
+    default: {
+      title: '前端工程资源',
+      description: '探索 Xander Lab 的前端工程资源与交互式 UI 演示。'
+    }
   }
 };

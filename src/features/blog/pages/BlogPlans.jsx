@@ -1,8 +1,9 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { CalendarClock, ChevronRight, Eye, Loader2, Pencil, Plus, Sparkles, Trash2, Zap } from 'lucide-react';
+import { Ban, CalendarClock, Eye, Pause, Pencil, Play, Plus, Sparkles, Trash2, Zap } from 'lucide-react';
 import DataTable from '@components/common/DataTable';
+import RowActionsMenu from '@components/common/RowActionsMenu';
 import { blogPlanService, PLAN_STATUS } from '../services/blogPlanService';
 import { useToast } from '@/hooks/useToast';
 import { usePlanActions } from '../hooks/usePlanActions';
@@ -103,69 +104,78 @@ const BlogPlans = () => {
     {
       key: 'actions',
       title: t('blogPlans.actions'),
-      width: '22%',
+      width: '10%',
       align: 'right',
-      render: (plan) => (
-        <div className="flex flex-wrap items-center justify-end gap-1">
-          {(plan.status === PLAN_STATUS.ACTIVE || plan.status === PLAN_STATUS.PAUSED) && (
-            <>
-              {!plan.runOnce && (
-                <button
-                  onClick={() => actions.trigger(plan)}
-                  disabled={!!actions.busyId || plan.status === PLAN_STATUS.RUNNING}
-                  className="inline-flex items-center gap-1 rounded-lg bg-accent px-2.5 py-1.5 text-micro font-bold text-white hover:opacity-90 disabled:opacity-50"
-                  title={t('blogPlans.triggerNow')}
-                >
-                  {actions.busyId === plan.id ? <Loader2 className="h-3 w-3 animate-spin" /> : <Zap className="h-3 w-3" />}
-                </button>
-              )}
-              {plan.status === PLAN_STATUS.ACTIVE ? (
-                <button onClick={() => actions.pause(plan)} disabled={!!actions.busyId}
-                  className="rounded-lg border border-border px-2.5 py-1.5 text-micro text-ink-secondary hover:bg-surface-muted disabled:opacity-50">
-                  {t('blogPlans.pause')}
-                </button>
-              ) : (
-                <button onClick={() => actions.resume(plan)} disabled={!!actions.busyId}
-                  className="rounded-lg border border-border px-2.5 py-1.5 text-micro text-ink-secondary hover:bg-surface-muted disabled:opacity-50">
-                  {t('blogPlans.resume')}
-                </button>
-              )}
-              {!plan.runOnce && (
-                <button onClick={() => openEdit(plan)} disabled={!!actions.busyId}
-                  className="inline-flex items-center gap-1 rounded-lg border border-border px-2.5 py-1.5 text-micro text-ink-secondary hover:bg-surface-muted disabled:opacity-50"
-                  title={t('blogPlans.edit')}>
-                  <Pencil className="h-3 w-3" />
-                </button>
-              )}
-            </>
-          )}
-          {plan.status !== PLAN_STATUS.RUNNING && (
-            <button onClick={() => actions.remove(plan)} disabled={!!actions.busyId}
-              className="inline-flex items-center gap-1 rounded-lg border border-border px-2.5 py-1.5 text-micro text-danger hover:bg-danger-soft disabled:opacity-50"
-              title={t('blogPlans.delete')}>
-              <Trash2 className="h-3 w-3" />
-            </button>
-          )}
-          {plan.status !== PLAN_STATUS.RUNNING && plan.status !== PLAN_STATUS.CANCELLED
-            && plan.status !== PLAN_STATUS.FINISHED && plan.status !== PLAN_STATUS.FAILED && (
-            <button onClick={() => actions.cancel(plan)} disabled={!!actions.busyId}
-              className="rounded-lg border border-border px-2.5 py-1.5 text-micro text-ink-faint hover:bg-surface-muted disabled:opacity-50">
-              {t('blogPlans.cancel')}
-            </button>
-          )}
-          <button onClick={() => navigate(`/workspace/plans/${plan.id}`)}
-            className="inline-flex items-center gap-1 rounded-lg border border-border px-2.5 py-1.5 text-micro text-ink-secondary hover:bg-surface-muted"
-            title={t('blogPlans.detail')}>
-            <Eye className="h-3 w-3" />
-            <ChevronRight className="h-3 w-3" />
-          </button>
-        </div>
-      ),
+      render: (plan) => {
+        const items = [];
+        if (plan.status === PLAN_STATUS.ACTIVE || plan.status === PLAN_STATUS.PAUSED) {
+          if (!plan.runOnce) {
+            items.push({
+              key: 'trigger',
+              label: t('blogPlans.triggerNow'),
+              icon: Zap,
+              disabled: !!actions.busyId || plan.status === PLAN_STATUS.RUNNING,
+              loading: actions.busyId === plan.id,
+              loadingLabel: t('blogPlans.triggerNow'),
+              onClick: () => actions.trigger(plan),
+            });
+          }
+          items.push(plan.status === PLAN_STATUS.ACTIVE ? {
+            key: 'pause',
+            label: t('blogPlans.pause'),
+            icon: Pause,
+            disabled: !!actions.busyId,
+            onClick: () => actions.pause(plan),
+          } : {
+            key: 'resume',
+            label: t('blogPlans.resume'),
+            icon: Play,
+            disabled: !!actions.busyId,
+            onClick: () => actions.resume(plan),
+          });
+          if (!plan.runOnce) {
+            items.push({
+              key: 'edit',
+              label: t('blogPlans.edit'),
+              icon: Pencil,
+              disabled: !!actions.busyId,
+              onClick: () => openEdit(plan),
+            });
+          }
+        }
+        if (plan.status !== PLAN_STATUS.RUNNING && plan.status !== PLAN_STATUS.CANCELLED
+          && plan.status !== PLAN_STATUS.FINISHED && plan.status !== PLAN_STATUS.FAILED) {
+          items.push({
+            key: 'cancel',
+            label: t('blogPlans.cancel'),
+            icon: Ban,
+            disabled: !!actions.busyId,
+            onClick: () => actions.cancel(plan),
+          });
+        }
+        if (plan.status !== PLAN_STATUS.RUNNING) {
+          items.push({
+            key: 'delete',
+            label: t('blogPlans.delete'),
+            icon: Trash2,
+            danger: true,
+            disabled: !!actions.busyId,
+            onClick: () => actions.remove(plan),
+          });
+        }
+        items.push({
+          key: 'detail',
+          label: t('blogPlans.detail'),
+          icon: Eye,
+          onClick: () => navigate(`/workspace/plans/${plan.id}`),
+        });
+        return <RowActionsMenu actions={items} />;
+      },
     },
   ];
 
   return (
-    <div className="mx-auto flex h-full w-full max-w-6xl flex-col px-4 py-6 sm:px-6 lg:px-8">
+    <div className="mx-auto flex h-full min-h-0 w-full max-w-6xl flex-col overflow-hidden px-4 py-6 sm:px-6 lg:px-8">
       <div className="flex items-center justify-between">
         <div>
           <div className="text-xl font-bold text-ink">{t('blogPlans.title')}</div>

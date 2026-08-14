@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Vietnamese translations
  * Bản dịch tiếng Việt
  */
@@ -222,6 +222,8 @@ export default {
   common: {
     confirm: 'Xác nhận',
     cancel: 'Hủy',
+    close: 'Đóng',
+    save: 'Lưu',
     pagination: {
       pageInfo: '{{from}}-{{to}} / {{total}}',
       pageSizeOption: '{{size}} mỗi trang',
@@ -229,6 +231,8 @@ export default {
       nextPage: 'Sau'
     },
     backHome: 'Về trang chủ',
+    reset: 'Đặt lại',
+    resetDemo: 'Đặt lại bản demo',
     backToInfra: 'Quay lại Hạ tầng',
     backToComponents: 'Quay lại Thành phần',
     goBack: 'Quay lại',
@@ -262,6 +266,8 @@ export default {
       copy: 'Sao chép mã',
       copied: 'Đã sao chép',
       previewFrame: 'Xem trước {{language}}',
+      hideCode: 'Ẩn mã',
+      viewCode: 'Xem mã',
     },
     errorBoundary: {
       title: 'Đã xảy ra lỗi',
@@ -312,7 +318,11 @@ export default {
       codeAuth: 'Mã xác minh',
       login: 'Đăng nhập',
       backToLobby: 'Quay lại',
-      techBlog: 'Blog kỹ thuật'
+      techBlog: 'Blog kỹ thuật',
+      unifiedAuth: 'Xác thực thống nhất',
+      systemStatus: 'Trạng thái hệ thống:',
+      systemSecure: 'An toàn',
+      identityGateway: 'Cổng danh tính'
     }
   },
   workspace: {
@@ -1048,9 +1058,31 @@ export default {
     },
     previews: {
       agent: { newTask: 'Tác vụ mới', saved: 'Đã lưu', topic: 'Chủ đề', topicValue: 'Xây dựng thành phần dễ tiếp cận', schedule: 'Lịch chạy', scheduleValue: 'Mỗi thứ Hai · 09:00', article: 'Bài viết', generating: 'Đang tạo', nextRun: '● Lần chạy tiếp theo: 26 tháng 5, 2026', synced: 'Đã đồng bộ' },
-      email: { to: 'Đến', subscribers: 'Người đăng ký', subject: 'Cập nhật tuần từ Xander Lab', greeting: 'Xin chào,', body: 'Đây là cập nhật tuần này.', signature: 'Đội ngũ Xander Lab', schedule: 'Mỗi thứ Sáu' },
+      email: { to: 'Đến', subscribers: 'Người đăng ký', cc: 'CC', subject: 'Cập nhật tuần từ Xander Lab', greeting: 'Xin chào,', body: 'Đây là cập nhật tuần này.', signature: 'Đội ngũ Xander Lab', schedule: 'Mỗi thứ Sáu' },
       demo: { preview: 'Xem trước', code: 'Mã nguồn', button: 'Nút', primary: 'Chính', secondary: 'Phụ', ghost: 'Trong suốt' }
     },
     articles: { title: 'Bài viết mới nhất', all: 'Xem tất cả bài viết', items: { accessibility: { date: '18 tháng 5, 2026', title: 'Xây dựng thành phần dễ tiếp cận', tag: 'Phát triển' }, designTokens: { date: '11 tháng 5, 2026', title: 'Design token trong thực tế', tag: 'Thiết kế' }, automation: { date: '4 tháng 5, 2026', title: 'Tự động hóa công việc bằng lịch', tag: 'Năng suất' } } }
+  },
+  seo: {
+    home: {
+      title: 'Hạ tầng UI & trưng bày thành phần tương tác',
+      description: 'Khám phá hạ tầng UI của Xander Lab, các thành phần React, hệ thống kéo thả, lớp phủ neo và các demo kiến trúc frontend.',
+    },
+    infra: {
+      title: 'Hệ thống hạ tầng UI',
+      description: 'Tìm hiểu cách Xander Lab xây dựng hạ tầng UI tái sử dụng, hệ thống định vị và kiến trúc frontend bền vững.',
+    },
+    modules: {
+      title: 'Mô-đun frontend tương tác',
+      description: 'Khám phá các mô-đun frontend thực tế và demo tương tác được xây dựng bằng React tại Xander Lab.',
+    },
+    components: {
+      title: 'Trưng bày thành phần React',
+      description: 'Duyệt các thành phần React tái sử dụng, hướng dẫn triển khai và ví dụ UI tương tác từ Xander Lab.',
+    },
+    default: {
+      title: 'Tài nguyên kỹ thuật frontend',
+      description: 'Khám phá tài nguyên kỹ thuật frontend và demo UI tương tác của Xander Lab.',
+    },
   }
 };

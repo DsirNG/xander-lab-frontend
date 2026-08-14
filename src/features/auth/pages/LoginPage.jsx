@@ -3,7 +3,7 @@ import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
     Mail, Lock, ShieldCheck, ArrowRight, Loader2,
-    ChevronLeft, Github, Globe, Sparkles,
+    Github, Globe, Sparkles,
     Fingerprint, Shield
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -91,7 +91,7 @@ const LoginPage = () => {
     };
 
     return (
-        <div className="min-h-screen flex flex-col items-center justify-center p-4 sm:p-6 bg-surface overflow-hidden selection:bg-accent/30">
+        <div className="min-h-screen flex flex-col items-center justify-center p-4 sm:p-6 bg-surface overflow-y-auto selection:bg-accent/30">
             {/* 高级艺术背景 */}
             <div className="absolute inset-0 pointer-events-none z-0">
                 {/*<DigitalOrbit />*/}
@@ -103,7 +103,7 @@ const LoginPage = () => {
             <motion.header
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="fixed top-0 left-0 right-0 p-8 flex justify-between items-center z-50 max-w-7xl mx-auto w-full"
+                className="fixed top-0 left-0 right-0 p-4 flex justify-between items-center z-50 max-w-7xl mx-auto w-full"
             >
                 <Link to="/" className="group flex items-center gap-3">
                     <div className="relative">
@@ -112,15 +112,15 @@ const LoginPage = () => {
                         </div>
                     </div>
                     <div className="flex flex-col">
-                        <span className="font-black tracking-tighter text-2xl text-ink leading-none">XANDER LAB</span>
-                        <span className="text-micro font-bold text-ink-faint leading-none mt-1 tracking-[0.2em]">UNIFIED AUTH</span>
+                        <span className="font-black tracking-tighter text-xl text-ink leading-none">XANDER LAB</span>
+                        <span className="text-micro font-bold text-ink-faint leading-none mt-1 tracking-[0.2em]">{t('auth.login.unifiedAuth')}</span>
                     </div>
                 </Link>
 
                 <div className="flex items-center gap-2">
-                    <button className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold text-ink-muted hover:text-accent hover:bg-canvas shadow-sm transition-all border border-transparent hover:border-border">
+                    <button className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl text-caption font-bold text-ink-muted hover:text-accent hover:bg-canvas shadow-sm transition-all border border-transparent hover:border-border">
                         <Globe className="w-4 h-4" />
-                        System Status: <span className="text-success animate-pulse font-black uppercase">Secure</span>
+                        <span>{t('auth.login.systemStatus')}</span> <span className="text-success animate-pulse font-black uppercase">{t('auth.login.systemSecure')}</span>
                     </button>
                     <div className="w-px h-4 bg-border mx-2 hidden sm:block" />
                     <a href="https://github.com" className="p-3 text-ink-faint hover:text-accent transition-colors">
@@ -142,20 +142,20 @@ const LoginPage = () => {
 
                 <div className="relative bg-canvas/70 backdrop-blur-xl border border-canvas/40 rounded-[3.5rem] overflow-hidden">
 
-                    <div className="p-6 sm:p-10 md:p-14 relative z-10">
+                    <div className="p-6 sm:p-8 relative z-10">
                         {/* 装饰图标 */}
                         {/*<div className="absolute top-0 right-0 p-8 opacity-10">*/}
                         {/*    <Cpu className="w-16 h-16 text-accent" />*/}
                         {/*</div>*/}
 
                         {/* 引导标题 */}
-                        <div className="mb-12">
+                        <div className="mb-6">
                             <div className="flex items-center gap-2 mb-4">
                                 <Sparkles className="w-4 h-4 text-accent animate-bounce" />
-                                <span className="text-micro font-black text-accent uppercase tracking-[0.3em]">Identity Gateway</span>
+                                <span className="text-micro font-black text-accent uppercase tracking-[0.3em]">{t('auth.login.identityGateway')}</span>
                             </div>
-                            <div className="text-4xl font-black text-ink tracking-tight mb-4">
-                                {t('auth.login.loginAccess')}<span className="text-accent text-5xl">.</span>
+                            <div className="text-3xl font-black text-ink tracking-tight mb-4">
+                                {t('auth.login.loginAccess')}<span className="text-accent text-4xl">.</span>
                             </div>
                             <div className="text-ink-muted text-sm font-medium leading-relaxed">
                                 {t('auth.login.loginDesc')}
@@ -163,7 +163,7 @@ const LoginPage = () => {
                         </div>
 
                         {/* 模式选择 Tab */}
-                        <div className="grid grid-cols-2 p-1.5 bg-surface-muted/50 rounded-2xl mb-10 border border-border/50">
+                        <div className="grid grid-cols-2 p-1.5 bg-surface-muted/50 rounded-2xl mb-5 border border-border/50">
                             {[
                                 { id: 'code', label: t('auth.login.codeAuth'), icon: Shield },
                                 { id: 'password', label: t('auth.login.passwordAuth'), icon: Fingerprint }
@@ -171,7 +171,7 @@ const LoginPage = () => {
                                 <button
                                     key={tab.id}
                                     onClick={() => setLoginType(tab.id)}
-                                    className={`relative flex items-center justify-center gap-2 py-3.5 text-xs font-black rounded-xl transition-all duration-500 overflow-hidden ${
+                                    className={`relative flex items-center justify-center gap-2 py-3.5 text-caption font-black rounded-xl transition-all duration-500 overflow-hidden ${
                                         loginType === tab.id
                                             ? 'text-white'
                                             : 'text-ink-muted hover:text-ink-secondary'
@@ -190,7 +190,7 @@ const LoginPage = () => {
                             ))}
                         </div>
 
-                        <form onSubmit={handleSubmit} className="space-y-6">
+                        <form onSubmit={handleSubmit} className="space-y-4">
                             <AnimatePresence mode="wait">
                                 <motion.div
                                     key={loginType}
@@ -198,9 +198,9 @@ const LoginPage = () => {
                                     animate={{ opacity: 1, x: 0 }}
                                     exit={{ opacity: 0, x: -10 }}
                                     transition={{ duration: 0.3 }}
-                                    className="space-y-6"
+                                    className="space-y-4"
                                 >
-                                    <div className="space-y-5">
+                                    <div className="space-y-4">
                                         {/* 账号/邮箱输入 */}
                                         <div className="group">
                                             <label htmlFor="account" className="text-caption font-black text-ink-faint uppercase tracking-widest mb-2 px-1 block">
@@ -274,7 +274,7 @@ const LoginPage = () => {
                                                         type="button"
                                                         disabled={countdown > 0 || sendingCode}
                                                         onClick={handleSendCode}
-                                                        className="px-6 rounded-3xl bg-ink text-white text-xs font-black hover:scale-105 active:scale-95 disabled:opacity-30 transition-all shadow-xl shadow-ink/10 whitespace-nowrap"
+                                                        className="px-6 rounded-3xl bg-ink text-white text-caption font-black hover:scale-105 active:scale-95 disabled:opacity-30 transition-all shadow-xl shadow-ink/10 whitespace-nowrap"
                                                     >
                                                         {sendingCode ? (
                                                             <Loader2 className="w-4 h-4 animate-spin" aria-label={t('auth.login.sendCode')} />
@@ -292,7 +292,7 @@ const LoginPage = () => {
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className="group relative w-full flex items-center justify-center py-5 bg-accent text-white rounded-[1.75rem] font-black text-sm  shadow-accent/30 hover:bg-accent-700 transition-all duration-500 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 scale-fix"
+                                className="group relative w-full flex items-center justify-center py-4.5 bg-accent text-white rounded-[1.75rem] font-black text-sm  shadow-accent/30 hover:bg-accent-700 transition-all duration-500 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 scale-fix"
                             >
                                 <span className="relative z-10 flex items-center gap-2">
                                     {loading ? (
@@ -318,27 +318,7 @@ const LoginPage = () => {
 
                     <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent/30 to-transparent" />
                 </div>
-
-                {/* 底部导航 */}
-                <div className="mt-12 flex flex-col items-center gap-6">
-                    <div className="flex items-center gap-8 text-xs font-black text-ink-faint">
-                        <Link to="/" className="group flex items-center gap-2 hover:text-accent transition-all">
-                            <ChevronLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-                            {t('auth.login.backToLobby')}
-                        </Link>
-                        <div className="w-1 h-1 rounded-full bg-border-strong" />
-                        <Link to="/blog" className="hover:text-accent transition-all">
-                            {t('auth.login.techBlog')}
-                        </Link>
-                    </div>
-                </div>
             </motion.div>
-
-            <footer className="fixed bottom-0 left-0 right-0 p-10 text-center pointer-events-none">
-                <div className="text-micro font-black text-ink-faint uppercase tracking-[0.5em]">
-                    Xander Lab // System Protocol
-                </div>
-            </footer>
         </div>
     );
 };

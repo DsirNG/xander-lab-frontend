@@ -7,15 +7,16 @@ import {
     Eye,
     FilePenLine,
     FileText,
-    Loader2,
     Plus,
     RotateCcw,
     Search,
     Send,
     Trash2,
+    Undo,
 } from 'lucide-react';
 import ConfirmModal from '@components/common/ConfirmModal';
 import DataTable from '@components/common/DataTable';
+import RowActionsMenu from '@components/common/RowActionsMenu';
 import { useToast } from '@hooks/useToast';
 import { blogService, BLOG_STATUS } from '@features/blog/services/blogService';
 import CsdnSyncDialog from './CsdnSyncDialog';
@@ -283,124 +284,91 @@ const BlogManagePanel = () => {
                         {
                             key: 'actions',
                             title: t('profile.blogManage.actions'),
-                            width: '30%',
+                            width: '10%',
                             align: 'right',
                             render: (post) => {
                                 const status = Number(post.status);
                                 const isBusy = Boolean(actionKey) && actionKey.includes(String(post.id));
-                                return (
-                                    <div className="flex flex-wrap items-center justify-end gap-0.5">
-                                        {status === BLOG_STATUS.PUBLISHED ? (
-                                            <button
-                                                type="button"
-                                                title={t('profile.blogManage.actions.view')}
-                                                onClick={() => navigate(`/blog/${post.id}`)}
-                                                className="grid h-8 w-8 place-items-center rounded-lg text-ink-faint transition hover:bg-surface-muted hover:text-ink"
-                                            >
-                                                <Eye className="h-3.5 w-3.5" />
-                                            </button>
-                                        ) : null}
-
-                                        {status !== BLOG_STATUS.TRASH ? (
-                                            <button
-                                                type="button"
-                                                title={t('profile.blogManage.actions.syncJuejin')}
-                                                disabled={Boolean(actionKey)}
-                                                onClick={() => setJuejinPost(post)}
-                                                className="grid h-8 w-8 place-items-center rounded-lg text-ink-faint transition hover:bg-accent-soft hover:text-accent disabled:opacity-50"
-                                            >
-                                                <Send className="h-3.5 w-3.5" />
-                                            </button>
-                                        ) : null}
-
-                                        {status !== BLOG_STATUS.TRASH ? (
-                                            <button
-                                                type="button"
-                                                title={t('profile.blogManage.actions.syncCsdn')}
-                                                disabled={Boolean(actionKey)}
-                                                onClick={() => setCsdnPost(post)}
-                                                className="grid h-8 w-8 place-items-center rounded-lg text-ink-faint transition hover:bg-accent-soft hover:text-accent disabled:opacity-50"
-                                            >
-                                                <CloudUpload className="h-3.5 w-3.5" />
-                                            </button>
-                                        ) : null}
-
-                                        {status !== BLOG_STATUS.TRASH ? (
-                                            <button
-                                                type="button"
-                                                title={t('profile.blogManage.actions.edit')}
-                                                onClick={() => navigate(`/workspace/publish?id=${post.id}`)}
-                                                className="grid h-8 w-8 place-items-center rounded-lg text-ink-faint transition hover:bg-accent-soft hover:text-accent"
-                                            >
-                                                <FilePenLine className="h-3.5 w-3.5" />
-                                            </button>
-                                        ) : null}
-
-                                        {status === BLOG_STATUS.DRAFT ? (
-                                            <button
-                                                type="button"
-                                                title={t('profile.blogManage.actions.publish')}
-                                                disabled={Boolean(actionKey)}
-                                                onClick={() => handleStatus(post, BLOG_STATUS.PUBLISHED, 'profile.blogManage.published')}
-                                                className="grid h-8 w-8 place-items-center rounded-lg text-ink-faint transition hover:bg-success-soft hover:text-success disabled:opacity-50"
-                                            >
-                                                {isBusy && actionKey.includes(`status-${post.id}-${BLOG_STATUS.PUBLISHED}`)
-                                                    ? <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                                                    : <Send className="h-3.5 w-3.5" />}
-                                            </button>
-                                        ) : null}
-
-                                        {status === BLOG_STATUS.PUBLISHED ? (
-                                            <button
-                                                type="button"
-                                                title={t('profile.blogManage.actions.unpublish')}
-                                                disabled={Boolean(actionKey)}
-                                                onClick={() => handleStatus(post, BLOG_STATUS.DRAFT, 'profile.blogManage.unpublished')}
-                                                className="grid h-8 w-8 place-items-center rounded-lg text-ink-faint transition hover:bg-warning-soft hover:text-warning disabled:opacity-50"
-                                            >
-                                                {isBusy && actionKey.includes(`status-${post.id}-${BLOG_STATUS.DRAFT}`)
-                                                    ? <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                                                    : <FileText className="h-3.5 w-3.5" />}
-                                            </button>
-                                        ) : null}
-
-                                        {status === BLOG_STATUS.TRASH ? (
-                                            <button
-                                                type="button"
-                                                title={t('profile.blogManage.actions.restore')}
-                                                disabled={Boolean(actionKey)}
-                                                onClick={() => handleStatus(post, BLOG_STATUS.DRAFT, 'profile.blogManage.restored')}
-                                                className="grid h-8 w-8 place-items-center rounded-lg text-ink-faint transition hover:bg-accent-soft hover:text-accent disabled:opacity-50"
-                                            >
-                                                {isBusy && actionKey.includes(`status-${post.id}-${BLOG_STATUS.DRAFT}`)
-                                                    ? <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                                                    : <RotateCcw className="h-3.5 w-3.5" />}
-                                            </button>
-                                        ) : null}
-
-                                        {status !== BLOG_STATUS.TRASH ? (
-                                            <button
-                                                type="button"
-                                                title={t('profile.blogManage.actions.trash')}
-                                                disabled={Boolean(actionKey)}
-                                                onClick={() => setConfirmAction({ type: 'trash', post })}
-                                                className="grid h-8 w-8 place-items-center rounded-lg text-ink-faint transition hover:bg-danger-soft hover:text-danger disabled:opacity-50"
-                                            >
-                                                <Trash2 className="h-3.5 w-3.5" />
-                                            </button>
-                                        ) : (
-                                            <button
-                                                type="button"
-                                                title={t('profile.blogManage.actions.permanentDelete')}
-                                                disabled={Boolean(actionKey)}
-                                                onClick={() => setConfirmAction({ type: 'permanent', post })}
-                                                className="grid h-8 w-8 place-items-center rounded-lg text-ink-faint transition hover:bg-danger-soft hover:text-danger disabled:opacity-50"
-                                            >
-                                                <Trash2 className="h-3.5 w-3.5" />
-                                            </button>
-                                        )}
-                                    </div>
-                                );
+                                const items = [];
+                                if (status === BLOG_STATUS.PUBLISHED) {
+                                    items.push({
+                                        key: 'view',
+                                        label: t('profile.blogManage.actions.view'),
+                                        icon: Eye,
+                                        onClick: () => navigate(`/blog/${post.id}`),
+                                    });
+                                }
+                                if (status !== BLOG_STATUS.TRASH) {
+                                    items.push({
+                                        key: 'edit',
+                                        label: t('profile.blogManage.actions.edit'),
+                                        icon: FilePenLine,
+                                        disabled: Boolean(actionKey),
+                                        onClick: () => navigate(`/workspace/publish?id=${post.id}`),
+                                    });
+                                }
+                                if (status === BLOG_STATUS.DRAFT) {
+                                    items.push({
+                                        key: 'publish',
+                                        label: t('profile.blogManage.actions.publish'),
+                                        icon: Send,
+                                        disabled: Boolean(actionKey),
+                                        loading: isBusy && actionKey.includes(`status-${post.id}-${BLOG_STATUS.PUBLISHED}`),
+                                        onClick: () => handleStatus(post, BLOG_STATUS.PUBLISHED, 'profile.blogManage.published'),
+                                    });
+                                }
+                                if (status === BLOG_STATUS.PUBLISHED) {
+                                    items.push({
+                                        key: 'unpublish',
+                                        label: t('profile.blogManage.actions.unpublish'),
+                                        icon: Undo,
+                                        disabled: Boolean(actionKey),
+                                        loading: isBusy && actionKey.includes(`status-${post.id}-${BLOG_STATUS.DRAFT}`),
+                                        onClick: () => handleStatus(post, BLOG_STATUS.DRAFT, 'profile.blogManage.unpublished'),
+                                    });
+                                }
+                                if (status !== BLOG_STATUS.TRASH) {
+                                    items.push({
+                                        key: 'syncCsdn',
+                                        label: t('profile.blogManage.actions.syncCsdn'),
+                                        icon: CloudUpload,
+                                        disabled: Boolean(actionKey),
+                                        onClick: () => setCsdnPost(post),
+                                    });
+                                    items.push({
+                                        key: 'syncJuejin',
+                                        label: t('profile.blogManage.actions.syncJuejin'),
+                                        icon: CloudUpload,
+                                        disabled: Boolean(actionKey),
+                                        onClick: () => setJuejinPost(post),
+                                    });
+                                    items.push({
+                                        key: 'trash',
+                                        label: t('profile.blogManage.actions.trash'),
+                                        icon: Trash2,
+                                        danger: true,
+                                        disabled: Boolean(actionKey),
+                                        onClick: () => setConfirmAction({ type: 'trash', post }),
+                                    });
+                                } else {
+                                    items.push({
+                                        key: 'restore',
+                                        label: t('profile.blogManage.actions.restore'),
+                                        icon: RotateCcw,
+                                        disabled: Boolean(actionKey),
+                                        loading: isBusy && actionKey.includes(`status-${post.id}-${BLOG_STATUS.DRAFT}`),
+                                        onClick: () => handleStatus(post, BLOG_STATUS.DRAFT, 'profile.blogManage.restored'),
+                                    });
+                                    items.push({
+                                        key: 'permanentDelete',
+                                        label: t('profile.blogManage.actions.permanentDelete'),
+                                        icon: Trash2,
+                                        danger: true,
+                                        disabled: Boolean(actionKey),
+                                        onClick: () => setConfirmAction({ type: 'permanent', post }),
+                                    });
+                                }
+                                return <RowActionsMenu actions={items} size="sm" />;
                             },
                         },
                     ]}

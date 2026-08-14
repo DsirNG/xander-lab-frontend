@@ -24,11 +24,11 @@
 }
 
 .desktopNav {
-    @apply hidden md:block;
+    @apply hidden md:block lg:absolute lg:left-1/2 lg:-translate-x-1/2;
 }
 
 .navLinks {
-    @apply ml-10 flex items-baseline space-x-8;
+    @apply flex items-baseline space-x-6;
 }
 
 .navLink {

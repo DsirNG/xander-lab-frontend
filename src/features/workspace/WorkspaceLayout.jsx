@@ -42,8 +42,8 @@ const WorkspaceLayoutInner = () => {
           <span className="grid h-8 w-8 place-items-center rounded-xl bg-accent text-white transition group-hover:brightness-110">
             <Zap className="h-4 w-4" aria-hidden="true" />
           </span>
-          <span className="hidden text-base font-black tracking-tight text-ink sm:block">Xander Lab</span>
-          <span className="text-base font-black tracking-tight text-ink sm:hidden">{t('workspace.title')}</span>
+          <span className="hidden text-base font-bold tracking-tight text-ink sm:block">Xander Lab</span>
+          <span className="text-base font-bold tracking-tight text-ink sm:hidden">{t('workspace.title')}</span>
         </Link>
 
         <div className="flex items-center gap-1.5">
@@ -61,7 +61,7 @@ const WorkspaceLayoutInner = () => {
               key={item.to}
               to={item.to}
               className={({ isActive }) =>
-                `inline-flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
+                `inline-flex shrink-0 items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium transition ${
                   isActive ? 'bg-accent-soft text-accent' : 'text-ink-muted hover:bg-surface hover:text-ink-secondary'
                 }`
               }
@@ -75,7 +75,7 @@ const WorkspaceLayoutInner = () => {
 
       <div className="flex min-h-0 flex-1">
         {/* 桌面端左侧菜单 */}
-        <aside className="hidden w-60 shrink-0 flex-col border-r border-border bg-canvas p-3 lg:flex" aria-label={t('workspace.title')}>
+        <aside className="hidden w-52 shrink-0 flex-col border-r border-border bg-canvas p-2 lg:flex" aria-label={t('workspace.title')}>
           <div className="flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto">
             {MENU.map((item) => {
               const Icon = item.icon;
@@ -84,7 +84,7 @@ const WorkspaceLayoutInner = () => {
                   key={item.to}
                   to={item.to}
                   className={({ isActive }) =>
-                    `flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-semibold transition ${
+                    `flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-medium transition ${
                       isActive
                         ? 'bg-accent-soft text-accent'
                         : 'text-ink-muted hover:bg-surface hover:text-ink-secondary'
@@ -100,7 +100,7 @@ const WorkspaceLayoutInner = () => {
         </aside>
 
         {/* 右侧内容 */}
-        <main className="min-h-0 flex-1 overflow-y-auto bg-canvas">
+        <main className="min-h-0 flex-1 overflow-hidden bg-canvas">
           <Outlet />
         </main>
       </div>

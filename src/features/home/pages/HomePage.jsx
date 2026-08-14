@@ -7,7 +7,7 @@ import styles from './HomePage.module.css';
 
 const featureDefinitions = [
   { key: 'agent', to: '/workspace/agent', icon: CalendarClock },
-  { key: 'email', to: '/profile', icon: Mail },
+  { key: 'email', to: '/workspace/email-reminders', icon: Mail },
   { key: 'demo', to: '/workspace/studio/component', icon: Code2 },
 ];
 
@@ -24,7 +24,7 @@ function AgentPreview() {
 function EmailPreview() {
   const { t } = useTranslation();
   return <div className={styles.emailPreview} aria-hidden="true">
-    <div className={styles.mailMeta}><span>{t('home.previews.email.to')}</span><strong>{t('home.previews.email.subscribers')}</strong><span>CC</span></div>
+    <div className={styles.mailMeta}><span>{t('home.previews.email.to')}</span><strong>{t('home.previews.email.subscribers')}</strong><span>{t('home.previews.email.cc')}</span></div>
     <div className={styles.mailSubject}>{t('home.previews.email.subject')}</div>
     <div className={styles.mailBody}>{t('home.previews.email.greeting')}<br /><br />{t('home.previews.email.body')}<br /><br />— {t('home.previews.email.signature')}</div>
     <div className={styles.mailSchedule}><Send size={14} /> <span>{t('home.previews.email.schedule')}</span><span>10:00</span></div>

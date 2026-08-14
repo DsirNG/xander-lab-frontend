@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { AtSign, ChevronDown, Coins, Loader2, LogOut, Settings2, Shield, UserRound } from 'lucide-react';
+import { ChevronDown, Coins, Loader2, LogOut, Settings2, Shield, UserRound } from 'lucide-react';
 import { useAuthSession } from '@features/auth/context/authSessionContextValue';
 import { authService } from '@features/auth/services/authService';
 import { pointsService } from '@features/profile/services/pointsService';
@@ -11,12 +10,11 @@ const getDisplayName = (userInfo) => userInfo?.nickname || userInfo?.username ||
 
 /**
  * 顶栏用户区：头像 + 用户名 + 积分。点击展开浮框展示部分用户信息，
- * 提供个人中心 / 个人设置 / 退出登录入口。
+ * 提供个人设置 / 退出登录入口。
  */
 const UserMenu = ({ onOpenSettings }) => {
   const { t } = useTranslation();
   const toast = useToast();
-  const navigate = useNavigate();
   const { userInfo } = useAuthSession();
   const [open, setOpen] = useState(false);
   const [points, setPoints] = useState(null);
@@ -144,15 +142,6 @@ const UserMenu = ({ onOpenSettings }) => {
           </div>
 
           <div className="border-t border-border p-1.5">
-            <button
-              type="button"
-              role="menuitem"
-              onClick={() => { setOpen(false); navigate('/profile'); }}
-              className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-semibold text-ink-secondary transition hover:bg-surface-muted hover:text-ink"
-            >
-              <AtSign className="h-3.5 w-3.5" aria-hidden="true" />
-              {t('workspace.myProfile')}
-            </button>
             <button
               type="button"
               role="menuitem"

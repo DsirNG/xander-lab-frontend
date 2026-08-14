@@ -5,7 +5,6 @@ import {
     CheckCircle2,
     CirclePause,
     Clock3,
-    Loader2,
     Mail,
     Pause,
     Play,
@@ -18,6 +17,7 @@ import {
 import ConfirmModal from '@components/common/ConfirmModal';
 import CustomSelect from '@components/common/CustomSelect';
 import DataTable from '@components/common/DataTable';
+import RowActionsMenu from '@components/common/RowActionsMenu';
 import { useToast } from '@hooks/useToast';
 import { emailReminderService } from '../services/emailReminderService';
 import EmailReminderCreateModal from './EmailReminderCreateModal';
@@ -363,52 +363,37 @@ const EmailRemindersPanel = () => {
         {
             key: 'actions',
             title: t('profile.emailReminders.actions'),
-            width: '12%',
+            width: '8%',
             align: 'right',
             render: (reminder) => {
                 const status = normalizeStatus(reminder.status);
                 const canToggle = status === 'PENDING' || status === 'PAUSED';
                 const canDelete = status !== 'SENDING';
                 const isStatusLoading = actionKey === `status-${reminder.id}`;
-                return (
-                    <div className="flex items-center justify-end gap-0.5">
-                        {canToggle ? (
-                            <button
-                                type="button"
-                                onClick={() => handleStatusChange(reminder)}
-                                disabled={Boolean(actionKey)}
-                                title={status === 'PAUSED'
-                                    ? t('profile.emailReminders.resume')
-                                    : t('profile.emailReminders.pause')}
-                                aria-label={status === 'PAUSED'
-                                    ? t('profile.emailReminders.resume')
-                                    : t('profile.emailReminders.pause')}
-                                className="grid h-7 w-7 place-items-center rounded-md text-ink-faint transition hover:bg-accent-soft hover:text-accent disabled:opacity-50"
-                            >
-                                {isStatusLoading ? (
-                                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                                ) : status === 'PAUSED' ? (
-                                    <Play className="h-3.5 w-3.5" />
-                                ) : (
-                                    <Pause className="h-3.5 w-3.5" />
-                                )}
-                            </button>
-                        ) : null}
-
-                        {canDelete ? (
-                            <button
-                                type="button"
-                                onClick={() => setPendingDelete(reminder)}
-                                disabled={Boolean(actionKey)}
-                                title={t('profile.emailReminders.delete')}
-                                aria-label={t('profile.emailReminders.delete')}
-                                className="grid h-7 w-7 place-items-center rounded-md text-ink-faint transition hover:bg-danger-soft hover:text-danger disabled:opacity-50"
-                            >
-                                <Trash2 className="h-3.5 w-3.5" />
-                            </button>
-                        ) : null}
-                    </div>
-                );
+                const items = [];
+                if (canToggle) {
+                    items.push({
+                        key: 'toggle',
+                        label: status === 'PAUSED'
+                            ? t('profile.emailReminders.resume')
+                            : t('profile.emailReminders.pause'),
+                        icon: status === 'PAUSED' ? Play : Pause,
+                        disabled: Boolean(actionKey),
+                        loading: isStatusLoading,
+                        onClick: () => handleStatusChange(reminder),
+                    });
+                }
+                if (canDelete) {
+                    items.push({
+                        key: 'delete',
+                        label: t('profile.emailReminders.delete'),
+                        icon: Trash2,
+                        danger: true,
+                        disabled: Boolean(actionKey),
+                        onClick: () => setPendingDelete(reminder),
+                    });
+                }
+                return <RowActionsMenu actions={items} size="sm" />;
             },
         },
     ], [actionKey, formatDate, formatSchedule, handleStatusChange, setPendingDelete, t]);

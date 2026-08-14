@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Japanese translations
  * 日本語翻訳リソース
  */
@@ -222,6 +222,8 @@ export default {
   common: {
     confirm: '確認',
     cancel: 'キャンセル',
+    close: '閉じる',
+    save: '保存',
     pagination: {
       pageInfo: '{{from}}-{{to}} / 全 {{total}} 件',
       pageSizeOption: '{{size}} 件/ページ',
@@ -229,6 +231,8 @@ export default {
       nextPage: '次へ'
     },
     backHome: 'ホームに戻る',
+    reset: 'リセット',
+    resetDemo: 'デモをリセット',
     backToInfra: 'インフラに戻る',
     backToComponents: 'コンポーネントに戻る',
     goBack: '戻る',
@@ -262,6 +266,8 @@ export default {
       copy: 'コードをコピー',
       copied: 'コピーしました',
       previewFrame: '{{language}} プレビュー',
+      hideCode: 'コードを隠す',
+      viewCode: 'コードを見る',
     },
     errorBoundary: {
       title: 'エラーが発生しました',
@@ -312,7 +318,11 @@ export default {
       codeAuth: '確認コード',
       login: 'ログイン',
       backToLobby: 'ロビーに戻る',
-      techBlog: '技術ブログ'
+      techBlog: '技術ブログ',
+      unifiedAuth: '統合認証',
+      systemStatus: 'システムステータス:',
+      systemSecure: '安全',
+      identityGateway: 'アイデンティティゲートウェイ'
     }
   },
   workspace: {
@@ -1048,9 +1058,31 @@ export default {
     },
     previews: {
       agent: { newTask: '新しいタスク', saved: '保存済み', topic: 'テーマ', topicValue: 'アクセシブルなコンポーネントを作る', schedule: 'スケジュール', scheduleValue: '毎週月曜 · 09:00', article: '記事', generating: '生成中', nextRun: '● 次回実行：2026年5月26日', synced: '同期済み' },
-      email: { to: '宛先', subscribers: '購読者', subject: 'Xander Lab 週間アップデート', greeting: 'こんにちは、', body: '今週のアップデートをお届けします。', signature: 'Xander Lab チーム', schedule: '毎週金曜' },
+      email: { to: '宛先', subscribers: '購読者', cc: 'CC', subject: 'Xander Lab 週間アップデート', greeting: 'こんにちは、', body: '今週のアップデートをお届けします。', signature: 'Xander Lab チーム', schedule: '毎週金曜' },
       demo: { preview: 'プレビュー', code: 'コード', button: 'ボタン', primary: 'プライマリ', secondary: 'セカンダリ', ghost: 'ゴースト' }
     },
     articles: { title: '最新記事', all: 'すべての記事を見る', items: { accessibility: { date: '2026年5月18日', title: 'アクセシブルなコンポーネントを作る', tag: '開発' }, designTokens: { date: '2026年5月11日', title: 'デザイントークンの実践', tag: 'デザイン' }, automation: { date: '2026年5月4日', title: '予約で日常業務を自動化する', tag: '生産性' } } }
+  },
+  seo: {
+    home: {
+      title: 'UI インフラとインタラクティブコンポーネントショーケース',
+      description: 'Xander Lab の UI インフラ、React コンポーネント、ドラッグ＆ドロップシステム、アンカーオーバーレイ、フロントエンドアーキテクチャのデモを紹介します。',
+    },
+    infra: {
+      title: 'UI インフラストラクチャシステム',
+      description: 'Xander Lab が再利用可能な UI インフラ、位置決めシステム、堅牢なフロントエンドアーキテクチャにどう取り組むかを学べます。',
+    },
+    modules: {
+      title: 'インタラクティブフロントエンドモジュール',
+      description: 'Xander Lab で React を使って作られた実践的なフロントエンドモジュールとインタラクティブデモを探索します。',
+    },
+    components: {
+      title: 'React コンポーネントショーケース',
+      description: 'Xander Lab の再利用可能な React コンポーネント、実装ガイド、インタラクティブ UI の例を閲覧できます。',
+    },
+    default: {
+      title: 'フロントエンドエンジニアリングリソース',
+      description: 'Xander Lab のフロントエンドエンジニアリングリソースとインタラクティブ UI デモを探索します。',
+    },
   }
 };

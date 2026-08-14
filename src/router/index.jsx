@@ -37,7 +37,6 @@ const ProjectUploadPage = React.lazy(() => import('@features/studio/pages/Projec
 const ComponentUploadPage = React.lazy(() => import('@features/studio/pages/ComponentUploadPage'));
 const CompilerPage = React.lazy(() => import('@features/studio/pages/CompilerPage'));
 const PublicSourcePage = React.lazy(() => import('@features/studio/pages/PublicSourcePage'));
-const ProfilePage = React.lazy(() => import('@features/profile/pages/ProfilePage'));
 const Img2ThreePage = React.lazy(() => import('@features/img2three/pages/Img2ThreePage'));
 const WorkspaceLayout = React.lazy(() => import('@features/workspace/WorkspaceLayout'));
 const BlogManagePage = React.lazy(() => import('@features/workspace/pages/BlogManagePage'));
@@ -128,10 +127,6 @@ export const createRouter = () => {
       moduleRoutes,
       componentRoutes,
       blogRoutes,
-      {
-        path: 'profile',
-        element: <ProtectedPage page={<ProfilePage />} />,
-      },
       {
         path: '*',
         element: <LazyPage><NotFoundPage /></LazyPage>,

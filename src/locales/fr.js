@@ -1,4 +1,4 @@
-/**
+﻿/**
  * French translations
  * Traductions françaises
  */
@@ -222,6 +222,8 @@ export default {
   common: {
     confirm: 'Confirmer',
     cancel: 'Annuler',
+    close: 'Fermer',
+    save: 'Enregistrer',
     pagination: {
       pageInfo: '{{from}}-{{to}} sur {{total}}',
       pageSizeOption: '{{size}} par page',
@@ -229,6 +231,8 @@ export default {
       nextPage: 'Suivant'
     },
     backHome: 'Retour à l\'accueil',
+    reset: 'Réinitialiser',
+    resetDemo: 'Réinitialiser la démo',
     backToInfra: 'Retour à l\'infrastructure',
     backToComponents: 'Retour aux composants',
     goBack: 'Retour',
@@ -262,6 +266,8 @@ export default {
       copy: 'Copier le code',
       copied: 'Copié',
       previewFrame: 'Aperçu {{language}}',
+      hideCode: 'Masquer le code',
+      viewCode: 'Voir le code',
     },
     errorBoundary: {
       title: 'Une erreur est survenue',
@@ -312,7 +318,11 @@ export default {
       codeAuth: 'Code de v\u00e9rification',
       login: 'Connexion',
       backToLobby: 'Retour à l\'accueil',
-      techBlog: 'Blog technique'
+      techBlog: 'Blog technique',
+      unifiedAuth: 'Authentification unifiée',
+      systemStatus: 'État du système :',
+      systemSecure: 'Sécurisé',
+      identityGateway: 'Passerelle d\'identité'
     }
   },
   workspace: {
@@ -1048,9 +1058,31 @@ export default {
     },
     previews: {
       agent: { newTask: 'Nouvelle tâche', saved: 'Enregistré', topic: 'Sujet', topicValue: 'Créer des composants accessibles', schedule: 'Planification', scheduleValue: 'Chaque lundi · 09:00', article: 'Article', generating: 'Génération', nextRun: '● Prochaine exécution : 26 mai 2026', synced: 'Synchronisé' },
-      email: { to: 'À', subscribers: 'Abonnés', subject: 'Mise à jour hebdomadaire de Xander Lab', greeting: 'Bonjour,', body: 'Voici notre mise à jour de la semaine.', signature: 'L’équipe Xander Lab', schedule: 'Chaque vendredi' },
+      email: { to: 'À', subscribers: 'Abonnés', cc: 'CC', subject: 'Mise à jour hebdomadaire de Xander Lab', greeting: 'Bonjour,', body: 'Voici notre mise à jour de la semaine.', signature: 'L’équipe Xander Lab', schedule: 'Chaque vendredi' },
       demo: { preview: 'Aperçu', code: 'Code', button: 'Bouton', primary: 'Principal', secondary: 'Secondaire', ghost: 'Fantôme' }
     },
     articles: { title: 'Derniers articles', all: 'Voir tous les articles', items: { accessibility: { date: '18 mai 2026', title: 'Créer des composants accessibles', tag: 'Développement' }, designTokens: { date: '11 mai 2026', title: 'Les design tokens en pratique', tag: 'Design' }, automation: { date: '4 mai 2026', title: 'Automatiser votre travail planifié', tag: 'Productivité' } } }
+  },
+  seo: {
+    home: {
+      title: 'Infrastructure UI et présentation de composants interactifs',
+      description: 'Découvrez l\'infrastructure UI de Xander Lab, les composants React, les systèmes de glisser-déposer, les overlays ancrés et les démonstrations d\'architecture frontend.',
+    },
+    infra: {
+      title: 'Systèmes d\'infrastructure UI',
+      description: 'Découvrez comment Xander Lab aborde l\'infrastructure UI réutilisable, les systèmes de positionnement et l\'architecture frontend résiliente.',
+    },
+    modules: {
+      title: 'Modules frontend interactifs',
+      description: 'Explorez des modules frontend pratiques et des démonstrations interactives construites avec React chez Xander Lab.',
+    },
+    components: {
+      title: 'Vitrine de composants React',
+      description: 'Parcourez les composants React réutilisables, les guides d\'implémentation et les exemples UI interactifs de Xander Lab.',
+    },
+    default: {
+      title: 'Ressources d\'ingénierie frontend',
+      description: 'Explorez les ressources d\'ingénierie frontend et les démonstrations UI interactives de Xander Lab.',
+    },
   }
 };

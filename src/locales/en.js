@@ -1,4 +1,4 @@
-/**
+﻿/**
  * English translations
  * 英语翻译资源
  */
@@ -230,6 +230,8 @@ export default {
   common: {
     confirm: 'Confirm',
     cancel: 'Cancel',
+    close: 'Close',
+    save: 'Save',
     pagination: {
       pageInfo: '{{from}}-{{to}} of {{total}}',
       pageSizeOption: '{{size}} per page',
@@ -237,6 +239,8 @@ export default {
       nextPage: 'Next'
     },
     backHome: 'Back to Home',
+    reset: 'Reset',
+    resetDemo: 'Reset demo',
     backToInfra: 'Back to Infrastructure',
     backToComponents: 'Back to Components',
     goBack: 'Go Back',
@@ -270,6 +274,8 @@ export default {
       copy: 'Copy code',
       copied: 'Copied',
       previewFrame: '{{language}} preview',
+      hideCode: 'Hide code',
+      viewCode: 'View code',
     },
     errorBoundary: {
       title: 'Something went wrong',
@@ -320,7 +326,11 @@ export default {
       codeAuth: 'Verification Code',
       login: 'Log In',
       backToLobby: 'Back to Lobby',
-      techBlog: 'Tech Blog'
+      techBlog: 'Tech Blog',
+      unifiedAuth: 'Unified Auth',
+      systemStatus: 'System Status:',
+      systemSecure: 'Secure',
+      identityGateway: 'Identity Gateway'
     }
   },
   workspace: {
@@ -382,6 +392,7 @@ export default {
       articleColumn: 'Post',
       category: 'Category',
       statusLabel: 'Status',
+      emptyTitle: 'No articles yet',
       emptyHint: 'Create a new article from here or the blog home page.',
       emptyTrash: 'Recycle bin is empty',
       emptyTrashHint: 'Soft-deleted posts appear here.',
@@ -1055,9 +1066,31 @@ export default {
     },
     previews: {
       agent: { newTask: 'New task', saved: 'Saved', topic: 'Topic', topicValue: 'Building accessible components', schedule: 'Schedule', scheduleValue: 'Every Monday · 09:00', article: 'Article', generating: 'Generating', nextRun: '● Next run: May 26, 2026', synced: 'Synced' },
-      email: { to: 'To', subscribers: 'Subscribers', subject: 'Weekly update from Xander Lab', greeting: 'Hi there,', body: "Here's your weekly update.", signature: 'The Xander Lab Team', schedule: 'Every Friday' },
+      email: { to: 'To', subscribers: 'Subscribers', cc: 'CC', subject: 'Weekly update from Xander Lab', greeting: 'Hi there,', body: "Here's your weekly update.", signature: 'The Xander Lab Team', schedule: 'Every Friday' },
       demo: { preview: 'Preview', code: 'Code', button: 'Button', primary: 'Primary', secondary: 'Secondary', ghost: 'Ghost' }
     },
     articles: { title: 'Latest Articles', all: 'View all articles', items: { accessibility: { date: 'May 18, 2026', title: 'Building Accessible Components', tag: 'Development' }, designTokens: { date: 'May 11, 2026', title: 'Design Tokens in Practice', tag: 'Design' }, automation: { date: 'May 4, 2026', title: 'Automate Your Workflow with Schedules', tag: 'Productivity' } } }
+  },
+  seo: {
+    home: {
+      title: 'UI Infrastructure & Interactive Component Showcase',
+      description: 'Explore Xander Lab UI infrastructure, React components, drag-and-drop systems, anchored overlays, and frontend architecture demonstrations.',
+    },
+    infra: {
+      title: 'UI Infrastructure Systems',
+      description: 'Learn how Xander Lab approaches reusable UI infrastructure, positioning systems, and resilient frontend architecture.',
+    },
+    modules: {
+      title: 'Interactive Frontend Modules',
+      description: 'Explore practical frontend modules and interactive demonstrations built with React at Xander Lab.',
+    },
+    components: {
+      title: 'React Component Showcase',
+      description: 'Browse reusable React components, implementation guides, and interactive UI examples from Xander Lab.',
+    },
+    default: {
+      title: 'Frontend Engineering Resource',
+      description: "Explore Xander Lab's frontend engineering resources and interactive UI demonstrations.",
+    },
   }
 };
