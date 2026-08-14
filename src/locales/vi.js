@@ -38,6 +38,8 @@ export default {
     noArticlesHint: 'Thử điều chỉnh từ khóa hoặc chọn danh mục khác.',
     viewAll: 'Xem tất cả',
     articleNotFound: 'Bài viết không tồn tại hoặc đã bị xóa.',
+    unsavedLeaveTitle: 'Hủy các thay đổi chưa lưu?',
+    unsavedLeaveMessage: 'Nội dung đang chỉnh sửa chưa được lưu. Rời khỏi sẽ mất các thay đổi này.',
     backToBlog: 'Quay lại Blog',
     pureReading: 'Đọc thuần túy',
     exitPureReading: 'Thoát đọc thuần túy',

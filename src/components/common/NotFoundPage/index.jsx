@@ -1,6 +1,7 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import useBack from '@/hooks/useBack';
 
 /**
  * 404 页面
@@ -8,15 +9,7 @@ import { useTranslation } from 'react-i18next';
  */
 const NotFoundPage = () => {
   const { t } = useTranslation();
-  const navigate = useNavigate();
-
-  const handleGoBack = () => {
-    if (window.history.state?.idx > 0) {
-      navigate(-1);
-    } else {
-      navigate('/');
-    }
-  };
+  const handleGoBack = useBack('/');
 
   return (
     <div className="min-h-[60vh] flex items-center justify-center p-6">

@@ -6,7 +6,7 @@
 
 import React from 'react';
 import { ArrowLeft } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import useBack from '@/hooks/useBack';
 
 const DEFAULT_BACK_LABEL = '返回 Studio';
 
@@ -17,15 +17,7 @@ export default function StudioTopBar({
   fallbackTo = '/workspace/studio',
   children,
 }) {
-  const navigate = useNavigate();
-
-  const handleBack = () => {
-    if (window.history.state?.idx > 0) {
-      navigate(-1);
-    } else {
-      navigate(fallbackTo);
-    }
-  };
+  const handleBack = useBack(fallbackTo);
 
   return (
     <div className="flex shrink-0 items-center justify-between border-b border-border bg-canvas px-4 py-3 sm:px-6">

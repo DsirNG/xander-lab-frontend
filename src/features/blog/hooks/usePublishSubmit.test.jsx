@@ -94,7 +94,7 @@ describe('usePublishSubmit 发布流程', () => {
     expect(blogServiceMock.updateBlog).toHaveBeenCalledWith(7, expect.objectContaining({ publish: true }))
     expect(blogServiceMock.updateBlogStatus).toHaveBeenCalledWith(7, 1)
     expect(blogServiceMock.publishBlog).not.toHaveBeenCalled()
-    expect(navigateMock).toHaveBeenCalledWith('/profile')
+    expect(navigateMock).toHaveBeenCalledWith('/workspace/blog-manage')
   })
 })
 
@@ -166,7 +166,7 @@ describe('usePublishSubmit 发布失败降级', () => {
 })
 
 describe('usePublishSubmit 保存草稿', () => {
-  it('新帖：发布草稿成功并跳转个人页', async () => {
+  it('新帖：发布草稿成功并跳转博客管理', async () => {
     blogServiceMock.publishBlog.mockResolvedValue({})
     const { result } = renderHook(() => usePublishSubmitHook(defaultProps))
 
@@ -177,7 +177,7 @@ describe('usePublishSubmit 保存草稿', () => {
     expect(blogServiceMock.publishBlog).toHaveBeenCalledWith(expect.objectContaining({ publish: false }))
     expect(consumeDraft).toHaveBeenCalled()
     expect(toast.success).toHaveBeenCalledWith('t:blog.saveDraftServerSuccess')
-    expect(navigateMock).toHaveBeenCalledWith('/profile')
+    expect(navigateMock).toHaveBeenCalledWith('/workspace/blog-manage')
   })
 
   it('编辑模式：更新文章为草稿状态', async () => {

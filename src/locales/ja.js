@@ -38,6 +38,8 @@ export default {
     noArticlesHint: '検索キーワードを変更するか、別のカテゴリーを選択してください。',
     viewAll: 'すべての記事を見る',
     articleNotFound: '記事が見つからないか削除されました。',
+    unsavedLeaveTitle: '未保存の変更を破棄しますか？',
+    unsavedLeaveMessage: '編集中の内容はまだ保存されていません。離れると変更は失われます。',
     backToBlog: 'ブログに戻る',
     pureReading: '集中読書',
     exitPureReading: '集中読書を終了',

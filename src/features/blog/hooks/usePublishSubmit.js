@@ -36,7 +36,7 @@ const usePublishSubmit = ({ formData, isEditMode, editId, toast, consumeDraft })
                 await blogService.updateBlog(editId, buildPayload(true));
                 await blogService.updateBlogStatus(editId, BLOG_STATUS.PUBLISHED);
                 toast.success(t('blog.publishSuccess'));
-                navigate('/profile');
+                navigate('/workspace/blog-manage');
                 return;
             }
 
@@ -88,14 +88,14 @@ const usePublishSubmit = ({ formData, isEditMode, editId, toast, consumeDraft })
                 await blogService.updateBlog(editId, buildPayload(false));
                 await blogService.updateBlogStatus(editId, BLOG_STATUS.DRAFT);
                 toast.success(t('blog.saveDraftServerSuccess'));
-                navigate('/profile');
+                navigate('/workspace/blog-manage');
                 return;
             }
 
             await blogService.publishBlog(buildPayload(false));
             consumeDraft();
             toast.success(t('blog.saveDraftServerSuccess'));
-            navigate('/profile');
+            navigate('/workspace/blog-manage');
         } catch (err) {
             if (!isEditMode) {
                 if (saveDraft(formData)) {

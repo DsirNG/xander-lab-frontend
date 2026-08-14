@@ -38,6 +38,8 @@ export default {
     noArticlesHint: 'Essayez d\'ajuster vos termes de recherche ou de sélectionner une autre catégorie.',
     viewAll: 'Voir tous les articles',
     articleNotFound: 'Article introuvable ou supprimé.',
+    unsavedLeaveTitle: 'Abandonner les modifications non enregistrées ?',
+    unsavedLeaveMessage: 'Vos modifications ne sont pas enregistrées. Quitter entraînera leur perte.',
     backToBlog: 'Retour au blog',
     pureReading: 'Lecture pure',
     exitPureReading: 'Quitter la lecture pure',

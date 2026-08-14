@@ -4,7 +4,10 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { Tag, Hash, ChevronLeft, FileText } from 'lucide-react';
 import { blogService } from '../services/blogService';
 import BlogCard from '../components/BlogCard';
+import Pagination from '@components/common/Pagination';
 import SEOHead from '@components/seo/SEOHead';
+
+const PAGE_SIZE = 10;
 
 const tagLevelStyles = {
     1: 'text-xs px-2.5 py-1',
@@ -23,6 +26,8 @@ const BlogTags = () => {
     const [searchParams] = useSearchParams();
     const [allTags, setAllTags] = useState([]);
     const [filteredBlogs, setFilteredBlogs] = useState([]);
+    const [filteredTotal, setFilteredTotal] = useState(0);
+    const [page, setPage] = useState(1);
     const [loading, setLoading] = useState(true);
     const [blogsLoading, setBlogsLoading] = useState(false);
 
@@ -48,10 +53,11 @@ const BlogTags = () => {
         return () => controller.abort();
     }, []);
 
-    // 根据选中标签加载文章
+    // 根据选中标签加载文章（分页）
     useEffect(() => {
         if (!activeTag) {
             setFilteredBlogs([]);
+            setFilteredTotal(0);
             return;
         }
 
@@ -61,15 +67,17 @@ const BlogTags = () => {
             setBlogsLoading(true);
             try {
                 const data = await blogService.getBlogs(
-                    { tag: activeTag, size: 20 },
+                    { tag: activeTag, page, size: PAGE_SIZE },
                     { signal: controller.signal }
                 );
                 // 此时 data 是 PageData 对象
                 setFilteredBlogs(data.records || []);
+                setFilteredTotal(Number(data.total) || 0);
             } catch (error) {
                 if (error.name === 'CanceledError' || error.code === 'ERR_CANCELED') return;
                 console.error('Failed to fetch blogs by tag:', error);
                 setFilteredBlogs([]);
+                setFilteredTotal(0);
             } finally {
                 setBlogsLoading(false);
             }
@@ -77,6 +85,11 @@ const BlogTags = () => {
         fetchBlogs();
 
         return () => controller.abort();
+    }, [activeTag, page]);
+
+    // 切换标签时回到第一页
+    useEffect(() => {
+        setPage(1);
     }, [activeTag]);
 
     // 根据文章数量计算标签大小等级 (1-5)
@@ -173,7 +186,7 @@ const BlogTags = () => {
                             {t('blog.tagArticles', { tag: activeTag })}
                         </div>
                         <span className="text-micro font-medium px-2 py-0.5 rounded-full bg-accent/10 text-accent">
-                            {blogsLoading ? '...' : (filteredBlogs?.length || 0)}
+                            {blogsLoading ? '...' : (filteredTotal || 0)}
                         </span>
                     </div>
 
@@ -184,11 +197,20 @@ const BlogTags = () => {
                             ))}
                         </div>
                     ) : filteredBlogs.length > 0 ? (
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            {filteredBlogs.map(blog => (
-                                <BlogCard key={blog.id} blog={blog} />
-                            ))}
-                        </div>
+                        <>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {filteredBlogs.map(blog => (
+                                    <BlogCard key={blog.id} blog={blog} />
+                                ))}
+                            </div>
+                            <Pagination
+                                page={page}
+                                pageSize={PAGE_SIZE}
+                                total={filteredTotal}
+                                onPageChange={setPage}
+                                hideWhenEmpty
+                            />
+                        </>
                     ) : (
                         <div className="text-center py-10 text-sm text-ink-muted">
                             {t('blog.noArticles')}

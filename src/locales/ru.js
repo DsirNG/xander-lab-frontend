@@ -38,6 +38,8 @@ export default {
     noArticlesHint: 'Попробуйте изменить поисковый запрос или выбрать другую категорию.',
     viewAll: 'Все статьи',
     articleNotFound: 'Статья не найдена или удалена.',
+    unsavedLeaveTitle: 'Отменить несохранённые изменения?',
+    unsavedLeaveMessage: 'Изменения не сохранены. При выходе они будут потеряны.',
     backToBlog: 'Назад к блогу',
     pureReading: 'Чистое чтение',
     exitPureReading: 'Выйти из чистого чтения',

@@ -96,7 +96,7 @@ const BlogPlans = () => {
                           <span>{t('blogPlans.topicsQueue')}: {plan.topics.length}{t('blogPlans.topicsQueueUnit')}</span>
                         )}
                         {plan.runOnce && (
-                          <span className="rounded-full bg-indigo-100 px-2 py-0.5 text-xs font-medium text-indigo-600 dark:bg-indigo-900/40 dark:text-indigo-300">
+                          <span className="rounded-full bg-accent-soft px-2 py-0.5 text-xs font-medium text-accent-fg">
                             {t('blogPlans.oneShot')}
                           </span>
                         )}

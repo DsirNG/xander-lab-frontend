@@ -36,9 +36,11 @@ const ToastGuide = ({ componentId }) => {
         <div className="min-h-screen bg-slate-50  pb-20">
             <div className="max-w-6xl mx-auto pt-10 px-6">
                 {/* Navigation */}
-                <Link to={`/components/${componentId}`} className="inline-flex items-center text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-primary mb-8 transition-colors group">
-                    <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
-                    {t('components.toast.guide.back')}
+                <Link to={`/components/${componentId}`} className="inline-flex items-center text-micro font-black uppercase tracking-widest text-ink-faint hover:text-accent mb-8 transition-all group">
+                    <div className="w-8 h-8 rounded-full border border-border flex items-center justify-center mr-3 group-hover:border-accent/30 group-hover:bg-accent/5">
+                        <ArrowLeft className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-1" />
+                    </div>
+                    {t('common.backToComponents')}
                 </Link>
 
                 {/* Header */}

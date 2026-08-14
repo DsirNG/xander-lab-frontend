@@ -5,6 +5,12 @@ import { motion } from 'framer-motion';
 import { Zap, MousePointer2 } from 'lucide-react';
 import PropTypes from 'prop-types';
 
+const THEME_TEXT = {
+    accent: 'text-accent',
+    'blue-600': 'text-blue-600',
+    'emerald-600': 'text-emerald-600',
+};
+
 /**
  * 通用内容布局组件
  * 用于基础设施、功能模块、组件库等展示页面
@@ -62,7 +68,7 @@ const ContentLayout = ({
 
             {/* 场景演示分隔线 */}
             <div className="space-y-4 mb-10">
-                <div className={`text-caption font-black uppercase tracking-[0.2em] text-${themeColor} flex items-center`}>
+                <div className={`text-caption font-black uppercase tracking-[0.2em] ${THEME_TEXT[themeColor] || 'text-accent'} flex items-center`}>
                     <MousePointer2 className="w-3 h-3 mr-2" />
                     {t('common.liveScenarios')}
                 </div>

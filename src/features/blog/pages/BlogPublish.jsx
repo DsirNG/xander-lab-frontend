@@ -10,6 +10,7 @@ import usePublishSubmit from '../hooks/usePublishSubmit';
 import { useToast } from '@/hooks/useToast';
 import useIsMobile from '@hooks/useIsMobile';
 import LoadingSpinner from '@components/common/LoadingSpinner';
+import ConfirmModal from '@components/common/ConfirmModal';
 
 /**
  * 博客发布 / 编辑页面
@@ -25,8 +26,10 @@ const BlogPublish = () => {
     const [isPreview, setIsPreview] = useState(false);
     const isMobile = useIsMobile();
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+    const [confirmLeaveOpen, setConfirmLeaveOpen] = useState(false);
     const toggleSettings = () => setIsSettingsOpen(prev => !prev);
     const editorRef = useRef(null);
+    const dirtyRef = useRef(false);
 
     const { formData, setField, resetFromPost, setDefaultCategory, draftStatus, isDraftStatusVisible, consumeDraft } = usePublishForm({ isEditMode });
 
@@ -54,12 +57,43 @@ const BlogPublish = () => {
         if (!isMobile) setIsSettingsOpen(false);
     }, [isMobile]);
 
-    const handleBack = () => {
+    const markDirty = useCallback((field, value) => {
+        if (isEditMode) dirtyRef.current = true;
+        setField(field, value);
+    }, [isEditMode, setField]);
+
+    // 编辑模式：未保存的修改在刷新/关闭时提醒，返回前二次确认
+    useEffect(() => {
+        if (!isEditMode) return undefined;
+        const warnBeforeUnload = (event) => {
+            if (!dirtyRef.current) return;
+            event.preventDefault();
+            event.returnValue = '';
+        };
+        window.addEventListener('beforeunload', warnBeforeUnload);
+        return () => window.removeEventListener('beforeunload', warnBeforeUnload);
+    }, [isEditMode]);
+
+    const leavePage = () => {
         if (window.history.state?.idx > 0) {
             navigate(-1);
         } else {
             navigate(isEditMode ? '/workspace/blog-manage' : '/workspace');
         }
+    };
+
+    const handleBack = () => {
+        if (isEditMode && dirtyRef.current) {
+            setConfirmLeaveOpen(true);
+            return;
+        }
+        leavePage();
+    };
+
+    const handleConfirmLeave = () => {
+        dirtyRef.current = false;
+        setConfirmLeaveOpen(false);
+        leavePage();
     };
 
     if (pageLoading) {
@@ -92,9 +126,9 @@ const BlogPublish = () => {
                         }}
                         onPreviewMode={() => setIsPreview(true)}
                         title={formData.title}
-                        onTitleChange={(title) => setField('title', title)}
+                        onTitleChange={(title) => markDirty('title', title)}
                         content={formData.content}
-                        onContentChange={(content) => setField('content', content)}
+                        onContentChange={(content) => markDirty('content', content)}
                         disabled={loading}
                     />
                 </main>
@@ -105,10 +139,20 @@ const BlogPublish = () => {
                     categories={categories}
                     availableTags={availableTags}
                     values={formData}
-                    onChange={setField}
+                    onChange={markDirty}
                     onToggleSettings={toggleSettings}
                 />
             </div>
+
+            <ConfirmModal
+                isOpen={confirmLeaveOpen}
+                onClose={() => setConfirmLeaveOpen(false)}
+                onConfirm={handleConfirmLeave}
+                title={t('blog.unsavedLeaveTitle')}
+                message={t('blog.unsavedLeaveMessage')}
+                confirmText={t('common.confirm')}
+                cancelText={t('common.cancel')}
+            />
         </div>
     );
 };

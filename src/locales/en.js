@@ -38,6 +38,8 @@ export default {
     noArticlesHint: 'Try adjusting your search terms or selecting a different category.',
     viewAll: 'View All Posts',
     articleNotFound: 'Article not found or has been removed.',
+    unsavedLeaveTitle: 'Discard unsaved changes?',
+    unsavedLeaveMessage: 'Your edits have not been saved. Leaving now will discard them.',
     backToBlog: 'Back to Blog',
     pureReading: 'Pure Reading',
     exitPureReading: 'Exit Pure Reading',

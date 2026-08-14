@@ -38,6 +38,8 @@ export default {
     noArticlesHint: '试试调整搜索关键词或选择其他分类',
     viewAll: '查看全部文章',
     articleNotFound: '文章不存在或已被删除',
+    unsavedLeaveTitle: '放弃未保存的修改？',
+    unsavedLeaveMessage: '当前编辑内容尚未保存，离开后将丢失这些修改。',
     backToBlog: '返回博客',
     pureReading: '纯净阅读',
     exitPureReading: '退出纯净阅读',

@@ -15,6 +15,7 @@ import {
   FolderKanban,
   Sparkles,
 } from 'lucide-react';
+import useBack from '@/hooks/useBack';
 import {
   fetchProjects,
   getStatusColor,
@@ -44,6 +45,7 @@ const entryCards = [
 
 export default function StudioPage() {
   const navigate = useNavigate();
+  const backToWorkspace = useBack('/workspace');
   const [projects, setProjects] = useState([]);
 
   const loadProjects = useCallback(async () => {
@@ -64,7 +66,7 @@ export default function StudioPage() {
       <header className="mb-6">
         <button
           type="button"
-          onClick={() => (window.history.state?.idx > 0 ? navigate(-1) : navigate('/workspace'))}
+          onClick={backToWorkspace}
           title="返回上一页"
           aria-label="返回上一页"
           className="mb-3 inline-flex items-center gap-2 rounded-full bg-accent/5 px-3 py-1 text-micro font-bold uppercase tracking-widest text-accent transition-colors hover:bg-accent/10"
