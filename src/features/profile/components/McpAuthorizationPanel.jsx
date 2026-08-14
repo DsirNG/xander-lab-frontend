@@ -12,6 +12,7 @@ const McpAuthorizationPanel = () => {
   const toast = useToast()
   const [copiedEndpoint, setCopiedEndpoint] = useState(null)
   const [oauthRequest, setOauthRequest] = useState(null)
+  const [selectedScopes, setSelectedScopes] = useState([])
   const [oauthBusy, setOauthBusy] = useState(false)
   const [clients, setClients] = useState([])
   const [revokingClient, setRevokingClient] = useState(null)
@@ -28,7 +29,11 @@ const McpAuthorizationPanel = () => {
     if (!requestId) return undefined
     let active = true
     mcpOAuthService.getAuthorizationRequest(requestId)
-      .then((request) => active && setOauthRequest({ ...request, requestId }))
+      .then((request) => {
+        if (!active) return
+        setOauthRequest({ ...request, requestId })
+        setSelectedScopes(preselectScopes(request.scopes, request.previouslyGranted))
+      })
       .catch((error) => active && toast.error(error?.message || t('profile.mcp.consentLoadFailed')))
     return () => { active = false }
   }, [t, toast])
@@ -41,12 +46,27 @@ const McpAuthorizationPanel = () => {
     return () => { active = false }
   }, [])
 
+  // Preselect scopes granted previously; a fresh client defaults to everything it requested.
+  const preselectScopes = (requested, previouslyGranted) => {
+    const requestedScopes = Array.isArray(requested) ? [...requested] : []
+    if (!requestedScopes.length) return []
+    const prior = Array.isArray(previouslyGranted) ? previouslyGranted : []
+    const inherited = prior.length ? requestedScopes.filter((scope) => prior.includes(scope)) : []
+    return inherited.length ? inherited : requestedScopes
+  }
+
+  const toggleScope = (scope) => {
+    setSelectedScopes((current) => current.includes(scope)
+      ? current.filter((item) => item !== scope)
+      : [...current, scope])
+  }
+
   const completeOAuthRequest = async (approve) => {
-    if (!oauthRequest || oauthBusy) return
+    if (!oauthRequest || oauthBusy || (approve && !selectedScopes.length)) return
     setOauthBusy(true)
     try {
       const result = approve
-        ? await mcpOAuthService.approveAuthorization(oauthRequest.requestId)
+        ? await mcpOAuthService.approveAuthorization(oauthRequest.requestId, selectedScopes)
         : await mcpOAuthService.denyAuthorization(oauthRequest.requestId)
       window.location.assign(result.redirectUrl)
     } catch (error) {
@@ -104,18 +124,28 @@ const McpAuthorizationPanel = () => {
                 <div className="mt-1 text-caption text-ink-muted">
                   {t('profile.mcp.consentDescription', { client: oauthRequest.clientName })}
                 </div>
-                <div className="mt-3 flex flex-wrap gap-2">
+                <div className="mt-3 space-y-2">
                   {[...oauthRequest.scopes].map((scope) => (
-                    <span key={scope} className="rounded-md bg-surface px-2 py-1 font-mono text-micro font-bold text-ink-secondary">
-                      {scope}
-                    </span>
+                    <label
+                      key={scope}
+                      className="flex items-center gap-2 rounded-md bg-surface px-2 py-1.5 text-caption font-bold text-ink-secondary"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={selectedScopes.includes(scope)}
+                        onChange={() => toggleScope(scope)}
+                        className="h-4 w-4 rounded border-border text-accent focus:ring-accent"
+                      />
+                      <span className="font-mono text-micro">{scope}</span>
+                    </label>
                   ))}
                 </div>
+                <div className="mt-2 text-micro text-ink-muted">{t('profile.mcp.consentScopeHint')}</div>
                 <div className="mt-4 flex flex-wrap gap-2">
                   <button
                     type="button"
                     onClick={() => completeOAuthRequest(true)}
-                    disabled={oauthBusy}
+                    disabled={oauthBusy || !selectedScopes.length}
                     className="inline-flex items-center gap-2 rounded-lg bg-accent px-3.5 py-2 text-caption font-bold text-white hover:bg-accent/90 disabled:opacity-50"
                   >
                     <Check className="h-4 w-4" />

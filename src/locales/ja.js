@@ -415,6 +415,7 @@ export default {
       consentDeny: '拒否',
       consentLoadFailed: 'MCP 認証リクエストを読み込めません',
       consentFailed: 'MCP 認証に失敗しました',
+      consentScopeHint: '以前に許可したスコープは事前に選択されています。外すと権限を狭められます。',
       clientsTitle: '認証済み MCP クライアント',
       revokeClient: 'クライアントのアクセスを取り消す',
       clientRevoked: 'クライアントのアクセスを取り消しました',

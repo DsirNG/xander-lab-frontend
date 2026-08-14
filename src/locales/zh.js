@@ -442,6 +442,7 @@ export default {
       consentDeny: '拒绝',
       consentLoadFailed: '无法加载 MCP 授权请求',
       consentFailed: 'MCP 授权操作失败',
+      consentScopeHint: '已默认勾选上次授权的范围，可取消勾选某项以缩小授权范围。',
       clientsTitle: '已授权的 MCP 客户端',
       revokeClient: '撤销客户端授权',
       clientRevoked: '客户端授权已撤销',

@@ -415,6 +415,7 @@ export default {
       consentDeny: 'Refuser',
       consentLoadFailed: 'Impossible de charger la demande MCP',
       consentFailed: 'Échec de l’autorisation MCP',
+      consentScopeHint: 'Les périmètres déjà accordés sont présélectionnés. Décochez pour réduire la portée.',
       clientsTitle: 'Clients MCP autorisés',
       revokeClient: 'Révoquer l’accès du client',
       clientRevoked: 'Accès du client révoqué',

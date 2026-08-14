@@ -21,7 +21,12 @@ const oauthRequest = (requestId) => `/api/mcp/oauth/authorize/requests/${encodeU
 
 export const mcpOAuthService = {
   getAuthorizationRequest: (requestId) => get(oauthRequest(requestId), undefined, { _silent: true, dedupe: false }),
-  approveAuthorization: (requestId) => post(`${oauthRequest(requestId)}/approve`),
+  approveAuthorization: (requestId, scopes) => {
+    const body = scopes?.length
+      ? new URLSearchParams({ scopes: scopes.join(' ') })
+      : undefined
+    return post(`${oauthRequest(requestId)}/approve`, body)
+  },
   denyAuthorization: (requestId) => post(`${oauthRequest(requestId)}/deny`),
   listClients: () => get('/api/mcp/oauth/clients', undefined, { _silent: true, dedupe: false }),
   revokeClient: (clientId) => deleteRequest(`/api/mcp/oauth/clients/${encodeURIComponent(clientId)}`),

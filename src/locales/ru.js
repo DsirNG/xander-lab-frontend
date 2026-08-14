@@ -415,6 +415,7 @@ export default {
       consentDeny: 'Отклонить',
       consentLoadFailed: 'Не удалось загрузить запрос MCP',
       consentFailed: 'Ошибка авторизации MCP',
+      consentScopeHint: 'Ранее предоставленные области предвыбраны. Снимите отметки, чтобы сузить доступ.',
       clientsTitle: 'Авторизованные MCP-клиенты',
       revokeClient: 'Отозвать доступ клиента',
       clientRevoked: 'Доступ клиента отозван',

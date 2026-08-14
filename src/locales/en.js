@@ -423,6 +423,7 @@ export default {
       consentDeny: 'Deny',
       consentLoadFailed: 'Unable to load the MCP authorization request',
       consentFailed: 'MCP authorization failed',
+      consentScopeHint: 'Scopes granted previously are preselected. Uncheck any to narrow the grant.',
       clientsTitle: 'Authorized MCP Clients',
       revokeClient: 'Revoke client access',
       clientRevoked: 'Client access revoked',

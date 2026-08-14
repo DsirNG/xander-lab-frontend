@@ -39,7 +39,12 @@ describe('mcpOAuthService', () => {
       '/api/mcp/oauth/authorize/requests/abc%2F1', undefined, { _silent: true, dedupe: false }
     )
     mcpOAuthService.approveAuthorization('req-1')
-    expect(apiMock.post).toHaveBeenCalledWith('/api/mcp/oauth/authorize/requests/req-1/approve')
+    expect(apiMock.post).toHaveBeenCalledWith('/api/mcp/oauth/authorize/requests/req-1/approve', undefined)
+    mcpOAuthService.approveAuthorization('req-1', ['blog:read', 'blog:write'])
+    expect(apiMock.post).toHaveBeenCalledWith(
+      '/api/mcp/oauth/authorize/requests/req-1/approve',
+      new URLSearchParams({ scopes: 'blog:read blog:write' })
+    )
     mcpOAuthService.denyAuthorization('req-1')
     expect(apiMock.post).toHaveBeenCalledWith('/api/mcp/oauth/authorize/requests/req-1/deny')
   })

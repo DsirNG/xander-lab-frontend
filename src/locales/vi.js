@@ -415,6 +415,7 @@ export default {
       consentDeny: 'Từ chối',
       consentLoadFailed: 'Không thể tải yêu cầu ủy quyền MCP',
       consentFailed: 'Ủy quyền MCP thất bại',
+      consentScopeHint: 'Các phạm vi đã cấp trước đó được chọn sẵn. Bỏ chọn để thu hẹp quyền.',
       clientsTitle: 'Client MCP đã ủy quyền',
       revokeClient: 'Thu hồi quyền client',
       clientRevoked: 'Đã thu hồi quyền client',
