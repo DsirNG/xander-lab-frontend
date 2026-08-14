@@ -63,6 +63,7 @@ export default {
     categoryPlaceholder: 'Sélectionner une catégorie',
     summaryLabel: 'Résumé',
     summaryPlaceholder: 'Rédigez un bref résumé...',
+    summaryHint: '100 caractères max : les plateformes externes appliquent la limite la plus stricte (Juejin exige 50-100)',
     contentLabel: 'Contenu (Markdown)',
     contentPlaceholder: 'Exprimez vos idées en Markdown...',
     tagsPlaceholder: 'Appuyez sur Entrée pour ajouter des étiquettes...',

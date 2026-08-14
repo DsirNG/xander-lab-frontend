@@ -63,6 +63,7 @@ export default {
     categoryPlaceholder: 'Chọn danh mục',
     summaryLabel: 'Tóm tắt',
     summaryPlaceholder: 'Viết tóm tắt ngắn gọn...',
+    summaryHint: 'Tối đa 100 ký tự: các nền tảng bên ngoài áp dụng giới hạn khắt khe nhất (Juejin yêu cầu 50-100)',
     contentLabel: 'Nội dung (Markdown)',
     contentPlaceholder: 'Thể hiện suy nghĩ bằng Markdown...',
     tagsPlaceholder: 'Nhấn Enter để thêm thẻ...',

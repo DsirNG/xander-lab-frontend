@@ -63,6 +63,7 @@ export default {
     categoryPlaceholder: 'カテゴリーを選択',
     summaryLabel: '概要',
     summaryPlaceholder: '簡単な概要を書く...',
+    summaryHint: '最大100文字：外部プラットフォームは最も厳しい上限に従います（掘金は50〜100文字必須）',
     contentLabel: '本文 (Markdown)',
     contentPlaceholder: 'Markdownで考えを記述...',
     tagsPlaceholder: 'Enterキーでタグを追加...',

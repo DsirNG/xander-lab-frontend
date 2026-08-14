@@ -60,8 +60,8 @@ const PublishSettings = ({ t, isSettingsOpen, categories, availableTags, values,
                                     <AlignLeft className="w-4 h-4 group-hover:text-accent transition-colors" />
                                     <span className="text-micro font-black uppercase tracking-widest">{t('blog.summaryLabel')}</span>
                                 </div>
-                                <span className={`text-micro font-medium ${values.summary.length > 200 ? 'text-danger' : 'text-ink-faint'}`}>
-                                    {values.summary.length} / 200
+                                <span className={`text-micro font-medium ${values.summary.length > 100 ? 'text-danger' : 'text-ink-faint'}`}>
+                                    {values.summary.length} / 100
                                 </span>
                             </div>
                             <textarea
@@ -70,6 +70,7 @@ const PublishSettings = ({ t, isSettingsOpen, categories, availableTags, values,
                                 placeholder={t('blog.summaryPlaceholder')}
                                 className="w-full bg-canvas border border-border/60 rounded-2xl px-5 py-4 text-sm leading-relaxed outline-none focus:border-accent focus:ring-4 focus:ring-accent/10 transition-all resize-none h-40 shadow-sm text-ink placeholder:text-ink-faint custom-scrollbar"
                             />
+                            <p className="text-micro text-ink-faint">{t('blog.summaryHint')}</p>
                         </section>
                     </div>
                 </div>

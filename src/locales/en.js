@@ -63,6 +63,7 @@ export default {
     categoryPlaceholder: 'Select Category',
     summaryLabel: 'Abstract',
     summaryPlaceholder: 'Write a brief summary...',
+    summaryHint: 'Up to 100 characters: external platforms enforce the strictest cap (Juejin requires 50-100)',
     contentLabel: 'Content (Markdown)',
     contentPlaceholder: 'Pour your thoughts here using Markdown...',
     tagsPlaceholder: 'Press Enter to add tags...',

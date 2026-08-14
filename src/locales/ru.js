@@ -63,6 +63,7 @@ export default {
     categoryPlaceholder: 'Выберите категорию',
     summaryLabel: 'Аннотация',
     summaryPlaceholder: 'Напишите краткое описание...',
+    summaryHint: 'Максимум 100 символов: внешние платформы применяют самый строгий лимит (Juejin требует 50-100)',
     contentLabel: 'Содержание (Markdown)',
     contentPlaceholder: 'Изложите свои мысли в Markdown...',
     tagsPlaceholder: 'Нажмите Enter для добавления тега...',

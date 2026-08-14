@@ -63,6 +63,7 @@ export default {
     categoryPlaceholder: '选择分类',
     summaryLabel: '文章摘要',
     summaryPlaceholder: '简单介绍一下这篇文章...',
+    summaryHint: '最多 100 字：外部平台按最严格上限执行（掘金要求 50-100 字）',
     contentLabel: '文章内容 (Markdown)',
     contentPlaceholder: '使用 Markdown 倾诉你的想法...',
     tagsPlaceholder: '按回车添加标签...',
