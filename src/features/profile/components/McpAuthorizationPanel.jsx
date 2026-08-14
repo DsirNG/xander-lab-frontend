@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { useToast } from '@hooks/useToast'
 import { mcpOAuthService } from '../services/mcpService'
 import CsdnAuthorizationPanel from './CsdnAuthorizationPanel'
+import JuejinAuthorizationPanel from './JuejinAuthorizationPanel'
 
 /** Profile surface for user-owned CSDN authorization used by external MCP clients. */
 const McpAuthorizationPanel = () => {
@@ -18,6 +19,7 @@ const McpAuthorizationPanel = () => {
   const endpoints = [
     { id: 'blog', name: t('profile.mcp.blogEndpoint'), url: `${baseUrl}/api/mcp` },
     { id: 'csdn', name: t('profile.mcp.csdnEndpoint'), url: `${baseUrl}/api/mcp/csdn` },
+    { id: 'juejin', name: t('profile.mcp.juejinEndpoint'), url: `${baseUrl}/api/mcp/juejin` },
     { id: 'dual', name: t('profile.mcp.dualEndpoint'), url: `${baseUrl}/api/mcp/dual` },
   ]
 
@@ -188,6 +190,7 @@ const McpAuthorizationPanel = () => {
         )}
 
         <CsdnAuthorizationPanel />
+        <JuejinAuthorizationPanel />
       </div>
     </section>
   )
