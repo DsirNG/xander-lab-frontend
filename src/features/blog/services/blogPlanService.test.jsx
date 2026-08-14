@@ -17,13 +17,14 @@ afterEach(() => {
 })
 
 describe('状态常量', () => {
-  it('计划状态包含 ACTIVE/RUNNING/PAUSED/CANCELLED/FINISHED', () => {
+  it('计划状态包含 ACTIVE/RUNNING/PAUSED/CANCELLED/FINISHED/FAILED', () => {
     expect(PLAN_STATUS).toEqual({
       ACTIVE: 'ACTIVE',
       RUNNING: 'RUNNING',
       PAUSED: 'PAUSED',
       CANCELLED: 'CANCELLED',
       FINISHED: 'FINISHED',
+      FAILED: 'FAILED',
     })
   })
 

@@ -145,7 +145,7 @@ const BlogPlans = () => {
                       </button>
                     )}
                     {plan.status !== PLAN_STATUS.RUNNING && plan.status !== PLAN_STATUS.CANCELLED
-                      && plan.status !== PLAN_STATUS.FINISHED && (
+                      && plan.status !== PLAN_STATUS.FINISHED && plan.status !== PLAN_STATUS.FAILED && (
                       <button onClick={() => actions.cancel(plan)} disabled={!!actions.busyId}
                         className="rounded-xl border border-border px-3 py-1.5 text-xs text-ink-faint hover:bg-surface-muted disabled:opacity-50">
                         {t('blogPlans.cancel')}

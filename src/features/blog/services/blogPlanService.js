@@ -12,6 +12,7 @@ export const PLAN_STATUS = {
   PAUSED: 'PAUSED',
   CANCELLED: 'CANCELLED',
   FINISHED: 'FINISHED',
+  FAILED: 'FAILED',
 };
 
 export const RUN_STATUS = {

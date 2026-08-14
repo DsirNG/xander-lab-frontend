@@ -7,6 +7,7 @@ const STYLE = {
   [PLAN_STATUS.PAUSED]: 'bg-warning-soft text-warning-fg',
   [PLAN_STATUS.CANCELLED]: 'bg-surface text-ink-muted ring-1 ring-border',
   [PLAN_STATUS.FINISHED]: 'bg-accent-soft text-accent-fg',
+  [PLAN_STATUS.FAILED]: 'bg-red-50 text-red-600 ring-1 ring-red-200',
 };
 
 const LABEL_KEY = {
@@ -15,6 +16,7 @@ const LABEL_KEY = {
   [PLAN_STATUS.PAUSED]: 'blogPlans.statusPaused',
   [PLAN_STATUS.CANCELLED]: 'blogPlans.statusCancelled',
   [PLAN_STATUS.FINISHED]: 'blogPlans.statusFinished',
+  [PLAN_STATUS.FAILED]: 'blogPlans.statusFailed',
 };
 
 /**
