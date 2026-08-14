@@ -34,7 +34,7 @@ const BlogPublish = () => {
         if (error) {
             if (isEditMode) {
                 toast.error(error.message || t('blog.articleNotFound'));
-                navigate('/profile', { replace: true });
+                navigate('/workspace/blog-manage', { replace: true });
             }
             return;
         }
@@ -55,7 +55,11 @@ const BlogPublish = () => {
     }, [isMobile]);
 
     const handleBack = () => {
-        navigate(isEditMode ? '/profile' : '/blog/');
+        if (window.history.state?.idx > 0) {
+            navigate(-1);
+        } else {
+            navigate(isEditMode ? '/workspace/blog-manage' : '/workspace');
+        }
     };
 
     if (pageLoading) {

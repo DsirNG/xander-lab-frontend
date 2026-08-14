@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
 /**
@@ -8,6 +8,15 @@ import { useTranslation } from 'react-i18next';
  */
 const NotFoundPage = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+
+  const handleGoBack = () => {
+    if (window.history.state?.idx > 0) {
+      navigate(-1);
+    } else {
+      navigate('/');
+    }
+  };
 
   return (
     <div className="min-h-[60vh] flex items-center justify-center p-6">
@@ -27,7 +36,7 @@ const NotFoundPage = () => {
             {t('common.backHome', '返回首页')}
           </Link>
           <button
-            onClick={() => window.history.back()}
+            onClick={handleGoBack}
             className="px-6 py-2.5 bg-surface-muted text-ink-secondary rounded-xl text-body font-bold hover:bg-border-strong transition-all"
           >
             {t('common.goBack', '返回上页')}
