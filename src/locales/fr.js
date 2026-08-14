@@ -355,7 +355,7 @@ export default {
       emptyTrashHint: 'Les articles supprimés apparaissent ici.',
       untitled: 'Sans titre',
       status: { draft: 'Brouillon', published: 'Publié', trash: 'Corbeille' },
-      actions: { edit: 'Modifier', publish: 'Publier', unpublish: 'Passer en brouillon', trash: 'Mettre à la corbeille', restore: 'Restaurer en brouillon', permanentDelete: 'Supprimer définitivement', view: 'Voir', syncCsdn: 'Synchroniser avec CSDN' },
+      actions: { edit: 'Modifier', publish: 'Publier', unpublish: 'Passer en brouillon', trash: 'Mettre à la corbeille', restore: 'Restaurer en brouillon', permanentDelete: 'Supprimer définitivement', view: 'Voir', syncCsdn: 'Synchroniser avec CSDN', syncJuejin: 'Synchroniser avec Juejin' },
       csdn: {
         dialogTitle: 'Synchroniser avec CSDN',
         syncing: 'Publication sur CSDN en cours...',
@@ -366,6 +366,18 @@ export default {
         syncFailed: 'Impossible de synchroniser cet article avec CSDN',
         authorizationFailed: 'Impossible de démarrer l\'autorisation CSDN',
         qrAlt: 'Code QR de connexion CSDN'
+      },
+      juejin: {
+        badge: 'Juejin',
+        dialogTitle: 'Synchroniser avec Juejin',
+        syncing: 'Publication sur Juejin en cours...',
+        checking: 'Vérification de l\'autorisation Juejin...',
+        scanHint: 'Scannez pour autoriser. L\'article sera synchronisé automatiquement après la connexion.',
+        synced: 'Synchronisé avec Juejin',
+        viewPost: 'Voir l\'article Juejin',
+        syncFailed: 'Impossible de synchroniser cet article avec Juejin',
+        authorizationFailed: 'Impossible de démarrer l\'autorisation Juejin',
+        qrAlt: 'Code QR de connexion Juejin'
       },
       confirmTrashTitle: 'Mettre à la corbeille',
       confirmTrashMessage: 'Mettre « {{title}} » à la corbeille ? Vous pourrez le restaurer plus tard.',

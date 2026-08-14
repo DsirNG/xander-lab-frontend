@@ -59,6 +59,8 @@ describe('blogService 端点映射', () => {
     expect(apiMock.get).toHaveBeenCalledWith('/api/blog/posts/mine/5', undefined, undefined)
     blogService.syncToCsdn(5)
     expect(apiMock.post).toHaveBeenCalledWith('/api/blog/posts/5/sync/csdn', undefined, undefined)
+    blogService.syncToJuejin(5)
+    expect(apiMock.post).toHaveBeenCalledWith('/api/blog/posts/5/sync/juejin', undefined, undefined)
   })
 
   it('更新、状态切换与删除', () => {

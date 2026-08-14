@@ -355,7 +355,7 @@ export default {
       emptyTrashHint: 'Удалённые статьи появляются здесь.',
       untitled: 'Без названия',
       status: { draft: 'Черновик', published: 'Опубликовано', trash: 'Корзина' },
-      actions: { edit: 'Редактировать', publish: 'Опубликовать', unpublish: 'В черновики', trash: 'В корзину', restore: 'Восстановить как черновик', permanentDelete: 'Удалить навсегда', view: 'Просмотр', syncCsdn: 'Синхронизировать с CSDN' },
+      actions: { edit: 'Редактировать', publish: 'Опубликовать', unpublish: 'В черновики', trash: 'В корзину', restore: 'Восстановить как черновик', permanentDelete: 'Удалить навсегда', view: 'Просмотр', syncCsdn: 'Синхронизировать с CSDN', syncJuejin: 'Синхронизировать с Juejin' },
       csdn: {
         dialogTitle: 'Синхронизация с CSDN',
         syncing: 'Публикация в CSDN...',
@@ -366,6 +366,18 @@ export default {
         syncFailed: 'Не удалось синхронизировать статью с CSDN',
         authorizationFailed: 'Не удалось запустить авторизацию CSDN',
         qrAlt: 'QR-код входа CSDN'
+      },
+      juejin: {
+        badge: 'Juejin',
+        dialogTitle: 'Синхронизация с Juejin',
+        syncing: 'Публикация в Juejin...',
+        checking: 'Проверка авторизации Juejin...',
+        scanHint: 'Отсканируйте для авторизации. Статья будет синхронизирована автоматически после входа.',
+        synced: 'Синхронизировано с Juejin',
+        viewPost: 'Просмотреть статью Juejin',
+        syncFailed: 'Не удалось синхронизировать статью с Juejin',
+        authorizationFailed: 'Не удалось запустить авторизацию Juejin',
+        qrAlt: 'QR-код входа Juejin'
       },
       confirmTrashTitle: 'Переместить в корзину',
       confirmTrashMessage: 'Переместить «{{title}}» в корзину? Позже можно восстановить.',

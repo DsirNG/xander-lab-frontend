@@ -355,7 +355,7 @@ export default {
       emptyTrashHint: 'Bài viết đã xóa mềm sẽ xuất hiện ở đây.',
       untitled: 'Chưa có tiêu đề',
       status: { draft: 'Bản nháp', published: 'Đã xuất bản', trash: 'Thùng rác' },
-      actions: { edit: 'Chỉnh sửa', publish: 'Xuất bản', unpublish: 'Chuyển thành nháp', trash: 'Chuyển vào thùng rác', restore: 'Khôi phục thành nháp', permanentDelete: 'Xóa vĩnh viễn', view: 'Xem', syncCsdn: 'Đồng bộ sang CSDN' },
+      actions: { edit: 'Chỉnh sửa', publish: 'Xuất bản', unpublish: 'Chuyển thành nháp', trash: 'Chuyển vào thùng rác', restore: 'Khôi phục thành nháp', permanentDelete: 'Xóa vĩnh viễn', view: 'Xem', syncCsdn: 'Đồng bộ sang CSDN', syncJuejin: 'Đồng bộ sang Juejin' },
       csdn: {
         dialogTitle: 'Đồng bộ bài viết sang CSDN',
         syncing: 'Đang xuất bản sang CSDN...',
@@ -366,6 +366,18 @@ export default {
         syncFailed: 'Không thể đồng bộ bài viết này sang CSDN',
         authorizationFailed: 'Không thể bắt đầu ủy quyền CSDN',
         qrAlt: 'Mã QR đăng nhập CSDN'
+      },
+      juejin: {
+        badge: 'Juejin',
+        dialogTitle: 'Đồng bộ bài viết sang Juejin',
+        syncing: 'Đang xuất bản sang Juejin...',
+        checking: 'Đang kiểm tra ủy quyền Juejin...',
+        scanHint: 'Quét mã để ủy quyền. Bài viết sẽ tự động đồng bộ sau khi đăng nhập.',
+        synced: 'Đã đồng bộ sang Juejin',
+        viewPost: 'Xem bài viết Juejin',
+        syncFailed: 'Không thể đồng bộ bài viết này sang Juejin',
+        authorizationFailed: 'Không thể bắt đầu ủy quyền Juejin',
+        qrAlt: 'Mã QR đăng nhập Juejin'
       },
       confirmTrashTitle: 'Chuyển vào thùng rác',
       confirmTrashMessage: 'Chuyển «{{title}}» vào thùng rác? Bạn có thể khôi phục sau.',

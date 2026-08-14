@@ -380,7 +380,8 @@ export default {
         restore: '恢复为草稿',
         permanentDelete: '彻底删除',
         view: '查看',
-        syncCsdn: '同步至 CSDN'
+        syncCsdn: '同步至 CSDN',
+        syncJuejin: '同步至掘金'
       },
       csdn: {
         dialogTitle: '同步文章至 CSDN',
@@ -392,6 +393,18 @@ export default {
         syncFailed: '无法将此文章同步至 CSDN',
         authorizationFailed: '无法发起 CSDN 授权',
         qrAlt: 'CSDN 登录二维码'
+      },
+      juejin: {
+        badge: '掘金',
+        dialogTitle: '同步文章至掘金',
+        syncing: '正在同步发布至掘金...',
+        checking: '正在检查掘金授权状态...',
+        scanHint: '扫码授权，登录成功后将自动同步文章。',
+        synced: '已同步至掘金',
+        viewPost: '查看掘金文章',
+        syncFailed: '无法将此文章同步至掘金',
+        authorizationFailed: '无法发起掘金授权',
+        qrAlt: '掘金登录二维码'
       },
       confirmTrashTitle: '移入回收站',
       confirmTrashMessage: '确定将「{{title}}」移入回收站？之后可在回收站恢复。',

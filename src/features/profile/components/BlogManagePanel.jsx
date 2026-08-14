@@ -21,6 +21,7 @@ import Pagination from '@components/common/Pagination';
 import { useToast } from '@hooks/useToast';
 import { blogService, BLOG_STATUS } from '@features/blog/services/blogService';
 import CsdnSyncDialog from './CsdnSyncDialog';
+import JuejinSyncDialog from './JuejinSyncDialog';
 
 const DEFAULT_PAGE_SIZE = 10;
 const SEARCH_DEBOUNCE_MS = 300;
@@ -61,6 +62,7 @@ const BlogManagePanel = () => {
     const [actionKey, setActionKey] = useState('');
     const [confirmAction, setConfirmAction] = useState(null);
     const [csdnPost, setCsdnPost] = useState(null);
+    const [juejinPost, setJuejinPost] = useState(null);
 
     const abortRef = useRef(null);
     const requestSeq = useRef(0);
@@ -254,6 +256,7 @@ const BlogManagePanel = () => {
                                     : 'draft';
                             const isBusy = Boolean(actionKey) && actionKey.includes(String(post.id));
                             const isCsdnSynced = post.csdnSynced === true;
+                            const isJuejinSynced = post.juejinSynced === true;
 
                             return (
                                 <li key={post.id} className="flex flex-col gap-3 bg-canvas px-3 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-4">
@@ -272,6 +275,15 @@ const BlogManagePanel = () => {
                                                     CSDN
                                                 </span>
                                             ) : null}
+                                            {isJuejinSynced ? (
+                                                <span
+                                                    title={t('profile.blogManage.juejin.synced')}
+                                                    className="inline-flex items-center gap-1 rounded-full bg-success-soft px-2 py-0.5 text-micro font-bold text-success-fg ring-1 ring-success/20"
+                                                >
+                                                    <CheckCircle2 className="h-3 w-3" />
+                                                    {t('profile.blogManage.juejin.badge')}
+                                                </span>
+                                            ) : null}
                                         </div>
                                         <div className="mt-1 line-clamp-1 text-caption font-medium text-ink-faint">
                                             {post.summary || post.categoryName || '—'}
@@ -286,6 +298,18 @@ const BlogManagePanel = () => {
                                                 className="grid h-8 w-8 place-items-center rounded-lg text-ink-faint transition hover:bg-surface-muted hover:text-ink"
                                             >
                                                 <Eye className="h-3.5 w-3.5" />
+                                            </button>
+                                        ) : null}
+
+                                        {status !== BLOG_STATUS.TRASH ? (
+                                            <button
+                                                type="button"
+                                                title={t('profile.blogManage.actions.syncJuejin')}
+                                                disabled={Boolean(actionKey)}
+                                                onClick={() => setJuejinPost(post)}
+                                                className="grid h-8 w-8 place-items-center rounded-lg text-ink-faint transition hover:bg-accent-soft hover:text-accent disabled:opacity-50"
+                                            >
+                                                <Send className="h-3.5 w-3.5" />
                                             </button>
                                         ) : null}
 
@@ -422,6 +446,19 @@ const BlogManagePanel = () => {
                             post.id === csdnPost.id ? { ...post, csdnSynced: true } : post
                         )));
                         toast.success(t('profile.blogManage.csdn.synced'));
+                        loadPosts({ showLoading: false });
+                    }}
+                />
+            )}
+            {juejinPost && (
+                <JuejinSyncDialog
+                    post={juejinPost}
+                    onClose={() => setJuejinPost(null)}
+                    onSuccess={() => {
+                        setPosts((current) => current.map((post) => (
+                            post.id === juejinPost.id ? { ...post, juejinSynced: true } : post
+                        )));
+                        toast.success(t('profile.blogManage.juejin.synced'));
                         loadPosts({ showLoading: false });
                     }}
                 />

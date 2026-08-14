@@ -363,7 +363,7 @@ export default {
       emptyTrashHint: 'Soft-deleted posts appear here.',
       untitled: 'Untitled',
       status: { draft: 'Draft', published: 'Published', trash: 'Trash' },
-      actions: { edit: 'Edit', publish: 'Publish', unpublish: 'Move to draft', trash: 'Move to trash', restore: 'Restore as draft', permanentDelete: 'Delete permanently', view: 'View', syncCsdn: 'Sync to CSDN' },
+      actions: { edit: 'Edit', publish: 'Publish', unpublish: 'Move to draft', trash: 'Move to trash', restore: 'Restore as draft', permanentDelete: 'Delete permanently', view: 'View', syncCsdn: 'Sync to CSDN', syncJuejin: 'Sync to Juejin' },
       csdn: {
         dialogTitle: 'Sync to CSDN',
         syncing: 'Publishing to CSDN...',
@@ -374,6 +374,18 @@ export default {
         syncFailed: 'Unable to sync this post to CSDN',
         authorizationFailed: 'Unable to start CSDN authorization',
         qrAlt: 'CSDN login QR code'
+      },
+      juejin: {
+        badge: 'Juejin',
+        dialogTitle: 'Sync to Juejin',
+        syncing: 'Publishing to Juejin...',
+        checking: 'Checking Juejin authorization...',
+        scanHint: 'Scan to authorize. The post will sync automatically after login.',
+        synced: 'Synced to Juejin',
+        viewPost: 'View Juejin post',
+        syncFailed: 'Unable to sync this post to Juejin',
+        authorizationFailed: 'Unable to start Juejin authorization',
+        qrAlt: 'Juejin login QR code'
       },
       confirmTrashTitle: 'Move to trash',
       confirmTrashMessage: 'Move "{{title}}" to the recycle bin? You can restore it later.',

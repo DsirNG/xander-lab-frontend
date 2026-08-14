@@ -46,6 +46,9 @@ export const blogService = {
   /** POST /api/blog/posts/{id}/sync/csdn */
   syncToCsdn: (id, config) => post(`${BASE}/posts/${id}/sync/csdn`, undefined, config),
 
+  /** POST /api/blog/posts/{id}/sync/juejin */
+  syncToJuejin: (id, config) => post(`${BASE}/posts/${id}/sync/juejin`, undefined, config),
+
   /** PUT /api/blog/posts/{id} */
   updateBlog: (id, blogData, config) => put(`${BASE}/posts/${id}`, blogData, config),
 
