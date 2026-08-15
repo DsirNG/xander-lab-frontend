@@ -495,82 +495,74 @@ const AgentChat = () => {
   );
 
   return (
-    <div className="flex h-dvh flex-col bg-surface font-chat text-ink">
-      <header className="sticky top-0 z-20 flex h-14 shrink-0 items-center justify-between border-b border-border bg-canvas/95 px-4 backdrop-blur sm:px-6">
-        <Button
-          type="button"
-          variant="ghost"
-          icon={ArrowLeft}
-          onClick={() => navigate('/workspace')}
-          className="flex items-center gap-2 rounded-xl px-2 py-2 text-sm font-semibold transition hover:text-ink"
-        >
-          {t('blog.agentChat.back')}
-        </Button>
-        <div className="flex min-w-0 items-center gap-2 text-sm font-black tracking-tight">
-          <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-ink text-white">
-            <Bot className="h-4 w-4" />
-          </span>
-          <span className="truncate">{t('blog.agentChat.title')}</span>
-        </div>
-        <div className="flex items-center gap-1">
-          <Button
-            type="button"
-            variant="ghost"
-            icon={MessageSquareText}
-            onClick={() => setMobileSessionsOpen(true)}
-            className="rounded-xl p-2 lg:hidden"
-            aria-label={t('blog.agent.conversations')}
-          />
-          <Button
-            onClick={handleNewConversation}
-            disabled={navigationLocked}
-            icon={Plus}
-            variant="primary"
-          >
-            <span className="hidden sm:inline">{t('blog.agent.newConversation')}</span>
-          </Button>
-        </div>
-      </header>
-
-      <div className="relative flex min-h-0 flex-1 overflow-hidden">
+    <div className="flex h-dvh overflow-hidden bg-canvas font-chat text-ink">
+      <AgentSessionList
+        sessions={sessions.map((session) => ({ ...session, input: session.title }))}
+        activeId={conversationId}
+        loading={sessionsLoading}
+        disableNew={navigationLocked}
+        onSelect={(id) => {
+          if (!navigationLocked) navigate(`/workspace/agent/${id}`);
+        }}
+        onNew={handleNewConversation}
+        onGoHome={() => navigate('/workspace')}
+      />
+      {mobileSessionsOpen && (
+        <div className="absolute inset-0 z-40 flex bg-ink/40 lg:hidden">
           <AgentSessionList
+            mobile
             sessions={sessions.map((session) => ({ ...session, input: session.title }))}
             activeId={conversationId}
             loading={sessionsLoading}
             disableNew={navigationLocked}
             onSelect={(id) => {
-              if (!navigationLocked) navigate(`/workspace/agent/${id}`);
+              if (navigationLocked) return;
+              setMobileSessionsOpen(false);
+              navigate(`/workspace/agent/${id}`);
             }}
-            onNew={handleNewConversation}
+            onNew={() => {
+              setMobileSessionsOpen(false);
+              handleNewConversation();
+            }}
+            onGoHome={() => navigate('/workspace')}
           />
-          {mobileSessionsOpen && (
-            <div className="absolute inset-0 z-40 flex bg-ink/40 lg:hidden">
-              <AgentSessionList
-                mobile
-                sessions={sessions.map((session) => ({ ...session, input: session.title }))}
-                activeId={conversationId}
-                loading={sessionsLoading}
-                disableNew={navigationLocked}
-                onSelect={(id) => {
-                  if (navigationLocked) return;
-                  setMobileSessionsOpen(false);
-                  navigate(`/workspace/agent/${id}`);
-                }}
-                onNew={() => {
-                  setMobileSessionsOpen(false);
-                  handleNewConversation();
-                }}
-              />
-              <Button
-                type="button"
-                icon={X}
-                onClick={() => setMobileSessionsOpen(false)}
-                className="absolute right-3 top-3 z-10 grid w-10 place-items-center rounded-full bg-canvas text-ink-secondary shadow-lg"
-                aria-label={t('common.close')}
-              />
-            </div>
-          )}
+          <Button
+            type="button"
+            icon={X}
+            onClick={() => setMobileSessionsOpen(false)}
+            className="absolute right-3 top-3 z-10 grid w-10 place-items-center rounded-full bg-canvas text-ink-secondary shadow-lg"
+            aria-label={t('common.close')}
+          />
+        </div>
+      )}
 
+      <main className="relative flex min-h-0 min-w-0 flex-1 flex-col bg-surface">
+        <header className="sticky top-0 z-20 flex h-14 shrink-0 items-center justify-between border-b border-border bg-canvas/95 px-4 backdrop-blur lg:hidden">
+          <Button
+            type="button"
+            variant="ghost"
+            icon={MessageSquareText}
+            onClick={() => setMobileSessionsOpen(true)}
+            className="rounded-xl p-2"
+            aria-label={t('blog.agent.conversations')}
+          />
+          <div className="flex min-w-0 items-center gap-2 text-sm font-black tracking-tight">
+            <span className="grid h-6 w-6 shrink-0 place-items-center rounded-md bg-ink text-white">
+              <Bot className="h-3.5 w-3.5" />
+            </span>
+            <span className="truncate">{t('blog.agentChat.title')}</span>
+          </div>
+          <Button
+            type="button"
+            variant="ghost"
+            icon={Plus}
+            onClick={handleNewConversation}
+            disabled={navigationLocked}
+            className="rounded-xl p-2"
+          />
+        </header>
+
+        <div className="flex min-h-0 flex-1 overflow-hidden">
           <section className={`flex min-h-0 min-w-0 flex-1 flex-col ${showArtifact && !isMobile ? 'lg:max-w-[48%]' : ''}`}>
             {(reconnecting || errorMessage) && (
               <div className={`flex items-center gap-2 border-b px-4 py-2 text-xs font-semibold ${
@@ -681,8 +673,8 @@ const AgentChat = () => {
             <div className="absolute inset-0 z-30 bg-canvas">
               {artifactPanel}
             </div>
-          )}
-      </div>
+          </div>
+      </main>
     </div>
   );
 };
