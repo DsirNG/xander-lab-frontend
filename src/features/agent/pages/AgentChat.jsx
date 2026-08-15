@@ -3,7 +3,7 @@ import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
   AlertCircle, ArrowLeft, Bot, CheckCircle2, FileText, Loader2, MessageSquareText, Plus,
-  Send, Sparkles, Square, Wrench, X,
+  Send, Sparkles, Square, Wrench, X, Globe, PenLine, Image as ImageIcon, Brain, Mic, Menu, PanelLeftOpen, Link2
 } from 'lucide-react';
 import { useToast } from '@/hooks/useToast';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
@@ -12,8 +12,10 @@ import AgentPreviewPanel from '@/features/blog/components/agent/AgentPreviewPane
 import BlogMarkdown from '@/features/blog/components/BlogMarkdown';
 import { blogAgentService } from '@/features/blog/services/blogAgentService';
 import useIsMobile from '@/hooks/useIsMobile';
+import useClickOutside from '@/hooks/useClickOutside';
 import { useAgentConversation, compactToolResult, toolCallSummary } from '../hooks/useAgentConversation';
 import AgentMarkdown from '../components/AgentMarkdown';
+import { useAuthSession } from '@features/auth/context/authSessionContextValue';
 
 const ThoughtCard = ({ content }) => (
   <div className="flex items-start gap-2 rounded-xl border border-border bg-canvas px-3 py-2 text-xs leading-5 text-ink-muted">
@@ -202,46 +204,74 @@ const HistoricalToolCard = ({ message, t, onViewBlog }) => {
 const AgentChatInputBar = ({ t, input, setInput, isActive, creating, hasConversation, onSubmit, onStop }) => {
   const locked = isActive || creating;
   return (
-  <div className="shrink-0 border-t border-border bg-canvas px-4 py-3 pb-safe sm:px-6">
-    <div className="mx-auto max-w-2xl">
-      {hasConversation && !isActive && <div className="mb-2 text-xs text-ink-muted">{t('blog.agentChat.multiTurnHint')}</div>}
-      <div className="flex min-w-0 items-end gap-2 rounded-2xl border border-border bg-surface p-2 focus-within:border-border-strong focus-within:bg-canvas focus-within:ring-4 focus-within:ring-ink/5">
-        <textarea
-          value={input}
-          onChange={(event) => setInput(event.target.value)}
-          disabled={locked}
-          rows={2}
-          placeholder={locked ? t('blog.agentChat.inputLockedPlaceholder') : t('blog.agentChat.inputPlaceholder')}
-          onKeyDown={(event) => {
-            if (event.key === 'Enter' && !event.shiftKey) {
-              event.preventDefault();
-            if (!locked) onSubmit();
-            }
-          }}
-          className="max-h-40 min-h-[52px] min-w-0 flex-1 resize-none bg-transparent px-2 py-2 text-sm leading-6 outline-none placeholder:text-ink-faint disabled:opacity-60"
-        />
-        {isActive && (
+    <div className={`mx-auto w-full max-w-3xl ${hasConversation ? 'px-4 py-3 pb-safe sm:px-6' : 'px-4'}`}>
+      <div className="relative flex flex-col rounded-3xl border border-border/80 bg-surface shadow-sm focus-within:border-border-strong focus-within:ring-4 focus-within:ring-ink/5">
+        <div className="flex min-h-[56px] items-end px-3 py-2">
           <button
             type="button"
-            onClick={onStop}
-            className="inline-flex h-10 shrink-0 items-center gap-2 rounded-xl border border-danger/30 bg-danger/5 px-4 text-sm font-black text-danger transition hover:bg-danger/10"
+            className="mb-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-ink-muted transition hover:bg-surface-muted hover:text-ink"
+            title="Add attachment"
           >
-            <Square className="h-4 w-4" />
-            {t('blog.agentChat.stop')}
+            <Plus className="h-5 w-5" />
           </button>
-        )}
-        <button
-          type="button"
-          onClick={onSubmit}
-          disabled={locked || !input.trim()}
-          className="inline-flex h-10 shrink-0 items-center gap-2 rounded-xl bg-ink px-4 text-sm font-black text-white transition hover:bg-ink-secondary disabled:cursor-wait disabled:opacity-60"
-        >
-          {locked ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-          {locked ? t('blog.agentChat.working') : t('blog.agentChat.send')}
-        </button>
+          
+          <textarea
+            value={input}
+            onChange={(event) => setInput(event.target.value)}
+            disabled={locked}
+            rows={1}
+            placeholder={locked ? t('blog.agentChat.inputLockedPlaceholder') : "有问题，随便问"}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                if (!locked) onSubmit();
+              }
+            }}
+            className="max-h-40 min-h-[40px] min-w-0 flex-1 resize-none bg-transparent px-3 py-2 text-base leading-6 outline-none placeholder:text-ink-faint disabled:opacity-60"
+            style={{ height: input ? 'auto' : '40px' }}
+          />
+        </div>
+
+        <div className="flex items-center justify-between px-3 pb-2 pt-1">
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              className="flex items-center gap-1.5 rounded-full border border-border/60 px-3 py-1 text-xs font-semibold text-ink-muted transition hover:bg-surface-muted hover:text-ink"
+            >
+              <Brain className="h-3.5 w-3.5" />
+              思考
+            </button>
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              className="flex h-8 w-8 items-center justify-center rounded-full text-ink-muted transition hover:bg-surface-muted hover:text-ink"
+            >
+              <Mic className="h-5 w-5" />
+            </button>
+            {isActive ? (
+              <button
+                type="button"
+                onClick={onStop}
+                className="flex h-8 w-8 items-center justify-center rounded-full bg-ink text-white transition hover:bg-ink-secondary"
+              >
+                <Square className="h-4 w-4 fill-current" />
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={onSubmit}
+                disabled={locked || !input.trim()}
+                className="flex h-8 w-8 items-center justify-center rounded-full bg-ink text-white transition hover:bg-ink-secondary disabled:opacity-50"
+              >
+                <Send className="h-4 w-4 ml-0.5" />
+              </button>
+            )}
+          </div>
+        </div>
       </div>
+      {hasConversation && !isActive && <div className="mt-2 text-center text-xs text-ink-muted">{t('blog.agentChat.multiTurnHint')}</div>}
     </div>
-  </div>
   );
 };
 
@@ -253,6 +283,8 @@ const AgentChat = () => {
   const blogTaskId = searchParams.get('blogTaskId');
   const toast = useToast();
   const isMobile = useIsMobile(1024);
+  const { userInfo } = useAuthSession();
+
   const [input, setInput] = useState('');
   const [mobileSessionsOpen, setMobileSessionsOpen] = useState(false);
   const [artifactData, setArtifactData] = useState(null);
@@ -261,6 +293,10 @@ const AgentChat = () => {
   const [selectedVersionId, setSelectedVersionId] = useState(null);
   const [isPublishing, setIsPublishing] = useState(false);
   const [isSavingDraft, setIsSavingDraft] = useState(false);
+  const [isShareOpen, setIsShareOpen] = useState(false);
+  const [isShareCopied, setIsShareCopied] = useState(false);
+  const [shareLoading, setShareLoading] = useState(false);
+  const shareMenuRef = useRef(null);
   const chatEndRef = useRef(null);
   const chatScrollRef = useRef(null);
   const stickToBottomRef = useRef(true);
@@ -363,6 +399,27 @@ const AgentChat = () => {
     const next = new URLSearchParams(searchParams);
     next.delete('blogTaskId');
     setSearchParams(next, { replace: true });
+  };
+
+  const closeShareMenu = () => setIsShareOpen(false);
+  useClickOutside(shareMenuRef, closeShareMenu, isShareOpen);
+
+  const handleCopyShareLink = async () => {
+    if (!conversationId) return;
+    setShareLoading(true);
+    try {
+      const { post } = await import('@api');
+      const token = await post(`/api/agent/conversations/${conversationId}/share`);
+      const shareUrl = `${window.location.origin}/agent/shared/${token}`;
+      await navigator.clipboard.writeText(shareUrl);
+      setIsShareCopied(true);
+      toast.success(t('blog.shareLinkCopied', '分享链接已复制'));
+      setTimeout(() => setIsShareCopied(false), 2000);
+    } catch (error) {
+      toast.error(error.message || t('blog.shareFailed', '分享失败'));
+    } finally {
+      setShareLoading(false);
+    }
   };
 
   const handlePublishArtifact = async () => {
@@ -489,193 +546,230 @@ const AgentChat = () => {
 
   return (
     <div className="flex h-dvh flex-col bg-surface font-chat text-ink">
-      <header className="sticky top-0 z-20 flex h-14 shrink-0 items-center justify-between border-b border-border bg-canvas/95 px-4 backdrop-blur sm:px-6">
-        <button
-          type="button"
-          onClick={() => navigate('/workspace')}
-          className="flex items-center gap-2 rounded-xl px-2 py-2 text-sm font-semibold text-ink-muted transition hover:bg-surface-muted hover:text-ink"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          {t('blog.agentChat.back')}
-        </button>
-        <div className="flex min-w-0 items-center gap-2 text-sm font-black tracking-tight">
-          <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-ink text-white">
-            <Bot className="h-4 w-4" />
-          </span>
-          <span className="truncate">{t('blog.agentChat.title')}</span>
-        </div>
-        <div className="flex items-center gap-1">
-          <button
-            type="button"
-            onClick={() => setMobileSessionsOpen(true)}
-            className="rounded-xl p-2 text-ink-muted hover:bg-surface-muted lg:hidden"
-            aria-label={t('blog.agent.conversations')}
-          >
-            <MessageSquareText className="h-4 w-4" />
-          </button>
-          <button
-            type="button"
-            onClick={handleNewConversation}
-            disabled={navigationLocked}
-            className="inline-flex items-center gap-1.5 rounded-xl px-2 py-2 text-sm font-semibold text-ink-muted transition hover:bg-surface-muted hover:text-ink"
-          >
-            <Plus className="h-4 w-4" />
-            <span className="hidden sm:inline">{t('blog.agent.newConversation')}</span>
-          </button>
-        </div>
-      </header>
-
       <div className="relative flex min-h-0 flex-1 overflow-hidden">
-          <AgentSessionList
-            sessions={sessions.map((session) => ({ ...session, input: session.title }))}
-            activeId={conversationId}
-            loading={sessionsLoading}
-            disableNew={navigationLocked}
-            onSelect={(id) => {
-              if (!navigationLocked) navigate(`/workspace/agent/${id}`);
-            }}
-            onNew={handleNewConversation}
-          />
-          {mobileSessionsOpen && (
-            <div className="absolute inset-0 z-40 flex bg-ink/40 lg:hidden">
-              <AgentSessionList
-                mobile
-                sessions={sessions.map((session) => ({ ...session, input: session.title }))}
-                activeId={conversationId}
-                loading={sessionsLoading}
-                disableNew={navigationLocked}
-                onSelect={(id) => {
-                  if (navigationLocked) return;
-                  setMobileSessionsOpen(false);
-                  navigate(`/workspace/agent/${id}`);
-                }}
-                onNew={() => {
-                  setMobileSessionsOpen(false);
-                  handleNewConversation();
-                }}
-              />
+        <AgentSessionList
+          sessions={sessions.map((session) => ({ ...session, input: session.title }))}
+          activeId={conversationId}
+          loading={sessionsLoading}
+          disableNew={navigationLocked}
+          onSelect={(id) => {
+            if (!navigationLocked) navigate(`/workspace/agent/${id}`);
+          }}
+          onNew={handleNewConversation}
+        />
+        {mobileSessionsOpen && (
+          <div className="absolute inset-0 z-40 flex bg-ink/40 lg:hidden">
+            <AgentSessionList
+              mobile
+              sessions={sessions.map((session) => ({ ...session, input: session.title }))}
+              activeId={conversationId}
+              loading={sessionsLoading}
+              disableNew={navigationLocked}
+              onSelect={(id) => {
+                if (navigationLocked) return;
+                setMobileSessionsOpen(false);
+                navigate(`/workspace/agent/${id}`);
+              }}
+              onNew={() => {
+                setMobileSessionsOpen(false);
+                handleNewConversation();
+              }}
+            />
+            <button
+              type="button"
+              onClick={() => setMobileSessionsOpen(false)}
+              className="absolute right-3 top-3 z-10 grid h-10 w-10 place-items-center rounded-full bg-canvas text-ink-secondary shadow-lg"
+              aria-label={t('common.close')}
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
+        )}
+
+        <section className={`relative flex min-h-0 min-w-0 flex-1 flex-col bg-canvas ${showArtifact && !isMobile ? 'lg:max-w-[48%]' : ''}`}>
+          {/* Main Header */}
+          <header className="absolute top-0 left-0 right-0 z-10 flex h-14 items-center justify-between px-4 sm:px-6">
+            <div className="flex items-center">
               <button
                 type="button"
-                onClick={() => setMobileSessionsOpen(false)}
-                className="absolute right-3 top-3 z-10 grid h-10 w-10 place-items-center rounded-full bg-canvas text-ink-secondary shadow-lg"
-                aria-label={t('common.close')}
+                onClick={() => setMobileSessionsOpen(true)}
+                className="rounded-lg p-2 text-ink-muted hover:bg-surface-muted lg:hidden"
               >
-                <X className="h-5 w-5" />
+                <PanelLeftOpen className="h-5 w-5" />
               </button>
             </div>
-          )}
-
-          <section className={`flex min-h-0 min-w-0 flex-1 flex-col ${showArtifact && !isMobile ? 'lg:max-w-[48%]' : ''}`}>
-            {(reconnecting || errorMessage) && (
-              <div className={`flex items-center gap-2 border-b px-4 py-2 text-xs font-semibold ${
-                errorMessage ? 'border-danger/20 bg-danger/5 text-danger' : 'border-border bg-surface-muted text-ink-secondary'
-              }`}>
-                {errorMessage ? <AlertCircle className="h-3.5 w-3.5" /> : <Loader2 className="h-3.5 w-3.5 animate-spin" />}
-                <span className="truncate">{errorMessage || statusLine}</span>
+            <div className="flex items-center gap-3">
+              <div ref={shareMenuRef} className="relative">
+                <button
+                  type="button"
+                  onClick={() => setIsShareOpen((open) => !open)}
+                  aria-expanded={isShareOpen}
+                  aria-haspopup="dialog"
+                  className="inline-flex items-center gap-2 rounded-lg border border-border bg-canvas px-3 py-1.5 text-sm font-bold text-ink-muted transition-colors hover:text-accent"
+                >
+                  <Link2 className="h-4 w-4" /> 分享
+                </button>
+                {isShareOpen ? (
+                  <div role="dialog" aria-label="分享对话" className="absolute right-0 top-full z-40 mt-2 w-80 max-w-[calc(100vw-2.5rem)] rounded-xl border border-border bg-canvas p-3 shadow-xl">
+                    <div className="mb-2 text-sm font-bold text-ink-secondary">分享对话链接</div>
+                    <p className="mb-2 text-xs text-ink-muted">复制链接后，对方无需登录即可查看此对话</p>
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={handleCopyShareLink}
+                        disabled={shareLoading || !conversationId}
+                        className="w-full inline-flex items-center justify-center gap-1.5 rounded-lg bg-accent px-3 py-2 text-sm font-bold text-white transition hover:bg-accent/90 disabled:opacity-50"
+                      >
+                        {shareLoading ? (
+                          <><Loader2 className="h-4 w-4 animate-spin" /> 生成中...</>
+                        ) : isShareCopied ? (
+                          '已复制'
+                        ) : (
+                          <><Link2 className="h-4 w-4" /> 复制分享链接</>
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                ) : null}
               </div>
-            )}
-
-            <div
-              ref={chatScrollRef}
-              onScroll={(event) => {
-                const element = event.currentTarget;
-                stickToBottomRef.current = element.scrollHeight - element.scrollTop - element.clientHeight < 96;
-              }}
-              className="min-h-0 min-w-0 flex-1 overflow-y-auto overscroll-contain px-4 py-5 sm:px-6"
-            >
-              {loading ? (
-                <div className="flex h-full min-h-48 items-center justify-center">
-                  <LoadingSpinner fullScreen={false} text={t('blog.agentChat.restoring')} />
-                </div>
-              ) : messages.length === 0 && steps.length === 0 ? (
-                <div className="mx-auto flex max-w-xl flex-col items-start gap-4 pt-8 sm:pt-16">
-                  <div className="grid h-12 w-12 place-items-center rounded-2xl bg-surface-muted text-ink-secondary">
-                    <Bot className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <div className="text-2xl font-black tracking-tight">{t('blog.agentChat.headline')}</div>
-                    <div className="mt-2 text-sm leading-6 text-ink-muted">{t('blog.agentChat.description')}</div>
-                  </div>
-                </div>
-              ) : (
-                <div className="mx-auto flex max-w-2xl flex-col gap-3">
-                  {messages.map((message) => {
-                    if (message.role === 'user') {
-                      return <ConversationMessage key={message.id} role="user" content={message.content} />;
-                    }
-                    if (message.kind === 'thought') {
-                      return <ThoughtCard key={message.id} content={message.content} />;
-                    }
-                    if (message.kind === 'tool_call' || message.kind === 'tool_result') {
-                      return <HistoricalToolCard key={message.id} message={message} t={t} onViewBlog={handleViewBlog} />;
-                    }
-                    if (message.kind === 'answer' || message.kind === 'message') {
-                      return <ConversationMessage key={message.id} role="assistant" content={message.content} />;
-                    }
-                    return null;
-                  })}
-                  {steps.map((step, index) => {
-                    if (step.type === 'user') return <ConversationMessage key={`live-${index}`} role="user" content={step.content} />;
-                    if (step.type === 'thought') return <ThoughtCard key={`live-${index}`} content={step.content} />;
-                    if (step.type === 'tool') {
-                      // progress 步骤由下方 ToolProgressPanel 聚合展示。
-                      if (step.phase === 'progress') return null;
-                      return <ToolStepCard key={`live-${index}`} step={step} t={t} onViewBlog={handleViewBlog} />;
-                    }
-                    if (step.type === 'answer' || step.type === 'answer_delta') {
-                      return <ConversationMessage key={`live-${index}`} role="assistant" content={step.content} isStreaming={step.type === 'answer_delta'} />;
-                    }
-                    if (step.type === 'tool_delta') return null;
-                    if (step.type === 'error') {
-                      return (
-                        <div key={`live-${index}`} className="flex items-center gap-2 rounded-xl border border-danger/30 bg-danger/5 px-3 py-2 text-xs font-semibold text-danger">
-                          <AlertCircle className="h-3.5 w-3.5 shrink-0" />
-                          <span className="truncate">{step.message}</span>
-                        </div>
-                      );
-                    }
-                    return null;
-                  })}
-                  {toolProgress.map((tool) => (
-                    <ToolProgressPanel
-                      key={tool.tool}
-                      logs={tool.logs}
-                      stage={tool.stage}
-                      draft={tool.draft}
-                      active={tool.active}
-                    />
-                  ))}
-                  {isActive && !streamingAnswer && !activeToolRunning && toolProgress.length === 0 && (
-                    <ThinkingIndicator label={t('blog.agentChat.thinking')} />
-                  )}
-                  <div ref={chatEndRef} />
-                </div>
-              )}
             </div>
+          </header>
 
-            <AgentChatInputBar
-              t={t}
-              input={input}
-              setInput={setInput}
-              isActive={isActive}
-              creating={creating}
-              hasConversation={Boolean(conversation)}
-              onSubmit={handleSubmit}
-              onStop={handleStop}
-            />
-          </section>
-
-          {showArtifact && !isMobile && (
-            <aside className="hidden min-h-0 w-[52%] border-l border-border lg:block">
-              {artifactPanel}
-            </aside>
-          )}
-
-          {showArtifact && isMobile && (
-            <div className="absolute inset-0 z-30 bg-canvas">
-              {artifactPanel}
+          {(reconnecting || errorMessage) && (
+            <div className={`absolute top-14 left-0 right-0 z-10 flex items-center gap-2 border-b px-4 py-2 text-xs font-semibold ${
+              errorMessage ? 'border-danger/20 bg-danger/5 text-danger' : 'border-border bg-surface-muted text-ink-secondary'
+            }`}>
+              {errorMessage ? <AlertCircle className="h-3.5 w-3.5" /> : <Loader2 className="h-3.5 w-3.5 animate-spin" />}
+              <span className="truncate">{errorMessage || statusLine}</span>
             </div>
           )}
+
+          {messages.length === 0 && steps.length === 0 && !loading ? (
+            <div className="flex h-full flex-col items-center justify-center px-4 pt-10">
+              <h1 className="mb-8 text-3xl font-semibold text-ink">我们先从哪里开始呢？</h1>
+              
+              <AgentChatInputBar
+                t={t}
+                input={input}
+                setInput={setInput}
+                isActive={isActive}
+                creating={creating}
+                hasConversation={false}
+                onSubmit={handleSubmit}
+                onStop={handleStop}
+              />
+
+              <div className="mx-auto mt-6 flex w-full max-w-3xl flex-wrap justify-center gap-2">
+                <button onClick={() => setInput('生成图片')} className="flex items-center gap-2 rounded-xl border border-border bg-surface px-4 py-2 text-sm font-semibold text-ink transition hover:bg-surface-muted">
+                  <ImageIcon className="h-4 w-4 text-emerald-500" />
+                  生成图片
+                </button>
+                <button onClick={() => setInput('撰写或编辑文章')} className="flex items-center gap-2 rounded-xl border border-border bg-surface px-4 py-2 text-sm font-semibold text-ink transition hover:bg-surface-muted">
+                  <PenLine className="h-4 w-4 text-blue-500" />
+                  撰写或编辑
+                </button>
+                <button onClick={() => setInput('搜索网页')} className="flex items-center gap-2 rounded-xl border border-border bg-surface px-4 py-2 text-sm font-semibold text-ink transition hover:bg-surface-muted">
+                  <Globe className="h-4 w-4 text-orange-500" />
+                  搜索网页
+                </button>
+              </div>
+            </div>
+          ) : (
+            <>
+              <div
+                ref={chatScrollRef}
+                onScroll={(event) => {
+                  const element = event.currentTarget;
+                  stickToBottomRef.current = element.scrollHeight - element.scrollTop - element.clientHeight < 96;
+                }}
+                className="min-h-0 min-w-0 flex-1 overflow-y-auto overscroll-contain px-4 pb-4 pt-20 sm:px-6"
+              >
+                {loading ? (
+                  <div className="flex h-full min-h-48 items-center justify-center">
+                    <LoadingSpinner fullScreen={false} text={t('blog.agentChat.restoring')} />
+                  </div>
+                ) : (
+                  <div className="mx-auto flex max-w-3xl flex-col gap-5">
+                    {messages.map((message) => {
+                      if (message.role === 'user') {
+                        return <ConversationMessage key={message.id} role="user" content={message.content} />;
+                      }
+                      if (message.kind === 'thought') {
+                        return <ThoughtCard key={message.id} content={message.content} />;
+                      }
+                      if (message.kind === 'tool_call' || message.kind === 'tool_result') {
+                        return <HistoricalToolCard key={message.id} message={message} t={t} onViewBlog={handleViewBlog} />;
+                      }
+                      if (message.kind === 'answer' || message.kind === 'message') {
+                        return <ConversationMessage key={message.id} role="assistant" content={message.content} />;
+                      }
+                      return null;
+                    })}
+                    {steps.map((step, index) => {
+                      if (step.type === 'user') return <ConversationMessage key={`live-${index}`} role="user" content={step.content} />;
+                      if (step.type === 'thought') return <ThoughtCard key={`live-${index}`} content={step.content} />;
+                      if (step.type === 'tool') {
+                        if (step.phase === 'progress') return null;
+                        return <ToolStepCard key={`live-${index}`} step={step} t={t} onViewBlog={handleViewBlog} />;
+                      }
+                      if (step.type === 'answer' || step.type === 'answer_delta') {
+                        return <ConversationMessage key={`live-${index}`} role="assistant" content={step.content} isStreaming={step.type === 'answer_delta'} />;
+                      }
+                      if (step.type === 'tool_delta') return null;
+                      if (step.type === 'error') {
+                        return (
+                          <div key={`live-${index}`} className="flex items-center gap-2 rounded-xl border border-danger/30 bg-danger/5 px-3 py-2 text-xs font-semibold text-danger">
+                            <AlertCircle className="h-3.5 w-3.5 shrink-0" />
+                            <span className="truncate">{step.message}</span>
+                          </div>
+                        );
+                      }
+                      return null;
+                    })}
+                    {toolProgress.map((tool) => (
+                      <ToolProgressPanel
+                        key={tool.tool}
+                        logs={tool.logs}
+                        stage={tool.stage}
+                        draft={tool.draft}
+                        active={tool.active}
+                      />
+                    ))}
+                    {isActive && !streamingAnswer && !activeToolRunning && toolProgress.length === 0 && (
+                      <ThinkingIndicator label={t('blog.agentChat.thinking')} />
+                    )}
+                    <div ref={chatEndRef} className="h-2" />
+                  </div>
+                )}
+              </div>
+
+              <div className="shrink-0 bg-gradient-to-t from-canvas via-canvas/80 to-transparent pt-4">
+                <AgentChatInputBar
+                  t={t}
+                  input={input}
+                  setInput={setInput}
+                  isActive={isActive}
+                  creating={creating}
+                  hasConversation={true}
+                  onSubmit={handleSubmit}
+                  onStop={handleStop}
+                />
+              </div>
+            </>
+          )}
+        </section>
+
+        {showArtifact && !isMobile && (
+          <aside className="hidden min-h-0 w-[52%] border-l border-border lg:block">
+            {artifactPanel}
+          </aside>
+        )}
+
+        {showArtifact && isMobile && (
+          <div className="absolute inset-0 z-30 bg-canvas">
+            {artifactPanel}
+          </div>
+        )}
       </div>
     </div>
   );
