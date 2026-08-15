@@ -166,8 +166,7 @@ const AdminModelProvidersPage = () => {
   ];
 
   return (
-    <div className="h-full overflow-y-auto p-4 sm:p-6">
-      <div className="mx-auto max-w-5xl">
+    <div className="mx-auto flex h-full min-h-0 w-full max-w-5xl flex-col overflow-hidden p-4 sm:p-6">
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
           <div>
             <h1 className="flex items-center gap-2 text-base font-bold text-ink">
@@ -186,16 +185,17 @@ const AdminModelProvidersPage = () => {
           </button>
         </div>
 
-        <DataTable
-          columns={columns}
-          rows={providers}
-          loading={loading}
-          emptyTitle={t('admin.providers.empty')}
-          emptyHint={t('admin.providers.emptyHint')}
-          emptyIcon={Server}
-          minWidth="860px"
-        />
-      </div>
+        <div className="flex min-h-0 flex-1 flex-col">
+          <DataTable
+            columns={columns}
+            rows={providers}
+            loading={loading}
+            emptyTitle={t('admin.providers.empty')}
+            emptyHint={t('admin.providers.emptyHint')}
+            emptyIcon={Server}
+            minWidth="860px"
+          />
+        </div>
 
       <ProviderFormModal
         isOpen={formOpen}

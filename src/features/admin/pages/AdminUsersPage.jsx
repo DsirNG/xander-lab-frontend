@@ -154,8 +154,7 @@ const AdminUsersPage = () => {
   ];
 
   return (
-    <div className="h-full overflow-y-auto p-4 sm:p-6">
-      <div className="mx-auto max-w-5xl">
+    <div className="mx-auto flex h-full min-h-0 w-full max-w-5xl flex-col overflow-hidden p-4 sm:p-6">
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
           <div>
             <h1 className="flex items-center gap-2 text-base font-bold text-ink">
@@ -175,22 +174,23 @@ const AdminUsersPage = () => {
           </div>
         </div>
 
-        <DataTable
-          columns={columns}
-          rows={users}
-          loading={loading}
-          emptyTitle={t('admin.users.empty')}
-          emptyHint={t('admin.users.emptyHint')}
-          emptyIcon={Users}
-          minWidth="920px"
-          page={page}
-          pageSize={pageSize}
-          total={total}
-          onPageChange={setPage}
-          onPageSizeChange={(size) => { setPageSize(size); setPage(1); }}
-          paginationDisabled={loading}
-        />
-      </div>
+        <div className="flex min-h-0 flex-1 flex-col">
+          <DataTable
+            columns={columns}
+            rows={users}
+            loading={loading}
+            emptyTitle={t('admin.users.empty')}
+            emptyHint={t('admin.users.emptyHint')}
+            emptyIcon={Users}
+            minWidth="920px"
+            page={page}
+            pageSize={pageSize}
+            total={total}
+            onPageChange={setPage}
+            onPageSizeChange={(size) => { setPageSize(size); setPage(1); }}
+            paginationDisabled={loading}
+          />
+        </div>
 
       <ConfirmModal
         isOpen={Boolean(pendingTarget)}

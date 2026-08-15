@@ -119,8 +119,7 @@ const AdminFeatureModelConfigsPage = () => {
   ];
 
   return (
-    <div className="h-full overflow-y-auto p-4 sm:p-6">
-      <div className="mx-auto max-w-5xl">
+    <div className="mx-auto flex h-full min-h-0 w-full max-w-5xl flex-col overflow-hidden p-4 sm:p-6">
         <div className="mb-4">
           <h1 className="flex items-center gap-2 text-base font-bold text-ink">
             <SlidersHorizontal className="h-4 w-4 text-accent" aria-hidden="true" />
@@ -129,16 +128,17 @@ const AdminFeatureModelConfigsPage = () => {
           <p className="mt-1 text-xs text-ink-muted">{t('admin.configs.subtitle')}</p>
         </div>
 
-        <DataTable
-          columns={columns}
-          rows={configs}
-          loading={loading}
-          emptyTitle={t('admin.configs.empty')}
-          emptyHint={t('admin.configs.emptyHint')}
-          emptyIcon={SlidersHorizontal}
-          minWidth="820px"
-        />
-      </div>
+        <div className="flex min-h-0 flex-1 flex-col">
+          <DataTable
+            columns={columns}
+            rows={configs}
+            loading={loading}
+            emptyTitle={t('admin.configs.empty')}
+            emptyHint={t('admin.configs.emptyHint')}
+            emptyIcon={SlidersHorizontal}
+            minWidth="820px"
+          />
+        </div>
 
       <FeatureConfigModal
         isOpen={Boolean(editingConfig)}
