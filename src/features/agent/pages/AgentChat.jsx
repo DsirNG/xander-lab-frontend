@@ -673,7 +673,8 @@ const AgentChat = () => {
             <div className="absolute inset-0 z-30 bg-canvas">
               {artifactPanel}
             </div>
-          </div>
+          )}
+        </div>
       </main>
     </div>
   );
