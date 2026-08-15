@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useAuthSession } from '@features/auth/context/authSessionContextValue';
 
-const AgentSessionList = ({ sessions, activeId, loading, disableNew = false, mobile = false, onSelect, onNew }) => {
+const AgentSessionList = ({ sessions, activeId, loading, disableNew = false, mobile = false, onSelect, onNew, onCollapse }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { userInfo } = useAuthSession();
@@ -23,7 +23,12 @@ const AgentSessionList = ({ sessions, activeId, loading, disableNew = false, mob
         </div>
         <div className="flex items-center gap-1 text-ink-muted">
           <button className="p-1.5 hover:bg-surface-muted rounded-lg transition"><Search className="h-4 w-4" /></button>
-          <button className="p-1.5 hover:bg-surface-muted rounded-lg transition hidden lg:block"><PanelLeftClose className="h-4 w-4" /></button>
+          <button
+            onClick={onCollapse}
+            className="p-1.5 hover:bg-surface-muted rounded-lg transition hidden lg:block"
+          >
+            <PanelLeftClose className="h-4 w-4" />
+          </button>
         </div>
       </div>
 

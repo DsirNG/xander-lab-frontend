@@ -3,7 +3,7 @@ import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
   AlertCircle, ArrowLeft, Bot, CheckCircle2, FileText, Loader2, MessageSquareText, Plus,
-  Send, Sparkles, Square, Wrench, X, Globe, PenLine, Image as ImageIcon, Brain, Mic, Menu, PanelLeftOpen, Link2
+  Send, Sparkles, Square, Wrench, X, Globe, PenLine, Image as ImageIcon, Mic, Menu, PanelLeftOpen, Link2, Search
 } from 'lucide-react';
 import { useToast } from '@/hooks/useToast';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
@@ -205,69 +205,55 @@ const AgentChatInputBar = ({ t, input, setInput, isActive, creating, hasConversa
   const locked = isActive || creating;
   return (
     <div className={`mx-auto w-full max-w-3xl ${hasConversation ? 'px-4 py-3 pb-safe sm:px-6' : 'px-4'}`}>
-      <div className="relative flex flex-col rounded-3xl border border-border/80 bg-surface shadow-sm focus-within:border-border-strong focus-within:ring-4 focus-within:ring-ink/5">
-        <div className="flex min-h-[56px] items-end px-3 py-2">
+      <div className="relative flex items-center rounded-3xl border border-border/80 bg-surface">
+        <button
+          type="button"
+          className="ml-2 flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-ink-muted transition hover:bg-surface-muted hover:text-ink"
+          title="Add attachment"
+        >
+          <Plus className="h-5 w-5" />
+        </button>
+
+        <input
+          type="text"
+          value={input}
+          onChange={(event) => setInput(event.target.value)}
+          disabled={locked}
+          placeholder={locked ? t('blog.agentChat.inputLockedPlaceholder') : "有问题，随便问"}
+          onKeyDown={(event) => {
+            if (event.key === 'Enter' && !event.shiftKey) {
+              event.preventDefault();
+              if (!locked) onSubmit();
+            }
+          }}
+          className="min-h-[44px] min-w-0 flex-1 bg-transparent px-3 py-2 text-base leading-6 outline-none placeholder:text-ink-faint disabled:opacity-60"
+        />
+
+        <div className="mr-2 flex items-center gap-1">
           <button
             type="button"
-            className="mb-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-ink-muted transition hover:bg-surface-muted hover:text-ink"
-            title="Add attachment"
+            className="flex h-8 w-8 items-center justify-center rounded-full text-ink-muted transition hover:bg-surface-muted hover:text-ink"
           >
-            <Plus className="h-5 w-5" />
+            <Mic className="h-5 w-5" />
           </button>
-          
-          <textarea
-            value={input}
-            onChange={(event) => setInput(event.target.value)}
-            disabled={locked}
-            rows={1}
-            placeholder={locked ? t('blog.agentChat.inputLockedPlaceholder') : "有问题，随便问"}
-            onKeyDown={(event) => {
-              if (event.key === 'Enter' && !event.shiftKey) {
-                event.preventDefault();
-                if (!locked) onSubmit();
-              }
-            }}
-            className="max-h-40 min-h-[40px] min-w-0 flex-1 resize-none bg-transparent px-3 py-2 text-base leading-6 outline-none placeholder:text-ink-faint disabled:opacity-60"
-            style={{ height: input ? 'auto' : '40px' }}
-          />
-        </div>
-
-        <div className="flex items-center justify-between px-3 pb-2 pt-1">
-          <div className="flex items-center gap-2">
+          {isActive ? (
             <button
               type="button"
-              className="flex items-center gap-1.5 rounded-full border border-border/60 px-3 py-1 text-xs font-semibold text-ink-muted transition hover:bg-surface-muted hover:text-ink"
+              onClick={onStop}
+              className="flex h-8 w-8 items-center justify-center rounded-full bg-ink text-white transition hover:bg-ink-secondary"
             >
-              <Brain className="h-3.5 w-3.5" />
-              思考
+              <Square className="h-4 w-4 fill-current" />
             </button>
-          </div>
-          <div className="flex items-center gap-2">
+          ) : (
             <button
               type="button"
-              className="flex h-8 w-8 items-center justify-center rounded-full text-ink-muted transition hover:bg-surface-muted hover:text-ink"
+              onClick={onSubmit}
+              disabled={locked || !input.trim()}
+              className="flex h-8 w-8 items-center justify-center rounded-full bg-ink text-white transition hover:bg-ink-secondary disabled:opacity-50"
             >
-              <Mic className="h-5 w-5" />
+              <Send className="h-4 w-4" />
             </button>
-            {isActive ? (
-              <button
-                type="button"
-                onClick={onStop}
-                className="flex h-8 w-8 items-center justify-center rounded-full bg-ink text-white transition hover:bg-ink-secondary"
-              >
-                <Square className="h-4 w-4 fill-current" />
-              </button>
-            ) : (
-              <button
-                type="button"
-                onClick={onSubmit}
-                disabled={locked || !input.trim()}
-                className="flex h-8 w-8 items-center justify-center rounded-full bg-ink text-white transition hover:bg-ink-secondary disabled:opacity-50"
-              >
-                <Send className="h-4 w-4 ml-0.5" />
-              </button>
-            )}
-          </div>
+          )}
         </div>
       </div>
       {hasConversation && !isActive && <div className="mt-2 text-center text-xs text-ink-muted">{t('blog.agentChat.multiTurnHint')}</div>}
@@ -285,6 +271,10 @@ const AgentChat = () => {
   const isMobile = useIsMobile(1024);
   const { userInfo } = useAuthSession();
 
+  const displayName = userInfo?.nickname || userInfo?.username || '用户';
+  const avatarText = (displayName || 'XL').slice(0, 2).toUpperCase();
+  const avatar = userInfo?.avatar;
+
   const [input, setInput] = useState('');
   const [mobileSessionsOpen, setMobileSessionsOpen] = useState(false);
   const [artifactData, setArtifactData] = useState(null);
@@ -296,7 +286,11 @@ const AgentChat = () => {
   const [isShareOpen, setIsShareOpen] = useState(false);
   const [isShareCopied, setIsShareCopied] = useState(false);
   const [shareLoading, setShareLoading] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   const shareMenuRef = useRef(null);
+  const searchModalRef = useRef(null);
   const chatEndRef = useRef(null);
   const chatScrollRef = useRef(null);
   const stickToBottomRef = useRef(true);
@@ -404,6 +398,12 @@ const AgentChat = () => {
   const closeShareMenu = () => setIsShareOpen(false);
   useClickOutside(shareMenuRef, closeShareMenu, isShareOpen);
 
+  const closeSearchModal = () => {
+    setSearchOpen(false);
+    setSearchQuery('');
+  };
+  useClickOutside(searchModalRef, closeSearchModal, searchOpen);
+
   const handleCopyShareLink = async () => {
     if (!conversationId) return;
     setShareLoading(true);
@@ -464,6 +464,14 @@ const AgentChat = () => {
       setIsSavingDraft(false);
     }
   };
+
+  const filteredSessions = useMemo(() => {
+    if (!searchQuery.trim()) return sessions;
+    const query = searchQuery.toLowerCase();
+    return sessions.filter((session) =>
+      (session.title || '').toLowerCase().includes(query)
+    );
+  }, [sessions, searchQuery]);
 
   const navigationLocked = loading || creating;
 
@@ -547,16 +555,19 @@ const AgentChat = () => {
   return (
     <div className="flex h-dvh flex-col bg-surface font-chat text-ink">
       <div className="relative flex min-h-0 flex-1 overflow-hidden">
-        <AgentSessionList
-          sessions={sessions.map((session) => ({ ...session, input: session.title }))}
-          activeId={conversationId}
-          loading={sessionsLoading}
-          disableNew={navigationLocked}
-          onSelect={(id) => {
-            if (!navigationLocked) navigate(`/workspace/agent/${id}`);
-          }}
-          onNew={handleNewConversation}
-        />
+        {!sidebarCollapsed && (
+          <AgentSessionList
+            sessions={sessions.map((session) => ({ ...session, input: session.title }))}
+            activeId={conversationId}
+            loading={sessionsLoading}
+            disableNew={navigationLocked}
+            onSelect={(id) => {
+              if (!navigationLocked) navigate(`/workspace/agent/${id}`);
+            }}
+            onNew={handleNewConversation}
+            onCollapse={() => setSidebarCollapsed(true)}
+          />
+        )}
         {mobileSessionsOpen && (
           <div className="absolute inset-0 z-40 flex bg-ink/40 lg:hidden">
             <AgentSessionList
@@ -589,49 +600,87 @@ const AgentChat = () => {
         <section className={`relative flex min-h-0 min-w-0 flex-1 flex-col bg-canvas ${showArtifact && !isMobile ? 'lg:max-w-[48%]' : ''}`}>
           {/* Main Header */}
           <header className="absolute top-0 left-0 right-0 z-10 flex h-14 items-center justify-between px-4 sm:px-6">
-            <div className="flex items-center">
-              <button
-                type="button"
-                onClick={() => setMobileSessionsOpen(true)}
-                className="rounded-lg p-2 text-ink-muted hover:bg-surface-muted lg:hidden"
-              >
-                <PanelLeftOpen className="h-5 w-5" />
-              </button>
-            </div>
-            <div className="flex items-center gap-3">
-              <div ref={shareMenuRef} className="relative">
+            <div className="flex items-center gap-2">
+              {sidebarCollapsed && (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => setSidebarCollapsed(false)}
+                    className="rounded-lg p-2 text-ink-muted hover:bg-surface-muted transition"
+                  >
+                    <PanelLeftOpen className="h-5 w-5" />
+                  </button>
+                  <span className="font-bold text-base text-ink">DinQorGPT</span>
+                </>
+              )}
+              {!sidebarCollapsed && (
                 <button
                   type="button"
-                  onClick={() => setIsShareOpen((open) => !open)}
-                  aria-expanded={isShareOpen}
-                  aria-haspopup="dialog"
-                  className="inline-flex items-center gap-2 rounded-lg border border-border bg-canvas px-3 py-1.5 text-sm font-bold text-ink-muted transition-colors hover:text-accent"
+                  onClick={() => setMobileSessionsOpen(true)}
+                  className="rounded-lg p-2 text-ink-muted hover:bg-surface-muted lg:hidden"
                 >
-                  <Link2 className="h-4 w-4" /> 分享
+                  <PanelLeftOpen className="h-5 w-5" />
                 </button>
-                {isShareOpen ? (
-                  <div role="dialog" aria-label="分享对话" className="absolute right-0 top-full z-40 mt-2 w-80 max-w-[calc(100vw-2.5rem)] rounded-xl border border-border bg-canvas p-3 shadow-xl">
-                    <div className="mb-2 text-sm font-bold text-ink-secondary">分享对话链接</div>
-                    <p className="mb-2 text-xs text-ink-muted">复制链接后，对方无需登录即可查看此对话</p>
-                    <div className="flex items-center gap-2">
-                      <button
-                        type="button"
-                        onClick={handleCopyShareLink}
-                        disabled={shareLoading || !conversationId}
-                        className="w-full inline-flex items-center justify-center gap-1.5 rounded-lg bg-accent px-3 py-2 text-sm font-bold text-white transition hover:bg-accent/90 disabled:opacity-50"
-                      >
-                        {shareLoading ? (
-                          <><Loader2 className="h-4 w-4 animate-spin" /> 生成中...</>
-                        ) : isShareCopied ? (
-                          '已复制'
-                        ) : (
-                          <><Link2 className="h-4 w-4" /> 复制分享链接</>
-                        )}
-                      </button>
-                    </div>
+              )}
+            </div>
+            <div className="flex items-center gap-3">
+              {sidebarCollapsed && (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => setSearchOpen(true)}
+                    className="rounded-lg p-2 text-ink-muted hover:bg-surface-muted transition"
+                  >
+                    <Search className="h-5 w-5" />
+                  </button>
+                  <div className="relative grid h-8 w-8 place-items-center rounded-full bg-accent text-white font-bold text-xs uppercase">
+                    {avatarText}
+                    {avatar ? (
+                      <img
+                        src={avatar}
+                        alt={displayName}
+                        className="absolute inset-0 h-full w-full rounded-full object-cover"
+                        onError={(event) => { event.currentTarget.style.display = 'none'; }}
+                      />
+                    ) : null}
                   </div>
-                ) : null}
-              </div>
+                </>
+              )}
+              {!sidebarCollapsed && (
+                <div ref={shareMenuRef} className="relative">
+                  <button
+                    type="button"
+                    onClick={() => setIsShareOpen((open) => !open)}
+                    aria-expanded={isShareOpen}
+                    aria-haspopup="dialog"
+                    className="inline-flex items-center gap-2 rounded-lg border border-border bg-canvas px-3 py-1.5 text-sm font-bold text-ink-muted transition-colors hover:text-accent"
+                  >
+                    <Link2 className="h-4 w-4" /> 分享
+                  </button>
+                  {isShareOpen ? (
+                    <div role="dialog" aria-label="分享对话" className="absolute right-0 top-full z-40 mt-2 w-80 max-w-[calc(100vw-2.5rem)] rounded-xl border border-border bg-canvas p-3 shadow-xl">
+                      <div className="mb-2 text-sm font-bold text-ink-secondary">分享对话链接</div>
+                      <p className="mb-2 text-xs text-ink-muted">复制链接后，对方无需登录即可查看此对话</p>
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={handleCopyShareLink}
+                          disabled={shareLoading || !conversationId}
+                          className="w-full inline-flex items-center justify-center gap-1.5 rounded-lg bg-accent px-3 py-2 text-sm font-bold text-white transition hover:bg-accent/90 disabled:opacity-50"
+                        >
+                          {shareLoading ? (
+                            <><Loader2 className="h-4 w-4 animate-spin" /> 生成中...</>
+                          ) : isShareCopied ? (
+                            '已复制'
+                          ) : (
+                            <><Link2 className="h-4 w-4" /> 复制分享链接</>
+                          )}
+                        </button>
+                      </div>
+                    </div>
+                  ) : null}
+                </div>
+              )}
             </div>
           </header>
 
@@ -771,6 +820,55 @@ const AgentChat = () => {
           </div>
         )}
       </div>
+
+      {/* Search Modal */}
+      {searchOpen && (
+        <div className="absolute inset-0 z-50 flex items-start justify-center bg-ink/40 pt-[15vh]">
+          <div ref={searchModalRef} className="w-full max-w-lg rounded-2xl border border-border bg-canvas shadow-2xl">
+            <div className="flex items-center gap-3 border-b border-border px-4 py-3">
+              <Search className="h-5 w-5 shrink-0 text-ink-muted" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(event) => setSearchQuery(event.target.value)}
+                placeholder="搜索会话..."
+                autoFocus
+                className="min-h-[40px] min-w-0 flex-1 bg-transparent text-base outline-none placeholder:text-ink-faint"
+              />
+              <button
+                type="button"
+                onClick={closeSearchModal}
+                className="rounded-lg p-1.5 text-ink-muted hover:bg-surface-muted transition"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            <div className="max-h-[50vh] overflow-y-auto p-2">
+              <div className="px-2 py-1.5 text-xs font-semibold text-ink-muted">最近聊天</div>
+              {filteredSessions.length > 0 ? (
+                filteredSessions.map((session) => (
+                  <button
+                    key={session.id}
+                    type="button"
+                    onClick={() => {
+                      closeSearchModal();
+                      navigate(`/workspace/agent/${session.id}`);
+                    }}
+                    className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm transition hover:bg-surface-muted"
+                  >
+                    <MessageSquareText className="h-4 w-4 shrink-0 text-ink-muted" />
+                    <span className="truncate">{session.title || t('blog.agent.untitled')}</span>
+                  </button>
+                ))
+              ) : (
+                <div className="py-8 text-center text-sm text-ink-muted">
+                  {searchQuery ? '没有找到匹配的会话' : '暂无会话记录'}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
