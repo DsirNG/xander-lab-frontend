@@ -210,14 +210,13 @@ const MultiFileTransferDemo = () => {
                                         initial={{ opacity: 0, y: 10 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         exit={{ opacity: 0, scale: 0.95 }}
-                                        draggable
-                                        onDragStart={(e) => dragDrop.handleDragStart(file, e)}
-                                        onDragEnd={dragDrop.handleDragEnd}
+                                        onPointerDown={(e) => dragDrop.handleDragStart(file, e)}
                                         onClick={() => toggleSelect(file.id)}
                                         className={`group flex items-center p-3 rounded-2xl cursor-pointer transition-all duration-300 ${isSelected
                                             ? 'bg-primary-50 ring-1 ring-primary/20'
                                             : 'hover:bg-slate-50 '
                                             }`}
+                                        style={{ touchAction: 'none' }}
                                     >
                                         <div className={`mr-4 w-12 h-12 flex items-center justify-center rounded-xl transition-all duration-300 ${isSelected ? 'bg-primary scale-110 shadow-lg shadow-primary/30' : 'bg-slate-100 '
                                             }`}>
@@ -264,9 +263,9 @@ const MultiFileTransferDemo = () => {
                     {folders.map(folder => (
                         <div
                             key={folder.id}
-                            onDragOver={(e) => dragDrop.handleDragOver(folder, e)}
-                            onDragLeave={dragDrop.handleDragLeave}
-                            onDrop={(e) => dragDrop.handleDrop(folder, e)}
+                            onPointerMove={(e) => dragDrop.handleDragOver(folder, e)}
+                            onPointerLeave={dragDrop.handleDragLeave}
+                            onPointerUp={(e) => dragDrop.handleDrop(folder, e)}
                             className={`p-8 rounded-[2.5rem] border-2 border-dashed transition-all duration-500 relative min-h-[220px] group ${dragDrop.dragOverItem?.id === folder.id
                                 ? 'border-primary bg-primary/10 scale-[1.02] shadow-2xl shadow-primary/20'
                                 : 'border-slate-200  hover:border-slate-300 shadow-sm'

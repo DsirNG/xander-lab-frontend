@@ -137,7 +137,7 @@ const KanbanDemo = () => {
                     key={colId}
                     className="flex-shrink-0 w-72 bg-slate-100 /50 rounded-2xl flex flex-col max-h-[500px]"
                     // Allow dropping onto empty columns headers (advanced implementation would need a wrapper)
-                    onDragOver={(e) => {
+                    onPointerMove={(e) => {
                         e.preventDefault();
                         // This handles dropping on the column itself (e.g. at the bottom)
                         // Ideally we pass a special 'target' to handleDrop.
@@ -170,15 +170,14 @@ const KanbanDemo = () => {
                                     layout
                                     layoutId={item.id}
                                     key={item.id}
-                                    draggable
-                                    onDragStart={(e) => dragDrop.handleDragStart(item, e)}
-                                    onDragOver={(e) => dragDrop.handleDragOver(item, e)}
+                                    onPointerDown={(e) => dragDrop.handleDragStart(item, e)}
+                                    onPointerMove={(e) => dragDrop.handleDragOver(item, e)}
                                     // onDragLeave={dragDrop.handleDragLeave} // Optional, sometimes causes flicker if layouts update fast
-                                    onDrop={(e) => dragDrop.handleDrop(item, e)}
-                                    onDragEnd={dragDrop.handleDragEnd}
+                                    onPointerUp={(e) => dragDrop.handleDrop(item, e)}
                                     initial={{ opacity: 0, y: 10 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     exit={{ opacity: 0, scale: 0.9 }}
+                                    style={{ touchAction: 'none' }}
                                     className={`
                                         bg-white  p-4 rounded-xl shadow-sm border border-slate-200 cursor-grab active:cursor-grabbing group
                                         ${dragDrop.draggedItem?.id === item.id ? 'opacity-50 border-dashed' : ''}
@@ -231,11 +230,11 @@ const KanbanDemo = () => {
                                     initial={{ opacity: 0 }}
                                     animate={{ opacity: 1 }}
                                     exit={{ opacity: 0 }}
-                                    onDragOver={(e) => {
+                                    onPointerMove={(e) => {
                                         e.preventDefault();
                                         // e.stopPropagation();
                                     }}
-                                    onDrop={(e) => dragDrop.handleDrop(colId, e)}
+                                    onPointerUp={(e) => dragDrop.handleDrop(colId, e)}
                                     className="h-full border-2 border-dashed border-slate-200 rounded-xl flex items-center justify-center text-slate-400 text-sm font-medium"
                                 >
                                     Drop here

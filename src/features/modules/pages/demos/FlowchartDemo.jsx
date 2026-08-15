@@ -81,6 +81,10 @@ const FlowchartDemo = () => {
     // Node Drag Logic (Position)
     const startMovingNode = (e, node) => {
         e.stopPropagation(); // Prevent canvas handlers if any specific ones exist
+        const el = e.currentTarget;
+        setTimeout(() => {
+            if (el && el.hasPointerCapture?.(e.pointerId)) el.releasePointerCapture(e.pointerId);
+        }, 0);
         const rect = canvasRef.current.getBoundingClientRect();
         const mouseX = e.clientX - rect.left;
         const mouseY = e.clientY - rect.top;
@@ -94,6 +98,10 @@ const FlowchartDemo = () => {
     const startConnection = (e, nodeId) => {
         e.stopPropagation();
         e.preventDefault();
+        const el = e.currentTarget;
+        setTimeout(() => {
+            if (el && el.hasPointerCapture?.(e.pointerId)) el.releasePointerCapture(e.pointerId);
+        }, 0);
         const rect = canvasRef.current.getBoundingClientRect();
         setDragStartNode(nodeId);
         setDragPos({ x: e.clientX - rect.left, y: e.clientY - rect.top });
@@ -125,9 +133,9 @@ const FlowchartDemo = () => {
                 backgroundPosition: '-10px -10px',
                 minWidth: '100%'
             }}
-            onMouseMove={handleCanvasMouseMove}
-            onMouseUp={handleCanvasMouseUp}
-            onMouseLeave={handleCanvasMouseUp}
+            onPointerMove={handleCanvasMouseMove}
+            onPointerUp={handleCanvasMouseUp}
+            onPointerLeave={handleCanvasMouseUp}
         >
             {/* SVG Layer for Lines */}
             <svg className="absolute inset-0 h-full pointer-events-none sticky-svg" style={{ width: '760px', maxWidth: 'none' }}>
@@ -170,13 +178,14 @@ const FlowchartDemo = () => {
                 <div
                     key={node.id}
                     className="absolute w-[140px] h-[64px] bg-white  rounded-xl shadow-lg border-2 border-slate-200 flex items-center justify-between px-3 group transition-colors hover:border-blue-400 z-10"
-                    style={{ left: node.x, top: node.y }}
-                    onMouseDown={(e) => startMovingNode(e, node)}
+                    style={{ left: node.x, top: node.y, touchAction: 'none' }}
+                    onPointerDown={(e) => startMovingNode(e, node)}
                 >
                     {/* Left Connector (Target) */}
                     <div
                         className="w-3 h-3 rounded-full bg-slate-300 -ml-4 border-2 border-white  cursor-pointer hover:scale-125 hover:bg-blue-500 transition-transform"
-                        onMouseUp={(e) => finishConnection(e, node.id)}
+                        style={{ touchAction: 'none' }}
+                        onPointerUp={(e) => finishConnection(e, node.id)}
                     />
 
                     <div className="flex items-center space-x-3 pointer-events-none">
@@ -187,7 +196,8 @@ const FlowchartDemo = () => {
                     {/* Right Connector (Source) */}
                     <div
                         className="w-3 h-3 rounded-full bg-blue-500 -mr-4 border-2 border-white  cursor-pointer hover:scale-125 transition-transform"
-                        onMouseDown={(e) => startConnection(e, node.id)}
+                        style={{ touchAction: 'none' }}
+                        onPointerDown={(e) => startConnection(e, node.id)}
                     />
 
                     {/* Delete button on hover */}

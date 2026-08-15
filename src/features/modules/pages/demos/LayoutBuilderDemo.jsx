@@ -95,10 +95,9 @@ const LayoutBuilderDemo = () => {
                     {TOOL_ITEMS.map((tool) => (
                         <div
                             key={tool.id}
-                            draggable
-                            onDragStart={(e) => dragDrop.handleDragStart(tool, e)}
-                            onDragEnd={dragDrop.handleDragEnd}
+                            onPointerDown={(e) => dragDrop.handleDragStart(tool, e)}
                             className="flex items-center p-2.5 sm:p-3 bg-slate-50  border border-slate-200 rounded-xl cursor-grab active:cursor-grabbing hover:border-blue-500 transition-colors group min-w-0"
+                            style={{ touchAction: 'none' }}
                         >
                             <div className="p-2 bg-white  rounded-lg mr-2 sm:mr-3 shadow-sm group-hover:scale-105 transition-transform flex-shrink-0">
                                 <tool.icon className="w-4 h-4 text-slate-600 " />
@@ -118,8 +117,8 @@ const LayoutBuilderDemo = () => {
             {/* Canvas Area */}
             <div
                 className="flex-1 p-3 sm:p-6 lg:p-8 overflow-y-auto min-w-0"
-                onDragOver={(e) => e.preventDefault()}
-                onDrop={(e) => {
+                onPointerMove={(e) => e.preventDefault()}
+                onPointerUp={(e) => {
                     // This handles dropping on empty space = append
                     // We need to differentiate if it was dropped on an Item or the Container.
                     // If e.target is the container itself:
@@ -147,15 +146,14 @@ const LayoutBuilderDemo = () => {
                             <motion.div
                                 layout
                                 key={item.id}
-                                draggable
-                                onDragStart={(e) => dragDrop.handleDragStart(item, e)}
-                                onDragOver={(e) => dragDrop.handleDragOver(item, e)}
-                                onDrop={(e) => dragDrop.handleDrop(item, e)}
-                                onDragEnd={dragDrop.handleDragEnd}
+                                onPointerDown={(e) => dragDrop.handleDragStart(item, e)}
+                                onPointerMove={(e) => dragDrop.handleDragOver(item, e)}
+                                onPointerUp={(e) => dragDrop.handleDrop(item, e)}
                                 initial={{ opacity: 0, scale: 0.8 }}
                                 animate={{ opacity: 1, scale: 1 }}
                                 exit={{ opacity: 0, scale: 0.8 }}
                                 transition={{ type: 'spring', bounce: 0.2, duration: 0.4 }}
+                                style={{ touchAction: 'none' }}
                                 className={`
                                     relative group bg-white  rounded-2xl shadow-lg border-2 overflow-hidden flex flex-col
                                     ${item.w === 2 ? 'col-span-2' : 'col-span-1'}

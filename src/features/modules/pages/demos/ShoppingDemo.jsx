@@ -103,9 +103,7 @@ const ShoppingDemo = () => {
                         {tags.map(tag => (
                             <div
                                 key={tag.id}
-                                draggable
-                                onDragStart={(e) => dragDrop.handleDragStart(tag, e)}
-                                onDragEnd={dragDrop.handleDragEnd}
+                                onPointerDown={(e) => dragDrop.handleDragStart(tag, e)}
                                 className={`
                                       px-3 py-1 rounded-full text-xs font-bold cursor-grab border transition-all hover:scale-105 active:scale-95
                                       bg-${tag.color}-100 text-${tag.color}-600 border-${tag.color}-200
@@ -115,7 +113,8 @@ const ShoppingDemo = () => {
                                     // Fallback colors for tailwind strict scanning usually failing dynamic
                                     backgroundColor: tag.color === 'rose' ? '#ffe4e6' : tag.color === 'emerald' ? '#d1fae5' : '#fef3c7',
                                     color: tag.color === 'rose' ? '#e11d48' : tag.color === 'emerald' ? '#059669' : '#d97706',
-                                    borderColor: 'transparent'
+                                    borderColor: 'transparent',
+                                    touchAction: 'none'
                                 }}
                             >
                                 <div className="flex items-center space-x-1">
@@ -131,11 +130,11 @@ const ShoppingDemo = () => {
                     {products.map(product => (
                         <motion.div
                             key={product.id}
-                            draggable
-                            onDragStart={(e) => dragDrop.handleDragStart(product, e)}
-                            onDrop={(e) => dragDrop.handleDrop(product, e)} // Allow dropping tags
-                            onDragOver={(e) => dragDrop.handleDragOver(product, e)}
+                            onPointerDown={(e) => dragDrop.handleDragStart(product, e)}
+                            onPointerUp={(e) => dragDrop.handleDrop(product, e)} // Allow dropping tags
+                            onPointerMove={(e) => dragDrop.handleDragOver(product, e)}
                             className="bg-white rounded-2xl p-4 sm:p-6 border border-slate-200 shadow-sm hover:shadow-xl transition-all group relative cursor-move min-w-0"
+                            style={{ touchAction: 'none' }}
                         >
                             <div className={`w-12 h-12 rounded-xl mb-4 flex items-center justify-center bg-slate-100  ${product.color}`}>
                                 <product.icon className="w-6 h-6" />
@@ -167,11 +166,11 @@ const ShoppingDemo = () => {
             <div className="absolute bottom-6 right-6 z-50 max-w-full">
                 <motion.div
                     animate={cartAnimating ? { scale: [1, 1.2, 0.9, 1.1, 1], rotate: [0, -5, 5, -5, 0] } : {}}
-                    onDragOver={(e) => {
+                    onPointerMove={(e) => {
                         e.preventDefault();
                         // Highlight or something? handled by framer mostly
                     }}
-                    onDrop={(e) => dragDrop.handleDrop({ id: 'cart-zone' }, e)}
+                    onPointerUp={(e) => dragDrop.handleDrop({ id: 'cart-zone' }, e)}
                     className={`
                         w-20 h-20 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-2xl cursor-default
                         border-4 ${dragDrop.dragOverItem?.id === 'cart-zone' ? 'border-white scale-110' : 'border-blue-700'}

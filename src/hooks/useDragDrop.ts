@@ -1,15 +1,5 @@
 import { useState, useCallback, useRef } from 'react';
 
-// 1x1 透明图（隐藏系统 drag image）
-const TRANSPARENT_GIF =
-  'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==';
-
-function setTransparentDragImage(e: DragEvent) {
-  const img = new Image();
-  img.src = TRANSPARENT_GIF;
-  e.dataTransfer?.setDragImage(img, 0, 0);
-}
-
 // 鼠标跟随
 function moveFloatingPreview(
   el: HTMLElement,
@@ -65,19 +55,19 @@ export type DragPreviewResult =
  */
 export interface UseDragDropOptions<T = any> {
   /** 拖拽开始回调 */
-  onDragStart?: (item: T, e: React.DragEvent) => void;
+  onDragStart?: (item: T, e: React.PointerEvent) => void;
   /** 拖拽经过回调，返回 boolean 表示是否允许放置 */
-  onDragOver?: (item: T, e: React.DragEvent) => boolean;
+  onDragOver?: (item: T, e: React.PointerEvent) => boolean;
   /** 放置回调 */
-  onDrop?: (source: T, target: T, e: React.DragEvent) => void;
+  onDrop?: (source: T, target: T, e: React.PointerEvent) => void;
   /** 拖拽结束回调 */
-  onDragEnd?: (item: T, e: React.DragEvent) => void;
+  onDragEnd?: (item: T, e: React.PointerEvent) => void;
   /** 判断是否可以拖拽 */
   canDrag?: (item: T) => boolean;
   /** 判断是否可以放置到目标 */
   canDrop?: (source: T, target: T) => boolean;
   /**获取拖拽预览*/
-  getDragPreview?: (item: T, e: React.DragEvent) => DragPreviewResult;
+  getDragPreview?: (item: T, e: React.PointerEvent) => DragPreviewResult;
   /** 获取放置提示文本*/
   getDropHintText?: (source: T, target: T) => string;
 }
@@ -93,15 +83,15 @@ export interface UseDragDropReturn<T = any> {
   /** 是否正在拖拽 */
   isDragging: boolean;
   /** 拖拽开始事件处理 */
-  handleDragStart: (item: T, e: React.DragEvent) => void;
+  handleDragStart: (item: T, e: React.PointerEvent) => void;
   /** 拖拽经过事件处理 */
-  handleDragOver: (item: T, e: React.DragEvent) => void;
+  handleDragOver: (item: T, e: React.PointerEvent) => void;
   /** 拖拽离开事件处理 */
-  handleDragLeave: (e: React.DragEvent) => void;
+  handleDragLeave: (e: React.PointerEvent) => void;
   /** 放置事件处理 */
-  handleDrop: (item: T, e: React.DragEvent) => void;
+  handleDrop: (item: T, e: React.PointerEvent) => void;
   /** 拖拽结束事件处理 */
-  handleDragEnd: (e: React.DragEvent) => void;
+  handleDragEnd: (e: React.PointerEvent) => void;
   /** 重置拖拽状态 */
   reset: () => void;
 }
@@ -110,8 +100,8 @@ export interface UseDragDropReturn<T = any> {
  * 拖拽功能 Hook
  *
  * @description
- * 通用的拖拽功能 Hook，支持 HTML5 Drag and Drop API
- * 提供拖拽状态管理和验证逻辑
+ * 通用的拖拽功能 Hook，基于 Pointer Events（pointerdown/pointermove/pointerup）实现
+ * 统一支持鼠标、触控笔与触摸，提供拖拽状态管理和验证逻辑
  *
  * @example
  * ```tsx
@@ -127,11 +117,10 @@ export interface UseDragDropReturn<T = any> {
  * });
  *
  * <div
- *   draggable
- *   onDragStart={(e) => dragDrop.handleDragStart(item, e)}
- *   onDragOver={(e) => dragDrop.handleDragOver(item, e)}
- *   onDrop={(e) => dragDrop.handleDrop(item, e)}
- *   onDragEnd={dragDrop.handleDragEnd}
+ *   onPointerDown={(e) => dragDrop.handleDragStart(item, e)}
+ *   onPointerMove={(e) => dragDrop.handleDragOver(item, e)}
+ *   onPointerUp={(e) => dragDrop.handleDrop(item, e)}
+ *   style={{ touchAction: 'none' }}
  * >
  *   可拖拽项
  * </div>
@@ -153,8 +142,10 @@ export function useDragDrop<T = any>({
   const dragLeaveTimerRef = useRef<number | null>(null);
   const dragPreviewElRef = useRef<HTMLElement | null>(null);
   const previewCtrlRef = useRef<DragPreviewController | null>(null);
-  const dragMoveHandlerRef = useRef<((ev: DragEvent) => void) | null>(null);
-  const dragCleanupRef = useRef<(() => void) | null>(null);
+  const dragMoveHandlerRef = useRef<((ev: PointerEvent) => void) | null>(null);
+  const dragCleanupRef = useRef<((ev: PointerEvent) => void) | null>(null);
+  const draggedItemRef = useRef<T | null>(null);
+  const isDraggingRef = useRef(false);
 
   // 清理拖拽预览
   const cleanupDragPreview = useCallback(() => {
@@ -166,12 +157,12 @@ export function useDragDrop<T = any>({
 
     // 清理事件监听器
     if (dragMoveHandlerRef.current) {
-      document.removeEventListener('dragover', dragMoveHandlerRef.current);
+      window.removeEventListener('pointermove', dragMoveHandlerRef.current);
       dragMoveHandlerRef.current = null;
     }
     if (dragCleanupRef.current) {
-      document.removeEventListener('dragend', dragCleanupRef.current);
-      document.removeEventListener('drop', dragCleanupRef.current);
+      window.removeEventListener('pointerup', dragCleanupRef.current);
+      window.removeEventListener('pointercancel', dragCleanupRef.current);
       dragCleanupRef.current = null;
     }
     // 清理 DOM 元素
@@ -189,24 +180,59 @@ export function useDragDrop<T = any>({
     }
   }, []);
 
+  // 取消/结束拖拽（未放置成功）
+  const cancelDrag = useCallback(
+    (e: PointerEvent | React.PointerEvent) => {
+      cleanupDragPreview();
+      clearDragLeaveTimer();
+
+      if (draggedItemRef.current) {
+        onDragEnd?.(draggedItemRef.current, e as React.PointerEvent);
+      }
+
+      draggedItemRef.current = null;
+      isDraggingRef.current = false;
+      setDraggedItem(null);
+      setDragOverItem(null);
+      setIsDragging(false);
+    },
+    [onDragEnd, cleanupDragPreview, clearDragLeaveTimer]
+  );
+
   // 处理拖拽开始
   const handleDragStart = useCallback(
-    (item: T, e: React.DragEvent) => {
+    (item: T, e: React.PointerEvent) => {
+      e.preventDefault();
+
       // 检查是否可以拖拽
       if (canDrag && !canDrag(item)) {
-        e.preventDefault();
         return;
       }
 
       // 先清理上一次的预览（保险）
       cleanupDragPreview();
 
+      draggedItemRef.current = item;
+      isDraggingRef.current = true;
       setDraggedItem(item);
       setIsDragging(true);
 
-      // 设置拖拽数据
-      e.dataTransfer.effectAllowed = 'move';
-      e.dataTransfer.setData('text/plain', JSON.stringify(item));
+      // 释放触屏/触控笔的隐式指针捕获，让 pointermove/pointerup 按真实命中测试派发
+      const target = e.currentTarget as HTMLElement | null;
+      const pointerId = e.pointerId;
+      setTimeout(() => {
+        if (target && target.hasPointerCapture?.(pointerId)) {
+          target.releasePointerCapture(pointerId);
+        }
+      }, 0);
+
+      // window 级 pointerup/pointercancel 兜底：未放置成功则取消拖拽
+      const onPointerCancel = (ev: PointerEvent) => {
+        cancelDrag(ev);
+      };
+      window.addEventListener('pointerup', onPointerCancel);
+      window.addEventListener('pointercancel', onPointerCancel);
+      dragCleanupRef.current = onPointerCancel;
 
       // 自定义拖拽视图
       if (getDragPreview) {
@@ -222,9 +248,6 @@ export function useDragDrop<T = any>({
           // 保存 controller
           previewCtrlRef.current = controller ?? null;
 
-          //  隐藏系统预览（否则系统一定会发淡/糊）
-          setTransparentDragImage(e.nativeEvent);
-
           //  用自己的浮层预览（完全不透明，阴影正常）
           mountFloatingPreview(el);
           dragPreviewElRef.current = el;
@@ -233,8 +256,8 @@ export function useDragDrop<T = any>({
           moveFloatingPreview(el, e.clientX, e.clientY, offsetX, offsetY);
 
           // 如果 controller 有 updatePosition，使用它；否则使用默认的 moveFloatingPreview
-          const onMove = (ev: DragEvent) => {
-            if (!dragPreviewElRef.current) return;
+          const onMove = (ev: PointerEvent) => {
+            if (!dragPreviewElRef.current || !isDraggingRef.current) return;
 
             if (previewCtrlRef.current?.updatePosition) {
               previewCtrlRef.current.updatePosition(ev.clientX, ev.clientY);
@@ -249,48 +272,36 @@ export function useDragDrop<T = any>({
             }
           };
 
-          document.addEventListener('dragover', onMove);
+          window.addEventListener('pointermove', onMove);
           dragMoveHandlerRef.current = onMove;
-
-          // 在 dragend/ drop 时清理
-          const cleanup = () => {
-            cleanupDragPreview();
-          };
-
-          document.addEventListener('dragend', cleanup);
-          document.addEventListener('drop', cleanup);
-          dragCleanupRef.current = cleanup;
         }
       }
 
       // 调用回调
       onDragStart?.(item, e);
     },
-    [canDrag, onDragStart, getDragPreview, cleanupDragPreview]
+    [canDrag, onDragStart, getDragPreview, cleanupDragPreview, cancelDrag]
   );
 
   // 处理拖拽经过
   const handleDragOver = useCallback(
-    (item: T, e: React.DragEvent) => {
+    (item: T, e: React.PointerEvent) => {
       e.preventDefault();
 
-      if (!draggedItem) {
-        e.dataTransfer.dropEffect = 'none';
+      if (!isDraggingRef.current) {
         previewCtrlRef.current?.hideDropHint();
         return;
       }
 
       // 不能拖到自己上
-      if (draggedItem === item) {
-        e.dataTransfer.dropEffect = 'none';
+      if (draggedItemRef.current === item) {
         setDragOverItem(null);
         previewCtrlRef.current?.hideDropHint();
         return;
       }
 
       // 检查是否可以放置
-      if (canDrop && !canDrop(draggedItem, item)) {
-        e.dataTransfer.dropEffect = 'none';
+      if (canDrop && !canDrop(draggedItemRef.current, item)) {
         setDragOverItem(null);
         previewCtrlRef.current?.hideDropHint();
         return;
@@ -300,7 +311,6 @@ export function useDragDrop<T = any>({
       if (onDragOver) {
         const allowDrop = onDragOver(item, e);
         if (!allowDrop) {
-          e.dataTransfer.dropEffect = 'none';
           setDragOverItem(null);
           previewCtrlRef.current?.hideDropHint();
           return;
@@ -308,7 +318,7 @@ export function useDragDrop<T = any>({
       }
 
       // 允许时显示并更新文案
-      const text = getDropHintText ? getDropHintText(draggedItem, item) : '';
+      const text = getDropHintText ? getDropHintText(draggedItemRef.current, item) : '';
       if (text) {
         previewCtrlRef.current?.showDropHint(text);
       } else {
@@ -316,15 +326,14 @@ export function useDragDrop<T = any>({
       }
 
       clearDragLeaveTimer();
-      e.dataTransfer.dropEffect = 'move';
       setDragOverItem(item);
     },
-    [draggedItem, canDrop, onDragOver, clearDragLeaveTimer, getDropHintText]
+    [canDrop, onDragOver, clearDragLeaveTimer, getDropHintText]
   );
 
   // 处理拖拽离开
   const handleDragLeave = useCallback(
-    (e: React.DragEvent) => {
+    (e: React.PointerEvent) => {
       e.preventDefault();
       e.stopPropagation();
 
@@ -340,19 +349,20 @@ export function useDragDrop<T = any>({
 
   // 处理放置
   const handleDrop = useCallback(
-    (item: T, e: React.DragEvent) => {
+    (item: T, e: React.PointerEvent) => {
       e.preventDefault();
       e.stopPropagation();
 
-      if (!draggedItem) return;
+      if (!isDraggingRef.current) return;
+      const source = draggedItemRef.current;
 
       // 不能拖到自己上
-      if (draggedItem === item) {
+      if (source === item) {
         return;
       }
 
       // 检查是否可以放置
-      if (canDrop && !canDrop(draggedItem, item)) {
+      if (canDrop && !canDrop(source, item)) {
         return;
       }
 
@@ -360,41 +370,35 @@ export function useDragDrop<T = any>({
 
       try {
         // 调用回调
-        onDrop?.(draggedItem, item, e);
+        onDrop?.(source, item, e);
       } finally {
         // 清理预览
         cleanupDragPreview();
         // 重置状态
+        draggedItemRef.current = null;
+        isDraggingRef.current = false;
         setDraggedItem(null);
         setDragOverItem(null);
         setIsDragging(false);
       }
     },
-    [draggedItem, canDrop, onDrop, clearDragLeaveTimer, cleanupDragPreview]
+    [canDrop, onDrop, clearDragLeaveTimer, cleanupDragPreview]
   );
 
   // 处理拖拽结束
   const handleDragEnd = useCallback(
-    (e: React.DragEvent) => {
-      cleanupDragPreview();
-      clearDragLeaveTimer();
-
-      if (draggedItem) {
-        onDragEnd?.(draggedItem, e);
-      }
-
-      // 重置状态
-      setDraggedItem(null);
-      setDragOverItem(null);
-      setIsDragging(false);
+    (e: React.PointerEvent) => {
+      cancelDrag(e);
     },
-    [draggedItem, onDragEnd, clearDragLeaveTimer, cleanupDragPreview]
+    [cancelDrag]
   );
 
   // 重置拖拽状态
   const reset = useCallback(() => {
     cleanupDragPreview();
     clearDragLeaveTimer();
+    draggedItemRef.current = null;
+    isDraggingRef.current = false;
     setDraggedItem(null);
     setDragOverItem(null);
     setIsDragging(false);

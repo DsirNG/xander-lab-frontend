@@ -162,10 +162,9 @@ const SingleFileTransferDemo = () => {
                                     initial={{ opacity: 0, x: -20 }}
                                     animate={{ opacity: 1, x: 0 }}
                                     exit={{ opacity: 0, scale: 0.9 }}
-                                    draggable
-                                    onDragStart={(e) => dragDrop.handleDragStart(file, e)}
-                                    onDragEnd={dragDrop.handleDragEnd}
+                                    onPointerDown={(e) => dragDrop.handleDragStart(file, e)}
                                     className="group relative flex items-center p-4 bg-white /80 border border-slate-200  rounded-2xl cursor-grab active:cursor-grabbing hover:border-sky-500/50 hover:shadow-xl hover:shadow-sky-500/5 transition-all duration-300"
+                                    style={{ touchAction: 'none' }}
                                 >
                                     <div className="mr-4 p-2.5 bg-slate-50 /50 rounded-xl group-hover:scale-110 transition-transform duration-300">
                                         {getFileIcon(file.type)}
@@ -201,9 +200,9 @@ const SingleFileTransferDemo = () => {
                         {folders.map(folder => (
                             <div
                                 key={folder.id}
-                                onDragOver={(e) => dragDrop.handleDragOver(folder, e)}
-                                onDragLeave={dragDrop.handleDragLeave}
-                                onDrop={(e) => dragDrop.handleDrop(folder, e)}
+                                onPointerMove={(e) => dragDrop.handleDragOver(folder, e)}
+                                onPointerLeave={dragDrop.handleDragLeave}
+                                onPointerUp={(e) => dragDrop.handleDrop(folder, e)}
                                 className={`relative p-6 rounded-[2rem] border-2 transition-all duration-500 flex flex-col min-h-[220px] ${dragDrop.dragOverItem?.id === folder.id
                                     ? 'border-sky-500 bg-sky-50/50  scale-[1.02] shadow-2xl shadow-sky-500/10'
                                     : 'border-slate-100  bg-white/50 /50'
