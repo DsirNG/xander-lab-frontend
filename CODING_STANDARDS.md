@@ -359,6 +359,12 @@ import { cn } from '@utils'
 <div className="text-sm md:text-base lg:text-lg">
 ```
 
+### 界面视觉规范
+
+- **禁止使用 border / ring 做分割和描边**：区块、卡片、工具栏、按钮、徽标之间的分割一律通过背景色差实现（`bg-surface` / `bg-surface-muted` / `bg-accent-soft` 等），层级用阴影（`shadow-sm` / `shadow-lg`）表达；`border` / `ring-1` 一律不用，唯一例外是键盘焦点环（`focus:ring-*`）。
+- **小字不配大字号字重**：`text-micro` / `text-caption` / `text-xs` 文字字重不超过 `font-medium`（500），`text-xs` 操作性按钮最多 `font-semibold`；`font-bold` 只用于 `text-sm` 以上的标题级文字。
+- **状态表达优先用颜色而非描边**：选中/悬停状态用背景色（`bg-accent-soft`、`bg-surface-muted`）或焦点环（`focus:ring-*`）表达，禁止用 `border border-*` 描边方案。
+
 ---
 
 ## Git 提交规范
