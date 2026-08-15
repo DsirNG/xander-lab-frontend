@@ -4,6 +4,7 @@ import SyntaxHighlighter from '@components/common/SyntaxHighlighter';
 import HtmlSandboxPreview from '@components/common/HtmlSandboxPreview';
 import { oneLight, vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { Code2, Copy, Check, FileCode2, Play } from 'lucide-react';
+import Button from '@components/common/Button';
 
 const PREVIEWABLE_LANGUAGES = new Set(['html', 'htm', 'svg']);
 
@@ -54,49 +55,47 @@ const CodeBlock = memo(({
                 </div>
 
                 <div className="flex shrink-0 items-center gap-0.5">
-                    <button
-                        type="button"
+                    <Button
                         onClick={() => setMode('code')}
-                        className={`grid h-7 w-7 place-items-center rounded-full transition ${
-                            activeMode === 'code'
-                                ? 'bg-border/70 text-ink'
-                                : 'text-ink-faint hover:bg-surface-muted hover:text-ink-secondary'
-                        }`}
+                        variant="ghost"
+                        size="xs"
+                        icon={Code2}
                         title={t('common.codeBlock.showCode')}
                         aria-label={t('common.codeBlock.showCode')}
                         aria-pressed={activeMode === 'code'}
-                    >
-                        <Code2 className="h-3.5 w-3.5" aria-hidden="true" />
-                    </button>
+                        className={
+                            activeMode === 'code'
+                                ? 'bg-border/70 text-ink hover:bg-border/70 hover:text-ink'
+                                : ''
+                        }
+                    />
 
                     {canPreview ? (
-                        <button
-                            type="button"
+                        <Button
                             onClick={() => setMode('preview')}
-                            className={`grid h-7 w-7 place-items-center rounded-full transition ${
-                                activeMode === 'preview'
-                                    ? 'bg-border/70 text-ink'
-                                    : 'text-ink-faint hover:bg-surface-muted hover:text-ink-secondary'
-                            }`}
+                            variant="ghost"
+                            size="xs"
+                            icon={Play}
                             title={t('common.codeBlock.showPreview')}
                             aria-label={t('common.codeBlock.showPreview')}
                             aria-pressed={activeMode === 'preview'}
-                        >
-                            <Play className="h-3.5 w-3.5" aria-hidden="true" />
-                        </button>
+                            className={
+                                activeMode === 'preview'
+                                    ? 'bg-border/70 text-ink hover:bg-border/70 hover:text-ink'
+                                    : ''
+                            }
+                        />
                     ) : null}
 
-                    <button
-                        type="button"
+                    <Button
                         onClick={handleCopy}
-                        className="grid h-7 w-7 place-items-center rounded-full text-ink-faint transition hover:bg-surface-muted hover:text-ink-secondary"
+                        variant="ghost"
+                        size="xs"
+                        icon={copied ? Check : Copy}
                         title={copied ? t('common.codeBlock.copied') : t('common.codeBlock.copy')}
                         aria-label={copied ? t('common.codeBlock.copied') : t('common.codeBlock.copy')}
-                    >
-                        {copied
-                            ? <Check className="h-3.5 w-3.5 text-success" aria-hidden="true" />
-                            : <Copy className="h-3.5 w-3.5" aria-hidden="true" />}
-                    </button>
+                        className={copied ? 'text-success' : ''}
+                    />
                 </div>
             </div>
 

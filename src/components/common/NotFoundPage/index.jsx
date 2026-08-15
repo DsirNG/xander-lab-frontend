@@ -1,7 +1,8 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import useBack from '@/hooks/useBack';
+import Button from '@components/common/Button';
 
 /**
  * 404 页面
@@ -9,6 +10,7 @@ import useBack from '@/hooks/useBack';
  */
 const NotFoundPage = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const handleGoBack = useBack('/');
 
   return (
@@ -22,18 +24,12 @@ const NotFoundPage = () => {
           {t('common.pageNotFoundDesc', '你访问的页面不存在或已被移动。')}
         </div>
         <div className="flex flex-wrap gap-3 justify-center">
-          <Link
-            to="/"
-            className="px-6 py-3 bg-accent text-white rounded-xl text-body font-bold hover:opacity-90 transition-all"
-          >
+          <Button onClick={() => navigate('/')} size="lg">
             {t('common.backHome', '返回首页')}
-          </Link>
-          <button
-            onClick={handleGoBack}
-            className="px-6 py-3 bg-surface-muted text-ink-secondary rounded-xl text-body font-bold hover:bg-border-strong transition-all"
-          >
+          </Button>
+          <Button onClick={handleGoBack} variant="outline" size="lg">
             {t('common.goBack', '返回上页')}
-          </button>
+          </Button>
         </div>
       </div>
     </div>

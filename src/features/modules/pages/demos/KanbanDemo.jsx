@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Plus, MoreHorizontal, MessageSquare, Paperclip, Calendar } from 'lucide-react';
 import { useDragDrop } from '@hooks/useDragDrop';
+import Button from '@components/common/Button';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const KanbanDemo = () => {
@@ -153,9 +154,9 @@ const KanbanDemo = () => {
                                 {col.items.length}
                             </span>
                         </div>
-                        <button className="text-slate-400 hover:text-slate-600 p-1 hover:bg-slate-200 rounded-lg transition-colors">
+                        <Button variant="ghost" size="xs" className="h-auto w-auto p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-200 transition-colors">
                             <Plus className="w-4 h-4" />
-                        </button>
+                        </Button>
                     </div>
 
                     {/* Column Items */}
@@ -193,9 +194,9 @@ const KanbanDemo = () => {
                                          `}>
                                             {item.tag}
                                         </span>
-                                        <button className="sm:opacity-0 sm:group-hover:opacity-100 text-slate-400 hover:text-slate-600 transition-opacity p-2 min-w-[44px] min-h-[44px] grid place-items-center">
+                                        <Button variant="ghost" size="xs" className="h-auto w-auto p-2 min-w-[44px] min-h-[44px] grid place-items-center text-slate-400 hover:text-slate-600 transition-opacity sm:opacity-0 sm:group-hover:opacity-100">
                                             <MoreHorizontal className="w-4 h-4" />
-                                        </button>
+                                        </Button>
                                     </div>
                                     <div className="font-semibold text-slate-800  mb-3 text-sm leading-snug">
                                         {item.title}

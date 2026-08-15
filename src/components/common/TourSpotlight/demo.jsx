@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { Play } from 'lucide-react';
 import TourSpotlight from './index';
+import Button from '@components/common/Button';
 
 /**
  * TourSpotlight 的使用演示 Demo
@@ -46,23 +47,26 @@ export const TourSpotlightDemo = () => {
     return (
         <div className="p-12 min-h-[400px] flex flex-col items-center justify-center gap-12 bg-slate-50 relative overflow-hidden">
             {/* 顶层触发器 */}
-            <button
+            <Button
                 onClick={() => setTourStep(0)}
-                className="px-6 py-2.5 bg-primary text-white rounded-xl shadow-lg shadow-primary/30 text-xs font-bold active:scale-95 transition-all text-center"
+                icon={Play}
+                size="lg"
+                className="shadow-lg shadow-primary/30 text-center"
             >
-                <Play className="w-4 h-4 inline-block mr-2" />
                 在这儿测试：点击启动向导示范！
-            </button>
+            </Button>
 
             {/* 一些散布在页面各个边角的 DOM 元素 (被点名标记 ID) */}
             <div className="flex gap-20 w-full justify-between items-center max-w-4xl px-12">
-                <button
+                <Button
                     id="demo-btn-1"
                     onClick={() => { if (tourStep === 0) handleNextStep(); }}
-                    className={`px-8 py-4 bg-white border border-slate-200 shadow-xl rounded-2xl text-[14px] font-black tracking-widest transition-all ${tourStep === 0 ? 'ring-4 ring-primary/50 relative z-10' : ''}`}
+                    variant="outline"
+                    size="lg"
+                    className={`h-auto px-8 py-4 shadow-xl rounded-2xl font-black tracking-widest ${tourStep === 0 ? 'ring-4 ring-primary/50 relative z-10' : ''}`}
                 >
                     [向导目标 1]
-                </button>
+                </Button>
 
                 <div
                     id="demo-card-2"

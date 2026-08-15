@@ -13,6 +13,7 @@ import {
     RotateCcw
 } from 'lucide-react';
 import BrowserWindow from '@components/common/BrowserWindow';
+import Button from '@components/common/Button';
 
 /**
  * 增强演示区域组件
@@ -45,23 +46,25 @@ const EnhancedDemoSection = ({ title, desc, children, code, useBrowserWindow = t
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
                     {/* 重置按钮 */}
-                    <button
+                    <Button
                         onClick={handleReset}
-                        className="flex items-center space-x-2 px-4 py-2 rounded-xl bg-slate-100  text-slate-600  text-xs font-bold hover:bg-orange-500 hover:text-white transition-all shadow-sm"
+                        variant="outline"
+                        size="md"
+                        icon={RotateCcw}
                         title={t('common.resetDemo')}
                     >
-                        <RotateCcw aria-hidden="true" className="w-3.5 h-3.5" />
-                        <span>{t('common.reset')}</span>
-                    </button>
+                        {t('common.reset')}
+                    </Button>
                     {/* 查看代码按钮 */}
                     {code && (
-                        <button
+                        <Button
                             onClick={() => setShowCode(!showCode)}
-                            className="flex items-center space-x-2 px-4 py-2 rounded-xl bg-slate-100  text-slate-600  text-xs font-bold hover:bg-blue-600 hover:text-white transition-all shadow-sm"
+                            variant="outline"
+                            size="md"
+                            icon={showCode ? ChevronUp : Code}
                         >
-                            {showCode ? <ChevronUp aria-hidden="true" className="w-3.5 h-3.5" /> : <Code aria-hidden="true" className="w-3.5 h-3.5" />}
-                            <span>{showCode ? t('common.codeBlock.hideCode') : t('common.codeBlock.viewCode')}</span>
-                        </button>
+                            {showCode ? t('common.codeBlock.hideCode') : t('common.codeBlock.viewCode')}
+                        </Button>
                     )}
                 </div>
             </div>
@@ -100,14 +103,15 @@ const EnhancedDemoSection = ({ title, desc, children, code, useBrowserWindow = t
                     >
                         <div className="relative group rounded-[2rem] overflow-hidden border border-slate-200  shadow-2xl w-full">
                             {/* 复制按钮 */}
-                            <button
+                            <Button
                                 onClick={handleCopy}
-                                className="absolute right-4 sm:right-6 top-4 sm:top-6 z-20 p-2.5 rounded-xl bg-slate-800/50 text-slate-400 hover:text-white hover:bg-slate-700 transition-all backdrop-blur-md border border-white/5 sm:opacity-0 sm:group-hover:opacity-100 shadow-xl"
+                                variant="ghost"
+                                size="sm"
+                                icon={copied ? Check : Copy}
                                 title={t('common.codeBlock.copy')}
                                 aria-label={t('common.codeBlock.copy')}
-                            >
-                                {copied ? <Check aria-hidden="true" className="w-4 h-4 text-emerald-400" /> : <Copy aria-hidden="true" className="w-4 h-4" />}
-                            </button>
+                                className="absolute right-4 sm:right-6 top-4 sm:top-6 z-20 bg-slate-800/50 text-slate-400 hover:text-white hover:bg-slate-700 backdrop-blur-md border border-white/5 sm:opacity-0 sm:group-hover:opacity-100 shadow-xl"
+                            />
 
                             <div className="max-h-[500px] overflow-auto scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent w-full">
                                 <SyntaxHighlighter

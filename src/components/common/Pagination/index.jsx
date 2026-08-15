@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import CustomSelect from '@components/common/CustomSelect';
+import Button from '@components/common/Button';
 
 const DEFAULT_PAGE_SIZE_OPTIONS = [5, 10, 15, 20];
 
@@ -75,43 +76,44 @@ const Pagination = ({
                 </div>
             </div>
             <div className="flex items-center gap-1 flex-wrap">
-                <button
-                    type="button"
+                <Button
                     onClick={() => onPageChange?.(Math.max(1, page - 1))}
                     disabled={disabled || page <= 1}
-                    className="grid h-11 w-11 md:h-7 md:w-7 place-items-center rounded-md bg-canvas text-ink-muted shadow-sm transition hover:bg-surface-muted disabled:cursor-not-allowed disabled:opacity-40"
+                    variant="outline"
+                    size="lg"
+                    icon={ChevronLeft}
                     aria-label={t('common.pagination.prevPage')}
-                >
-                    <ChevronLeft className="h-3.5 w-3.5" />
-                </button>
+                    className="md:h-7 md:w-7"
+                />
                 {pageItems.map((item, index) => (
                     item === 'ellipsis' ? (
                         <span key={`ellipsis-${index}`} className="px-1 text-micro text-ink-faint">…</span>
                     ) : (
-                        <button
+                        <Button
                             key={item}
-                            type="button"
                             onClick={() => onPageChange?.(item)}
                             disabled={disabled}
-                            className={`grid h-11 w-11 md:h-7 md:w-7 place-items-center rounded-md text-xs font-medium transition disabled:opacity-40 ${
+                            variant="outline"
+                            size="lg"
+                            className={`md:h-7 md:w-7 ${
                                 page === item
-                                    ? 'bg-accent text-white'
-                                    : 'bg-canvas text-ink-muted shadow-sm hover:bg-surface-muted'
+                                    ? 'bg-accent text-white border-accent hover:bg-accent hover:text-white hover:border-accent'
+                                    : ''
                             }`}
                         >
                             {item}
-                        </button>
+                        </Button>
                     )
                 ))}
-                <button
-                    type="button"
+                <Button
                     onClick={() => onPageChange?.(Math.min(totalPages, page + 1))}
                     disabled={disabled || page >= totalPages}
-                    className="grid h-11 w-11 md:h-7 md:w-7 place-items-center rounded-md bg-canvas text-ink-muted shadow-sm transition hover:bg-surface-muted disabled:cursor-not-allowed disabled:opacity-40"
+                    variant="outline"
+                    size="lg"
+                    icon={ChevronRight}
                     aria-label={t('common.pagination.nextPage')}
-                >
-                    <ChevronRight className="h-3.5 w-3.5" />
-                </button>
+                    className="md:h-7 md:w-7"
+                />
             </div>
         </div>
     );

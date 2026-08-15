@@ -6,6 +6,7 @@ import {
     FileCode, Edit2,
     Trash2, HelpCircle
 } from 'lucide-react';
+import Button from '@components/common/Button';
 
 const ShareSidebar = ({
     meta,
@@ -45,7 +46,7 @@ const ShareSidebar = ({
                 <section className="space-y-6">
                     <div className="text-micro font-black text-ink-faint uppercase tracking-widest italic flex items-center justify-between">
                         <span className="flex items-center gap-2"><Database className="w-4 h-4 text-accent" /> {t('components.share.sidebar.registerMeta')}</span>
-                        <button id={tourIds.metaHelp} onClick={() => onHelpClick('meta')} className="p-1 hover:bg-surface rounded text-ink-faint hover:text-accent transition-colors relative z-10"><HelpCircle className="w-4 h-4" /></button>
+                        <Button id={tourIds.metaHelp} onClick={() => onHelpClick('meta')} variant="ghost" size="xs" className="h-auto w-auto p-1 rounded text-ink-faint hover:bg-surface hover:text-accent transition-colors relative z-10"><HelpCircle className="w-4 h-4" /></Button>
                     </div>
 
                     <div className="space-y-4">
@@ -77,12 +78,12 @@ const ShareSidebar = ({
                             <Zap className="w-4 h-4 text-warning" /> {t('components.share.sidebar.testScenarios')}
                         </span>
                         <div className="flex items-center gap-1 relative z-10">
-                            <button id={tourIds.scenarioHelp} onClick={() => onHelpClick('scenario')} className="p-1 hover:bg-surface rounded-lg text-ink-faint hover:text-accent transition-colors">
+                            <Button id={tourIds.scenarioHelp} onClick={() => onHelpClick('scenario')} variant="ghost" size="xs" className="h-auto w-auto p-1 rounded-lg text-ink-faint hover:bg-surface hover:text-accent transition-colors">
                                 <HelpCircle className="w-4 h-4" />
-                            </button>
-                            <button onClick={onAddScenario} className="p-1 hover:bg-surface rounded-lg text-accent transition-all active:scale-125">
+                            </Button>
+                            <Button onClick={onAddScenario} variant="ghost" size="xs" className="h-auto w-auto p-1 rounded-lg text-accent transition-all active:scale-125">
                                 <Plus className="w-5 h-5" />
-                            </button>
+                            </Button>
                         </div>
                     </div>
                     <div className="space-y-2">
@@ -91,19 +92,23 @@ const ShareSidebar = ({
                                 <div className={`text-micro font-black uppercase italic mb-1 ${activeSIdx === i ? 'text-accent-fg' : 'text-ink'}`}>{s.titleEn}</div>
                                 <div className={`text-micro font-bold ${activeSIdx === i ? 'text-accent' : 'text-ink-faint'}`}>{s.titleZh}</div>
                                 <div className="absolute top-4 right-4 flex sm:opacity-0 sm:group-hover:opacity-100 transition-all gap-1">
-                                    <button
+                                    <Button
                                         onClick={(e) => { e.stopPropagation(); onEditScenario(i); }}
-                                        className={`p-1.5 transition-all outline-none ${activeSIdx === i ? 'text-accent/40 hover:text-accent' : 'text-ink-faint hover:text-accent'}`}
+                                        variant="ghost"
+                                        size="xs"
+                                        className={`h-auto w-auto p-1.5 rounded transition-all outline-none ${activeSIdx === i ? 'text-accent/40 hover:text-accent' : 'text-ink-faint hover:text-accent'}`}
                                     >
                                         <Edit2 className="w-3.5 h-3.5" />
-                                    </button>
+                                    </Button>
                                     {scenarios.length > 1 && (
-                                        <button
+                                        <Button
                                             onClick={(e) => { e.stopPropagation(); onDeleteScenario(i); }}
-                                            className={`p-1.5 transition-all outline-none ${activeSIdx === i ? 'text-accent/40 hover:text-danger' : 'text-ink-faint hover:text-danger'}`}
+                                            variant="ghost"
+                                            size="xs"
+                                            className={`h-auto w-auto p-1.5 rounded transition-all outline-none ${activeSIdx === i ? 'text-accent/40 hover:text-danger' : 'text-ink-faint hover:text-danger'}`}
                                         >
                                             <Trash2 className="w-3.5 h-3.5" />
-                                        </button>
+                                        </Button>
                                     )}
                                 </div>
                             </div>

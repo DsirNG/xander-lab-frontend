@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { CheckCircle2, AlertCircle, Info, XCircle, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import Button from '@components/common/Button';
 
 const defaultIcons = {
     success: <CheckCircle2 className="w-5 h-5 text-success" />,
@@ -105,13 +106,14 @@ const ToastItem = ({ toast, onRemove }) => {
             </div>
 
             {showClose && (
-                <button
+                <Button
                     onClick={() => setIsExiting(true)}
-                    className="flex-shrink-0 p-1 opacity-0 group-hover:opacity-100 rounded-full hover:bg-surface-muted text-ink-faint transition-all duration-300"
+                    variant="ghost"
+                    size="xs"
+                    icon={X}
                     aria-label={t('common.aria.closeNotification', 'Close notification')}
-                >
-                    <X className="w-3.5 h-3.5" />
-                </button>
+                    className="opacity-0 group-hover:opacity-100 rounded-full"
+                />
             )}
 
             {/* C-End Style Progress Bar */}

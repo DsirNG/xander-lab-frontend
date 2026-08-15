@@ -7,6 +7,7 @@ import {
 
 // ─── 注入项目内部组件 ──────────────────────────────────────────────
 import CustomSelect from '@/components/common/CustomSelect';
+import Button from '@components/common/Button';
 import LucideIcons from '@/features/components/registries/sandboxIconRegistry';
 
 // ─── 动态加载 Babel（~2.5MB，不打入首屏 bundle）─────────────────
@@ -379,12 +380,12 @@ const LiveDemoSandbox = ({
                     {lastRunSuccess === true && <span className="px-3 py-1 bg-emerald-50 text-emerald-500 text-[9px] font-black rounded-full uppercase tracking-tighter whitespace-nowrap">Ready</span>}
                 </div>
                 <div className="flex items-center gap-2 sm:gap-4">
-                    <button onClick={() => setRunningCode(code)} className="px-4 py-2.5 hover:bg-slate-50 text-slate-400 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all whitespace-nowrap">
+                    <Button onClick={() => setRunningCode(code)} variant="ghost" size="sm" className="px-4 py-2.5 hover:bg-slate-50 text-slate-400 text-[10px] font-black uppercase tracking-widest rounded-xl whitespace-nowrap">
                         Sync Changes
-                    </button>
-                    <button id="tour-run-btn" onClick={handleRun} disabled={isRunning} className="flex items-center gap-2.5 px-5 sm:px-8 py-2.5 bg-slate-900 text-white rounded-2xl text-[10px] font-black hover:bg-primary transition-all shadow-xl active:scale-95 disabled:opacity-50 whitespace-nowrap">
+                    </Button>
+                    <Button id="tour-run-btn" onClick={handleRun} disabled={isRunning} variant="ink" size="sm" className="flex items-center gap-2.5 px-5 sm:px-8 py-2.5 bg-slate-900 text-white rounded-2xl text-[10px] font-black shadow-xl active:scale-95 whitespace-nowrap">
                         <Play className={`w-3.5 h-3.5 ${isRunning ? 'animate-spin' : ''}`} /> {isRunning ? 'EXECUTING...' : 'RUN ANALYTICS'}
-                    </button>
+                    </Button>
                 </div>
             </div>
             <div className="flex-1 flex flex-col lg:flex-row overflow-hidden min-h-0">

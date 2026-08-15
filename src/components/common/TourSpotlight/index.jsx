@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { Compass } from 'lucide-react';
+import Button from '@components/common/Button';
 
 /**
  * 核心聚焦向导漫游组件 (TourSpotlight)
@@ -95,7 +96,12 @@ const TourSpotlight = ({ targetConfig, onSkip }) => {
                             <Compass className="w-4 h-4 text-warning flex-shrink-0" />
                             <div className="font-black text-body uppercase tracking-widest break-words">{targetConfig.text}</div>
                         </div>
-                        <button onClick={onSkip} className="text-accent-200 hover:text-white transition-colors text-micro uppercase font-bold tracking-widest px-2 py-1 bg-accent-700/50 rounded-lg flex-shrink-0 ml-2">Skip // 退出</button>
+                        <Button
+                            onClick={onSkip}
+                            variant="link"
+                            size="md"
+                            className="bg-accent-700/50 rounded-lg px-2 py-1 text-micro uppercase font-bold tracking-widest text-accent-200 hover:text-white hover:no-underline"
+                        >Skip // 退出</Button>
                     </div>
                     <div className="text-accent-50 text-caption font-medium leading-relaxed opacity-90 break-words">{targetConfig.desc}</div>
                 </div>

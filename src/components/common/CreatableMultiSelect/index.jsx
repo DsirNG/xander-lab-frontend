@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { X, Hash } from 'lucide-react';
+import Button from '@components/common/Button';
 
 const EMPTY_ARRAY = [];
 
@@ -105,16 +106,17 @@ const CreatableMultiSelect = ({
             onClick={() => inputRef.current?.focus()}
         >
             {value.map(item => (
-                <button
-                    type="button"
+                <Button
                     key={item}
+                    variant="outline"
+                    size="xs"
+                    icon={X}
+                    className="h-auto px-3 py-1.5 text-micro rounded-xl hover:bg-danger-soft hover:text-danger hover:border-danger/30"
                     aria-label={`移除 ${item}`}
-                    className="px-3 py-1.5 bg-surface border border-border text-micro font-bold text-ink-secondary rounded-xl flex items-center gap-1.5 hover:bg-danger-soft hover:text-danger hover:border-danger/30 transition-colors group/item cursor-pointer"
                     onClick={(e) => { e.stopPropagation(); removeItem(item); }}
                 >
                     {item}
-                    <X className="w-3.5 h-3.5 opacity-50 group-hover/item:opacity-100" />
-                </button>
+                </Button>
             ))}
 
             <div className="relative flex-1 min-w-[120px]">
@@ -137,20 +139,22 @@ const CreatableMultiSelect = ({
                     <div role="listbox" className="absolute top-full left-0 mt-2 w-[240px] max-w-[calc(100vw-1rem)] max-h-48 overflow-y-auto custom-scrollbar bg-canvas border border-border rounded-xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.1)] z-50 py-1">
                         {filteredOptions
                             .map((item, index) => (
-                                <button
-                                    type="button"
+                                <Button
                                     role="option"
                                     key={item}
                                     aria-selected={value.includes(item)}
+                                    variant="ghost"
+                                    size="sm"
+                                    icon={Hash}
                                     onClick={(e) => {
                                         e.stopPropagation();
                                         addItem(item);
                                     }}
                                     onMouseEnter={() => setHighlightedIndex(index)}
-                                    className={`px-4 py-2.5 text-caption font-medium text-ink-muted hover:bg-surface hover:text-accent cursor-pointer transition-colors flex items-center gap-2 w-full text-left ${index === highlightedIndex ? 'bg-accent/10' : ''}`}
+                                    className={`h-auto w-full justify-start px-4 py-2.5 text-left font-medium hover:bg-surface hover:text-accent ${index === highlightedIndex ? 'bg-accent/10' : ''}`}
                                 >
-                                    <Hash className="w-3.5 h-3.5 opacity-50" /> {item}
-                                </button>
+                                    {item}
+                                </Button>
                             ))}
                         {/* 如果用户输入了一个不存在的新选项，给个提示 */}
                         {inputValue.trim() && !options.includes(inputValue.trim()) && (

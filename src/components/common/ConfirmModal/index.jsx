@@ -1,7 +1,7 @@
 import React from 'react';
-import { Loader2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import Modal from '@components/common/Modal';
+import Button from '@components/common/Button';
 
 /**
  * 二次确认弹窗（删除、退出登录等危险操作）
@@ -35,27 +35,22 @@ const ConfirmModal = ({
             hideCloseButton={confirming}
             footer={(
                 <>
-                    <button
-                        type="button"
+                    <Button
                         onClick={onClose}
                         disabled={confirming}
-                        className="rounded-xl px-5 py-2.5 text-caption font-bold text-ink-muted transition hover:bg-surface-muted disabled:opacity-50"
+                        variant="ghost"
+                        size="lg"
                     >
                         {resolvedCancel}
-                    </button>
-                    <button
-                        type="button"
+                    </Button>
+                    <Button
                         onClick={onConfirm}
-                        disabled={confirming}
-                        className={`inline-flex items-center gap-2 rounded-xl px-6 py-2.5 text-caption font-bold text-white transition active:scale-95 disabled:opacity-60 ${
-                            danger
-                                ? 'bg-danger shadow-lg shadow-danger/20 hover:bg-danger-fg'
-                                : 'bg-ink hover:bg-accent'
-                        }`}
+                        loading={confirming}
+                        variant={danger ? 'danger' : 'ink'}
+                        size="lg"
                     >
-                        {confirming ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : null}
                         {resolvedConfirm}
-                    </button>
+                    </Button>
                 </>
             )}
         >

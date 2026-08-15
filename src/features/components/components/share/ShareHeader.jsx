@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
 import { Share2, Compass } from 'lucide-react';
+import Button from '@components/common/Button';
 
 const ShareHeader = ({ onPublish, onTourStart, onNavigateBack }) => {
     const { t } = useTranslation();
@@ -20,12 +21,12 @@ const ShareHeader = ({ onPublish, onTourStart, onNavigateBack }) => {
                 </div>
             </div>
             <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
-                <button onClick={onTourStart} className="px-3 sm:px-5 py-2 sm:py-3 text-ink-faint hover:text-accent hover:bg-surface border border-border rounded-2xl text-micro font-black transition-all active:scale-95 flex items-center gap-2" title={t('components.share.header.restartTour')}>
-                    <Compass className="w-4 h-4" /> <span className="hidden sm:inline">{t('components.share.header.tour')}</span>
-                </button>
-                <button onClick={onPublish} className="px-4 sm:px-10 py-2 sm:py-3 bg-accent hover:bg-accent-600 text-white rounded-2xl text-micro font-black shadow-xl shadow-accent/20 transition-all active:scale-95 flex items-center gap-2">
-                    <Share2 className="w-4 h-4" /> <span className="hidden sm:inline">{t('components.share.header.publish')}</span>
-                </button>
+                <Button onClick={onTourStart} variant="outline" size="sm" icon={Compass} className="text-ink-faint hover:text-accent hover:bg-surface font-black active:scale-95" title={t('components.share.header.restartTour')}>
+                    <span className="hidden sm:inline">{t('components.share.header.tour')}</span>
+                </Button>
+                <Button onClick={onPublish} variant="primary" size="sm" icon={Share2} className="font-black active:scale-95 shadow-xl shadow-accent/20">
+                    <span className="hidden sm:inline">{t('components.share.header.publish')}</span>
+                </Button>
             </div>
         </header>
     );

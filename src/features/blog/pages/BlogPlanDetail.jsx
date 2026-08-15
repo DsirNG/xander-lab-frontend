@@ -4,6 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, CalendarClock, Eye, Loader2, Pencil, Trash2, Zap } from 'lucide-react';
 import Pagination from '@components/common/Pagination';
 import LoadingSpinner from '@components/common/LoadingSpinner';
+import Button from '@components/common/Button';
 import { blogPlanService, PLAN_STATUS } from '../services/blogPlanService';
 import { useToast } from '@/hooks/useToast';
 import { usePlanActions } from '../hooks/usePlanActions';
@@ -88,20 +89,20 @@ const BlogPlanDetail = () => {
     return (
       <div className="mx-auto flex h-full w-full max-w-5xl flex-col items-center justify-center px-4 py-16 text-center">
         <div className="text-sm font-medium text-ink-faint">{t('blogPlans.notFound')}</div>
-        <button onClick={() => navigate('/workspace/plans')}
-          className="mt-4 rounded-xl border border-border px-4 py-2 text-sm text-ink-secondary hover:bg-surface-muted">
+        <Button onClick={() => navigate('/workspace/plans')}
+          variant="outline" size="md">
           {t('blogPlans.backToList')}
-        </button>
+        </Button>
       </div>
     );
   }
 
   return (
     <div className="mx-auto flex h-full min-h-0 w-full max-w-5xl flex-col overflow-hidden px-4 py-6 sm:px-6 lg:px-8">
-      <button onClick={() => navigate('/workspace/plans')}
-        className="inline-flex items-center gap-1.5 text-sm font-medium text-ink-faint hover:text-ink">
-        <ArrowLeft className="h-4 w-4" /> {t('blogPlans.backToList')}
-      </button>
+      <Button onClick={() => navigate('/workspace/plans')}
+        variant="ghost" size="sm" icon={ArrowLeft}>
+        {t('blogPlans.backToList')}
+      </Button>
 
       <div className="min-h-0 flex-1 overflow-y-auto pb-4">
         <div className="mt-3 rounded-2xl border border-border bg-canvas/60 p-5 shadow-sm">
@@ -140,43 +141,42 @@ const BlogPlanDetail = () => {
             {(plan.status === PLAN_STATUS.ACTIVE || plan.status === PLAN_STATUS.PAUSED) && (
               <>
                 {!plan.runOnce && (
-                  <button onClick={() => actions.trigger(plan)} disabled={!!actions.busyId || plan.status === PLAN_STATUS.RUNNING}
-                    className="inline-flex min-h-11 items-center gap-1.5 rounded-xl bg-accent px-3.5 py-1.5 text-xs font-bold text-white hover:opacity-90 disabled:opacity-50">
-                    {actions.busyId === plan.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Zap className="h-3.5 w-3.5" />}
+                  <Button onClick={() => actions.trigger(plan)} disabled={!!actions.busyId || plan.status === PLAN_STATUS.RUNNING}
+                    loading={actions.busyId === plan.id} variant="primary" size="lg" icon={Zap}>
                     {t('blogPlans.triggerNow')}
-                  </button>
+                  </Button>
                 )}
                 {plan.status === PLAN_STATUS.ACTIVE ? (
-                  <button onClick={() => actions.pause(plan)} disabled={!!actions.busyId}
-                    className="inline-flex min-h-11 items-center rounded-xl border border-border px-3.5 py-1.5 text-xs text-ink-secondary hover:bg-surface-muted disabled:opacity-50">
+                  <Button onClick={() => actions.pause(plan)} disabled={!!actions.busyId}
+                    variant="outline" size="lg">
                     {t('blogPlans.pause')}
-                  </button>
+                  </Button>
                 ) : (
-                  <button onClick={() => actions.resume(plan)} disabled={!!actions.busyId}
-                    className="inline-flex min-h-11 items-center rounded-xl border border-border px-3.5 py-1.5 text-xs text-ink-secondary hover:bg-surface-muted disabled:opacity-50">
+                  <Button onClick={() => actions.resume(plan)} disabled={!!actions.busyId}
+                    variant="outline" size="lg">
                     {t('blogPlans.resume')}
-                  </button>
+                  </Button>
                 )}
                 {!plan.runOnce && (
-                  <button onClick={() => setFormOpen(true)} disabled={!!actions.busyId}
-                    className="inline-flex min-h-11 items-center gap-1 rounded-xl border border-border px-3.5 py-1.5 text-xs text-ink-secondary hover:bg-surface-muted disabled:opacity-50">
-                    <Pencil className="h-3 w-3" /> {t('blogPlans.edit')}
-                  </button>
+                  <Button onClick={() => setFormOpen(true)} disabled={!!actions.busyId}
+                    variant="outline" size="lg" icon={Pencil}>
+                    {t('blogPlans.edit')}
+                  </Button>
                 )}
               </>
             )}
             {plan.status !== PLAN_STATUS.RUNNING && (
-              <button onClick={() => actions.remove(plan)} disabled={!!actions.busyId}
-                className="inline-flex min-h-11 items-center gap-1 rounded-xl border border-red-200 px-3.5 py-1.5 text-xs text-red-600 hover:bg-red-50 disabled:opacity-50">
-                <Trash2 className="h-3 w-3" /> {t('blogPlans.delete')}
-              </button>
+              <Button onClick={() => actions.remove(plan)} disabled={!!actions.busyId}
+                variant="dangerOutline" size="lg" icon={Trash2}>
+                {t('blogPlans.delete')}
+              </Button>
             )}
             {plan.status !== PLAN_STATUS.RUNNING && plan.status !== PLAN_STATUS.CANCELLED
               && plan.status !== PLAN_STATUS.FINISHED && plan.status !== PLAN_STATUS.FAILED && (
-              <button onClick={() => actions.cancel(plan)} disabled={!!actions.busyId}
-                className="inline-flex min-h-11 items-center rounded-xl border border-border px-3.5 py-1.5 text-xs text-ink-faint hover:bg-surface-muted disabled:opacity-50">
+              <Button onClick={() => actions.cancel(plan)} disabled={!!actions.busyId}
+                variant="outline" size="lg">
                 {t('blogPlans.cancel')}
-              </button>
+              </Button>
             )}
           </div>
         </div>
@@ -228,10 +228,10 @@ const BlogPlanDetail = () => {
                           ) : '—'}
                         </td>
                         <td className="px-4 py-2.5 text-right">
-                          <button onClick={() => setDetailRun(run)}
-                            className="inline-flex items-center gap-1 rounded-lg border border-border px-2.5 py-1 text-ink-secondary hover:bg-surface-muted">
-                            <Eye className="h-3 w-3" /> {t('blogPlans.viewDetail')}
-                          </button>
+                          <Button onClick={() => setDetailRun(run)}
+                            variant="outline" size="xs" icon={Eye}>
+                            {t('blogPlans.viewDetail')}
+                          </Button>
                         </td>
                       </tr>
                     );

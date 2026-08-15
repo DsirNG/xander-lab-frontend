@@ -4,6 +4,7 @@ import { ChevronRight } from 'lucide-react';
 import PropTypes from 'prop-types';
 import useIsMobile from '@hooks/useIsMobile';
 import { useTranslation } from 'react-i18next';
+import Button from '@components/common/Button';
 
 const EMPTY_ITEMS = [];
 
@@ -70,13 +71,14 @@ const SidebarLayout = ({
     return (
         <div className="bg-canvas">
             {/* 移动端菜单按钮 */}
-            <button
+            <Button
                 onClick={() => setIsMobileMenuOpen(true)}
-                className={`lg:hidden fixed top-20 left-0 z-40 p-2 bg-canvas rounded-r-lg shadow-md border border-l-0 border-border ${isMobileMenuOpen ? 'hidden' : ''}`}
+                variant="ghost"
+                size="sm"
+                icon={ChevronRight}
+                className={`lg:hidden fixed top-20 left-0 z-40 bg-canvas rounded-r-lg shadow-md border border-l-0 border-border ${isMobileMenuOpen ? 'hidden' : ''}`}
                 aria-label={t('common.aria.openMenu', 'Open menu')}
-            >
-                <ChevronRight className="w-5 h-5 text-ink-muted" />
-            </button>
+            />
 
             {/* 移动端遮罩层 */}
             {isMobileMenuOpen && isMobile && (

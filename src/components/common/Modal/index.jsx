@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import Button from '@components/common/Button';
 
 /**
  * 通用弹窗组件
@@ -151,13 +152,14 @@ const Modal = ({
                                 )}
 
                                 {!hideCloseButton && (
-                                    <button
+                                    <Button
                                         onClick={onClose}
                                         aria-label={t('common.aria.close', 'Close')}
-                                        className="p-2 -mr-2 text-ink-faint hover:text-danger hover:bg-danger-soft rounded-full transition-all active:scale-90"
-                                    >
-                                        <X className="w-5 h-5" />
-                                    </button>
+                                        variant="ghost"
+                                        size="xs"
+                                        icon={X}
+                                        className="-mr-2 rounded-full hover:text-danger hover:bg-danger-soft"
+                                    />
                                 )}
                             </div>
                         )}

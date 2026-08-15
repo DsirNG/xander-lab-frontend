@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import CreatableMultiSelect from './index';
 import { LayoutList, Check } from 'lucide-react';
+import Button from '@components/common/Button';
 
 export default function CreatableMultiSelectDemo() {
     const [selectedItems, setSelectedItems] = useState(['React', 'TailwindCSS']);
@@ -59,13 +60,14 @@ export default function CreatableMultiSelectDemo() {
 
                 {/* 提交与结果展示 */}
                 <section className="pt-6 border-t border-slate-200/60  flex flex-col items-start gap-4">
-                    <button
+                    <Button
                         onClick={handleSubmit}
-                        className="px-6 py-2.5 bg-primary hover:bg-primary-400 text-white rounded-xl text-sm font-bold shadow-lg shadow-primary/20 transition-all flex items-center gap-2"
+                        icon={Check}
+                        size="lg"
+                        className="shadow-lg shadow-primary/20"
                     >
-                        <Check className="w-4 h-4" />
                         提交数据
-                    </button>
+                    </Button>
 
                     {submittedItems.length > 0 && (
                         <div className="w-full mt-4 p-4 bg-white  rounded-2xl border border-slate-100 ">

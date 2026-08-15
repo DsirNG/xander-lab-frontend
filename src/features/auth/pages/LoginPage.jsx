@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
-    Mail, Lock, ShieldCheck, ArrowRight, Loader2,
+    Mail, Lock, ShieldCheck, ArrowRight,
     Github, Globe, Sparkles,
     Fingerprint, Shield
 } from 'lucide-react';
@@ -10,6 +10,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { authService } from '../services/authService';
 import { useToast } from '../../../hooks/useToast';
 import FloatingParticles from '../components/FloatingParticles';
+import Button from '@components/common/Button';
 
 /**
  * 登录/注册页面
@@ -118,10 +119,9 @@ const LoginPage = () => {
                 </Link>
 
                 <div className="flex items-center gap-2">
-                    <button className="hidden sm:flex items-center gap-2 px-4 min-h-11 rounded-xl text-caption font-bold text-ink-muted hover:text-accent hover:bg-canvas shadow-sm transition-all border border-transparent hover:border-border">
-                        <Globe className="w-4 h-4" />
+                    <Button variant="ghost" size="lg" icon={Globe} className="hidden sm:flex border border-transparent hover:border-border shadow-sm">
                         <span>{t('auth.login.systemStatus')}</span> <span className="text-success animate-pulse font-black uppercase">{t('auth.login.systemSecure')}</span>
-                    </button>
+                    </Button>
                     <div className="w-px h-4 bg-border mx-2 hidden sm:block" />
                     <a href="https://github.com" className="p-3 text-ink-faint hover:text-accent transition-colors">
                         <Github className="w-6 h-6" />
@@ -168,16 +168,18 @@ const LoginPage = () => {
                                 { id: 'code', label: t('auth.login.codeAuth'), icon: Shield },
                                 { id: 'password', label: t('auth.login.passwordAuth'), icon: Fingerprint }
                             ].map((tab) => (
-                                <button
+                                <Button
                                     key={tab.id}
                                     onClick={() => setLoginType(tab.id)}
-                                    className={`relative flex items-center justify-center gap-2 py-3.5 text-caption font-black rounded-xl transition-all duration-500 overflow-hidden ${
+                                    variant="ghost"
+                                    size="sm"
+                                    icon={tab.icon}
+                                    className={`relative h-auto py-3.5 rounded-xl overflow-hidden transition-all duration-500 font-black ${
                                         loginType === tab.id
                                             ? 'text-white'
                                             : 'text-ink-muted hover:text-ink-secondary'
                                     }`}
                                 >
-                                    <tab.icon className="w-4 h-4 relative z-10" />
                                     <span className="relative z-10">{tab.label}</span>
                                     {loginType === tab.id && (
                                         <motion.div
@@ -186,7 +188,7 @@ const LoginPage = () => {
                                             transition={{ type: "tween", duration: 0.3, ease: "easeInOut" }}
                                         />
                                     )}
-                                </button>
+                                </Button>
                             ))}
                         </div>
 
@@ -270,16 +272,17 @@ const LoginPage = () => {
                                                             placeholder={t('auth.login.codePlaceholder')}
                                                         />
                                                     </div>
-                                                    <button
+                                                    <Button
                                                         type="button"
                                                         disabled={countdown > 0 || sendingCode}
+                                                        loading={sendingCode}
                                                         onClick={handleSendCode}
-                                                        className="px-6 py-4 rounded-3xl bg-ink text-white text-caption font-black hover:scale-105 active:scale-95 disabled:opacity-30 transition-all shadow-xl shadow-ink/10 whitespace-nowrap"
+                                                        variant="ink"
+                                                        size="lg"
+                                                        className="rounded-3xl h-auto px-6 py-4 whitespace-nowrap hover:scale-105 shadow-xl shadow-ink/10"
                                                     >
-                                                        {sendingCode ? (
-                                                            <Loader2 className="w-4 h-4 animate-spin" aria-label={t('auth.login.sendCode')} />
-                                                        ) : countdown > 0 ? `${countdown}s` : t('auth.login.sendCode')}
-                                                    </button>
+                                                        {countdown > 0 ? `${countdown}s` : t('auth.login.sendCode')}
+                                                    </Button>
                                                 </div>
                                             </div>
                                         )}
@@ -289,23 +292,21 @@ const LoginPage = () => {
 
                             {/* 登录按钮 */}
                             <div className="relative pb-6">
-                            <button
+                            <Button
                                 type="submit"
-                                disabled={loading}
-                                className="group relative w-full flex items-center justify-center py-4.5 bg-accent text-white rounded-[1.75rem] font-black text-sm  shadow-accent/30 hover:bg-accent-700 transition-all duration-500 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 scale-fix"
+                                loading={loading}
+                                variant="primary"
+                                size="lg"
+                                block
+                                icon={ArrowRight}
+                                iconPosition="right"
+                                className="group relative h-auto py-4.5 rounded-[1.75rem] font-black text-sm shadow-accent/30 hover:scale-[1.02] overflow-hidden scale-fix"
                             >
-                                <span className="relative z-10 flex items-center gap-2">
-                                    {loading ? (
-                                        <Loader2 className="w-5 h-5 animate-spin" />
-                                    ) : (
-                                        <>
-                                            {loginType === 'code' ? t('auth.login.submit') : t('auth.login.login')}
-                                            <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform duration-500" />
-                                        </>
-                                    )}
+                                <span className="relative z-10">
+                                    {loginType === 'code' ? t('auth.login.submit') : t('auth.login.login')}
                                 </span>
                                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:animate-[shimmer_2s_infinite]" />
-                            </button>
+                            </Button>
                             {/* 验证码模式的自动注册提示 - 绝对定位不占空间 */}
                             {loginType === 'code' && (
                                 <div className="absolute top-full left-0 right-0 mt-2 text-caption text-ink-faint text-center font-medium px-2">

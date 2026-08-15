@@ -37,10 +37,11 @@ describe('NotFoundPage', () => {
     expect(screen.getByText(/你访问的页面不存在或已被移动/)).toBeInTheDocument();
   });
 
-  it('links back to the home page', () => {
+  it('navigates back to the home page', () => {
     renderPage();
-    const homeLink = screen.getByRole('link', { name: '返回首页' });
-    expect(homeLink).toHaveAttribute('href', '/');
+    const homeBtn = screen.getByRole('button', { name: '返回首页' });
+    fireEvent.click(homeBtn);
+    expect(screen.getByTestId('location')).toHaveTextContent('/');
   });
 
   it('goes back in history via the back button when there is history', () => {

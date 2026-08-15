@@ -2,6 +2,7 @@ import React from 'react';
 import { AlertCircle, Inbox } from 'lucide-react';
 import LoadingSpinner from '@components/common/LoadingSpinner';
 import Pagination from '@components/common/Pagination';
+import Button from '@components/common/Button';
 
 const ALIGN_CLASSES = {
     left: 'text-left',
@@ -57,13 +58,14 @@ const DataTable = ({
                             <div className="mt-1 max-w-sm text-caption font-medium text-danger">{error}</div>
                         ) : null}
                         {onRetry ? (
-                            <button
-                                type="button"
+                            <Button
                                 onClick={onRetry}
-                                className="mt-3 rounded-lg bg-danger px-3 py-1.5 text-caption font-semibold text-white transition hover:bg-danger-fg"
+                                variant="danger"
+                                size="sm"
+                                className="mt-3"
                             >
                                 {onRetryLabel || ''}
-                            </button>
+                            </Button>
                         ) : null}
                     </div>
                 ) : rows.length === 0 ? (

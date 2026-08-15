@@ -6,6 +6,7 @@ import {
     Palette, Trash2, ChevronUp, ChevronDown, X, HelpCircle, Layout
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import Button from '@components/common/Button';
 
 const TABS = [
     { id: 'logic', nameKey: 'components.share.drawer.logic', icon: FileCode },
@@ -43,24 +44,28 @@ const ShareDrawer = ({
                     <div className="hidden lg:block h-4 w-px bg-border" />
                     <div className="flex h-full">
                         {TABS.map(tab => (
-                            <button
+                            <Button
                                 key={tab.id}
                                 onClick={() => { setInfTab(tab.id); setDrawerOpen(true); }}
+                                variant="ghost"
+                                size="sm"
                                 className={`relative h-full flex items-center gap-1.5 lg:gap-2.5 px-3 lg:px-6 text-micro font-black uppercase tracking-widest transition-all ${infTab === tab.id ? 'text-accent' : 'text-ink-faint hover:text-ink-muted'}`}
                             >
                                 <tab.icon className="w-3.5 h-3.5" /> <span className="hidden sm:inline">{t(tab.nameKey)}</span>
                                 {infTab === tab.id && <motion.div layoutId="itab_line" className="absolute bottom-0 left-0 right-0 h-1 bg-accent rounded-t-lg" />}
-                            </button>
+                            </Button>
                         ))}
                     </div>
                 </div>
-                <button
+                <Button
                     onClick={() => setDrawerOpen(!drawerOpen)}
-                    className="flex items-center gap-1.5 lg:gap-2 px-2.5 lg:px-4 py-1.5 lg:py-2 rounded-xl text-ink-faint hover:bg-surface hover:text-accent transition-all border border-border"
+                    variant="outline"
+                    size="sm"
+                    className="flex items-center gap-1.5 lg:gap-2 text-ink-faint hover:bg-surface hover:text-accent transition-all"
                 >
                     <span className="text-micro font-black uppercase tracking-widest hidden sm:inline">{drawerOpen ? t('components.share.drawer.collapseConsole') : t('components.share.drawer.viewArchitecture')}</span>
                     {drawerOpen ? <ChevronDown className="w-4 h-4" /> : <ChevronUp className="w-4 h-4" />}
-                </button>
+                </Button>
             </div>
 
             <div className="flex-1 flex overflow-hidden bg-surface">
@@ -71,15 +76,15 @@ const ShareDrawer = ({
                                 <div className="flex items-center justify-between mb-4 px-2">
                                     <div className="flex items-center gap-2 relative z-10">
                                         <span className="text-micro font-black uppercase tracking-widest text-ink-faint">Files</span>
-                                        <button id={tourIds.logicHelp} onClick={() => onHelpClick('logic')} className="p-1 hover:bg-surface-muted rounded text-ink-faint hover:text-accent transition-colors"><HelpCircle className="w-3.5 h-3.5" /></button>
+                                        <Button id={tourIds.logicHelp} onClick={() => onHelpClick('logic')} variant="ghost" size="xs" className="h-auto w-auto p-1 rounded text-ink-faint hover:bg-surface-muted hover:text-accent transition-colors"><HelpCircle className="w-3.5 h-3.5" /></Button>
                                     </div>
-                                    <button onClick={onAddFile} className="p-1 hover:bg-surface-muted rounded text-ink-faint hover:text-accent transition-colors">
+                                    <Button onClick={onAddFile} variant="ghost" size="xs" className="h-auto w-auto p-1 rounded text-ink-faint hover:bg-surface-muted hover:text-accent transition-colors">
                                         <Plus className="w-3.5 h-3.5" />
-                                    </button>
+                                    </Button>
                                 </div>
                                 <div className="space-y-1 overflow-y-auto custom-scrollbar flex-1 pb-4">
                                     {libFiles.map((f, i) => (
-                                        <button key={i} onClick={() => setActiveLibIdx(i)} className={`w-full px-4 py-3 rounded-xl text-left text-micro font-black truncate transition-all flex items-center justify-between group ${activeLibIdx === i ? 'bg-accent-soft text-accent-fg border border-accent/30' : 'text-ink-muted hover:bg-surface border border-transparent'}`}>
+                                        <Button key={i} onClick={() => setActiveLibIdx(i)} variant="ghost" size="sm" className={`h-auto w-full px-4 py-3 rounded-xl text-left text-micro font-black truncate transition-all flex items-center justify-between group ${activeLibIdx === i ? 'bg-accent-soft text-accent-fg border border-accent/30' : 'text-ink-muted hover:bg-surface border border-transparent'}`}>
                                             <span className="flex items-center gap-2 truncate"><FileCode className="w-4 h-4 opacity-40 flex-shrink-0" /> <span className="truncate">{f.name}</span></span>
                                             {libFiles.length > 1 && (
                                                 <div
@@ -89,7 +94,7 @@ const ShareDrawer = ({
                                                     <X className="w-3 h-3" />
                                                 </div>
                                             )}
-                                        </button>
+                                        </Button>
                                     ))}
                                 </div>
                             </div>
@@ -106,7 +111,7 @@ const ShareDrawer = ({
                     {infTab === 'env' && (
                         <motion.div key="env" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex-1 h-full relative">
                             <div className="absolute top-4 right-8 z-10">
-                                <button id={tourIds.envHelp} onClick={() => onHelpClick('env')} className="p-2 rounded-xl text-ink-faint hover:bg-surface hover:text-accent transition-colors shadow-sm bg-canvas border border-border" title={t('components.share.drawer.wrapperHint')}><HelpCircle className="w-4 h-4" /></button>
+                                <Button id={tourIds.envHelp} onClick={() => onHelpClick('env')} variant="ghost" size="xs" className="h-auto w-auto p-2 rounded-xl text-ink-faint hover:bg-surface hover:text-accent transition-colors shadow-sm bg-canvas border border-border" title={t('components.share.drawer.wrapperHint')}><HelpCircle className="w-4 h-4" /></Button>
                             </div>
                             <textarea value={wrapperCode} onChange={e => setWrapperCode(e.target.value)} className="absolute inset-0 w-full h-full bg-canvas p-6 sm:p-10 text-body font-mono text-ink-secondary outline-none resize-none min-w-0" spellCheck={false} />
                         </motion.div>
@@ -114,7 +119,7 @@ const ShareDrawer = ({
                     {infTab === 'css' && (
                         <motion.div key="css" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex-1 h-full relative">
                             <div className="absolute top-4 right-8 z-10">
-                                <button id={tourIds.cssHelp} onClick={() => onHelpClick('css')} className="p-2 rounded-xl text-ink-faint hover:bg-surface hover:text-accent transition-colors shadow-sm bg-canvas border border-border" title={t('components.share.drawer.cssHint')}><HelpCircle className="w-4 h-4" /></button>
+                                <Button id={tourIds.cssHelp} onClick={() => onHelpClick('css')} variant="ghost" size="xs" className="h-auto w-auto p-2 rounded-xl text-ink-faint hover:bg-surface hover:text-accent transition-colors shadow-sm bg-canvas border border-border" title={t('components.share.drawer.cssHint')}><HelpCircle className="w-4 h-4" /></Button>
                             </div>
                             <textarea value={cssCode} onChange={e => setCssCode(e.target.value)} className="absolute inset-0 w-full h-full bg-canvas p-6 sm:p-10 text-body font-mono text-ink-secondary outline-none resize-none min-w-0" spellCheck={false} />
                         </motion.div>

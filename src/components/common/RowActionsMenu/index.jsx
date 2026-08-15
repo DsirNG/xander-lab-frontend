@@ -1,11 +1,12 @@
 import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { Loader2, MoreHorizontal } from 'lucide-react';
+import { MoreHorizontal } from 'lucide-react';
+import Button from '@components/common/Button';
 
 const SIZE_CLASSES = {
-  sm: 'h-7 w-7 rounded-md',
-  md: 'h-8 w-8 rounded-lg',
-  lg: 'h-9 w-9 rounded-xl',
+    sm: 'xs',
+    md: 'sm',
+    lg: 'md',
 };
 
 const VIEWPORT_GAP = 8;
@@ -93,16 +94,15 @@ const RowActionsMenu = ({ actions = [], size = 'md', align = 'right', ariaLabel 
   return (
     <>
       <div className="relative" ref={anchorRef}>
-        <button
-          type="button"
+        <Button
           onClick={() => setOpen((current) => !current)}
           aria-haspopup="menu"
           aria-expanded={open}
           aria-label={ariaLabel}
-          className={`grid place-items-center text-ink-faint transition hover:bg-surface-muted hover:text-ink focus:outline-none focus:ring-2 focus:ring-accent-200 ${SIZE_CLASSES[size] || SIZE_CLASSES.md}`}
-        >
-          <MoreHorizontal className="h-4 w-4" aria-hidden="true" />
-        </button>
+          variant="ghost"
+          size={SIZE_CLASSES[size] || 'sm'}
+          icon={MoreHorizontal}
+        />
       </div>
 
       {open
@@ -116,25 +116,23 @@ const RowActionsMenu = ({ actions = [], size = 'md', align = 'right', ariaLabel 
               {actions.map((item) => {
                 const Icon = item.icon;
                 return (
-                  <button
+                  <Button
                     key={item.key}
-                    type="button"
                     role="menuitem"
                     disabled={item.disabled || item.loading}
+                    loading={item.loading}
+                    icon={Icon}
+                    variant={item.danger ? 'dangerOutline' : 'ghost'}
+                    size="sm"
                     onClick={() => handleItemClick(item)}
-                    className={`flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-sm font-medium transition disabled:opacity-50 truncate ${
+                    className={`h-auto w-full justify-start border-0 px-3 py-2 text-left truncate ${
                       item.danger
                         ? 'text-danger hover:bg-danger-soft'
                         : 'text-ink-secondary hover:bg-surface-muted hover:text-ink'
                     }`}
                   >
-                    {item.loading ? (
-                      <Loader2 className="h-3.5 w-3.5 shrink-0 animate-spin" aria-hidden="true" />
-                    ) : Icon ? (
-                      <Icon className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-                    ) : null}
                     {item.loading && item.loadingLabel ? item.loadingLabel : item.label}
-                  </button>
+                  </Button>
                 );
               })}
             </div>,

@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Bell, CheckCheck } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import Button from '@components/common/Button';
 import { useNotifications } from '@features/blog/context/useNotifications';
 import { blogPlanService } from '@features/blog/services/blogPlanService';
 import { authService } from '@features/auth/services/authService';
@@ -59,30 +60,32 @@ const NotificationBell = () => {
 
   return (
     <div className="relative" ref={boxRef}>
-      <button
+      <Button
         onClick={toggleOpen}
-        className="relative flex h-10 w-10 items-center justify-center rounded-xl text-ink-secondary transition hover:bg-surface-muted"
+        variant="ghost"
+        size="md"
+        icon={Bell}
+        className="relative h-10 w-10 px-0"
         aria-label={t('notifications.title')}
         aria-expanded={open}
         title={t('notifications.title')}
       >
-        <Bell className="h-5 w-5" />
         {iconBadge}
-      </button>
+      </Button>
 
       {open && (
         <div className="absolute right-0 top-full z-50 mt-2 w-[min(20rem,calc(100vw-2rem))] overflow-hidden rounded-2xl border border-border bg-canvas shadow-lg">
           <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1 border-b border-border px-4 py-2.5">
             <span className="truncate text-sm font-semibold text-ink">{t('notifications.title')}</span>
             {unread > 0 && (
-              <button onClick={handleMarkAll} className="inline-flex items-center gap-1 text-xs text-accent hover:underline">
-                <CheckCheck className="h-3 w-3" /> {t('notifications.markAll')}
-              </button>
+              <Button onClick={handleMarkAll} variant="link" size="xs" icon={CheckCheck} className="gap-1">
+                {t('notifications.markAll')}
+              </Button>
             )}
             {isAdmin && (
-              <button onClick={handleTestBroadcast} disabled={broadcasting} className="text-xs text-ink-secondary hover:text-accent disabled:opacity-50">
+              <Button onClick={handleTestBroadcast} disabled={broadcasting} variant="link" size="xs">
                 {broadcasting ? '广播中…' : '测试 SSE 广播'}
-              </button>
+              </Button>
             )}
           </div>
 

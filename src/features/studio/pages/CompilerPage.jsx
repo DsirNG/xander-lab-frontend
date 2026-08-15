@@ -16,6 +16,7 @@ import {
   X,
 } from 'lucide-react';
 import CustomSelect from '@components/common/CustomSelect';
+import Button from '@components/common/Button';
 import useClickOutside from '@hooks/useClickOutside';
 import StudioTopBar from '../components/StudioTopBar';
 import {
@@ -298,30 +299,32 @@ export default function CompilerPage() {
                       <div className="mb-2 text-caption font-bold text-ink-secondary">公开源码链接</div>
                       <div className="flex items-center gap-2">
                         <input value={shareUrl} readOnly onFocus={(event) => event.currentTarget.select()} className="min-w-0 flex-1 rounded-lg border border-border bg-surface px-2.5 py-2 text-caption text-ink-muted outline-none" aria-label="公开源码链接" />
-                        <button type="button" onClick={handleCopyShareLink} className="inline-flex shrink-0 items-center gap-1 rounded-lg bg-accent px-2.5 py-2 text-caption font-bold text-white hover:bg-accent-700">
+                        <Button type="button" onClick={handleCopyShareLink} variant="primary" size="sm" className="shrink-0 font-bold">
                           {isShareCopied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
                           {isShareCopied ? '已复制' : '复制'}
-                        </button>
+                        </Button>
                       </div>
                     </div>
                   ) : null}
                 </div>
-                <button type="button" disabled={isDownloadingSource} onClick={handleDownloadSource} className="inline-flex items-center gap-2 rounded-lg border border-border bg-canvas px-3 py-1.5 text-caption font-bold text-ink-muted transition-colors hover:text-accent disabled:cursor-not-allowed disabled:opacity-50">
-                  {isDownloadingSource ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Download className="h-3.5 w-3.5" />} 下载 ZIP
-                </button>
+                <Button type="button" disabled={isDownloadingSource} loading={isDownloadingSource} onClick={handleDownloadSource} variant="outline" size="sm" icon={Download} className="font-bold">
+                  下载 ZIP
+                </Button>
               </>
             )}
             <span className={`rounded-full border px-3 py-1 text-caption font-bold ${getStatusColor(project?.status)}`}>
               {getStatusLabel(project?.status)}
             </span>
-            <button
+            <Button
               type="button"
               onClick={loadProject}
-              className="inline-flex items-center gap-2 rounded-lg border border-border bg-canvas px-3 py-1.5 text-caption font-bold text-ink-muted transition-colors hover:text-accent"
+              variant="outline"
+              size="sm"
+              icon={RefreshCw}
+              className="font-bold"
             >
-              <RefreshCw className="h-3.5 w-3.5" />
               刷新
-            </button>
+            </Button>
           </div>
       </StudioTopBar>
 

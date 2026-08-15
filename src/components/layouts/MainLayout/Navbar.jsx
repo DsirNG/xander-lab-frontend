@@ -5,6 +5,7 @@ import { Github, Menu, Languages, X, User as UserIcon, ChevronDown, Check } from
 import styles from './Navbar.module.css';
 import { useAuthSession } from '@features/auth/context/authSessionContextValue';
 import NotificationBell from '@features/blog/components/NotificationBell';
+import Button from '@components/common/Button';
 
 const LANGUAGES = ['zh', 'en', 'fr', 'ja', 'ru', 'vi'];
 const LANG_LABELS = { zh: '中文', en: 'EN', fr: 'FR', ja: '日本語', ru: 'RU', vi: 'VI' };
@@ -185,8 +186,10 @@ const Navbar = () => {
                         <div className={styles.actionsArea}>
                             {/* PC端语言下拉选择器 */}
                             <div className="hidden sm:flex items-center relative" ref={langDropdownRef}>
-                                <button
+                                <Button
                                     onClick={() => setIsLangDropdownOpen(!isLangDropdownOpen)}
+                                    variant="ghost"
+                                    size="sm"
                                     className={`${styles.iconButton} flex items-center gap-1 px-2 sm:px-3`}
                                     title="Language"
                                     aria-expanded={isLangDropdownOpen}
@@ -211,7 +214,7 @@ const Navbar = () => {
                                         ) : null}
                                     </span>
                                     <ChevronDown aria-hidden="true" className={`w-3 h-3 transition-transform duration-200 ${isLangDropdownOpen ? 'rotate-180' : ''}`} />
-                                </button>
+                                </Button>
 
                                 {/* 下拉菜单 */}
                                 <div className={`absolute top-full right-0 mt-2 ${styles.langDropdown} ${isLangDropdownOpen ? styles.langDropdownOpen : ''}`}>
@@ -219,11 +222,13 @@ const Navbar = () => {
                                         {LANGUAGES.map((lng, idx) => {
                                             const isActive = i18n.language === lng;
                                             return (
-                                                <button
+                                                <Button
                                                     key={lng}
                                                     role="option"
                                                     aria-selected={isActive}
                                                     onClick={() => changeLanguage(lng)}
+                                                    variant="ghost"
+                                                    size="sm"
                                                     className={`${styles.langOption} ${isActive ? styles.langOptionActive : ''}`}
                                                     style={{ animationDelay: isLangDropdownOpen ? `${idx * 40}ms` : '0ms' }}
                                                 >
@@ -236,7 +241,7 @@ const Navbar = () => {
                                                         </span>
                                                     </span>
                                                     {isActive && <Check className="w-3.5 h-3.5 text-accent" />}
-                                                </button>
+                                                </Button>
                                             );
                                         })}
                                     </div>
@@ -293,18 +298,15 @@ const Navbar = () => {
                                     </Link>
                                 )}
                             </div>
-                            <button
+                            <Button
                                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                                className={styles.menuButton}
+                                variant="ghost"
+                                size="md"
+                                icon={isMobileMenuOpen ? X : Menu}
                                 aria-label={t('common.aria.openMenu', 'Open menu')}
                                 aria-expanded={isMobileMenuOpen}
-                            >
-                                {isMobileMenuOpen ? (
-                                    <X aria-hidden="true" className="w-5 h-5 sm:w-6 sm:h-6" />
-                                ) : (
-                                    <Menu aria-hidden="true" className="w-5 h-5 sm:w-6 sm:h-6" />
-                                )}
-                            </button>
+                                className={`md:hidden ${styles.menuButton}`}
+                            />
                         </div>
                     </div>
                 </div>
@@ -341,8 +343,10 @@ const Navbar = () => {
                     </div>
 
                     <div className={styles.mobileMenuActions}>
-                        <button
+                        <Button
                             onClick={toggleLanguageMobile}
+                            variant="ghost"
+                            size="md"
                             className={`${styles.mobileActionButton} flex items-center space-x-2`}
                         >
                             <Languages aria-hidden="true" className="w-4 h-4" />
@@ -363,7 +367,7 @@ const Navbar = () => {
                                     </span>
                                 ) : null}
                             </span>
-                        </button>
+                        </Button>
                         <a
                             href="https://github.com/DsirNG/xander-lab-frontend"
                             target="_blank"

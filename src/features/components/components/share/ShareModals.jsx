@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import Modal from '@/components/common/Modal';
 import TourSpotlight from '@/components/common/TourSpotlight';
+import Button from '@components/common/Button';
 
 const ShareModals = ({
     // Modal visibility
@@ -64,8 +65,8 @@ const ShareModals = ({
                 width="max-w-[400px]"
                 footer={
                     <>
-                        <button onClick={onCloseAddModal} className="px-5 py-2.5 rounded-xl text-caption font-bold text-ink-muted hover:bg-surface-muted  transition-all">{t('components.share.modals.cancel')}</button>
-                        <button onClick={onAddFileSubmit} className="px-6 py-2.5 rounded-xl text-caption font-bold text-white bg-accent hover:bg-accent-700 shadow-lg shadow-accent/20 active:scale-95 transition-all">{t('components.share.modals.confirmCreate')}</button>
+                        <Button onClick={onCloseAddModal} variant="ghost" size="md">{t('components.share.modals.cancel')}</Button>
+                        <Button onClick={onAddFileSubmit} variant="primary" size="md">{t('components.share.modals.confirmCreate')}</Button>
                     </>
                 }
             >
@@ -96,10 +97,10 @@ const ShareModals = ({
                 width="max-w-[360px]"
                 footer={
                     <>
-                        <button onClick={onCloseDeleteModal} className="px-5 py-2.5 rounded-xl text-caption font-bold text-ink-muted hover:bg-surface-muted  transition-all">{t('components.share.modals.cancel')}</button>
-                        <button onClick={onConfirmDeleteFile} className="px-6 py-2.5 rounded-xl text-caption font-bold text-white bg-danger hover:bg-danger-fg shadow-lg shadow-danger/20 active:scale-95 transition-all flex items-center gap-2">
-                            <Trash2 className="w-3.5 h-3.5" /> {t('components.share.modals.confirmDelete')}
-                        </button>
+                        <Button onClick={onCloseDeleteModal} variant="ghost" size="md">{t('components.share.modals.cancel')}</Button>
+                        <Button onClick={onConfirmDeleteFile} variant="danger" size="md" icon={Trash2}>
+                            {t('components.share.modals.confirmDelete')}
+                        </Button>
                     </>
                 }
             >
@@ -125,10 +126,10 @@ const ShareModals = ({
                 width="max-w-[360px]"
                 footer={
                     <>
-                        <button onClick={onCloseDeleteScenarioModal} className="px-5 py-2.5 rounded-xl text-caption font-bold text-ink-muted hover:bg-surface-muted transition-all">{t('components.share.modals.cancel')}</button>
-                        <button onClick={onConfirmDeleteScenario} className="px-6 py-2.5 rounded-xl text-caption font-bold text-white bg-danger hover:bg-danger-fg shadow-lg shadow-danger/20 active:scale-95 transition-all flex items-center gap-2">
-                            <Trash2 className="w-3.5 h-3.5" /> {t('components.share.modals.confirmDelete')}
-                        </button>
+                        <Button onClick={onCloseDeleteScenarioModal} variant="ghost" size="md">{t('components.share.modals.cancel')}</Button>
+                        <Button onClick={onConfirmDeleteScenario} variant="danger" size="md" icon={Trash2}>
+                            {t('components.share.modals.confirmDelete')}
+                        </Button>
                     </>
                 }
             >
@@ -163,10 +164,10 @@ const ShareModals = ({
                 width="max-w-[420px]"
                 footer={
                     <>
-                        <button onClick={onCloseHelpModal} className="px-5 py-2.5 rounded-xl text-caption font-bold text-ink-muted hover:bg-surface-muted  transition-all">{t('components.share.modals.cancel')}</button>
-                        <button id="tour-apply-btn" onClick={onApplySample} className="px-6 py-2.5 rounded-xl text-caption font-bold text-white bg-accent hover:bg-accent-700 shadow-lg shadow-accent/20 active:scale-95 transition-all relative z-10">
+                        <Button onClick={onCloseHelpModal} variant="ghost" size="md">{t('components.share.modals.cancel')}</Button>
+                        <Button id="tour-apply-btn" onClick={onApplySample} variant="primary" size="md">
                             {t('components.share.modals.oneClickLoad')}
-                        </button>
+                        </Button>
                     </>
                 }
             >
@@ -195,10 +196,10 @@ const ShareModals = ({
                 width="max-w-[400px]"
                 footer={
                     <>
-                        <button onClick={onCloseEditScenarioModal} className="px-5 py-2.5 rounded-xl text-caption font-bold text-ink-muted hover:bg-surface-muted  transition-all">{t('components.share.modals.cancel')}</button>
-                        <button onClick={onEditScenarioSubmit} className="px-6 py-2.5 rounded-xl text-caption font-bold text-white bg-accent hover:bg-accent-700 shadow-lg shadow-accent/20 active:scale-95 transition-all">
+                        <Button onClick={onCloseEditScenarioModal} variant="ghost" size="md">{t('components.share.modals.cancel')}</Button>
+                        <Button onClick={onEditScenarioSubmit} variant="primary" size="md">
                             {t('components.share.modals.saveChanges')}
-                        </button>
+                        </Button>
                     </>
                 }
             >
@@ -234,12 +235,12 @@ const ShareModals = ({
                 title={t('components.share.modals.welcomeTitle')}
                 footer={
                     <>
-                        <button onClick={onTourWelcomeSkip} className="px-5 py-2.5 text-caption text-ink-muted hover:bg-surface-muted rounded-xl font-bold transition-all">
+                        <Button onClick={onTourWelcomeSkip} variant="ghost" size="md">
                             {t('components.share.modals.welcomeReject')}
-                        </button>
-                        <button onClick={onTourWelcomeStart} className="px-6 py-2.5 bg-accent hover:bg-accent-700 text-white rounded-xl text-caption font-bold shadow-xl shadow-accent/20 active:scale-95 transition-all flex items-center gap-2">
-                            <Compass className="w-4 h-4" /> {t('components.share.modals.startTour')}
-                        </button>
+                        </Button>
+                        <Button onClick={onTourWelcomeStart} variant="primary" size="md" icon={Compass}>
+                            {t('components.share.modals.startTour')}
+                        </Button>
                     </>
                 }
             >

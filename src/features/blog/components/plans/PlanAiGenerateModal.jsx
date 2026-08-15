@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { CalendarDays, Loader2, Sparkles } from 'lucide-react';
+import { CalendarDays, Sparkles } from 'lucide-react';
 import Modal from '@components/common/Modal';
+import Button from '@components/common/Button';
 import TimezoneSelect from '@components/common/TimezoneSelect';
 import TimeInput from '@components/common/TimeInput';
 import FormField from '@components/common/FormField';
@@ -87,15 +88,12 @@ const PlanAiGenerateModal = ({ isOpen, onClose, onSaved }) => {
 
   const footer = (
     <>
-      <button onClick={onClose} disabled={generating}
-        className="rounded-xl border border-border px-4 py-2 text-sm text-ink-secondary hover:bg-surface-muted disabled:opacity-50">
+      <Button onClick={onClose} disabled={generating} variant="outline">
         {t('common.close')}
-      </button>
-      <button onClick={submit} disabled={generating}
-        className="inline-flex min-h-11 items-center gap-1.5 rounded-xl bg-accent px-4 py-2 text-sm font-bold text-white hover:opacity-90 disabled:opacity-50">
-        {generating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
+      </Button>
+      <Button onClick={submit} loading={generating} variant="primary" icon={Sparkles}>
         {t('blogPlans.aiGenerate')}
-      </button>
+      </Button>
     </>
   );
 

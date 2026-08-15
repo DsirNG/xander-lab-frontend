@@ -1,5 +1,6 @@
 import React from 'react';
 import { withTranslation } from 'react-i18next';
+import Button from '@components/common/Button';
 
 /**
  * 全局错误边界组件
@@ -60,18 +61,16 @@ class ErrorBoundary extends React.Component {
               </details>
             )}
             <div className="flex gap-3 justify-center">
-              <button
-                onClick={this.handleReload}
-                className="px-6 py-2.5 bg-accent text-white rounded-xl text-body font-bold hover:opacity-90 transition-all"
-              >
+              <Button onClick={this.handleReload} size="lg">
                 {t('common.errorBoundary.reload')}
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={() => window.location.href = '/'}
-                className="px-6 py-2.5 bg-surface-muted text-ink-secondary rounded-xl text-body font-bold hover:bg-border transition-all"
+                variant="outline"
+                size="lg"
               >
                 {t('common.errorBoundary.backToHome')}
-              </button>
+              </Button>
             </div>
           </div>
         </div>

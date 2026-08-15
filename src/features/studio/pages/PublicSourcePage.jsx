@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Download, File, Loader2 } from 'lucide-react';
 import { useParams } from 'react-router-dom';
 import { FileTreeNodes } from './CompilerPage';
+import Button from '@components/common/Button';
 import StudioTopBar from '../components/StudioTopBar';
 import {
   downloadPublicProjectSource,
@@ -58,7 +59,7 @@ export default function PublicSourcePage() {
           </div>
         }
       >
-        <button type="button" onClick={() => downloadPublicProjectSource(project.id, project.name)} className="inline-flex shrink-0 items-center gap-2 rounded-lg border border-border bg-canvas px-3 py-2 text-caption font-bold text-ink-muted hover:text-accent"><Download className="h-4 w-4" /> 下载源码</button>
+          <Button type="button" onClick={() => downloadPublicProjectSource(project.id, project.name)} variant="outline" size="sm" icon={Download} className="shrink-0 font-bold">下载源码</Button>
       </StudioTopBar>
       <div className="flex min-h-0 flex-1 flex-col lg:flex-row">
         <aside className="flex max-h-[40vh] w-full shrink-0 flex-col border-b border-border bg-canvas lg:max-h-none lg:w-64 lg:border-b-0 lg:border-r"><div className="border-b border-border px-4 py-3 text-caption font-bold uppercase tracking-widest text-ink-faint">Source files</div><div className="min-h-0 flex-1 overflow-auto p-2"><FileTreeNodes nodes={nodes} depth={0} activePath={activeFilePath} onOpenFile={openFile} /></div></aside>
