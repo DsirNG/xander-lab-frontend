@@ -91,7 +91,7 @@ const LoginPage = () => {
     };
 
     return (
-        <div className="min-h-screen flex flex-col items-center justify-center p-4 sm:p-6 bg-surface overflow-y-auto selection:bg-accent/30">
+        <div className="min-h-screen flex flex-col items-center justify-center p-4 sm:p-6 px-ultra-tight bg-surface overflow-y-auto selection:bg-accent/30">
             {/* 高级艺术背景 */}
             <div className="absolute inset-0 pointer-events-none z-0">
                 {/*<DigitalOrbit />*/}
@@ -105,20 +105,20 @@ const LoginPage = () => {
                 animate={{ opacity: 1, y: 0 }}
                 className="fixed top-0 left-0 right-0 p-4 flex justify-between items-center z-50 max-w-7xl mx-auto w-full"
             >
-                <Link to="/" className="group flex items-center gap-3">
+                <Link to="/" className="group flex items-center gap-3 min-w-0">
                     <div className="relative">
                         <div className="absolute inset-0 bg-accent blur-md opacity-20 group-hover:opacity-40 transition-opacity" />
                         <div className="relative p-2.5 rounded-2xl bg-canvas border border-border shadow-xl group-hover:scale-110 transition-transform duration-500">
                         </div>
                     </div>
-                    <div className="flex flex-col">
-                        <span className="font-black tracking-tighter text-xl text-ink leading-none">XANDER LAB</span>
-                        <span className="text-micro font-bold text-ink-faint leading-none mt-1 tracking-[0.2em]">{t('auth.login.unifiedAuth')}</span>
+                    <div className="flex flex-col min-w-0">
+                        <span className="font-black tracking-tighter text-xl text-ink leading-none truncate">XANDER LAB</span>
+                        <span className="text-micro font-bold text-ink-faint leading-none mt-1 tracking-[0.2em] truncate">{t('auth.login.unifiedAuth')}</span>
                     </div>
                 </Link>
 
                 <div className="flex items-center gap-2">
-                    <button className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl text-caption font-bold text-ink-muted hover:text-accent hover:bg-canvas shadow-sm transition-all border border-transparent hover:border-border">
+                    <button className="hidden sm:flex items-center gap-2 px-4 min-h-11 rounded-xl text-caption font-bold text-ink-muted hover:text-accent hover:bg-canvas shadow-sm transition-all border border-transparent hover:border-border">
                         <Globe className="w-4 h-4" />
                         <span>{t('auth.login.systemStatus')}</span> <span className="text-success animate-pulse font-black uppercase">{t('auth.login.systemSecure')}</span>
                     </button>
@@ -134,7 +134,7 @@ const LoginPage = () => {
                 initial={{ opacity: 0, y: 40, scale: 0.98 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                className="relative z-10 w-full max-w-[480px]"
+                className="relative z-10 w-full max-w-[480px] my-auto"
             >
                 {/* 装饰发光背景 */}
                 {/*<div className="absolute -top-20 -right-20 w-64 h-64 bg-accent/10 rounded-full blur-[100px] animate-pulse" />*/}
@@ -150,7 +150,7 @@ const LoginPage = () => {
 
                         {/* 引导标题 */}
                         <div className="mb-6">
-                            <div className="flex items-center gap-2 mb-4">
+                            <div className="flex items-center gap-2 flex-wrap mb-4">
                                 <Sparkles className="w-4 h-4 text-accent animate-bounce" />
                                 <span className="text-micro font-black text-accent uppercase tracking-[0.3em]">{t('auth.login.identityGateway')}</span>
                             </div>
@@ -274,7 +274,7 @@ const LoginPage = () => {
                                                         type="button"
                                                         disabled={countdown > 0 || sendingCode}
                                                         onClick={handleSendCode}
-                                                        className="px-6 rounded-3xl bg-ink text-white text-caption font-black hover:scale-105 active:scale-95 disabled:opacity-30 transition-all shadow-xl shadow-ink/10 whitespace-nowrap"
+                                                        className="px-6 py-4 rounded-3xl bg-ink text-white text-caption font-black hover:scale-105 active:scale-95 disabled:opacity-30 transition-all shadow-xl shadow-ink/10 whitespace-nowrap"
                                                     >
                                                         {sendingCode ? (
                                                             <Loader2 className="w-4 h-4 animate-spin" aria-label={t('auth.login.sendCode')} />

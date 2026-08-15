@@ -43,11 +43,11 @@ export default function PublicSourcePage() {
   }, [projectId]);
 
   const nodes = useMemo(() => tree?.children || [], [tree]);
-  if (loading) return <div className="flex h-screen items-center justify-center"><Loader2 className="h-7 w-7 animate-spin text-accent" /></div>;
-  if (!project) return <div className="flex h-screen items-center justify-center text-body font-bold text-ink-muted">该项目不存在或未公开源码。</div>;
+  if (loading) return <div className="flex h-dvh items-center justify-center"><Loader2 className="h-7 w-7 animate-spin text-accent" /></div>;
+  if (!project) return <div className="flex h-dvh items-center justify-center text-body font-bold text-ink-muted">该项目不存在或未公开源码。</div>;
 
   return (
-    <div className="flex h-screen flex-col bg-surface">
+    <div className="flex h-dvh flex-col bg-surface">
       <StudioTopBar
         showBack={false}
         fallbackTo="/"
@@ -60,8 +60,8 @@ export default function PublicSourcePage() {
       >
         <button type="button" onClick={() => downloadPublicProjectSource(project.id, project.name)} className="inline-flex shrink-0 items-center gap-2 rounded-lg border border-border bg-canvas px-3 py-2 text-caption font-bold text-ink-muted hover:text-accent"><Download className="h-4 w-4" /> 下载源码</button>
       </StudioTopBar>
-      <div className="flex min-h-0 flex-1">
-        <aside className="flex w-64 shrink-0 flex-col border-r border-border bg-canvas"><div className="border-b border-border px-4 py-3 text-caption font-bold uppercase tracking-widest text-ink-faint">Source files</div><div className="min-h-0 flex-1 overflow-auto p-2"><FileTreeNodes nodes={nodes} depth={0} activePath={activeFilePath} onOpenFile={openFile} /></div></aside>
+      <div className="flex min-h-0 flex-1 flex-col lg:flex-row">
+        <aside className="flex max-h-[40vh] w-full shrink-0 flex-col border-b border-border bg-canvas lg:max-h-none lg:w-64 lg:border-b-0 lg:border-r"><div className="border-b border-border px-4 py-3 text-caption font-bold uppercase tracking-widest text-ink-faint">Source files</div><div className="min-h-0 flex-1 overflow-auto p-2"><FileTreeNodes nodes={nodes} depth={0} activePath={activeFilePath} onOpenFile={openFile} /></div></aside>
         <main className="flex min-w-0 flex-1 flex-col bg-canvas"><div className="flex items-center gap-2 border-b border-border px-4 py-3 text-body font-bold text-ink-secondary"><File className="h-4 w-4 text-ink-faint" />{activeFilePath || '选择一个文件查看源码'}</div><pre className="min-h-0 flex-1 overflow-auto bg-ink p-5 text-body leading-6 text-surface"><code>{content || '从左侧文件树选择一个文本文件。'}</code></pre></main>
       </div>
     </div>

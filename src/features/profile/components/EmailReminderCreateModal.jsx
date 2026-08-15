@@ -323,7 +323,7 @@ const EmailReminderCreateModal = ({ isOpen, onClose, onCreated }) => {
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby="email-reminder-create-title"
-                className="flex max-h-[min(900px,92vh)] w-full max-w-5xl flex-col overflow-hidden rounded-2xl border border-border bg-canvas shadow-2xl shadow-ink/20"
+                className="flex max-h-[min(900px,92dvh)] w-full max-w-5xl flex-col overflow-hidden rounded-2xl border border-border bg-canvas shadow-2xl shadow-ink/20"
             >
                 <header className="flex shrink-0 items-center justify-between border-b border-border px-5 py-4">
                     <div className="flex items-center gap-2.5">
@@ -522,7 +522,7 @@ const EmailReminderCreateModal = ({ isOpen, onClose, onCreated }) => {
                                                         key={item}
                                                         type="button"
                                                         onClick={() => setFrequency(item)}
-                                                        className={`rounded-lg border px-2.5 py-1.5 text-caption font-bold transition ${
+                                                        className={`flex min-h-11 items-center rounded-lg border px-3 py-2 text-caption font-bold transition ${
                                                             active
                                                                 ? 'border-accent bg-accent text-white'
                                                                 : 'border-border bg-canvas text-ink-muted hover:border-accent/30 hover:text-accent'
@@ -591,7 +591,7 @@ const EmailReminderCreateModal = ({ isOpen, onClose, onCreated }) => {
                                     </span>
                                 </div>
                                 <div className="bg-surface-muted/80 p-2">
-                                    <div className="max-h-[min(560px,52vh)] overflow-y-auto rounded-lg border border-border bg-canvas">
+                                    <div className="max-h-[min(560px,52dvh)] overflow-y-auto rounded-lg border border-border bg-canvas">
                                         <iframe
                                             ref={previewFrameRef}
                                             title={t('profile.emailReminders.previewTitle')}
@@ -612,14 +612,14 @@ const EmailReminderCreateModal = ({ isOpen, onClose, onCreated }) => {
                             type="button"
                             onClick={handleClose}
                             disabled={isCreating}
-                            className="h-9 rounded-lg border border-border px-4 text-xs font-bold text-ink-muted transition hover:bg-surface disabled:opacity-60"
+                            className="min-h-11 rounded-lg border border-border px-4 text-xs font-bold text-ink-muted transition hover:bg-surface disabled:opacity-60"
                         >
                             {t('profile.emailReminders.cancelDelete')}
                         </button>
                         <button
                             type="submit"
                             disabled={isCreating}
-                            className="inline-flex h-9 items-center justify-center gap-1.5 rounded-lg bg-accent px-4 text-xs font-bold text-white shadow-sm shadow-accent/20 transition hover:brightness-105 disabled:cursor-wait disabled:opacity-60"
+                            className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-lg bg-accent px-4 text-xs font-bold text-white shadow-sm shadow-accent/20 transition hover:brightness-105 disabled:cursor-wait disabled:opacity-60"
                         >
                             {isCreating
                                 ? <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -643,7 +643,7 @@ const EmailReminderCreateModal = ({ isOpen, onClose, onCreated }) => {
                         role="dialog"
                         aria-modal="true"
                         aria-labelledby="email-template-picker-title"
-                        className="flex max-h-[min(640px,88vh)] w-full max-w-6xl flex-col overflow-hidden rounded-2xl border border-border bg-canvas shadow-2xl"
+                        className="flex max-h-[min(640px,88dvh)] w-full max-w-6xl flex-col overflow-hidden rounded-2xl border border-border bg-canvas shadow-2xl"
                     >
                         <header className="flex shrink-0 items-center justify-between border-b border-border px-5 py-3.5">
                             <div>

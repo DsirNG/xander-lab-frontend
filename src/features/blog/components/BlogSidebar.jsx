@@ -86,9 +86,9 @@ const BlogSidebar = ({ onNavigate }) => {
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         aria-label={t('blog.search')}
-                        className="w-full pl-9 pr-4 py-2 bg-canvas border border-border rounded-xl text-sm placeholder:text-ink-faint focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent/40 transition-all"
+                        className="w-full h-11 pl-9 pr-4 bg-canvas border border-border rounded-xl text-sm placeholder:text-ink-faint focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent/40 transition-all"
                     />
-                    <Search className="w-4 h-4 absolute left-3 top-2.5 text-ink-faint" />
+                    <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-ink-faint" />
                 </form>
             </section>
 
@@ -103,7 +103,7 @@ const BlogSidebar = ({ onNavigate }) => {
                         <Link
                             to="/blog/"
                             onClick={() => onNavigate?.()}
-                            className={`flex items-center justify-between p-2 rounded-lg text-sm transition-colors ${!activeCategory
+                            className={`flex items-center justify-between px-2 py-2.5 rounded-lg text-sm transition-colors ${!activeCategory
                                     ? 'bg-accent/10 text-accent font-medium'
                                     : 'text-ink-secondary hover:bg-surface-muted'
                                 }`}
@@ -116,7 +116,7 @@ const BlogSidebar = ({ onNavigate }) => {
                             <Link
                                 to={`/blog/?category=${cat.id}`}
                                 onClick={() => onNavigate?.()}
-                                className={`flex items-center justify-between p-2 rounded-lg text-sm transition-colors ${activeCategory === cat.id
+                                className={`flex items-center justify-between px-2 py-2.5 rounded-lg text-sm transition-colors ${activeCategory === cat.id
                                         ? 'bg-accent/10 text-accent font-medium'
                                         : 'text-ink-secondary hover:bg-surface-muted'
                                     }`}
@@ -158,7 +158,7 @@ const BlogSidebar = ({ onNavigate }) => {
                                 key={tag.name}
                                 to={isActive ? '/blog/' : `/blog/?tag=${encodeURIComponent(tag.name)}`}
                                 onClick={() => onNavigate?.()}
-                                className={`inline-flex items-center gap-1 text-caption px-2 py-1 rounded-full border transition-all ${isActive
+                                className={`inline-flex items-center gap-1 text-caption px-2.5 py-1.5 rounded-full border transition-all ${isActive
                                         ? 'bg-accent text-white border-accent'
                                         : 'bg-canvas/60 text-ink-muted border-border hover:border-accent/50 hover:text-accent'
                                     }`}

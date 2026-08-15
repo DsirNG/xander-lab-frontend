@@ -135,7 +135,7 @@ const AccountInfoPanel = () => {
                             type="button"
                             onClick={handleSave}
                             disabled={saving}
-                            className="inline-flex h-9 items-center justify-center gap-1.5 rounded-lg bg-accent px-4 text-xs font-bold text-white shadow-sm shadow-accent/20 transition hover:brightness-105 disabled:opacity-60"
+                            className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-lg bg-accent px-5 text-xs font-bold text-white shadow-sm shadow-accent/20 transition hover:brightness-105 disabled:opacity-60"
                         >
                             {saving ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <CheckCircle2 className="h-3.5 w-3.5" />}
                             {t('profile.account.save')}

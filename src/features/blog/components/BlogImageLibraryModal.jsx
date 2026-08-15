@@ -79,7 +79,7 @@ const BlogImageLibraryModal = ({ isOpen, onClose, onInsert }) => {
     };
 
     const footer = (
-        <div className="flex w-full items-center justify-between gap-4">
+        <div className="flex w-full flex-wrap items-center justify-between gap-x-4 gap-y-2">
             <span className="text-sm font-medium text-ink-muted">
                 {selected ? t('blog.media.selectedCount', { count: 1 }) : t('blog.media.selectedCount', { count: 0 })}
             </span>
@@ -144,13 +144,13 @@ const BlogImageLibraryModal = ({ isOpen, onClose, onInsert }) => {
                     />
                 </div>
 
-                <div className="flex border-b border-border">
+                <div className="flex overflow-x-auto border-b border-border scrollbar-none">
                     {scopes.map((item) => (
                         <button
                             key={item}
                             type="button"
                             onClick={() => setScope(item)}
-                            className={`border-b-2 px-4 py-2.5 text-sm font-bold transition ${scope === item ? 'border-accent text-accent' : 'border-transparent text-ink-muted hover:text-ink'}`}
+                            className={`shrink-0 whitespace-nowrap border-b-2 px-4 py-2.5 text-sm font-bold transition ${scope === item ? 'border-accent text-accent' : 'border-transparent text-ink-muted hover:text-ink'}`}
                         >
                             {t(`blog.media.scopes.${item}`)}
                         </button>

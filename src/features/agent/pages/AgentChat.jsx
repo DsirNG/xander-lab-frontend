@@ -202,10 +202,10 @@ const HistoricalToolCard = ({ message, t, onViewBlog }) => {
 const AgentChatInputBar = ({ t, input, setInput, isActive, creating, hasConversation, onSubmit, onStop }) => {
   const locked = isActive || creating;
   return (
-  <div className="shrink-0 border-t border-border bg-canvas px-4 py-3 sm:px-6">
+  <div className="shrink-0 border-t border-border bg-canvas px-4 py-3 pb-safe sm:px-6">
     <div className="mx-auto max-w-2xl">
       {hasConversation && !isActive && <div className="mb-2 text-xs text-ink-muted">{t('blog.agentChat.multiTurnHint')}</div>}
-      <div className="flex items-end gap-2 rounded-2xl border border-border bg-surface p-2 focus-within:border-border-strong focus-within:bg-canvas focus-within:ring-4 focus-within:ring-ink/5">
+      <div className="flex min-w-0 items-end gap-2 rounded-2xl border border-border bg-surface p-2 focus-within:border-border-strong focus-within:bg-canvas focus-within:ring-4 focus-within:ring-ink/5">
         <textarea
           value={input}
           onChange={(event) => setInput(event.target.value)}
@@ -218,7 +218,7 @@ const AgentChatInputBar = ({ t, input, setInput, isActive, creating, hasConversa
             if (!locked) onSubmit();
             }
           }}
-          className="max-h-40 min-h-[52px] flex-1 resize-none bg-transparent px-2 py-2 text-sm leading-6 outline-none placeholder:text-ink-faint disabled:opacity-60"
+          className="max-h-40 min-h-[52px] min-w-0 flex-1 resize-none bg-transparent px-2 py-2 text-sm leading-6 outline-none placeholder:text-ink-faint disabled:opacity-60"
         />
         {isActive && (
           <button
@@ -557,7 +557,7 @@ const AgentChat = () => {
               <button
                 type="button"
                 onClick={() => setMobileSessionsOpen(false)}
-                className="m-3 grid h-10 w-10 place-items-center rounded-full bg-canvas text-ink-secondary"
+                className="absolute right-3 top-3 z-10 grid h-10 w-10 place-items-center rounded-full bg-canvas text-ink-secondary shadow-lg"
                 aria-label={t('common.close')}
               >
                 <X className="h-5 w-5" />
@@ -581,7 +581,7 @@ const AgentChat = () => {
                 const element = event.currentTarget;
                 stickToBottomRef.current = element.scrollHeight - element.scrollTop - element.clientHeight < 96;
               }}
-              className="min-h-0 flex-1 overflow-y-auto px-4 py-5 sm:px-6"
+              className="min-h-0 min-w-0 flex-1 overflow-y-auto overscroll-contain px-4 py-5 sm:px-6"
             >
               {loading ? (
                 <div className="flex h-full min-h-48 items-center justify-center">

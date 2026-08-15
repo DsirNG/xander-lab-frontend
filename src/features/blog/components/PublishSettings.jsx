@@ -17,7 +17,7 @@ const PublishSettings = ({ t, isSettingsOpen, categories, availableTags, values,
             )}
 
             <aside className={`fixed top-14 right-0 bottom-0 w-[min(22rem,100vw)] border-l border-border bg-surface flex flex-col z-40 transform shadow-2xl transition-transform duration-300 ease-in-out ${isSettingsOpen ? 'translate-x-0' : 'translate-x-full'}`}>
-                <div className="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar p-6 space-y-10 pb-24">
+                <div className="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar p-4 sm:p-6 space-y-8 sm:space-y-10 pb-24">
                     <div>
                         <span className="text-micro font-bold uppercase text-ink-faint mb-8 flex items-center gap-3">
                             <span className="h-px bg-border flex-1"></span>

@@ -131,7 +131,7 @@ const KanbanDemo = () => {
 
 
     return (
-        <div className="flex space-x-6 overflow-x-auto pb-4 w-full h-[400px]">
+        <div className="flex space-x-4 sm:space-x-6 overflow-x-auto pb-4 w-full h-[400px] max-h-[70dvh] min-h-[300px]">
             {Object.entries(columns).map(([colId, col]) => (
                 <div
                     key={colId}
@@ -194,7 +194,7 @@ const KanbanDemo = () => {
                                          `}>
                                             {item.tag}
                                         </span>
-                                        <button className="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-slate-600 transition-opacity">
+                                        <button className="sm:opacity-0 sm:group-hover:opacity-100 text-slate-400 hover:text-slate-600 transition-opacity p-2 min-w-[44px] min-h-[44px] grid place-items-center">
                                             <MoreHorizontal className="w-4 h-4" />
                                         </button>
                                     </div>

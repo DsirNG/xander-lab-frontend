@@ -62,7 +62,7 @@ export default function StudioPage() {
   }, [loadProjects]);
 
   return (
-    <div className="mx-auto flex h-full w-full max-w-5xl flex-col px-4 py-6 sm:px-6 lg:px-8">
+    <div className="mx-auto flex h-full min-h-0 w-full min-w-0 max-w-5xl flex-col overflow-y-auto overscroll-contain px-4 py-6 px-ultra-tight sm:px-6 lg:px-8">
       <header className="mb-6">
         <button
           type="button"
@@ -83,7 +83,7 @@ export default function StudioPage() {
         </div>
       </header>
 
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         {entryCards.map((entry) => {
           const Icon = entry.icon;
 

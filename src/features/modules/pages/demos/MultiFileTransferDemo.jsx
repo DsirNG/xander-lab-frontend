@@ -227,8 +227,8 @@ const MultiFileTransferDemo = () => {
                                                 file.type === 'pdf' ? <FileText className="w-5 h-5 text-rose-400" /> : <ImageIcon className="w-5 h-5 text-sky-400" />
                                             )}
                                         </div>
-                                        <div className="flex-grow">
-                                            <div className={`text-sm font-bold ${isSelected ? 'text-primary' : 'text-slate-600 '}`}>
+                                        <div className="flex-grow min-w-0">
+                                            <div className={`text-sm font-bold truncate ${isSelected ? 'text-primary' : 'text-slate-600 '}`}>
                                                 {file.name}
                                             </div>
                                             <div className="text-[10px] text-slate-400 font-semibold">{file.size}</div>

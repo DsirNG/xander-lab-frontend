@@ -172,7 +172,7 @@ const BlogHome = () => {
                     </div>
                 </div>
 
-                <div className="flex items-center gap-3">
+                <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                     {(search || category || tag) && (
                         <button
                             onClick={clearFilters}
@@ -212,7 +212,7 @@ const BlogHome = () => {
 
             {/* 文章列表 */}
             {loading && page === 1 ? (
-                <div className={`grid ${viewMode === 'grid' ? 'grid-cols-1 md:grid-cols-2' : 'grid-cols-1'} gap-4 animate-pulse`}>
+                <div className={`grid ${viewMode === 'grid' ? 'grid-cols-1 md:grid-cols-2 xl:grid-cols-3' : 'grid-cols-1'} gap-4 animate-pulse`}>
                     {[1, 2, 3, 4].map(i => (
                         <div key={i} className="h-48 bg-surface-muted rounded-xl" />
                     ))}
@@ -221,7 +221,7 @@ const BlogHome = () => {
                 <div className="space-y-6">
                     <div className={
                         viewMode === 'grid'
-                            ? 'grid grid-cols-1 md:grid-cols-2 gap-4'
+                            ? 'grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4'
                             : 'flex flex-col gap-4'
                     }>
                         {blogs.map((blog, index) => {

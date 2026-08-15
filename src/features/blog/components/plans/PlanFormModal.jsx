@@ -89,7 +89,7 @@ const PlanFormModal = ({ isOpen, plan, onClose, onSaved }) => {
         {t('common.cancel')}
       </button>
       <button onClick={submit} disabled={saving}
-        className="inline-flex items-center gap-1.5 rounded-xl bg-accent px-4 py-2 text-sm font-bold text-white hover:opacity-90 disabled:opacity-50">
+        className="inline-flex min-h-11 items-center gap-1.5 rounded-xl bg-accent px-4 py-2 text-sm font-bold text-white hover:opacity-90 disabled:opacity-50">
         {saving && <Loader2 className="w-4 h-4 animate-spin" />}
         {t('common.save')}
       </button>

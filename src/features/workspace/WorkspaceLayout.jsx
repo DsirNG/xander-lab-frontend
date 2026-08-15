@@ -31,46 +31,48 @@ const WorkspaceLayoutInner = () => {
   const [settingsOpen, setSettingsOpen] = useState(false);
 
   return (
-    <div className="flex h-screen flex-col bg-canvas">
+    <div className="flex h-dvh flex-col bg-canvas">
       {/* 顶栏：左侧 Logo + 名称（点击回首页），右侧通知铃铛 + 用户区 */}
-      <header className="flex h-14 shrink-0 items-center justify-between border-b border-border bg-canvas px-4 sm:px-6">
+      <header className="flex h-14 shrink-0 items-center justify-between gap-2 border-b border-border bg-canvas px-3 xs:px-4 sm:px-6">
         <Link
           to="/"
-          className="group flex items-center gap-2.5 rounded-xl px-1.5 py-1 transition hover:bg-surface-muted focus:outline-none focus:ring-2 focus:ring-accent-200"
+          className="group flex min-w-0 items-center gap-2 rounded-xl px-1.5 py-1 transition hover:bg-surface-muted focus:outline-none focus:ring-2 focus:ring-accent-200"
           aria-label={t('workspace.backHome')}
         >
-          <span className="grid h-8 w-8 place-items-center rounded-xl bg-accent text-white transition group-hover:brightness-110">
+          <span className="grid h-8 w-8 shrink-0 place-items-center rounded-xl bg-accent text-white transition group-hover:brightness-110">
             <Zap className="h-4 w-4" aria-hidden="true" />
           </span>
-          <span className="hidden text-base font-bold tracking-tight text-ink sm:block">Xander Lab</span>
-          <span className="text-base font-bold tracking-tight text-ink sm:hidden">{t('workspace.title')}</span>
+          <span className="hidden truncate text-base font-bold tracking-tight text-ink sm:block">Xander Lab</span>
+          <span className="truncate text-base font-bold tracking-tight text-ink sm:hidden">{t('workspace.title')}</span>
         </Link>
 
-        <div className="flex items-center gap-1.5">
+        <div className="flex shrink-0 items-center gap-1">
           <NotificationBell />
           <UserMenu onOpenSettings={() => setSettingsOpen(true)} />
         </div>
       </header>
 
       {/* 移动端横向菜单 */}
-      <nav className="flex gap-1 overflow-x-auto border-b border-border bg-canvas px-3 py-2 lg:hidden" aria-label={t('workspace.title')}>
-        {MENU.map((item) => {
-          const Icon = item.icon;
-          return (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              className={({ isActive }) =>
-                `inline-flex shrink-0 items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium transition ${
-                  isActive ? 'bg-accent-soft text-accent' : 'text-ink-muted hover:bg-surface hover:text-ink-secondary'
-                }`
-              }
-            >
-              <Icon className="h-3.5 w-3.5" aria-hidden="true" />
-              {t(item.labelKey)}
-            </NavLink>
-          );
-        })}
+      <nav className="flex gap-1 overflow-x-auto overscroll-x-contain border-b border-border bg-canvas px-3 py-2 lg:hidden" aria-label={t('workspace.title')}>
+        <div className="mx-auto flex min-w-max gap-1">
+          {MENU.map((item) => {
+            const Icon = item.icon;
+            return (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                className={({ isActive }) =>
+                  `inline-flex min-h-11 shrink-0 items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-medium transition ${
+                    isActive ? 'bg-accent-soft text-accent' : 'text-ink-muted hover:bg-surface hover:text-ink-secondary'
+                  }`
+                }
+              >
+                <Icon className="h-3.5 w-3.5" aria-hidden="true" />
+                {t(item.labelKey)}
+              </NavLink>
+            );
+          })}
+        </div>
       </nav>
 
       <div className="flex min-h-0 flex-1">
@@ -100,7 +102,7 @@ const WorkspaceLayoutInner = () => {
         </aside>
 
         {/* 右侧内容 */}
-        <main className="min-h-0 flex-1 overflow-hidden bg-canvas">
+        <main className="min-h-0 min-w-0 flex-1 overflow-hidden bg-canvas">
           <Outlet />
         </main>
       </div>

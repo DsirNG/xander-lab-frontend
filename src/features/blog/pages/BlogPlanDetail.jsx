@@ -141,25 +141,25 @@ const BlogPlanDetail = () => {
               <>
                 {!plan.runOnce && (
                   <button onClick={() => actions.trigger(plan)} disabled={!!actions.busyId || plan.status === PLAN_STATUS.RUNNING}
-                    className="inline-flex items-center gap-1.5 rounded-xl bg-accent px-3 py-1.5 text-xs font-bold text-white hover:opacity-90 disabled:opacity-50">
+                    className="inline-flex min-h-11 items-center gap-1.5 rounded-xl bg-accent px-3.5 py-1.5 text-xs font-bold text-white hover:opacity-90 disabled:opacity-50">
                     {actions.busyId === plan.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Zap className="h-3.5 w-3.5" />}
                     {t('blogPlans.triggerNow')}
                   </button>
                 )}
                 {plan.status === PLAN_STATUS.ACTIVE ? (
                   <button onClick={() => actions.pause(plan)} disabled={!!actions.busyId}
-                    className="rounded-xl border border-border px-3 py-1.5 text-xs text-ink-secondary hover:bg-surface-muted disabled:opacity-50">
+                    className="inline-flex min-h-11 items-center rounded-xl border border-border px-3.5 py-1.5 text-xs text-ink-secondary hover:bg-surface-muted disabled:opacity-50">
                     {t('blogPlans.pause')}
                   </button>
                 ) : (
                   <button onClick={() => actions.resume(plan)} disabled={!!actions.busyId}
-                    className="rounded-xl border border-border px-3 py-1.5 text-xs text-ink-secondary hover:bg-surface-muted disabled:opacity-50">
+                    className="inline-flex min-h-11 items-center rounded-xl border border-border px-3.5 py-1.5 text-xs text-ink-secondary hover:bg-surface-muted disabled:opacity-50">
                     {t('blogPlans.resume')}
                   </button>
                 )}
                 {!plan.runOnce && (
                   <button onClick={() => setFormOpen(true)} disabled={!!actions.busyId}
-                    className="inline-flex items-center gap-1 rounded-xl border border-border px-3 py-1.5 text-xs text-ink-secondary hover:bg-surface-muted disabled:opacity-50">
+                    className="inline-flex min-h-11 items-center gap-1 rounded-xl border border-border px-3.5 py-1.5 text-xs text-ink-secondary hover:bg-surface-muted disabled:opacity-50">
                     <Pencil className="h-3 w-3" /> {t('blogPlans.edit')}
                   </button>
                 )}
@@ -167,14 +167,14 @@ const BlogPlanDetail = () => {
             )}
             {plan.status !== PLAN_STATUS.RUNNING && (
               <button onClick={() => actions.remove(plan)} disabled={!!actions.busyId}
-                className="inline-flex items-center gap-1 rounded-xl border border-red-200 px-3 py-1.5 text-xs text-red-600 hover:bg-red-50 disabled:opacity-50">
+                className="inline-flex min-h-11 items-center gap-1 rounded-xl border border-red-200 px-3.5 py-1.5 text-xs text-red-600 hover:bg-red-50 disabled:opacity-50">
                 <Trash2 className="h-3 w-3" /> {t('blogPlans.delete')}
               </button>
             )}
             {plan.status !== PLAN_STATUS.RUNNING && plan.status !== PLAN_STATUS.CANCELLED
               && plan.status !== PLAN_STATUS.FINISHED && plan.status !== PLAN_STATUS.FAILED && (
               <button onClick={() => actions.cancel(plan)} disabled={!!actions.busyId}
-                className="rounded-xl border border-border px-3 py-1.5 text-xs text-ink-faint hover:bg-surface-muted disabled:opacity-50">
+                className="inline-flex min-h-11 items-center rounded-xl border border-border px-3.5 py-1.5 text-xs text-ink-faint hover:bg-surface-muted disabled:opacity-50">
                 {t('blogPlans.cancel')}
               </button>
             )}
@@ -194,8 +194,9 @@ const BlogPlanDetail = () => {
               <div className="text-sm text-ink-faint">{t('blogPlans.noRuns')}</div>
             </div>
           ) : (
-            <div className="overflow-hidden rounded-2xl border border-border">
-              <table className="w-full text-xs">
+            <div className="rounded-2xl border border-border">
+              <div className="overflow-x-auto">
+                <table className="w-full text-xs">
                 <thead>
                   <tr className="bg-surface-muted text-left text-ink-faint">
                     <th className="px-4 py-2.5 font-medium">{t('blogPlans.time')}</th>
@@ -237,6 +238,7 @@ const BlogPlanDetail = () => {
                   })}
                 </tbody>
               </table>
+              </div>
               <Pagination
                 page={runsPage}
                 pageSize={RUN_PAGE_SIZE}

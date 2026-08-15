@@ -176,21 +176,21 @@ const BlogPlans = () => {
 
   return (
     <div className="mx-auto flex h-full min-h-0 w-full max-w-6xl flex-col overflow-hidden px-4 py-6 sm:px-6 lg:px-8">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <div className="text-xl font-bold text-ink">{t('blogPlans.title')}</div>
           <div className="mt-1 text-sm text-ink-faint">{t('blogPlans.subtitle')}</div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <button
             onClick={() => setAiOpen(true)}
-            className="inline-flex items-center gap-1.5 rounded-xl border border-border px-4 py-2 text-sm font-bold text-ink-secondary hover:bg-surface-muted"
+            className="inline-flex min-h-11 items-center gap-1.5 rounded-xl border border-border px-4 py-2 text-sm font-bold text-ink-secondary hover:bg-surface-muted"
           >
             <Sparkles className="w-4 h-4 text-accent" /> {t('blogPlans.aiGenerate')}
           </button>
           <button
             onClick={openCreate}
-            className="inline-flex items-center gap-1.5 rounded-xl bg-accent px-4 py-2 text-sm font-bold text-white hover:opacity-90"
+            className="inline-flex min-h-11 items-center gap-1.5 rounded-xl bg-accent px-4 py-2 text-sm font-bold text-white hover:opacity-90"
           >
             <Plus className="w-4 h-4" /> {t('blogPlans.createCustom')}
           </button>

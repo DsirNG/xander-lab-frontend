@@ -217,7 +217,7 @@ const ComponentShare = () => {
     const drawerTourIds = { logicHelp: 'tour-logic-help', envHelp: 'tour-env-help', cssHelp: 'tour-css-help' };
 
     return (
-        <div className="h-screen flex flex-col bg-slate-50 text-slate-900 font-sans overflow-hidden">
+        <div className="h-dvh flex flex-col bg-slate-50 text-slate-900 font-sans overflow-hidden">
             <ShareHeader onPublish={handlePublish} onTourStart={() => setTourStep(0)} onNavigateBack={() => navigate('/components')} />
 
             {/* 移动端侧边栏切换按钮 */}

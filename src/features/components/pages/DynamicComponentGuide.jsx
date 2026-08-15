@@ -85,7 +85,7 @@ const DynamicComponentGuide = ({ componentId, initialData }) => {
             {/* 渐变装饰背景 */}
             <div className="absolute top-0 left-0 right-0 h-[500px] bg-gradient-to-b from-accent/5 to-transparent pointer-events-none" />
 
-            <div className="max-w-6xl mx-auto pt-12 px-6 relative z-10">
+            <div className="max-w-6xl mx-auto pt-12 px-4 sm:px-6 relative z-10">
                 {/* Navigation */}
                 <Link to={`/components/${componentId}`} className="inline-flex items-center text-micro font-black uppercase tracking-widest text-ink-faint hover:text-accent mb-12 transition-all group">
                     <div className="w-8 h-8 rounded-full border border-border flex items-center justify-center mr-3 group-hover:border-accent/30 group-hover:bg-accent/5">
@@ -106,11 +106,11 @@ const DynamicComponentGuide = ({ componentId, initialData }) => {
                         </div>
                     </div>
 
-                    <div className="text-5xl md:text-6xl font-black text-ink  mb-8 tracking-tighter italic uppercase">
+                    <div className="text-3xl sm:text-5xl md:text-6xl font-black text-ink  mb-8 tracking-tighter italic uppercase break-words">
                         {data.title} <span className="text-accent">Structure</span>
                     </div>
 
-                    <div className="text-xl text-ink-muted  max-w-3xl leading-relaxed font-medium">
+                    <div className="text-lg sm:text-xl text-ink-muted  max-w-3xl leading-relaxed font-medium break-words">
                         {data.desc || t('components.guide.defaultDesc')}
                     </div>
                 </div>
@@ -124,7 +124,7 @@ const DynamicComponentGuide = ({ componentId, initialData }) => {
                                 <Boxes className="w-6 h-6" />
                             </div>
                             <div>
-                                <div className="text-2xl font-black text-ink  uppercase italic tracking-tighter">Implementation Layers</div>
+                                <div className="text-xl sm:text-2xl font-black text-ink  uppercase italic tracking-tighter break-words">Implementation Layers</div>
                                 <div className="text-body text-ink-muted font-bold uppercase tracking-widest">Modular Logic Files</div>
                             </div>
                         </div>
@@ -148,7 +148,7 @@ const DynamicComponentGuide = ({ componentId, initialData }) => {
                                     <Layout className="w-6 h-6" />
                                 </div>
                                 <div>
-                                    <div className="text-2xl font-black text-ink  uppercase italic tracking-tighter">Environment Wrapper</div>
+                                    <div className="text-xl sm:text-2xl font-black text-ink  uppercase italic tracking-tighter break-words">Environment Wrapper</div>
                                     <div className="text-body text-ink-muted font-bold uppercase tracking-widest">wrapper_code.jsx</div>
                                 </div>
                             </div>
@@ -168,7 +168,7 @@ const DynamicComponentGuide = ({ componentId, initialData }) => {
                                     <FileCode className="w-6 h-6" />
                                 </div>
                                 <div>
-                                    <div className="text-2xl font-black text-ink  uppercase italic tracking-tighter">Styling Specification</div>
+                                    <div className="text-xl sm:text-2xl font-black text-ink  uppercase italic tracking-tighter break-words">Styling Specification</div>
                                     <div className="text-body text-ink-muted font-bold uppercase tracking-widest">custom_styles.css</div>
                                 </div>
                             </div>

@@ -400,7 +400,7 @@ const EmailRemindersPanel = () => {
 
     return (
         <div className="relative flex min-h-0 flex-1 flex-col">
-            <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto p-4 sm:gap-4 sm:p-5">
+            <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-3 overflow-y-auto p-4 px-ultra-tight sm:gap-4 sm:p-5">
                 <header className="flex shrink-0 flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <div className="flex min-w-0 items-start gap-2.5">
                         <span className="mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-xl bg-accent-soft text-accent">
@@ -418,14 +418,14 @@ const EmailRemindersPanel = () => {
                     <button
                         type="button"
                         onClick={() => setIsCreateOpen(true)}
-                        className="inline-flex h-8 shrink-0 items-center justify-center gap-1.5 rounded-lg bg-accent px-3 text-xs font-bold text-white shadow-sm shadow-accent/20 transition hover:brightness-105"
+                        className="inline-flex min-h-11 shrink-0 items-center justify-center gap-1.5 rounded-lg bg-accent px-4 text-xs font-bold text-white shadow-sm shadow-accent/20 transition hover:brightness-105"
                     >
                         <Plus className="h-3.5 w-3.5" />
                         {t('profile.emailReminders.createNew')}
                     </button>
                 </header>
 
-                <div className="grid shrink-0 grid-cols-4 gap-2">
+                <div className="grid shrink-0 grid-cols-2 gap-2 sm:grid-cols-4">
                     {statCards.map((card) => {
                         const Icon = card.icon;
                         return (

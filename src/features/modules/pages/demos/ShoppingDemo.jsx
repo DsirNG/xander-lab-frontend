@@ -96,9 +96,9 @@ const ShoppingDemo = () => {
 
             {/* Scenario D-1: Add to Cart */}
             <div className="relative">
-                <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
                     <div className="text-sm font-black text-slate-500 uppercase tracking-wider">Drag to Cart</div>
-                    <div className="flex items-center space-x-2">
+                    <div className="flex items-center space-x-2 flex-wrap">
                         {/* Tags Source */}
                         {tags.map(tag => (
                             <div
@@ -127,7 +127,7 @@ const ShoppingDemo = () => {
                     </div>
                 </div>
 
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-6">
                     {products.map(product => (
                         <motion.div
                             key={product.id}
@@ -135,7 +135,7 @@ const ShoppingDemo = () => {
                             onDragStart={(e) => dragDrop.handleDragStart(product, e)}
                             onDrop={(e) => dragDrop.handleDrop(product, e)} // Allow dropping tags
                             onDragOver={(e) => dragDrop.handleDragOver(product, e)}
-                            className="bg-white  rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-xl transition-all group relative cursor-move"
+                            className="bg-white rounded-2xl p-4 sm:p-6 border border-slate-200 shadow-sm hover:shadow-xl transition-all group relative cursor-move min-w-0"
                         >
                             <div className={`w-12 h-12 rounded-xl mb-4 flex items-center justify-center bg-slate-100  ${product.color}`}>
                                 <product.icon className="w-6 h-6" />
@@ -164,7 +164,7 @@ const ShoppingDemo = () => {
             </div>
 
             {/* Cart Drop Zone (Floating or Fixed) */}
-            <div className="absolute bottom-6 right-6 z-50">
+            <div className="absolute bottom-6 right-6 z-50 max-w-full">
                 <motion.div
                     animate={cartAnimating ? { scale: [1, 1.2, 0.9, 1.1, 1], rotate: [0, -5, 5, -5, 0] } : {}}
                     onDragOver={(e) => {
@@ -196,7 +196,7 @@ const ShoppingDemo = () => {
                     <motion.div
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="absolute bottom-24 right-0 w-64 bg-white  rounded-xl shadow-2xl border border-slate-200 p-4"
+                        className="absolute bottom-24 right-0 w-64 max-w-[calc(100vw-2rem)] bg-white rounded-xl shadow-2xl border border-slate-200 p-4"
                     >
     <div className="text-sm font-bold border-b border-slate-100 pb-2 mb-2 text-slate-800 ">Cart Summary</div>
                         <div className="space-y-2 max-h-40 overflow-y-auto">

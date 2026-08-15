@@ -8,7 +8,7 @@
 }
 
 .container {
-    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 3xl:max-w-8xl;
 }
 
 .navContent {
@@ -28,7 +28,7 @@
 }
 
 .navLinks {
-    @apply flex items-baseline space-x-6;
+    @apply flex items-baseline space-x-6 3xl:space-x-8;
 }
 
 .navLink {
@@ -50,13 +50,13 @@
 }
 
 .iconButton {
-    @apply p-2 rounded-full transition-colors;
+    @apply p-2 rounded-full transition-colors min-h-11 min-w-11;
     @apply hover:bg-surface;
     @apply text-ink-secondary;
 }
 
 .menuButton {
-    @apply md:hidden p-2 rounded-md text-ink-secondary;
+    @apply md:hidden p-3 rounded-md text-ink-secondary;
     @apply hover:bg-surface;
     @apply transition-colors;
 }
@@ -81,7 +81,7 @@
 }
 
 .mobileMenuContent {
-    @apply px-4 py-6;
+    @apply px-4 py-6 pb-safe;
 }
 
 .mobileNavLinks {

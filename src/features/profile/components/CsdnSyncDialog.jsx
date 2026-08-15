@@ -93,7 +93,7 @@ const CsdnSyncDialog = ({ post, isOpen = true, onClose, onSuccess }) => {
       {phase === 'authorize' && (
         <div className="flex flex-col items-center gap-3 text-center py-2">
           {qrCode ? (
-            <img src={qrCode} alt={t('profile.blogManage.csdn.qrAlt')} className="h-60 w-60 rounded-xl border border-border bg-white object-contain p-2" />
+            <img src={qrCode} alt={t('profile.blogManage.csdn.qrAlt')} className="h-52 w-52 rounded-xl border border-border bg-white object-contain p-2 sm:h-60 sm:w-60" />
           ) : (
             <QrCode className="h-16 w-16 text-ink-faint" />
           )}

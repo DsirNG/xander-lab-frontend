@@ -64,7 +64,7 @@ const ComponentContent = ({ component }) => {
             {/* 技术实现预览（如果是分享组件且有实现代码） */}
             {isShared && (
                 <div className="mb-20">
-                    <div className="flex items-center gap-4 mb-8">
+                    <div className="flex items-center gap-4 mb-8 flex-wrap">
                         <div className="p-3 rounded-2xl bg-accent/10 text-accent">
                             <Code className="w-6 h-6" />
                         </div>
@@ -76,8 +76,8 @@ const ComponentContent = ({ component }) => {
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                        <div className="group relative rounded-[2rem] border border-border  bg-canvas p-8 hover:shadow-2xl transition-all h-full flex flex-col">
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
+                        <div className="group relative rounded-[2rem] border border-border  bg-canvas p-5 sm:p-8 hover:shadow-2xl transition-all h-full flex flex-col min-w-0">
                             <div className="flex items-center gap-3 mb-4">
                                 <Code className="w-4 h-4 text-accent" />
                                 <span className="text-caption font-black uppercase tracking-widest text-ink-faint">{t('components.content.coreLogic')}</span>
@@ -95,7 +95,7 @@ const ComponentContent = ({ component }) => {
                         </div>
 
                         {component.cssCode && (
-                            <div className="group relative rounded-[2rem] border border-border  bg-canvas p-8 hover:shadow-2xl transition-all h-full flex flex-col">
+                            <div className="group relative rounded-[2rem] border border-border  bg-canvas p-5 sm:p-8 hover:shadow-2xl transition-all h-full flex flex-col min-w-0">
                                 <div className="flex items-center gap-3 mb-4">
                                     <FileCode className="w-4 h-4 text-success" />
                                     <span className="text-caption font-black uppercase tracking-widest text-ink-faint">{t('components.content.stylesDef')}</span>
@@ -113,11 +113,11 @@ const ComponentContent = ({ component }) => {
                             </div>
                         )}
 
-                        <div className={`bg-ink rounded-[2rem] p-8 text-white flex flex-col justify-center relative overflow-hidden group ${!component.cssCode ? 'lg:col-span-2' : ''}`}>
+                        <div className={`bg-ink rounded-[2rem] p-5 sm:p-8 text-white flex flex-col justify-center relative overflow-hidden group ${!component.cssCode ? 'lg:col-span-2' : ''}`}>
                             {/* 装饰背景 */}
                             <div className="absolute -right-8 -bottom-8 w-40 h-40 bg-canvas/10 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700" />
 
-                            <div className="text-2xl font-black mb-4 tracking-tighter italic uppercase leading-tight"
+                            <div className="text-xl sm:text-2xl font-black mb-4 tracking-tighter italic uppercase leading-tight break-words"
                                 dangerouslySetInnerHTML={{ __html: t('components.content.understandTitle') }}
                             />
                             <div className="text-body text-ink-faint font-medium mb-8 leading-relaxed opacity-80">
@@ -153,7 +153,7 @@ const ComponentContent = ({ component }) => {
                                 style={EnhancedDemoSection.vscDarkPlus}
                                 customStyle={{
                                     margin: 0,
-                                    padding: '2.5rem',
+                                    padding: '1.5rem',
                                     fontSize: '0.85rem',
                                     background: '#0f172a',
                                     lineHeight: '1.6',

@@ -370,39 +370,39 @@ const LiveDemoSandbox = ({
     if (previewOnly) return <SandboxPreview code={code} libraryCode={libraryCode} wrapperCode={wrapperCode} cssCode={cssCode} />;
 
     return (
-        <div className="w-full h-full flex flex-col bg-white">
-            <div className="flex-shrink-0 flex items-center justify-between px-8 py-4 border-b border-slate-100">
-                <div className="flex items-center gap-4">
-                    <div className="w-3 h-3 rounded-full bg-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.4)]" />
-                    <span className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 italic">Live Lab Preview</span>
-                    {lastRunSuccess === false && <span className="px-3 py-1 bg-red-50 text-red-500 text-[9px] font-black rounded-full uppercase tracking-tighter">Compile Failed</span>}
-                    {lastRunSuccess === true && <span className="px-3 py-1 bg-emerald-50 text-emerald-500 text-[9px] font-black rounded-full uppercase tracking-tighter">Ready</span>}
+        <div className="w-full h-full flex flex-col bg-white min-h-0">
+            <div className="flex-shrink-0 flex items-center justify-between px-4 sm:px-8 py-3 sm:py-4 border-b border-slate-100 flex-wrap gap-3">
+                <div className="flex items-center gap-3 min-w-0">
+                    <div className="w-3 h-3 rounded-full bg-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.4)] flex-shrink-0" />
+                    <span className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 italic whitespace-nowrap">Live Lab Preview</span>
+                    {lastRunSuccess === false && <span className="px-3 py-1 bg-red-50 text-red-500 text-[9px] font-black rounded-full uppercase tracking-tighter whitespace-nowrap">Compile Failed</span>}
+                    {lastRunSuccess === true && <span className="px-3 py-1 bg-emerald-50 text-emerald-500 text-[9px] font-black rounded-full uppercase tracking-tighter whitespace-nowrap">Ready</span>}
                 </div>
-                <div className="flex items-center gap-4">
-                    <button onClick={() => setRunningCode(code)} className="px-5 py-2 hover:bg-slate-50 text-slate-400 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all">
+                <div className="flex items-center gap-2 sm:gap-4">
+                    <button onClick={() => setRunningCode(code)} className="px-4 py-2.5 hover:bg-slate-50 text-slate-400 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all whitespace-nowrap">
                         Sync Changes
                     </button>
-                    <button id="tour-run-btn" onClick={handleRun} disabled={isRunning} className="flex items-center gap-2.5 px-8 py-2.5 bg-slate-900 text-white rounded-2xl text-[10px] font-black hover:bg-primary transition-all shadow-xl active:scale-95 disabled:opacity-50">
+                    <button id="tour-run-btn" onClick={handleRun} disabled={isRunning} className="flex items-center gap-2.5 px-5 sm:px-8 py-2.5 bg-slate-900 text-white rounded-2xl text-[10px] font-black hover:bg-primary transition-all shadow-xl active:scale-95 disabled:opacity-50 whitespace-nowrap">
                         <Play className={`w-3.5 h-3.5 ${isRunning ? 'animate-spin' : ''}`} /> {isRunning ? 'EXECUTING...' : 'RUN ANALYTICS'}
                     </button>
                 </div>
             </div>
-            <div className="flex-1 flex overflow-hidden">
+            <div className="flex-1 flex flex-col lg:flex-row overflow-hidden min-h-0">
                 {!readOnly && (
-                    <div className="flex-1 relative border-r border-slate-100 bg-slate-50/20">
+                    <div className="flex-1 relative border-b lg:border-b-0 lg:border-r border-slate-100 bg-slate-50/20 min-h-0">
                         <div className="absolute top-4 right-6 text-[9px] font-black text-slate-300 uppercase tracking-[0.2em] select-none">Scenario Logic</div>
                         <textarea
                             ref={textareaRef}
                             value={code}
                             onChange={e => updateCode(e.target.value)}
                             onKeyDown={handleKeyDown}
-                            className="absolute inset-0 w-full h-full p-10 font-mono text-[13px] outline-none resize-none bg-transparent leading-relaxed text-slate-700"
+                            className="absolute inset-0 w-full h-full p-5 sm:p-10 font-mono text-body outline-none resize-none bg-transparent leading-relaxed text-slate-700"
                             spellCheck={false}
                             placeholder="// 编写你的演示脚本..."
                         />
                     </div>
                 )}
-                <div className="flex-1 bg-white overflow-hidden relative">
+                <div className="flex-1 bg-white overflow-hidden relative min-h-0">
                     <SandboxPreview code={runningCode} libraryCode={runningLibraryCode} wrapperCode={runningWrapperCode} cssCode={runningCssCode} />
                 </div>
             </div>

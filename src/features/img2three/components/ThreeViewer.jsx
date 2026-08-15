@@ -96,6 +96,7 @@ const ThreeViewer = ({ sceneSpec, className, onReady, onError }) => {
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     renderer.setSize(width, height);
+    Object.assign(renderer.domElement.style, { display: 'block', maxWidth: '100%', width: '100%', height: '100%' });
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1;

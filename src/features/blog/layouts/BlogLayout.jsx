@@ -32,7 +32,7 @@ const BlogLayout = () => {
             {!isPureReading && (
                 <button
                     onClick={() => setIsSidebarOpen(true)}
-                    className={`lg:hidden fixed top-20 right-0 z-50 p-2 bg-canvas/10 backdrop-blur-[2px] rounded-l-lg shadow-md border border-r-0 border-border transition-all duration-300 ease-in-out ${
+                    className={`lg:hidden fixed top-20 right-0 z-50 p-3 bg-canvas/10 backdrop-blur-[2px] rounded-l-lg shadow-md border border-r-0 border-border transition-all duration-300 ease-in-out ${
                         isSidebarOpen
                             ? 'translate-x-full opacity-0 pointer-events-none'
                             : 'translate-x-0 opacity-100'
@@ -58,7 +58,7 @@ const BlogLayout = () => {
                     : 'max-w-full sm:max-w-[640px] md:max-w-[768px] lg:max-w-[1024px] xl:max-w-[1280px] 2xl:max-w-[1400px] h-[calc(100vh-64px)]'
             }`}>
                 {/* 左侧主内容区 - 独立滚动 (纯净模式下全屏宽度，滚动条靠最右侧) */}
-                <main className={`flex-grow overflow-y-auto custom-scrollbar w-full ${
+                <main className={`flex-grow overflow-y-auto custom-scrollbar w-full min-w-0 ${
                     isPureReading
                         ? 'px-4 sm:px-8 md:px-12 py-8 sm:py-12 flex justify-center'
                         : 'px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12 py-6 sm:py-8 lg:py-10 lg:w-auto'
@@ -71,6 +71,7 @@ const BlogLayout = () => {
                     <aside className={`
                         fixed lg:static
                         top-[64px] right-0 bottom-0
+                        max-w-full
                         w-[300px] xl:w-[320px] 2xl:w-[340px]
                         flex-shrink-0 flex flex-col
                         h-[calc(100vh-64px)]
@@ -85,10 +86,10 @@ const BlogLayout = () => {
                         {/* 移动端关闭按钮 */}
                         <button
                             onClick={() => setIsSidebarOpen(false)}
-                            className="lg:hidden self-end mb-3 p-1.5 rounded-lg text-ink-faint hover:text-ink-secondary hover:bg-surface-muted transition-colors"
+                            className="lg:hidden self-end mb-3 flex h-11 w-11 items-center justify-center rounded-lg text-ink-faint hover:text-ink-secondary hover:bg-surface-muted transition-colors"
                             aria-label={t('common.aria.closeSidebar', 'Close sidebar')}
                         >
-                            <X className="w-4 h-4" />
+                            <X className="w-5 h-5" />
                         </button>
                         <BlogSidebar onNavigate={() => isMobile && setIsSidebarOpen(false)} />
                     </aside>

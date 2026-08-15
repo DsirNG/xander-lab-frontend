@@ -76,12 +76,12 @@ export default function ComponentUploadPage() {
   );
 
   return (
-    <div className="min-h-screen bg-surface">
+    <div className="min-h-dvh bg-surface">
       <StudioTopBar backLabel="返回 Studio" />
-      <main className="mx-auto max-w-[1400px] px-4 py-6 sm:px-6 lg:px-8">
+      <main className="mx-auto w-full max-w-[1400px] px-4 py-6 px-ultra-tight sm:px-6 lg:px-8">
 
-        <form onSubmit={handleBuild} className="grid gap-6 lg:grid-cols-[320px_1fr]">
-          <aside className="rounded-lg border border-border bg-canvas p-5 shadow-sm">
+        <form onSubmit={handleBuild} className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,320px)_minmax(0,1fr)]">
+          <aside className="min-w-0 rounded-lg border border-border bg-canvas p-5 shadow-sm">
             <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-lg bg-ink text-white shadow-lg shadow-ink/15">
               <FileCode2 className="h-6 w-6" />
             </div>
@@ -141,7 +141,7 @@ export default function ComponentUploadPage() {
             </div>
           </aside>
 
-          <section className="overflow-hidden rounded-lg border border-border bg-canvas shadow-sm">
+          <section className="min-w-0 overflow-hidden rounded-lg border border-border bg-canvas shadow-sm">
             <div className="flex flex-col gap-3 border-b border-border px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex min-w-0 items-center gap-2">
                 <Code2 className="h-4 w-4 text-ink-faint" />

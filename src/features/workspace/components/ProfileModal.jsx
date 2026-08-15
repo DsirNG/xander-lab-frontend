@@ -42,7 +42,7 @@ const ProfileModal = ({ open, onClose }) => {
       <div className="flex min-h-[420px] flex-col gap-4 lg:flex-row lg:gap-6">
         {/* 设置分类导航：移动端横向滚动，桌面端左侧竖排 */}
         <nav
-          className="flex shrink-0 gap-1 overflow-x-auto rounded-xl border border-border bg-surface p-1 lg:w-44 lg:flex-col lg:overflow-y-auto"
+          className="flex min-w-0 shrink-0 gap-1 overflow-x-auto overscroll-x-contain rounded-xl border border-border bg-surface p-1 lg:w-44 lg:flex-col lg:overflow-x-visible lg:overflow-y-auto"
           aria-label={t('workspace.settings')}
         >
           {TABS.map((tab) => {
@@ -57,7 +57,7 @@ const ProfileModal = ({ open, onClose }) => {
                 aria-selected={active}
                 disabled={!enabled}
                 onClick={() => enabled && setActiveTab(tab.id)}
-                className={`flex shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-left text-xs font-semibold transition lg:w-full ${
+                className={`flex min-h-11 shrink-0 items-center gap-2 rounded-lg px-3 py-2.5 text-left text-xs font-semibold transition lg:w-full lg:min-h-10 lg:py-2 ${
                   active
                     ? 'bg-accent-soft text-ink'
                     : enabled

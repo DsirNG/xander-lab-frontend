@@ -38,17 +38,17 @@ const ContentLayout = ({
         >
             {/* 头部：标题、描述、操作按钮 */}
             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-8 sm:mb-12 gap-4 sm:gap-0">
-                <div className="max-w-2xl flex-1">
-                    <div className="text-display sm:text-3xl lg:text-4xl font-black text-ink mb-3 sm:mb-4">
+                <div className="max-w-2xl flex-1 min-w-0">
+                    <div className="text-display sm:text-3xl lg:text-4xl font-black text-ink mb-3 sm:mb-4 break-words">
                         {item.title}
                     </div>
-                    <div className="text-body sm:text-lg text-ink-muted">
+                    <div className="text-body sm:text-lg text-ink-muted break-words">
                         {item.desc || item.description}
                     </div>
                 </div>
 
                 {/* 右侧按钮区域 */}
-                <div className="flex items-center space-x-2 flex-shrink-0">
+                <div className="flex flex-wrap items-center gap-2 flex-shrink-0">
                     {/* 额外的按钮（可选） */}
                     {extraHeaderButtons}
 
@@ -56,7 +56,7 @@ const ContentLayout = ({
                     {item.detailPages && item.detailPages.length > 0 && (
                         <Link
                             to={`${basePath}/${item.id}/${item.detailPages[0].type}`}
-                            className="flex items-center space-x-2 bg-ink text-white px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl font-bold text-caption sm:text-body hover:scale-105 transition-transform shadow-xl whitespace-nowrap"
+                            className="flex items-center gap-2 bg-ink text-white px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl font-bold text-caption sm:text-body hover:scale-105 transition-transform shadow-xl whitespace-nowrap"
                         >
                             {DetailButtonIcon && <DetailButtonIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />}
                             <span className="hidden sm:inline">{detailButtonText || t('common.viewDetails')}</span>

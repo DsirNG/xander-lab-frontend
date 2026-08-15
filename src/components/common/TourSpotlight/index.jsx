@@ -57,6 +57,12 @@ const TourSpotlight = ({ targetConfig, onSkip }) => {
     const topHeight = Math.max(0, rect.top - pad);
     const bottomTop = rect.top + rect.height + pad;
     const isModalLevel = targetConfig.isModalLevel;
+    const hintWidth = Math.min(320, Math.max(200, window.innerWidth - 24));
+    const hintTop =
+        rect.top > window.innerHeight / 2
+            ? Math.max(10, rect.top - pad - 140)
+            : Math.min(bottomTop + 10, window.innerHeight - 150);
+    const hintLeft = Math.max(12, Math.min(window.innerWidth - hintWidth - 12, rect.left + rect.width / 2 - hintWidth / 2));
 
     return createPortal(
         <div className={`fixed inset-0 pointer-events-none transition-all duration-300 ${isModalLevel ? 'z-[1200]' : 'z-[900]'}`}>
@@ -78,20 +84,20 @@ const TourSpotlight = ({ targetConfig, onSkip }) => {
             <div
                 className="absolute flex flex-col pointer-events-auto transition-all duration-500"
                 style={{
-                    top: rect.top > window.innerHeight / 2 ? Math.max(10, rect.top - pad - 120) : bottomTop + 10,
-                    left: Math.max(20, Math.min(window.innerWidth - 320, rect.left + rect.width / 2 - 160)),
-                    width: 320
+                    top: hintTop,
+                    left: hintLeft,
+                    width: hintWidth
                 }}
             >
-                <div className="bg-accent text-white p-5 rounded-2xl shadow-[0_30px_60px_-15px_rgba(2,132,199,0.5)] border border-accent-400/30">
+                <div className="bg-accent text-white p-5 rounded-2xl shadow-[0_30px_60px_-15px_rgba(2,132,199,0.5)] border border-accent-400/30 overflow-y-auto">
                     <div className="flex items-center justify-between mb-3">
-                        <div className="flex items-center gap-2">
-                            <Compass className="w-4 h-4 text-warning" />
-                            <div className="font-black text-body uppercase tracking-widest">{targetConfig.text}</div>
+                        <div className="flex items-center gap-2 min-w-0">
+                            <Compass className="w-4 h-4 text-warning flex-shrink-0" />
+                            <div className="font-black text-body uppercase tracking-widest break-words">{targetConfig.text}</div>
                         </div>
-                        <button onClick={onSkip} className="text-accent-200 hover:text-white transition-colors text-micro uppercase font-bold tracking-widest px-2 py-1 bg-accent-700/50 rounded-lg">Skip // 退出</button>
+                        <button onClick={onSkip} className="text-accent-200 hover:text-white transition-colors text-micro uppercase font-bold tracking-widest px-2 py-1 bg-accent-700/50 rounded-lg flex-shrink-0 ml-2">Skip // 退出</button>
                     </div>
-                    <div className="text-accent-50 text-caption font-medium leading-relaxed opacity-90">{targetConfig.desc}</div>
+                    <div className="text-accent-50 text-caption font-medium leading-relaxed opacity-90 break-words">{targetConfig.desc}</div>
                 </div>
             </div>
         </div>,

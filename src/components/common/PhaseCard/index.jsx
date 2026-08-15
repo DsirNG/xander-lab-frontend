@@ -39,19 +39,19 @@ const PhaseCard = ({ phase, index, color = 'primary' }) => {
                 {index === 2 && <Box className="w-4 h-4" />}
             </div>
 
-            <div className={`bg-white/50 rounded-3xl p-8 border border-slate-200 ${scheme.hoverBorder} transition-colors shadow-sm`}>
-                <div className="text-2xl font-bold text-slate-900 mb-2">
+            <div className={`bg-white/50 rounded-3xl p-5 sm:p-8 border border-slate-200 ${scheme.hoverBorder} transition-colors shadow-sm`}>
+                <div className="text-heading sm:text-2xl font-bold text-slate-900 mb-2 break-words">
                     {phase.title}
                 </div>
-                <div className="text-slate-600 mb-6 text-lg">
+                <div className="text-slate-600 mb-6 text-body sm:text-lg">
                     {phase.desc}
                 </div>
 
                 <ul className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     {phase.points.map((point, i) => (
-                        <li key={i} className="flex items-center space-x-2 text-slate-500">
+                        <li key={i} className="flex items-center space-x-2 text-slate-500 text-body">
                             <CheckCircle2 className="w-4 h-4 text-green-500 flex-shrink-0" />
-                            <span>{point}</span>
+                            <span className="min-w-0">{point}</span>
                         </li>
                     ))}
                 </ul>

@@ -92,7 +92,7 @@ const PlanAiGenerateModal = ({ isOpen, onClose, onSaved }) => {
         {t('common.close')}
       </button>
       <button onClick={submit} disabled={generating}
-        className="inline-flex items-center gap-1.5 rounded-xl bg-accent px-4 py-2 text-sm font-bold text-white hover:opacity-90 disabled:opacity-50">
+        className="inline-flex min-h-11 items-center gap-1.5 rounded-xl bg-accent px-4 py-2 text-sm font-bold text-white hover:opacity-90 disabled:opacity-50">
         {generating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
         {t('blogPlans.aiGenerate')}
       </button>
@@ -162,12 +162,12 @@ const PlanAiGenerateModal = ({ isOpen, onClose, onSaved }) => {
             </div>
             <div className="mt-3 max-h-56 space-y-2 overflow-y-auto">
               {createdPlans.map((plan) => (
-                <div key={plan.id} className="flex items-center gap-2 text-sm">
+                <div key={plan.id} className="flex min-w-0 items-center gap-2 text-sm">
                   <CalendarDays className="h-4 w-4 shrink-0 text-ink-faint" />
                   <span className="shrink-0 rounded-md bg-accent/10 px-1.5 py-0.5 text-xs font-bold text-accent">
                     {formatFireTime(plan)}
                   </span>
-                  <span className="truncate text-ink">{plan.topic}</span>
+                  <span className="min-w-0 truncate text-ink">{plan.topic}</span>
                   <span className="ml-auto shrink-0 rounded-full bg-indigo-100 px-2 py-0.5 text-xs font-medium text-indigo-600 dark:bg-indigo-900/40 dark:text-indigo-300">
                     {t('blogPlans.oneShot')}
                   </span>

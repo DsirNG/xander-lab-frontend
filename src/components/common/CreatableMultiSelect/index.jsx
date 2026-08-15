@@ -134,7 +134,7 @@ const CreatableMultiSelect = ({
 
                 {/* 自定义下拉选择器 */}
                 {isDropdownOpen && (inputValue || options.length > 0) && (
-                    <div role="listbox" className="absolute top-full left-0 mt-2 w-[240px] max-h-48 overflow-y-auto custom-scrollbar bg-canvas border border-border rounded-xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.1)] z-50 py-1">
+                    <div role="listbox" className="absolute top-full left-0 mt-2 w-[240px] max-w-[calc(100vw-1rem)] max-h-48 overflow-y-auto custom-scrollbar bg-canvas border border-border rounded-xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.1)] z-50 py-1">
                         {filteredOptions
                             .map((item, index) => (
                                 <button

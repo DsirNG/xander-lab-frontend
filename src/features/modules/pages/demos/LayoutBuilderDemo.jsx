@@ -87,9 +87,9 @@ const LayoutBuilderDemo = () => {
     };
 
     return (
-        <div className="flex w-full h-[500px] border border-slate-200  rounded-2xl overflow-hidden bg-slate-50 /30">
+        <div className="flex w-full h-[500px] max-h-[70dvh] min-h-[360px] border border-slate-200 rounded-2xl overflow-hidden bg-slate-50 /30">
             {/* Sidebar Tools */}
-            <div className="w-64 bg-white  border-r border-slate-200  p-4 flex flex-col">
+            <div className="w-40 sm:w-52 lg:w-64 bg-white border-r border-slate-200 p-3 sm:p-4 flex flex-col flex-shrink-0 min-w-0">
                 <div className="text-xs font-black text-slate-400 uppercase tracking-wider mb-4">Components</div>
                 <div className="space-y-3">
                     {TOOL_ITEMS.map((tool) => (
@@ -98,18 +98,18 @@ const LayoutBuilderDemo = () => {
                             draggable
                             onDragStart={(e) => dragDrop.handleDragStart(tool, e)}
                             onDragEnd={dragDrop.handleDragEnd}
-                            className="flex items-center p-3 bg-slate-50  border border-slate-200 rounded-xl cursor-grab active:cursor-grabbing hover:border-blue-500 transition-colors group"
+                            className="flex items-center p-2.5 sm:p-3 bg-slate-50  border border-slate-200 rounded-xl cursor-grab active:cursor-grabbing hover:border-blue-500 transition-colors group min-w-0"
                         >
-                            <div className="p-2 bg-white  rounded-lg mr-3 shadow-sm group-hover:scale-105 transition-transform">
+                            <div className="p-2 bg-white  rounded-lg mr-2 sm:mr-3 shadow-sm group-hover:scale-105 transition-transform flex-shrink-0">
                                 <tool.icon className="w-4 h-4 text-slate-600 " />
                             </div>
-                            <span className="font-medium text-slate-700  text-sm">{tool.label}</span>
+                            <span className="font-medium text-slate-700 text-caption sm:text-body truncate">{tool.label}</span>
                         </div>
                     ))}
                 </div>
 
-                <div className="mt-auto p-4 bg-blue-50 rounded-xl border border-blue-100">
-                    <div className="text-xs text-blue-600 leading-relaxed">
+                <div className="mt-auto p-3 sm:p-4 bg-blue-50 rounded-xl border border-blue-100">
+                    <div className="text-micro sm:text-xs text-blue-600 leading-relaxed">
                         Drag components from here to the canvas on the right to build your dashboard.
                     </div>
                 </div>
@@ -117,7 +117,7 @@ const LayoutBuilderDemo = () => {
 
             {/* Canvas Area */}
             <div
-                className="flex-1 p-8 overflow-y-auto"
+                className="flex-1 p-3 sm:p-6 lg:p-8 overflow-y-auto min-w-0"
                 onDragOver={(e) => e.preventDefault()}
                 onDrop={(e) => {
                     // This handles dropping on empty space = append
@@ -132,11 +132,11 @@ const LayoutBuilderDemo = () => {
                     }
                 }}
             >
-                <div className="grid grid-cols-3 gap-6 auto-rows-min min-h-full pb-20 relative">
+                <div className="grid grid-cols-3 gap-3 sm:gap-6 auto-rows-min min-h-full pb-20 relative">
                     {/*
                        Grid visualization
                      */}
-                    <div className="absolute inset-0 pointer-events-none grid grid-cols-3 gap-6 opacity-10">
+                    <div className="absolute inset-0 pointer-events-none grid grid-cols-3 gap-3 sm:gap-6 opacity-10">
                         {Array.from({ length: 12 }).map((_, i) => (
                             <div key={i} className="border-2 border-dashed border-slate-400 rounded-xl h-32" />
                         ))}
@@ -171,7 +171,7 @@ const LayoutBuilderDemo = () => {
                                         <GripVertical className="w-4 h-4" />
                                         <span className="text-xs font-bold uppercase tracking-wider">{item.type}</span>
                                     </div>
-                                    <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <div className="flex items-center space-x-1 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
                                         <button
                                             onClick={() => {
                                                 const newItems = [...gridItems];

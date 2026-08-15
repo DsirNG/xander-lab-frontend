@@ -27,7 +27,7 @@ const CustomSelectGuide = ({ componentId }) => {
 
     return (
         <div className="min-h-screen bg-slate-50  pb-20">
-            <div className="max-w-6xl mx-auto pt-10 px-6">
+            <div className="max-w-6xl mx-auto pt-10 px-4 sm:px-6">
                 {/* Navigation */}
                 <Link to={`/components/${componentId}`} className="inline-flex items-center text-micro font-black uppercase tracking-widest text-ink-faint hover:text-accent mb-8 transition-all group">
                     <div className="w-8 h-8 rounded-full border border-border flex items-center justify-center mr-3 group-hover:border-accent/30 group-hover:bg-accent/5">
@@ -38,11 +38,11 @@ const CustomSelectGuide = ({ componentId }) => {
 
                 {/* Header */}
                 <div className="mb-12">
-                    <div className="text-4xl font-black text-slate-900  mb-4">
+                    <div className="text-3xl sm:text-4xl font-black text-slate-900  mb-4 break-words">
                         CustomSelect
                         <span className="ml-4 text-lg font-normal text-slate-500 ">{t('common.componentSource')}</span>
                     </div>
-                    <div className="text-lg text-slate-600  max-w-3xl leading-relaxed">
+                    <div className="text-body sm:text-lg text-slate-600  max-w-3xl leading-relaxed break-words">
                         {t('components.customSelect.desc')}
                     </div>
                 </div>
@@ -76,12 +76,12 @@ const CustomSelectGuide = ({ componentId }) => {
                 {/* Source Code Section */}
                 <div className="space-y-12">
                     <div>
-                        <div className="flex items-end justify-between mb-4 px-2">
+                        <div className="flex items-end justify-between mb-4 px-2 flex-wrap gap-2">
                             <div>
-                                <div className="text-2xl font-bold text-slate-900  mb-2">{t('common.logicLayer')}</div>
+                                <div className="text-xl sm:text-2xl font-bold text-slate-900  mb-2">{t('common.logicLayer')}</div>
                                 <div className="text-slate-500  text-sm">{t('common.logicLayerDesc')}</div>
                             </div>
-                            <span className="text-xs font-mono text-slate-400">src/.../CustomSelect/index.jsx</span>
+                            <span className="text-xs font-mono text-slate-400 break-all">src/.../CustomSelect/index.jsx</span>
                         </div>
                         <CodeBlock
                             code={ComponentCode}
@@ -90,12 +90,12 @@ const CustomSelectGuide = ({ componentId }) => {
                     </div>
 
                     <div>
-                        <div className="flex items-end justify-between mb-4 px-2">
+                        <div className="flex items-end justify-between mb-4 px-2 flex-wrap gap-2">
                             <div>
-                                <div className="text-2xl font-bold text-slate-900  mb-2">{t('common.styleLayer')}</div>
+                                <div className="text-xl sm:text-2xl font-bold text-slate-900  mb-2">{t('common.styleLayer')}</div>
                                 <div className="text-slate-500  text-sm">{t('common.styleLayerDesc')}</div>
                             </div>
-                            <span className="text-xs font-mono text-slate-400">src/.../CustomSelect/index.module.css</span>
+                            <span className="text-xs font-mono text-slate-400 break-all">src/.../CustomSelect/index.module.css</span>
                         </div>
                         <CodeBlock
                             code={StyleCode}

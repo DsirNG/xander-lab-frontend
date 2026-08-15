@@ -59,7 +59,7 @@ const UserMenu = ({ onOpenSettings }) => {
       <button
         type="button"
         onClick={() => setOpen((current) => !current)}
-        className="flex items-center gap-2 rounded-xl px-1.5 py-1 transition hover:bg-surface-muted focus:outline-none focus:ring-2 focus:ring-accent-200"
+        className="flex min-h-11 items-center gap-1.5 rounded-xl px-1.5 py-1 transition hover:bg-surface-muted focus:outline-none focus:ring-2 focus:ring-accent-200 sm:gap-2"
         aria-expanded={open}
         aria-haspopup="menu"
         aria-label={t('workspace.userMenu')}
@@ -87,7 +87,7 @@ const UserMenu = ({ onOpenSettings }) => {
       {open ? (
         <div
           role="menu"
-          className="absolute right-0 top-full z-50 mt-2 w-72 overflow-hidden rounded-2xl border border-border bg-canvas shadow-lg shadow-black/5"
+          className="absolute right-0 top-full z-50 mt-2 w-72 max-w-[calc(100vw-1.5rem)] overflow-hidden rounded-2xl border border-border bg-canvas shadow-lg shadow-black/5"
         >
           <div className="flex items-center gap-3 border-b border-border px-4 py-3">
             <span className="relative grid h-11 w-11 shrink-0 place-items-center rounded-full bg-accent text-sm font-black uppercase text-white">

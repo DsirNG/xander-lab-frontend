@@ -38,14 +38,14 @@ export default function ProjectUploadPage() {
   );
 
   return (
-    <div className="min-h-screen bg-surface">
+    <div className="min-h-dvh bg-surface">
       <StudioTopBar backLabel="返回 Studio" />
-      <main className="mx-auto max-w-[1200px] px-4 py-6 sm:px-6 lg:px-8">
+      <main className="mx-auto w-full max-w-[1200px] px-4 py-6 sm:px-6 lg:px-8">
 
-        <div className="grid gap-6 lg:grid-cols-[1fr_360px]">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
           <form
             onSubmit={handleBuild}
-            className="rounded-lg border border-border bg-canvas p-5 shadow-sm"
+            className="min-w-0 rounded-lg border border-border bg-canvas p-5 shadow-sm"
           >
             <div className="mb-6">
               <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-lg bg-accent text-white shadow-lg shadow-accent/20">
@@ -104,7 +104,7 @@ export default function ProjectUploadPage() {
             </div>
           </form>
 
-          <aside className="rounded-lg border border-border bg-canvas p-5 shadow-sm">
+          <aside className="min-w-0 rounded-lg border border-border bg-canvas p-5 shadow-sm">
             <div className="text-body font-black text-ink">构建前检查</div>
             <div className="mt-4 grid gap-3">
               {['包含 package.json', '依赖安装脚本可运行', '构建输出可被预览'].map((item) => (

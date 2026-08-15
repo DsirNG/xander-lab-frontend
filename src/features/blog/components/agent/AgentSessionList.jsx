@@ -6,7 +6,7 @@ const AgentSessionList = ({ sessions, activeId, loading, disableNew = false, mob
   const { t } = useTranslation();
 
   return (
-    <aside className={`${mobile ? 'flex h-full w-72' : 'hidden min-h-0 w-64 lg:flex'} shrink-0 flex-col border-r border-border bg-canvas`}>
+    <aside className={`${mobile ? 'flex h-full w-72 max-w-[calc(100vw-5rem)]' : 'hidden min-h-0 w-64 lg:flex'} shrink-0 flex-col border-r border-border bg-canvas`}>
       <div className="p-3">
         <button
           type="button"

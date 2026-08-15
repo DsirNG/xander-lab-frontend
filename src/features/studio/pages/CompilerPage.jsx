@@ -260,7 +260,7 @@ export default function CompilerPage() {
   }, [isReady, loadFileTree]);
 
   return (
-    <div className="flex h-screen flex-col bg-surface">
+    <div className="flex h-dvh flex-col bg-surface">
       {/* 顶部栏 */}
       <StudioTopBar
         title={
@@ -294,7 +294,7 @@ export default function CompilerPage() {
                     <Link2 className="h-3.5 w-3.5" /> 分享
                   </button>
                   {isShareOpen ? (
-                    <div role="dialog" aria-label="分享项目" className="absolute right-0 top-full z-40 mt-2 w-80 rounded-xl border border-border bg-canvas p-3 shadow-xl">
+                    <div role="dialog" aria-label="分享项目" className="absolute right-0 top-full z-40 mt-2 w-80 max-w-[calc(100vw-2.5rem)] rounded-xl border border-border bg-canvas p-3 shadow-xl">
                       <div className="mb-2 text-caption font-bold text-ink-secondary">公开源码链接</div>
                       <div className="flex items-center gap-2">
                         <input value={shareUrl} readOnly onFocus={(event) => event.currentTarget.select()} className="min-w-0 flex-1 rounded-lg border border-border bg-surface px-2.5 py-2 text-caption text-ink-muted outline-none" aria-label="公开源码链接" />
@@ -326,9 +326,9 @@ export default function CompilerPage() {
       </StudioTopBar>
 
       {/* 主内容区 - flex:1 占满剩余空间 */}
-      <div className="flex min-h-0 flex-1 gap-0">
+      <div className="flex min-h-0 flex-1 flex-col gap-0 lg:flex-row">
         {/* 文件树 - 固定宽度，独立滚动 */}
-        <aside className="flex w-72 shrink-0 flex-col border-r border-border bg-canvas">
+        <aside className="flex max-h-[40vh] w-full shrink-0 flex-col border-b border-border bg-canvas lg:max-h-none lg:w-72 lg:border-b-0 lg:border-r">
           <div className="shrink-0 border-b border-border px-4 py-2.5">
             <div className="text-micro font-bold uppercase tracking-widest text-ink-faint">
               File Tree
@@ -386,8 +386,8 @@ export default function CompilerPage() {
 
       {/* 预览弹窗 */}
       {isPreviewOpen && (
-        <div className="fixed inset-0 z-50 bg-ink/60 p-4 backdrop-blur-sm">
-          <div className="mx-auto flex h-full max-w-[1400px] flex-col overflow-hidden rounded-lg bg-canvas shadow-2xl">
+        <div className="fixed inset-0 z-50 bg-ink/60 p-2 backdrop-blur-sm sm:p-4">
+          <div className="mx-auto flex h-full w-full max-w-[1400px] flex-col overflow-hidden rounded-lg bg-canvas shadow-2xl">
             <div className="flex items-center justify-between gap-3 border-b border-border px-4 py-3">
               <div className="min-w-0">
                 <div className="text-caption font-bold uppercase tracking-widest text-ink-faint">

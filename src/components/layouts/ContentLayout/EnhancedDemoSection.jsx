@@ -38,16 +38,16 @@ const EnhancedDemoSection = ({ title, desc, children, code, useBrowserWindow = t
     return (
         <div className="mb-12">
             {/* 标题和操作按钮 */}
-            <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center space-x-3">
-                    <div className="h-6 w-1 bg-blue-600 rounded-full" />
-                    <div className="text-lg font-bold text-slate-900 ">{title}</div>
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-4">
+                <div className="flex items-center space-x-3 min-w-0">
+                    <div className="h-6 w-1 bg-blue-600 rounded-full flex-shrink-0" />
+                    <div className="text-lg font-bold text-slate-900 break-words">{title}</div>
                 </div>
-                <div className="flex items-center space-x-2">
+                <div className="flex flex-wrap items-center gap-2">
                     {/* 重置按钮 */}
                     <button
                         onClick={handleReset}
-                        className="flex items-center space-x-2 px-4 py-1.5 rounded-xl bg-slate-100  text-slate-600  text-xs font-bold hover:bg-orange-500 hover:text-white transition-all shadow-sm"
+                        className="flex items-center space-x-2 px-4 py-2 rounded-xl bg-slate-100  text-slate-600  text-xs font-bold hover:bg-orange-500 hover:text-white transition-all shadow-sm"
                         title={t('common.resetDemo')}
                     >
                         <RotateCcw aria-hidden="true" className="w-3.5 h-3.5" />
@@ -57,7 +57,7 @@ const EnhancedDemoSection = ({ title, desc, children, code, useBrowserWindow = t
                     {code && (
                         <button
                             onClick={() => setShowCode(!showCode)}
-                            className="flex items-center space-x-2 px-4 py-1.5 rounded-xl bg-slate-100  text-slate-600  text-xs font-bold hover:bg-blue-600 hover:text-white transition-all shadow-sm"
+                            className="flex items-center space-x-2 px-4 py-2 rounded-xl bg-slate-100  text-slate-600  text-xs font-bold hover:bg-blue-600 hover:text-white transition-all shadow-sm"
                         >
                             {showCode ? <ChevronUp aria-hidden="true" className="w-3.5 h-3.5" /> : <Code aria-hidden="true" className="w-3.5 h-3.5" />}
                             <span>{showCode ? t('common.codeBlock.hideCode') : t('common.codeBlock.viewCode')}</span>
@@ -72,7 +72,7 @@ const EnhancedDemoSection = ({ title, desc, children, code, useBrowserWindow = t
             {/* 演示区域 */}
             {useBrowserWindow ? (
                 <BrowserWindow>
-                    <div className="bg-slate-50 /50  p-10 min-h-[300px] flex items-center justify-center relative overflow-hidden transition-all">
+                    <div className="bg-slate-50 /50 p-4 sm:p-8 lg:p-10 min-h-[300px] flex items-center justify-center relative overflow-hidden transition-all">
                         <div
                             className="absolute inset-0 opacity-[0.03] pointer-events-none"
                             style={{ backgroundImage: 'radial-gradient(#000 1px, transparent 1px)', backgroundSize: '20px 20px' }}
@@ -102,7 +102,7 @@ const EnhancedDemoSection = ({ title, desc, children, code, useBrowserWindow = t
                             {/* 复制按钮 */}
                             <button
                                 onClick={handleCopy}
-                                className="absolute right-6 top-6 z-20 p-2.5 rounded-xl bg-slate-800/50 text-slate-400 hover:text-white hover:bg-slate-700 transition-all backdrop-blur-md border border-white/5 opacity-0 group-hover:opacity-100 shadow-xl"
+                                className="absolute right-4 sm:right-6 top-4 sm:top-6 z-20 p-2.5 rounded-xl bg-slate-800/50 text-slate-400 hover:text-white hover:bg-slate-700 transition-all backdrop-blur-md border border-white/5 sm:opacity-0 sm:group-hover:opacity-100 shadow-xl"
                                 title={t('common.codeBlock.copy')}
                                 aria-label={t('common.codeBlock.copy')}
                             >
@@ -115,7 +115,7 @@ const EnhancedDemoSection = ({ title, desc, children, code, useBrowserWindow = t
                                     style={vscDarkPlus}
                                     customStyle={{
                                         margin: 0,
-                                        padding: '2.5rem',
+                                        padding: '1.5rem',
                                         fontSize: '0.85rem',
                                         background: '#0f172a',
                                         lineHeight: '1.6',

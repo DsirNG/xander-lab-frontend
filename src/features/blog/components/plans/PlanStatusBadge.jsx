@@ -26,7 +26,7 @@ const PlanStatusBadge = ({ status }) => {
   const { t } = useTranslation();
   const labelKey = LABEL_KEY[status];
   return (
-    <span className={`inline-flex shrink-0 items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${STYLE[status] || 'bg-surface text-ink-muted ring-1 ring-border'}`}>
+    <span className={`inline-flex shrink-0 whitespace-nowrap items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${STYLE[status] || 'bg-surface text-ink-muted ring-1 ring-border'}`}>
       {labelKey ? t(labelKey) : status}
     </span>
   );

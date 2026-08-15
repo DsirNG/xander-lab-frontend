@@ -11,6 +11,12 @@
 @plugin "@tailwindcss/typography";
 
 @theme {
+  /* ── 响应式断点（Tailwind 4 默认 sm=640 md=768 lg=1024 xl=1280 2xl=1536）
+     新增：xs=480 覆盖小屏手机，3xl=1792 覆盖超宽屏 */
+  --breakpoint-xs: 30rem;
+  --breakpoint-3xl: 112rem;
+  --container-8xl: 90rem;
+
   /* ── Accent (theme accent, sky-600 family) ── */
   --color-accent: #0284c7;
   --color-accent-50: #f0f9ff;
@@ -176,6 +182,31 @@ html {
     scroll-behavior: smooth;
     -webkit-font-smoothing: subpixel-antialiased;
     text-rendering: optimizeSpeed;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  /* 横向溢出保护：任何视口/比例下不允许整页横向滚动条 */
+  html,
+  body {
+    max-width: 100%;
+    overflow-x: clip;
+  }
+
+  /* 媒体元素自适应容器宽度 */
+  img,
+  video,
+  svg,
+  canvas {
+    max-width: 100%;
+  }
+
+  /* 代码块、表格等宽内容：容器内横向滚动而非撑破页面 */
+  pre,
+  table,
+  .overflow-protect {
+    max-width: 100%;
+    overflow-x: auto;
   }
 
   body {
@@ -194,6 +225,69 @@ html {
     text-shadow: 0 0 1px rgba(15, 23, 42, 0.05);
     filter: blur(0);
     -webkit-filter: blur(0);
+  }
+}
+
+/* ── 响应式工具 ──
+   小屏安全区、超窄屏布局收紧、矮屏（横屏手机/小本）高度适配 */
+@utility pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+@utility pt-safe {
+  padding-top: env(safe-area-inset-top);
+}
+
+@utility min-h-safe {
+  min-height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+}
+
+/* ── 字号基准：rem 流式缩放 ──
+   项目全部字号/间距/图标均以 rem 为单位（Tailwind 默认即 rem），
+   因此按视口宽度流式调整根字号，即可让不同设备的文字观感尽量一致：
+   320px 手机 ≈14px → 1080p 桌面 ≈16px → 4K/超宽屏封顶 17px。
+   不要再用固定 px 大字号写业务样式，随根字号缩放才稳定。 */
+html {
+  font-size: clamp(14px, 13.5px + 0.16vw, 17px);
+}
+
+/* 超窄屏（≤360px 老款小屏机）：进一步收紧内边距 */
+@media (max-width: 360px) {
+  @layer utilities {
+    .px-ultra-tight {
+      padding-left: 0.75rem;
+      padding-right: 0.75rem;
+    }
+  }
+}
+
+/* 矮屏（高度 ≤640px，如横屏手机、小笔记本）：压缩垂直留白保证内容可见 */
+@media (max-height: 640px) {
+  @layer utilities {
+    .py-short-tight {
+      padding-top: 1rem;
+      padding-bottom: 1rem;
+    }
+    .gap-short-tight {
+      gap: 0.75rem;
+    }
+  }
+}
+
+/* 矮宽屏（横屏手机 高度≤480px）：根字号压到 14px，提高信息密度 */
+@media (max-height: 480px) {
+  html {
+    font-size: 14px;
+  }
+}
+
+/* 横屏手机（landscape）时弹层与面板不得超过视口高度 */
+@media (orientation: landscape) and (max-height: 480px) {
+  @layer utilities {
+    .h-screen-mobile {
+      height: 100dvh;
+      max-height: 100dvh;
+    }
   }
 }
 

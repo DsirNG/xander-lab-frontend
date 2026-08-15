@@ -40,7 +40,7 @@ const markdownComponents = {
 };
 
 const BlogMarkdown = ({ content, className = '' }) => (
-    <div className={`prose prose-sm max-w-none sm:prose-base prose-li:leading-relaxed prose-li:text-ink-secondary prose-strong:text-ink prose-li:my-0.5 prose-pre:m-0 prose-pre:bg-transparent prose-pre:p-0 ${className}`}>
+    <div className={`prose prose-sm max-w-none break-words min-w-0 sm:prose-base prose-li:leading-relaxed prose-li:text-ink-secondary prose-strong:text-ink prose-li:my-0.5 prose-pre:m-0 prose-pre:bg-transparent prose-pre:p-0 ${className}`}>
         <ReactMarkdown remarkPlugins={[remarkGfm]} components={markdownComponents}>{content || ''}</ReactMarkdown>
     </div>
 );

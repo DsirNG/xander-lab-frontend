@@ -36,7 +36,7 @@ const ShareSidebar = ({
             <aside className={`
                 fixed lg:static
                 top-[64px] left-0 bottom-0
-                w-[260px] md:w-[300px] lg:w-[320px] flex-shrink-0
+                w-[80vw] max-w-[300px] sm:w-[300px] md:w-[300px] lg:w-[320px] flex-shrink-0
                 bg-canvas border-r border-border flex flex-col overflow-y-auto custom-scrollbar
                 transform transition-transform duration-300 ease-in-out z-40
                 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
@@ -90,7 +90,7 @@ const ShareSidebar = ({
                             <div key={s.id} onClick={() => setActiveSIdx(i)} className={`relative group px-5 py-4 rounded-2xl cursor-pointer border transition-all ${activeSIdx === i ? 'bg-accent-soft border-accent shadow-sm' : 'bg-canvas border-border hover:border-border-strong'}`}>
                                 <div className={`text-micro font-black uppercase italic mb-1 ${activeSIdx === i ? 'text-accent-fg' : 'text-ink'}`}>{s.titleEn}</div>
                                 <div className={`text-micro font-bold ${activeSIdx === i ? 'text-accent' : 'text-ink-faint'}`}>{s.titleZh}</div>
-                                <div className="absolute top-4 right-4 flex opacity-0 group-hover:opacity-100 transition-all gap-1">
+                                <div className="absolute top-4 right-4 flex sm:opacity-0 sm:group-hover:opacity-100 transition-all gap-1">
                                     <button
                                         onClick={(e) => { e.stopPropagation(); onEditScenario(i); }}
                                         className={`p-1.5 transition-all outline-none ${activeSIdx === i ? 'text-accent/40 hover:text-accent' : 'text-ink-faint hover:text-accent'}`}

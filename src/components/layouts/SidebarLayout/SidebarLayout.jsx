@@ -87,12 +87,12 @@ const SidebarLayout = ({
                 />
             )}
 
-            <div className="max-w-full sm:max-w-[640px] md:max-w-[768px] lg:max-w-[1024px] xl:max-w-[1280px] 2xl:max-w-[1536px] mx-auto flex h-[calc(100vh-64px)] overflow-hidden">
+            <div className="max-w-full sm:max-w-[640px] md:max-w-[768px] lg:max-w-[1024px] xl:max-w-[1280px] 2xl:max-w-[1536px] 3xl:max-w-[1792px] mx-auto flex h-[calc(100vh-64px)] overflow-hidden">
                 {/* 左侧边栏 */}
                 <aside className={`
                     fixed lg:static
                     top-[64px] left-0 bottom-0
-                    w-[260px] sm:w-[300px] md:w-[280px] lg:w-[260px] xl:w-[300px] 2xl:w-[320px]
+                    w-[80vw] max-w-[300px] sm:w-[300px] md:w-[280px] lg:w-[260px] xl:w-[300px] 2xl:w-[320px]
                     flex-shrink-0
                     border-r border-border
                     p-4 sm:p-5 lg:p-6
@@ -130,7 +130,7 @@ const SidebarLayout = ({
                 </aside>
 
                 {/* 右侧内容区 */}
-                <main className="flex-grow overflow-y-auto custom-scrollbar bg-canvas px-4 sm:px-6 lg:px-10 py-6 lg:py-8 relative w-full lg:w-auto">
+                <main className="flex-grow min-w-0 overflow-y-auto overflow-x-clip custom-scrollbar bg-canvas px-4 sm:px-6 lg:px-10 py-6 lg:py-8 relative w-full lg:w-auto">
                     <Outlet />
                 </main>
             </div>

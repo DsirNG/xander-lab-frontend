@@ -282,16 +282,16 @@ title={t(`blog.editor.${key}`)}
                         <button
                             onClick={onEditMode}
                             title={t('blog.edit', 'Edit')}
-                            className={`flex h-8 w-8 items-center justify-center rounded-md transition-colors ${!isPreview ? 'bg-canvas text-accent shadow-sm' : 'text-ink-muted'}`}
+                            className={`flex h-11 w-11 items-center justify-center rounded-md transition-colors ${!isPreview ? 'bg-canvas text-accent shadow-sm' : 'text-ink-muted'}`}
                         >
-                            <Edit3 className="w-4 h-4" />
+                            <Edit3 className="w-5 h-5" />
                         </button>
                         <button
                             onClick={onPreviewMode}
                             title={t('blog.preview', 'Preview')}
-                            className={`flex h-8 w-8 items-center justify-center rounded-md transition-colors ${isPreview ? 'bg-canvas text-accent shadow-sm' : 'text-ink-muted'}`}
+                            className={`flex h-11 w-11 items-center justify-center rounded-md transition-colors ${isPreview ? 'bg-canvas text-accent shadow-sm' : 'text-ink-muted'}`}
                         >
-                            <Eye className="w-4 h-4" />
+                            <Eye className="w-5 h-5" />
                         </button>
                     </div>}
                 </div>

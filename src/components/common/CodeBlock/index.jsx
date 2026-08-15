@@ -111,9 +111,9 @@ const CodeBlock = memo(({
                     />
                 </div>
             ) : (
-                <div className={`overflow-auto ${
-                    isConversation ? 'h-[480px] bg-surface' : 'max-h-[600px] bg-[#1e1e1e]'
-                }`}>
+<div className={`overflow-auto ${
+                        isConversation ? 'h-[480px] max-h-[70dvh] bg-surface' : 'max-h-[600px] bg-[#1e1e1e]'
+                    }`}>
                     <SyntaxHighlighter
                         language={normalizedLanguage === 'htm' ? 'html' : normalizedLanguage}
                         style={isConversation ? oneLight : vscDarkPlus}

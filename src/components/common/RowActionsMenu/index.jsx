@@ -52,7 +52,7 @@ const RowActionsMenu = ({ actions = [], size = 'md', align = 'right', ariaLabel 
       {open ? (
         <div
           role="menu"
-          className={`absolute top-full z-50 mt-1 min-w-36 overflow-hidden rounded-xl border border-border bg-canvas py-1.5 shadow-lg shadow-black/5 ${align === 'left' ? 'left-0' : 'right-0'}`}
+          className={`absolute top-full z-50 mt-1 min-w-36 max-w-[calc(100vw-1rem)] max-h-[70vh] overflow-y-auto overflow-x-hidden rounded-xl border border-border bg-canvas py-1.5 shadow-lg shadow-black/5 ${align === 'left' ? 'left-0' : 'right-0'}`}
         >
           {actions.map((item) => {
             const Icon = item.icon;
@@ -63,7 +63,7 @@ const RowActionsMenu = ({ actions = [], size = 'md', align = 'right', ariaLabel 
                 role="menuitem"
                 disabled={item.disabled || item.loading}
                 onClick={() => handleItemClick(item)}
-                className={`flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-xs font-semibold transition disabled:opacity-50 ${
+                className={`flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-xs font-semibold transition disabled:opacity-50 truncate ${
                   item.danger
                     ? 'text-danger hover:bg-danger-soft'
                     : 'text-ink-secondary hover:bg-surface-muted hover:text-ink'

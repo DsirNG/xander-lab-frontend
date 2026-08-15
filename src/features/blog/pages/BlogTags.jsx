@@ -180,9 +180,9 @@ const BlogTags = () => {
             {/* 选中标签后展示文章列表 */}
             {activeTag && (
                 <div className="space-y-4 pt-2">
-                    <div className="flex items-center gap-2 border-b border-border pb-4">
-                        <FileText className="w-4 h-4 text-ink-faint" />
-                        <div className="text-sm font-semibold text-ink-secondary">
+                    <div className="flex flex-wrap items-center gap-x-2 gap-y-1.5 border-b border-border pb-4">
+                        <FileText className="w-4 h-4 shrink-0 text-ink-faint" />
+                        <div className="min-w-0 truncate text-sm font-semibold text-ink-secondary">
                             {t('blog.tagArticles', { tag: activeTag })}
                         </div>
                         <span className="text-micro font-medium px-2 py-0.5 rounded-full bg-accent/10 text-accent">
@@ -191,14 +191,14 @@ const BlogTags = () => {
                     </div>
 
                     {blogsLoading ? (
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-pulse">
+                        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 animate-pulse">
                             {[1, 2].map(i => (
                                 <div key={i} className="h-48 bg-surface-muted rounded-xl" />
                             ))}
                         </div>
                     ) : filteredBlogs.length > 0 ? (
                         <>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
                                 {filteredBlogs.map(blog => (
                                     <BlogCard key={blog.id} blog={blog} />
                                 ))}

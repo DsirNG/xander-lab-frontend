@@ -360,9 +360,9 @@ const Img2ThreePage = () => {
   const viewerReady = Boolean(viewerTaskId) && viewerReadyTaskId === viewerTaskId && !viewerError;
 
   return (
-    <div className="mx-auto flex h-full w-full max-w-5xl flex-col px-4 py-6 sm:px-6 lg:px-8">
+    <div className="mx-auto flex h-full min-h-0 w-full min-w-0 max-w-5xl flex-col overflow-y-auto overscroll-contain px-4 py-6 px-ultra-tight sm:px-6 lg:px-8">
       <div className="mb-8 flex flex-wrap items-start justify-between gap-4">
-        <div>
+        <div className="min-w-0">
           <div className="text-caption font-semibold uppercase tracking-wide text-accent">{t('nav.img2three')}</div>
           <div className="mt-1 text-title font-bold text-ink">{t('img2three.title')}</div>
           <div className="mt-2 max-w-2xl text-body text-ink-secondary">{t('img2three.subtitle')}</div>
@@ -371,7 +371,7 @@ const Img2ThreePage = () => {
           <button
             type="button"
             onClick={handleToggleHistory}
-            className="inline-flex items-center gap-2 rounded-xl border border-border bg-surface px-4 py-2 text-sm font-semibold text-ink-secondary transition hover:border-accent hover:text-accent"
+            className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-border bg-surface px-4 py-2 text-sm font-semibold text-ink-secondary transition hover:border-accent hover:text-accent"
           >
             <History className="h-4 w-4" aria-hidden="true" />
             {t('img2three.history')}
@@ -380,7 +380,7 @@ const Img2ThreePage = () => {
           <button
             type="button"
             onClick={handleNewTask}
-            className="inline-flex items-center gap-2 rounded-xl border border-border bg-surface px-4 py-2 text-sm font-semibold text-ink-secondary transition hover:border-accent hover:text-accent"
+            className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-border bg-surface px-4 py-2 text-sm font-semibold text-ink-secondary transition hover:border-accent hover:text-accent"
           >
             <ArrowLeft className="h-4 w-4" aria-hidden="true" />
             {t('img2three.newTask')}
@@ -454,7 +454,7 @@ const Img2ThreePage = () => {
             )}
             <div className="text-body font-semibold text-ink">{t('img2three.uploadHint')}</div>
             <div className="mt-2 text-caption text-ink-muted">{t('img2three.dropHint')}</div>
-            <span className="mt-4 inline-flex items-center gap-2 rounded-xl bg-accent px-4 py-2 text-sm font-bold text-white">
+            <span className="mt-4 inline-flex min-h-11 items-center gap-2 rounded-xl bg-accent px-4 py-2 text-sm font-bold text-white">
               <Upload className="h-4 w-4" aria-hidden="true" />
               {t('img2three.chooseImage')}
             </span>
@@ -476,7 +476,7 @@ const Img2ThreePage = () => {
               type="button"
               disabled={!selectedFile || isBusy}
               onClick={handleGenerate}
-              className="inline-flex items-center gap-2 rounded-xl bg-accent px-5 py-2.5 text-sm font-bold text-white transition hover:bg-accent-fg disabled:cursor-not-allowed disabled:opacity-60"
+              className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-accent px-5 py-2.5 text-sm font-bold text-white transition hover:bg-accent-fg disabled:cursor-not-allowed disabled:opacity-60"
             >
               {isBusy ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> : <Sparkles className="h-4 w-4" aria-hidden="true" />}
               {isBusy ? t('img2three.generating') : t('img2three.generate')}
@@ -515,7 +515,7 @@ const Img2ThreePage = () => {
               <button
                 type="button"
                 onClick={handleDownloadSpec}
-                className="inline-flex items-center gap-2 rounded-xl border border-border bg-surface px-4 py-2 text-sm font-semibold text-ink-secondary transition hover:border-accent hover:text-accent"
+                className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-border bg-surface px-4 py-2 text-sm font-semibold text-ink-secondary transition hover:border-accent hover:text-accent"
               >
                 <Download className="h-4 w-4" aria-hidden="true" />
                 {t('img2three.downloadSpec')}
@@ -523,7 +523,7 @@ const Img2ThreePage = () => {
               <button
                 type="button"
                 onClick={handleDownloadFactory}
-                className="inline-flex items-center gap-2 rounded-xl border border-border bg-surface px-4 py-2 text-sm font-semibold text-ink-secondary transition hover:border-accent hover:text-accent"
+                className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-border bg-surface px-4 py-2 text-sm font-semibold text-ink-secondary transition hover:border-accent hover:text-accent"
               >
                 <Download className="h-4 w-4" aria-hidden="true" />
                 {t('img2three.downloadFactory')}
@@ -532,7 +532,7 @@ const Img2ThreePage = () => {
                 type="button"
                 onClick={handleDownloadGlb}
                 disabled={exportingGlb || !viewerReady}
-                className="inline-flex items-center gap-2 rounded-xl bg-accent px-4 py-2 text-sm font-bold text-white transition hover:bg-accent-fg disabled:cursor-not-allowed disabled:opacity-60"
+                className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-accent px-4 py-2 text-sm font-bold text-white transition hover:bg-accent-fg disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {exportingGlb ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> : <Download className="h-4 w-4" aria-hidden="true" />}
                 {exportingGlb ? t('img2three.exportingGlb') : t('img2three.downloadGlb')}
@@ -540,7 +540,7 @@ const Img2ThreePage = () => {
             </div>
           </div>
 
-          <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
             <div className="space-y-3">
               {viewerError ? (
                 <div role="alert" className="rounded-xl border border-danger/30 bg-danger/5 px-4 py-3 text-sm text-danger">

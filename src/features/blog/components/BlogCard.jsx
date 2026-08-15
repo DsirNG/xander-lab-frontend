@@ -14,7 +14,7 @@ const BlogCard = memo(({ blog }) => {
             className="group block bg-canvas rounded-xl p-5 border border-border hover:border-border-strong hover:shadow-sm transition-all duration-200"
         >
             {/* 分类 + 日期 */}
-            <div className="flex items-center text-caption text-ink-muted mb-2.5 gap-3">
+            <div className="flex flex-wrap items-center text-caption text-ink-muted mb-2.5 gap-x-3 gap-y-1">
                 <span className="bg-accent/5 text-accent px-2 py-0.5 rounded-full font-medium">
                     {blog.categoryName || blog.category}
                 </span>
@@ -39,7 +39,7 @@ const BlogCard = memo(({ blog }) => {
             </div>
 
             {/* 标签 + 阅读时间 */}
-            <div className="flex items-center gap-2 pt-3 border-t border-border/50">
+            <div className="flex flex-wrap items-center gap-x-2 gap-y-1.5 pt-3 border-t border-border/50">
                 {blog.tags.slice(0, 3).map((tag, index) => (
                     <span
                         key={index}

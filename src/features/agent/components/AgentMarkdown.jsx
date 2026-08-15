@@ -79,7 +79,7 @@ const createMarkdownComponents = (codeAppearance) => ({
 });
 
 const AgentMarkdown = memo(({ content, codeAppearance = 'conversation' }) => (
-  <div className="prose prose-sm max-w-none break-words prose-li:my-0.5 prose-li:text-ink-secondary prose-strong:text-ink prose-pre:my-3 prose-pre:bg-transparent prose-pre:p-0 prose-table:text-sm">
+  <div className="prose prose-sm min-w-0 max-w-none break-words prose-li:my-0.5 prose-li:text-ink-secondary prose-strong:text-ink prose-pre:my-3 prose-pre:bg-transparent prose-pre:p-0 prose-table:text-sm">
     <ReactMarkdown remarkPlugins={[remarkGfm]} components={createMarkdownComponents(codeAppearance)}>
       {normalizeAnswer(content || '')}
     </ReactMarkdown>

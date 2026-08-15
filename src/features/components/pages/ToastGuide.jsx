@@ -34,7 +34,7 @@ const ToastGuide = ({ componentId }) => {
 
     return (
         <div className="min-h-screen bg-slate-50  pb-20">
-            <div className="max-w-6xl mx-auto pt-10 px-6">
+            <div className="max-w-6xl mx-auto pt-10 px-4 sm:px-6">
                 {/* Navigation */}
                 <Link to={`/components/${componentId}`} className="inline-flex items-center text-micro font-black uppercase tracking-widest text-ink-faint hover:text-accent mb-8 transition-all group">
                     <div className="w-8 h-8 rounded-full border border-border flex items-center justify-center mr-3 group-hover:border-accent/30 group-hover:bg-accent/5">
@@ -49,11 +49,11 @@ const ToastGuide = ({ componentId }) => {
                         <div className="p-3 rounded-2xl bg-primary/10 border border-primary/20">
                             <Zap className="w-7 h-7 text-primary" />
                         </div>
-                        <div className="text-4xl font-black italic tracking-tighter text-slate-900  uppercase">
+                        <div className="text-2xl sm:text-4xl font-black italic tracking-tighter text-slate-900  uppercase break-words">
                             {t('components.toast.guide.title').split(' // ')[0]} {' // '} <span className="text-primary">{t('components.toast.guide.title').split(' // ')[1]}</span>
                         </div>
                     </div>
-                    <div className="text-lg text-slate-500  max-w-3xl font-medium leading-relaxed italic">
+                    <div className="text-body sm:text-lg text-slate-500  max-w-3xl font-medium leading-relaxed italic break-words">
                         {t('components.toast.guide.subtitle')}
                     </div>
                 </div>
@@ -86,7 +86,7 @@ const ToastGuide = ({ componentId }) => {
                     {/* 1. Item Logic */}
                     <section>
                         <div className="mb-6 px-2">
-                            <div className="text-2xl font-black text-slate-900  mb-2 italic uppercase tracking-tighter">
+                            <div className="text-xl sm:text-2xl font-black text-slate-900  mb-2 italic uppercase tracking-tighter break-words">
                                 {t('components.toast.guide.sections.physics.title')}
                             </div>
                             <div className="text-slate-500  text-sm font-medium">
@@ -102,7 +102,7 @@ const ToastGuide = ({ componentId }) => {
                     {/* 2. Context Management */}
                     <section>
                         <div className="mb-6 px-2">
-                            <div className="text-2xl font-black text-slate-900  mb-2 italic uppercase tracking-tighter">
+                            <div className="text-xl sm:text-2xl font-black text-slate-900  mb-2 italic uppercase tracking-tighter break-words">
                                 {t('components.toast.guide.sections.orchestration.title')}
                             </div>
                             <div className="text-slate-500  text-sm font-medium">
@@ -118,7 +118,7 @@ const ToastGuide = ({ componentId }) => {
                     {/* 3. Container & Portal */}
                     <section>
                         <div className="mb-6 px-2">
-                            <div className="text-2xl font-black text-slate-900  mb-2 italic uppercase tracking-tighter">
+                            <div className="text-xl sm:text-2xl font-black text-slate-900  mb-2 italic uppercase tracking-tighter break-words">
                                 {t('components.toast.guide.sections.portal.title')}
                             </div>
                             <div className="text-slate-500  text-sm font-medium">
@@ -134,7 +134,7 @@ const ToastGuide = ({ componentId }) => {
                     {/* 4. Entry Point */}
                     <section>
                         <div className="mb-6 px-2">
-                            <div className="text-2xl font-black text-slate-900  mb-2 italic uppercase tracking-tighter">
+                            <div className="text-xl sm:text-2xl font-black text-slate-900  mb-2 italic uppercase tracking-tighter break-words">
                                 {t('components.toast.guide.sections.entry.title')}
                             </div>
                             <div className="text-slate-500  text-sm font-medium">

@@ -20,7 +20,7 @@ export default function StudioTopBar({
   const handleBack = useBack(fallbackTo);
 
   return (
-    <div className="flex shrink-0 items-center justify-between border-b border-border bg-canvas px-4 py-3 sm:px-6">
+    <div className="flex shrink-0 flex-wrap items-center justify-between gap-x-3 gap-y-2 border-b border-border bg-canvas px-4 py-3 sm:px-6">
       <div className="flex min-w-0 items-center gap-3">
         <button
           type="button"
@@ -39,16 +39,16 @@ export default function StudioTopBar({
           <button
             type="button"
             onClick={handleBack}
-            className="inline-flex items-center gap-2 text-caption font-bold text-ink-faint transition-colors hover:text-accent"
+            className="inline-flex shrink-0 items-center gap-2 text-caption font-bold text-ink-faint transition-colors hover:text-accent"
           >
             <ArrowLeft className="h-3.5 w-3.5" />
             {backLabel}
           </button>
         )}
-        <div className="h-5 w-px bg-border" />
-        {title && <div className="min-w-0">{title}</div>}
+        <div className="h-5 w-px shrink-0 bg-border" />
+        {title && <div className="min-w-0 flex-1 truncate">{title}</div>}
       </div>
-      {children ? <div className="flex items-center gap-2">{children}</div> : null}
+      {children ? <div className="flex min-w-0 flex-wrap items-center justify-end gap-2">{children}</div> : null}
     </div>
   );
 }

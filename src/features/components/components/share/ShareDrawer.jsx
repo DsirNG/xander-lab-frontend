@@ -97,7 +97,7 @@ const ShareDrawer = ({
                                 <textarea
                                     value={libFiles[activeLibIdx]?.content || ''}
                                     onChange={e => onLibFileContentChange(e.target.value)}
-                                    className="absolute inset-0 w-full h-full bg-canvas p-10 text-body font-mono text-ink-secondary outline-none resize-none custom-scrollbar leading-relaxed"
+                                    className="absolute inset-0 w-full h-full bg-canvas p-6 sm:p-10 text-body font-mono text-ink-secondary outline-none resize-none custom-scrollbar leading-relaxed min-w-0"
                                     spellCheck={false}
                                 />
                             </div>
@@ -108,7 +108,7 @@ const ShareDrawer = ({
                             <div className="absolute top-4 right-8 z-10">
                                 <button id={tourIds.envHelp} onClick={() => onHelpClick('env')} className="p-2 rounded-xl text-ink-faint hover:bg-surface hover:text-accent transition-colors shadow-sm bg-canvas border border-border" title={t('components.share.drawer.wrapperHint')}><HelpCircle className="w-4 h-4" /></button>
                             </div>
-                            <textarea value={wrapperCode} onChange={e => setWrapperCode(e.target.value)} className="absolute inset-0 w-full h-full bg-canvas p-10 text-body font-mono text-ink-secondary outline-none resize-none" spellCheck={false} />
+                            <textarea value={wrapperCode} onChange={e => setWrapperCode(e.target.value)} className="absolute inset-0 w-full h-full bg-canvas p-6 sm:p-10 text-body font-mono text-ink-secondary outline-none resize-none min-w-0" spellCheck={false} />
                         </motion.div>
                     )}
                     {infTab === 'css' && (
@@ -116,7 +116,7 @@ const ShareDrawer = ({
                             <div className="absolute top-4 right-8 z-10">
                                 <button id={tourIds.cssHelp} onClick={() => onHelpClick('css')} className="p-2 rounded-xl text-ink-faint hover:bg-surface hover:text-accent transition-colors shadow-sm bg-canvas border border-border" title={t('components.share.drawer.cssHint')}><HelpCircle className="w-4 h-4" /></button>
                             </div>
-                            <textarea value={cssCode} onChange={e => setCssCode(e.target.value)} className="absolute inset-0 w-full h-full bg-canvas p-10 text-body font-mono text-ink-secondary outline-none resize-none" spellCheck={false} />
+                            <textarea value={cssCode} onChange={e => setCssCode(e.target.value)} className="absolute inset-0 w-full h-full bg-canvas p-6 sm:p-10 text-body font-mono text-ink-secondary outline-none resize-none min-w-0" spellCheck={false} />
                         </motion.div>
                     )}
                 </AnimatePresence>

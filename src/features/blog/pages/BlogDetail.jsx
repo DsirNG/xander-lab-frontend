@@ -338,7 +338,7 @@ const BlogDetail = () => {
                                 <span className="text-warning text-xs font-bold font-mono">i</span>
                             </div>
                         </div>
-                        <div className="text-sm text-warning-fg leading-relaxed font-medium">
+                        <div className="text-sm text-warning-fg leading-relaxed font-medium break-words">
                             {blog.tips}
                         </div>
                     </div>

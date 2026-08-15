@@ -239,7 +239,7 @@ const JuejinAuthorizationPanel = () => {
           type="button"
           onClick={start}
           disabled={busy}
-          className="mt-4 inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-2.5 text-sm font-bold text-white hover:bg-accent/90 disabled:opacity-50"
+          className="mt-4 inline-flex min-h-11 items-center gap-2 rounded-lg bg-accent px-4 py-2.5 text-sm font-bold text-white hover:bg-accent/90 disabled:opacity-50"
         >
           {busy ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <QrCode className="h-4 w-4" />}
           {expired ? t('profile.juejin.reauthorize') : t('profile.juejin.connect')}
@@ -251,7 +251,7 @@ const JuejinAuthorizationPanel = () => {
           type="button"
           onClick={disconnect}
           disabled={busy}
-          className="mt-4 inline-flex items-center gap-2 rounded-lg border border-border px-4 py-2.5 text-sm font-bold text-ink-muted hover:bg-canvas disabled:opacity-50"
+          className="mt-4 inline-flex min-h-11 items-center gap-2 rounded-lg border border-border px-4 py-2.5 text-sm font-bold text-ink-muted hover:bg-canvas disabled:opacity-50"
         >
           {busy ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <Unplug className="h-4 w-4" />}
           {t('profile.juejin.disconnect')}
@@ -291,7 +291,7 @@ const JuejinAuthorizationPanel = () => {
               <img
                 src={qrCode}
                 alt={t('profile.juejin.qrAlt')}
-                className="h-60 w-60 object-contain"
+                className="h-52 w-52 object-contain sm:h-60 sm:w-60"
               />
             </div>
             <div className="text-caption font-medium text-ink-muted">

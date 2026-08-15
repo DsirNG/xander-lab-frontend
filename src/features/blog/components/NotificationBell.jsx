@@ -61,7 +61,7 @@ const NotificationBell = () => {
     <div className="relative" ref={boxRef}>
       <button
         onClick={toggleOpen}
-        className="relative flex h-9 w-9 items-center justify-center rounded-xl text-ink-secondary transition hover:bg-surface-muted"
+        className="relative flex h-10 w-10 items-center justify-center rounded-xl text-ink-secondary transition hover:bg-surface-muted"
         aria-label={t('notifications.title')}
         aria-expanded={open}
         title={t('notifications.title')}
@@ -71,9 +71,9 @@ const NotificationBell = () => {
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full z-50 mt-2 w-80 overflow-hidden rounded-2xl border border-border bg-canvas shadow-lg">
-          <div className="flex items-center justify-between border-b border-border px-4 py-2.5">
-            <span className="text-sm font-semibold text-ink">{t('notifications.title')}</span>
+        <div className="absolute right-0 top-full z-50 mt-2 w-[min(20rem,calc(100vw-2rem))] overflow-hidden rounded-2xl border border-border bg-canvas shadow-lg">
+          <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1 border-b border-border px-4 py-2.5">
+            <span className="truncate text-sm font-semibold text-ink">{t('notifications.title')}</span>
             {unread > 0 && (
               <button onClick={handleMarkAll} className="inline-flex items-center gap-1 text-xs text-accent hover:underline">
                 <CheckCheck className="h-3 w-3" /> {t('notifications.markAll')}

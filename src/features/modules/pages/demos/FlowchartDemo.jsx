@@ -118,18 +118,19 @@ const FlowchartDemo = () => {
     return (
         <div
             ref={canvasRef}
-            className="relative w-full h-[500px] bg-slate-50  border border-slate-200  rounded-2xl overflow-hidden cursor-crosshair select-none"
+            className="relative w-full h-[500px] max-h-[70dvh] min-h-[360px] bg-slate-50 border border-slate-200 rounded-2xl overflow-auto cursor-crosshair select-none"
             style={{
                 backgroundImage: 'radial-gradient(#94a3b8 1px, transparent 1px)',
                 backgroundSize: '20px 20px',
-                backgroundPosition: '-10px -10px'
+                backgroundPosition: '-10px -10px',
+                minWidth: '100%'
             }}
             onMouseMove={handleCanvasMouseMove}
             onMouseUp={handleCanvasMouseUp}
             onMouseLeave={handleCanvasMouseUp}
         >
             {/* SVG Layer for Lines */}
-            <svg className="absolute inset-0 w-full h-full pointer-events-none sticky-svg">
+            <svg className="absolute inset-0 h-full pointer-events-none sticky-svg" style={{ width: '760px', maxWidth: 'none' }}>
                 {/* Existing Connections */}
                 {connections.map(conn => {
                     const start = getNodeAnchor(conn.from, 'right');
@@ -191,7 +192,7 @@ const FlowchartDemo = () => {
 
                     {/* Delete button on hover */}
                     <button
-                        className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity shadow-sm"
+                        className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1.5 sm:p-0.5 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity shadow-sm"
                         onClick={(e) => {
                             e.stopPropagation();
                             setNodes(nodes.filter(n => n.id !== node.id));

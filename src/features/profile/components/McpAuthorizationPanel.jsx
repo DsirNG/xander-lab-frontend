@@ -100,10 +100,10 @@ const McpAuthorizationPanel = () => {
   }
 
   return (
-    <section className="flex flex-1 flex-col overflow-y-auto p-5 sm:p-8">
+    <section className="flex min-w-0 flex-1 flex-col overflow-y-auto p-5 px-ultra-tight sm:p-8">
       <div className="mx-auto w-full max-w-3xl">
         <div className="mb-6 flex items-start justify-between gap-4">
-          <div>
+          <div className="min-w-0">
             <div className="mb-1 text-micro font-bold uppercase tracking-[0.2em] text-accent">MCP</div>
             <div className="text-title font-black text-ink">{t('profile.mcp.title')}</div>
             <div className="mt-2 max-w-xl text-body text-ink-muted">
@@ -181,7 +181,7 @@ const McpAuthorizationPanel = () => {
                   <button
                     type="button"
                     onClick={() => copyEndpoint(endpoint)}
-                    className="grid h-8 w-8 shrink-0 place-items-center rounded-md text-ink-muted hover:bg-canvas hover:text-accent"
+                    className="grid h-9 w-9 shrink-0 place-items-center rounded-md text-ink-muted hover:bg-canvas hover:text-accent"
                     aria-label={t('profile.mcp.copyEndpoint')}
                     title={t('profile.mcp.copyEndpoint')}
                   >
@@ -207,7 +207,7 @@ const McpAuthorizationPanel = () => {
                     type="button"
                     onClick={() => revokeClient(client.clientId)}
                     disabled={revokingClient === client.clientId}
-                    className="grid h-8 w-8 shrink-0 place-items-center rounded-md text-ink-muted hover:bg-danger-soft hover:text-danger disabled:opacity-50"
+                    className="grid h-9 w-9 shrink-0 place-items-center rounded-md text-ink-muted hover:bg-danger-soft hover:text-danger disabled:opacity-50"
                     aria-label={t('profile.mcp.revokeClient')}
                     title={t('profile.mcp.revokeClient')}
                   >

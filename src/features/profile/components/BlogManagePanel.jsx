@@ -160,8 +160,8 @@ const BlogManagePanel = () => {
 
     return (
         <div className="flex h-full min-h-0 flex-col">
-            <div className="flex shrink-0 flex-col gap-3 border-b border-border px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
-                <div>
+            <div className="flex shrink-0 flex-col gap-3 border-b border-border px-4 py-4 px-ultra-tight sm:flex-row sm:items-center sm:justify-between sm:px-6">
+                <div className="min-w-0">
                     <div className="text-base font-bold text-ink">{t('profile.blogManage.title')}</div>
                     <div className="mt-0.5 text-caption font-medium text-ink-faint">
                         {t('profile.blogManage.description')}
@@ -170,15 +170,15 @@ const BlogManagePanel = () => {
                 <button
                     type="button"
                     onClick={() => navigate('/workspace/publish')}
-                    className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-ink px-3.5 py-2 text-xs font-bold text-white transition hover:bg-accent"
+                    className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-xl bg-ink px-4 py-2 text-xs font-bold text-white transition hover:bg-accent"
                 >
                     <Plus className="h-3.5 w-3.5" />
                     {t('profile.blogManage.createNew')}
                 </button>
             </div>
 
-            <div className="flex shrink-0 flex-col gap-3 border-b border-border px-4 py-3 sm:px-6">
-                <div className="flex gap-1 overflow-x-auto">
+            <div className="flex shrink-0 flex-col gap-3 border-b border-border px-4 py-3 px-ultra-tight sm:px-6">
+                <div className="flex gap-1 overflow-x-auto overscroll-x-contain">
                     {TABS.map((item) => {
                         const active = tab === item.id;
                         return (
@@ -189,7 +189,7 @@ const BlogManagePanel = () => {
                                     setTab(item.id);
                                     setPage(1);
                                 }}
-                                className={`shrink-0 rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
+                                className={`flex min-h-11 shrink-0 items-center rounded-lg px-3.5 py-2 text-xs font-semibold transition ${
                                     active
                                         ? 'bg-accent-soft text-ink'
                                         : 'text-ink-muted hover:bg-surface hover:text-ink-secondary'
@@ -211,7 +211,7 @@ const BlogManagePanel = () => {
                 </div>
             </div>
 
-            <div className="flex min-h-0 flex-1 flex-col px-4 py-3 sm:px-6">
+            <div className="flex min-h-0 min-w-0 flex-1 flex-col px-4 py-3 px-ultra-tight sm:px-6">
                 <DataTable
                     columns={[
                         {

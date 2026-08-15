@@ -22,7 +22,7 @@ const PARTICLES = [
  */
 const FloatingParticles = () => {
     return (
-        <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
             {PARTICLES.map((p, i) => (
                 <motion.div
                     key={i}

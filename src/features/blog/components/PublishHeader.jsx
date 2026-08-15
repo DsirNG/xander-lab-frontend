@@ -10,7 +10,7 @@ const PublishHeader = ({ t, isEditMode, loading, isSettingsOpen, draftStatus, sh
             <div className="flex min-w-0 items-center gap-2 sm:gap-4">
                 <button
                     onClick={onBack}
-                    className="flex h-9 w-9 items-center justify-center text-ink-muted hover:bg-surface-muted rounded-lg transition-colors"
+                    className="flex h-10 w-10 items-center justify-center text-ink-muted hover:bg-surface-muted rounded-lg transition-colors"
                     title={isEditMode ? t('blog.backToManage') : t('blog.backToBlog')}
                 >
                     <ChevronLeft className="w-5 h-5 transition-transform" />
@@ -32,13 +32,13 @@ const PublishHeader = ({ t, isEditMode, loading, isSettingsOpen, draftStatus, sh
                     onClick={onSaveDraft}
                     disabled={loading}
                     title={t('blog.saveDraft')}
-                    className="flex h-9 px-2 sm:px-3 text-caption font-semibold text-ink-muted hover:text-ink transition-colors items-center gap-2 rounded-lg hover:bg-surface-muted disabled:opacity-50"
+                    className="flex h-10 w-10 sm:w-auto sm:px-3 text-caption font-semibold text-ink-muted hover:text-ink transition-colors items-center justify-center gap-2 rounded-lg hover:bg-surface-muted disabled:opacity-50"
                 >
                     <Save className="w-4 h-4" /> <span className="hidden md:inline">{t('blog.saveDraft')}</span>
                 </button>
                 <button
                     onClick={onToggleSettings}
-                    className={`flex h-9 w-9 items-center justify-center rounded-lg transition-colors ${isSettingsOpen ? 'bg-accent-soft text-accent' : 'text-ink-muted hover:bg-surface-muted hover:text-ink'}`}
+                    className={`flex h-10 w-10 items-center justify-center rounded-lg transition-colors ${isSettingsOpen ? 'bg-accent-soft text-accent' : 'text-ink-muted hover:bg-surface-muted hover:text-ink'}`}
                     title={t('blog.publishSettings', 'Document Settings')}
                 >
                     {isSettingsOpen ? <X className="w-5 h-5" /> : <Settings className="w-5 h-5" />}
@@ -46,7 +46,7 @@ const PublishHeader = ({ t, isEditMode, loading, isSettingsOpen, draftStatus, sh
                 <button
                     onClick={onPublish}
                     disabled={loading}
-                    className="flex h-9 items-center gap-2 rounded-lg bg-ink px-3 sm:px-4 text-caption font-semibold text-white transition-colors hover:bg-accent disabled:opacity-50"
+                    className="flex h-10 items-center gap-2 rounded-lg bg-ink px-2.5 sm:px-4 text-caption font-semibold text-white transition-colors hover:bg-accent disabled:opacity-50"
                 >
                     {loading ? (
                         <><Loader2 className="w-4 h-4 animate-spin" /> {t('blog.publishing')}</>
