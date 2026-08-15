@@ -21,6 +21,7 @@ import {
   getStatusColor,
   getStatusLabel,
 } from '../services/studioService';
+import Button from '@components/common/Button';
 
 const entryCards = [
   {
@@ -64,17 +65,18 @@ export default function StudioPage() {
   return (
     <div className="mx-auto flex h-full min-h-0 w-full min-w-0 max-w-5xl flex-col overflow-y-auto overscroll-contain px-4 py-6 px-ultra-tight sm:px-6 lg:px-8">
       <header className="mb-6">
-        <button
-          type="button"
+        <Button
           onClick={backToWorkspace}
           title="返回上一页"
           aria-label="返回上一页"
-          className="mb-3 inline-flex items-center gap-2 rounded-full bg-accent/5 px-3 py-1 text-micro font-bold uppercase tracking-widest text-accent transition-colors hover:bg-accent/10"
+          variant="ghost"
+          size="xs"
+          className="mb-3 rounded-full bg-accent/5 text-micro uppercase tracking-widest text-accent hover:bg-accent/10"
         >
           <img src="/logo-512.png" alt="Xander Lab" className="h-5 w-5 rounded object-cover" />
           <FolderKanban className="h-3.5 w-3.5" />
           Xander Lab Studio
-        </button>
+        </Button>
         <div className="text-xl font-black text-ink sm:text-2xl">
           选择入口，进入构建工作流
         </div>
@@ -140,13 +142,13 @@ export default function StudioPage() {
         {projects.length > 0 ? (
           <div className="grid gap-2">
             {projects.slice(0, 6).map((project) => (
-              <button
+              <Button
                 key={project.id}
-                type="button"
                 onClick={() => navigate(`/workspace/studio/compiler/${project.id}`)}
-                className="group flex w-full items-center justify-between gap-3 rounded-xl border border-border bg-canvas px-3 py-3 text-left transition-colors hover:border-accent/30 hover:bg-accent/5"
+                variant="outline"
+                className="group h-auto w-full justify-between gap-3 py-3 hover:border-accent/30 hover:bg-accent/5"
               >
-                <div className="min-w-0">
+                <div className="min-w-0 text-left">
                   <div className="truncate text-body font-bold text-ink-secondary">
                     {project.name}
                   </div>
@@ -160,7 +162,7 @@ export default function StudioPage() {
                   </div>
                 </div>
                 <ChevronRight className="h-4 w-4 shrink-0 text-ink-faint group-hover:text-accent" />
-              </button>
+              </Button>
             ))}
           </div>
         ) : (

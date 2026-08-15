@@ -12,6 +12,7 @@ import {
   Send,
   X,
 } from 'lucide-react';
+import Button from '@/components/common/Button';
 import BlogMarkdown from '../BlogMarkdown';
 
 const asArray = (value) => (Array.isArray(value) ? value : []);
@@ -67,65 +68,74 @@ const AgentPreviewPanel = ({
           {versions.length > 0 && (
             <div className="mt-3 flex flex-wrap items-center gap-1.5">
               {versions.map((version) => (
-                <button
+                <Button
                   key={version.id}
                   type="button"
                   onClick={() => onSelectVersion(version.id)}
-                  className={`rounded-lg px-2 py-1 text-xs font-bold transition ${
+                  size="xs"
+                  variant={String(selectedVersion?.id) === String(version.id) ? 'primary' : 'ghost'}
+                  className={`rounded-lg px-2 py-1 font-bold transition ${
                     String(selectedVersion?.id) === String(version.id)
-                      ? 'bg-accent text-white'
-                      : 'bg-surface text-ink-muted hover:bg-accent/10 hover:text-accent'
+                      ? ''
+                      : 'bg-surface hover:bg-accent/10 hover:text-accent'
                   }`}
                   title={version.changeNote || version.createdAt}
                 >
                   V{version.versionNo}
-                </button>
+                </Button>
               ))}
             </div>
           )}
         </div>
         <div className="flex flex-wrap items-center gap-2">
           {task.publishedPostId ? (
-            <button
+            <Button
               type="button"
               onClick={onViewPublished}
-              className="inline-flex items-center gap-2 rounded-xl bg-ink px-3 py-2 text-xs font-black text-white"
+              variant="ink"
+              size="xs"
+              className="inline-flex items-center gap-2 rounded-xl py-2 font-black"
             >
               {t('blog.agent.viewArticle')}
-            </button>
+            </Button>
           ) : (
             task.status === 'ready' && (
               <>
-                {isLatestVersion && <button
+                {isLatestVersion && <Button
                   type="button"
                   onClick={onCreateDraft}
                   disabled={isSavingDraft}
-                  className="inline-flex items-center gap-2 rounded-xl border border-border px-3 py-2 text-xs font-black disabled:opacity-60"
+                  variant="outline"
+                  size="xs"
+                  className="inline-flex items-center gap-2 rounded-xl py-2 font-black disabled:opacity-60"
                 >
                   {isSavingDraft ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <FileText className="h-3.5 w-3.5" />}
                   {t('blog.agent.toDraft')}
-                </button>}
-                <button
+                </Button>}
+                <Button
                   type="button"
                   onClick={onPublish}
                   disabled={isPublishing || !isLatestVersion}
-                  className="inline-flex items-center gap-2 rounded-xl bg-accent px-3 py-2 text-xs font-black text-white disabled:opacity-60"
+                  variant="primary"
+                  size="xs"
+                  className="inline-flex items-center gap-2 rounded-xl py-2 font-black disabled:opacity-60"
                 >
                   {isPublishing ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Send className="h-3.5 w-3.5" />}
                   {t('blog.agent.confirmPublish')}
-                </button>
+                </Button>
               </>
             )
           )}
           {onClose && (
-            <button
+            <Button
               type="button"
               onClick={onClose}
-              className="grid h-9 w-9 place-items-center rounded-xl border border-border text-ink-muted transition hover:bg-surface"
+              variant="outline"
+              size="sm"
+              icon={X}
+              className="grid w-9 place-items-center rounded-xl text-ink-muted transition hover:bg-surface"
               aria-label={t('common.aria.close')}
-            >
-              <X className="h-4 w-4" />
-            </button>
+            />
           )}
         </div>
       </header>
@@ -138,13 +148,15 @@ const AgentPreviewPanel = ({
         )}
 
         <div className="mt-8 border-t border-border pt-4">
-          <button
+          <Button
             type="button"
             onClick={() => setMetaOpen((value) => !value)}
-            className="text-sm font-bold text-ink-secondary transition hover:text-accent"
+            variant="ghost"
+            size="sm"
+            className="font-bold text-ink-secondary transition hover:text-accent"
           >
             {metaOpen ? t('blog.agent.hideMeta') : t('blog.agent.showMeta')}
-          </button>
+          </Button>
 
           {metaOpen && (
             <div className="mt-4 space-y-4">

@@ -80,12 +80,12 @@ function FileTreeNode({ node, depth, isActive, onOpenFile }) {
 
   return (
     <>
-      <button
-        type="button"
+      <Button
         onClick={handleClick}
-        className={`flex w-full items-center gap-1.5 rounded-lg px-2 py-1.5 text-left text-body transition-colors ${
+        variant="ghost"
+        className={`w-full justify-start rounded-lg px-2 py-1.5 text-left text-body transition-colors ${
           isActive && isFile
-            ? 'bg-accent/10 font-bold text-accent'
+            ? 'bg-accent/10 font-bold text-accent hover:bg-accent/10 hover:text-accent'
             : 'text-ink-muted hover:bg-surface-muted'
         } ${!isFile || !isReadable ? 'cursor-default' : 'cursor-pointer'}`}
         style={{ paddingLeft: `${8 + depth * 16}px` }}
@@ -99,7 +99,7 @@ function FileTreeNode({ node, depth, isActive, onOpenFile }) {
         )}
         <Icon className="h-4 w-4 shrink-0 text-ink-faint" />
         <span className="truncate">{node.name}</span>
-      </button>
+      </Button>
 
       {isDir && expanded && node.children?.length > 0 && (
         <FileTreeNodes
@@ -285,15 +285,16 @@ export default function CompilerPage() {
             {visibility === 'public' && (
               <>
                 <div ref={shareMenuRef} className="relative">
-                  <button
-                    type="button"
+                  <Button
                     onClick={() => setIsShareOpen((open) => !open)}
                     aria-expanded={isShareOpen}
                     aria-haspopup="dialog"
-                    className="inline-flex items-center gap-2 rounded-lg border border-border bg-canvas px-3 py-1.5 text-caption font-bold text-ink-muted transition-colors hover:text-accent"
+                    variant="outline"
+                    size="xs"
+                    icon={Link2}
                   >
-                    <Link2 className="h-3.5 w-3.5" /> 分享
-                  </button>
+                    分享
+                  </Button>
                   {isShareOpen ? (
                     <div role="dialog" aria-label="分享项目" className="absolute right-0 top-full z-40 mt-2 w-80 max-w-[calc(100vw-2.5rem)] rounded-xl border border-border bg-canvas p-3 shadow-xl">
                       <div className="mb-2 text-caption font-bold text-ink-secondary">公开源码链接</div>
@@ -377,15 +378,17 @@ export default function CompilerPage() {
       </div>
 
       {/* 构建运行按钮 */}
-      <button
-        type="button"
+      <Button
         disabled={!isReady}
+        loading={!isReady}
         onClick={() => setIsPreviewOpen(true)}
-        className="fixed bottom-6 right-6 z-30 inline-flex items-center justify-center gap-2 rounded-lg bg-accent px-5 py-3 text-body font-black text-white shadow-2xl shadow-accent/30 transition-all hover:-translate-y-0.5 hover:bg-accent-700 disabled:cursor-not-allowed disabled:opacity-40"
+        variant="primary"
+        size="lg"
+        icon={Play}
+        className="fixed bottom-6 right-6 z-30 shadow-2xl shadow-accent/30 hover:-translate-y-0.5"
       >
-        {isReady ? <Play className="h-4 w-4" /> : <Loader2 className="h-4 w-4 animate-spin" />}
         {isReady ? '预览' : '等待构建'}
-      </button>
+      </Button>
 
       {/* 预览弹窗 */}
       {isPreviewOpen && (
@@ -410,14 +413,13 @@ export default function CompilerPage() {
                   <ExternalLink className="h-3.5 w-3.5" />
                   新窗口
                 </a>
-                <button
-                  type="button"
+                <Button
                   onClick={() => setIsPreviewOpen(false)}
-                  className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border text-ink-muted transition-colors hover:bg-surface hover:text-ink"
+                  variant="outline"
+                  size="sm"
+                  icon={X}
                   aria-label="关闭预览"
-                >
-                  <X className="h-4 w-4" />
-                </button>
+                />
               </div>
             </div>
             <div className="relative flex-1">

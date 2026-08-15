@@ -11,6 +11,7 @@ import {
   Upload,
 } from 'lucide-react';
 import LoadingSpinner from '@components/common/LoadingSpinner';
+import Button from '@components/common/Button';
 import { img2threeService } from '../services/img2threeService';
 import { authService } from '@features/auth/services/authService';
 import { useToast } from '@/hooks/useToast';
@@ -368,23 +369,25 @@ const Img2ThreePage = () => {
           <div className="mt-2 max-w-2xl text-body text-ink-secondary">{t('img2three.subtitle')}</div>
         </div>
         <div className="flex flex-wrap gap-2">
-          <button
+          <Button
             type="button"
+            variant="outline"
+            icon={History}
             onClick={handleToggleHistory}
-            className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-border bg-surface px-4 py-2 text-sm font-semibold text-ink-secondary transition hover:border-accent hover:text-accent"
+            className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-surface px-4 py-2 text-sm font-semibold text-ink-secondary transition hover:border-accent hover:text-accent"
           >
-            <History className="h-4 w-4" aria-hidden="true" />
             {t('img2three.history')}
-          </button>
+          </Button>
         {taskId ? (
-          <button
+          <Button
             type="button"
+            variant="outline"
+            icon={ArrowLeft}
             onClick={handleNewTask}
-            className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-border bg-surface px-4 py-2 text-sm font-semibold text-ink-secondary transition hover:border-accent hover:text-accent"
+            className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-surface px-4 py-2 text-sm font-semibold text-ink-secondary transition hover:border-accent hover:text-accent"
           >
-            <ArrowLeft className="h-4 w-4" aria-hidden="true" />
             {t('img2three.newTask')}
-          </button>
+          </Button>
         ) : null}
         </div>
       </div>
@@ -398,18 +401,19 @@ const Img2ThreePage = () => {
           {!historyLoading && historyTasks.length === 0 ? <div className="text-caption text-ink-muted">{t('img2three.historyEmpty')}</div> : null}
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {historyTasks.map((item) => (
-              <button
+              <Button
                 key={item.id}
                 type="button"
+                variant="outline"
                 onClick={() => navigate(`/workspace/img2three/${item.id}`)}
-                className="flex min-w-0 items-center gap-3 rounded-xl border border-border p-3 text-left transition hover:border-accent"
+                className="flex min-w-0 items-center gap-3 rounded-xl p-3 text-left transition hover:border-accent"
               >
                 {item.referenceMediaUrl ? <img src={item.referenceMediaUrl} alt="" className="h-12 w-12 shrink-0 rounded-lg object-cover" /> : null}
                 <span className="min-w-0">
                   <span className="block truncate text-sm font-semibold text-ink">{item.title || t('img2three.untitledTask')}</span>
                   <span className="mt-1 block text-caption text-ink-muted">{t(`img2three.status.${item.status}`, { defaultValue: item.status })}</span>
                 </span>
-              </button>
+              </Button>
             ))}
           </div>
         </section>
@@ -472,15 +476,16 @@ const Img2ThreePage = () => {
 
           <div className="mt-6 flex flex-wrap items-center justify-between gap-4">
             <div className="text-caption text-ink-muted">{t('img2three.loginRequired')}</div>
-            <button
+            <Button
               type="button"
+              size="lg"
               disabled={!selectedFile || isBusy}
               onClick={handleGenerate}
-              className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-accent px-5 py-2.5 text-sm font-bold text-white transition hover:bg-accent-fg disabled:cursor-not-allowed disabled:opacity-60"
+              className="inline-flex items-center gap-2 rounded-xl py-2.5 text-sm font-bold transition hover:bg-accent-fg disabled:cursor-not-allowed disabled:opacity-60"
             >
               {isBusy ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> : <Sparkles className="h-4 w-4" aria-hidden="true" />}
               {isBusy ? t('img2three.generating') : t('img2three.generate')}
-            </button>
+            </Button>
           </div>
         </section>
       ) : null}
@@ -512,31 +517,33 @@ const Img2ThreePage = () => {
               <div className="mt-1 text-caption text-ink-muted">{t('img2three.ready')}</div>
             </div>
             <div className="flex flex-wrap gap-2">
-              <button
+              <Button
                 type="button"
+                variant="outline"
+                icon={Download}
                 onClick={handleDownloadSpec}
-                className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-border bg-surface px-4 py-2 text-sm font-semibold text-ink-secondary transition hover:border-accent hover:text-accent"
+                className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-surface px-4 py-2 text-sm font-semibold text-ink-secondary transition hover:border-accent hover:text-accent"
               >
-                <Download className="h-4 w-4" aria-hidden="true" />
                 {t('img2three.downloadSpec')}
-              </button>
-              <button
+              </Button>
+              <Button
                 type="button"
+                variant="outline"
+                icon={Download}
                 onClick={handleDownloadFactory}
-                className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-border bg-surface px-4 py-2 text-sm font-semibold text-ink-secondary transition hover:border-accent hover:text-accent"
+                className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-surface px-4 py-2 text-sm font-semibold text-ink-secondary transition hover:border-accent hover:text-accent"
               >
-                <Download className="h-4 w-4" aria-hidden="true" />
                 {t('img2three.downloadFactory')}
-              </button>
-              <button
+              </Button>
+              <Button
                 type="button"
-                onClick={handleDownloadGlb}
                 disabled={exportingGlb || !viewerReady}
-                className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-accent px-4 py-2 text-sm font-bold text-white transition hover:bg-accent-fg disabled:cursor-not-allowed disabled:opacity-60"
+                onClick={handleDownloadGlb}
+                className="inline-flex min-h-11 items-center gap-2 rounded-xl px-4 py-2 text-sm font-bold transition hover:bg-accent-fg disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {exportingGlb ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> : <Download className="h-4 w-4" aria-hidden="true" />}
                 {exportingGlb ? t('img2three.exportingGlb') : t('img2three.downloadGlb')}
-              </button>
+              </Button>
             </div>
           </div>
 

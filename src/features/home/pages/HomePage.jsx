@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { ArrowRight, CalendarClock, Code2, Mail, Send, Share2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import Button from '@/components/common/Button';
 import styles from './HomePage.module.css';
 
 const featureDefinitions = [
@@ -35,7 +36,7 @@ function DemoPreview() {
   const { t } = useTranslation();
   return <div className={styles.demoPreview} aria-hidden="true">
     <div className={styles.previewBar}><span>{t('home.previews.demo.preview')}</span><span>{t('home.previews.demo.code')}</span><Share2 size={15} /></div>
-    <div className={styles.demoBody}><div className={styles.demoControls}><span>{t('home.previews.demo.button')}</span><button type="button">{t('home.previews.demo.primary')}</button><button type="button">{t('home.previews.demo.secondary')}</button><button type="button">{t('home.previews.demo.ghost')}</button></div><pre>{`export function Button({ variant }) {\n  return <button className={variant}>\n    {children}\n  </button>\n}`}</pre></div>
+    <div className={styles.demoBody}><div className={styles.demoControls}><span>{t('home.previews.demo.button')}</span><Button type="button" variant="primary">{t('home.previews.demo.primary')}</Button><Button type="button" variant="outline">{t('home.previews.demo.secondary')}</Button><Button type="button" variant="ghost">{t('home.previews.demo.ghost')}</Button></div><pre>{`export function Button({ variant }) {\n  return <button className={variant}>\n    {children}\n  </button>\n}`}</pre></div>
   </div>;
 }
 

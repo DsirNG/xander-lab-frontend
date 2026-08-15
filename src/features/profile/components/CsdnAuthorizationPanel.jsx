@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 import Modal from '@components/common/Modal'
 import { useToast } from '@hooks/useToast'
 import { csdnService } from '../services/mcpService'
+import Button from '@components/common/Button'
 
 /** User-facing CSDN QR authorization flow backed by one short-lived Selenium session. */
 const QR_EXPIRY_BUFFER_SECONDS = 5
@@ -235,27 +236,31 @@ const CsdnAuthorizationPanel = () => {
       )}
 
       {!loading && !authorized && state !== 'UNAVAILABLE' && (
-        <button
+        <Button
           type="button"
           onClick={start}
           disabled={busy}
-          className="mt-4 inline-flex min-h-11 items-center gap-2 rounded-lg bg-accent px-4 py-2.5 text-sm font-bold text-white hover:bg-accent/90 disabled:opacity-50"
+          size="lg"
+          variant="primary"
+          className="mt-4 inline-flex items-center gap-2 rounded-lg py-2.5 text-sm font-bold disabled:opacity-50"
         >
           {busy ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <QrCode className="h-4 w-4" />}
           {expired ? t('profile.csdn.reauthorize') : t('profile.csdn.connect')}
-        </button>
+        </Button>
       )}
 
       {!loading && (authorized || expired) && (
-        <button
+        <Button
           type="button"
           onClick={disconnect}
           disabled={busy}
-          className="mt-4 inline-flex min-h-11 items-center gap-2 rounded-lg border border-border px-4 py-2.5 text-sm font-bold text-ink-muted hover:bg-canvas disabled:opacity-50"
+          size="lg"
+          variant="outline"
+          className="mt-4 inline-flex items-center gap-2 rounded-lg py-2.5 text-sm font-bold text-ink-muted hover:bg-canvas disabled:opacity-50"
         >
           {busy ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <Unplug className="h-4 w-4" />}
           {t('profile.csdn.disconnect')}
-        </button>
+        </Button>
       )}
 
       {!loading && state === 'UNAVAILABLE' && (

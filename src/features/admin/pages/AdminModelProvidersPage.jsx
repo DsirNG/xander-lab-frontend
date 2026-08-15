@@ -4,6 +4,7 @@ import { KeyRound, Pencil, Plus, Server, Trash2 } from 'lucide-react';
 import DataTable from '@components/common/DataTable';
 import RowActionsMenu from '@components/common/RowActionsMenu';
 import ConfirmModal from '@components/common/ConfirmModal';
+import Button from '@components/common/Button';
 import { useToast } from '@/hooks/useToast';
 import { adminService } from '../services/adminService';
 import ProviderFormModal from '../components/ProviderFormModal';
@@ -175,14 +176,16 @@ const AdminModelProvidersPage = () => {
             </h1>
             <p className="mt-1 text-xs text-ink-muted">{t('admin.providers.subtitle')}</p>
           </div>
-          <button
+          <Button
             type="button"
             onClick={openCreate}
-            className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-ink px-4 text-xs font-bold text-white transition hover:bg-accent active:scale-95"
+            variant="ink"
+            size="sm"
+            icon={Plus}
+            className="inline-flex items-center gap-1.5 rounded-lg px-4 text-xs font-bold transition hover:bg-accent active:scale-95"
           >
-            <Plus className="h-3.5 w-3.5" aria-hidden="true" />
             {t('admin.providers.add')}
-          </button>
+          </Button>
         </div>
 
         <div className="flex min-h-0 flex-1 flex-col">

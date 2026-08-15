@@ -1,10 +1,11 @@
-﻿import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
     Code2, Edit3, Eye, FileCode2, Heading1, Heading2, ImagePlus, Info, List, ListTodo, Minus, Quote, Table2, Type
 } from 'lucide-react';
 import { useToast } from '@/hooks/useToast';
 import useIsMobile from '@hooks/useIsMobile';
+import Button from '@/components/common/Button';
 import BlogMarkdown from './BlogMarkdown';
 import BlogImageLibraryModal from './BlogImageLibraryModal';
 
@@ -181,39 +182,43 @@ const PublishEditor = forwardRef(({ isPreview, onEditMode, onPreviewMode, title,
     };
 
     const toolItemClass = useCallback((isActive) => (
-        `flex h-8 w-8 shrink-0 items-center justify-center rounded-lg transition ${isActive ? 'bg-accent/10 text-accent' : 'text-ink-muted hover:bg-accent/10 hover:text-accent disabled:cursor-not-allowed disabled:opacity-40'}`
+        `flex w-8 px-0 shrink-0 items-center justify-center rounded-lg transition ${isActive ? 'bg-accent/10 text-accent' : 'hover:bg-accent/10 hover:text-accent disabled:cursor-not-allowed disabled:opacity-40'}`
     ), []);
 
     const renderToolbar = () => (
         <div className="flex flex-wrap items-center gap-1">
             {formatActions.map(({ key, icon: Icon, prefix, code }) => (
-                <button
+                <Button
                     key={key}
                     type="button"
-title={t(`blog.editor.${key}`)}
+                    title={t(`blog.editor.${key}`)}
                     aria-label={t(`blog.editor.${key}`)}
                     disabled={disabled}
                     onMouseDown={prepareToolbarAction}
                     onClick={() => (code ? applyCodeFormat() : applyLineFormat(prefix))}
+                    variant="ghost"
+                    size="xs"
                     className={toolItemClass(false)}
                 >
                     <Icon className="h-4 w-4 shrink-0" />
-                </button>
+                </Button>
             ))}
             <span className="mx-1 h-5 w-px bg-border" />
             {insertActions.map(({ key, icon: Icon, markdown, cursorBack, image }) => (
-                <button
+                <Button
                     key={key}
                     type="button"
-title={t(`blog.editor.${key}`)}
+                    title={t(`blog.editor.${key}`)}
                     aria-label={t(`blog.editor.${key}`)}
                     disabled={disabled}
                     onMouseDown={prepareToolbarAction}
                     onClick={() => (image ? openImageLibrary() : insertAtSelection(markdown, cursorBack))}
+                    variant="ghost"
+                    size="xs"
                     className={toolItemClass(false)}
                 >
                     <Icon className="h-4 w-4 shrink-0" />
-                </button>
+                </Button>
             ))}
         </div>
     );
@@ -279,20 +284,24 @@ title={t(`blog.editor.${key}`)}
                         className="min-w-0 flex-1 resize-none overflow-hidden border-none bg-transparent text-xl font-semibold text-ink outline-none placeholder:text-ink-faint sm:text-2xl"
                     />
                     {isMobile && <div className="flex shrink-0 bg-surface-muted p-1 rounded-lg border border-border">
-                        <button
+                        <Button
                             onClick={onEditMode}
                             title={t('blog.edit', 'Edit')}
-                            className={`flex h-11 w-11 items-center justify-center rounded-md transition-colors ${!isPreview ? 'bg-canvas text-accent shadow-sm' : 'text-ink-muted'}`}
+                            variant="ghost"
+                            size="lg"
+                            className={`flex w-11 px-0 items-center justify-center rounded-md transition-colors ${!isPreview ? 'bg-canvas text-accent shadow-sm' : ''}`}
                         >
                             <Edit3 className="w-5 h-5" />
-                        </button>
-                        <button
+                        </Button>
+                        <Button
                             onClick={onPreviewMode}
                             title={t('blog.preview', 'Preview')}
-                            className={`flex h-11 w-11 items-center justify-center rounded-md transition-colors ${isPreview ? 'bg-canvas text-accent shadow-sm' : 'text-ink-muted'}`}
+                            variant="ghost"
+                            size="lg"
+                            className={`flex w-11 px-0 items-center justify-center rounded-md transition-colors ${isPreview ? 'bg-canvas text-accent shadow-sm' : ''}`}
                         >
                             <Eye className="w-5 h-5" />
-                        </button>
+                        </Button>
                     </div>}
                 </div>
                 <div className="min-h-0 flex-1">

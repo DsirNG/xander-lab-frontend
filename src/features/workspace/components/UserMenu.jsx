@@ -5,6 +5,7 @@ import { useAuthSession } from '@features/auth/context/authSessionContextValue';
 import { authService } from '@features/auth/services/authService';
 import { pointsService } from '@features/profile/services/pointsService';
 import { useToast } from '@hooks/useToast';
+import Button from '@components/common/Button';
 
 const getDisplayName = (userInfo) => userInfo?.nickname || userInfo?.username || '';
 
@@ -56,10 +57,11 @@ const UserMenu = ({ onOpenSettings }) => {
 
   return (
     <div className="relative" ref={boxRef}>
-      <button
-        type="button"
+      <Button
         onClick={() => setOpen((current) => !current)}
-        className="flex min-h-11 items-center gap-1.5 rounded-xl px-1.5 py-1 transition hover:bg-surface-muted focus:outline-none focus:ring-2 focus:ring-accent-200 sm:gap-2"
+        variant="ghost"
+        size="lg"
+        className="px-1.5 py-1 sm:gap-2"
         aria-expanded={open}
         aria-haspopup="menu"
         aria-label={t('workspace.userMenu')}
@@ -82,7 +84,7 @@ const UserMenu = ({ onOpenSettings }) => {
           </span>
         </span>
         <ChevronDown className={`hidden h-3.5 w-3.5 text-ink-faint transition-transform min-[420px]:block ${open ? 'rotate-180' : ''}`} />
-      </button>
+      </Button>
 
       {open ? (
         <div
@@ -142,25 +144,29 @@ const UserMenu = ({ onOpenSettings }) => {
           </div>
 
           <div className="border-t border-border p-1.5">
-            <button
-              type="button"
+            <Button
               role="menuitem"
               onClick={() => { setOpen(false); onOpenSettings?.(); }}
-              className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-semibold text-ink-secondary transition hover:bg-surface-muted hover:text-ink"
+              variant="ghost"
+              size="xs"
+              block
+              icon={Settings2}
+              className="justify-start text-ink-secondary"
             >
-              <Settings2 className="h-3.5 w-3.5" aria-hidden="true" />
               {t('workspace.settings')}
-            </button>
-            <button
-              type="button"
+            </Button>
+            <Button
               role="menuitem"
               onClick={handleLogout}
-              disabled={loggingOut}
-              className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-semibold text-ink-muted transition hover:bg-danger-soft hover:text-danger disabled:opacity-60"
+              loading={loggingOut}
+              variant="ghost"
+              size="xs"
+              block
+              icon={LogOut}
+              className="justify-start hover:bg-danger-soft hover:text-danger"
             >
-              {loggingOut ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <LogOut className="h-3.5 w-3.5" aria-hidden="true" />}
               {t('nav.logout')}
-            </button>
+            </Button>
           </div>
         </div>
       ) : null}

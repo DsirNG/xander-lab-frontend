@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Ban, CalendarClock, Eye, Pause, Pencil, Play, Plus, Sparkles, Trash2, Zap } from 'lucide-react';
 import DataTable from '@components/common/DataTable';
 import RowActionsMenu from '@components/common/RowActionsMenu';
+import Button from '@components/common/Button';
 import { blogPlanService, PLAN_STATUS } from '../services/blogPlanService';
 import { useToast } from '@/hooks/useToast';
 import { usePlanActions } from '../hooks/usePlanActions';
@@ -182,18 +183,19 @@ const BlogPlans = () => {
           <div className="mt-1 text-sm text-ink-faint">{t('blogPlans.subtitle')}</div>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <button
+          <Button
             onClick={() => setAiOpen(true)}
-            className="inline-flex min-h-11 items-center gap-1.5 rounded-xl border border-border px-4 py-2 text-sm font-bold text-ink-secondary hover:bg-surface-muted"
+            variant="outline"
           >
             <Sparkles className="w-4 h-4 text-accent" /> {t('blogPlans.aiGenerate')}
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={openCreate}
-            className="inline-flex min-h-11 items-center gap-1.5 rounded-xl bg-accent px-4 py-2 text-sm font-bold text-white hover:opacity-90"
+            icon={Plus}
+            variant="primary"
           >
-            <Plus className="w-4 h-4" /> {t('blogPlans.createCustom')}
-          </button>
+            {t('blogPlans.createCustom')}
+          </Button>
         </div>
       </div>
 

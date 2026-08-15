@@ -18,6 +18,7 @@ import ConfirmModal from '@components/common/ConfirmModal';
 import CustomSelect from '@components/common/CustomSelect';
 import DataTable from '@components/common/DataTable';
 import RowActionsMenu from '@components/common/RowActionsMenu';
+import Button from '@components/common/Button';
 import { useToast } from '@hooks/useToast';
 import { blogService, BLOG_STATUS } from '@features/blog/services/blogService';
 import CsdnSyncDialog from './CsdnSyncDialog';
@@ -195,29 +196,24 @@ const BlogManagePanel = () => {
                             className="h-9 w-full rounded-xl bg-surface pl-9 pr-3 text-sm font-medium text-ink outline-none transition placeholder:text-ink-faint focus:bg-canvas focus:ring-4 focus:ring-accent/15 sm:w-56"
                         />
                     </div>
-                    <button
-                        type="button"
+                    <Button
                         onClick={() => {
                             setTrashMode((current) => !current);
                             setPage(1);
                         }}
-                        className={`inline-flex min-h-9 items-center justify-center gap-1.5 rounded-xl px-3.5 py-1.5 text-sm font-semibold transition ${
-                            trashMode
-                                ? 'bg-accent-soft text-ink'
-                                : 'bg-surface text-ink-muted hover:bg-surface-muted hover:text-ink-secondary'
-                        }`}
+                        icon={Trash2}
+                        variant={trashMode ? 'primary' : 'ghost'}
+                        className={trashMode ? 'bg-accent-soft text-ink' : ''}
                     >
-                        <Trash2 className="h-3.5 w-3.5" />
                         {t('profile.blogManage.tabs.trash')}
-                    </button>
-                    <button
-                        type="button"
+                    </Button>
+                    <Button
                         onClick={() => navigate('/workspace/publish')}
-                        className="inline-flex min-h-9 items-center justify-center gap-1.5 rounded-xl bg-ink px-3.5 py-1.5 text-sm font-semibold text-white transition hover:bg-accent"
+                        icon={Plus}
+                        variant="primary"
                     >
-                        <Plus className="h-3.5 w-3.5" />
                         {t('profile.blogManage.createNew')}
-                    </button>
+                    </Button>
                 </div>
             </div>
 

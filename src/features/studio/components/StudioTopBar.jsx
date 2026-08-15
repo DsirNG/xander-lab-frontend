@@ -7,6 +7,7 @@
 import React from 'react';
 import { ArrowLeft } from 'lucide-react';
 import useBack from '@/hooks/useBack';
+import Button from '@components/common/Button';
 
 const DEFAULT_BACK_LABEL = '返回 Studio';
 
@@ -22,28 +23,28 @@ export default function StudioTopBar({
   return (
     <div className="flex shrink-0 flex-wrap items-center justify-between gap-x-3 gap-y-2 border-b border-border bg-canvas px-4 py-3 sm:px-6">
       <div className="flex min-w-0 items-center gap-3">
-        <button
-          type="button"
+        <Button
           onClick={handleBack}
           title={backLabel}
           aria-label={backLabel}
-          className="shrink-0 rounded-lg transition-opacity hover:opacity-80"
+          variant="ghost"
+          className="h-auto w-auto p-0 hover:bg-transparent hover:opacity-80"
         >
           <img
             src="/logo-512.png"
             alt="Xander Lab"
             className="h-8 w-8 rounded-lg object-cover"
           />
-        </button>
+        </Button>
         {showBack && (
-          <button
-            type="button"
+          <Button
             onClick={handleBack}
-            className="inline-flex shrink-0 items-center gap-2 text-caption font-bold text-ink-faint transition-colors hover:text-accent"
+            variant="ghost"
+            className="h-auto p-0 hover:bg-transparent text-ink-faint hover:text-accent"
+            icon={ArrowLeft}
           >
-            <ArrowLeft className="h-3.5 w-3.5" />
             {backLabel}
-          </button>
+          </Button>
         )}
         <div className="h-5 w-px shrink-0 bg-border" />
         {title && <div className="min-w-0 flex-1 truncate">{title}</div>}

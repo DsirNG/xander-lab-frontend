@@ -20,6 +20,7 @@ import {
     buildReminderPreviewHtml,
     resolveContentType,
 } from '../utils/emailReminderTemplates';
+import Button from '@components/common/Button';
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PREVIEW_MIN_HEIGHT = 240;
@@ -334,14 +335,15 @@ const EmailReminderCreateModal = ({ isOpen, onClose, onCreated }) => {
                             {t('profile.emailReminders.addTitle')}
                         </div>
                     </div>
-                    <button
+                    <Button
                         type="button"
                         onClick={handleClose}
-                        className="rounded-full p-1.5 text-ink-faint transition hover:bg-surface-muted hover:text-ink-muted"
+                        variant="ghost"
+                        className="rounded-full p-1.5 text-ink-faint transition hover:text-ink-muted"
                         aria-label={t('common.aria.close', 'Close')}
                     >
                         <X className="h-4 w-4" />
-                    </button>
+                    </Button>
                 </header>
 
                 <form className="flex min-h-0 flex-1 flex-col" onSubmit={handleCreate}>
@@ -399,14 +401,15 @@ const EmailReminderCreateModal = ({ isOpen, onClose, onCreated }) => {
                                                 <span className="ml-0.5 text-danger">*</span>
                                             </span>
                                             <div className="flex items-center gap-2">
-                                                <button
+                                                <Button
                                                     type="button"
                                                     onClick={() => setIsTemplatePickerOpen(true)}
-                                                    className="inline-flex items-center gap-1 rounded-md border border-border bg-canvas px-2 py-1 text-micro font-bold text-ink-muted transition hover:border-accent/40 hover:text-accent"
+                                                    variant="outline"
+                                                    className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-micro font-bold text-ink-muted transition hover:border-accent/40 hover:text-accent"
                                                 >
                                                     <LayoutTemplate className="h-3 w-3" />
                                                     {t('profile.emailReminders.selectTemplate')}
-                                                </button>
+                                                </Button>
                                             </div>
                                         </div>
                                         <textarea
@@ -518,18 +521,20 @@ const EmailReminderCreateModal = ({ isOpen, onClose, onCreated }) => {
                                             {FREQUENCIES.map((item) => {
                                                 const active = form.frequency === item;
                                                 return (
-                                                    <button
+                                                    <Button
                                                         key={item}
                                                         type="button"
                                                         onClick={() => setFrequency(item)}
-                                                        className={`flex min-h-11 items-center rounded-lg border px-3 py-2 text-caption font-bold transition ${
+                                                        size="lg"
+                                                        variant={active ? 'primary' : 'outline'}
+                                                        className={`flex items-center rounded-lg py-2 text-caption font-bold transition ${
                                                             active
-                                                                ? 'border-accent bg-accent text-white'
-                                                                : 'border-border bg-canvas text-ink-muted hover:border-accent/30 hover:text-accent'
+                                                                ? ''
+                                                                : 'text-ink-muted hover:border-accent/30 hover:text-accent'
                                                         }`}
                                                     >
                                                         {t(`profile.emailReminders.frequencies.${item.toLowerCase()}`)}
-                                                    </button>
+                                                    </Button>
                                                 );
                                             })}
                                         </div>
@@ -608,18 +613,22 @@ const EmailReminderCreateModal = ({ isOpen, onClose, onCreated }) => {
                     </div>
 
                     <footer className="flex shrink-0 items-center justify-end gap-2 border-t border-border bg-canvas px-5 py-3">
-                        <button
+                        <Button
                             type="button"
                             onClick={handleClose}
                             disabled={isCreating}
-                            className="min-h-11 rounded-lg border border-border px-4 text-xs font-bold text-ink-muted transition hover:bg-surface disabled:opacity-60"
+                            size="lg"
+                            variant="outline"
+                            className="rounded-lg text-xs font-bold text-ink-muted transition hover:bg-surface disabled:opacity-60"
                         >
                             {t('profile.emailReminders.cancelDelete')}
-                        </button>
-                        <button
+                        </Button>
+                        <Button
                             type="submit"
                             disabled={isCreating}
-                            className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-lg bg-accent px-4 text-xs font-bold text-white shadow-sm shadow-accent/20 transition hover:brightness-105 disabled:cursor-wait disabled:opacity-60"
+                            size="lg"
+                            variant="primary"
+                            className="inline-flex items-center justify-center gap-1.5 rounded-lg text-xs font-bold shadow-sm shadow-accent/20 transition hover:brightness-105 disabled:cursor-wait disabled:opacity-60"
                         >
                             {isCreating
                                 ? <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -627,7 +636,7 @@ const EmailReminderCreateModal = ({ isOpen, onClose, onCreated }) => {
                             {isCreating
                                 ? t('profile.emailReminders.creating')
                                 : t('profile.emailReminders.createAndSave')}
-                        </button>
+                        </Button>
                     </footer>
                 </form>
             </div>
@@ -654,22 +663,24 @@ const EmailReminderCreateModal = ({ isOpen, onClose, onCreated }) => {
                                     {t('profile.emailReminders.templatePickerHint')}
                                 </div>
                             </div>
-                            <button
+                            <Button
                                 type="button"
                                 onClick={() => setIsTemplatePickerOpen(false)}
-                                className="rounded-full p-1.5 text-ink-faint transition hover:bg-surface-muted hover:text-ink-muted"
+                                variant="ghost"
+                                className="rounded-full p-1.5 text-ink-faint transition hover:text-ink-muted"
                                 aria-label={t('common.aria.close', 'Close')}
                             >
                                 <X className="h-4 w-4" />
-                            </button>
+                            </Button>
                         </header>
                         <div className="min-h-0 flex-1 overflow-x-auto overflow-y-hidden p-4">
                             <div className="flex min-w-max gap-3 lg:min-w-0 lg:w-full">
                                 {templateCards.map((card) => (
-                                    <button
+                                    <Button
                                         key={card.id}
                                         type="button"
                                         onClick={() => applyTemplate(card.id)}
+                                        variant="ghost"
                                         className={`w-[220px] shrink-0 overflow-hidden rounded-xl text-left transition hover:bg-surface-muted hover:shadow-md lg:w-0 lg:min-w-0 lg:flex-1 ${
                                             form.templateId === card.id
                                                 ? 'bg-accent-soft text-ink'
@@ -702,7 +713,7 @@ const EmailReminderCreateModal = ({ isOpen, onClose, onCreated }) => {
                                                 }}
                                             />
                                         </div>
-                                    </button>
+                                    </Button>
                                 ))}
                             </div>
                         </div>

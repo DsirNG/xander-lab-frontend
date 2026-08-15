@@ -3,6 +3,7 @@ import { Check, ImageIcon, Loader2, Search, Upload } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { get, upload } from '@api/http';
 import Modal from '@/components/common/Modal';
+import Button from '@/components/common/Button';
 import { useToast } from '@/hooks/useToast';
 
 const MAX_IMAGE_SIZE = 10 * 1024 * 1024;
@@ -84,21 +85,25 @@ const BlogImageLibraryModal = ({ isOpen, onClose, onInsert }) => {
                 {selected ? t('blog.media.selectedCount', { count: 1 }) : t('blog.media.selectedCount', { count: 0 })}
             </span>
             <div className="flex items-center gap-3">
-                <button
+                <Button
                     type="button"
                     onClick={onClose}
-                    className="rounded-xl border border-border bg-canvas px-5 py-2.5 text-sm font-bold text-ink-secondary transition hover:bg-surface"
+                    variant="outline"
+                    size="sm"
+                    className="rounded-xl bg-canvas px-5 py-2.5 font-bold text-ink-secondary transition hover:bg-surface"
                 >
                     {t('blog.media.cancel')}
-                </button>
-                <button
+                </Button>
+                <Button
                     type="button"
                     disabled={!selected}
                     onClick={() => onInsert(selected)}
-                    className="rounded-xl bg-accent px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-accent/20 transition hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-40"
+                    variant="primary"
+                    size="sm"
+                    className="rounded-xl px-5 py-2.5 font-bold shadow-lg shadow-accent/20 transition hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-40"
                 >
                     {t('blog.media.insertAtCursor')}
-                </button>
+                </Button>
             </div>
         </div>
     );
@@ -123,15 +128,17 @@ const BlogImageLibraryModal = ({ isOpen, onClose, onInsert }) => {
                             className="h-11 w-full rounded-xl border border-border bg-canvas pl-10 pr-4 text-sm font-medium text-ink-secondary outline-none transition focus:border-accent focus:ring-4 focus:ring-accent/10"
                         />
                     </label>
-                    <button
+                    <Button
                         type="button"
                         disabled={uploading}
                         onClick={() => fileInputRef.current?.click()}
-                        className="flex h-11 items-center justify-center gap-2 rounded-xl bg-accent px-5 text-sm font-bold text-white shadow-lg shadow-accent/20 transition hover:brightness-105 disabled:opacity-60"
+                        variant="primary"
+                        size="lg"
+                        className="flex items-center justify-center gap-2 rounded-xl px-5 text-sm font-bold shadow-lg shadow-accent/20 transition hover:brightness-105 disabled:opacity-60"
                     >
                         {uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
                         {uploading ? t('blog.media.uploadingImage') : t('blog.media.uploadImage')}
-                    </button>
+                    </Button>
                     <input
                         ref={fileInputRef}
                         type="file"
@@ -146,14 +153,16 @@ const BlogImageLibraryModal = ({ isOpen, onClose, onInsert }) => {
 
                 <div className="flex overflow-x-auto border-b border-border scrollbar-none">
                     {scopes.map((item) => (
-                        <button
+                        <Button
                             key={item}
                             type="button"
                             onClick={() => setScope(item)}
-                            className={`shrink-0 whitespace-nowrap border-b-2 px-4 py-2.5 text-sm font-bold transition ${scope === item ? 'border-accent text-accent' : 'border-transparent text-ink-muted hover:text-ink'}`}
+                            variant="ghost"
+                            size="sm"
+                            className={`shrink-0 whitespace-nowrap border-b-2 px-4 py-2.5 font-bold transition ${scope === item ? 'border-accent text-accent' : 'border-transparent hover:text-ink'}`}
                         >
                             {t(`blog.media.scopes.${item}`)}
-                        </button>
+                        </Button>
                     ))}
                 </div>
 
@@ -168,10 +177,11 @@ const BlogImageLibraryModal = ({ isOpen, onClose, onInsert }) => {
                                 {images.map((image) => {
                                     const active = selected?.id === image.id;
                                     return (
-                                        <button
+                                        <Button
                                             key={image.id}
                                             type="button"
                                             onClick={() => setSelected(image)}
+                                            variant="ghost"
                                             className={`group relative overflow-hidden rounded-xl border-2 bg-surface text-left transition ${active ? 'border-accent ring-4 ring-accent/10' : 'border-transparent hover:border-border-strong'}`}
                                         >
                                             <img
@@ -188,7 +198,7 @@ const BlogImageLibraryModal = ({ isOpen, onClose, onInsert }) => {
                                                     <Check className="h-4 w-4" />
                                                 </span>
                                             )}
-                                        </button>
+                                        </Button>
                                     );
                                 })}
                             </div>
