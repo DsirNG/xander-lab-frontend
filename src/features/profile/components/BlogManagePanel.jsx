@@ -162,63 +162,63 @@ const BlogManagePanel = () => {
 
     return (
         <div className="flex h-full min-h-0 flex-col">
-            <div className="flex shrink-0 flex-col gap-1 px-4 py-4 px-ultra-tight sm:px-6">
+            <div className="flex shrink-0 flex-col gap-3 px-4 py-4 px-ultra-tight sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:px-6">
                 <div className="min-w-0">
                     <div className="text-base font-bold text-ink">{t('profile.blogManage.title')}</div>
                     <div className="mt-0.5 text-caption font-medium text-ink-faint">
                         {t('profile.blogManage.description')}
                     </div>
                 </div>
-            </div>
 
-            <div className="flex shrink-0 flex-col gap-2 px-4 py-3 px-ultra-tight sm:flex-row sm:items-center sm:justify-end sm:px-6">
-                <div className={`w-full sm:w-32 ${trashMode ? 'pointer-events-none opacity-50' : ''}`}>
-                    <CustomSelect
-                        size="sm"
-                        value={tab}
-                        options={FILTERS.map((item) => ({
-                            value: item.id,
-                            label: t(`profile.blogManage.tabs.${item.id}`),
-                        }))}
-                        onChange={(value) => {
-                            setTrashMode(false);
-                            setTab(value);
+                <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center sm:justify-end sm:gap-2">
+                    <div className={`w-full sm:w-32 ${trashMode ? 'pointer-events-none opacity-50' : ''}`}>
+                        <CustomSelect
+                            size="sm"
+                            value={tab}
+                            options={FILTERS.map((item) => ({
+                                value: item.id,
+                                label: t(`profile.blogManage.tabs.${item.id}`),
+                            }))}
+                            onChange={(value) => {
+                                setTrashMode(false);
+                                setTab(value);
+                                setPage(1);
+                            }}
+                        />
+                    </div>
+                    <div className="relative min-w-0 flex-1 sm:flex-none">
+                        <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-ink-faint" />
+                        <input
+                            value={searchInput}
+                            onChange={(e) => setSearchInput(e.target.value)}
+                            placeholder={t('profile.blogManage.searchPlaceholder')}
+                            className="h-9 w-full rounded-xl bg-surface pl-9 pr-3 text-sm font-medium text-ink outline-none transition placeholder:text-ink-faint focus:bg-canvas focus:ring-4 focus:ring-accent/15 sm:w-56"
+                        />
+                    </div>
+                    <button
+                        type="button"
+                        onClick={() => {
+                            setTrashMode((current) => !current);
                             setPage(1);
                         }}
-                    />
+                        className={`inline-flex min-h-9 items-center justify-center gap-1.5 rounded-xl px-3.5 py-1.5 text-sm font-semibold transition ${
+                            trashMode
+                                ? 'bg-accent-soft text-ink'
+                                : 'bg-surface text-ink-muted hover:bg-surface-muted hover:text-ink-secondary'
+                        }`}
+                    >
+                        <Trash2 className="h-3.5 w-3.5" />
+                        {t('profile.blogManage.tabs.trash')}
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => navigate('/workspace/publish')}
+                        className="inline-flex min-h-9 items-center justify-center gap-1.5 rounded-xl bg-ink px-3.5 py-1.5 text-sm font-semibold text-white transition hover:bg-accent"
+                    >
+                        <Plus className="h-3.5 w-3.5" />
+                        {t('profile.blogManage.createNew')}
+                    </button>
                 </div>
-                <div className="relative min-w-0 flex-1 sm:flex-none">
-                    <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-ink-faint" />
-                    <input
-                        value={searchInput}
-                        onChange={(e) => setSearchInput(e.target.value)}
-                        placeholder={t('profile.blogManage.searchPlaceholder')}
-                        className="h-9 w-full rounded-xl bg-surface pl-9 pr-3 text-sm font-medium text-ink outline-none transition placeholder:text-ink-faint focus:bg-canvas focus:ring-4 focus:ring-accent/15 sm:w-56"
-                    />
-                </div>
-                <button
-                    type="button"
-                    onClick={() => {
-                        setTrashMode((current) => !current);
-                        setPage(1);
-                    }}
-                    className={`inline-flex min-h-9 items-center justify-center gap-1.5 rounded-xl px-3.5 py-1.5 text-sm font-semibold transition ${
-                        trashMode
-                            ? 'bg-accent-soft text-ink'
-                            : 'bg-surface text-ink-muted hover:bg-surface-muted hover:text-ink-secondary'
-                    }`}
-                >
-                    <Trash2 className="h-3.5 w-3.5" />
-                    {t('profile.blogManage.tabs.trash')}
-                </button>
-                <button
-                    type="button"
-                    onClick={() => navigate('/workspace/publish')}
-                    className="inline-flex min-h-9 items-center justify-center gap-1.5 rounded-xl bg-ink px-3.5 py-1.5 text-sm font-semibold text-white transition hover:bg-accent"
-                >
-                    <Plus className="h-3.5 w-3.5" />
-                    {t('profile.blogManage.createNew')}
-                </button>
             </div>
 
             <div className="flex min-h-0 min-w-0 flex-1 flex-col px-4 py-3 px-ultra-tight sm:px-6">
