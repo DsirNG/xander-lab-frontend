@@ -7,7 +7,7 @@
  */
 
 import React from 'react';
-import { createBrowserRouter, Navigate } from 'react-router-dom';
+import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom';
 
 // Layouts (始终需要，保持静态导入)
 import MainLayout from '@components/layouts/MainLayout';
@@ -41,6 +41,10 @@ const Img2ThreePage = React.lazy(() => import('@features/img2three/pages/Img2Thr
 const WorkspaceLayout = React.lazy(() => import('@features/workspace/WorkspaceLayout'));
 const BlogManagePage = React.lazy(() => import('@features/workspace/pages/BlogManagePage'));
 const EmailRemindersPage = React.lazy(() => import('@features/workspace/pages/EmailRemindersPage'));
+const AdminUsersPage = React.lazy(() => import('@features/admin/pages/AdminUsersPage'));
+const AdminModelProvidersPage = React.lazy(() => import('@features/admin/pages/AdminModelProvidersPage'));
+const AdminFeatureModelConfigsPage = React.lazy(() => import('@features/admin/pages/AdminFeatureModelConfigsPage'));
+const RequireAdmin = React.lazy(() => import('@features/admin/components/RequireAdmin'));
 
 // 配置数据
 import { getModuleConfig } from '@features/modules/constants';
@@ -180,6 +184,29 @@ export const createRouter = () => {
         {
           path: 'studio',
           element: <LazyPage><StudioPage /></LazyPage>,
+        },
+        // 后台管理（仅 ADMIN 角色可见/可进）
+        {
+          path: 'admin',
+          element: <RequireAdmin><Outlet /></RequireAdmin>,
+          children: [
+            {
+              index: true,
+              element: <Navigate to="users" replace />,
+            },
+            {
+              path: 'users',
+              element: <LazyPage><AdminUsersPage /></LazyPage>,
+            },
+            {
+              path: 'model-providers',
+              element: <LazyPage><AdminModelProvidersPage /></LazyPage>,
+            },
+            {
+              path: 'feature-model-configs',
+              element: <LazyPage><AdminFeatureModelConfigsPage /></LazyPage>,
+            },
+          ],
         },
       ],
     },

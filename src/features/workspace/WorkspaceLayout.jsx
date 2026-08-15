@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Link, NavLink, Outlet } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
@@ -8,10 +8,12 @@ import {
   Mail,
   NotebookPen,
   Send,
+  ShieldCheck,
   Sparkles,
   Zap,
 } from 'lucide-react';
 import ProtectedRoute from '@features/auth/components/ProtectedRoute';
+import { useAuthSession } from '@features/auth/context/authSessionContextValue';
 import NotificationBell from '@features/blog/components/NotificationBell';
 import ProfileModal from './components/ProfileModal';
 import UserMenu from './components/UserMenu';
@@ -26,9 +28,17 @@ const MENU = [
   { to: '/workspace/studio', icon: Code2, labelKey: 'nav.studio' },
 ];
 
+/** 仅 ADMIN 角色可见的后台管理入口（路由侧另有 RequireAdmin 强校验） */
+const ADMIN_MENU = { to: '/workspace/admin', icon: ShieldCheck, labelKey: 'admin.menuLabel' };
+
 const WorkspaceLayoutInner = () => {
   const { t } = useTranslation();
+  const { userInfo } = useAuthSession();
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const menu = useMemo(
+    () => (userInfo?.role === 'ADMIN' ? [...MENU, ADMIN_MENU] : MENU),
+    [userInfo?.role],
+  );
 
   return (
     <div className="flex h-dvh flex-col bg-canvas">
@@ -55,7 +65,7 @@ const WorkspaceLayoutInner = () => {
       {/* 移动端横向菜单 */}
       <nav className="flex gap-1 overflow-x-auto overscroll-x-contain border-b border-border bg-canvas px-3 py-2 lg:hidden" aria-label={t('workspace.title')}>
         <div className="mx-auto flex min-w-max gap-1">
-          {MENU.map((item) => {
+          {menu.map((item) => {
             const Icon = item.icon;
             return (
               <NavLink
@@ -79,7 +89,7 @@ const WorkspaceLayoutInner = () => {
         {/* 桌面端左侧菜单 */}
         <aside className="hidden w-52 shrink-0 flex-col border-r border-border bg-canvas p-2 lg:flex" aria-label={t('workspace.title')}>
           <div className="flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto">
-            {MENU.map((item) => {
+            {menu.map((item) => {
               const Icon = item.icon;
               return (
                 <NavLink
