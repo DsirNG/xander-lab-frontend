@@ -60,9 +60,9 @@ const Pagination = ({
     };
 
     return (
-        <div className={`flex shrink-0 flex-col gap-2 border-t border-border px-3 py-2.5 sm:flex-row sm:items-center sm:justify-between sm:px-4 ${className}`}>
+        <div className={`flex shrink-0 flex-col gap-2 px-3 py-2.5 sm:flex-row sm:items-center sm:justify-between sm:px-4 ${className}`}>
             <div className="flex flex-wrap items-center gap-2">
-                <div className="text-micro font-medium text-ink-faint">
+                <div className="text-xs font-medium text-ink-faint">
                     {t('common.pagination.pageInfo', { from, to, total })}
                 </div>
                 <div className="w-[7.5rem]">
@@ -79,7 +79,7 @@ const Pagination = ({
                     type="button"
                     onClick={() => onPageChange?.(Math.max(1, page - 1))}
                     disabled={disabled || page <= 1}
-                    className="grid h-11 w-11 md:h-7 md:w-7 place-items-center rounded-md border border-border text-ink-muted transition hover:bg-surface disabled:cursor-not-allowed disabled:opacity-40"
+                    className="grid h-11 w-11 md:h-7 md:w-7 place-items-center rounded-md bg-canvas text-ink-muted shadow-sm transition hover:bg-surface-muted disabled:cursor-not-allowed disabled:opacity-40"
                     aria-label={t('common.pagination.prevPage')}
                 >
                     <ChevronLeft className="h-3.5 w-3.5" />
@@ -93,10 +93,10 @@ const Pagination = ({
                             type="button"
                             onClick={() => onPageChange?.(item)}
                             disabled={disabled}
-                            className={`grid h-11 w-11 md:h-7 md:w-7 place-items-center rounded-md text-micro font-bold transition disabled:opacity-40 ${
+                            className={`grid h-11 w-11 md:h-7 md:w-7 place-items-center rounded-md text-xs font-medium transition disabled:opacity-40 ${
                                 page === item
                                     ? 'bg-accent text-white'
-                                    : 'border border-border text-ink-muted hover:bg-surface'
+                                    : 'bg-canvas text-ink-muted shadow-sm hover:bg-surface-muted'
                             }`}
                         >
                             {item}
@@ -107,7 +107,7 @@ const Pagination = ({
                     type="button"
                     onClick={() => onPageChange?.(Math.min(totalPages, page + 1))}
                     disabled={disabled || page >= totalPages}
-                    className="grid h-11 w-11 md:h-7 md:w-7 place-items-center rounded-md border border-border text-ink-muted transition hover:bg-surface disabled:cursor-not-allowed disabled:opacity-40"
+                    className="grid h-11 w-11 md:h-7 md:w-7 place-items-center rounded-md bg-canvas text-ink-muted shadow-sm transition hover:bg-surface-muted disabled:cursor-not-allowed disabled:opacity-40"
                     aria-label={t('common.pagination.nextPage')}
                 >
                     <ChevronRight className="h-3.5 w-3.5" />

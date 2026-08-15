@@ -130,7 +130,7 @@ const Modal = ({
                             duration: 0.3
                         }}
                         // 【修复 1】增加 antialiased 和 transform-gpu 类名
-                        className={`relative w-full ${width} bg-canvas rounded-3xl shadow-2xl shadow-ink/20 border border-border flex flex-col max-h-[90dvh] overflow-hidden antialiased transform-gpu outline-none ${className}`}
+                        className={`relative w-full ${width} bg-canvas rounded-3xl shadow-2xl shadow-ink/30 flex flex-col max-h-[90dvh] overflow-hidden antialiased transform-gpu outline-none ${className}`}
                         // 【修复 1 补充】强制保留硬件加速，防止动画结束时字体重新渲染
                         style={{
                             WebkitFontSmoothing: 'antialiased',
@@ -141,7 +141,7 @@ const Modal = ({
                     >
                         {/* 头部标题与关闭按钮 */}
                         {(title || !hideCloseButton) && (
-                            <div className="flex-shrink-0 flex items-center justify-between px-6 py-5 border-b border-border">
+                            <div className="flex-shrink-0 flex items-center justify-between px-6 py-5">
                                 {typeof title === 'string' ? (
                                     <div id={titleId} className="text-title font-black text-ink tracking-tight">
                                         {title}
@@ -169,7 +169,7 @@ const Modal = ({
 
                         {/* 底部按钮栏（若提供） */}
                         {footer && (
-                            <div className="flex-shrink-0 px-6 py-5 border-t border-border bg-surface/50 flex items-center justify-end gap-3 rounded-b-3xl flex-wrap">
+                            <div className="flex-shrink-0 px-6 py-5 bg-surface/50 flex items-center justify-end gap-3 rounded-b-3xl flex-wrap">
                                 {footer}
                             </div>
                         )}

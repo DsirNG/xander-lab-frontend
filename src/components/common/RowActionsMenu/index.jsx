@@ -111,7 +111,7 @@ const RowActionsMenu = ({ actions = [], size = 'md', align = 'right', ariaLabel 
               ref={menuRef}
               role="menu"
               style={position ? { top: position.top, left: position.left, width: position.width } : undefined}
-              className={`fixed z-50 max-h-[70vh] overflow-y-auto overflow-x-hidden rounded-xl border border-border bg-canvas py-1.5 shadow-lg shadow-black/5 ${position ? 'min-w-36' : 'invisible'}`}
+              className={`fixed z-50 max-h-[70vh] overflow-y-auto overflow-x-hidden rounded-xl bg-canvas py-1.5 shadow-lg shadow-black/10 ${position ? 'min-w-36' : 'invisible'}`}
             >
               {actions.map((item) => {
                 const Icon = item.icon;
@@ -122,7 +122,7 @@ const RowActionsMenu = ({ actions = [], size = 'md', align = 'right', ariaLabel 
                     role="menuitem"
                     disabled={item.disabled || item.loading}
                     onClick={() => handleItemClick(item)}
-                    className={`flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-xs font-semibold transition disabled:opacity-50 truncate ${
+                    className={`flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-sm font-medium transition disabled:opacity-50 truncate ${
                       item.danger
                         ? 'text-danger hover:bg-danger-soft'
                         : 'text-ink-secondary hover:bg-surface-muted hover:text-ink'

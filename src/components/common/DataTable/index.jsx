@@ -42,7 +42,7 @@ const DataTable = ({
     const alignClass = (align) => ALIGN_CLASSES[align] || ALIGN_CLASSES.left;
 
     return (
-        <section className={`flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-xl border border-border bg-canvas ${className}`}>
+        <section className={`flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-xl bg-canvas ${className}`}>
             {header ? <div className="shrink-0">{header}</div> : null}
             <div className="min-h-[220px] min-w-0 flex-1 overflow-auto">
                 {loading ? (
@@ -60,7 +60,7 @@ const DataTable = ({
                             <button
                                 type="button"
                                 onClick={onRetry}
-                                className="mt-3 rounded-lg bg-danger px-3 py-1.5 text-caption font-bold text-white transition hover:bg-danger-fg"
+                                className="mt-3 rounded-lg bg-danger px-3 py-1.5 text-caption font-semibold text-white transition hover:bg-danger-fg"
                             >
                                 {onRetryLabel || ''}
                             </button>
@@ -71,7 +71,7 @@ const DataTable = ({
                         <span className="mb-3 grid h-11 w-11 place-items-center rounded-xl bg-surface text-ink-faint">
                             <EmptyIcon className="h-5 w-5" />
                         </span>
-                        <div className="text-xs font-bold text-ink-secondary">{emptyTitle}</div>
+                        <div className="text-sm font-semibold text-ink-secondary">{emptyTitle}</div>
                         {emptyHint ? (
                             <div className="mt-1 max-w-xs text-caption font-medium leading-5 text-ink-faint">
                                 {emptyHint}
@@ -86,7 +86,7 @@ const DataTable = ({
                             ))}
                         </colgroup>
                         <thead className="sticky top-0 z-10 bg-surface/95 backdrop-blur-sm">
-                            <tr className="border-b border-border text-micro font-bold uppercase tracking-wide text-ink-faint">
+                            <tr className="text-sm font-medium uppercase tracking-wide text-ink-faint">
                                 {columns.map((column) => (
                                     <th
                                         key={column.key}
@@ -97,9 +97,9 @@ const DataTable = ({
                                 ))}
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-border">
+                        <tbody>
                             {rows.map((row) => (
-                                <tr key={rowKey(row)} className="hover:bg-surface/70">
+                                <tr key={rowKey(row)} className="even:bg-surface-muted/30 hover:bg-surface-muted/40">
                                     {columns.map((column) => (
                                         <td
                                             key={column.key}
