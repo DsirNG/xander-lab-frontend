@@ -8,8 +8,10 @@ import {
   Mail,
   NotebookPen,
   Send,
-  ShieldCheck,
+  Server,
+  SlidersHorizontal,
   Sparkles,
+  Users,
   Zap,
 } from 'lucide-react';
 import ProtectedRoute from '@features/auth/components/ProtectedRoute';
@@ -28,15 +30,19 @@ const MENU = [
   { to: '/workspace/studio', icon: Code2, labelKey: 'nav.studio' },
 ];
 
-/** 仅 ADMIN 角色可见的后台管理入口（路由侧另有 RequireAdmin 强校验） */
-const ADMIN_MENU = { to: '/workspace/admin', icon: ShieldCheck, labelKey: 'admin.menuLabel' };
+/** 仅 ADMIN 角色可见的后台管理菜单（路由侧另有 RequireAdmin 强校验） */
+const ADMIN_MENU = [
+  { to: '/workspace/admin/users', icon: Users, labelKey: 'admin.users.title' },
+  { to: '/workspace/admin/model-providers', icon: Server, labelKey: 'admin.providers.title' },
+  { to: '/workspace/admin/feature-model-configs', icon: SlidersHorizontal, labelKey: 'admin.configs.title' },
+];
 
 const WorkspaceLayoutInner = () => {
   const { t } = useTranslation();
   const { userInfo } = useAuthSession();
   const [settingsOpen, setSettingsOpen] = useState(false);
   const menu = useMemo(
-    () => (userInfo?.role === 'ADMIN' ? [...MENU, ADMIN_MENU] : MENU),
+    () => (userInfo?.role === 'ADMIN' ? [...MENU, ...ADMIN_MENU] : MENU),
     [userInfo?.role],
   );
 
