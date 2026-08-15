@@ -12,7 +12,6 @@ import {
   UserRound,
 } from 'lucide-react';
 import Modal from '@components/common/Modal';
-import Button from '@components/common/Button';
 import AccountInfoPanel from '@features/profile/components/AccountInfoPanel';
 import McpAuthorizationPanel from '@features/profile/components/McpAuthorizationPanel';
 
@@ -51,18 +50,24 @@ const ProfileModal = ({ open, onClose }) => {
             const enabled = ENABLED_TABS.includes(tab.id);
             const active = activeTab === tab.id;
             return (
-              <Button
+              <button
                 key={tab.id}
+                type="button"
                 role="tab"
                 aria-selected={active}
                 disabled={!enabled}
                 onClick={() => enabled && setActiveTab(tab.id)}
-                variant="ghost"
-                icon={Icon}
-                className={`justify-start lg:w-full ${active ? 'bg-accent-soft text-ink' : ''}`}
+                className={`flex min-h-11 shrink-0 items-center gap-2 rounded-lg px-3 py-2.5 text-left text-xs font-semibold transition lg:w-full lg:min-h-10 lg:py-2 ${
+                  active
+                    ? 'bg-accent-soft text-ink'
+                    : enabled
+                      ? 'text-ink-muted hover:bg-surface-muted hover:text-ink-secondary'
+                      : 'cursor-not-allowed text-ink-faint opacity-50'
+                }`}
               >
+                <Icon className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                 <span className="whitespace-nowrap">{t(`profile.nav.${tab.id}`)}</span>
-              </Button>
+              </button>
             );
           })}
         </nav>

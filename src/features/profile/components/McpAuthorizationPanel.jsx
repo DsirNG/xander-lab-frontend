@@ -2,7 +2,6 @@ import { Check, Copy, Plug, ShieldCheck, Unplug, X } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useToast } from '@hooks/useToast'
-import Button from '@components/common/Button'
 import { mcpOAuthService } from '../services/mcpService'
 import CsdnAuthorizationPanel from './CsdnAuthorizationPanel'
 import JuejinAuthorizationPanel from './JuejinAuthorizationPanel'
@@ -143,23 +142,24 @@ const McpAuthorizationPanel = () => {
                 </div>
                 <div className="mt-2 text-micro text-ink-muted">{t('profile.mcp.consentScopeHint')}</div>
                 <div className="mt-4 flex flex-wrap gap-2">
-                  <Button
+                  <button
+                    type="button"
                     onClick={() => completeOAuthRequest(true)}
                     disabled={oauthBusy || !selectedScopes.length}
-                    icon={Check}
-                    size="sm"
+                    className="inline-flex items-center gap-2 rounded-lg bg-accent px-3.5 py-2 text-caption font-bold text-white hover:bg-accent/90 disabled:opacity-50"
                   >
+                    <Check className="h-4 w-4" />
                     {t('profile.mcp.consentApprove')}
-                  </Button>
-                  <Button
+                  </button>
+                  <button
+                    type="button"
                     onClick={() => completeOAuthRequest(false)}
                     disabled={oauthBusy}
-                    icon={X}
-                    variant="outline"
-                    size="sm"
+                    className="inline-flex items-center gap-2 rounded-lg border border-border px-3.5 py-2 text-caption font-bold text-ink-muted hover:bg-surface disabled:opacity-50"
                   >
+                    <X className="h-4 w-4" />
                     {t('profile.mcp.consentDeny')}
-                  </Button>
+                  </button>
                 </div>
               </div>
             </div>
@@ -178,14 +178,15 @@ const McpAuthorizationPanel = () => {
                   <code className="min-w-0 flex-1 truncate font-mono text-caption text-ink-muted" title={endpoint.url}>
                     {endpoint.url}
                   </code>
-                  <Button
+                  <button
+                    type="button"
                     onClick={() => copyEndpoint(endpoint)}
-                    variant="ghost"
-                    size="sm"
-                    icon={copied ? (props) => <Check {...props} className={props.className + ' text-success'} /> : Copy}
+                    className="grid h-9 w-9 shrink-0 place-items-center rounded-md text-ink-muted hover:bg-canvas hover:text-accent"
                     aria-label={t('profile.mcp.copyEndpoint')}
                     title={t('profile.mcp.copyEndpoint')}
-                  />
+                  >
+                    {copied ? <Check className="h-4 w-4 text-success" /> : <Copy className="h-4 w-4" />}
+                  </button>
                 </div>
               )
             })}
@@ -202,16 +203,16 @@ const McpAuthorizationPanel = () => {
                     <div className="truncate text-caption font-bold text-ink">{client.clientName}</div>
                     <div className="mt-0.5 truncate font-mono text-micro text-ink-faint">{client.scopes?.join(' ')}</div>
                   </div>
-                  <Button
+                  <button
+                    type="button"
                     onClick={() => revokeClient(client.clientId)}
                     disabled={revokingClient === client.clientId}
-                    variant="ghost"
-                    size="sm"
-                    className="hover:bg-danger-soft hover:text-danger"
-                    icon={revokingClient === client.clientId ? (props) => <Unplug {...props} className={props.className + ' animate-pulse'} /> : X}
+                    className="grid h-9 w-9 shrink-0 place-items-center rounded-md text-ink-muted hover:bg-danger-soft hover:text-danger disabled:opacity-50"
                     aria-label={t('profile.mcp.revokeClient')}
                     title={t('profile.mcp.revokeClient')}
-                  />
+                  >
+                    {revokingClient === client.clientId ? <Unplug className="h-4 w-4 animate-pulse" /> : <X className="h-4 w-4" />}
+                  </button>
                 </div>
               ))}
             </div>

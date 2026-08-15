@@ -5,7 +5,6 @@ import { Grid, List, Filter, X, Loader2 } from 'lucide-react';
 import { blogService } from '../services/blogService';
 import BlogCard from '../components/BlogCard';
 import SEOHead from '@components/seo/SEOHead';
-import Button from '@components/common/Button';
 
 const getHasMore = (data, loadedCount = 0) => {
     const current = Number(data?.current);
@@ -175,42 +174,38 @@ const BlogHome = () => {
 
                 <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                     {(search || category || tag) && (
-                        <Button
+                        <button
                             onClick={clearFilters}
-                            size="xs"
-                            variant="ghost"
-                            className="flex items-center py-1.5 font-medium text-ink-secondary bg-surface-muted rounded-lg hover:bg-border transition-colors"
+                            className="flex items-center px-2.5 py-1.5 text-xs font-medium text-ink-secondary bg-surface-muted rounded-lg hover:bg-border transition-colors"
                         >
                             <X className="w-3.5 h-3.5 mr-1" />
                             {t('blog.clearFilters')}
-                        </Button>
+                        </button>
                     )}
 
                     <div className="hidden md:flex bg-surface-muted p-0.5 rounded-lg">
-                        <Button
+                        <button
                             onClick={() => setViewMode('grid')}
                             aria-label={t('common.aria.gridView', 'Grid view')}
                             aria-pressed={viewMode === 'grid'}
-                            variant="ghost"
                             className={`p-1.5 rounded-md transition-all ${viewMode === 'grid'
                                 ? 'bg-canvas shadow-sm text-accent'
                                 : 'text-ink-faint hover:text-ink-secondary'
                                 }`}
                         >
                             <Grid aria-hidden="true" className="w-3.5 h-3.5" />
-                        </Button>
-                        <Button
+                        </button>
+                        <button
                             onClick={() => setViewMode('list')}
                             aria-label={t('common.aria.listView', 'List view')}
                             aria-pressed={viewMode === 'list'}
-                            variant="ghost"
                             className={`p-1.5 rounded-md transition-all ${viewMode === 'list'
                                 ? 'bg-canvas shadow-sm text-accent'
                                 : 'text-ink-faint hover:text-ink-secondary'
                                 }`}
                         >
                             <List aria-hidden="true" className="w-3.5 h-3.5" />
-                        </Button>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -267,14 +262,12 @@ const BlogHome = () => {
                         {t('blog.noArticlesHint')}
                     </div>
                     {(search || category || tag) && (
-                        <Button
+                        <button
                             onClick={clearFilters}
-                            size="sm"
-                            variant="primary"
-                            className="py-2 rounded-lg transition-colors shadow-sm shadow-accent/20"
+                            className="px-4 py-2 text-sm bg-accent text-white rounded-lg hover:bg-accent/90 transition-colors shadow-sm shadow-accent/20"
                         >
                             {t('blog.viewAll')}
-                        </Button>
+                        </button>
                     )}
                 </div>
             )}

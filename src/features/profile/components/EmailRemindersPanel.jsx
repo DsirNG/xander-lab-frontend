@@ -18,7 +18,6 @@ import ConfirmModal from '@components/common/ConfirmModal';
 import CustomSelect from '@components/common/CustomSelect';
 import DataTable from '@components/common/DataTable';
 import RowActionsMenu from '@components/common/RowActionsMenu';
-import Button from '@components/common/Button';
 import { useToast } from '@hooks/useToast';
 import { emailReminderService } from '../services/emailReminderService';
 import EmailReminderCreateModal from './EmailReminderCreateModal';
@@ -416,12 +415,14 @@ const EmailRemindersPanel = () => {
                             </div>
                         </div>
                     </div>
-                    <Button
+                    <button
+                        type="button"
                         onClick={() => setIsCreateOpen(true)}
-                        icon={Plus}
+                        className="inline-flex min-h-11 shrink-0 items-center justify-center gap-1.5 rounded-lg bg-accent px-4 text-xs font-bold text-white shadow-sm shadow-accent/20 transition hover:brightness-105"
                     >
+                        <Plus className="h-3.5 w-3.5" />
                         {t('profile.emailReminders.createNew')}
-                    </Button>
+                    </button>
                 </header>
 
                 <div className="grid shrink-0 grid-cols-2 gap-2 sm:grid-cols-4">

@@ -10,7 +10,6 @@ import {
 } from 'lucide-react';
 import { uploadComponent } from '../services/studioService';
 import StudioTopBar from '../components/StudioTopBar';
-import Button from '@components/common/Button';
 
 const defaultCode = `export default function DemoComponent() {
   return (
@@ -111,14 +110,14 @@ export default function ComponentUploadPage() {
                 />
               </label>
 
-              <Button
+              <button
+                type="button"
                 onClick={handleCreateBlank}
-                variant="outline"
-                className="py-3 text-body hover:border-accent/40 hover:text-accent"
-                icon={Plus}
+                className="inline-flex items-center justify-center gap-2 rounded-lg border border-border bg-canvas px-4 py-3 text-body font-bold text-ink-secondary transition-colors hover:border-accent/40 hover:text-accent"
               >
+                <Plus className="h-4 w-4" />
                 新增空白文件
-              </Button>
+              </button>
 
               <label className="block">
                 <span className="mb-1 block text-caption font-bold text-ink-muted">文件名</span>
@@ -150,15 +149,14 @@ export default function ComponentUploadPage() {
                   {activeFileName}
                 </span>
               </div>
-              <Button
+              <button
+                type="button"
                 onClick={handleCopy}
-                variant="outline"
-                size="xs"
-                className="text-ink-muted hover:text-accent"
-                icon={Copy}
+                className="inline-flex items-center justify-center gap-2 rounded-lg border border-border bg-canvas px-3 py-2 text-caption font-bold text-ink-muted transition-colors hover:text-accent"
               >
+                <Copy className="h-3.5 w-3.5" />
                 复制代码
-              </Button>
+              </button>
             </div>
 
             <textarea
@@ -178,17 +176,18 @@ export default function ComponentUploadPage() {
               <div className="text-caption leading-5 text-ink-muted">
                 构建后会生成预览项目，并进入编译器页面继续查看文件。
               </div>
-              <Button
+              <button
                 type="submit"
                 disabled={!code.trim() || !fileName.trim() || isBuilding}
-                loading={isBuilding}
-                variant="ink"
-                size="lg"
-                icon={UploadCloud}
-                className="py-3 text-body font-black"
+                className="inline-flex items-center justify-center gap-2 rounded-lg bg-ink px-5 py-3 text-body font-black text-white transition-colors hover:bg-ink-secondary disabled:cursor-not-allowed disabled:opacity-40"
               >
+                {isBuilding ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <UploadCloud className="h-4 w-4" />
+                )}
                 {isBuilding ? '构建中' : '构建并进入编译器'}
-              </Button>
+              </button>
             </div>
           </section>
         </form>

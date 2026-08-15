@@ -6,7 +6,6 @@ import { useAuthSession } from '@features/auth/context/authSessionContextValue';
 import { useToast } from '@hooks/useToast';
 import FormField from '@components/common/FormField';
 import { formInputCls } from '@components/common/formStyles';
-import Button from '@components/common/Button';
 
 const DEFAULT_AVATAR_SEED = 'https://api.dicebear.com/7.x/avataaars/svg?seed=';
 
@@ -132,17 +131,15 @@ const AccountInfoPanel = () => {
                         </div>
                     </FormField>
                     <div className="pt-1">
-                        <Button
+                        <button
                             type="button"
                             onClick={handleSave}
                             disabled={saving}
-                            size="lg"
-                            variant="primary"
-                            className="inline-flex items-center justify-center gap-1.5 rounded-lg text-xs font-bold shadow-sm shadow-accent/20 transition hover:brightness-105 disabled:opacity-60"
+                            className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-lg bg-accent px-5 text-xs font-bold text-white shadow-sm shadow-accent/20 transition hover:brightness-105 disabled:opacity-60"
                         >
                             {saving ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <CheckCircle2 className="h-3.5 w-3.5" />}
                             {t('profile.account.save')}
-                        </Button>
+                        </button>
                     </div>
                 </div>
             </div>

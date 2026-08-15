@@ -6,7 +6,6 @@ import SEOHead from '@components/seo/SEOHead';
 import { blogService } from '../services/blogService';
 import BlogMarkdown from '../components/BlogMarkdown';
 import usePureReading from '@/hooks/usePureReading';
-import Button from '@components/common/Button';
 
 /**
  * Markdown 自定义渲染组件映射
@@ -219,12 +218,10 @@ const BlogDetail = () => {
             {/* 浮动退出纯净阅读按钮 */}
             {isPureReading && (
                 <div className="fixed top-5 right-6 z-50 flex items-center gap-2">
-                    <Button
+                    <button
                         type="button"
                         onClick={togglePureReading}
-                        size="sm"
-                        variant="ink"
-                        className="inline-flex items-center gap-2 py-2 rounded-full backdrop-blur-md shadow-lg font-bold transition-all hover:scale-105 border border-white/20 active:scale-95 cursor-pointer"
+                        className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full bg-ink/90 text-canvas hover:bg-ink backdrop-blur-md shadow-lg text-xs font-bold transition-all hover:scale-105 border border-white/20 active:scale-95 cursor-pointer"
                         title={t('blog.pureReadingHint', '纯净阅读模式 (按 Esc 退出)')}
                     >
                         <Minimize2 className="w-4 h-4 text-accent" />
@@ -232,7 +229,7 @@ const BlogDetail = () => {
                         <kbd className="hidden sm:inline-block px-1.5 py-0.5 text-[10px] font-mono bg-canvas/20 rounded text-canvas/80 ml-1">
                             ESC
                         </kbd>
-                    </Button>
+                    </button>
                 </div>
             )}
 
@@ -275,32 +272,28 @@ const BlogDetail = () => {
             {/* 窗口固定纯净阅读按钮 (非纯净模式下固定悬浮在窗口右下角) */}
             {!isPureReading && (
                 <div className="fixed bottom-8 right-8 z-40">
-                    <Button
+                    <button
                         type="button"
                         onClick={togglePureReading}
-                        size="md"
-                        variant="outline"
-                        className="inline-flex items-center gap-2 py-2.5 rounded-full bg-surface/90 text-ink hover:text-accent hover:border-accent backdrop-blur-md shadow-xl text-xs font-bold transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer group"
+                        className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-surface/90 text-ink hover:text-accent hover:border-accent backdrop-blur-md shadow-xl border border-border text-xs font-bold transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer group"
                         title={t('blog.pureReadingHint', '纯净阅读模式 (按 Esc 退出)')}
                     >
                         <BookOpen className="w-4 h-4 text-accent group-hover:scale-110 transition-transform" />
                         <span>{t('blog.pureReading', '纯净阅读')}</span>
-                    </Button>
+                    </button>
                 </div>
             )}
 
             {!isPureReading && (
-                <Button
+                <button
                     type="button"
                     onClick={togglePureReading}
-                    size="xs"
-                    variant="ghost"
-                    className="inline-flex items-center gap-1.5 py-1.5 rounded-full bg-surface-muted text-ink-secondary hover:bg-accent/10 hover:text-accent font-bold transition-all shadow-xs border border-border/60 cursor-pointer"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-muted text-ink-secondary hover:bg-accent/10 hover:text-accent text-xs font-bold transition-all shadow-xs border border-border/60 cursor-pointer"
                     title={t('blog.pureReadingHint', '纯净阅读模式 (按 Esc 退出)')}
                 >
                     <BookOpen className="w-3.5 h-3.5 text-accent" />
                     <span>{t('blog.pureReading', '纯净阅读')}</span>
-                </Button>
+                </button>
             )}
             </div>
 

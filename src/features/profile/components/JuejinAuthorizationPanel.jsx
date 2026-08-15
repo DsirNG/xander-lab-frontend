@@ -2,7 +2,6 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { CheckCircle2, Link2, LoaderCircle, QrCode, ShieldOff, TriangleAlert, Unplug } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import Modal from '@components/common/Modal'
-import Button from '@components/common/Button'
 import { useToast } from '@hooks/useToast'
 import { juejinService } from '../services/mcpService'
 
@@ -236,28 +235,27 @@ const JuejinAuthorizationPanel = () => {
       )}
 
       {!loading && !authorized && state !== 'UNAVAILABLE' && (
-        <Button
+        <button
+          type="button"
           onClick={start}
-          loading={busy}
-          icon={QrCode}
-          size="lg"
-          className="mt-4"
+          disabled={busy}
+          className="mt-4 inline-flex min-h-11 items-center gap-2 rounded-lg bg-accent px-4 py-2.5 text-sm font-bold text-white hover:bg-accent/90 disabled:opacity-50"
         >
+          {busy ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <QrCode className="h-4 w-4" />}
           {expired ? t('profile.juejin.reauthorize') : t('profile.juejin.connect')}
-        </Button>
+        </button>
       )}
 
       {!loading && (authorized || expired) && (
-        <Button
+        <button
+          type="button"
           onClick={disconnect}
-          loading={busy}
-          icon={Unplug}
-          variant="outline"
-          size="lg"
-          className="mt-4"
+          disabled={busy}
+          className="mt-4 inline-flex min-h-11 items-center gap-2 rounded-lg border border-border px-4 py-2.5 text-sm font-bold text-ink-muted hover:bg-canvas disabled:opacity-50"
         >
+          {busy ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <Unplug className="h-4 w-4" />}
           {t('profile.juejin.disconnect')}
-        </Button>
+        </button>
       )}
 
       {!loading && state === 'UNAVAILABLE' && (

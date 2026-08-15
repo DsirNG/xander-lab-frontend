@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import styles from './index.module.css';
-import Button from '@/components/common/Button';
 
 const EMPTY_OPTIONS = [];
 
@@ -220,7 +219,7 @@ const CustomSelect = ({
 
   return (
     <div className={`${styles.customSelect} ${size === 'sm' ? styles.sm : ''} ${className}`} ref={selectRef}>
-      <Button
+      <button
         type="button"
         role="combobox"
         aria-expanded={isOpen}
@@ -235,7 +234,7 @@ const CustomSelect = ({
         <span className={`${styles.selectArrow} ${isOpen ? styles.rotated : ''}`}>
           <DownIcon />
         </span>
-      </Button>
+      </button>
 
       {isOpen && (
         <div
@@ -245,7 +244,7 @@ const CustomSelect = ({
         >
           <div className={styles.optionsList} role="listbox" style={{ maxHeight: dropdownMaxHeight }}>
             {options.map((option, index) => (
-              <Button
+              <button
                 type="button"
                 role="option"
                 key={option.value}
@@ -256,7 +255,7 @@ const CustomSelect = ({
                 onMouseEnter={() => setHighlightedIndex(index)}
               >
                 {option.label}
-              </Button>
+              </button>
             ))}
           </div>
         </div>

@@ -1,7 +1,6 @@
 import { RefreshCw } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import Modal from '@components/common/Modal'
-import Button from '@components/common/Button'
 import { reloadApp } from './appUpdate'
 
 export default function AppUpdateModal({ isOpen }) {
@@ -16,16 +15,14 @@ export default function AppUpdateModal({ isOpen }) {
       hideCloseButton
       width="max-w-sm"
       footer={(
-        <Button
+        <button
           type="button"
           onClick={reloadApp}
-          variant="primary"
-          size="lg"
-          icon={RefreshCw}
-          className="w-full justify-center gap-2 rounded-lg font-semibold transition-opacity hover:opacity-90"
+          className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-lg bg-accent px-5 text-body font-semibold text-white transition-opacity hover:opacity-90"
         >
+          <RefreshCw className="h-4 w-4" aria-hidden="true" />
           {t('common.appUpdate.refresh')}
-        </Button>
+        </button>
       )}
     >
       <div className="text-body text-ink-secondary">

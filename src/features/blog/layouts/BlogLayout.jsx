@@ -5,7 +5,6 @@ import BlogSidebar from '../components/BlogSidebar';
 import useIsMobile from '@hooks/useIsMobile';
 import { useTranslation } from 'react-i18next';
 import usePureReading from '@/hooks/usePureReading';
-import Button from '@components/common/Button';
 
 /**
  * 博客布局组件
@@ -31,10 +30,9 @@ const BlogLayout = () => {
         <div className="bg-canvas">
             {/* 移动端侧边栏展开按钮 - 固定在右侧 (纯净阅读模式下隐去) */}
             {!isPureReading && (
-                <Button
+                <button
                     onClick={() => setIsSidebarOpen(true)}
-                    variant="outline"
-                    className={`lg:hidden fixed top-20 right-0 z-50 p-3 bg-canvas/10 backdrop-blur-[2px] rounded-l-lg shadow-md border-r-0 transition-all duration-300 ease-in-out ${
+                    className={`lg:hidden fixed top-20 right-0 z-50 p-3 bg-canvas/10 backdrop-blur-[2px] rounded-l-lg shadow-md border border-r-0 border-border transition-all duration-300 ease-in-out ${
                         isSidebarOpen
                             ? 'translate-x-full opacity-0 pointer-events-none'
                             : 'translate-x-0 opacity-100'
@@ -42,7 +40,7 @@ const BlogLayout = () => {
                     aria-label={t('common.aria.openSidebar', 'Open sidebar')}
                 >
                     <ChevronLeft className="w-5 h-5 text-ink-secondary" />
-                </Button>
+                </button>
             )}
 
             {/* 移动端遮罩层 */}
@@ -86,15 +84,13 @@ const BlogLayout = () => {
                         ${isSidebarOpen ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'}
                     `}>
                         {/* 移动端关闭按钮 */}
-                        <Button
+                        <button
                             onClick={() => setIsSidebarOpen(false)}
-                            size="lg"
-                            variant="ghost"
-                            className="lg:hidden self-end mb-3 flex w-11 items-center justify-center rounded-lg text-ink-faint hover:text-ink-secondary transition-colors"
+                            className="lg:hidden self-end mb-3 flex h-11 w-11 items-center justify-center rounded-lg text-ink-faint hover:text-ink-secondary hover:bg-surface-muted transition-colors"
                             aria-label={t('common.aria.closeSidebar', 'Close sidebar')}
                         >
                             <X className="w-5 h-5" />
-                        </Button>
+                        </button>
                         <BlogSidebar onNavigate={() => isMobile && setIsSidebarOpen(false)} />
                     </aside>
                 )}

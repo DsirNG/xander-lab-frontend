@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { Loader2 } from 'lucide-react';
 import Modal from '@components/common/Modal';
 import FormField from '@components/common/FormField';
-import Button from '@components/common/Button';
 import { formInputCls } from '@components/common/formStyles';
 import { useToast } from '@/hooks/useToast';
 import { adminService } from '../services/adminService';
@@ -97,25 +96,23 @@ const ProviderFormModal = ({ isOpen, provider, providers, onClose, onSaved }) =>
 
   const footer = (
     <>
-      <Button
+      <button
         type="button"
         onClick={onClose}
         disabled={saving}
-        variant="ghost"
-        className="rounded-xl px-5 py-2.5 text-caption font-bold"
+        className="rounded-xl px-5 py-2.5 text-caption font-bold text-ink-muted transition hover:bg-surface-muted disabled:opacity-50"
       >
         {t('common.cancel')}
-      </Button>
-      <Button
+      </button>
+      <button
         type="button"
         onClick={handleSubmit}
         disabled={saving}
-        loading={saving}
-        variant="ink"
-        className="inline-flex items-center gap-2 rounded-xl px-6 py-2.5 text-caption font-bold transition hover:bg-accent active:scale-95"
+        className="inline-flex items-center gap-2 rounded-xl bg-ink px-6 py-2.5 text-caption font-bold text-white transition hover:bg-accent active:scale-95 disabled:opacity-60"
       >
+        {saving ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : null}
         {editing ? t('common.save') : t('admin.providers.create')}
-      </Button>
+      </button>
     </>
   );
 

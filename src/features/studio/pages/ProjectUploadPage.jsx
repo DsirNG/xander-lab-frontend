@@ -9,7 +9,6 @@ import {
 } from 'lucide-react';
 import { uploadProject } from '../services/studioService';
 import StudioTopBar from '../components/StudioTopBar';
-import Button from '@components/common/Button';
 
 export default function ProjectUploadPage() {
   const navigate = useNavigate();
@@ -90,17 +89,18 @@ export default function ProjectUploadPage() {
               <div className="text-caption leading-5 text-ink-muted">
                 构建成功后会自动跳转到编译器。
               </div>
-              <Button
+              <button
                 type="submit"
                 disabled={!zipFile || isBuilding}
-                loading={isBuilding}
-                variant="primary"
-                size="lg"
-                icon={PackageCheck}
-                className="py-3 text-body font-black"
+                className="inline-flex items-center justify-center gap-2 rounded-lg bg-accent px-5 py-3 text-body font-black text-white transition-colors hover:bg-accent-700 disabled:cursor-not-allowed disabled:opacity-40"
               >
+                {isBuilding ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <PackageCheck className="h-4 w-4" />
+                )}
                 {isBuilding ? '构建中' : '构建并进入编译器'}
-              </Button>
+              </button>
             </div>
           </form>
 

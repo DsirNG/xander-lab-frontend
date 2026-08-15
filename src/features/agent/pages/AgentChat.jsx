@@ -10,7 +10,6 @@ import LoadingSpinner from '@/components/common/LoadingSpinner';
 import AgentSessionList from '@/features/blog/components/agent/AgentSessionList';
 import AgentPreviewPanel from '@/features/blog/components/agent/AgentPreviewPanel';
 import BlogMarkdown from '@/features/blog/components/BlogMarkdown';
-import Button from '@/components/common/Button';
 import { blogAgentService } from '@/features/blog/services/blogAgentService';
 import useIsMobile from '@/hooks/useIsMobile';
 import { useAgentConversation, compactToolResult, toolCallSummary } from '../hooks/useAgentConversation';
@@ -105,16 +104,14 @@ const ToolStepCard = ({ step, t, onViewBlog }) => {
         </div>
       )}
       {step.phase === 'end' && blogTaskId && (
-        <Button
+        <button
           type="button"
-          size="xs"
-          variant="outline"
-          icon={FileText}
           onClick={() => onViewBlog(blogTaskId)}
-          className="mt-2 inline-flex items-center gap-1.5 rounded-lg bg-surface-muted py-1.5 font-bold text-ink-secondary transition hover:bg-border"
+          className="mt-2 inline-flex items-center gap-1.5 rounded-lg border border-border bg-surface-muted px-3 py-1.5 text-xs font-bold text-ink-secondary transition hover:bg-border"
         >
+          <FileText className="h-3.5 w-3.5" />
           {t('blog.agentChat.viewBlog')}
-        </Button>
+        </button>
       )}
     </div>
   );
@@ -189,16 +186,14 @@ const HistoricalToolCard = ({ message, t, onViewBlog }) => {
         </div>
       )}
       {blogTaskId && (
-        <Button
+        <button
           type="button"
-          size="xs"
-          variant="outline"
-          icon={FileText}
           onClick={() => onViewBlog(blogTaskId)}
-          className="mt-2 inline-flex items-center gap-1.5 rounded-lg bg-surface-muted py-1.5 font-bold text-ink-secondary transition hover:bg-border"
+          className="mt-2 inline-flex items-center gap-1.5 rounded-lg border border-border bg-surface-muted px-3 py-1.5 text-xs font-bold text-ink-secondary transition hover:bg-border"
         >
+          <FileText className="h-3.5 w-3.5" />
           {t('blog.agentChat.viewBlog')}
-        </Button>
+        </button>
       )}
     </div>
   );
@@ -226,25 +221,24 @@ const AgentChatInputBar = ({ t, input, setInput, isActive, creating, hasConversa
           className="max-h-40 min-h-[52px] min-w-0 flex-1 resize-none bg-transparent px-2 py-2 text-sm leading-6 outline-none placeholder:text-ink-faint disabled:opacity-60"
         />
         {isActive && (
-          <Button
+          <button
             type="button"
             onClick={onStop}
             className="inline-flex h-10 shrink-0 items-center gap-2 rounded-xl border border-danger/30 bg-danger/5 px-4 text-sm font-black text-danger transition hover:bg-danger/10"
           >
             <Square className="h-4 w-4" />
             {t('blog.agentChat.stop')}
-          </Button>
+          </button>
         )}
-        <Button
+        <button
           type="button"
-          variant="ink"
           onClick={onSubmit}
           disabled={locked || !input.trim()}
-          className="inline-flex shrink-0 items-center gap-2 rounded-xl text-sm font-black transition hover:bg-ink-secondary disabled:cursor-wait disabled:opacity-60"
+          className="inline-flex h-10 shrink-0 items-center gap-2 rounded-xl bg-ink px-4 text-sm font-black text-white transition hover:bg-ink-secondary disabled:cursor-wait disabled:opacity-60"
         >
           {locked ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
           {locked ? t('blog.agentChat.working') : t('blog.agentChat.send')}
-        </Button>
+        </button>
       </div>
     </div>
   </div>
@@ -470,14 +464,13 @@ const AgentChat = () => {
     <div className="flex h-full flex-col items-center justify-center gap-4 bg-canvas px-6 text-center">
       <AlertCircle className="h-8 w-8 text-danger" />
       <div className="text-sm font-semibold text-danger">{artifactError}</div>
-      <Button
+      <button
         type="button"
-        variant="outline"
         onClick={handleCloseArtifact}
-        className="rounded-xl py-2 text-sm font-bold text-ink-secondary"
+        className="rounded-xl border border-border px-4 py-2 text-sm font-bold text-ink-secondary"
       >
         {t('common.close')}
-      </Button>
+      </button>
     </div>
   ) : (
     <AgentPreviewPanel
@@ -495,74 +488,83 @@ const AgentChat = () => {
   );
 
   return (
-    <div className="flex h-dvh overflow-hidden bg-canvas font-chat text-ink">
-      <AgentSessionList
-        sessions={sessions.map((session) => ({ ...session, input: session.title }))}
-        activeId={conversationId}
-        loading={sessionsLoading}
-        disableNew={navigationLocked}
-        onSelect={(id) => {
-          if (!navigationLocked) navigate(`/workspace/agent/${id}`);
-        }}
-        onNew={handleNewConversation}
-        onGoHome={() => navigate('/workspace')}
-      />
-      {mobileSessionsOpen && (
-        <div className="absolute inset-0 z-40 flex bg-ink/40 lg:hidden">
+    <div className="flex h-dvh flex-col bg-surface font-chat text-ink">
+      <header className="sticky top-0 z-20 flex h-14 shrink-0 items-center justify-between border-b border-border bg-canvas/95 px-4 backdrop-blur sm:px-6">
+        <button
+          type="button"
+          onClick={() => navigate('/workspace')}
+          className="flex items-center gap-2 rounded-xl px-2 py-2 text-sm font-semibold text-ink-muted transition hover:bg-surface-muted hover:text-ink"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          {t('blog.agentChat.back')}
+        </button>
+        <div className="flex min-w-0 items-center gap-2 text-sm font-black tracking-tight">
+          <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-ink text-white">
+            <Bot className="h-4 w-4" />
+          </span>
+          <span className="truncate">{t('blog.agentChat.title')}</span>
+        </div>
+        <div className="flex items-center gap-1">
+          <button
+            type="button"
+            onClick={() => setMobileSessionsOpen(true)}
+            className="rounded-xl p-2 text-ink-muted hover:bg-surface-muted lg:hidden"
+            aria-label={t('blog.agent.conversations')}
+          >
+            <MessageSquareText className="h-4 w-4" />
+          </button>
+          <button
+            type="button"
+            onClick={handleNewConversation}
+            disabled={navigationLocked}
+            className="inline-flex items-center gap-1.5 rounded-xl px-2 py-2 text-sm font-semibold text-ink-muted transition hover:bg-surface-muted hover:text-ink"
+          >
+            <Plus className="h-4 w-4" />
+            <span className="hidden sm:inline">{t('blog.agent.newConversation')}</span>
+          </button>
+        </div>
+      </header>
+
+      <div className="relative flex min-h-0 flex-1 overflow-hidden">
           <AgentSessionList
-            mobile
             sessions={sessions.map((session) => ({ ...session, input: session.title }))}
             activeId={conversationId}
             loading={sessionsLoading}
             disableNew={navigationLocked}
             onSelect={(id) => {
-              if (navigationLocked) return;
-              setMobileSessionsOpen(false);
-              navigate(`/workspace/agent/${id}`);
+              if (!navigationLocked) navigate(`/workspace/agent/${id}`);
             }}
-            onNew={() => {
-              setMobileSessionsOpen(false);
-              handleNewConversation();
-            }}
-            onGoHome={() => navigate('/workspace')}
+            onNew={handleNewConversation}
           />
-          <Button
-            type="button"
-            icon={X}
-            onClick={() => setMobileSessionsOpen(false)}
-            className="absolute right-3 top-3 z-10 grid w-10 place-items-center rounded-full bg-canvas text-ink-secondary shadow-lg"
-            aria-label={t('common.close')}
-          />
-        </div>
-      )}
+          {mobileSessionsOpen && (
+            <div className="absolute inset-0 z-40 flex bg-ink/40 lg:hidden">
+              <AgentSessionList
+                mobile
+                sessions={sessions.map((session) => ({ ...session, input: session.title }))}
+                activeId={conversationId}
+                loading={sessionsLoading}
+                disableNew={navigationLocked}
+                onSelect={(id) => {
+                  if (navigationLocked) return;
+                  setMobileSessionsOpen(false);
+                  navigate(`/workspace/agent/${id}`);
+                }}
+                onNew={() => {
+                  setMobileSessionsOpen(false);
+                  handleNewConversation();
+                }}
+              />
+              <button
+                type="button"
+                onClick={() => setMobileSessionsOpen(false)}
+                className="absolute right-3 top-3 z-10 grid h-10 w-10 place-items-center rounded-full bg-canvas text-ink-secondary shadow-lg"
+                aria-label={t('common.close')}
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+          )}
 
-      <main className="relative flex min-h-0 min-w-0 flex-1 flex-col bg-surface">
-        <header className="sticky top-0 z-20 flex h-14 shrink-0 items-center justify-between border-b border-border bg-canvas/95 px-4 backdrop-blur lg:hidden">
-          <Button
-            type="button"
-            variant="ghost"
-            icon={MessageSquareText}
-            onClick={() => setMobileSessionsOpen(true)}
-            className="rounded-xl p-2"
-            aria-label={t('blog.agent.conversations')}
-          />
-          <div className="flex min-w-0 items-center gap-2 text-sm font-black tracking-tight">
-            <span className="grid h-6 w-6 shrink-0 place-items-center rounded-md bg-ink text-white">
-              <Bot className="h-3.5 w-3.5" />
-            </span>
-            <span className="truncate">{t('blog.agentChat.title')}</span>
-          </div>
-          <Button
-            type="button"
-            variant="ghost"
-            icon={Plus}
-            onClick={handleNewConversation}
-            disabled={navigationLocked}
-            className="rounded-xl p-2"
-          />
-        </header>
-
-        <div className="flex min-h-0 flex-1 overflow-hidden">
           <section className={`flex min-h-0 min-w-0 flex-1 flex-col ${showArtifact && !isMobile ? 'lg:max-w-[48%]' : ''}`}>
             {(reconnecting || errorMessage) && (
               <div className={`flex items-center gap-2 border-b px-4 py-2 text-xs font-semibold ${
@@ -674,8 +676,7 @@ const AgentChat = () => {
               {artifactPanel}
             </div>
           )}
-        </div>
-      </main>
+      </div>
     </div>
   );
 };
