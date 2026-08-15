@@ -34,23 +34,23 @@ const EMPTY_STATS = {
 
 const STATUS_STYLES = {
     PENDING: {
-        badge: 'bg-success-soft text-success-fg ring-1 ring-success/20',
+        badge: 'bg-success-soft text-success-fg',
         rowIcon: 'bg-success-soft text-success',
     },
     PAUSED: {
-        badge: 'bg-warning-soft text-warning-fg ring-1 ring-warning/20',
+        badge: 'bg-warning-soft text-warning-fg',
         rowIcon: 'bg-warning-soft text-warning',
     },
     SENDING: {
-        badge: 'bg-info-soft text-info-fg ring-1 ring-info/20',
+        badge: 'bg-info-soft text-info-fg',
         rowIcon: 'bg-accent-soft text-accent',
     },
     SENT: {
-        badge: 'bg-surface text-ink-muted ring-1 ring-border',
+        badge: 'bg-surface text-ink-muted',
         rowIcon: 'bg-surface text-ink-muted',
     },
     FAILED: {
-        badge: 'bg-danger-soft text-danger-fg ring-1 ring-danger/20',
+        badge: 'bg-danger-soft text-danger-fg',
         rowIcon: 'bg-danger-soft text-danger',
     },
 };
@@ -431,7 +431,7 @@ const EmailRemindersPanel = () => {
                         return (
                             <div
                                 key={card.key}
-                                className="min-w-0 rounded-xl border border-border bg-canvas px-2 py-2.5 sm:px-3"
+                                className="min-w-0 rounded-xl bg-surface px-2 py-2.5 sm:px-3"
                             >
                                 <div className="flex items-start justify-between gap-1.5 sm:gap-2">
                                     <div className="min-w-0">
@@ -471,7 +471,7 @@ const EmailRemindersPanel = () => {
                     onPageSizeChange={setPageSize}
                     paginationDisabled={isLoading}
                     header={(
-                        <div className="flex shrink-0 flex-col gap-2 border-b border-border px-3 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-4">
+                        <div className="flex shrink-0 flex-col gap-2 px-3 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-4">
                             <div className="text-xs font-black text-ink">
                                 {t('profile.emailReminders.taskList')}
                             </div>
@@ -491,7 +491,7 @@ const EmailRemindersPanel = () => {
                                         value={searchQuery}
                                         onChange={(event) => setSearchQuery(event.target.value)}
                                         placeholder={t('profile.emailReminders.searchPlaceholder')}
-                                        className="h-8 w-full rounded-lg border border-border bg-canvas pl-8 pr-2.5 text-xs font-medium text-ink-secondary outline-none transition placeholder:text-ink-faint focus:border-accent focus:ring-2 focus:ring-accent/10"
+                                        className="h-8 w-full rounded-lg bg-surface pl-8 pr-2.5 text-xs font-medium text-ink-secondary outline-none transition placeholder:text-ink-faint focus:bg-canvas focus:ring-2 focus:ring-accent/15"
                                     />
                                 </label>
                             </div>
@@ -499,7 +499,7 @@ const EmailRemindersPanel = () => {
                     )}
                 />
 
-                <div className="flex shrink-0 items-start gap-2 rounded-xl border border-accent-100 bg-accent-soft/80 px-3 py-2.5">
+                <div className="flex shrink-0 items-start gap-2 rounded-xl bg-accent-soft/80 px-3 py-2.5">
                     <ShieldCheck className="mt-0.5 h-3.5 w-3.5 shrink-0 text-accent" />
                     <div className="min-w-0">
                         <div className="text-caption font-bold text-accent-fg">

@@ -93,7 +93,7 @@ const JuejinSyncDialog = ({ post, isOpen = true, onClose, onSuccess }) => {
       {phase === 'authorize' && (
         <div className="flex flex-col items-center gap-3 text-center py-2">
           {qrCode ? (
-            <img src={qrCode} alt={t('profile.blogManage.juejin.qrAlt')} className="h-52 w-52 rounded-xl border border-border bg-white object-contain p-2 sm:h-60 sm:w-60" />
+            <img src={qrCode} alt={t('profile.blogManage.juejin.qrAlt')} className="h-52 w-52 rounded-xl bg-surface object-contain p-2 sm:h-60 sm:w-60" />
           ) : (
             <QrCode className="h-16 w-16 text-ink-faint" />
           )}
@@ -116,7 +116,7 @@ const JuejinSyncDialog = ({ post, isOpen = true, onClose, onSuccess }) => {
       )}
 
       {phase === 'error' && (
-        <div className="rounded-xl bg-danger-soft p-4 text-sm font-medium text-danger-fg ring-1 ring-danger/20">
+        <div className="rounded-xl bg-danger-soft p-4 text-sm font-medium text-danger-fg">
           {error}
         </div>
       )}

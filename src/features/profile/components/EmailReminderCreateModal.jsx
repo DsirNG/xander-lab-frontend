@@ -670,13 +670,13 @@ const EmailReminderCreateModal = ({ isOpen, onClose, onCreated }) => {
                                         key={card.id}
                                         type="button"
                                         onClick={() => applyTemplate(card.id)}
-                                        className={`w-[220px] shrink-0 overflow-hidden rounded-xl border text-left transition hover:border-accent/40 hover:shadow-md lg:w-0 lg:min-w-0 lg:flex-1 ${
+                                        className={`w-[220px] shrink-0 overflow-hidden rounded-xl text-left transition hover:bg-surface-muted hover:shadow-md lg:w-0 lg:min-w-0 lg:flex-1 ${
                                             form.templateId === card.id
-                                                ? 'border-accent ring-1 ring-accent/20'
-                                                : 'border-border'
+                                                ? 'bg-accent-soft text-ink'
+                                                : 'bg-surface'
                                         }`}
                                     >
-                                        <div className="flex items-center justify-between gap-2 border-b border-border px-3 py-2">
+                                        <div className="flex items-center justify-between gap-2 px-3 py-2">
                                             <div className="flex min-w-0 items-center gap-2">
                                                 <span className={`h-2 w-8 shrink-0 rounded-full bg-gradient-to-r ${TEMPLATE_SWATCH[card.id]}`} />
                                                 <span className="truncate text-caption font-black text-ink-secondary">

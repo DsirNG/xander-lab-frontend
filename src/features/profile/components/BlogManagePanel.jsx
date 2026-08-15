@@ -15,6 +15,7 @@ import {
     Undo,
 } from 'lucide-react';
 import ConfirmModal from '@components/common/ConfirmModal';
+import CustomSelect from '@components/common/CustomSelect';
 import DataTable from '@components/common/DataTable';
 import RowActionsMenu from '@components/common/RowActionsMenu';
 import { useToast } from '@hooks/useToast';
@@ -25,17 +26,16 @@ import JuejinSyncDialog from './JuejinSyncDialog';
 const DEFAULT_PAGE_SIZE = 10;
 const SEARCH_DEBOUNCE_MS = 300;
 
-const TABS = [
+const FILTERS = [
     { id: 'all', status: undefined },
     { id: 'published', status: BLOG_STATUS.PUBLISHED },
     { id: 'draft', status: BLOG_STATUS.DRAFT },
-    { id: 'trash', status: BLOG_STATUS.TRASH },
 ];
 
 const STATUS_STYLES = {
-    [BLOG_STATUS.DRAFT]: 'bg-warning-soft text-warning-fg ring-1 ring-warning/20',
-    [BLOG_STATUS.PUBLISHED]: 'bg-success-soft text-success-fg ring-1 ring-success/20',
-    [BLOG_STATUS.TRASH]: 'bg-surface text-ink-muted ring-1 ring-border',
+    [BLOG_STATUS.DRAFT]: 'bg-warning-soft text-warning-fg',
+    [BLOG_STATUS.PUBLISHED]: 'bg-success-soft text-success-fg',
+    [BLOG_STATUS.TRASH]: 'bg-surface text-ink-muted',
 };
 
 const getList = (result) => {
@@ -50,6 +50,7 @@ const BlogManagePanel = () => {
     const navigate = useNavigate();
 
     const [tab, setTab] = useState('all');
+    const [trashMode, setTrashMode] = useState(false);
     const [searchInput, setSearchInput] = useState('');
     const [search, setSearch] = useState('');
     const [page, setPage] = useState(1);
@@ -66,7 +67,8 @@ const BlogManagePanel = () => {
     const abortRef = useRef(null);
     const requestSeq = useRef(0);
 
-    const activeTab = TABS.find((item) => item.id === tab) || TABS[0];
+    const activeFilter = FILTERS.find((item) => item.id === tab) || FILTERS[0];
+    const effectiveStatus = trashMode ? BLOG_STATUS.TRASH : activeFilter.status;
 
     const loadPosts = useCallback(async ({ showLoading = true } = {}) => {
         abortRef.current?.abort();
@@ -80,7 +82,7 @@ const BlogManagePanel = () => {
         try {
             const result = await blogService.getMyBlogs(
                 {
-                    status: activeTab.status,
+                    status: effectiveStatus,
                     search,
                     page,
                     size: pageSize,
@@ -99,7 +101,7 @@ const BlogManagePanel = () => {
         } finally {
             if (seq === requestSeq.current) setLoading(false);
         }
-    }, [activeTab.status, page, pageSize, search]);
+    }, [effectiveStatus, page, pageSize, search]);
 
     useEffect(() => {
         loadPosts();
@@ -160,55 +162,63 @@ const BlogManagePanel = () => {
 
     return (
         <div className="flex h-full min-h-0 flex-col">
-            <div className="flex shrink-0 flex-col gap-3 border-b border-border px-4 py-4 px-ultra-tight sm:flex-row sm:items-center sm:justify-between sm:px-6">
+            <div className="flex shrink-0 flex-col gap-1 px-4 py-4 px-ultra-tight sm:px-6">
                 <div className="min-w-0">
                     <div className="text-base font-bold text-ink">{t('profile.blogManage.title')}</div>
                     <div className="mt-0.5 text-caption font-medium text-ink-faint">
                         {t('profile.blogManage.description')}
                     </div>
                 </div>
-                <button
-                    type="button"
-                    onClick={() => navigate('/workspace/publish')}
-                    className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-xl bg-ink px-4 py-2 text-xs font-bold text-white transition hover:bg-accent"
-                >
-                    <Plus className="h-3.5 w-3.5" />
-                    {t('profile.blogManage.createNew')}
-                </button>
             </div>
 
-            <div className="flex shrink-0 flex-col gap-3 border-b border-border px-4 py-3 px-ultra-tight sm:px-6">
-                <div className="flex gap-1 overflow-x-auto overscroll-x-contain">
-                    {TABS.map((item) => {
-                        const active = tab === item.id;
-                        return (
-                            <button
-                                key={item.id}
-                                type="button"
-                                onClick={() => {
-                                    setTab(item.id);
-                                    setPage(1);
-                                }}
-                                className={`flex min-h-11 shrink-0 items-center rounded-lg px-3.5 py-2 text-xs font-semibold transition ${
-                                    active
-                                        ? 'bg-accent-soft text-ink'
-                                        : 'text-ink-muted hover:bg-surface hover:text-ink-secondary'
-                                }`}
-                            >
-                                {t(`profile.blogManage.tabs.${item.id}`)}
-                            </button>
-                        );
-                    })}
+            <div className="flex shrink-0 flex-col gap-2 px-4 py-3 px-ultra-tight sm:flex-row sm:items-center sm:justify-end sm:px-6">
+                <div className={`w-full sm:w-32 ${trashMode ? 'pointer-events-none opacity-50' : ''}`}>
+                    <CustomSelect
+                        size="sm"
+                        value={tab}
+                        options={FILTERS.map((item) => ({
+                            value: item.id,
+                            label: t(`profile.blogManage.tabs.${item.id}`),
+                        }))}
+                        onChange={(value) => {
+                            setTrashMode(false);
+                            setTab(value);
+                            setPage(1);
+                        }}
+                    />
                 </div>
-                <div className="relative">
+                <div className="relative min-w-0 flex-1 sm:flex-none">
                     <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-ink-faint" />
                     <input
                         value={searchInput}
                         onChange={(e) => setSearchInput(e.target.value)}
                         placeholder={t('profile.blogManage.searchPlaceholder')}
-                        className="h-9 w-full rounded-xl border border-border bg-canvas pl-9 pr-3 text-xs font-medium text-ink outline-none transition placeholder:text-ink-faint focus:border-accent focus:ring-4 focus:ring-accent/10"
+                        className="h-9 w-full rounded-xl bg-surface pl-9 pr-3 text-sm font-medium text-ink outline-none transition placeholder:text-ink-faint focus:bg-canvas focus:ring-4 focus:ring-accent/15 sm:w-56"
                     />
                 </div>
+                <button
+                    type="button"
+                    onClick={() => {
+                        setTrashMode((current) => !current);
+                        setPage(1);
+                    }}
+                    className={`inline-flex min-h-9 items-center justify-center gap-1.5 rounded-xl px-3.5 py-1.5 text-sm font-semibold transition ${
+                        trashMode
+                            ? 'bg-accent-soft text-ink'
+                            : 'bg-surface text-ink-muted hover:bg-surface-muted hover:text-ink-secondary'
+                    }`}
+                >
+                    <Trash2 className="h-3.5 w-3.5" />
+                    {t('profile.blogManage.tabs.trash')}
+                </button>
+                <button
+                    type="button"
+                    onClick={() => navigate('/workspace/publish')}
+                    className="inline-flex min-h-9 items-center justify-center gap-1.5 rounded-xl bg-ink px-3.5 py-1.5 text-sm font-semibold text-white transition hover:bg-accent"
+                >
+                    <Plus className="h-3.5 w-3.5" />
+                    {t('profile.blogManage.createNew')}
+                </button>
             </div>
 
             <div className="flex min-h-0 min-w-0 flex-1 flex-col px-4 py-3 px-ultra-tight sm:px-6">
@@ -224,13 +234,13 @@ const BlogManagePanel = () => {
                                 return (
                                     <div className="min-w-0">
                                         <div className="flex flex-wrap items-center gap-2">
-                                            <div className="truncate text-xs font-bold text-ink">
+                                            <div className="truncate text-sm font-semibold text-ink">
                                                 {post.title || t('profile.blogManage.untitled')}
                                             </div>
                                             {isCsdnSynced ? (
                                                 <span
                                                     title={t('profile.blogManage.csdn.synced')}
-                                                    className="inline-flex shrink-0 items-center gap-1 rounded-full bg-success-soft px-2 py-0.5 text-micro font-bold text-success-fg ring-1 ring-success/20"
+                                                    className="inline-flex shrink-0 items-center gap-1 rounded-full bg-success-soft px-2 py-0.5 text-xs font-medium text-success-fg"
                                                 >
                                                     <CheckCircle2 className="h-3 w-3" />
                                                     CSDN
@@ -239,7 +249,7 @@ const BlogManagePanel = () => {
                                             {isJuejinSynced ? (
                                                 <span
                                                     title={t('profile.blogManage.juejin.synced')}
-                                                    className="inline-flex shrink-0 items-center gap-1 rounded-full bg-success-soft px-2 py-0.5 text-micro font-bold text-success-fg ring-1 ring-success/20"
+                                                    className="inline-flex shrink-0 items-center gap-1 rounded-full bg-success-soft px-2 py-0.5 text-xs font-medium text-success-fg"
                                                 >
                                                     <CheckCircle2 className="h-3 w-3" />
                                                     {t('profile.blogManage.juejin.badge')}
@@ -258,7 +268,7 @@ const BlogManagePanel = () => {
                             title: t('profile.blogManage.category'),
                             width: '18%',
                             render: (post) => (
-                                <span className="block truncate text-xs font-medium text-ink-muted" title={post.categoryName}>
+                                <span className="block truncate text-sm font-medium text-ink-muted" title={post.categoryName}>
                                     {post.categoryName || '—'}
                                 </span>
                             ),
@@ -275,7 +285,7 @@ const BlogManagePanel = () => {
                                         ? 'trash'
                                         : 'draft';
                                 return (
-                                    <span className={`inline-flex rounded-full px-2 py-0.5 text-micro font-bold ${STATUS_STYLES[status] || STATUS_STYLES[BLOG_STATUS.DRAFT]}`}>
+                                    <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_STYLES[status] || STATUS_STYLES[BLOG_STATUS.DRAFT]}`}>
                                         {t(`profile.blogManage.status.${statusKey}`)}
                                     </span>
                                 );
@@ -378,10 +388,10 @@ const BlogManagePanel = () => {
                     error={loadError ? t('profile.blogManage.loadError') : ''}
                     onRetry={loadPosts}
                     onRetryLabel={t('profile.blogManage.retry')}
-                    emptyTitle={tab === 'trash'
+                    emptyTitle={trashMode
                         ? t('profile.blogManage.emptyTrash')
                         : t('profile.blogManage.emptyTitle')}
-                    emptyHint={tab === 'trash'
+                    emptyHint={trashMode
                         ? t('profile.blogManage.emptyTrashHint')
                         : t('profile.blogManage.emptyHint')}
                     emptyIcon={FileText}
