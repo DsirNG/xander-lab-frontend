@@ -126,7 +126,7 @@ const AdminUsersPage = () => {
       key: 'actions',
       title: t('admin.users.actions'),
       width: '14%',
-      align: 'right',
+
       render: (user) => {
         if (user.role === 'ADMIN') {
           return (

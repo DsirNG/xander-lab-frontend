@@ -133,7 +133,7 @@ const AdminModelProvidersPage = () => {
       key: 'actions',
       title: t('admin.providers.actions'),
       width: '24%',
-      align: 'right',
+
       render: (provider) => {
         const items = [
           {

@@ -105,7 +105,7 @@ const BlogPlans = () => {
       key: 'actions',
       title: t('blogPlans.actions'),
       width: '10%',
-      align: 'right',
+
       render: (plan) => {
         const items = [];
         if (plan.status === PLAN_STATUS.ACTIVE || plan.status === PLAN_STATUS.PAUSED) {

@@ -364,7 +364,7 @@ const EmailRemindersPanel = () => {
             key: 'actions',
             title: t('profile.emailReminders.actions'),
             width: '8%',
-            align: 'right',
+
             render: (reminder) => {
                 const status = normalizeStatus(reminder.status);
                 const canToggle = status === 'PENDING' || status === 'PAUSED';

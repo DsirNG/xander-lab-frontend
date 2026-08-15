@@ -102,7 +102,7 @@ const AdminFeatureModelConfigsPage = () => {
       key: 'actions',
       title: t('admin.configs.actions'),
       width: '12%',
-      align: 'right',
+
       render: (config) => {
         const items = [
           {

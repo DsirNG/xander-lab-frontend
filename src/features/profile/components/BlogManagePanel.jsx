@@ -285,7 +285,7 @@ const BlogManagePanel = () => {
                             key: 'actions',
                             title: t('profile.blogManage.actionsColumn'),
                             width: '10%',
-                            align: 'right',
+
                             render: (post) => {
                                 const status = Number(post.status);
                                 const isBusy = Boolean(actionKey) && actionKey.includes(String(post.id));
