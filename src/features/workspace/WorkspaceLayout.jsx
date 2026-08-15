@@ -47,9 +47,9 @@ const WorkspaceLayoutInner = () => {
   );
 
   return (
-    <div className="flex h-dvh flex-col bg-canvas">
-      {/* 顶栏：左侧 Logo + 名称（点击回首页），右侧通知铃铛 + 用户区 */}
-      <header className="flex h-14 shrink-0 items-center justify-between gap-2 border-b border-border bg-canvas px-3 xs:px-4 sm:px-6">
+    <div className="flex h-dvh flex-col overflow-hidden bg-surface-muted">
+      {/* 顶部整条 + 左侧整条：合并为同一底色，围出桌面端的 L 形外壳 */}
+      <header className="flex h-14 shrink-0 items-center justify-between gap-2 bg-surface px-3 xs:px-4 sm:px-6">
         <Link
           to="/"
           className="group flex min-w-0 items-center gap-2 rounded-xl px-1.5 py-1 transition hover:bg-surface-muted focus:outline-none focus:ring-2 focus:ring-accent-200"
@@ -68,8 +68,8 @@ const WorkspaceLayoutInner = () => {
         </div>
       </header>
 
-      {/* 移动端横向菜单 */}
-      <nav className="flex gap-1 overflow-x-auto overscroll-x-contain border-b border-border bg-canvas px-3 py-2 lg:hidden" aria-label={t('workspace.title')}>
+      {/* 移动端横向菜单（与顶部/左侧同色，无额外边界） */}
+      <nav className="flex gap-1 overflow-x-auto overscroll-x-contain bg-surface px-3 py-2 lg:hidden" aria-label={t('workspace.title')}>
         <div className="mx-auto flex min-w-max gap-1">
           {menu.map((item) => {
             const Icon = item.icon;
@@ -79,7 +79,7 @@ const WorkspaceLayoutInner = () => {
                 to={item.to}
                 className={({ isActive }) =>
                   `inline-flex min-h-11 shrink-0 items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-medium transition ${
-                    isActive ? 'bg-accent-soft text-accent' : 'text-ink-muted hover:bg-surface hover:text-ink-secondary'
+                    isActive ? 'bg-accent-soft text-accent' : 'text-ink-muted hover:bg-surface-muted hover:text-ink-secondary'
                   }`
                 }
               >
@@ -92,34 +92,34 @@ const WorkspaceLayoutInner = () => {
       </nav>
 
       <div className="flex min-h-0 flex-1">
-        {/* 桌面端左侧菜单 */}
-        <aside className="hidden w-52 shrink-0 flex-col border-r border-border bg-canvas p-2 lg:flex" aria-label={t('workspace.title')}>
-          <div className="flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto">
-            {menu.map((item) => {
-              const Icon = item.icon;
-              return (
-                <NavLink
-                  key={item.to}
-                  to={item.to}
-                  className={({ isActive }) =>
-                    `flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-medium transition ${
-                      isActive
-                        ? 'bg-accent-soft text-accent'
-                        : 'text-ink-muted hover:bg-surface hover:text-ink-secondary'
-                    }`
-                  }
-                >
-                  <Icon className="h-4 w-4 shrink-0" aria-hidden="true" />
-                  {t(item.labelKey)}
-                </NavLink>
-              );
-            })}
-          </div>
+        {/* 左侧整条菜单（与顶部同色，合并为一体，右侧以灰底自然接壤） */}
+        <aside className="hidden min-h-0 w-52 shrink-0 flex-col gap-1 overflow-y-auto bg-surface p-2 lg:flex" aria-label={t('workspace.title')}>
+          {menu.map((item) => {
+            const Icon = item.icon;
+            return (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                className={({ isActive }) =>
+                  `flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-medium transition ${
+                    isActive
+                      ? 'bg-accent-soft text-accent'
+                      : 'text-ink-muted hover:bg-surface-muted hover:text-ink-secondary'
+                  }`
+                }
+              >
+                <Icon className="h-4 w-4 shrink-0" aria-hidden="true" />
+                {t(item.labelKey)}
+              </NavLink>
+            );
+          })}
         </aside>
 
-        {/* 右侧内容 */}
-        <main className="min-h-0 min-w-0 flex-1 overflow-hidden bg-canvas">
-          <Outlet />
+        {/* 内容区贴合右下边界，仅保留与 L 形外壳相接的内圆角 */}
+        <main className="min-h-0 min-w-0 flex-1 bg-surface">
+          <div className="h-full min-h-0 overflow-hidden rounded-t-3xl border-t border-border bg-canvas lg:rounded-t-none lg:rounded-tl-3xl lg:border-l">
+            <Outlet />
+          </div>
         </main>
       </div>
 
