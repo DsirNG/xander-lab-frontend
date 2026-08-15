@@ -418,6 +418,7 @@ export default {
         syncCsdn: '同步至 CSDN',
         syncJuejin: '同步至掘金'
       },
+      actionsColumn: '操作',
       csdn: {
         dialogTitle: '同步文章至 CSDN',
         syncing: '正在同步发布至 CSDN...',

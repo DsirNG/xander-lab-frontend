@@ -391,6 +391,7 @@ export default {
       untitled: '無題',
       status: { draft: '下書き', published: '公開済み', trash: 'ゴミ箱' },
       actions: { edit: '編集', publish: '公開', unpublish: '下書きに戻す', trash: 'ゴミ箱へ', restore: '下書きとして復元', permanentDelete: '完全に削除', view: '表示', syncCsdn: 'CSDN へ同期', syncJuejin: '掘金へ同期' },
+      actionsColumn: '操作',
       csdn: {
         dialogTitle: 'CSDN へ記事を同期',
         syncing: 'CSDN へ投稿中...',

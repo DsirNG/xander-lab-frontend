@@ -42,9 +42,9 @@ const DataTable = ({
     const alignClass = (align) => ALIGN_CLASSES[align] || ALIGN_CLASSES.left;
 
     return (
-        <section className={`flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-xl border border-border bg-canvas ${className}`}>
+        <section className={`flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-xl border border-border bg-canvas ${className}`}>
             {header ? <div className="shrink-0">{header}</div> : null}
-            <div className="min-w-0 flex-1 overflow-auto">
+            <div className="min-h-[220px] min-w-0 flex-1 overflow-auto">
                 {loading ? (
                     <div className="flex min-h-[220px] items-center justify-center">
                         <LoadingSpinner fullScreen={false} text={loadingText} />

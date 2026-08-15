@@ -53,12 +53,13 @@
 | `Modal` | `@components/common/Modal` | 确认、编辑、表单弹窗 | `isOpen`、`onClose`、`title`、`footer`、`width`；已实现 Portal、焦点管理与背景滚动锁定。 |
 | `ConfirmModal` | `@components/common/ConfirmModal` | 删除、退出登录等二次确认 | 基于 `Modal`；`isOpen`、`onClose`、`onConfirm`、`title`、`message`/`children`、`confirmText`、`cancelText`、`confirming`、`danger`（默认 true）。 |
 | `Pagination` | `@components/common/Pagination` | 列表底部分页 | `page`、`pageSize`、`total`、`pageSizeOptions`（默认 `[5,10,15,20]`）、`onPageChange`、`onPageSizeChange`、`disabled`、`hideWhenEmpty`；文案走 `common.pagination.*`。 |
+| `DataTable` | `@components/common/DataTable` | 分页列表（定时邮箱 / 博客管理 / 定时发文等） | `columns: { key, title, width, align, render }[]`、`rows`、`loading`、`error`、`emptyTitle/emptyHint/emptyIcon`、`minWidth`、`paginationDisabled`、分页 props；列表区自带最小高度（220px），表格体随容器高度滚动。 |
 | `Toast` | `@components/common/Toast` | 用户操作结果反馈 | 优先由 `http.js` 处理请求错误；页面主动提示使用 `window.__toast` 或现有 Toast 上下文，勿自行造 toast。 |
 | `TourSpotlight` | `@components/common/TourSpotlight` | 新功能引导和聚焦提示 | `targetConfig`、`onSkip`。 |
 | `LoadingSpinner` | `@components/common/LoadingSpinner` | 页面或局部加载态 | `fullScreen`、`text`、`size: sm/md/lg`。 |
 | `ThreeViewer` | `@features/img2three/components/ThreeViewer` | legacy nodes、ObjectSculptSpec 与图片浮雕协议的受限 WebGL 预览 | `sceneSpec`、`onReady({exportGlb})`、`onError(error)`；异步构建可取消，勿执行模型返回的 TS。 |
 | `ErrorBoundary` | `@components/common/ErrorBoundary` | 路由或高风险子树兜底 | 使用在页面/模块边界，不替代请求错误处理。 |
-| `RowActionsMenu` | `@components/common/RowActionsMenu` | 列表行操作按钮组收敛为图标+浮框菜单 | `actions: { key, label, icon, onClick, disabled, danger, loading }[]`，`size: sm/md/lg`、`align: left/right`；点击图标展开浮框菜单，点击外部 / Esc 关闭，点击菜单项后自动收起并执行操作。 |
+| `RowActionsMenu` | `@components/common/RowActionsMenu` | 列表行操作按钮组收敛为图标+浮框菜单 | `actions: { key, label, icon, onClick, disabled, danger, loading }[]`，`size: sm/md/lg`、`align: left/right`；点击图标展开浮框菜单，点击外部 / Esc 关闭，点击菜单项后自动收起并执行操作。菜单经 Portal 挂载到 body 并做视口边界检查：下方空间不足自动向上展开、左右自动收拢进视口、滚动/缩放时重新定位，避免被列表滚动容器裁剪。 |
 
 ## 内容与展示
 

@@ -391,6 +391,7 @@ export default {
       untitled: 'Без названия',
       status: { draft: 'Черновик', published: 'Опубликовано', trash: 'Корзина' },
       actions: { edit: 'Редактировать', publish: 'Опубликовать', unpublish: 'В черновики', trash: 'В корзину', restore: 'Восстановить как черновик', permanentDelete: 'Удалить навсегда', view: 'Просмотр', syncCsdn: 'Синхронизировать с CSDN', syncJuejin: 'Синхронизировать с Juejin' },
+      actionsColumn: 'Действия',
       csdn: {
         dialogTitle: 'Синхронизация с CSDN',
         syncing: 'Публикация в CSDN...',

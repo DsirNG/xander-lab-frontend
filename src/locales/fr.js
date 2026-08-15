@@ -391,6 +391,7 @@ export default {
       untitled: 'Sans titre',
       status: { draft: 'Brouillon', published: 'Publié', trash: 'Corbeille' },
       actions: { edit: 'Modifier', publish: 'Publier', unpublish: 'Passer en brouillon', trash: 'Mettre à la corbeille', restore: 'Restaurer en brouillon', permanentDelete: 'Supprimer définitivement', view: 'Voir', syncCsdn: 'Synchroniser avec CSDN', syncJuejin: 'Synchroniser avec Juejin' },
+      actionsColumn: 'Actions',
       csdn: {
         dialogTitle: 'Synchroniser avec CSDN',
         syncing: 'Publication sur CSDN en cours...',

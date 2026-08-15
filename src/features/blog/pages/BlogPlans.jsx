@@ -197,7 +197,7 @@ const BlogPlans = () => {
         </div>
       </div>
 
-      <div className="mt-6 min-h-0 flex-1">
+      <div className="mt-6 flex min-h-0 flex-1 flex-col">
         <DataTable
           columns={columns}
           rows={plans}

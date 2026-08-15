@@ -283,7 +283,7 @@ const BlogManagePanel = () => {
                         },
                         {
                             key: 'actions',
-                            title: t('profile.blogManage.actions'),
+                            title: t('profile.blogManage.actionsColumn'),
                             width: '10%',
                             align: 'right',
                             render: (post) => {

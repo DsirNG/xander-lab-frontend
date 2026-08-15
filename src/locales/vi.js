@@ -391,6 +391,7 @@ export default {
       untitled: 'Chưa có tiêu đề',
       status: { draft: 'Bản nháp', published: 'Đã xuất bản', trash: 'Thùng rác' },
       actions: { edit: 'Chỉnh sửa', publish: 'Xuất bản', unpublish: 'Chuyển thành nháp', trash: 'Chuyển vào thùng rác', restore: 'Khôi phục thành nháp', permanentDelete: 'Xóa vĩnh viễn', view: 'Xem', syncCsdn: 'Đồng bộ sang CSDN', syncJuejin: 'Đồng bộ sang Juejin' },
+      actionsColumn: 'Thao tác',
       csdn: {
         dialogTitle: 'Đồng bộ bài viết sang CSDN',
         syncing: 'Đang xuất bản sang CSDN...',

@@ -399,6 +399,7 @@ export default {
       untitled: 'Untitled',
       status: { draft: 'Draft', published: 'Published', trash: 'Trash' },
       actions: { edit: 'Edit', publish: 'Publish', unpublish: 'Move to draft', trash: 'Move to trash', restore: 'Restore as draft', permanentDelete: 'Delete permanently', view: 'View', syncCsdn: 'Sync to CSDN', syncJuejin: 'Sync to Juejin' },
+      actionsColumn: 'Actions',
       csdn: {
         dialogTitle: 'Sync to CSDN',
         syncing: 'Publishing to CSDN...',
