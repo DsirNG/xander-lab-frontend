@@ -1196,6 +1196,8 @@ export default {
       apiStyleChatPrompt: 'Chat API /chat/completions (prompt params, gateway like okinto)',
       apiStyleResponses: 'Responses API /responses',
       apiStyleHint: 'The same model may use different API shapes per provider: official OpenAI images use messages+modalities, gateways like okinto use top-level prompt, legacy uses /images/generations',
+      configHint: 'Each slot = one provider + model name + API style. Fill in only the primary slot if you use a single model and leave the fallback empty; the fallback is used only when the primary call fails, so it should point to another provider or an alternative model — duplicating the primary is pointless.',
+      formFallbackDuplicate: 'Fallback equals the primary slot (same provider + model). Configure a different provider or model',
       selectProvider: 'Select provider',
       noFallback: 'No fallback',
       formUntypedWhileEnabled: 'Providers, models or API styles cannot be set while routing is disabled',

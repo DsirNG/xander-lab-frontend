@@ -1188,6 +1188,8 @@ export default {
       apiStyleChatPrompt: 'API chat /chat/completions (tham số prompt, gateway như okinto)',
       apiStyleResponses: 'API Responses /responses',
       apiStyleHint: 'Cùng một mô hình ở mỗi nhà cung cấp có thể dùng dạng API khác nhau: OpenAI chính thức dùng messages+modalities, gateway như okinto dùng prompt ở cấp cao nhất, dạng cũ dùng /images/generations',
+      configHint: 'Mỗi ô = một nhà cung cấp + tên mô hình + kiểu API. Chỉ dùng một mô hình thì điền ô chính là đủ, để trống ô dự phòng; ô dự phòng chỉ dùng khi gọi mô hình chính thất bại, hãy chọn nhà cung cấp hoặc mô hình khác — trùng với ô chính thì vô nghĩa.',
+      formFallbackDuplicate: 'Ô dự phòng trùng ô chính (cùng nhà cung cấp + mô hình). Hãy cấu hình nhà cung cấp hoặc mô hình khác',
       selectProvider: 'Chọn nhà cung cấp',
       noFallback: 'Không dự phòng',
       formUntypedWhileEnabled: 'Không thể nhập nhà cung cấp, mô hình hoặc kiểu API khi định tuyến tắt',

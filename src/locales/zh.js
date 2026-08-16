@@ -1215,6 +1215,8 @@ export default {
       apiStyleChatPrompt: '对话接口 /chat/completions（prompt 参数，聚合网关如 okinto）',
       apiStyleResponses: 'Responses 接口 /responses',
       apiStyleHint: '同型号模型在不同供应商可能走不同接口形态：OpenAI 官方图片用 messages+modalities，okinto 等聚合网关用顶层 prompt 参数，旧接口用 /images/generations',
+      configHint: '每个槽位 = 一家供应商 + 模型名 + 接口风格。只用一个模型时填主模型即可，兜底留空；兜底只在主模型调用失败时启用，应配置其他供应商或备选模型，与主模型相同则无意义。',
+      formFallbackDuplicate: '兜底模型与主模型相同（同供应商+同模型），请配置其他供应商或模型',
       selectProvider: '选择供应商',
       noFallback: '无兜底',
       formUntypedWhileEnabled: '未启用时不能填写供应商、模型或接口风格',

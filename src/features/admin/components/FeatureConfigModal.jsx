@@ -32,7 +32,10 @@ const FeatureConfigModal = ({ isOpen, config, providers, onClose, onSaved }) => 
   const [formError, setFormError] = useState('');
 
   const providerOptions = useMemo(
-    () => providers.map((p) => ({ value: p.id, label: p.name })),
+    () => providers.map((p) => ({
+      value: p.id,
+      label: p.baseUrl ? `${p.name} · ${p.baseUrl}` : p.name,
+    })),
     [providers],
   );
   const fallbackOptions = useMemo(
@@ -98,6 +101,11 @@ const FeatureConfigModal = ({ isOpen, config, providers, onClose, onSaved }) => 
       setFormError(t('admin.configs.formModelRequired'));
       return;
     }
+    if (primaryProviderId && fallbackProviderId && primaryProviderId === fallbackProviderId
+        && primaryModelTrimmed === fallbackModelTrimmed) {
+      setFormError(t('admin.configs.formFallbackDuplicate'));
+      return;
+    }
     try {
       setSaving(true);
       await adminService.updateFeatureConfig(config.featureKey, {
@@ -160,6 +168,10 @@ const FeatureConfigModal = ({ isOpen, config, providers, onClose, onSaved }) => 
           {t('admin.configs.formEnabled')}
           <span className="text-micro font-normal text-ink-faint">{t('admin.configs.formEnabledHint')}</span>
         </label>
+
+        <p className="rounded-xl bg-surface-muted px-3 py-2.5 text-micro leading-relaxed text-ink-muted">
+          {t('admin.configs.configHint')}
+        </p>
 
         <div>
           <p className="mb-2 text-xs font-bold text-ink-secondary">{t('admin.configs.primary')}</p>

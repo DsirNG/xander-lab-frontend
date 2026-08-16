@@ -1188,6 +1188,8 @@ export default {
       apiStyleChatPrompt: 'チャットAPI /chat/completions（promptパラメータ、okinto等のゲートウェイ）',
       apiStyleResponses: 'Responses API /responses',
       apiStyleHint: '同じモデルでもプロバイダーごとにAPI形式が異なる場合があります：OpenAI公式はmessages+modalities、okinto等のゲートウェイはトップレベルprompt、旧形式は/images/generations',
+      configHint: '各スロット＝プロバイダー＋モデル名＋API形式。モデルが1つだけであればメインスロットのみでOK、フォールバックは空のままに。フォールバックはメイン呼び出し失敗時のみ使われ、別プロバイダーか代替モデルを設定してください（メインと同じなら無意味です）。',
+      formFallbackDuplicate: 'フォールバックがメインと同じです（同じプロバイダー＋モデル）。別のプロバイダーかモデルを設定してください',
       selectProvider: 'プロバイダーを選択',
       noFallback: 'フォールバックなし',
       formUntypedWhileEnabled: 'ルーティング無効時はプロバイダー・モデル・API形式を設定できません',

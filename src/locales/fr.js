@@ -1188,6 +1188,8 @@ export default {
       apiStyleChatPrompt: 'API chat /chat/completions (paramètre prompt, passerelle type okinto)',
       apiStyleResponses: 'API Responses /responses',
       apiStyleHint: 'Un même modèle peut utiliser des formes d\'API différentes selon le fournisseur : OpenAI officiel utilise messages+modalities, les passerelles type okinto utilisent prompt au niveau racine, l\'ancien format utilise /images/generations',
+      configHint: 'Chaque emplacement = un fournisseur + un nom de modèle + un style d\'API. Un seul modèle suffit : remplissez uniquement l\'emplacement principal et laissez le secours vide ; le secours n\'est utilisé qu\'en cas d\'échec du principal, choisissez donc un autre fournisseur ou un modèle alternatif — le dupliquer n\'a pas de sens.',
+      formFallbackDuplicate: 'Le secours est identique au principal (même fournisseur + modèle). Configurez un autre fournisseur ou modèle',
       selectProvider: 'Choisir un fournisseur',
       noFallback: 'Aucun secours',
       formUntypedWhileEnabled: 'Impossible de renseigner fournisseur, modèle ou style d\'API si le routage est désactivé',
