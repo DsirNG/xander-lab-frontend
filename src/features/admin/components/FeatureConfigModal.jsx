@@ -41,7 +41,7 @@ const FeatureConfigModal = ({ isOpen, config, providers, onClose, onSaved }) => 
   const styleOptions = useMemo(() => {
     const isImage = config?.featureKey === 'blog_agent_image';
     const options = isImage
-      ? [API_STYLE_IMAGES, API_STYLE_CHAT]
+      ? [API_STYLE_CHAT, API_STYLE_IMAGES]
       : [API_STYLE_CHAT, API_STYLE_RESPONSES];
     return options.map((style) => ({
       value: style,
