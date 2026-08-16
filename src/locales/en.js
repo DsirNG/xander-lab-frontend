@@ -1173,7 +1173,7 @@ export default {
       feature: 'Feature',
       'feature.agent': 'Agent Chat',
       'feature.blog_agent': 'Blog Agent',
-      'feature.blog_agent_image': 'Blog Image',
+      'feature.blog_agent_image': 'Image Generation',
       'feature.img2three_vision': 'Img2Three Vision',
       enabledLabel: 'Status',
       enabledOn: 'On',

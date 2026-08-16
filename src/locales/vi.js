@@ -1165,7 +1165,7 @@ export default {
       feature: 'Chức năng',
       'feature.agent': 'Trò chuyện agent',
       'feature.blog_agent': 'Agent Blog',
-      'feature.blog_agent_image': 'Ảnh Blog',
+      'feature.blog_agent_image': 'Tạo ảnh',
       'feature.img2three_vision': 'Thị giác Img2Three',
       enabledLabel: 'Trạng thái',
       enabledOn: 'Bật',

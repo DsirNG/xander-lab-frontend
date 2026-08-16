@@ -16,7 +16,7 @@ const DownIcon = () => (
  * @param {function} onChange - 值改变回调
  * @param {string} placeholder - 占位符文字
  * @param {string} className - 额外的类名
- * @param {string} size - 尺寸: 'md'(默认) | 'sm'(紧凑，匹配表单 h-9)
+ * @param {string} size - 尺寸: 'md'(默认) | 'sm'(紧凑，匹配表单 h-9) | 'xs'(更紧凑，小字号，适合多列表单)
  * @param {string} align - [Deprecated] 统一对齐方式，建议使用 textAlign 和 dropdownAlign
  * @param {string} textAlign - 触发器文字对齐方式: 'left' | 'center' | 'right'，默认 'left'
  * @param {string} dropdownAlign - 下拉选项对齐方式: 'left' | 'center' | 'right'，默认 'left'
@@ -79,7 +79,7 @@ const CustomSelect = ({
     if (!selectRef.current || !isOpen) return;
 
     const { spaceAbove, spaceBelow } = getAvailableSpace(selectRef.current);
-    const optionHeightPx = size === 'sm' ? 32 : 40;
+    const optionHeightPx = size === 'xs' ? 28 : size === 'sm' ? 32 : 40;
     const measuredHeight = dropdownRef.current?.getBoundingClientRect().height;
     const dropdownHeight = measuredHeight && measuredHeight > 0
       ? measuredHeight
@@ -218,7 +218,7 @@ const CustomSelect = ({
     : undefined;
 
   return (
-    <div className={`${styles.customSelect} ${size === 'sm' ? styles.sm : ''} ${className}`} ref={selectRef}>
+    <div className={`${styles.customSelect} ${size === 'sm' ? styles.sm : ''} ${size === 'xs' ? styles.xs : ''} ${className}`} ref={selectRef}>
       <button
         type="button"
         role="combobox"

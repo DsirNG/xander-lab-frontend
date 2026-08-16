@@ -56,6 +56,59 @@
   color: var(--color-accent);
 }
 
+.customSelect.xs .selectTrigger {
+  height: 2rem;
+  padding: 0 0.625rem;
+  font-size: var(--text-caption);
+  font-weight: 500;
+  line-height: 1.2;
+  color: var(--color-ink-secondary);
+  background: var(--color-surface);
+  border: none;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 2px color-mix(in srgb, var(--color-ink) 6%, transparent);
+}
+
+.customSelect.xs .selectTrigger:hover {
+  background: var(--color-surface-muted);
+}
+
+.customSelect.xs .selectTrigger:focus-visible,
+.customSelect.xs .selectTrigger.active {
+  background: var(--color-surface-muted);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-accent) 15%, transparent);
+}
+
+.customSelect.xs .selectTrigger.hasValue {
+  color: var(--color-ink-secondary);
+}
+
+.customSelect.xs .selectText {
+  text-transform: none;
+}
+
+.customSelect.xs .selectDropdown {
+  border: none;
+  border-radius: 0.5rem;
+  box-shadow: 0 10px 25px color-mix(in srgb, var(--color-ink) 10%, transparent);
+}
+
+.customSelect.xs .option {
+  min-height: 1.75rem;
+  padding: 0.25rem 0.5rem;
+  font-size: var(--text-caption);
+  font-weight: 500;
+  color: var(--color-ink-secondary);
+  border-radius: 0.375rem;
+  text-transform: none;
+}
+
+.customSelect.xs .option:hover,
+.customSelect.xs .option.selected {
+  background: color-mix(in srgb, var(--color-accent) 8%, white);
+  color: var(--color-accent);
+}
+
 .selectTrigger {
   /* Button reset */
   font-family: var(--font-sans);

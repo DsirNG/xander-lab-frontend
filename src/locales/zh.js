@@ -1192,7 +1192,7 @@ export default {
       feature: '功能',
       'feature.agent': 'AI 编排对话',
       'feature.blog_agent': '博客智能体',
-      'feature.blog_agent_image': '博客配图生成',
+      'feature.blog_agent_image': '生图配置',
       'feature.img2three_vision': '图生 3D 视觉',
       enabledLabel: '启用状态',
       enabledOn: '已启用',

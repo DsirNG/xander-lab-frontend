@@ -1165,7 +1165,7 @@ export default {
       feature: '機能',
       'feature.agent': 'エージェントチャット',
       'feature.blog_agent': 'ブログエージェント',
-      'feature.blog_agent_image': 'ブログ画像生成',
+      'feature.blog_agent_image': '画像生成',
       'feature.img2three_vision': '画像→3D ビジョン',
       enabledLabel: '状態',
       enabledOn: '有効',

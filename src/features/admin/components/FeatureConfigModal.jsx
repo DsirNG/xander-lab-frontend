@@ -9,14 +9,23 @@ import { useToast } from '@/hooks/useToast';
 import { adminService } from '../services/adminService';
 
 /**
- * 功能模型配置弹窗：为主模型/兜底模型各选择一个供应商 + 模型名 + 接口风格。
- * 两个槽位均留空 = 该功能未启用管理台路由，回退环境变量。
- * 接口风格按功能过滤：图片功能可选图片/对话接口，文本功能可选对话/Responses 接口。
+ * 鍔熻兘妯″瀷閰嶇疆寮圭獥锛氫负涓绘ā鍨?鍏滃簳妯″瀷鍚勯€夋嫨涓€涓緵搴斿晢 + 妯″瀷鍚?+ 鎺ュ彛椋庢牸銆?
+ * 涓や釜妲戒綅鍧囩暀绌?= 璇ュ姛鑳芥湭鍚敤绠＄悊鍙拌矾鐢憋紝鍥為€€鐜鍙橀噺銆?
+ * 鎺ュ彛椋庢牸鎸夊姛鑳借繃婊わ細鍥剧墖鍔熻兘鍙€夊浘鐗?瀵硅瘽鎺ュ彛锛屾枃鏈姛鑳藉彲閫夊璇?Responses 鎺ュ彛銆?
  */
 const API_STYLE_IMAGES = 'IMAGES_GENERATIONS';
 const API_STYLE_CHAT = 'CHAT_COMPLETIONS';
 const API_STYLE_CHAT_PROMPT = 'CHAT_PROMPT';
 const API_STYLE_RESPONSES = 'RESPONSES';
+
+const providerLabel = (provider) => {
+  if (!provider.baseUrl) return provider.name;
+  try {
+    return `${provider.name} 路 ${new URL(provider.baseUrl).hostname}`;
+  } catch {
+    return provider.name;
+  }
+};
 
 const FeatureConfigModal = ({ isOpen, config, providers, onClose, onSaved }) => {
   const { t } = useTranslation();
@@ -34,7 +43,7 @@ const FeatureConfigModal = ({ isOpen, config, providers, onClose, onSaved }) => 
   const providerOptions = useMemo(
     () => providers.map((p) => ({
       value: p.id,
-      label: p.baseUrl ? `${p.name} · ${p.baseUrl}` : p.name,
+      label: providerLabel(p),
     })),
     [providers],
   );
@@ -84,6 +93,7 @@ const FeatureConfigModal = ({ isOpen, config, providers, onClose, onSaved }) => 
   const handleSubmit = async () => {
     const primaryModelTrimmed = primaryModel.trim();
     const fallbackModelTrimmed = fallbackModel.trim();
+    const fallbackActive = Boolean(fallbackProviderId);
     if (!enabled && (primaryProviderId || primaryModelTrimmed || primaryApiStyle
         || fallbackProviderId || fallbackModelTrimmed || fallbackApiStyle)) {
       setFormError(t('admin.configs.formUntypedWhileEnabled'));
@@ -97,11 +107,11 @@ const FeatureConfigModal = ({ isOpen, config, providers, onClose, onSaved }) => 
       setFormError(t('admin.configs.formModelRequired'));
       return;
     }
-    if (fallbackProviderId && (!fallbackModelTrimmed || !fallbackApiStyle)) {
+    if (fallbackActive && (!fallbackModelTrimmed || !fallbackApiStyle)) {
       setFormError(t('admin.configs.formModelRequired'));
       return;
     }
-    if (primaryProviderId && fallbackProviderId && primaryProviderId === fallbackProviderId
+    if (primaryProviderId && fallbackActive && primaryProviderId === fallbackProviderId
         && primaryModelTrimmed === fallbackModelTrimmed) {
       setFormError(t('admin.configs.formFallbackDuplicate'));
       return;
@@ -113,9 +123,9 @@ const FeatureConfigModal = ({ isOpen, config, providers, onClose, onSaved }) => 
         primaryProviderId,
         primaryModel: primaryModelTrimmed || null,
         primaryApiStyle: primaryApiStyle || null,
-        fallbackProviderId,
-        fallbackModel: fallbackModelTrimmed || null,
-        fallbackApiStyle: fallbackApiStyle || null,
+        fallbackProviderId: fallbackActive ? fallbackProviderId : null,
+        fallbackModel: fallbackActive ? (fallbackModelTrimmed || null) : null,
+        fallbackApiStyle: fallbackActive ? (fallbackApiStyle || null) : null,
       });
       toast.success(t('admin.configs.updated'));
       onClose();
@@ -178,7 +188,7 @@ const FeatureConfigModal = ({ isOpen, config, providers, onClose, onSaved }) => 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             <FormField label={t('admin.configs.primaryProvider')}>
               <CustomSelect
-                size="md"
+                size="xs"
                 options={providerOptions}
                 value={primaryProviderId}
                 onChange={setPrimaryProviderId}
@@ -197,7 +207,7 @@ const FeatureConfigModal = ({ isOpen, config, providers, onClose, onSaved }) => 
             </FormField>
             <FormField label={t('admin.configs.primaryApiStyle')}>
               <CustomSelect
-                size="md"
+                size="xs"
                 options={styleOptions}
                 value={primaryApiStyle || ''}
                 onChange={(value) => setPrimaryApiStyle(value || '')}
@@ -212,10 +222,16 @@ const FeatureConfigModal = ({ isOpen, config, providers, onClose, onSaved }) => 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             <FormField label={t('admin.configs.fallbackProvider')}>
               <CustomSelect
-                size="md"
+                size="xs"
                 options={fallbackOptions}
                 value={fallbackProviderId || ''}
-                onChange={(value) => setFallbackProviderId(value === '' ? null : value)}
+                onChange={(value) => {
+                  setFallbackProviderId(value === '' ? null : value);
+                  if (value === '') {
+                    setFallbackModel('');
+                    setFallbackApiStyle('');
+                  }
+                }}
                 placeholder={t('admin.configs.selectProvider')}
               />
             </FormField>
@@ -231,7 +247,7 @@ const FeatureConfigModal = ({ isOpen, config, providers, onClose, onSaved }) => 
             </FormField>
             <FormField label={t('admin.configs.fallbackApiStyle')}>
               <CustomSelect
-                size="md"
+                size="xs"
                 options={styleOptions}
                 value={fallbackApiStyle || ''}
                 onChange={(value) => setFallbackApiStyle(value || '')}

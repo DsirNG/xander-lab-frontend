@@ -1165,7 +1165,7 @@ export default {
       feature: 'Функция',
       'feature.agent': 'Чат агента',
       'feature.blog_agent': 'Агент блога',
-      'feature.blog_agent_image': 'Изображения блога',
+      'feature.blog_agent_image': 'Генерация изображений',
       'feature.img2three_vision': 'Видение Img2Three',
       enabledLabel: 'Статус',
       enabledOn: 'Включено',

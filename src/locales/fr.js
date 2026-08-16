@@ -1165,7 +1165,7 @@ export default {
       feature: 'Fonctionnalité',
       'feature.agent': 'Chat Agent',
       'feature.blog_agent': 'Agent Blog',
-      'feature.blog_agent_image': 'Image Blog',
+      'feature.blog_agent_image': 'Génération d\'images',
       'feature.img2three_vision': 'Vision Img2Three',
       enabledLabel: 'État',
       enabledOn: 'Activé',
