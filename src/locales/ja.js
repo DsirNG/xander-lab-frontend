@@ -95,7 +95,7 @@ export default {
       multiTurnHint: '続けて依頼してください。Agentが適切なツールを選択します。',
       inputRequired: 'まずAgentに依頼内容を入力してください。', sendFailed: 'メッセージを送信できませんでした。', loadFailed: '会話を読み込めませんでした。',
       restoring: '会話を復元中…', reconnecting: '接続が切れました。再接続中…',
-      unknownTool: 'ツール', working: '処理中…', writing: '執筆中…', toolCalled: 'ツール呼び出し', toolResult: 'ツール結果', viewBlog: 'ブログを見る',
+      unknownTool: 'ツール', working: '処理中…', writing: '執筆中…', toolCalled: 'ツール呼び出し', toolResult: 'ツール結果', toolSucceeded: '成功', toolFailed: '失敗', viewBlog: 'ブログを見る',
       generatingImage: '画像を生成中…', imageToolTitle: 'AI画像生成', imageToolHint: '説明に基づいて独立したイラスト/カバー画像を生成し、完了後にメディアライブラリへ保存します'
     }
   },

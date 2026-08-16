@@ -103,7 +103,7 @@ export default {
       multiTurnHint: 'DinQor 也会犯错，请注意甄别。',
       inputRequired: '请先输入你想让智能体做什么。', sendFailed: '消息发送失败。', loadFailed: '对话加载失败。',
       restoring: '正在恢复对话…', reconnecting: '连接已断开，正在重连…',
-      unknownTool: '工具', working: '处理中…', writing: '正在写作…', toolCalled: '已调用工具', toolResult: '工具返回结果', viewBlog: '查看博客',
+      unknownTool: '工具', working: '处理中…', writing: '正在写作…', toolCalled: '已调用工具', toolResult: '工具返回结果', toolSucceeded: '调用成功', toolFailed: '调用失败', viewBlog: '查看博客',
       generatingImage: '正在生成图片…', imageToolTitle: 'AI 图片生成', imageToolHint: '根据你的描述生成独立配图/封面图，完成后自动保存到素材库'
     }
   },

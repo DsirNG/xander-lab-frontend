@@ -152,9 +152,9 @@ const ToolStepCard = ({ step, t, onViewBlog }) => {
           <img src={imageUrl} alt={step.result?.title || ''} className="max-h-56 w-full object-cover" />
         </a>
       )}
-      {(step.result || step.error) && (
-        <div className={`mt-1 whitespace-pre-wrap break-all text-xs leading-5 ${isError ? 'text-danger/90' : 'text-ink-muted'}`}>
-          {compactToolResult(step.result ?? step.error)}
+      {isError && (step.result || step.error) && (
+        <div className="mt-1 whitespace-pre-wrap break-all text-xs leading-5 text-danger/90">
+          {compactToolResult(step.error ?? step.result)}
         </div>
       )}
       {step.phase === 'end' && blogTaskId && (
@@ -242,8 +242,11 @@ const HistoricalToolCard = ({ message, t, onViewBlog }) => {
         </a>
       )}
       {message.kind === 'tool_result' && (
-        <div className="mt-1 whitespace-pre-wrap break-all text-xs leading-5 text-ink-muted">
-          {compactToolResult(payload ?? message.content)}
+        <div className={`mt-1 flex items-center gap-1.5 text-xs ${payload?.ok === false ? 'text-danger' : 'text-emerald-600'}`}>
+          {payload?.ok === false
+            ? <AlertCircle className="h-3.5 w-3.5 shrink-0" />
+            : <CheckCircle2 className="h-3.5 w-3.5 shrink-0" />}
+          {payload?.ok === false ? t('blog.agentChat.toolFailed') : t('blog.agentChat.toolSucceeded')}
         </div>
       )}
       {blogTaskId && (

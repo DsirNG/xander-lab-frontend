@@ -37,11 +37,6 @@ const HistoricalToolCard = ({ message }) => {
           {JSON.stringify(payload, null, 2)}
         </pre>
       )}
-      {message.kind === 'tool_result' && (
-        <div className="mt-2 max-h-60 overflow-auto whitespace-pre-wrap break-all text-ink-muted">
-          {message.content}
-        </div>
-      )}
     </div>
   );
 };

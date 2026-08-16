@@ -95,7 +95,7 @@ export default {
       multiTurnHint: 'Tiếp tục yêu cầu; agent sẽ tự chọn công cụ phù hợp.',
       inputRequired: 'Hãy nhập yêu cầu cho agent trước.', sendFailed: 'Không gửi được tin nhắn.', loadFailed: 'Không tải được cuộc trò chuyện.',
       restoring: 'Đang khôi phục cuộc trò chuyện…', reconnecting: 'Mất kết nối, đang kết nối lại…',
-      unknownTool: 'Công cụ', working: 'Đang xử lý…', writing: 'Đang viết…', toolCalled: 'Công cụ được gọi', toolResult: 'Kết quả công cụ', viewBlog: 'Xem blog',
+      unknownTool: 'Công cụ', working: 'Đang xử lý…', writing: 'Đang viết…', toolCalled: 'Công cụ được gọi', toolResult: 'Kết quả công cụ', toolSucceeded: 'Thành công', toolFailed: 'Thất bại', viewBlog: 'Xem blog',
       generatingImage: 'Đang tạo hình ảnh…', imageToolTitle: 'Tạo hình ảnh AI', imageToolHint: 'Tạo hình minh họa hoặc ảnh bìa riêng theo mô tả của bạn; lưu vào thư viện media khi hoàn tất'
     }
   },
