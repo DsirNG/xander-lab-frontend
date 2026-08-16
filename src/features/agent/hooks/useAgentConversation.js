@@ -386,7 +386,7 @@ export const useAgentConversation = ({ conversationId }) => {
   }, [applySnapshot, clearLiveState, isCurrent, loadSessions, recoverConversation, t]);
 
   /** Send subsequent turns. New conversations are started by create() on the server. */
-  const sendMessage = useCallback(async (content) => {
+  const sendMessage = useCallback(async (content, { displayUserMessage = true } = {}) => {
     const id = activeIdRef.current;
     const text = content?.trim();
     if (!id || !text || runningRef.current || creatingRef.current) return false;
@@ -397,7 +397,7 @@ export const useAgentConversation = ({ conversationId }) => {
     beginRunGeneration();
     updateRunning(true);
     setConversation((current) => current ? { ...current, status: 'running' } : current);
-    pushStep({ type: 'user', content: text });
+    if (displayUserMessage) pushStep({ type: 'user', content: text });
 
     try {
       const streamEpoch = ++streamEpochRef.current;
@@ -462,6 +462,7 @@ export const useAgentConversation = ({ conversationId }) => {
     creatingRef.current = true;
     setCreating(true);
     setErrorMessage(null);
+    pushStep({ type: 'user', content: text });
 
     createControllerRef.current?.abort();
     const controller = new AbortController();
@@ -475,7 +476,7 @@ export const useAgentConversation = ({ conversationId }) => {
       const id = detail?.conversation?.id;
       if (id) {
         newlyCreatedIdRef.current = String(id);
-        pendingFirstMessageRef.current = { id: String(id), text };
+        pendingFirstMessageRef.current = { id: String(id), text, detail };
       }
       if (!controller.signal.aborted) await loadSessions();
       return detail;
@@ -486,6 +487,7 @@ export const useAgentConversation = ({ conversationId }) => {
         && !isAbortError(error)
       ) {
         setErrorMessage(error.message || t('blog.agentChat.sendFailed'));
+        clearLiveState();
       }
       throw error;
     } finally {
@@ -495,7 +497,7 @@ export const useAgentConversation = ({ conversationId }) => {
         setCreating(false);
       }
     }
-  }, [loadSessions, t]);
+  }, [clearLiveState, loadSessions, pushStep, t]);
 
   const reset = useCallback(() => {
     beginRunGeneration();
@@ -539,6 +541,11 @@ export const useAgentConversation = ({ conversationId }) => {
 
     // 切换会话时保留已渲染的消息直至新快照就绪，避免整页刷新感。
     setConversation(null);
+    if (isNewlyCreated && pending?.detail) {
+      applySnapshot(id, pending.detail);
+      setLoading(false);
+      return undefined;
+    }
     setLoading(true);
     const controller = new AbortController();
     routeControllerRef.current = controller;
@@ -547,7 +554,7 @@ export const useAgentConversation = ({ conversationId }) => {
       streamEpochRef.current += 1;
       controller.abort();
     };
-  }, [beginRunGeneration, conversationId, openConversation, updateRunning]);
+  }, [applySnapshot, beginRunGeneration, conversationId, openConversation, updateRunning]);
 
   // 新会话首条消息在快照就绪后经 /messages/stream 发送，避免首轮走 /events 恢复而整体一次性出现。
   useEffect(() => {
@@ -557,7 +564,7 @@ export const useAgentConversation = ({ conversationId }) => {
     if (pending.id !== convId || String(conversation.id) !== convId) return;
     if (conversation.status === 'running') return;
     pendingFirstMessageRef.current = null;
-    sendMessage(pending.text);
+    sendMessage(pending.text, { displayUserMessage: false });
   }, [loading, conversation, sendMessage]);
 
   useEffect(() => () => {
