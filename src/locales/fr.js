@@ -95,7 +95,8 @@ export default {
       multiTurnHint: 'Continuez à demander ; l’agent choisira lui-même les bons outils.',
       inputRequired: 'Saisissez d’abord la tâche demandée.', sendFailed: 'Envoi du message impossible.', loadFailed: 'Chargement de la conversation impossible.',
       restoring: 'Restauration de la conversation…', reconnecting: 'Connexion perdue, reconnexion…',
-      unknownTool: 'Outil', working: 'En cours…', writing: 'Rédaction…', toolCalled: 'Outil appelé', toolResult: 'Résultat de l’outil', viewBlog: 'Voir le blog'
+      unknownTool: 'Outil', working: 'En cours…', writing: 'Rédaction…', toolCalled: 'Outil appelé', toolResult: 'Résultat de l’outil', viewBlog: 'Voir le blog',
+      generatingImage: 'Génération de l’image…', imageToolTitle: 'Génération d’image IA', imageToolHint: 'Création d’une illustration ou couverture à partir de votre description ; enregistrée dans votre bibliothèque de médias'
     }
   },
   blogPlans: {

@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Chinese translations
  * 中文翻译资源
  */
@@ -100,10 +100,11 @@ export default {
       inputPlaceholder: '告诉 Dindor 你想做什么…',
       inputLockedPlaceholder: 'Dindor 执行中，请稍候',
       send: '发送', stop: '停止', running: '执行中…', thinking: '思考中…', callingTool: '工具调用中…', ready: '可以继续对话', failed: '本轮执行失败',
-      multiTurnHint: '继续提出要求，智能体会自动选择合适工具。',
+      multiTurnHint: 'DinQor 也会犯错，请注意甄别。',
       inputRequired: '请先输入你想让智能体做什么。', sendFailed: '消息发送失败。', loadFailed: '对话加载失败。',
       restoring: '正在恢复对话…', reconnecting: '连接已断开，正在重连…',
-      unknownTool: '工具', working: '处理中…', writing: '正在写作…', toolCalled: '已调用工具', toolResult: '工具返回结果', viewBlog: '查看博客'
+      unknownTool: '工具', working: '处理中…', writing: '正在写作…', toolCalled: '已调用工具', toolResult: '工具返回结果', viewBlog: '查看博客',
+      generatingImage: '正在生成图片…', imageToolTitle: 'AI 图片生成', imageToolHint: '根据你的描述生成独立配图/封面图，完成后自动保存到素材库'
     }
   },
   blogPlans: {

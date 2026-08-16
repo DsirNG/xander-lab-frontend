@@ -3,7 +3,7 @@ import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
   AlertCircle, ArrowLeft, Bot, CheckCircle2, FileText, Loader2, MessageSquareText, Plus,
-  Send, Sparkles, Wrench, X, Globe, PenLine, Image as ImageIcon, Mic, Menu, PanelLeftOpen, Link2, Search
+  Send, Sparkles, Wrench, X, Globe, PenLine, Image as ImageIcon, Mic, Menu, PanelLeftOpen, Link2, Search, Square
 } from 'lucide-react';
 import { useToast } from '@/hooks/useToast';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
@@ -26,9 +26,54 @@ const ThoughtCard = ({ content }) => (
 
 const BLOG_STAGES = ['analyze', 'research', 'write', 'illustrate', 'review'];
 
-/** 工具执行中的分步进度面板：阶段列表 + 实时日志 + 文章流式预览（对齐 blog-tool 的 AgentProcessPanel）。 */
-const ToolProgressPanel = ({ logs, stage, draft = '', active = false }) => {
+const IMAGE_TOOL = 'image_generate';
+
+/** 图片工具专属进度面板：独立样式，不走博客生成的阶段步骤 UI。 */
+const ImageToolProgressPanel = ({ logs, active = false }) => {
   const { t } = useTranslation();
+  return (
+    <div className="overflow-hidden rounded-2xl border border-emerald-500/30 bg-canvas shadow-sm">
+      <div className="flex items-center gap-2 border-b border-border px-4 py-3 text-sm font-semibold text-ink-secondary">
+        <ImageIcon className="h-4 w-4 shrink-0 text-emerald-500" />
+        <span className="truncate">{t('blog.agentChat.generatingImage')}</span>
+        {active && <Loader2 className="ml-auto h-4 w-4 shrink-0 animate-spin text-emerald-500" />}
+      </div>
+      <div className="space-y-3 px-4 py-4">
+        <div className="flex items-center gap-3 rounded-xl border border-emerald-500/20 bg-emerald-500/5 px-4 py-3">
+          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-emerald-500/10 text-emerald-500">
+            <ImageIcon className="h-5 w-5" />
+          </span>
+          <div className="min-w-0">
+            <div className="text-sm font-bold text-ink">{t('blog.agentChat.imageToolTitle')}</div>
+            <div className="mt-0.5 text-caption leading-5 text-ink-muted">{t('blog.agentChat.imageToolHint')}</div>
+          </div>
+        </div>
+        {logs.length > 0 && (
+          <div className="max-h-40 space-y-1.5 overflow-auto rounded-xl bg-ink p-3 text-caption leading-6 text-border-strong">
+            {logs.map((log, index) => (
+              <div key={`${log}-${index}`}><span className="mr-2 text-emerald-400">●</span>{log}</div>
+            ))}
+          </div>
+        )}
+        {active && (
+          <div className="flex h-28 items-center justify-center overflow-hidden rounded-xl border border-emerald-500/20 bg-emerald-500/5">
+            <div className="flex flex-col items-center gap-2 text-caption font-bold text-emerald-600/80">
+              <ImageIcon className="h-6 w-6 animate-pulse" />
+              <span>{t('blog.agentChat.generatingImage')}</span>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+/** 工具执行中的分步进度面板：阶段列表 + 实时日志 + 文章流式预览（对齐 blog-tool 的 AgentProcessPanel）。 */
+const ToolProgressPanel = ({ tool, logs, stage, draft = '', active = false }) => {
+  const { t } = useTranslation();
+  if (tool === IMAGE_TOOL) {
+    return <ImageToolProgressPanel logs={logs} active={active} />;
+  }
   const stageIndex = BLOG_STAGES.indexOf(stage);
   return (
     <div className="overflow-hidden rounded-2xl border border-border bg-canvas shadow-sm">
@@ -89,17 +134,24 @@ const ToolProgressPanel = ({ logs, stage, draft = '', active = false }) => {
 
 const ToolStepCard = ({ step, t, onViewBlog }) => {
   const isError = step.phase === 'error';
+  const isImageTool = step.tool === IMAGE_TOOL;
   const blogTaskId = step.result?.taskId;
+  const imageUrl = isImageTool ? step.result?.url : null;
   const Icon = isError ? AlertCircle : CheckCircle2;
   return (
     <div className={`rounded-xl border px-3 py-2 ${isError ? 'border-danger/30 bg-danger/5' : 'border-border bg-canvas'}`}>
-      <div className={`flex items-center gap-2 text-xs font-bold ${isError ? 'text-danger' : 'text-ink-secondary'}`}>
-        <Wrench className="h-3.5 w-3.5 shrink-0" />
-        <span className="truncate">{step.tool || t('blog.agentChat.unknownTool')}</span>
+      <div className={`flex items-center gap-2 text-xs font-bold ${isError ? 'text-danger' : isImageTool ? 'text-emerald-600' : 'text-ink-secondary'}`}>
+        {isImageTool ? <ImageIcon className="h-3.5 w-3.5 shrink-0" /> : <Wrench className="h-3.5 w-3.5 shrink-0" />}
+        <span className="truncate">{isImageTool ? t('blog.agentChat.imageToolTitle') : (step.tool || t('blog.agentChat.unknownTool'))}</span>
         {step.phase === 'start' && <span className="ml-auto font-normal text-ink-faint">{t('blog.agentChat.callingTool')}</span>}
         {step.phase === 'end' && <Icon className="ml-auto h-3.5 w-3.5 shrink-0 text-emerald-500" />}
         {isError && <Icon className="ml-auto h-3.5 w-3.5 shrink-0" />}
       </div>
+      {imageUrl && (
+        <a href={imageUrl} target="_blank" rel="noreferrer" className="mt-2 block overflow-hidden rounded-lg border border-border">
+          <img src={imageUrl} alt={step.result?.title || ''} className="max-h-56 w-full object-cover" />
+        </a>
+      )}
       {(step.result || step.error) && (
         <div className={`mt-1 whitespace-pre-wrap break-all text-xs leading-5 ${isError ? 'text-danger/90' : 'text-ink-muted'}`}>
           {compactToolResult(step.result ?? step.error)}
@@ -173,15 +225,22 @@ export const ThinkingIndicator = ({ label }) => (
 const HistoricalToolCard = ({ message, t, onViewBlog }) => {
   const { tool, payload } = toolCallSummary(message, t);
   const blogTaskId = message.kind === 'tool_result' ? payload?.taskId : null;
+  const isImageTool = tool === IMAGE_TOOL;
+  const imageUrl = isImageTool && message.kind === 'tool_result' ? payload?.url : null;
   return (
     <div className="rounded-xl border border-border bg-canvas px-3 py-2">
       <div className="flex items-center gap-2 text-xs font-bold text-ink-secondary">
-        <Wrench className="h-3.5 w-3.5 shrink-0" />
-        <span className="truncate">{tool}</span>
+        {isImageTool ? <ImageIcon className="h-3.5 w-3.5 shrink-0 text-emerald-500" /> : <Wrench className="h-3.5 w-3.5 shrink-0" />}
+        <span className="truncate">{isImageTool ? t('blog.agentChat.imageToolTitle') : tool}</span>
         <span className="ml-auto font-normal text-ink-faint">
           {message.kind === 'tool_call' ? t('blog.agentChat.toolCalled') : t('blog.agentChat.toolResult')}
         </span>
       </div>
+      {imageUrl && (
+        <a href={imageUrl} target="_blank" rel="noreferrer" className="mt-2 block overflow-hidden rounded-lg border border-border">
+          <img src={imageUrl} alt={payload?.title || ''} className="max-h-56 w-full object-cover" />
+        </a>
+      )}
       {message.kind === 'tool_result' && (
         <div className="mt-1 whitespace-pre-wrap break-all text-xs leading-5 text-ink-muted">
           {compactToolResult(payload ?? message.content)}
@@ -236,14 +295,21 @@ const AgentChatInputBar = ({ t, input, setInput, isActive, creating, hasConversa
           >
             <Mic className="h-5 w-5" />
           </button>
-          {isActive || creating ? (
+          {creating ? (
             <button
               type="button"
-              onClick={onStop}
               disabled
               className="flex h-8 w-8 items-center justify-center rounded-full bg-ink text-white"
             >
               <Loader2 className="h-4 w-4 animate-spin" />
+            </button>
+          ) : isActive ? (
+            <button
+              type="button"
+              onClick={onStop}
+              className="flex h-8 w-8 items-center justify-center rounded-full bg-ink text-white transition hover:bg-ink-secondary"
+            >
+              <Square className="h-3 w-3 fill-current" />
             </button>
           ) : (
             <button
@@ -257,7 +323,7 @@ const AgentChatInputBar = ({ t, input, setInput, isActive, creating, hasConversa
           )}
         </div>
       </div>
-      {hasConversation && !isActive && <div className="mt-2 text-center text-xs text-ink-muted">{t('blog.agentChat.multiTurnHint')}</div>}
+      <div className="mt-2 text-center text-xs text-ink-muted">{t('blog.agentChat.multiTurnHint')}</div>
     </div>
   );
 };
@@ -360,6 +426,11 @@ const AgentChat = () => {
       toast.warning(t('blog.agentChat.inputRequired'));
       return;
     }
+    stickToBottomRef.current = true;
+    setTimeout(() => {
+      chatEndRef.current?.scrollIntoView({ behavior: 'auto', block: 'end' });
+    }, 10);
+    
     if (!conversationId) {
       try {
         const detail = await createConversation(input);
@@ -785,6 +856,7 @@ const AgentChat = () => {
                     {toolProgress.map((tool) => (
                       <ToolProgressPanel
                         key={tool.tool}
+                        tool={tool.tool}
                         logs={tool.logs}
                         stage={tool.stage}
                         draft={tool.draft}

@@ -103,7 +103,8 @@ export default {
       multiTurnHint: 'Keep asking; the agent will pick the right tools by itself.',
       inputRequired: 'Enter what you want the agent to do first.', sendFailed: 'Could not send the message.', loadFailed: 'Could not load the conversation.',
       restoring: 'Restoring conversation…', reconnecting: 'Connection lost, reconnecting…',
-      unknownTool: 'Tool', working: 'Working…', writing: 'Writing…', toolCalled: 'Tool called', toolResult: 'Tool result', viewBlog: 'View blog'
+      unknownTool: 'Tool', working: 'Working…', writing: 'Writing…', toolCalled: 'Tool called', toolResult: 'Tool result', viewBlog: 'View blog',
+      generatingImage: 'Generating image…', imageToolTitle: 'AI Image Generation', imageToolHint: 'Creating a standalone illustration or cover from your description; saved to your media library when done'
     }
   },
   blogPlans: {

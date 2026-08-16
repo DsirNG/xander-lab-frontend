@@ -1,29 +1,40 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { AlertCircle, Bot, Loader2, MessageSquareText, Sparkles } from 'lucide-react';
+import { AlertCircle, Bot, Image as ImageIcon, Loader2, MessageSquareText, Sparkles } from 'lucide-react';
 import { get } from '@api';
 import AgentMarkdown from '../components/AgentMarkdown';
 
+const IMAGE_TOOL = 'image_generate';
+
 const HistoricalToolCard = ({ message }) => {
   let toolName = '';
-  let args = {};
+  let payload = {};
   try {
     const parsed = JSON.parse(message.content || '{}');
     toolName = parsed.tool || message.toolName || '';
-    args = parsed.args || {};
+    payload = parsed.args || parsed;
   } catch {
     toolName = message.toolName || '';
   }
+  const isImageTool = toolName === IMAGE_TOOL;
+  const imageUrl = isImageTool && message.kind === 'tool_result' ? payload.url : null;
   return (
     <div className="rounded-xl border border-border bg-surface p-3 text-xs">
       <div className="flex items-center gap-2 font-semibold text-ink-secondary">
-        <Sparkles className="h-3.5 w-3.5 text-ink-muted" />
-        <span>{toolName || '工具调用'}</span>
+        {isImageTool
+          ? <ImageIcon className="h-3.5 w-3.5 text-emerald-500" />
+          : <Sparkles className="h-3.5 w-3.5 text-ink-muted" />}
+        <span>{isImageTool ? 'AI 图片生成' : (toolName || '工具调用')}</span>
       </div>
-      {Object.keys(args).length > 0 && (
+      {imageUrl && (
+        <a href={imageUrl} target="_blank" rel="noreferrer" className="mt-2 block overflow-hidden rounded-lg border border-border">
+          <img src={imageUrl} alt={payload.title || ''} className="max-h-56 w-full object-cover" />
+        </a>
+      )}
+      {Object.keys(payload).length > 0 && message.kind !== 'tool_result' && (
         <pre className="mt-2 max-h-40 overflow-auto whitespace-pre-wrap break-all text-ink-muted">
-          {JSON.stringify(args, null, 2)}
+          {JSON.stringify(payload, null, 2)}
         </pre>
       )}
       {message.kind === 'tool_result' && (
