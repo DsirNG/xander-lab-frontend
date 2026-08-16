@@ -3,7 +3,7 @@ import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
   AlertCircle, ArrowLeft, Bot, CheckCircle2, FileText, Loader2, MessageSquareText, Plus,
-  Send, Sparkles, Wrench, X, Globe, PenLine, Image as ImageIcon, Mic, Menu, PanelLeftOpen, Link2, Search, Square
+  Send, Sparkles, Wrench, X, Globe, PenLine, Image as ImageIcon, Mic, Menu, PanelLeftOpen, Link2, Search, Square, SquarePen
 } from 'lucide-react';
 import { useToast } from '@/hooks/useToast';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
@@ -641,7 +641,39 @@ const AgentChat = () => {
             }}
             onNew={handleNewConversation}
             onCollapse={() => setSidebarCollapsed(true)}
+            onSearch={() => setSearchOpen(true)}
           />
+        )}
+        {sidebarCollapsed && (
+          <div className="hidden lg:flex w-16 shrink-0 flex-col items-center border-r border-border bg-surface py-4">
+            <div className="flex flex-col gap-3">
+              <button onClick={() => setSidebarCollapsed(false)} className="grid h-10 w-10 place-items-center rounded-xl text-ink hover:bg-surface-muted transition" title="展开">
+                <Bot className="h-6 w-6" />
+              </button>
+              <button onClick={handleNewConversation} className="mt-2 grid h-10 w-10 place-items-center rounded-xl text-ink-muted hover:bg-surface-muted hover:text-ink transition" title="新建会话">
+                <SquarePen className="h-5 w-5" />
+              </button>
+              <button onClick={() => setSearchOpen(true)} className="grid h-10 w-10 place-items-center rounded-xl text-ink-muted hover:bg-surface-muted hover:text-ink transition" title="搜索">
+                <Search className="h-5 w-5" />
+              </button>
+              <button onClick={() => setSidebarCollapsed(false)} className="grid h-10 w-10 place-items-center rounded-xl text-ink-muted hover:bg-surface-muted hover:text-ink transition" title="展开会话列表">
+                <MessageSquareText className="h-5 w-5" />
+              </button>
+            </div>
+            <div className="mt-auto">
+              <div className="relative grid h-8 w-8 cursor-pointer place-items-center rounded-full bg-accent text-white font-bold text-xs uppercase hover:opacity-80 transition" title="用户">
+                {avatarText}
+                {avatar ? (
+                  <img
+                    src={avatar}
+                    alt={displayName}
+                    className="absolute inset-0 h-full w-full rounded-full object-cover"
+                    onError={(event) => { event.currentTarget.style.display = 'none'; }}
+                  />
+                ) : null}
+              </div>
+            </div>
+          </div>
         )}
         {mobileSessionsOpen && (
           <div className="absolute inset-0 z-40 flex bg-ink/40 lg:hidden">
@@ -660,6 +692,7 @@ const AgentChat = () => {
                 setMobileSessionsOpen(false);
                 handleNewConversation();
               }}
+              onSearch={() => setSearchOpen(true)}
             />
             <button
               type="button"
@@ -681,11 +714,11 @@ const AgentChat = () => {
                   <button
                     type="button"
                     onClick={() => setSidebarCollapsed(false)}
-                    className="rounded-lg p-2 text-ink-muted hover:bg-surface-muted transition"
+                    className="rounded-lg p-2 text-ink-muted hover:bg-surface-muted transition lg:hidden"
                   >
                     <PanelLeftOpen className="h-5 w-5" />
                   </button>
-                  <span className="font-bold text-base text-ink">DinQorGPT</span>
+                  <span className="font-bold text-base text-ink lg:hidden">DinQorGPT</span>
                 </>
               )}
               {!sidebarCollapsed && (
@@ -704,11 +737,11 @@ const AgentChat = () => {
                   <button
                     type="button"
                     onClick={() => setSearchOpen(true)}
-                    className="rounded-lg p-2 text-ink-muted hover:bg-surface-muted transition"
+                    className="rounded-lg p-2 text-ink-muted hover:bg-surface-muted transition lg:hidden"
                   >
                     <Search className="h-5 w-5" />
                   </button>
-                  <div className="relative grid h-8 w-8 place-items-center rounded-full bg-accent text-white font-bold text-xs uppercase">
+                  <div className="relative grid h-8 w-8 place-items-center rounded-full bg-accent text-white font-bold text-xs uppercase lg:hidden">
                     {avatarText}
                     {avatar ? (
                       <img

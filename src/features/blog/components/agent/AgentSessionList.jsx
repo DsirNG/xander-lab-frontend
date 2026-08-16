@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useAuthSession } from '@features/auth/context/authSessionContextValue';
 
-const AgentSessionList = ({ sessions, activeId, loading, disableNew = false, mobile = false, onSelect, onNew, onCollapse }) => {
+const AgentSessionList = ({ sessions, activeId, loading, disableNew = false, mobile = false, onSelect, onNew, onCollapse, onSearch }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { userInfo } = useAuthSession();
@@ -22,7 +22,7 @@ const AgentSessionList = ({ sessions, activeId, loading, disableNew = false, mob
           <span className="font-bold text-base text-ink">DinQorGPT</span>
         </div>
         <div className="flex items-center gap-1 text-ink-muted">
-          <button className="p-1.5 hover:bg-surface-muted rounded-lg transition"><Search className="h-4 w-4" /></button>
+          <button onClick={onSearch} className="p-1.5 hover:bg-surface-muted rounded-lg transition"><Search className="h-4 w-4" /></button>
           <button
             onClick={onCollapse}
             className="p-1.5 hover:bg-surface-muted rounded-lg transition hidden lg:block"
