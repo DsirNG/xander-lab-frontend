@@ -16,6 +16,7 @@ import useClickOutside from '@/hooks/useClickOutside';
 import { useAgentConversation, compactToolResult, toolCallSummary } from '../hooks/useAgentConversation';
 import AgentMarkdown from '../components/AgentMarkdown';
 import AgentImagesPage from './AgentImagesPage';
+import ProfileModal from '@features/workspace/components/ProfileModal';
 import { useAuthSession } from '@features/auth/context/authSessionContextValue';
 
 const ThoughtCard = ({ content }) => (
@@ -359,6 +360,7 @@ const AgentChat = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const shareMenuRef = useRef(null);
   const searchModalRef = useRef(null);
   const chatEndRef = useRef(null);
@@ -687,6 +689,7 @@ const AgentChat = () => {
             onCollapse={() => setSidebarCollapsed(true)}
             onSearch={() => setSearchOpen(true)}
             onImages={() => setView('images')}
+            onOpenSettings={() => setSettingsOpen(true)}
           />
         )}
         {sidebarCollapsed && (
@@ -745,6 +748,7 @@ const AgentChat = () => {
                 setMobileSessionsOpen(false);
                 setView('images');
               }}
+              onOpenSettings={() => setSettingsOpen(true)}
             />
             <button
               type="button"
@@ -995,6 +999,8 @@ const AgentChat = () => {
           </div>
         )}
       </div>
+
+      <ProfileModal open={settingsOpen} onClose={() => setSettingsOpen(false)} />
 
       {/* Search Modal */}
       {searchOpen && (
