@@ -15,6 +15,7 @@ import { adminService } from '../services/adminService';
  */
 const API_STYLE_IMAGES = 'IMAGES_GENERATIONS';
 const API_STYLE_CHAT = 'CHAT_COMPLETIONS';
+const API_STYLE_CHAT_PROMPT = 'CHAT_PROMPT';
 const API_STYLE_RESPONSES = 'RESPONSES';
 
 const FeatureConfigModal = ({ isOpen, config, providers, onClose, onSaved }) => {
@@ -41,7 +42,7 @@ const FeatureConfigModal = ({ isOpen, config, providers, onClose, onSaved }) => 
   const styleOptions = useMemo(() => {
     const isImage = config?.featureKey === 'blog_agent_image';
     const options = isImage
-      ? [API_STYLE_CHAT, API_STYLE_IMAGES]
+      ? [API_STYLE_CHAT, API_STYLE_CHAT_PROMPT, API_STYLE_IMAGES]
       : [API_STYLE_CHAT, API_STYLE_RESPONSES];
     return options.map((style) => ({
       value: style,
@@ -49,7 +50,9 @@ const FeatureConfigModal = ({ isOpen, config, providers, onClose, onSaved }) => 
         ? t('admin.configs.apiStyleImages')
         : style === API_STYLE_CHAT
           ? t('admin.configs.apiStyleChat')
-          : t('admin.configs.apiStyleResponses'),
+          : style === API_STYLE_CHAT_PROMPT
+            ? t('admin.configs.apiStyleChatPrompt')
+            : t('admin.configs.apiStyleResponses'),
     }));
   }, [config?.featureKey, t]);
 
@@ -143,10 +146,10 @@ const FeatureConfigModal = ({ isOpen, config, providers, onClose, onSaved }) => 
       isOpen={isOpen}
       onClose={onClose}
       title={t('admin.configs.editTitle', { feature: t(`admin.configs.feature.${config?.featureKey}`) })}
-      width="max-w-xl"
+      width="max-w-2xl"
       footer={footer}
     >
-      <div className="space-y-4">
+      <div className="space-y-5">
         <label className="flex cursor-pointer items-center gap-2 text-xs font-medium text-ink">
           <input
             type="checkbox"
@@ -158,64 +161,72 @@ const FeatureConfigModal = ({ isOpen, config, providers, onClose, onSaved }) => 
           <span className="text-micro font-normal text-ink-faint">{t('admin.configs.formEnabledHint')}</span>
         </label>
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <FormField label={t('admin.configs.primaryProvider')}>
-            <CustomSelect
-              size="md"
-              options={providerOptions}
-              value={primaryProviderId}
-              onChange={setPrimaryProviderId}
-              placeholder={t('admin.configs.selectProvider')}
-            />
-          </FormField>
-          <FormField label={t('admin.configs.primaryModel')} htmlFor="admin-config-primary-model">
-            <input
-              id="admin-config-primary-model"
-              value={primaryModel}
-              onChange={(e) => setPrimaryModel(e.target.value)}
-              placeholder="gpt-4o"
-              className={formInputCls}
-              disabled={!primaryProviderId}
-            />
-          </FormField>
-          <FormField label={t('admin.configs.primaryApiStyle')}>
-            <CustomSelect
-              size="md"
-              options={styleOptions}
-              value={primaryApiStyle || ''}
-              onChange={(value) => setPrimaryApiStyle(value || '')}
-              placeholder={t('admin.configs.selectProvider')}
-            />
-          </FormField>
+        <div>
+          <p className="mb-2 text-xs font-bold text-ink-secondary">{t('admin.configs.primary')}</p>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+            <FormField label={t('admin.configs.primaryProvider')}>
+              <CustomSelect
+                size="md"
+                options={providerOptions}
+                value={primaryProviderId}
+                onChange={setPrimaryProviderId}
+                placeholder={t('admin.configs.selectProvider')}
+              />
+            </FormField>
+            <FormField label={t('admin.configs.primaryModel')} htmlFor="admin-config-primary-model">
+              <input
+                id="admin-config-primary-model"
+                value={primaryModel}
+                onChange={(e) => setPrimaryModel(e.target.value)}
+                placeholder="gpt-4o"
+                className={formInputCls}
+                disabled={!primaryProviderId}
+              />
+            </FormField>
+            <FormField label={t('admin.configs.primaryApiStyle')}>
+              <CustomSelect
+                size="md"
+                options={styleOptions}
+                value={primaryApiStyle || ''}
+                onChange={(value) => setPrimaryApiStyle(value || '')}
+                placeholder={t('admin.configs.selectProvider')}
+              />
+            </FormField>
+          </div>
+        </div>
 
-          <FormField label={t('admin.configs.fallbackProvider')}>
-            <CustomSelect
-              size="md"
-              options={fallbackOptions}
-              value={fallbackProviderId || ''}
-              onChange={(value) => setFallbackProviderId(value === '' ? null : value)}
-              placeholder={t('admin.configs.selectProvider')}
-            />
-          </FormField>
-          <FormField label={t('admin.configs.fallbackModel')} htmlFor="admin-config-fallback-model">
-            <input
-              id="admin-config-fallback-model"
-              value={fallbackModel}
-              onChange={(e) => setFallbackModel(e.target.value)}
-              placeholder="gpt-4o-mini"
-              className={formInputCls}
-              disabled={!fallbackProviderId}
-            />
-          </FormField>
-          <FormField label={t('admin.configs.fallbackApiStyle')}>
-            <CustomSelect
-              size="md"
-              options={styleOptions}
-              value={fallbackApiStyle || ''}
-              onChange={(value) => setFallbackApiStyle(value || '')}
-              placeholder={t('admin.configs.selectProvider')}
-            />
-          </FormField>
+        <div>
+          <p className="mb-2 text-xs font-bold text-ink-secondary">{t('admin.configs.fallback')}</p>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+            <FormField label={t('admin.configs.fallbackProvider')}>
+              <CustomSelect
+                size="md"
+                options={fallbackOptions}
+                value={fallbackProviderId || ''}
+                onChange={(value) => setFallbackProviderId(value === '' ? null : value)}
+                placeholder={t('admin.configs.selectProvider')}
+              />
+            </FormField>
+            <FormField label={t('admin.configs.fallbackModel')} htmlFor="admin-config-fallback-model">
+              <input
+                id="admin-config-fallback-model"
+                value={fallbackModel}
+                onChange={(e) => setFallbackModel(e.target.value)}
+                placeholder="gpt-4o-mini"
+                className={formInputCls}
+                disabled={!fallbackProviderId}
+              />
+            </FormField>
+            <FormField label={t('admin.configs.fallbackApiStyle')}>
+              <CustomSelect
+                size="md"
+                options={styleOptions}
+                value={fallbackApiStyle || ''}
+                onChange={(value) => setFallbackApiStyle(value || '')}
+                placeholder={t('admin.configs.selectProvider')}
+              />
+            </FormField>
+          </div>
         </div>
 
         <p className="text-micro text-ink-faint">{t('admin.configs.apiStyleHint')}</p>
