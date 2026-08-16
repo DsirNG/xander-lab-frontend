@@ -111,7 +111,7 @@ export default {
       generated: '生成图片', mine: '我的图片',
       loadFailed: '图片加载失败，请稍后重试',
       emptyTitle: '还没有生成的图片', emptyHint: '在输入框描述一张图片，智能体会生成并自动保存到这里',
-      loadMore: '加载更多', loadingMore: '加载中…'
+      loadMore: '加载更多', loadingMore: '加载中…', backToChat: '返回对话'
     }
   },
   blogPlans: {

@@ -30,7 +30,6 @@ const BlogTags = React.lazy(() => import('@features/blog/pages/BlogTags'));
 const BlogPublish = React.lazy(() => import('@features/blog/pages/BlogPublish'));
 const AgentChat = React.lazy(() => import('@features/agent/pages/AgentChat'));
 const AgentSharedView = React.lazy(() => import('@features/agent/pages/AgentSharedView'));
-const AgentImagesPage = React.lazy(() => import('@features/agent/pages/AgentImagesPage'));
 const BlogPlans = React.lazy(() => import('@features/blog/pages/BlogPlans'));
 const BlogPlanDetail = React.lazy(() => import('@features/blog/pages/BlogPlanDetail'));
 const LoginPage = React.lazy(() => import('@features/auth/pages/LoginPage'));
@@ -178,10 +177,6 @@ export const createRouter = () => {
         {
           path: 'img2three/:taskId',
           element: <LazyPage><Img2ThreePage /></LazyPage>,
-        },
-        {
-          path: 'images',
-          element: <LazyPage><AgentImagesPage /></LazyPage>,
         },
         {
           path: 'blog-manage',

@@ -1,12 +1,10 @@
 import React from 'react';
 import { MessageSquareText, Search, PanelLeftClose, SquarePen, Image as ImageIcon, CircleUser } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 import { useAuthSession } from '@features/auth/context/authSessionContextValue';
 
-const AgentSessionList = ({ sessions, activeId, loading, disableNew = false, mobile = false, onSelect, onNew, onCollapse, onSearch }) => {
+const AgentSessionList = ({ sessions, activeId, loading, disableNew = false, mobile = false, imagesActive = false, onSelect, onNew, onCollapse, onSearch, onImages }) => {
   const { t } = useTranslation();
-  const navigate = useNavigate();
   const { userInfo } = useAuthSession();
 
   const displayName = userInfo?.nickname || userInfo?.username || '用户';
@@ -53,10 +51,12 @@ const AgentSessionList = ({ sessions, activeId, loading, disableNew = false, mob
       {/* Nav Links */}
       <div className="px-3 py-1 space-y-0.5">
         <button
-          onClick={() => navigate('/workspace/images')}
-          className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm text-ink hover:bg-surface-muted transition"
+          onClick={onImages}
+          className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition ${
+            imagesActive ? 'bg-surface-muted text-ink' : 'text-ink hover:bg-surface-muted'
+          }`}
         >
-          <ImageIcon className="h-4 w-4 text-ink-muted" />
+          <ImageIcon className={`h-4 w-4 ${imagesActive ? 'text-emerald-500' : 'text-ink-muted'}`} />
           <span>图片</span>
         </button>
       </div>

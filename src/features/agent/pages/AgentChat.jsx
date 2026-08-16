@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
@@ -15,6 +15,7 @@ import useIsMobile from '@/hooks/useIsMobile';
 import useClickOutside from '@/hooks/useClickOutside';
 import { useAgentConversation, compactToolResult, toolCallSummary } from '../hooks/useAgentConversation';
 import AgentMarkdown from '../components/AgentMarkdown';
+import AgentImagesPage from './AgentImagesPage';
 import { useAuthSession } from '@features/auth/context/authSessionContextValue';
 
 const ThoughtCard = ({ content }) => (
@@ -351,6 +352,7 @@ const AgentChat = () => {
   const avatar = userInfo?.avatar;
 
   const [input, setInput] = useState('');
+  const [view, setView] = useState('chat'); // 'chat' | 'images'：图片画廊是智能体对话内的视图
   const [mobileSessionsOpen, setMobileSessionsOpen] = useState(false);
   const [artifactData, setArtifactData] = useState(null);
   const [artifactLoading, setArtifactLoading] = useState(false);
@@ -435,14 +437,21 @@ const AgentChat = () => {
       toast.warning(t('blog.agentChat.inputRequired'));
       return;
     }
+    await submitText(input);
+  };
+
+  /** 发送一段文本：无会话时先建会话壳再经流式接口发首条消息，否则直接发到当前会话。 */
+  const submitText = useCallback(async (text) => {
+    const trimmed = text.trim();
+    if (!trimmed) return;
     stickToBottomRef.current = true;
     setTimeout(() => {
       chatEndRef.current?.scrollIntoView({ behavior: 'auto', block: 'end' });
     }, 10);
-    
+
     if (!conversationId) {
       try {
-        const detail = await createConversation(input);
+        const detail = await createConversation(trimmed);
         if (!detail?.conversation?.id) return;
         navigate(`/workspace/agent/${detail.conversation.id}`, { replace: true });
         setInput('');
@@ -451,14 +460,14 @@ const AgentChat = () => {
       }
       return;
     }
-    const submitted = input.trim();
     setInput('');
-    await sendMessage(submitted);
-  };
+    await sendMessage(trimmed);
+  }, [conversationId, createConversation, navigate, sendMessage, t, toast]);
 
   const handleNewConversation = () => {
     reset();
     setInput('');
+    setView('chat');
     navigate('/workspace/agent', { replace: true });
   };
 
@@ -472,18 +481,21 @@ const AgentChat = () => {
     setInput(queryParam);
     (async () => {
       try {
-        const detail = await createConversation(queryParam);
-        if (!detail?.conversation?.id) return;
+        await submitText(queryParam);
         const next = new URLSearchParams(searchParams);
         next.delete('q');
         setSearchParams(next, { replace: true });
-        navigate(`/workspace/agent/${detail.conversation.id}`, { replace: true });
-        setInput('');
       } catch (error) {
         toast.error(error.message || t('blog.agentChat.sendFailed'));
       }
     })();
-  }, [queryParam, conversationId, creating, createConversation, navigate, searchParams, setSearchParams, t, toast]);
+  }, [queryParam, conversationId, creating, submitText, searchParams, setSearchParams, t, toast]);
+
+  /** 图片画廊内发起生成：切回对话视图并直接发送。 */
+  const handleImagesGenerate = useCallback((query) => {
+    setView('chat');
+    submitText(`生成一张图片: ${query}`);
+  }, [submitText]);
 
   const handleViewBlog = (taskId) => {
     const next = new URLSearchParams(searchParams);
@@ -663,12 +675,17 @@ const AgentChat = () => {
             activeId={conversationId}
             loading={sessionsLoading}
             disableNew={navigationLocked}
+            imagesActive={view === 'images'}
             onSelect={(id) => {
-              if (!navigationLocked) navigate(`/workspace/agent/${id}`);
+              if (!navigationLocked) {
+                setView('chat');
+                navigate(`/workspace/agent/${id}`);
+              }
             }}
             onNew={handleNewConversation}
             onCollapse={() => setSidebarCollapsed(true)}
             onSearch={() => setSearchOpen(true)}
+            onImages={() => setView('images')}
           />
         )}
         {sidebarCollapsed && (
@@ -710,9 +727,11 @@ const AgentChat = () => {
               activeId={conversationId}
               loading={sessionsLoading}
               disableNew={navigationLocked}
+              imagesActive={view === 'images'}
               onSelect={(id) => {
                 if (navigationLocked) return;
                 setMobileSessionsOpen(false);
+                setView('chat');
                 navigate(`/workspace/agent/${id}`);
               }}
               onNew={() => {
@@ -720,6 +739,10 @@ const AgentChat = () => {
                 handleNewConversation();
               }}
               onSearch={() => setSearchOpen(true)}
+              onImages={() => {
+                setMobileSessionsOpen(false);
+                setView('images');
+              }}
             />
             <button
               type="button"
@@ -733,6 +756,15 @@ const AgentChat = () => {
         )}
 
         <section className={`relative flex min-h-0 min-w-0 flex-1 flex-col bg-canvas ${showArtifact && !isMobile ? 'lg:max-w-[48%]' : ''}`}>
+          {view === 'images' ? (
+            <div className="min-h-0 flex-1">
+              <AgentImagesPage
+                onBack={() => setView('chat')}
+                onGenerate={handleImagesGenerate}
+              />
+            </div>
+          ) : (
+          <>
           {/* Main Header */}
           <header className="absolute top-0 left-0 right-0 z-10 flex h-14 items-center justify-between px-4 sm:px-6">
             <div className="flex items-center gap-2">
@@ -947,6 +979,8 @@ const AgentChat = () => {
                 />
               </div>
             </>
+          )}
+          </>
           )}
         </section>
 

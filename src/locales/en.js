@@ -111,7 +111,7 @@ export default {
       generated: 'Generated images', mine: 'My images',
       loadFailed: 'Could not load images. Please try again later.',
       emptyTitle: 'No images generated yet', emptyHint: 'Describe an image in the input box and the agent will generate and save it here',
-      loadMore: 'Load more', loadingMore: 'Loading…'
+      loadMore: 'Load more', loadingMore: 'Loading…', backToChat: 'Back to chat'
     }
   },
   blogPlans: {

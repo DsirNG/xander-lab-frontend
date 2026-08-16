@@ -103,7 +103,7 @@ export default {
       generated: '生成された画像', mine: 'マイ画像',
       loadFailed: '画像を読み込めませんでした。後でもう一度お試しください。',
       emptyTitle: 'まだ生成された画像はありません', emptyHint: '入力欄で画像を説明すると、エージェントが生成してここに保存します',
-      loadMore: 'さらに読み込む', loadingMore: '読み込み中…'
+      loadMore: 'さらに読み込む', loadingMore: '読み込み中…', backToChat: '会話に戻る'
     }
   },
   blogPlans: {
