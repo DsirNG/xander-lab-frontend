@@ -1,7 +1,8 @@
-import React, { memo } from 'react';
+import React, { memo, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import CodeBlock from '@/components/common/CodeBlock';
+import Modal from '@/components/common/Modal';
 
 /** 模型常把 Markdown 反引号写成 \` 转义，CommonMark 会把它渲染成裸反引号；这里还原为真正的反引号。 */
 const normalizeAnswer = (text) => (
@@ -76,15 +77,51 @@ const createMarkdownComponents = (codeAppearance) => ({
   blockquote({ children, ...props }) {
     return <blockquote className="border-l-4 border-border-strong pl-3 text-ink-muted" {...props}>{children}</blockquote>;
   },
+  img({ src, alt, onImageClick, ...props }) {
+    return (
+      <img
+        src={src}
+        alt={alt}
+        className="my-3 max-h-80 w-auto rounded-xl object-contain shadow-sm cursor-zoom-in transition-transform hover:opacity-90"
+        onClick={() => onImageClick?.(src)}
+        {...props}
+      />
+    );
+  },
 });
 
-const AgentMarkdown = memo(({ content, codeAppearance = 'conversation' }) => (
-  <div className="prose prose-sm min-w-0 max-w-none break-words prose-li:my-0.5 prose-li:text-ink-secondary prose-strong:text-ink prose-pre:my-3 prose-pre:bg-transparent prose-pre:p-0 prose-table:text-sm">
-    <ReactMarkdown remarkPlugins={[remarkGfm]} components={createMarkdownComponents(codeAppearance)}>
-      {normalizeAnswer(content || '')}
-    </ReactMarkdown>
-  </div>
-));
+const AgentMarkdown = memo(({ content, codeAppearance = 'conversation' }) => {
+  const [previewSrc, setPreviewSrc] = useState(null);
+
+  const components = React.useMemo(() => {
+    const base = createMarkdownComponents(codeAppearance);
+    return {
+      ...base,
+      img: (props) => base.img({ ...props, onImageClick: setPreviewSrc }),
+    };
+  }, [codeAppearance]);
+
+  return (
+    <>
+      <div className="prose prose-sm min-w-0 max-w-none break-words prose-li:my-0.5 prose-li:text-ink-secondary prose-strong:text-ink prose-pre:my-3 prose-pre:bg-transparent prose-pre:p-0 prose-table:text-sm">
+        <ReactMarkdown remarkPlugins={[remarkGfm]} components={components}>
+          {normalizeAnswer(content || '')}
+        </ReactMarkdown>
+      </div>
+      <Modal
+        isOpen={!!previewSrc}
+        onClose={() => setPreviewSrc(null)}
+        width="max-w-4xl"
+        className="!bg-transparent !shadow-none"
+        hideCloseButton
+      >
+        <div className="flex items-center justify-center" onClick={() => setPreviewSrc(null)}>
+          <img src={previewSrc} alt="Preview" className="max-h-[85vh] max-w-full rounded-lg object-contain" />
+        </div>
+      </Modal>
+    </>
+  );
+});
 
 AgentMarkdown.displayName = 'AgentMarkdown';
 

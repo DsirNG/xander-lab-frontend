@@ -29,40 +29,27 @@ const BLOG_STAGES = ['analyze', 'research', 'write', 'illustrate', 'review'];
 const IMAGE_TOOL = 'image_generate';
 
 /** 图片工具专属进度面板：独立样式，不走博客生成的阶段步骤 UI。 */
-const ImageToolProgressPanel = ({ logs, active = false }) => {
+const ImageToolProgressPanel = () => {
   const { t } = useTranslation();
   return (
-    <div className="overflow-hidden rounded-2xl border border-emerald-500/30 bg-canvas shadow-sm">
-      <div className="flex items-center gap-2 border-b border-border px-4 py-3 text-sm font-semibold text-ink-secondary">
-        <ImageIcon className="h-4 w-4 shrink-0 text-emerald-500" />
-        <span className="truncate">{t('blog.agentChat.generatingImage')}</span>
-        {active && <Loader2 className="ml-auto h-4 w-4 shrink-0 animate-spin text-emerald-500" />}
-      </div>
-      <div className="space-y-3 px-4 py-4">
-        <div className="flex items-center gap-3 rounded-xl border border-emerald-500/20 bg-emerald-500/5 px-4 py-3">
-          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-emerald-500/10 text-emerald-500">
-            <ImageIcon className="h-5 w-5" />
-          </span>
-          <div className="min-w-0">
-            <div className="text-sm font-bold text-ink">{t('blog.agentChat.imageToolTitle')}</div>
-            <div className="mt-0.5 text-caption leading-5 text-ink-muted">{t('blog.agentChat.imageToolHint')}</div>
-          </div>
-        </div>
-        {logs.length > 0 && (
-          <div className="max-h-40 space-y-1.5 overflow-auto rounded-xl bg-ink p-3 text-caption leading-6 text-border-strong">
-            {logs.map((log, index) => (
-              <div key={`${log}-${index}`}><span className="mr-2 text-emerald-400">●</span>{log}</div>
-            ))}
-          </div>
-        )}
-        {active && (
-          <div className="flex h-28 items-center justify-center overflow-hidden rounded-xl border border-emerald-500/20 bg-emerald-500/5">
-            <div className="flex flex-col items-center gap-2 text-caption font-bold text-emerald-600/80">
-              <ImageIcon className="h-6 w-6 animate-pulse" />
-              <span>{t('blog.agentChat.generatingImage')}</span>
-            </div>
-          </div>
-        )}
+    <div className="relative flex h-64 w-64 flex-col overflow-hidden rounded-[2rem] bg-surface-muted p-5 sm:h-80 sm:w-80 sm:p-6">
+      <div 
+        className="absolute inset-0 opacity-10 animate-pulse" 
+        style={{ backgroundImage: 'radial-gradient(circle, currentColor 1.5px, transparent 1.5px)', backgroundSize: '24px 24px', backgroundPosition: '0 0' }} 
+      />
+      <div className="absolute left-1/2 top-1/2 h-32 w-32 -translate-x-1/2 -translate-y-1/2 animate-pulse rounded-full bg-ink/5 blur-3xl" />
+      <div className="relative z-10 flex items-center gap-1.5 text-sm font-semibold text-ink-secondary">
+        <Sparkles className="h-4 w-4 animate-pulse text-ink-muted" />
+        <span>正在创建图片</span>
+        <span className="flex items-center gap-0.5 ml-1 mt-1" aria-hidden="true">
+          {[0, 1, 2].map((index) => (
+            <span
+              key={index}
+              className="h-1 w-1 animate-bounce rounded-full bg-current opacity-70"
+              style={{ animationDelay: `${index * 150}ms` }}
+            />
+          ))}
+        </span>
       </div>
     </div>
   );
@@ -133,25 +120,26 @@ const ToolProgressPanel = ({ tool, logs, stage, draft = '', active = false }) =>
 };
 
 const ToolStepCard = ({ step, t, onViewBlog }) => {
-  const isError = step.phase === 'error';
   const isImageTool = step.tool === IMAGE_TOOL;
+  if (isImageTool) {
+    if (step.phase === 'end' && step.result?.url) {
+      return <AgentMarkdown content={`![${step.result?.title || ''}](${step.result.url})`} />;
+    }
+    return null;
+  }
+
+  const isError = step.phase === 'error';
   const blogTaskId = step.result?.taskId;
-  const imageUrl = isImageTool ? step.result?.url : null;
   const Icon = isError ? AlertCircle : CheckCircle2;
   return (
     <div className={`rounded-xl border px-3 py-2 ${isError ? 'border-danger/30 bg-danger/5' : 'border-border bg-canvas'}`}>
-      <div className={`flex items-center gap-2 text-xs font-bold ${isError ? 'text-danger' : isImageTool ? 'text-emerald-600' : 'text-ink-secondary'}`}>
-        {isImageTool ? <ImageIcon className="h-3.5 w-3.5 shrink-0" /> : <Wrench className="h-3.5 w-3.5 shrink-0" />}
-        <span className="truncate">{isImageTool ? t('blog.agentChat.imageToolTitle') : (step.tool || t('blog.agentChat.unknownTool'))}</span>
+      <div className={`flex items-center gap-2 text-xs font-bold ${isError ? 'text-danger' : 'text-ink-secondary'}`}>
+        <Wrench className="h-3.5 w-3.5 shrink-0" />
+        <span className="truncate">{step.tool || t('blog.agentChat.unknownTool')}</span>
         {step.phase === 'start' && <span className="ml-auto font-normal text-ink-faint">{t('blog.agentChat.callingTool')}</span>}
         {step.phase === 'end' && <Icon className="ml-auto h-3.5 w-3.5 shrink-0 text-emerald-500" />}
         {isError && <Icon className="ml-auto h-3.5 w-3.5 shrink-0" />}
       </div>
-      {imageUrl && (
-        <a href={imageUrl} target="_blank" rel="noreferrer" className="mt-2 block overflow-hidden rounded-lg border border-border">
-          <img src={imageUrl} alt={step.result?.title || ''} className="max-h-56 w-full object-cover" />
-        </a>
-      )}
       {isError && (step.result || step.error) && (
         <div className="mt-1 whitespace-pre-wrap break-all text-xs leading-5 text-danger/90">
           {compactToolResult(step.error ?? step.result)}
@@ -224,23 +212,25 @@ export const ThinkingIndicator = ({ label }) => (
 
 const HistoricalToolCard = ({ message, t, onViewBlog }) => {
   const { tool, payload } = toolCallSummary(message, t);
-  const blogTaskId = message.kind === 'tool_result' ? payload?.taskId : null;
   const isImageTool = tool === IMAGE_TOOL;
-  const imageUrl = isImageTool && message.kind === 'tool_result' ? payload?.url : null;
+
+  if (isImageTool) {
+    if (message.kind === 'tool_result' && payload?.url) {
+      return <AgentMarkdown content={`![${payload?.title || ''}](${payload.url})`} />;
+    }
+    return null;
+  }
+
+  const blogTaskId = message.kind === 'tool_result' ? payload?.taskId : null;
   return (
     <div className="rounded-xl border border-border bg-canvas px-3 py-2">
       <div className="flex items-center gap-2 text-xs font-bold text-ink-secondary">
-        {isImageTool ? <ImageIcon className="h-3.5 w-3.5 shrink-0 text-emerald-500" /> : <Wrench className="h-3.5 w-3.5 shrink-0" />}
-        <span className="truncate">{isImageTool ? t('blog.agentChat.imageToolTitle') : tool}</span>
+        <Wrench className="h-3.5 w-3.5 shrink-0" />
+        <span className="truncate">{tool}</span>
         <span className="ml-auto font-normal text-ink-faint">
           {message.kind === 'tool_call' ? t('blog.agentChat.toolCalled') : t('blog.agentChat.toolResult')}
         </span>
       </div>
-      {imageUrl && (
-        <a href={imageUrl} target="_blank" rel="noreferrer" className="mt-2 block overflow-hidden rounded-lg border border-border">
-          <img src={imageUrl} alt={payload?.title || ''} className="max-h-56 w-full object-cover" />
-        </a>
-      )}
       {message.kind === 'tool_result' && (
         <div className={`mt-1 flex items-center gap-1.5 text-xs ${payload?.ok === false ? 'text-danger' : 'text-emerald-600'}`}>
           {payload?.ok === false
