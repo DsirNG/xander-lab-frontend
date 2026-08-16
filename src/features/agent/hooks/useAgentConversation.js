@@ -65,6 +65,7 @@ export const useAgentConversation = ({ conversationId }) => {
   const creatingRef = useRef(false);
   const runningRef = useRef(false);
   const newlyCreatedIdRef = useRef(null);
+  const pendingFirstMessageRef = useRef(null);
   const answerDeltaRef = useRef('');
   const toolDeltaRef = useRef(new Map());
   const streamFrameRef = useRef(null);
@@ -452,7 +453,7 @@ export const useAgentConversation = ({ conversationId }) => {
     }
   }, [isCurrent, t]);
 
-  /** Create persists the first user message and starts the first turn server-side. */
+  /** 创建会话壳；首条消息在会话快照就绪后经 /messages/stream 发送，与后续轮次共用同一流式接口。 */
   const createConversation = useCallback(async (content) => {
     const text = content?.trim();
     if (!text) throw new Error(t('blog.agentChat.inputRequired'));
@@ -461,19 +462,20 @@ export const useAgentConversation = ({ conversationId }) => {
     creatingRef.current = true;
     setCreating(true);
     setErrorMessage(null);
-    pushStep({ type: 'user', content: text });
 
     createControllerRef.current?.abort();
     const controller = new AbortController();
     createControllerRef.current = controller;
     try {
-      const detail = await agentConversationService.create(text, {
+      const detail = await agentConversationService.create({
         dedupe: false,
         _silent: true,
         signal: controller.signal,
       });
-      if (detail?.conversation?.id) {
-        newlyCreatedIdRef.current = String(detail.conversation.id);
+      const id = detail?.conversation?.id;
+      if (id) {
+        newlyCreatedIdRef.current = String(id);
+        pendingFirstMessageRef.current = { id: String(id), text };
       }
       if (!controller.signal.aborted) await loadSessions();
       return detail;
@@ -484,7 +486,6 @@ export const useAgentConversation = ({ conversationId }) => {
         && !isAbortError(error)
       ) {
         setErrorMessage(error.message || t('blog.agentChat.sendFailed'));
-        clearLiveState();
       }
       throw error;
     } finally {
@@ -498,6 +499,7 @@ export const useAgentConversation = ({ conversationId }) => {
 
   const reset = useCallback(() => {
     beginRunGeneration();
+    pendingFirstMessageRef.current = null;
     routeControllerRef.current?.abort();
     turnControllerRef.current?.abort();
     createControllerRef.current?.abort();
@@ -516,6 +518,8 @@ export const useAgentConversation = ({ conversationId }) => {
 
   useEffect(() => {
     const id = asId(conversationId);
+    const pending = pendingFirstMessageRef.current;
+    if (pending && pending.id !== id) pendingFirstMessageRef.current = null;
     const isNewlyCreated = id && id === newlyCreatedIdRef.current;
     if (isNewlyCreated) newlyCreatedIdRef.current = null;
 
@@ -544,6 +548,17 @@ export const useAgentConversation = ({ conversationId }) => {
       controller.abort();
     };
   }, [beginRunGeneration, conversationId, openConversation, updateRunning]);
+
+  // 新会话首条消息在快照就绪后经 /messages/stream 发送，避免首轮走 /events 恢复而整体一次性出现。
+  useEffect(() => {
+    const pending = pendingFirstMessageRef.current;
+    const convId = activeIdRef.current;
+    if (!pending || !convId || loading || !conversation) return;
+    if (pending.id !== convId || String(conversation.id) !== convId) return;
+    if (conversation.status === 'running') return;
+    pendingFirstMessageRef.current = null;
+    sendMessage(pending.text);
+  }, [loading, conversation, sendMessage]);
 
   useEffect(() => () => {
     streamEpochRef.current += 1;
