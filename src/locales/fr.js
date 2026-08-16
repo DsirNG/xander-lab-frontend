@@ -103,7 +103,7 @@ export default {
       generated: 'Images générées', mine: 'Mes images',
       loadFailed: 'Impossible de charger les images. Veuillez réessayer plus tard.',
       emptyTitle: 'Aucune image générée pour le moment', emptyHint: 'Décrivez une image dans le champ de saisie ; l’agent la générera et l’enregistrera ici',
-      loadMore: 'Charger plus', loadingMore: 'Chargement…', backToChat: 'Retour à la conversation'
+      loadMore: 'Charger plus', loadingMore: 'Chargement…'
     }
   },
   blogPlans: {

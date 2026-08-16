@@ -161,17 +161,10 @@ const ToolStepCard = ({ step, t, onViewBlog }) => {
 
 const cleanImageMarkdown = (text) => {
   if (!text) return text;
-  let cleaned = text.replace(/图片尺寸：.*?格式。/g, '');
-  const imageMatch = cleaned.match(/!\[.*?\]\([^)]+\)/);
-  if (imageMatch) {
-    // Remove all markdown images
-    cleaned = cleaned.replace(/!\[.*?\]\([^)]+\)/g, '');
-    // Remove all raw http/https urls
-    cleaned = cleaned.replace(/https?:\/\/[^\s]+/g, '');
-    // Append the first image back
-    cleaned = cleaned.trim() + '\n\n' + imageMatch[0];
-  }
-  return cleaned.trim() || text; // Fallback to original text if everything got deleted unexpectedly, though trim handles most cases.
+  // 图片生成回复只保留图片本身，模型附带的标题/尺寸/格式/链接/提示语一律不展示。
+  const imageMatch = text.match(/!\[.*?\]\([^)]+\)/);
+  if (imageMatch) return imageMatch[0];
+  return text;
 };
 
 const ConversationMessage = ({ role, content, isStreaming }) => (
@@ -491,11 +484,18 @@ const AgentChat = () => {
     })();
   }, [queryParam, conversationId, creating, submitText, searchParams, setSearchParams, t, toast]);
 
-  /** 图片画廊内发起生成：切回对话视图并直接发送。 */
-  const handleImagesGenerate = useCallback((query) => {
+  /** 图片画廊内发起生成：与「新聊天」等价——总是新建会话，只是首条消息固定为生成图片指令。 */
+  const handleImagesGenerate = useCallback(async (query) => {
     setView('chat');
-    submitText(`生成一张图片: ${query}`);
-  }, [submitText]);
+    try {
+      const detail = await createConversation(`生成一张图片: ${query}`);
+      if (!detail?.conversation?.id) return;
+      navigate(`/workspace/agent/${detail.conversation.id}`, { replace: true });
+      setInput('');
+    } catch (error) {
+      toast.error(error.message || t('blog.agentChat.sendFailed'));
+    }
+  }, [createConversation, navigate, t, toast]);
 
   const handleViewBlog = (taskId) => {
     const next = new URLSearchParams(searchParams);
@@ -676,6 +676,7 @@ const AgentChat = () => {
             loading={sessionsLoading}
             disableNew={navigationLocked}
             imagesActive={view === 'images'}
+            newChatActive={view === 'chat' && !conversationId}
             onSelect={(id) => {
               if (!navigationLocked) {
                 setView('chat');
@@ -728,6 +729,7 @@ const AgentChat = () => {
               loading={sessionsLoading}
               disableNew={navigationLocked}
               imagesActive={view === 'images'}
+              newChatActive={view === 'chat' && !conversationId}
               onSelect={(id) => {
                 if (navigationLocked) return;
                 setMobileSessionsOpen(false);
@@ -758,10 +760,7 @@ const AgentChat = () => {
         <section className={`relative flex min-h-0 min-w-0 flex-1 flex-col bg-canvas ${showArtifact && !isMobile ? 'lg:max-w-[48%]' : ''}`}>
           {view === 'images' ? (
             <div className="min-h-0 flex-1">
-              <AgentImagesPage
-                onBack={() => setView('chat')}
-                onGenerate={handleImagesGenerate}
-              />
+              <AgentImagesPage onGenerate={handleImagesGenerate} />
             </div>
           ) : (
           <>

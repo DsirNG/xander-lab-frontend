@@ -3,7 +3,7 @@ import { MessageSquareText, Search, PanelLeftClose, SquarePen, Image as ImageIco
 import { useTranslation } from 'react-i18next';
 import { useAuthSession } from '@features/auth/context/authSessionContextValue';
 
-const AgentSessionList = ({ sessions, activeId, loading, disableNew = false, mobile = false, imagesActive = false, onSelect, onNew, onCollapse, onSearch, onImages }) => {
+const AgentSessionList = ({ sessions, activeId, loading, disableNew = false, mobile = false, imagesActive = false, newChatActive = false, onSelect, onNew, onCollapse, onSearch, onImages }) => {
   const { t } = useTranslation();
   const { userInfo } = useAuthSession();
 
@@ -36,7 +36,11 @@ const AgentSessionList = ({ sessions, activeId, loading, disableNew = false, mob
           type="button"
           onClick={onNew}
           disabled={disableNew}
-          className="flex w-full items-center justify-between rounded-lg bg-surface-muted px-3 py-2 text-sm font-semibold text-ink transition hover:bg-border/60 disabled:cursor-wait disabled:opacity-50"
+          className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-sm font-semibold transition disabled:cursor-wait disabled:opacity-50 ${
+            newChatActive
+              ? 'bg-surface-muted text-ink'
+              : 'text-ink-secondary hover:bg-surface-muted hover:text-ink'
+          }`}
         >
           <div className="flex items-center gap-2">
             <span className="grid h-6 w-6 place-items-center rounded-full bg-canvas border border-border">
@@ -76,7 +80,9 @@ const AgentSessionList = ({ sessions, activeId, loading, disableNew = false, mob
             type="button"
             onClick={() => onSelect(session.id)}
             className={`flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm transition disabled:cursor-wait disabled:opacity-50 ${
-              String(activeId) === String(session.id) ? 'bg-surface-muted text-ink' : 'text-ink-secondary hover:bg-surface-muted/50'
+              !imagesActive && String(activeId) === String(session.id)
+                ? 'bg-surface-muted text-ink'
+                : 'text-ink-secondary hover:bg-surface-muted/50'
             }`}
           >
             <span className="truncate flex-1">{session.title || t('blog.agent.untitled')}</span>

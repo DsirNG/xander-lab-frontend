@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Paperclip, Sparkles, Mic, ArrowUp, Loader2, ArrowLeft } from 'lucide-react';
+import { Paperclip, Sparkles, Mic, ArrowUp, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { get } from '@api';
 
@@ -14,7 +14,7 @@ const EXAMPLES = [
 
 const PAGE_SIZE = 24;
 
-const AgentImagesPage = ({ onBack, onGenerate }) => {
+const AgentImagesPage = ({ onGenerate }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [query, setQuery] = useState('');
@@ -87,20 +87,7 @@ const AgentImagesPage = ({ onBack, onGenerate }) => {
       <div className="mx-auto w-full max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
 
         {/* Header */}
-        <div className="mb-8 flex items-center gap-3">
-          {onBack && (
-            <button
-              type="button"
-              onClick={onBack}
-              title={t('blog.agentImages.backToChat')}
-              aria-label={t('blog.agentImages.backToChat')}
-              className="grid h-9 w-9 place-items-center rounded-full border border-border bg-canvas text-ink-secondary transition hover:bg-surface-muted hover:text-ink"
-            >
-              <ArrowLeft className="h-4 w-4" />
-            </button>
-          )}
-          <h1 className="text-3xl font-bold text-ink">{t('blog.agentImages.title')}</h1>
-        </div>
+        <h1 className="mb-8 text-3xl font-bold text-ink">{t('blog.agentImages.title')}</h1>
 
         {/* Input Bar */}
         <form onSubmit={handleSubmit} className="relative mb-12 flex items-center w-full max-w-3xl mx-auto rounded-full border border-border bg-canvas px-4 py-3 shadow-sm focus-within:ring-2 focus-within:ring-emerald-500/20 focus-within:border-emerald-500 transition-all">
