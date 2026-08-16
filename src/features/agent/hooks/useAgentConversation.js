@@ -1,4 +1,4 @@
-import { startTransition, useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { agentConversationService, parseToolPayload } from '../services/agentConversationService';
 
@@ -64,6 +64,7 @@ export const useAgentConversation = ({ conversationId }) => {
   const sessionsRequestRef = useRef(0);
   const creatingRef = useRef(false);
   const runningRef = useRef(false);
+  const newlyCreatedIdRef = useRef(null);
   const answerDeltaRef = useRef('');
   const toolDeltaRef = useRef(new Map());
   const streamFrameRef = useRef(null);
@@ -83,32 +84,30 @@ export const useAgentConversation = ({ conversationId }) => {
     streamFrameRef.current = null;
     const answer = answerDeltaRef.current;
     const toolDrafts = new Map(toolDeltaRef.current);
-    startTransition(() => {
-      setLiveSteps((current) => {
-        let next = current;
-        const upsert = (predicate, value) => {
-          const index = next.findIndex(predicate);
-          if (index < 0) next = [...next, value];
-          else {
-            next = [...next];
-            next[index] = value;
-          }
-        };
-        if (answer) {
-          upsert((step) => step.type === 'answer_delta', {
-            type: 'answer_delta',
-            content: answer,
-          });
+    setLiveSteps((current) => {
+      let next = current;
+      const upsert = (predicate, value) => {
+        const index = next.findIndex(predicate);
+        if (index < 0) next = [...next, value];
+        else {
+          next = [...next];
+          next[index] = value;
         }
-        toolDrafts.forEach((content, tool) => {
-          upsert((step) => step.type === 'tool_delta' && step.tool === tool, {
-            type: 'tool_delta',
-            tool,
-            content,
-          });
+      };
+      if (answer) {
+        upsert((step) => step.type === 'answer_delta', {
+          type: 'answer_delta',
+          content: answer,
         });
-        return next.slice(-LIVE_STEP_LIMIT);
+      }
+      toolDrafts.forEach((content, tool) => {
+        upsert((step) => step.type === 'tool_delta' && step.tool === tool, {
+          type: 'tool_delta',
+          tool,
+          content,
+        });
       });
+      return next.slice(-LIVE_STEP_LIMIT);
     });
   }, []);
 
@@ -462,6 +461,8 @@ export const useAgentConversation = ({ conversationId }) => {
     creatingRef.current = true;
     setCreating(true);
     setErrorMessage(null);
+    pushStep({ type: 'user', content: text });
+
     createControllerRef.current?.abort();
     const controller = new AbortController();
     createControllerRef.current = controller;
@@ -471,6 +472,9 @@ export const useAgentConversation = ({ conversationId }) => {
         _silent: true,
         signal: controller.signal,
       });
+      if (detail?.conversation?.id) {
+        newlyCreatedIdRef.current = String(detail.conversation.id);
+      }
       if (!controller.signal.aborted) await loadSessions();
       return detail;
     } catch (error) {
@@ -480,6 +484,7 @@ export const useAgentConversation = ({ conversationId }) => {
         && !isAbortError(error)
       ) {
         setErrorMessage(error.message || t('blog.agentChat.sendFailed'));
+        clearLiveState();
       }
       throw error;
     } finally {
@@ -510,10 +515,13 @@ export const useAgentConversation = ({ conversationId }) => {
   }, [loadSessions]);
 
   useEffect(() => {
-    beginRunGeneration();
+    const id = asId(conversationId);
+    const isNewlyCreated = id && id === newlyCreatedIdRef.current;
+    if (isNewlyCreated) newlyCreatedIdRef.current = null;
+
+    beginRunGeneration(null, { clearLive: !isNewlyCreated });
     routeControllerRef.current?.abort();
     turnControllerRef.current?.abort();
-    const id = asId(conversationId);
     activeIdRef.current = id;
     setReconnecting(false);
     updateRunning(false);
@@ -525,8 +533,8 @@ export const useAgentConversation = ({ conversationId }) => {
       return undefined;
     }
 
+    // 切换会话时保留已渲染的消息直至新快照就绪，避免整页刷新感。
     setConversation(null);
-    setMessages([]);
     setLoading(true);
     const controller = new AbortController();
     routeControllerRef.current = controller;

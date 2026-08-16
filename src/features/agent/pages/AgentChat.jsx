@@ -694,6 +694,12 @@ const AgentChat = () => {
             </div>
           )}
 
+          {loading && messages.length > 0 && (
+            <div className="absolute top-14 left-0 right-0 z-10 h-0.5 overflow-hidden bg-border">
+              <div className="h-full w-1/3 animate-pulse rounded-full bg-accent" />
+            </div>
+          )}
+
           {messages.length === 0 && steps.length === 0 && !loading ? (
             <div className="flex h-full flex-col items-center justify-center px-4 pt-10">
               <h1 className="mb-8 text-3xl font-semibold text-ink">我们先从哪里开始呢？</h1>
@@ -734,7 +740,7 @@ const AgentChat = () => {
                 }}
                 className="min-h-0 min-w-0 flex-1 overflow-y-auto overscroll-contain px-4 pb-4 pt-20 sm:px-6"
               >
-                {loading && !creating && !running && steps.length === 0 ? (
+                {loading && !creating && !running && steps.length === 0 && messages.length === 0 ? (
                   <div className="flex h-full min-h-48 items-center justify-center">
                     <LoadingSpinner fullScreen={false} text={t('blog.agentChat.restoring')} />
                   </div>
@@ -785,7 +791,7 @@ const AgentChat = () => {
                         active={tool.active}
                       />
                     ))}
-                    {isActive && !streamingAnswer && !activeToolRunning && toolProgress.length === 0 && (
+                    {(isActive || creating || (loading && steps.length > 0)) && !streamingAnswer && !activeToolRunning && toolProgress.length === 0 && (
                       <ThinkingIndicator label={t('blog.agentChat.thinking')} />
                     )}
                     <div ref={chatEndRef} className="h-2" />

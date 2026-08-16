@@ -221,12 +221,9 @@ export const createRouter = () => {
       element: <ProtectedPage page={<BlogPublish />} />,
     },
     // 博客智能体（独立全屏对话页，进入后展开为完整创作界面）
+    // 单一路由 + 可选参数：切换会话时不重挂载，保持左侧列表与对话的“热更新”体验。
     {
-      path: '/workspace/agent',
-      element: <ProtectedPage page={<AgentChat />} />,
-    },
-    {
-      path: '/workspace/agent/:conversationId',
+      path: '/workspace/agent/:conversationId?',
       element: <ProtectedPage page={<AgentChat />} />,
     },
     // 旧博客生成助手入口仅保留历史兼容；生成能力现由 Dindor 工具调用。
