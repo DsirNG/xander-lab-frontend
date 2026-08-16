@@ -105,6 +105,13 @@ export default {
       restoring: 'Restoring conversation…', reconnecting: 'Connection lost, reconnecting…',
       unknownTool: 'Tool', working: 'Working…', writing: 'Writing…', toolCalled: 'Tool called', toolResult: 'Tool result', toolSucceeded: 'Succeeded', toolFailed: 'Failed', viewBlog: 'View blog',
       generatingImage: 'Generating image…', imageToolTitle: 'AI Image Generation', imageToolHint: 'Creating a standalone illustration or cover from your description; saved to your media library when done'
+    },
+    agentImages: {
+      title: 'Images', inputPlaceholder: 'Describe a new image', think: 'Think',
+      generated: 'Generated images', mine: 'My images',
+      loadFailed: 'Could not load images. Please try again later.',
+      emptyTitle: 'No images generated yet', emptyHint: 'Describe an image in the input box and the agent will generate and save it here',
+      loadMore: 'Load more', loadingMore: 'Loading…'
     }
   },
   blogPlans: {

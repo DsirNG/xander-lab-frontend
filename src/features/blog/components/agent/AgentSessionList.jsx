@@ -53,7 +53,7 @@ const AgentSessionList = ({ sessions, activeId, loading, disableNew = false, mob
       {/* Nav Links */}
       <div className="px-3 py-1 space-y-0.5">
         <button
-          onClick={() => navigate('/workspace/img2three')}
+          onClick={() => navigate('/workspace/images')}
           className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm text-ink hover:bg-surface-muted transition"
         >
           <ImageIcon className="h-4 w-4 text-ink-muted" />

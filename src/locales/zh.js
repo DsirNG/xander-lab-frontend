@@ -105,6 +105,13 @@ export default {
       restoring: '正在恢复对话…', reconnecting: '连接已断开，正在重连…',
       unknownTool: '工具', working: '处理中…', writing: '正在写作…', toolCalled: '已调用工具', toolResult: '工具返回结果', toolSucceeded: '调用成功', toolFailed: '调用失败', viewBlog: '查看博客',
       generatingImage: '正在生成图片…', imageToolTitle: 'AI 图片生成', imageToolHint: '根据你的描述生成独立配图/封面图，完成后自动保存到素材库'
+    },
+    agentImages: {
+      title: '图片', inputPlaceholder: '描述新图片', think: '思考',
+      generated: '生成图片', mine: '我的图片',
+      loadFailed: '图片加载失败，请稍后重试',
+      emptyTitle: '还没有生成的图片', emptyHint: '在输入框描述一张图片，智能体会生成并自动保存到这里',
+      loadMore: '加载更多', loadingMore: '加载中…'
     }
   },
   blogPlans: {

@@ -97,6 +97,13 @@ export default {
       restoring: 'Đang khôi phục cuộc trò chuyện…', reconnecting: 'Mất kết nối, đang kết nối lại…',
       unknownTool: 'Công cụ', working: 'Đang xử lý…', writing: 'Đang viết…', toolCalled: 'Công cụ được gọi', toolResult: 'Kết quả công cụ', toolSucceeded: 'Thành công', toolFailed: 'Thất bại', viewBlog: 'Xem blog',
       generatingImage: 'Đang tạo hình ảnh…', imageToolTitle: 'Tạo hình ảnh AI', imageToolHint: 'Tạo hình minh họa hoặc ảnh bìa riêng theo mô tả của bạn; lưu vào thư viện media khi hoàn tất'
+    },
+    agentImages: {
+      title: 'Hình ảnh', inputPlaceholder: 'Mô tả hình ảnh mới', think: 'Suy nghĩ',
+      generated: 'Hình ảnh đã tạo', mine: 'Hình ảnh của tôi',
+      loadFailed: 'Không tải được hình ảnh. Vui lòng thử lại sau.',
+      emptyTitle: 'Chưa có hình ảnh nào được tạo', emptyHint: 'Mô tả một hình ảnh trong ô nhập liệu, agent sẽ tạo và lưu vào đây',
+      loadMore: 'Tải thêm', loadingMore: 'Đang tải…'
     }
   },
   blogPlans: {

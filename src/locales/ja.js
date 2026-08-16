@@ -97,6 +97,13 @@ export default {
       restoring: '会話を復元中…', reconnecting: '接続が切れました。再接続中…',
       unknownTool: 'ツール', working: '処理中…', writing: '執筆中…', toolCalled: 'ツール呼び出し', toolResult: 'ツール結果', toolSucceeded: '成功', toolFailed: '失敗', viewBlog: 'ブログを見る',
       generatingImage: '画像を生成中…', imageToolTitle: 'AI画像生成', imageToolHint: '説明に基づいて独立したイラスト/カバー画像を生成し、完了後にメディアライブラリへ保存します'
+    },
+    agentImages: {
+      title: '画像', inputPlaceholder: '新しい画像を説明する', think: '考える',
+      generated: '生成された画像', mine: 'マイ画像',
+      loadFailed: '画像を読み込めませんでした。後でもう一度お試しください。',
+      emptyTitle: 'まだ生成された画像はありません', emptyHint: '入力欄で画像を説明すると、エージェントが生成してここに保存します',
+      loadMore: 'さらに読み込む', loadingMore: '読み込み中…'
     }
   },
   blogPlans: {

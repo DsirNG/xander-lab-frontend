@@ -97,6 +97,13 @@ export default {
       restoring: 'Restauration de la conversation…', reconnecting: 'Connexion perdue, reconnexion…',
       unknownTool: 'Outil', working: 'En cours…', writing: 'Rédaction…', toolCalled: 'Outil appelé', toolResult: 'Résultat de l’outil', toolSucceeded: 'Réussi', toolFailed: 'Échec', viewBlog: 'Voir le blog',
       generatingImage: 'Génération de l’image…', imageToolTitle: 'Génération d’image IA', imageToolHint: 'Création d’une illustration ou couverture à partir de votre description ; enregistrée dans votre bibliothèque de médias'
+    },
+    agentImages: {
+      title: 'Images', inputPlaceholder: 'Décrire une nouvelle image', think: 'Réfléchir',
+      generated: 'Images générées', mine: 'Mes images',
+      loadFailed: 'Impossible de charger les images. Veuillez réessayer plus tard.',
+      emptyTitle: 'Aucune image générée pour le moment', emptyHint: 'Décrivez une image dans le champ de saisie ; l’agent la générera et l’enregistrera ici',
+      loadMore: 'Charger plus', loadingMore: 'Chargement…'
     }
   },
   blogPlans: {

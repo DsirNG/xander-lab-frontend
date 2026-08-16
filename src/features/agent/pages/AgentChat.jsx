@@ -30,7 +30,6 @@ const IMAGE_TOOL = 'image_generate';
 
 /** 图片工具专属进度面板：独立样式，不走博客生成的阶段步骤 UI。 */
 const ImageToolProgressPanel = () => {
-  const { t } = useTranslation();
   return (
     <div className="relative flex h-64 w-64 flex-col overflow-hidden rounded-[2rem] bg-surface-muted p-5 sm:h-80 sm:w-80 sm:p-6">
       <div 
@@ -159,6 +158,21 @@ const ToolStepCard = ({ step, t, onViewBlog }) => {
   );
 };
 
+const cleanImageMarkdown = (text) => {
+  if (!text) return text;
+  let cleaned = text.replace(/图片尺寸：.*?格式。/g, '');
+  const imageMatch = cleaned.match(/!\[.*?\]\([^)]+\)/);
+  if (imageMatch) {
+    // Remove all markdown images
+    cleaned = cleaned.replace(/!\[.*?\]\([^)]+\)/g, '');
+    // Remove all raw http/https urls
+    cleaned = cleaned.replace(/https?:\/\/[^\s]+/g, '');
+    // Append the first image back
+    cleaned = cleaned.trim() + '\n\n' + imageMatch[0];
+  }
+  return cleaned.trim() || text; // Fallback to original text if everything got deleted unexpectedly, though trim handles most cases.
+};
+
 const ConversationMessage = ({ role, content, isStreaming }) => (
   <div className={`flex w-full ${role === 'user' ? 'justify-end' : 'justify-start'}`}>
     <div className={role === 'user'
@@ -170,7 +184,7 @@ const ConversationMessage = ({ role, content, isStreaming }) => (
         content ? (
           <div className="flex items-start gap-0.5">
             <div className="min-w-0 flex-1">
-              <AgentMarkdown content={content} />
+              <AgentMarkdown content={cleanImageMarkdown(content)} />
             </div>
             <span className="mt-1.5 inline-block h-4 w-[3px] shrink-0 animate-pulse rounded-sm bg-current align-middle" aria-hidden="true" />
           </div>
@@ -186,7 +200,7 @@ const ConversationMessage = ({ role, content, isStreaming }) => (
           </span>
         )
       ) : (
-        <AgentMarkdown content={content} />
+        <AgentMarkdown content={cleanImageMarkdown(content)} />
       )}
     </div>
   </div>
@@ -327,6 +341,7 @@ const AgentChat = () => {
   const { conversationId } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
   const blogTaskId = searchParams.get('blogTaskId');
+  const queryParam = searchParams.get('q');
   const toast = useToast();
   const isMobile = useIsMobile(1024);
   const { userInfo } = useAuthSession();
@@ -354,6 +369,7 @@ const AgentChat = () => {
   const chatEndRef = useRef(null);
   const chatScrollRef = useRef(null);
   const stickToBottomRef = useRef(true);
+  const pendingQueryRef = useRef(null);
 
   const {
     sessions, sessionsLoading, conversation, messages, loading, creating, running,
@@ -447,6 +463,27 @@ const AgentChat = () => {
   };
 
   const handleStop = () => cancelTurn();
+
+  // 图片等入口页面携带 ?q= 跳转而来：自动创建会话并发送首条消息。
+  // ref 守卫保证同一 q 只触发一次（StrictMode 双执行与路由变化都不会重复发送）。
+  useEffect(() => {
+    if (!queryParam || conversationId || creating || pendingQueryRef.current === queryParam) return;
+    pendingQueryRef.current = queryParam;
+    setInput(queryParam);
+    (async () => {
+      try {
+        const detail = await createConversation(queryParam);
+        if (!detail?.conversation?.id) return;
+        const next = new URLSearchParams(searchParams);
+        next.delete('q');
+        setSearchParams(next, { replace: true });
+        navigate(`/workspace/agent/${detail.conversation.id}`, { replace: true });
+        setInput('');
+      } catch (error) {
+        toast.error(error.message || t('blog.agentChat.sendFailed'));
+      }
+    })();
+  }, [queryParam, conversationId, creating, createConversation, navigate, searchParams, setSearchParams, t, toast]);
 
   const handleViewBlog = (taskId) => {
     const next = new URLSearchParams(searchParams);
