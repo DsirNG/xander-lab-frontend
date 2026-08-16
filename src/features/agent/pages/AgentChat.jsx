@@ -3,7 +3,7 @@ import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
   AlertCircle, ArrowLeft, Bot, CheckCircle2, FileText, Loader2, MessageSquareText, Plus,
-  Send, Sparkles, Square, Wrench, X, Globe, PenLine, Image as ImageIcon, Mic, Menu, PanelLeftOpen, Link2, Search
+  Send, Sparkles, Wrench, X, Globe, PenLine, Image as ImageIcon, Mic, Menu, PanelLeftOpen, Link2, Search
 } from 'lucide-react';
 import { useToast } from '@/hooks/useToast';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
@@ -236,13 +236,14 @@ const AgentChatInputBar = ({ t, input, setInput, isActive, creating, hasConversa
           >
             <Mic className="h-5 w-5" />
           </button>
-          {isActive ? (
+          {isActive || creating ? (
             <button
               type="button"
               onClick={onStop}
-              className="flex h-8 w-8 items-center justify-center rounded-full bg-ink text-white transition hover:bg-ink-secondary"
+              disabled
+              className="flex h-8 w-8 items-center justify-center rounded-full bg-ink text-white"
             >
-              <Square className="h-4 w-4 fill-current" />
+              <Loader2 className="h-4 w-4 animate-spin" />
             </button>
           ) : (
             <button
@@ -733,7 +734,7 @@ const AgentChat = () => {
                 }}
                 className="min-h-0 min-w-0 flex-1 overflow-y-auto overscroll-contain px-4 pb-4 pt-20 sm:px-6"
               >
-                {loading ? (
+                {loading && !creating && !running ? (
                   <div className="flex h-full min-h-48 items-center justify-center">
                     <LoadingSpinner fullScreen={false} text={t('blog.agentChat.restoring')} />
                   </div>
