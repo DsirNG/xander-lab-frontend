@@ -7,8 +7,8 @@ import { get, post, postStream, getStream } from '@api';
 const BASE = '/api/agent/conversations';
 
 export const agentConversationService = {
-  /** 创建会话壳；首条消息随后经 /messages/stream 发送并实时流式返回。 */
-  create: (config) => post(BASE, undefined, { dedupe: false, ...config }),
+  /** 用首条消息确定标题并创建会话壳；消息随后经 /messages/stream 执行。 */
+  create: (content, config) => post(BASE, { content }, { dedupe: false, ...config }),
   /** 会话列表 */
   list: (config) => get(BASE, undefined, config),
   /** 会话详情，返回 { conversation, messages } */

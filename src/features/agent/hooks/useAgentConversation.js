@@ -64,7 +64,6 @@ export const useAgentConversation = ({ conversationId }) => {
   const sessionsRequestRef = useRef(0);
   const creatingRef = useRef(false);
   const runningRef = useRef(false);
-  const newlyCreatedIdRef = useRef(null);
   const pendingFirstMessageRef = useRef(null);
   const answerDeltaRef = useRef('');
   const toolDeltaRef = useRef(new Map());
@@ -394,7 +393,7 @@ export const useAgentConversation = ({ conversationId }) => {
     turnControllerRef.current?.abort();
     const controller = new AbortController();
     turnControllerRef.current = controller;
-    beginRunGeneration();
+    beginRunGeneration(null, { clearLive: displayUserMessage });
     updateRunning(true);
     setConversation((current) => current ? { ...current, status: 'running' } : current);
     if (displayUserMessage) pushStep({ type: 'user', content: text });
@@ -462,23 +461,27 @@ export const useAgentConversation = ({ conversationId }) => {
     creatingRef.current = true;
     setCreating(true);
     setErrorMessage(null);
-    pushStep({ type: 'user', content: text });
 
     createControllerRef.current?.abort();
     const controller = new AbortController();
     createControllerRef.current = controller;
     try {
-      const detail = await agentConversationService.create({
+      const detail = await agentConversationService.create(text, {
         dedupe: false,
         _silent: true,
         signal: controller.signal,
       });
       const id = detail?.conversation?.id;
       if (id) {
-        newlyCreatedIdRef.current = String(id);
-        pendingFirstMessageRef.current = { id: String(id), text, detail };
+        pushStep({ type: 'user', content: text });
+        setSessions((current) => [
+          detail.conversation,
+          ...current.filter((session) => String(session.id) !== String(id)),
+        ]);
+        pendingFirstMessageRef.current = {
+          id: String(id), text, detail, routeInitialized: false, sent: false,
+        };
       }
-      if (!controller.signal.aborted) await loadSessions();
       return detail;
     } catch (error) {
       if (
@@ -497,7 +500,7 @@ export const useAgentConversation = ({ conversationId }) => {
         setCreating(false);
       }
     }
-  }, [clearLiveState, loadSessions, pushStep, t]);
+  }, [clearLiveState, pushStep, t]);
 
   const reset = useCallback(() => {
     beginRunGeneration();
@@ -520,10 +523,17 @@ export const useAgentConversation = ({ conversationId }) => {
 
   useEffect(() => {
     const id = asId(conversationId);
-    const pending = pendingFirstMessageRef.current;
-    if (pending && pending.id !== id) pendingFirstMessageRef.current = null;
-    const isNewlyCreated = id && id === newlyCreatedIdRef.current;
-    if (isNewlyCreated) newlyCreatedIdRef.current = null;
+    let pending = pendingFirstMessageRef.current;
+    if (pending && pending.id !== id) {
+      pendingFirstMessageRef.current = null;
+      pending = null;
+    }
+    const isNewlyCreated = Boolean(id && pending?.id === id);
+
+    // React StrictMode may replay this effect. Keep the optimistic conversation
+    // intact and do not start a competing recovery request for the same shell.
+    if (isNewlyCreated && pending.routeInitialized) return undefined;
+    if (isNewlyCreated) pending.routeInitialized = true;
 
     beginRunGeneration(null, { clearLive: !isNewlyCreated });
     routeControllerRef.current?.abort();
@@ -560,10 +570,10 @@ export const useAgentConversation = ({ conversationId }) => {
   useEffect(() => {
     const pending = pendingFirstMessageRef.current;
     const convId = activeIdRef.current;
-    if (!pending || !convId || loading || !conversation) return;
+    if (!pending || pending.sent || !convId || loading || !conversation) return;
     if (pending.id !== convId || String(conversation.id) !== convId) return;
     if (conversation.status === 'running') return;
-    pendingFirstMessageRef.current = null;
+    pending.sent = true;
     sendMessage(pending.text, { displayUserMessage: false });
   }, [loading, conversation, sendMessage]);
 

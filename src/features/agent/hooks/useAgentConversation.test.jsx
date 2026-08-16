@@ -1,4 +1,5 @@
 import { act, renderHook, waitFor } from '@testing-library/react'
+import { StrictMode } from 'react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { toolCallSummary, compactToolResult } from './useAgentConversation.js'
 import { agentConversationService } from '../services/agentConversationService.js'
@@ -84,6 +85,33 @@ describe('compactToolResult', () => {
 })
 
 describe('useAgentConversation new conversation', () => {
+  it('keeps the empty page state while the create request is pending', async () => {
+    const { useAgentConversation } = await import('./useAgentConversation.js')
+    let resolveCreate
+    agentConversationService.create.mockImplementation(() => new Promise((resolve) => {
+      resolveCreate = resolve
+    }))
+    const { result } = renderHook(() => useAgentConversation({ conversationId: null }))
+
+    let request
+    act(() => {
+      request = result.current.createConversation('hello')
+    })
+
+    expect(result.current.creating).toBe(true)
+    expect(result.current.liveSteps).toEqual([])
+
+    await act(async () => {
+      resolveCreate({
+        conversation: { id: 42, title: 'hello', status: 'ready', runVersion: 1 },
+        messages: [],
+      })
+      await request
+    })
+    expect(result.current.creating).toBe(false)
+    expect(result.current.liveSteps).toContainEqual({ type: 'user', content: 'hello' })
+  })
+
   it('uses the created shell without entering recovery loading and streams the first message', async () => {
     const { useAgentConversation } = await import('./useAgentConversation.js')
     const calls = []
@@ -95,22 +123,29 @@ describe('useAgentConversation new conversation', () => {
       calls.push('create')
       return shell
     })
-    agentConversationService.sendMessageStream.mockImplementation(async () => {
+    agentConversationService.sendMessageStream.mockImplementation(() => {
       calls.push('stream')
+      return new Promise(() => {})
     })
     agentConversationService.get.mockImplementation(async () => {
       calls.push('get')
       return shell
     })
 
+    const wrapper = ({ children }) => <StrictMode>{children}</StrictMode>
     const { result, rerender } = renderHook(
       ({ conversationId }) => useAgentConversation({ conversationId }),
-      { initialProps: { conversationId: null } },
+      { initialProps: { conversationId: null }, wrapper },
     )
 
     await act(async () => {
       await result.current.createConversation('hello')
     })
+    expect(agentConversationService.create).toHaveBeenCalledWith(
+      'hello',
+      expect.objectContaining({ _silent: true }),
+    )
+    expect(result.current.sessions).toContainEqual(shell.conversation)
     expect(result.current.liveSteps).toContainEqual({ type: 'user', content: 'hello' })
     rerender({ conversationId: '42' })
 
@@ -121,6 +156,8 @@ describe('useAgentConversation new conversation', () => {
       expect.any(Function),
       expect.objectContaining({ _silent: true }),
     ))
-    expect(calls.indexOf('stream')).toBeLessThan(calls.indexOf('get'))
+    expect(agentConversationService.sendMessageStream).toHaveBeenCalledTimes(1)
+    expect(result.current.liveSteps).toContainEqual({ type: 'user', content: 'hello' })
+    expect(agentConversationService.get).not.toHaveBeenCalled()
   })
 })
