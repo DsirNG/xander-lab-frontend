@@ -34,7 +34,7 @@ const AdminFeatureModelConfigsPage = () => {
       ]);
       const ordered = FEATURE_KEYS.map(
         (key) => configData?.find((c) => c.featureKey === key)
-          || { featureKey: key, enabled: false, primaryProviderId: null, primaryModel: null, fallbackProviderId: null, fallbackModel: null, updatedAt: null },
+          || { featureKey: key, enabled: false, primaryProviderId: null, primaryModel: null, primaryApiStyle: null, fallbackProviderId: null, fallbackModel: null, fallbackApiStyle: null, updatedAt: null },
       );
       setConfigs(ordered);
       setProviders(providerData || []);
@@ -47,7 +47,7 @@ const AdminFeatureModelConfigsPage = () => {
 
   useEffect(() => { loadData(); }, [loadData]);
 
-  const renderSlot = (providerId, model) => {
+  const renderSlot = (providerId, model, apiStyle) => {
     if (!providerId || !model) {
       return <span className="text-xs text-ink-faint">{t('admin.configs.none')}</span>;
     }
@@ -57,6 +57,11 @@ const AdminFeatureModelConfigsPage = () => {
           {providerName(providerId)}
         </span>
         <span className="text-xs font-bold text-ink">{model}</span>
+        {apiStyle && (
+          <span className="rounded-md bg-accent-soft px-1.5 py-0.5 text-micro font-medium text-accent">
+            {apiStyle}
+          </span>
+        )}
       </span>
     );
   };
@@ -90,13 +95,13 @@ const AdminFeatureModelConfigsPage = () => {
       key: 'primary',
       title: t('admin.configs.primary'),
       width: '28%',
-      render: (config) => renderSlot(config.primaryProviderId, config.primaryModel),
+      render: (config) => renderSlot(config.primaryProviderId, config.primaryModel, config.primaryApiStyle),
     },
     {
       key: 'fallback',
       title: t('admin.configs.fallback'),
       width: '28%',
-      render: (config) => renderSlot(config.fallbackProviderId, config.fallbackModel),
+      render: (config) => renderSlot(config.fallbackProviderId, config.fallbackModel, config.fallbackApiStyle),
     },
     {
       key: 'actions',
