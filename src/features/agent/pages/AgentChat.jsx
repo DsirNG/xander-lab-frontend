@@ -734,7 +734,7 @@ const AgentChat = () => {
                 }}
                 className="min-h-0 min-w-0 flex-1 overflow-y-auto overscroll-contain px-4 pb-4 pt-20 sm:px-6"
               >
-                {loading && !creating && !running ? (
+                {loading && !creating && !running && steps.length === 0 ? (
                   <div className="flex h-full min-h-48 items-center justify-center">
                     <LoadingSpinner fullScreen={false} text={t('blog.agentChat.restoring')} />
                   </div>
