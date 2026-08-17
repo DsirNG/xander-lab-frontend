@@ -79,7 +79,7 @@ const AgentSessionList = ({ sessions, activeId, loading, disableNew = false, mob
     <aside className={`${mobile ? 'flex h-full w-[260px] max-w-[calc(100vw-3rem)]' : 'hidden min-h-0 w-[260px] lg:flex'} relative shrink-0 flex-col bg-[#fcfcfc]`}>
       {/* Top Header */}
       <div className="flex items-center justify-between px-3 pt-3 pb-2">
-        <div className="flex items-center gap-2 px-2 py-1 hover:bg-surface-muted rounded-lg cursor-pointer transition">
+        <div onClick={() => navigate('/workspace')} className="flex items-center gap-2 px-2 py-1 hover:bg-surface-muted rounded-lg cursor-pointer transition">
           <span className="font-bold text-base text-ink">DinQorGPT</span>
         </div>
         <div className="flex items-center gap-1 text-ink-muted">
@@ -186,7 +186,7 @@ const AgentSessionList = ({ sessions, activeId, loading, disableNew = false, mob
           {menuOpen ? (
             <div
               role="menu"
-              className="absolute bottom-14 left-0 right-0 z-50 max-h-[60vh] overflow-hidden rounded-2xl border border-border bg-canvas shadow-lg shadow-black/5"
+              className="absolute bottom-14 left-0 right-0 z-50 max-h-[calc(100vh-80px)] overflow-y-auto rounded-2xl border border-border bg-canvas shadow-lg shadow-black/5"
             >
               {/* 用户信息 */}
               <div className="flex items-center gap-3 border-b border-border px-4 py-3">
@@ -244,7 +244,7 @@ const AgentSessionList = ({ sessions, activeId, loading, disableNew = false, mob
               {/* 工作台功能入口 */}
               <div className="border-t border-border p-1.5">
                 <div className="px-3 py-1 text-micro font-semibold text-ink-faint">{t('workspace.title')}</div>
-                <div className="grid max-h-[32vh] gap-0.5 overflow-y-auto">
+                <div className="grid gap-0.5">
                   {FEATURE_ENTRIES.map((item) => {
                     const Icon = item.icon;
                     return (
