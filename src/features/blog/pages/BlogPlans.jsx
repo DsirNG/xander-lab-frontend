@@ -51,35 +51,35 @@ const BlogPlans = () => {
     {
       key: 'topic',
       title: t('blogPlans.topic'),
-      width: '26%',
+      width: '38%',
       render: (plan) => (
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
-            <div className="truncate text-xs font-bold text-ink" title={plan.topic}>{plan.topic}</div>
+            <div className="truncate text-sm font-semibold text-ink" title={plan.topic}>{plan.topic}</div>
             {plan.runOnce && (
-              <span className="shrink-0 rounded-full bg-accent-soft px-2 py-0.5 text-micro font-medium text-accent-fg">
+              <span className="shrink-0 rounded-full bg-accent-soft px-2 py-0.5 text-xs font-medium text-accent-fg">
                 {t('blogPlans.oneShot')}
               </span>
             )}
-            {plan.topics?.length > 0 && (
-              <span className="shrink-0 text-micro font-medium text-ink-faint">
-                {t('blogPlans.topicsQueue')}: {plan.topics.length}{t('blogPlans.topicsQueueUnit')}
-              </span>
-            )}
           </div>
+          {plan.topics?.length > 0 && (
+            <div className="mt-1 line-clamp-1 text-caption font-medium text-ink-faint">
+              {t('blogPlans.topicsQueue')}: {plan.topics.length}{t('blogPlans.topicsQueueUnit')}
+            </div>
+          )}
         </div>
       ),
     },
     {
       key: 'trigger',
       title: t('blogPlans.triggerTime'),
-      width: '22%',
+      width: '20%',
       render: (plan) => (
         <div className="min-w-0">
-          <span className="block truncate text-xs font-medium text-ink-muted">
+          <span className="block truncate text-sm font-medium text-ink-muted">
             {(plan.triggerTimes?.length > 0 ? plan.triggerTimes.join(' / ') : plan.triggerTime)} ({plan.timezone})
           </span>
-          <span className="mt-0.5 block truncate text-micro text-ink-faint">
+          <span className="mt-1 block truncate text-caption font-medium text-ink-faint">
             {t('blogPlans.syncCsdn')}: {plan.syncCsdn ? t('blogPlans.yes') : t('blogPlans.no')}
           </span>
         </div>
@@ -90,7 +90,7 @@ const BlogPlans = () => {
       title: t('blogPlans.nextRun'),
       width: '18%',
       render: (plan) => (
-        <span className="block truncate text-xs font-medium text-ink-muted" title={plan.nextRunAt}>
+        <span className="block truncate text-sm font-medium text-ink-muted" title={plan.nextRunAt}>
           {plan.nextRunAt ? new Date(plan.nextRunAt).toLocaleString() : '—'}
         </span>
       ),
@@ -98,7 +98,7 @@ const BlogPlans = () => {
     {
       key: 'status',
       title: t('blogPlans.status'),
-      width: '12%',
+      width: '14%',
       render: (plan) => <PlanStatusBadge status={plan.status} />,
     },
     {
@@ -175,11 +175,11 @@ const BlogPlans = () => {
   ];
 
   return (
-    <div className="mx-auto flex h-full min-h-0 w-full max-w-6xl flex-col overflow-hidden px-4 py-6 sm:px-6 lg:px-8">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <div className="text-xl font-bold text-ink">{t('blogPlans.title')}</div>
-          <div className="mt-1 text-sm text-ink-faint">{t('blogPlans.subtitle')}</div>
+    <div className="flex h-full min-h-0 flex-col">
+      <div className="flex shrink-0 flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:px-6">
+        <div className="min-w-0">
+          <div className="text-base font-bold text-ink">{t('blogPlans.title')}</div>
+          <div className="mt-0.5 text-caption font-medium text-ink-faint">{t('blogPlans.subtitle')}</div>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <button
@@ -197,7 +197,7 @@ const BlogPlans = () => {
         </div>
       </div>
 
-      <div className="mt-6 flex min-h-0 flex-1 flex-col">
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col px-4 py-3 sm:px-6">
         <DataTable
           columns={columns}
           rows={plans}
@@ -205,7 +205,7 @@ const BlogPlans = () => {
           emptyTitle={t('blogPlans.empty')}
           emptyHint={t('blogPlans.emptyHint')}
           emptyIcon={CalendarClock}
-          minWidth="900px"
+          minWidth="840px"
           page={page}
           pageSize={pageSize}
           total={total}

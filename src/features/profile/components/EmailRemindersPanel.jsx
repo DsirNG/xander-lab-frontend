@@ -304,10 +304,10 @@ const EmailRemindersPanel = () => {
                             <Mail className="h-3.5 w-3.5" />
                         </span>
                         <div className="min-w-0 flex-1">
-                            <div className="truncate text-xs font-bold text-ink" title={reminder.subject}>
+                            <div className="truncate text-sm font-semibold text-ink" title={reminder.subject}>
                                 {reminder.subject}
                             </div>
-                            <div className="mt-0.5 truncate text-micro font-medium text-ink-faint">
+                            <div className="mt-0.5 truncate text-caption font-medium text-ink-faint">
                                 {t(`profile.emailReminders.frequencies.${frequency.toLowerCase()}`)}
                                 {reminder.timezone ? ` · ${reminder.timezone}` : ''}
                             </div>
@@ -321,7 +321,7 @@ const EmailRemindersPanel = () => {
             title: t('profile.emailReminders.recipientEmail'),
             width: '22%',
             render: (reminder) => (
-                <span className="block truncate text-xs font-medium text-ink-muted" title={reminder.recipientEmail}>
+                <span className="block truncate text-sm font-medium text-ink-muted" title={reminder.recipientEmail}>
                     {reminder.recipientEmail}
                 </span>
             ),
@@ -335,11 +335,11 @@ const EmailRemindersPanel = () => {
                 const scheduleText = formatSchedule(reminder);
                 return (
                     <>
-                        <span className="block truncate text-xs font-medium text-ink-muted" title={scheduleText}>
+                        <span className="block truncate text-sm font-medium text-ink-muted" title={scheduleText}>
                             {scheduleText}
                         </span>
                         {frequency !== 'ONCE' ? (
-                            <span className="mt-0.5 block truncate text-micro text-ink-faint" title={formatDate(reminder.scheduledAt)}>
+                            <span className="mt-1 block truncate text-caption font-medium text-ink-faint" title={formatDate(reminder.scheduledAt)}>
                                 {t('profile.emailReminders.nextRun', { time: formatDate(reminder.scheduledAt) })}
                             </span>
                         ) : null}
@@ -354,7 +354,7 @@ const EmailRemindersPanel = () => {
             render: (reminder) => {
                 const status = normalizeStatus(reminder.status);
                 return (
-                    <span className={`inline-flex max-w-full truncate items-center rounded-full px-2 py-0.5 text-micro font-bold ${STATUS_STYLES[status].badge}`}>
+                    <span className={`inline-flex max-w-full truncate items-center rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_STYLES[status].badge}`}>
                         {t(`profile.emailReminders.status.${status.toLowerCase()}`)}
                     </span>
                 );
@@ -399,32 +399,32 @@ const EmailRemindersPanel = () => {
     ], [actionKey, formatDate, formatSchedule, handleStatusChange, setPendingDelete, t]);
 
     return (
-        <div className="relative flex min-h-0 flex-1 flex-col">
-            <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-3 overflow-y-auto p-4 px-ultra-tight sm:gap-4 sm:p-5">
-                <header className="flex shrink-0 flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                    <div className="flex min-w-0 items-start gap-2.5">
-                        <span className="mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-xl bg-accent-soft text-accent">
-                            <CalendarClock className="h-4 w-4" />
-                        </span>
-                        <div className="min-w-0">
-                            <div className="text-sm font-black tracking-tight text-ink">
-                                {t('profile.emailReminders.title')}
-                            </div>
-                            <div className="mt-0.5 text-caption font-medium text-ink-faint">
-                                {t('profile.emailReminders.description')}
-                            </div>
+        <div className="flex h-full min-h-0 flex-col">
+            <div className="flex shrink-0 flex-col gap-3 px-4 py-4 px-ultra-tight sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:px-6">
+                <div className="flex min-w-0 items-center gap-2.5">
+                    <span className="grid h-8 w-8 shrink-0 place-items-center rounded-xl bg-accent-soft text-accent">
+                        <CalendarClock className="h-4 w-4" />
+                    </span>
+                    <div className="min-w-0">
+                        <div className="text-base font-bold text-ink">
+                            {t('profile.emailReminders.title')}
+                        </div>
+                        <div className="mt-0.5 text-caption font-medium text-ink-faint">
+                            {t('profile.emailReminders.description')}
                         </div>
                     </div>
-                    <button
-                        type="button"
-                        onClick={() => setIsCreateOpen(true)}
-                        className="inline-flex min-h-11 shrink-0 items-center justify-center gap-1.5 rounded-lg bg-accent px-4 text-xs font-bold text-white shadow-sm shadow-accent/20 transition hover:brightness-105"
-                    >
-                        <Plus className="h-3.5 w-3.5" />
-                        {t('profile.emailReminders.createNew')}
-                    </button>
-                </header>
+                </div>
+                <button
+                    type="button"
+                    onClick={() => setIsCreateOpen(true)}
+                    className="inline-flex min-h-9 items-center justify-center gap-1.5 rounded-xl bg-accent px-3.5 py-1.5 text-sm font-semibold text-white transition hover:bg-accent/90"
+                >
+                    <Plus className="h-3.5 w-3.5" />
+                    {t('profile.emailReminders.createNew')}
+                </button>
+            </div>
 
+            <div className="flex shrink-0 flex-col px-4 pb-3 px-ultra-tight sm:px-6">
                 <div className="grid shrink-0 grid-cols-2 gap-2 sm:grid-cols-4">
                     {statCards.map((card) => {
                         const Icon = card.icon;
@@ -451,7 +451,9 @@ const EmailRemindersPanel = () => {
                         );
                     })}
                 </div>
+            </div>
 
+            <div className="flex min-h-0 min-w-0 flex-1 flex-col px-4 pb-3 px-ultra-tight sm:px-6">
                 <DataTable
                     columns={columns}
                     rows={reminders}
@@ -499,7 +501,7 @@ const EmailRemindersPanel = () => {
                     )}
                 />
 
-                <div className="flex shrink-0 items-start gap-2 rounded-xl bg-accent-soft/80 px-3 py-2.5">
+                <div className="mt-3 flex shrink-0 items-start gap-2 rounded-xl bg-accent-soft/80 px-3 py-2.5">
                     <ShieldCheck className="mt-0.5 h-3.5 w-3.5 shrink-0 text-accent" />
                     <div className="min-w-0">
                         <div className="text-caption font-bold text-accent-fg">
