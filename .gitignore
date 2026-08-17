@@ -30,3 +30,6 @@ dist-ssr
 
 # local pnpm store path (machine-specific)
 xander-lab-miniprogram/.npmrc
+
+# WeChat miniprogram upload private key (never commit)
+xander-lab-miniprogram/keys/
