@@ -524,7 +524,10 @@ export default {
       disconnect: 'Déconnecter',
       unavailable: 'Service d\'autorisation Juejin indisponible.',
       sessionExpired: 'Session Juejin expirée, réautorisez pour continuer la synchronisation',
-      reauthorize: 'Réautoriser Juejin'
+      reauthorize: 'Réautoriser Juejin',
+      syncCatalog: 'Synchroniser le catalogue',
+      catalogSynced: 'Catalogue synchronisé avec succès',
+      catalogSyncFailed: 'Échec de la synchronisation du catalogue'
     },
     emailReminders: {
       title: 'E-mail programmé',

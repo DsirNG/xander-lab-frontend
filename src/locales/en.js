@@ -532,7 +532,10 @@ export default {
       disconnect: 'Disconnect',
       unavailable: 'Juejin authorization service unavailable',
       sessionExpired: 'Juejin session expired, please re-authorize to continue syncing',
-      reauthorize: 'Re-authorize Juejin'
+      reauthorize: 'Re-authorize Juejin',
+      syncCatalog: 'Sync Catalog',
+      catalogSynced: 'Catalog synced successfully',
+      catalogSyncFailed: 'Failed to sync catalog'
     },
     emailReminders: {
       title: 'Scheduled Email',

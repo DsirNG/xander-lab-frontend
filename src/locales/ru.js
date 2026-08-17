@@ -524,7 +524,10 @@ export default {
       disconnect: 'Отключить',
       unavailable: 'Служба авторизации Juejin недоступна',
       sessionExpired: 'Сеанс Juejin истёк, повторно авторизуйтесь, чтобы продолжить синхронизацию',
-      reauthorize: 'Повторно авторизовать Juejin'
+      reauthorize: 'Повторно авторизовать Juejin',
+      syncCatalog: 'Синхронизировать каталог',
+      catalogSynced: 'Каталог успешно синхронизирован',
+      catalogSyncFailed: 'Не удалось синхронизировать каталог'
     },
     emailReminders: {
       title: 'Отложенная почта',

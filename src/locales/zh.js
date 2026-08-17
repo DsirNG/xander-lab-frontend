@@ -551,7 +551,10 @@ export default {
       disconnect: '断开连接',
       unavailable: '掘金授权服务暂不可用',
       sessionExpired: '掘金登录已失效，请重新授权后继续同步',
-      reauthorize: '重新授权掘金'
+      reauthorize: '重新授权掘金',
+      syncCatalog: '手动同步字典',
+      catalogSynced: '掘金字典同步成功',
+      catalogSyncFailed: '掘金字典同步失败'
     },
     emailReminders: {
       title: '定时邮箱',

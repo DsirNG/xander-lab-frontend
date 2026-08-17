@@ -524,7 +524,10 @@ export default {
       disconnect: 'Ngắt kết nối',
       unavailable: 'Dịch vụ ủy quyền Juejin không khả dụng',
       sessionExpired: 'Phiên Juejin đã hết hạn, vui lòng cấp quyền lại để tiếp tục đồng bộ',
-      reauthorize: 'Cấp quyền lại Juejin'
+      reauthorize: 'Cấp quyền lại Juejin',
+      syncCatalog: 'Đồng bộ danh mục',
+      catalogSynced: 'Đồng bộ danh mục thành công',
+      catalogSyncFailed: 'Đồng bộ danh mục thất bại'
     },
     emailReminders: {
       title: 'Email hẹn giờ',

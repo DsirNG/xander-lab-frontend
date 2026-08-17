@@ -524,7 +524,10 @@ export default {
       disconnect: '連携解除',
       unavailable: '掘金認証サービスを利用できません',
       sessionExpired: '掘金のログインが失効しました。同期を続けるには再認証してください',
-      reauthorize: '掘金を再認証'
+      reauthorize: '掘金を再認証',
+      syncCatalog: 'カタログを同期',
+      catalogSynced: 'カタログの同期に成功しました',
+      catalogSyncFailed: 'カタログの同期に失敗しました'
     },
     emailReminders: {
       title: '予約メール',

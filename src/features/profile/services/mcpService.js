@@ -15,6 +15,7 @@ export const juejinService = {
   getAuthorizationStatus: () => get(`${JUEJIN_AUTH}/status`, undefined, { _silent: true, dedupe: false }),
   cancelAuthorization: () => post(`${JUEJIN_AUTH}/cancel`, undefined, { _silent: true, dedupe: false }),
   disconnect: () => deleteRequest(JUEJIN_AUTH),
+  syncCatalog: () => post('/api/publishing/juejin/catalog/sync'),
 }
 
 const oauthRequest = (requestId) => `/api/mcp/oauth/authorize/requests/${encodeURIComponent(requestId)}`

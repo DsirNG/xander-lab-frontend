@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { CheckCircle2, Link2, LoaderCircle, QrCode, ShieldOff, TriangleAlert, Unplug } from 'lucide-react'
+import { CheckCircle2, Link2, LoaderCircle, QrCode, ShieldOff, TriangleAlert, Unplug, RefreshCw } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import Modal from '@components/common/Modal'
 import { useToast } from '@hooks/useToast'
@@ -191,6 +191,18 @@ const JuejinAuthorizationPanel = () => {
     }
   }
 
+  const handleSyncCatalog = async () => {
+    setBusy(true)
+    try {
+      await juejinService.syncCatalog()
+      toast.success(t('profile.juejin.catalogSynced'))
+    } catch (error) {
+      toast.error(error?.message || t('profile.juejin.catalogSyncFailed'))
+    } finally {
+      setBusy(false)
+    }
+  }
+
   const loading = state === 'loading'
   const authorized = state === 'AUTHORIZED'
   const expired = state === 'EXPIRED'
@@ -247,15 +259,28 @@ const JuejinAuthorizationPanel = () => {
       )}
 
       {!loading && (authorized || expired) && (
-        <button
-          type="button"
-          onClick={disconnect}
-          disabled={busy}
-          className="mt-4 inline-flex min-h-11 items-center gap-2 rounded-lg border border-border px-4 py-2.5 text-sm font-bold text-ink-muted hover:bg-canvas disabled:opacity-50"
-        >
-          {busy ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <Unplug className="h-4 w-4" />}
-          {t('profile.juejin.disconnect')}
-        </button>
+        <div className="mt-4 flex flex-wrap gap-3">
+          {authorized && (
+            <button
+              type="button"
+              onClick={handleSyncCatalog}
+              disabled={busy}
+              className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-border px-4 py-2.5 text-sm font-bold text-ink-muted hover:bg-canvas disabled:opacity-50"
+            >
+              {busy ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
+              {t('profile.juejin.syncCatalog')}
+            </button>
+          )}
+          <button
+            type="button"
+            onClick={disconnect}
+            disabled={busy}
+            className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-border px-4 py-2.5 text-sm font-bold text-ink-muted hover:bg-canvas disabled:opacity-50"
+          >
+            {busy ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <Unplug className="h-4 w-4" />}
+            {t('profile.juejin.disconnect')}
+          </button>
+        </div>
       )}
 
       {!loading && state === 'UNAVAILABLE' && (
