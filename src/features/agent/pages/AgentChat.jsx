@@ -219,7 +219,7 @@ export const ThinkingIndicator = ({ label }) => (
   </div>
 );
 
-const HistoricalToolCard = ({ message, t, onViewBlog }) => {
+export const HistoricalToolCard = ({ message, t, onViewBlog }) => {
   const { tool, payload } = toolCallSummary(message, t);
   const isImageTool = tool === IMAGE_TOOL;
 
@@ -231,9 +231,13 @@ const HistoricalToolCard = ({ message, t, onViewBlog }) => {
   }
 
   const blogTaskId = message.kind === 'tool_result' ? payload?.taskId : null;
+  // 失败结果可能带 ok=false（工具层）或只有 error 字段（老数据），都按失败展示。
+  const failed = message.kind === 'tool_result'
+    && (payload?.ok === false || payload?.cancelled === true || Boolean(payload?.error));
+  const errorText = failed ? (payload?.error || '') : '';
   return (
-    <div className="rounded-xl border border-border bg-canvas px-3 py-2">
-      <div className="flex items-center gap-2 text-xs font-bold text-ink-secondary">
+    <div className={`rounded-xl border px-3 py-2 ${failed ? 'border-danger/30 bg-danger/5' : 'border-border bg-canvas'}`}>
+      <div className={`flex items-center gap-2 text-xs font-bold ${failed ? 'text-danger' : 'text-ink-secondary'}`}>
         <Wrench className="h-3.5 w-3.5 shrink-0" />
         <span className="truncate">{tool}</span>
         <span className="ml-auto font-normal text-ink-faint">
@@ -241,11 +245,16 @@ const HistoricalToolCard = ({ message, t, onViewBlog }) => {
         </span>
       </div>
       {message.kind === 'tool_result' && (
-        <div className={`mt-1 flex items-center gap-1.5 text-xs ${payload?.ok === false ? 'text-danger' : 'text-emerald-600'}`}>
-          {payload?.ok === false
+        <div className={`mt-1 flex items-center gap-1.5 text-xs ${failed ? 'text-danger' : 'text-emerald-600'}`}>
+          {failed
             ? <AlertCircle className="h-3.5 w-3.5 shrink-0" />
             : <CheckCircle2 className="h-3.5 w-3.5 shrink-0" />}
-          {payload?.ok === false ? t('blog.agentChat.toolFailed') : t('blog.agentChat.toolSucceeded')}
+          {failed ? t('blog.agentChat.toolFailed') : t('blog.agentChat.toolSucceeded')}
+        </div>
+      )}
+      {errorText && (
+        <div className="mt-1 whitespace-pre-wrap break-all text-xs leading-5 text-danger/90">
+          {compactToolResult(errorText)}
         </div>
       )}
       {blogTaskId && (
