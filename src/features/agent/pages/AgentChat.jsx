@@ -2,18 +2,17 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
-  AlertCircle, ArrowLeft, Bot, CheckCircle2, FileText, Loader2, MessageSquareText, Plus,
-  Send, Sparkles, Wrench, X, Globe, PenLine, Image as ImageIcon, Mic, Menu, PanelLeftOpen, Link2, Search, Square, SquarePen
+  AlertCircle, ArrowLeft, Bot, Loader2, MessageSquareText, Plus,
+  Send, Sparkles, X, Globe, PenLine, Image as ImageIcon, Mic, Menu, PanelLeftOpen, Link2, Search, Square, SquarePen
 } from 'lucide-react';
 import { useToast } from '@/hooks/useToast';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 import AgentSessionList from '@/features/blog/components/agent/AgentSessionList';
 import AgentPreviewPanel from '@/features/blog/components/agent/AgentPreviewPanel';
-import BlogMarkdown from '@/features/blog/components/BlogMarkdown';
 import { blogAgentService } from '@/features/blog/services/blogAgentService';
 import useIsMobile from '@/hooks/useIsMobile';
 import useClickOutside from '@/hooks/useClickOutside';
-import { useAgentConversation, compactToolResult, toolCallSummary } from '../hooks/useAgentConversation';
+import { useAgentConversation } from '../hooks/useAgentConversation';
 import AgentMarkdown from '../components/AgentMarkdown';
 import AgentImagesPage from './AgentImagesPage';
 import ProfileModal from '@features/workspace/components/ProfileModal';
@@ -25,140 +24,6 @@ const ThoughtCard = ({ content }) => (
     <span className="whitespace-pre-wrap">{content}</span>
   </div>
 );
-
-const BLOG_STAGES = ['analyze', 'research', 'write', 'illustrate', 'review'];
-
-const IMAGE_TOOL = 'image_generate';
-
-/** 图片工具专属进度面板：独立样式，不走博客生成的阶段步骤 UI。 */
-const ImageToolProgressPanel = () => {
-  return (
-    <div className="relative flex h-64 w-64 flex-col overflow-hidden rounded-[2rem] bg-surface-muted p-5 sm:h-80 sm:w-80 sm:p-6">
-      <div 
-        className="absolute inset-0 opacity-10 animate-pulse" 
-        style={{ backgroundImage: 'radial-gradient(circle, currentColor 1.5px, transparent 1.5px)', backgroundSize: '24px 24px', backgroundPosition: '0 0' }} 
-      />
-      <div className="absolute left-1/2 top-1/2 h-32 w-32 -translate-x-1/2 -translate-y-1/2 animate-pulse rounded-full bg-ink/5 blur-3xl" />
-      <div className="relative z-10 flex items-center gap-1.5 text-sm font-semibold text-ink-secondary">
-        <Sparkles className="h-4 w-4 animate-pulse text-ink-muted" />
-        <span>正在创建图片</span>
-        <span className="flex items-center gap-0.5 ml-1 mt-1" aria-hidden="true">
-          {[0, 1, 2].map((index) => (
-            <span
-              key={index}
-              className="h-1 w-1 animate-bounce rounded-full bg-current opacity-70"
-              style={{ animationDelay: `${index * 150}ms` }}
-            />
-          ))}
-        </span>
-      </div>
-    </div>
-  );
-};
-
-/** 工具执行中的分步进度面板：阶段列表 + 实时日志 + 文章流式预览（对齐 blog-tool 的 AgentProcessPanel）。 */
-const ToolProgressPanel = ({ tool, logs, stage, draft = '', active = false }) => {
-  const { t } = useTranslation();
-  if (tool === IMAGE_TOOL) {
-    return <ImageToolProgressPanel logs={logs} active={active} />;
-  }
-  const stageIndex = BLOG_STAGES.indexOf(stage);
-  return (
-    <div className="overflow-hidden rounded-2xl border border-border bg-canvas shadow-sm">
-      <div className="flex items-center gap-2 border-b border-border px-4 py-3 text-sm font-semibold text-ink-secondary">
-        <Loader2 className="h-4 w-4 shrink-0 animate-spin text-ink-muted" />
-        <span className="truncate">{t('blog.agentChat.callingTool')}</span>
-      </div>
-      <div className="space-y-4 px-4 py-4">
-        <ol className="space-y-3">
-          {BLOG_STAGES.map((key, index) => {
-            const done = stageIndex >= 0 && index < stageIndex;
-            const active = stageIndex >= 0 && index === stageIndex;
-            return (
-              <li key={key} className="flex gap-3">
-                <span
-                  className={`grid h-6 w-6 shrink-0 place-items-center rounded-full text-xs font-black ${
-                    done || active ? 'bg-ink text-white' : 'bg-surface-muted text-ink-faint'
-                  }`}
-                >
-                  {done ? '✓' : active ? <Loader2 className="h-3 w-3 animate-spin" /> : index + 1}
-                </span>
-                <div className="min-w-0">
-                  <div className="text-sm font-bold text-ink">
-                    {t(`blog.agent.stages.${key}`)}
-                  </div>
-                  <div className="mt-0.5 text-caption leading-5 text-ink-muted">
-                    {t(`blog.agent.stageDescriptions.${key}`)}
-                  </div>
-                </div>
-              </li>
-            );
-          })}
-        </ol>
-        {logs.length > 0 && (
-          <div className="max-h-40 space-y-1.5 overflow-auto rounded-xl bg-ink p-3 text-caption leading-6 text-border-strong">
-            {logs.map((log, index) => (
-              <div key={`${log}-${index}`}><span className="mr-2 text-border-strong">●</span>{log}</div>
-            ))}
-          </div>
-        )}
-        {draft && (
-          <div className="overflow-hidden rounded-xl border border-border bg-surface">
-            <div className="max-h-72 overflow-auto px-4 py-3">
-              <BlogMarkdown content={draft} />
-            </div>
-            {active && (
-              <div className="flex items-center gap-2 border-t border-border bg-canvas px-4 py-2 text-caption font-bold text-ink-secondary">
-                <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                <span>{t('blog.agentChat.writing')}</span>
-              </div>
-            )}
-          </div>
-        )}
-      </div>
-    </div>
-  );
-};
-
-const ToolStepCard = ({ step, t, onViewBlog }) => {
-  const isImageTool = step.tool === IMAGE_TOOL;
-  if (isImageTool) {
-    if (step.phase === 'end' && step.result?.url) {
-      return <AgentMarkdown content={`![${step.result?.title || ''}](${step.result.url})`} />;
-    }
-    return null;
-  }
-
-  const isError = step.phase === 'error';
-  const blogTaskId = step.result?.taskId;
-  const Icon = isError ? AlertCircle : CheckCircle2;
-  return (
-    <div className={`rounded-xl border px-3 py-2 ${isError ? 'border-danger/30 bg-danger/5' : 'border-border bg-canvas'}`}>
-      <div className={`flex items-center gap-2 text-xs font-bold ${isError ? 'text-danger' : 'text-ink-secondary'}`}>
-        <Wrench className="h-3.5 w-3.5 shrink-0" />
-        <span className="truncate">{step.tool || t('blog.agentChat.unknownTool')}</span>
-        {step.phase === 'start' && <span className="ml-auto font-normal text-ink-faint">{t('blog.agentChat.callingTool')}</span>}
-        {step.phase === 'end' && <Icon className="ml-auto h-3.5 w-3.5 shrink-0 text-emerald-500" />}
-        {isError && <Icon className="ml-auto h-3.5 w-3.5 shrink-0" />}
-      </div>
-      {isError && (step.result || step.error) && (
-        <div className="mt-1 whitespace-pre-wrap break-all text-xs leading-5 text-danger/90">
-          {compactToolResult(step.error ?? step.result)}
-        </div>
-      )}
-      {step.phase === 'end' && blogTaskId && (
-        <button
-          type="button"
-          onClick={() => onViewBlog(blogTaskId)}
-          className="mt-2 inline-flex items-center gap-1.5 rounded-lg border border-border bg-surface-muted px-3 py-1.5 text-xs font-bold text-ink-secondary transition hover:bg-border"
-        >
-          <FileText className="h-3.5 w-3.5" />
-          {t('blog.agentChat.viewBlog')}
-        </button>
-      )}
-    </div>
-  );
-};
 
 const cleanImageMarkdown = (text) => {
   if (!text) return text;
@@ -218,58 +83,6 @@ export const ThinkingIndicator = ({ label }) => (
     </div>
   </div>
 );
-
-export const HistoricalToolCard = ({ message, t, onViewBlog }) => {
-  const { tool, payload } = toolCallSummary(message, t);
-  const isImageTool = tool === IMAGE_TOOL;
-
-  if (isImageTool) {
-    if (message.kind === 'tool_result' && payload?.url) {
-      return <AgentMarkdown content={`![${payload?.title || ''}](${payload.url})`} />;
-    }
-    return null;
-  }
-
-  const blogTaskId = message.kind === 'tool_result' ? payload?.taskId : null;
-  // 失败结果可能带 ok=false（工具层）或只有 error 字段（老数据），都按失败展示。
-  const failed = message.kind === 'tool_result'
-    && (payload?.ok === false || payload?.cancelled === true || Boolean(payload?.error));
-  const errorText = failed ? (payload?.error || '') : '';
-  return (
-    <div className={`rounded-xl border px-3 py-2 ${failed ? 'border-danger/30 bg-danger/5' : 'border-border bg-canvas'}`}>
-      <div className={`flex items-center gap-2 text-xs font-bold ${failed ? 'text-danger' : 'text-ink-secondary'}`}>
-        <Wrench className="h-3.5 w-3.5 shrink-0" />
-        <span className="truncate">{tool}</span>
-        <span className="ml-auto font-normal text-ink-faint">
-          {message.kind === 'tool_call' ? t('blog.agentChat.toolCalled') : t('blog.agentChat.toolResult')}
-        </span>
-      </div>
-      {message.kind === 'tool_result' && (
-        <div className={`mt-1 flex items-center gap-1.5 text-xs ${failed ? 'text-danger' : 'text-emerald-600'}`}>
-          {failed
-            ? <AlertCircle className="h-3.5 w-3.5 shrink-0" />
-            : <CheckCircle2 className="h-3.5 w-3.5 shrink-0" />}
-          {failed ? t('blog.agentChat.toolFailed') : t('blog.agentChat.toolSucceeded')}
-        </div>
-      )}
-      {errorText && (
-        <div className="mt-1 whitespace-pre-wrap break-all text-xs leading-5 text-danger/90">
-          {compactToolResult(errorText)}
-        </div>
-      )}
-      {blogTaskId && (
-        <button
-          type="button"
-          onClick={() => onViewBlog(blogTaskId)}
-          className="mt-2 inline-flex items-center gap-1.5 rounded-lg border border-border bg-surface-muted px-3 py-1.5 text-xs font-bold text-ink-secondary transition hover:bg-border"
-        >
-          <FileText className="h-3.5 w-3.5" />
-          {t('blog.agentChat.viewBlog')}
-        </button>
-      )}
-    </div>
-  );
-};
 
 const AgentChatInputBar = ({ t, input, setInput, isActive, creating, hasConversation, onSubmit, onStop }) => {
   const locked = isActive || creating;
@@ -418,15 +231,6 @@ const AgentChat = () => {
     return liveSteps;
   }, [liveSteps]);
 
-  const activeToolRunning = useMemo(() => {
-    const endedTools = new Set(
-      steps
-        .filter((step) => step.type === 'tool' && (step.phase === 'end' || step.phase === 'error'))
-        .map((step) => step.tool),
-    );
-    return steps.some((step) => step.type === 'tool' && step.phase === 'start' && !endedTools.has(step.tool));
-  }, [steps]);
-
   const streamingAnswer = useMemo(
     () => steps.some((step) => step.type === 'answer' || step.type === 'answer_delta'),
     [steps],
@@ -507,12 +311,6 @@ const AgentChat = () => {
       toast.error(error.message || t('blog.agentChat.sendFailed'));
     }
   }, [createConversation, navigate, t, toast]);
-
-  const handleViewBlog = (taskId) => {
-    const next = new URLSearchParams(searchParams);
-    next.set('blogTaskId', String(taskId));
-    setSearchParams(next, { replace: true });
-  };
 
   const handleCloseArtifact = () => {
     const next = new URLSearchParams(searchParams);
@@ -599,38 +397,6 @@ const AgentChat = () => {
   }, [sessions, searchQuery]);
 
   const navigationLocked = loading || creating;
-
-  const toolProgress = useMemo(() => {
-    const tools = new Map();
-    let lastDraftTool = null;
-    steps.forEach((step) => {
-      if (step.type === 'tool' && step.phase === 'start') {
-        tools.set(step.tool || 'tool', { tool: step.tool || 'tool', active: true, logs: [], stage: undefined, draft: '' });
-      } else if (step.type === 'tool' && step.phase === 'progress') {
-        const key = step.tool || 'tool';
-        const state = tools.get(key) || { tool: key, active: true, logs: [], stage: undefined, draft: '' };
-        state.active = true;
-        state.stage = step.stage || state.stage;
-        if (step.message) state.logs.push(step.message);
-        tools.set(key, state);
-      } else if (step.type === 'tool_delta') {
-        const key = step.tool || 'tool';
-        const state = tools.get(key) || { tool: key, active: true, logs: [], stage: undefined, draft: '' };
-        state.active = true;
-        state.draft = step.content;
-        tools.set(key, state);
-        lastDraftTool = key;
-      } else if (step.type === 'tool' && (step.phase === 'end' || step.phase === 'error')) {
-        const key = step.tool || 'tool';
-        const state = tools.get(key);
-        if (state) state.active = false;
-      }
-    });
-    // 保留最近一次已完成写作的预览面板，直到本轮结束，避免文章刚写完预览就消失。
-    return [...tools.values()].filter(
-      (tool) => (tool.active && (tool.logs.length || tool.draft)) || (tool.draft && tool.tool === lastDraftTool),
-    );
-  }, [steps]);
 
   const statusLine = useMemo(() => {
     if (reconnecting) return t('blog.agentChat.reconnecting');
@@ -931,9 +697,6 @@ const AgentChat = () => {
                       if (message.kind === 'thought') {
                         return <ThoughtCard key={message.id} content={message.content} />;
                       }
-                      if (message.kind === 'tool_call' || message.kind === 'tool_result') {
-                        return <HistoricalToolCard key={message.id} message={message} t={t} onViewBlog={handleViewBlog} />;
-                      }
                       if (message.kind === 'answer' || message.kind === 'message') {
                         return <ConversationMessage key={message.id} role="assistant" content={message.content} />;
                       }
@@ -942,14 +705,9 @@ const AgentChat = () => {
                     {steps.map((step, index) => {
                       if (step.type === 'user') return <ConversationMessage key={`live-${index}`} role="user" content={step.content} />;
                       if (step.type === 'thought') return <ThoughtCard key={`live-${index}`} content={step.content} />;
-                      if (step.type === 'tool') {
-                        if (step.phase === 'progress') return null;
-                        return <ToolStepCard key={`live-${index}`} step={step} t={t} onViewBlog={handleViewBlog} />;
-                      }
                       if (step.type === 'answer' || step.type === 'answer_delta') {
                         return <ConversationMessage key={`live-${index}`} role="assistant" content={step.content} isStreaming={step.type === 'answer_delta'} />;
                       }
-                      if (step.type === 'tool_delta') return null;
                       if (step.type === 'error') {
                         return (
                           <div key={`live-${index}`} className="flex items-center gap-2 rounded-xl border border-danger/30 bg-danger/5 px-3 py-2 text-xs font-semibold text-danger">
@@ -960,17 +718,7 @@ const AgentChat = () => {
                       }
                       return null;
                     })}
-                    {toolProgress.map((tool) => (
-                      <ToolProgressPanel
-                        key={tool.tool}
-                        tool={tool.tool}
-                        logs={tool.logs}
-                        stage={tool.stage}
-                        draft={tool.draft}
-                        active={tool.active}
-                      />
-                    ))}
-                    {(isActive || creating || (loading && steps.length > 0)) && !streamingAnswer && !activeToolRunning && toolProgress.length === 0 && (
+                    {(isActive || creating || (loading && steps.length > 0)) && !streamingAnswer && (
                       <ThinkingIndicator label={t('blog.agentChat.thinking')} />
                     )}
                     <div ref={chatEndRef} className="h-2" />
