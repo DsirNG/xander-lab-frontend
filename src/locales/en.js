@@ -91,7 +91,7 @@ export default {
       stages: { analyze: 'Frame the article', research: 'Research and verify', write: 'Write the full article', illustrate: 'Create knowledge visuals', review: 'Review before publishing' },
       stageDescriptions: { analyze: 'Finds the reader, point of view, and evidence gaps.', research: 'Uses web research to verify external claims.', write: 'Builds a complete Markdown knowledge article.', illustrate: 'Creates useful visuals and saves them to your library.', review: 'Checks evidence, clarity, and publish readiness.' },
       article: 'Generated article', toDraft: 'Open in editor', draftCreated: 'Draft created. You can now edit and publish it.', sources: 'Research sources', noSources: 'No external sources were retained for this article.', review: 'Editorial review', reviewPending: 'The review will appear when the assistant completes its work.', inputRequired: 'Enter a topic or diary entry first.', contentFocus: 'Content focus', mustCover: 'Article backbone', relatedExpansion: 'Direct extensions', outOfScope: 'Not expanded', knowledgeGraph: 'Knowledge graph', illustrations: 'Knowledge visuals', illustrationStatuses: { running: 'Creating and saving visuals.', complete: 'Visuals were added to the article and your private library.', partial: 'Some visuals were created; the remaining ones can be added later.', failed: 'Visual generation failed, but the article is ready to review.', disabled: 'No image model is configured, so visuals were skipped.', none: 'The assistant determined that this article does not need extra visuals.' },
-      processing: 'Processing {{duration}}', processed: 'Processed {{duration}}', processedDone: 'Processed', processFailed: 'Processing failed', openPreview: 'Click to preview', previewEmpty: 'Select a generated blog to preview', untitled: 'Untitled article', newTask: 'New task', newConversation: 'New conversation', conversations: 'Conversations', noConversations: 'No previous conversations', restoring: 'Restoring generation task…', multiTurnHint: 'Describe another change and the assistant will create a new article version.', revise: 'Update article', revisionComplete: 'Article updated for this turn', waitingForStage: 'Preparing the next stage…', inputLockedPlaceholder: 'The assistant is working…', confirmPublish: 'Publish', viewArticle: 'View article', showMeta: 'Show research and review details', hideMeta: 'Hide research and review details'
+      processing: 'Processing {{duration}}', processed: 'Processed {{duration}}', processedDone: 'Processed', processFailed: 'Processing failed', openPreview: 'Click to preview', previewEmpty: 'Select a generated blog to preview', untitled: 'Untitled article', newTask: 'New task', newConversation: 'New conversation', conversations: 'Conversations', noConversations: 'No previous conversations', restoring: 'Restoring generation task…', multiTurnHint: 'Describe another change and the assistant will create a new article version.', revise: 'Update article', revisionComplete: 'Article updated for this turn', waitingForStage: 'Preparing the next stage…', inputLockedPlaceholder: 'The assistant is working…', confirmPublish: 'Publish', viewArticle: 'View article', showMeta: 'Show research and review details', hideMeta: 'Hide research and review details', sharedView: 'Shared conversation'
     },
     agentChat: {
       title: 'Dindor Agent', back: 'Back to workspace',
@@ -104,7 +104,7 @@ export default {
       inputRequired: 'Enter what you want the agent to do first.', sendFailed: 'Could not send the message.', loadFailed: 'Could not load the conversation.',
       restoring: 'Restoring conversation…', reconnecting: 'Connection lost, reconnecting…',
       unknownTool: 'Tool', working: 'Working…', writing: 'Writing…', toolCalled: 'Tool called', toolResult: 'Tool result', toolSucceeded: 'Succeeded', toolFailed: 'Failed', viewBlog: 'View blog',
-      generatingImage: 'Generating image…', imageToolTitle: 'AI Image Generation', imageToolHint: 'Creating a standalone illustration or cover from your description; saved to your media library when done'
+      generatingImage: 'Generating image…', imageToolTitle: 'AI Image Generation', imageToolHint: 'Creating a standalone illustration or cover from your description; saved to your media library when done', newChat: 'New chat', recentSessions: 'Recent', tierFree: 'Free', quickGenerateImage: 'Generate an image', quickWrite: 'Write or edit', quickWritePrompt: 'Write or edit an article', quickSearch: 'Search the web', share: 'Share', shareDialog: 'Share conversation', shareLinkTitle: 'Share conversation link', shareLinkHint: 'Anyone with this link can view the conversation without logging in', shareGenerating: 'Generating…', copied: 'Copied', copyShareLink: 'Copy share link', startHeadline: 'Where shall we start?', generateImagePrompt: 'Generate an image: {{query}}', searchPlaceholder: 'Search conversations…', recentChats: 'Recent chats', searchNoMatches: 'No matching conversations', noSessions: 'No conversations yet', user: 'User', expandSidebar: 'Expand conversation list'
     },
     agentImages: {
       title: 'Images', inputPlaceholder: 'Describe a new image', think: 'Think',
@@ -112,7 +112,9 @@ export default {
       loadFailed: 'Could not load images. Please try again later.',
       emptyTitle: 'No images generated yet', emptyHint: 'Describe an image in the input box and the agent will generate and save it here',
       loadMore: 'Load more', loadingMore: 'Loading…'
-    }
+    },
+    shareLinkCopied: 'Share link copied',
+    shareFailed: 'Failed to share'
   },
   blogPlans: {
     title: 'Scheduled Posts',
@@ -238,11 +240,12 @@ export default {
     loading: 'Loading…',
     markAll: 'Mark all read',
     markedAll: 'All notifications marked as read',
-    viewPlans: 'View scheduled posts'
+    viewPlans: 'View scheduled posts', testBroadcast: 'Test SSE broadcast', broadcasting: 'Broadcasting…', broadcastSent: 'SSE test broadcast sent ({{count}} live connections)', broadcastFailed: 'Failed to send SSE test broadcast'
   },
   common: {
     confirm: 'Confirm',
     cancel: 'Cancel',
+    delete: 'Delete',
     close: 'Close',
     save: 'Save',
     pagination: {
@@ -1173,7 +1176,7 @@ export default {
       disableToast: 'Provider disabled',
       created: 'Provider created',
       updated: 'Provider updated',
-      deleted: 'Provider deleted',
+      deleted: 'Provider deleted', delete: 'Delete',
       deleteTitle: 'Delete provider',
       deleteMessage: 'Delete {{name}}? Providers still referenced by feature configs cannot be removed.',
       nameTaken: 'A provider with this name already exists',
@@ -1183,6 +1186,25 @@ export default {
       loadFailed: 'Failed to load providers',
       empty: 'No providers yet',
       emptyHint: 'Add your first model provider to use admin model routing',
+    },
+    wechatCredential: {
+      title: 'WeChat Login Credential',
+      subtitle: 'Manage the WeChat Mini Program AppID / AppSecret used for login. The secret is encrypted at rest and never shown again.',
+      appId: 'AppID',
+      appIdPlaceholder: 'Mini Program AppID',
+      appSecret: 'AppSecret',
+      appSecretPlaceholder: 'Mini Program AppSecret',
+      appSecretHint: 'Stored encrypted; never displayed in the UI or API responses.',
+      formRequired: 'AppID and AppSecret are required',
+      saveFailed: 'Failed to save the credential',
+      loadFailed: 'Failed to load the credential',
+      saved: 'Credential saved',
+      cleared: 'Credential cleared',
+      clear: 'Clear',
+      clearTitle: 'Clear WeChat credential',
+      clearMessage: 'WeChat login will be disabled until a new credential is saved. Continue?',
+      configured: 'Configured',
+      notConfigured: 'Not configured',
     },
     configs: {
       title: 'Feature Model Configs',

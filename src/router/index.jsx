@@ -45,6 +45,7 @@ const EmailRemindersPage = React.lazy(() => import('@features/workspace/pages/Em
 const AdminUsersPage = React.lazy(() => import('@features/admin/pages/AdminUsersPage'));
 const AdminModelProvidersPage = React.lazy(() => import('@features/admin/pages/AdminModelProvidersPage'));
 const AdminFeatureModelConfigsPage = React.lazy(() => import('@features/admin/pages/AdminFeatureModelConfigsPage'));
+const AdminWechatCredentialPage = React.lazy(() => import('@features/admin/pages/AdminWechatCredentialPage'));
 const RequireAdmin = React.lazy(() => import('@features/admin/components/RequireAdmin'));
 
 // 配置数据
@@ -210,6 +211,10 @@ export const createRouter = () => {
             {
               path: 'feature-model-configs',
               element: <LazyPage><AdminFeatureModelConfigsPage /></LazyPage>,
+            },
+            {
+              path: 'wechat-credential',
+              element: <LazyPage><AdminWechatCredentialPage /></LazyPage>,
             },
           ],
         },

@@ -44,9 +44,9 @@ const NotificationBell = () => {
     setBroadcasting(true);
     try {
       const recipients = await blogPlanService.testSseBroadcast();
-      toast.success(`SSE 测试广播已发送（${recipients} 条连接）`);
+      toast.success(t('notifications.broadcastSent', { count: recipients }));
     } catch {
-      toast.error('SSE 测试广播发送失败');
+      toast.error(t('notifications.broadcastFailed'));
     } finally {
       setBroadcasting(false);
     }
@@ -84,7 +84,7 @@ const NotificationBell = () => {
             )}
             {isAdmin && (
               <Button onClick={handleTestBroadcast} disabled={broadcasting} variant="link" size="xs">
-                {broadcasting ? '广播中…' : '测试 SSE 广播'}
+                {broadcasting ? t('notifications.broadcasting') : t('notifications.testBroadcast')}
               </Button>
             )}
           </div>

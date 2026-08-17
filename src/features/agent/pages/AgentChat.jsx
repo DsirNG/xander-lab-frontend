@@ -660,17 +660,17 @@ const AgentChat = () => {
               />
 
               <div className="mx-auto mt-6 flex w-full max-w-3xl flex-wrap justify-center gap-2">
-                <button onClick={() => setInput('生成图片')} className="flex items-center gap-2 rounded-xl border border-border bg-[#ffffff] px-4 py-2 text-sm font-semibold text-ink transition hover:bg-surface-muted">
+                <button onClick={() => setInput(t('blog.agentChat.quickGenerateImage'))} className="flex items-center gap-2 rounded-xl border border-border bg-[#ffffff] px-4 py-2 text-sm font-semibold text-ink transition hover:bg-surface-muted">
                   <ImageIcon className="h-4 w-4 text-emerald-500" />
-                  生成图片
+                  {t('blog.agentChat.quickGenerateImage')}
                 </button>
-                <button onClick={() => setInput('撰写或编辑文章')} className="flex items-center gap-2 rounded-xl border border-border bg-[#ffffff] px-4 py-2 text-sm font-semibold text-ink transition hover:bg-surface-muted">
+                <button onClick={() => setInput(t('blog.agentChat.quickWritePrompt'))} className="flex items-center gap-2 rounded-xl border border-border bg-[#ffffff] px-4 py-2 text-sm font-semibold text-ink transition hover:bg-surface-muted">
                   <PenLine className="h-4 w-4 text-blue-500" />
-                  撰写或编辑
+                  {t('blog.agentChat.quickWrite')}
                 </button>
-                <button onClick={() => setInput('搜索网页')} className="flex items-center gap-2 rounded-xl border border-border bg-[#ffffff] px-4 py-2 text-sm font-semibold text-ink transition hover:bg-surface-muted">
+                <button onClick={() => setInput(t('blog.agentChat.quickSearch'))} className="flex items-center gap-2 rounded-xl border border-border bg-[#ffffff] px-4 py-2 text-sm font-semibold text-ink transition hover:bg-surface-muted">
                   <Globe className="h-4 w-4 text-orange-500" />
-                  搜索网页
+                  {t('blog.agentChat.quickSearch')}
                 </button>
               </div>
             </div>

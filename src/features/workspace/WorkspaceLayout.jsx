@@ -6,6 +6,7 @@ import {
   CalendarClock,
   Code2,
   Mail,
+  MessageCircle,
   NotebookPen,
   Send,
   Server,
@@ -35,6 +36,7 @@ const ADMIN_MENU = [
   { to: '/workspace/admin/users', icon: Users, labelKey: 'admin.users.title' },
   { to: '/workspace/admin/model-providers', icon: Server, labelKey: 'admin.providers.title' },
   { to: '/workspace/admin/feature-model-configs', icon: SlidersHorizontal, labelKey: 'admin.configs.title' },
+  { to: '/workspace/admin/wechat-credential', icon: MessageCircle, labelKey: 'admin.wechatCredential.title' },
 ];
 
 const WorkspaceLayoutInner = () => {

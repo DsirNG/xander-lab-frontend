@@ -38,10 +38,10 @@ const AgentSessionList = ({ sessions, activeId, loading, disableNew = false, mob
   const [loggingOut, setLoggingOut] = useState(false);
   const boxRef = useRef(null);
 
-  const displayName = userInfo?.nickname || userInfo?.username || '用户';
+  const displayName = userInfo?.nickname || userInfo?.username || t('blog.agentChat.user');
   const avatarText = (displayName || 'XL').slice(0, 2).toUpperCase();
   const avatar = userInfo?.avatar;
-  const tier = userInfo?.tier || '免费版';
+  const tier = userInfo?.tier || t('blog.agentChat.tierFree');
 
   useEffect(() => {
     if (!menuOpen) return;
@@ -106,7 +106,7 @@ const AgentSessionList = ({ sessions, activeId, loading, disableNew = false, mob
           }`}
         >
           <SquarePen className="h-4 w-4 text-ink-muted" />
-          <span>新聊天</span>
+          <span>{t('blog.agentChat.newChat')}</span>
         </button>
       </div>
 
@@ -119,13 +119,13 @@ const AgentSessionList = ({ sessions, activeId, loading, disableNew = false, mob
           }`}
         >
           <ImageIcon className={`h-4 w-4 ${imagesActive ? 'text-emerald-500' : 'text-ink-muted'}`} />
-          <span>图片</span>
+          <span>{t('blog.agentImages.title')}</span>
         </button>
       </div>
 
       {/* Conversations List */}
       <div className="mt-4 px-3 pb-1 text-xs font-semibold text-ink-muted">
-        最近
+        {t('blog.agentChat.recentSessions')}
       </div>
       <div className="min-h-0 flex-1 overflow-y-auto px-3 pb-3 space-y-0.5">
         {loading && !sessions.length ? (

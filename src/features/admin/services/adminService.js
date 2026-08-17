@@ -28,4 +28,9 @@ export const adminService = {
   listFeatureConfigs: (config) => get('/api/admin/feature-model-configs', undefined, config),
   updateFeatureConfig: (featureKey, payload, config) =>
     put(`/api/admin/feature-model-configs/${featureKey}`, payload, config),
+
+  /* ---------- 微信登录凭据（AppSecret 只进不出） ---------- */
+  getWechatCredential: (config) => get('/api/admin/wechat-credential', undefined, config),
+  saveWechatCredential: (payload, config) => put('/api/admin/wechat-credential', payload, config),
+  clearWechatCredential: (config) => del('/api/admin/wechat-credential', undefined, config),
 };

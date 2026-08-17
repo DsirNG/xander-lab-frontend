@@ -91,7 +91,7 @@ export default {
       stages: { analyze: '确定文章角度', research: '调研与核验', write: '撰写完整文章', illustrate: '生成知识插图', review: '发布前审校' },
       stageDescriptions: { analyze: '识别读者、观点和需要补充的证据。', research: '联网核验文章中的外部事实。', write: '生成完整的 Markdown 知识博客。', illustrate: '按需生成插图并保存到你的素材库。', review: '检查证据、表达和发布状态。' },
       article: '生成的文章', toDraft: '进入编辑器', draftCreated: '已创建草稿，现在可以编辑并发布。', sources: '调研来源', noSources: '这篇文章未保留外部来源。', review: '编辑审校', reviewPending: '博客生成助手完成后会显示审校结果。', inputRequired: '请先输入主题或日记。', contentFocus: '内容边界', mustCover: '文章主干', relatedExpansion: '直接扩展', outOfScope: '不主动扩展', knowledgeGraph: '知识关系图谱', illustrations: '知识插图', illustrationStatuses: { running: '正在生成并保存插图。', complete: '插图已生成并插入文章，同时保存到你的素材库。', partial: '部分插图已生成，其余插图可以稍后补充。', failed: '插图生成失败，文章内容仍可正常审阅。', disabled: '尚未配置图片模型，本次已跳过插图。', none: '博客生成助手判断这篇文章不需要额外插图。' },
-      processing: '处理中 {{duration}}', processed: '已处理 {{duration}}', processedDone: '已处理', processFailed: '处理失败', openPreview: '点击预览文章', previewEmpty: '选择生成的博客以预览', untitled: '未命名文章', newTask: '新任务', newConversation: '新建会话', conversations: '会话列表', noConversations: '还没有历史会话', restoring: '正在恢复博客生成任务…', multiTurnHint: '继续输入修改要求，博客生成助手会基于当前文章生成新版本。', revise: '继续修改', revisionComplete: '文章已按本轮要求更新', waitingForStage: '正在准备下一阶段…', inputLockedPlaceholder: '博客生成助手处理中，请稍候', confirmPublish: '确认发布', viewArticle: '查看文章', showMeta: '显示调研与审校信息', hideMeta: '收起调研与审校信息'
+      processing: '处理中 {{duration}}', processed: '已处理 {{duration}}', processedDone: '已处理', processFailed: '处理失败', openPreview: '点击预览文章', previewEmpty: '选择生成的博客以预览', untitled: '未命名文章', newTask: '新任务', newConversation: '新建会话', conversations: '会话列表', noConversations: '还没有历史会话', restoring: '正在恢复博客生成任务…', multiTurnHint: '继续输入修改要求，博客生成助手会基于当前文章生成新版本。', revise: '继续修改', revisionComplete: '文章已按本轮要求更新', waitingForStage: '正在准备下一阶段…', inputLockedPlaceholder: '博客生成助手处理中，请稍候', confirmPublish: '确认发布', viewArticle: '查看文章', showMeta: '显示调研与审校信息', hideMeta: '收起调研与审校信息', sharedView: '分享的对话'
     },
     agentChat: {
       title: 'Dindor 智能体', back: '返回工作台',
@@ -104,7 +104,7 @@ export default {
       inputRequired: '请先输入你想让智能体做什么。', sendFailed: '消息发送失败。', loadFailed: '对话加载失败。',
       restoring: '正在恢复对话…', reconnecting: '连接已断开，正在重连…',
       unknownTool: '工具', working: '处理中…', writing: '正在写作…', toolCalled: '已调用工具', toolResult: '工具返回结果', toolSucceeded: '调用成功', toolFailed: '调用失败', viewBlog: '查看博客',
-      generatingImage: '正在生成图片…', imageToolTitle: 'AI 图片生成', imageToolHint: '根据你的描述生成独立配图/封面图，完成后自动保存到素材库'
+      generatingImage: '正在生成图片…', imageToolTitle: 'AI 图片生成', imageToolHint: '根据你的描述生成独立配图/封面图，完成后自动保存到素材库', newChat: '新聊天', recentSessions: '最近', tierFree: '免费版', quickGenerateImage: '生成图片', quickWrite: '撰写或编辑', quickWritePrompt: '撰写或编辑文章', quickSearch: '搜索网页', share: '分享', shareDialog: '分享对话', shareLinkTitle: '分享对话链接', shareLinkHint: '复制链接后，对方无需登录即可查看此对话', shareGenerating: '生成中...', copied: '已复制', copyShareLink: '复制分享链接', startHeadline: '我们先从哪里开始呢？', generateImagePrompt: '生成一张图片: {{query}}', searchPlaceholder: '搜索会话...', recentChats: '最近聊天', searchNoMatches: '没有找到匹配的会话', noSessions: '暂无会话记录', user: '用户', expandSidebar: '展开会话列表'
     },
     agentImages: {
       title: '图片', inputPlaceholder: '描述新图片', think: '思考',
@@ -112,7 +112,9 @@ export default {
       loadFailed: '图片加载失败，请稍后重试',
       emptyTitle: '还没有生成的图片', emptyHint: '在输入框描述一张图片，智能体会生成并自动保存到这里',
       loadMore: '加载更多', loadingMore: '加载中…'
-    }
+    },
+    shareLinkCopied: '分享链接已复制',
+    shareFailed: '分享失败'
   },
   blogPlans: {
     title: '定时发文计划',
@@ -238,11 +240,12 @@ export default {
     loading: '加载中…',
     markAll: '全部已读',
     markedAll: '已全部标记为已读',
-    viewPlans: '查看定时发文计划'
+    viewPlans: '查看定时发文计划', testBroadcast: '测试 SSE 广播', broadcasting: '广播中…', broadcastSent: 'SSE 测试广播已发送（{{count}} 条连接）', broadcastFailed: 'SSE 测试广播发送失败'
   },
   common: {
     confirm: '确认',
     cancel: '取消',
+    delete: '删除',
     close: '关闭',
     save: '保存',
     pagination: {
@@ -1192,7 +1195,7 @@ export default {
       disableToast: '供应商已停用',
       created: '供应商已创建',
       updated: '供应商已更新',
-      deleted: '供应商已删除',
+      deleted: '供应商已删除', delete: '删除',
       deleteTitle: '删除供应商',
       deleteMessage: '确定删除 {{name}} 吗？仍被功能配置引用的供应商无法删除。',
       nameTaken: '已存在同名供应商',
@@ -1202,6 +1205,25 @@ export default {
       loadFailed: '供应商列表加载失败',
       empty: '暂无供应商',
       emptyHint: '新增第一个模型供应商即可使用管理台模型路由',
+    },
+    wechatCredential: {
+      title: '微信登录凭据',
+      subtitle: '维护微信小程序登录用的 AppID / AppSecret。密钥加密落库，保存后不再回显。',
+      appId: 'AppID',
+      appIdPlaceholder: '小程序 AppID',
+      appSecret: 'AppSecret',
+      appSecretPlaceholder: '小程序 AppSecret',
+      appSecretHint: '加密存储，不在界面与接口中回显。',
+      formRequired: 'AppID 与 AppSecret 不能为空',
+      saveFailed: '保存凭据失败',
+      loadFailed: '加载凭据失败',
+      saved: '凭据已保存',
+      cleared: '凭据已清除',
+      clear: '清除配置',
+      clearTitle: '清除微信凭据',
+      clearMessage: '清除后微信登录将关闭，直至重新保存新凭据。确定继续吗？',
+      configured: '已配置',
+      notConfigured: '未配置',
     },
     configs: {
       title: '功能模型配置',

@@ -83,7 +83,7 @@ export default {
     editor: { toolbar: 'Công cụ viết', addBlock: 'Thêm khối', text: 'Văn bản', h1: 'H1', h2: 'H2', todo: 'Việc cần làm', list: 'Danh sách', quote: 'Trích dẫn', code: 'Mã', insertContent: 'Chèn nội dung', imageGif: 'Ảnh / GIF', video: 'Video (sắp có)', divider: 'Đường phân cách', table: 'Bảng', codeBlock: 'Khối mã', quoteBlock: 'Khối trích dẫn', characters: '{{count}} ký tự', lines: '{{count}} dòng', markdownFormat: 'Định dạng Markdown', previewMode: 'Chế độ xem trước' },
     agent: {
       title: 'Trợ lý tạo blog', back: 'Quay lại blog', headline: 'Biến ý tưởng thành bài viết có thể xuất bản', description: 'Nhập chủ đề hoặc nhật ký. Trợ lý sẽ nghiên cứu, viết và kiểm tra bài viết đầy đủ có nguồn.', inputLabel: 'Chủ đề hoặc nhật ký', inputPlaceholder: 'Mô tả ý tưởng, trải nghiệm hoặc suy ngẫm của bạn…', inputType: 'Loại đầu vào', audience: 'Độc giả', tone: 'Giọng văn', defaultAudience: 'Độc giả quan tâm tới chủ đề này', defaultTone: 'Rõ ràng, chân thành và thực tế', generate: 'Nghiên cứu và viết', running: 'Đang nghiên cứu và viết…', waiting: 'Đang chờ nội dung', ready: 'Sẵn sàng xem lại', failed: 'Trợ lý chưa hoàn thành tác vụ', complete: 'Bài viết đã sẵn sàng để xem lại', workflow: 'Quy trình trợ lý', guardrail: 'Trải nghiệm cá nhân luôn thuộc về tác giả. Khẳng định bên ngoài cần nguồn có thể truy vết và không bao giờ tự động xuất bản.', stages: { analyze: 'Xác định bài viết', research: 'Nghiên cứu và xác minh', write: 'Viết bài hoàn chỉnh', illustrate: 'Tạo hình minh họa', review: 'Rà soát trước khi xuất bản' }, stageDescriptions: { analyze: 'Xác định độc giả, góc nhìn và chỗ thiếu bằng chứng.', research: 'Xác minh tuyên bố bên ngoài trên web.', write: 'Tạo bài Markdown hoàn chỉnh.', illustrate: 'Tạo hình hữu ích và lưu vào thư viện của bạn.', review: 'Kiểm tra bằng chứng và độ rõ ràng.' }, article: 'Bài viết đã tạo', toDraft: 'Mở trong trình biên tập', draftCreated: 'Đã tạo bản nháp. Bạn có thể chỉnh sửa và xuất bản.', sources: 'Nguồn nghiên cứu', noSources: 'Không giữ lại nguồn bên ngoài.', review: 'Rà soát biên tập', reviewPending: 'Kết quả rà soát sẽ xuất hiện khi hoàn tất.', inputRequired: 'Hãy nhập chủ đề hoặc nhật ký trước.', contentFocus: 'Phạm vi nội dung', mustCover: 'Trục chính bài viết', relatedExpansion: 'Mở rộng trực tiếp', outOfScope: 'Không mở rộng', knowledgeGraph: 'Sơ đồ tri thức', illustrations: 'Hình minh họa', illustrationStatuses: { running: 'Đang tạo hình.', complete: 'Đã thêm hình vào bài viết và thư viện.', partial: 'Đã tạo một phần hình minh họa.', failed: 'Không thể tạo hình, bài viết vẫn sẵn sàng.', disabled: 'Chưa cấu hình mô hình hình ảnh.', none: 'Bài viết không cần thêm hình minh họa.' },
-      processing: 'Đang xử lý {{duration}}', processed: 'Đã xử lý {{duration}}', processedDone: 'Đã xử lý', processFailed: 'Xử lý thất bại', openPreview: 'Nhấn để xem trước', previewEmpty: 'Chọn bài viết để xem trước', untitled: 'Bài viết chưa có tiêu đề', newTask: 'Nhiệm vụ mới', newConversation: 'Cuộc trò chuyện mới', conversations: 'Danh sách trò chuyện', noConversations: 'Chưa có lịch sử', restoring: 'Đang khôi phục nhiệm vụ…', multiTurnHint: 'Nhập yêu cầu chỉnh sửa để tạo phiên bản mới.', revise: 'Cập nhật bài viết', revisionComplete: 'Đã cập nhật bài viết', waitingForStage: 'Đang chuẩn bị bước tiếp theo…', inputLockedPlaceholder: 'Trợ lý đang xử lý…', confirmPublish: 'Xuất bản', viewArticle: 'Xem bài viết', showMeta: 'Hiện nghiên cứu và rà soát', hideMeta: 'Ẩn nghiên cứu và rà soát'
+      processing: 'Đang xử lý {{duration}}', processed: 'Đã xử lý {{duration}}', processedDone: 'Đã xử lý', processFailed: 'Xử lý thất bại', openPreview: 'Nhấn để xem trước', previewEmpty: 'Chọn bài viết để xem trước', untitled: 'Bài viết chưa có tiêu đề', newTask: 'Nhiệm vụ mới', newConversation: 'Cuộc trò chuyện mới', conversations: 'Danh sách trò chuyện', noConversations: 'Chưa có lịch sử', restoring: 'Đang khôi phục nhiệm vụ…', multiTurnHint: 'Nhập yêu cầu chỉnh sửa để tạo phiên bản mới.', revise: 'Cập nhật bài viết', revisionComplete: 'Đã cập nhật bài viết', waitingForStage: 'Đang chuẩn bị bước tiếp theo…', inputLockedPlaceholder: 'Trợ lý đang xử lý…', confirmPublish: 'Xuất bản', viewArticle: 'Xem bài viết', showMeta: 'Hiện nghiên cứu và rà soát', hideMeta: 'Ẩn nghiên cứu và rà soát', sharedView: 'Hội thoại được chia sẻ'
     },
     agentChat: {
       title: 'Dindor Agent', back: 'Quay lại không gian làm việc',
@@ -96,7 +96,7 @@ export default {
       inputRequired: 'Hãy nhập yêu cầu cho agent trước.', sendFailed: 'Không gửi được tin nhắn.', loadFailed: 'Không tải được cuộc trò chuyện.',
       restoring: 'Đang khôi phục cuộc trò chuyện…', reconnecting: 'Mất kết nối, đang kết nối lại…',
       unknownTool: 'Công cụ', working: 'Đang xử lý…', writing: 'Đang viết…', toolCalled: 'Công cụ được gọi', toolResult: 'Kết quả công cụ', toolSucceeded: 'Thành công', toolFailed: 'Thất bại', viewBlog: 'Xem blog',
-      generatingImage: 'Đang tạo hình ảnh…', imageToolTitle: 'Tạo hình ảnh AI', imageToolHint: 'Tạo hình minh họa hoặc ảnh bìa riêng theo mô tả của bạn; lưu vào thư viện media khi hoàn tất'
+      generatingImage: 'Đang tạo hình ảnh…', imageToolTitle: 'Tạo hình ảnh AI', imageToolHint: 'Tạo hình minh họa hoặc ảnh bìa riêng theo mô tả của bạn; lưu vào thư viện media khi hoàn tất', newChat: 'Cuộc trò chuyện mới', recentSessions: 'Gần đây', tierFree: 'Miễn phí', quickGenerateImage: 'Tạo hình ảnh', quickWrite: 'Viết hoặc chỉnh sửa', quickWritePrompt: 'Viết hoặc chỉnh sửa bài viết', quickSearch: 'Tìm kiếm trên web', share: 'Chia sẻ', shareDialog: 'Chia sẻ cuộc trò chuyện', shareLinkTitle: 'Liên kết chia sẻ cuộc trò chuyện', shareLinkHint: 'Bất kỳ ai có liên kết này đều có thể xem cuộc trò chuyện mà không cần đăng nhập', shareGenerating: 'Đang tạo…', copied: 'Đã sao chép', copyShareLink: 'Sao chép liên kết chia sẻ', startHeadline: 'Chúng ta bắt đầu từ đâu?', generateImagePrompt: 'Tạo hình ảnh: {{query}}', searchPlaceholder: 'Tìm kiếm cuộc trò chuyện…', recentChats: 'Cuộc trò chuyện gần đây', searchNoMatches: 'Không tìm thấy cuộc trò chuyện phù hợp', noSessions: 'Chưa có cuộc trò chuyện nào', user: 'Người dùng', expandSidebar: 'Mở rộng danh sách cuộc trò chuyện'
     },
     agentImages: {
       title: 'Hình ảnh', inputPlaceholder: 'Mô tả hình ảnh mới', think: 'Suy nghĩ',
@@ -104,7 +104,9 @@ export default {
       loadFailed: 'Không tải được hình ảnh. Vui lòng thử lại sau.',
       emptyTitle: 'Chưa có hình ảnh nào được tạo', emptyHint: 'Mô tả một hình ảnh trong ô nhập liệu, agent sẽ tạo và lưu vào đây',
       loadMore: 'Tải thêm', loadingMore: 'Đang tải…'
-    }
+    },
+    shareLinkCopied: 'Đã sao chép liên kết chia sẻ',
+    shareFailed: 'Chia sẻ thất bại'
   },
   blogPlans: {
     title: 'Bài viết theo lịch',
@@ -230,11 +232,12 @@ export default {
     loading: 'Đang tải…',
     markAll: 'Đánh dấu đã đọc',
     markedAll: 'Đã đánh dấu tất cả là đã đọc',
-    viewPlans: 'Xem kế hoạch bài viết'
+    viewPlans: 'Xem kế hoạch bài viết', testBroadcast: 'Kiểm tra phát SSE', broadcasting: 'Đang phát…', broadcastSent: 'Đã gửi phát thử SSE ({{count}} kết nối)', broadcastFailed: 'Gửi phát thử SSE thất bại'
   },
   common: {
     confirm: 'Xác nhận',
     cancel: 'Hủy',
+    delete: 'Xóa',
     close: 'Đóng',
     save: 'Lưu',
     pagination: {
@@ -1165,7 +1168,7 @@ export default {
       disableToast: 'Đã tắt nhà cung cấp',
       created: 'Đã tạo nhà cung cấp',
       updated: 'Đã cập nhật nhà cung cấp',
-      deleted: 'Đã xóa nhà cung cấp',
+      deleted: 'Đã xóa nhà cung cấp', delete: 'Xóa',
       deleteTitle: 'Xóa nhà cung cấp',
       deleteMessage: 'Xóa {{name}}? Nhà cung cấp đang được cấu hình chức năng tham chiếu thì không thể xóa.',
       nameTaken: 'Đã có nhà cung cấp trùng tên',
@@ -1175,6 +1178,25 @@ export default {
       loadFailed: 'Không tải được danh sách nhà cung cấp',
       empty: 'Chưa có nhà cung cấp',
       emptyHint: 'Thêm nhà cung cấp đầu tiên để dùng định tuyến mô hình quản trị',
+    },
+    wechatCredential: {
+      title: 'Thông tin đăng nhập WeChat',
+      subtitle: 'Quản lý AppID / AppSecret của mini-program WeChat dùng để đăng nhập. Bí mật được mã hóa khi lưu và không hiển thị lại.',
+      appId: 'AppID',
+      appIdPlaceholder: 'AppID mini-program',
+      appSecret: 'AppSecret',
+      appSecretPlaceholder: 'AppSecret mini-program',
+      appSecretHint: 'Được mã hóa khi lưu; không hiển thị trong giao diện hay phản hồi API.',
+      formRequired: 'Bắt buộc nhập AppID và AppSecret',
+      saveFailed: 'Không lưu được thông tin',
+      loadFailed: 'Không tải được thông tin',
+      saved: 'Đã lưu thông tin',
+      cleared: 'Đã xóa thông tin',
+      clear: 'Xóa',
+      clearTitle: 'Xóa thông tin WeChat',
+      clearMessage: 'Đăng nhập WeChat sẽ bị tắt cho đến khi lưu thông tin mới. Tiếp tục?',
+      configured: 'Đã cấu hình',
+      notConfigured: 'Chưa cấu hình',
     },
     configs: {
       title: 'Cấu hình mô hình chức năng',

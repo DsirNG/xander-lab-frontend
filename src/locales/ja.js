@@ -83,7 +83,7 @@ export default {
     editor: { toolbar: '執筆ツール', addBlock: 'ブロックを追加', text: 'テキスト', h1: 'H1', h2: 'H2', todo: 'To-do', list: 'リスト', quote: '引用', code: 'コード', insertContent: 'コンテンツを挿入', imageGif: '画像 / GIF', video: '動画（近日対応）', divider: '区切り線', table: '表', codeBlock: 'コードブロック', quoteBlock: '引用ブロック', characters: '{{count}} 文字', lines: '{{count}} 行', markdownFormat: 'Markdown 形式', previewMode: 'プレビューモード' },
     agent: {
       title: 'ブログ生成アシスタント', back: 'ブログに戻る', headline: 'アイデアを公開可能な記事に', description: 'テーマまたは日記を入力してください。アシスタントが調査、執筆、検証を行い、出典付きの記事を作成します。', inputLabel: 'テーマまたは日記', inputPlaceholder: '考え、経験、気づきを入力してください…', inputType: '入力タイプ', audience: '読者', tone: '文体', defaultAudience: 'このテーマに関心のある読者', defaultTone: '明快で誠実、実用的', generate: '調査して執筆', running: '調査・執筆中…', waiting: '入力待ち', ready: 'レビュー待ち', failed: 'アシスタントはこのタスクを完了できませんでした', complete: '記事をレビューできます', workflow: 'アシスタントの流れ', guardrail: '個人の経験は著者の経験として扱います。外部の主張には追跡可能な出典が必要で、自動公開はされません。', stages: { analyze: '記事の方向を決める', research: '調査と検証', write: '記事を執筆', illustrate: '知識画像を生成', review: '公開前レビュー' }, stageDescriptions: { analyze: '読者、視点、情報不足を整理します。', research: '外部の主張をウェブで検証します。', write: '完全な Markdown 記事を作成します。', illustrate: '必要な画像を生成してライブラリに保存します。', review: '根拠と明瞭さを確認します。' }, article: '生成された記事', toDraft: 'エディターで開く', draftCreated: '下書きを作成しました。編集して公開できます。', sources: '調査ソース', noSources: '外部ソースは保存されていません。', review: '編集レビュー', reviewPending: '完了後にレビューが表示されます。', inputRequired: 'まずテーマまたは日記を入力してください。', contentFocus: '内容の範囲', mustCover: '記事の主題', relatedExpansion: '直接の補足', outOfScope: '追加しない内容', knowledgeGraph: '知識関係グラフ', illustrations: '知識画像', illustrationStatuses: { running: '画像を生成中です。', complete: '画像を記事と個人ライブラリに追加しました。', partial: '一部の画像を生成しました。', failed: '画像生成に失敗しましたが、記事は確認できます。', disabled: '画像モデルが設定されていません。', none: '追加画像は不要と判断しました。' },
-      processing: '処理中 {{duration}}', processed: '処理済み {{duration}}', processedDone: '処理済み', processFailed: '処理に失敗しました', openPreview: 'クリックしてプレビュー', previewEmpty: '生成記事を選択してプレビュー', untitled: '無題の記事', newTask: '新しいタスク', newConversation: '新しい会話', conversations: '会話一覧', noConversations: '履歴はありません', restoring: '生成タスクを復元中…', multiTurnHint: '変更内容を入力すると新しい記事バージョンを作成します。', revise: '記事を更新', revisionComplete: '記事を更新しました', waitingForStage: '次の段階を準備中…', inputLockedPlaceholder: 'アシスタントが処理中です…', confirmPublish: '公開する', viewArticle: '記事を見る', showMeta: '調査とレビューを表示', hideMeta: '調査とレビューを隠す'
+      processing: '処理中 {{duration}}', processed: '処理済み {{duration}}', processedDone: '処理済み', processFailed: '処理に失敗しました', openPreview: 'クリックしてプレビュー', previewEmpty: '生成記事を選択してプレビュー', untitled: '無題の記事', newTask: '新しいタスク', newConversation: '新しい会話', conversations: '会話一覧', noConversations: '履歴はありません', restoring: '生成タスクを復元中…', multiTurnHint: '変更内容を入力すると新しい記事バージョンを作成します。', revise: '記事を更新', revisionComplete: '記事を更新しました', waitingForStage: '次の段階を準備中…', inputLockedPlaceholder: 'アシスタントが処理中です…', confirmPublish: '公開する', viewArticle: '記事を見る', showMeta: '調査とレビューを表示', hideMeta: '調査とレビューを隠す', sharedView: '共有された会話'
     },
     agentChat: {
       title: 'Dindor エージェント', back: 'ワークスペースに戻る',
@@ -96,7 +96,7 @@ export default {
       inputRequired: 'まずAgentに依頼内容を入力してください。', sendFailed: 'メッセージを送信できませんでした。', loadFailed: '会話を読み込めませんでした。',
       restoring: '会話を復元中…', reconnecting: '接続が切れました。再接続中…',
       unknownTool: 'ツール', working: '処理中…', writing: '執筆中…', toolCalled: 'ツール呼び出し', toolResult: 'ツール結果', toolSucceeded: '成功', toolFailed: '失敗', viewBlog: 'ブログを見る',
-      generatingImage: '画像を生成中…', imageToolTitle: 'AI画像生成', imageToolHint: '説明に基づいて独立したイラスト/カバー画像を生成し、完了後にメディアライブラリへ保存します'
+      generatingImage: '画像を生成中…', imageToolTitle: 'AI画像生成', imageToolHint: '説明に基づいて独立したイラスト/カバー画像を生成し、完了後にメディアライブラリへ保存します', newChat: '新しいチャット', recentSessions: '最近', tierFree: '無料版', quickGenerateImage: '画像を生成', quickWrite: '執筆または編集', quickWritePrompt: '記事を執筆または編集', quickSearch: 'ウェブ検索', share: '共有', shareDialog: '会話を共有', shareLinkTitle: '会話の共有リンク', shareLinkHint: 'このリンクがあれば、ログインせずに会話を閲覧できます', shareGenerating: '生成中…', copied: 'コピーしました', copyShareLink: '共有リンクをコピー', startHeadline: '何から始めましょうか？', generateImagePrompt: '画像を生成: {{query}}', searchPlaceholder: '会話を検索…', recentChats: '最近の会話', searchNoMatches: '一致する会話がありません', noSessions: '会話はまだありません', user: 'ユーザー', expandSidebar: '会話リストを展開'
     },
     agentImages: {
       title: '画像', inputPlaceholder: '新しい画像を説明する', think: '考える',
@@ -104,7 +104,9 @@ export default {
       loadFailed: '画像を読み込めませんでした。後でもう一度お試しください。',
       emptyTitle: 'まだ生成された画像はありません', emptyHint: '入力欄で画像を説明すると、エージェントが生成してここに保存します',
       loadMore: 'さらに読み込む', loadingMore: '読み込み中…'
-    }
+    },
+    shareLinkCopied: '共有リンクをコピーしました',
+    shareFailed: '共有に失敗しました'
   },
   blogPlans: {
     title: '定期投稿',
@@ -230,11 +232,12 @@ export default {
     loading: '読み込み中…',
     markAll: 'すべて既読にする',
     markedAll: 'すべて既読にしました',
-    viewPlans: '定期投稿プランを見る'
+    viewPlans: '定期投稿プランを見る', testBroadcast: 'SSE テスト配信', broadcasting: '配信中…', broadcastSent: 'SSE テスト配信を送信しました（{{count}} 接続）', broadcastFailed: 'SSE テスト配信の送信に失敗しました'
   },
   common: {
     confirm: '確認',
     cancel: 'キャンセル',
+    delete: '削除',
     close: '閉じる',
     save: '保存',
     pagination: {
@@ -1165,7 +1168,7 @@ export default {
       disableToast: 'プロバイダーを無効化しました',
       created: 'プロバイダーを作成しました',
       updated: 'プロバイダーを更新しました',
-      deleted: 'プロバイダーを削除しました',
+      deleted: 'プロバイダーを削除しました', delete: '削除',
       deleteTitle: 'プロバイダーを削除',
       deleteMessage: '{{name}} を削除しますか？機能設定で参照中のプロバイダーは削除できません。',
       nameTaken: '同名のプロバイダーが既に存在します',
@@ -1175,6 +1178,25 @@ export default {
       loadFailed: 'プロバイダー一覧の読み込みに失敗しました',
       empty: 'プロバイダーがいません',
       emptyHint: '最初のプロバイダーを追加すると管理画面のモデルルーティングが使えます',
+    },
+    wechatCredential: {
+      title: '微信ログイン認証情報',
+      subtitle: 'ログインに使う微信小程序の AppID / AppSecret を管理します。秘密鍵は暗号化して保存され、以後表示されません。',
+      appId: 'AppID',
+      appIdPlaceholder: '小程序の AppID',
+      appSecret: 'AppSecret',
+      appSecretPlaceholder: '小程序の AppSecret',
+      appSecretHint: '暗号化して保存され、UI や API レスポンスでは表示されません。',
+      formRequired: 'AppID と AppSecret は必須です',
+      saveFailed: '認証情報の保存に失敗しました',
+      loadFailed: '認証情報の読み込みに失敗しました',
+      saved: '認証情報を保存しました',
+      cleared: '認証情報をクリアしました',
+      clear: 'クリア',
+      clearTitle: '微信認証情報をクリア',
+      clearMessage: 'クリアすると新たに保存するまで微信ログインは無効になります。続行しますか？',
+      configured: '設定済み',
+      notConfigured: '未設定',
     },
     configs: {
       title: '機能モデル設定',

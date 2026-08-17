@@ -83,7 +83,7 @@ export default {
     editor: { toolbar: 'Инструменты письма', addBlock: 'Добавить блок', text: 'Текст', h1: 'H1', h2: 'H2', todo: 'Задача', list: 'Список', quote: 'Цитата', code: 'Код', insertContent: 'Вставить содержимое', imageGif: 'Изображение / GIF', video: 'Видео (скоро)', divider: 'Разделитель', table: 'Таблица', codeBlock: 'Блок кода', quoteBlock: 'Блок цитаты', characters: '{{count}} символов', lines: '{{count}} строк', markdownFormat: 'Формат Markdown', previewMode: 'Режим предпросмотра' },
     agent: {
       title: 'Ассистент создания блога', back: 'К блогу', headline: 'Превратите идею в готовую статью', description: 'Введите тему или дневниковую запись. Ассистент исследует, напишет и проверит статью с источниками.', inputLabel: 'Тема или дневниковая запись', inputPlaceholder: 'Опишите вашу мысль, опыт или наблюдение…', inputType: 'Тип ввода', audience: 'Аудитория', tone: 'Тон', defaultAudience: 'Читатели, которым интересна тема', defaultTone: 'Ясно, искренне и практично', generate: 'Исследовать и написать', running: 'Исследование и написание…', waiting: 'Ожидание ввода', ready: 'Готово к проверке', failed: 'Ассистент не завершил задачу', complete: 'Статья готова к проверке', workflow: 'Рабочий процесс ассистента', guardrail: 'Личный опыт остаётся опытом автора. Внешние утверждения требуют проверяемых источников и никогда не публикуются автоматически.', stages: { analyze: 'Определить статью', research: 'Исследовать и проверить', write: 'Написать статью', illustrate: 'Создать иллюстрации', review: 'Проверить перед публикацией' }, stageDescriptions: { analyze: 'Определяет читателя, угол и пробелы.', research: 'Проверяет внешние утверждения в интернете.', write: 'Создаёт полную статью Markdown.', illustrate: 'Создаёт изображения и сохраняет их в библиотеке.', review: 'Проверяет доказательства и ясность.' }, article: 'Созданная статья', toDraft: 'Открыть в редакторе', draftCreated: 'Черновик создан. Теперь его можно редактировать и публиковать.', sources: 'Источники исследования', noSources: 'Внешние источники не сохранены.', review: 'Редакторская проверка', reviewPending: 'Проверка появится после завершения работы.', inputRequired: 'Сначала введите тему или запись.', contentFocus: 'Границы содержания', mustCover: 'Основа статьи', relatedExpansion: 'Прямые дополнения', outOfScope: 'Не расширяется', knowledgeGraph: 'Граф знаний', illustrations: 'Иллюстрации', illustrationStatuses: { running: 'Создание изображений.', complete: 'Изображения добавлены в статью и библиотеку.', partial: 'Создана часть изображений.', failed: 'Не удалось создать изображения, статья доступна.', disabled: 'Модель изображений не настроена.', none: 'Дополнительные изображения не нужны.' },
-      processing: 'Обработка {{duration}}', processed: 'Обработано {{duration}}', processedDone: 'Обработано', processFailed: 'Ошибка обработки', openPreview: 'Нажмите для предпросмотра', previewEmpty: 'Выберите статью для предпросмотра', untitled: 'Статья без названия', newTask: 'Новая задача', newConversation: 'Новый диалог', conversations: 'Диалоги', noConversations: 'История пуста', restoring: 'Восстановление задачи генерации…', multiTurnHint: 'Опишите изменение, и ассистент создаст новую версию.', revise: 'Обновить статью', revisionComplete: 'Статья обновлена', waitingForStage: 'Подготовка следующего этапа…', inputLockedPlaceholder: 'Ассистент работает…', confirmPublish: 'Опубликовать', viewArticle: 'Открыть статью', showMeta: 'Показать исследование и проверку', hideMeta: 'Скрыть исследование и проверку'
+      processing: 'Обработка {{duration}}', processed: 'Обработано {{duration}}', processedDone: 'Обработано', processFailed: 'Ошибка обработки', openPreview: 'Нажмите для предпросмотра', previewEmpty: 'Выберите статью для предпросмотра', untitled: 'Статья без названия', newTask: 'Новая задача', newConversation: 'Новый диалог', conversations: 'Диалоги', noConversations: 'История пуста', restoring: 'Восстановление задачи генерации…', multiTurnHint: 'Опишите изменение, и ассистент создаст новую версию.', revise: 'Обновить статью', revisionComplete: 'Статья обновлена', waitingForStage: 'Подготовка следующего этапа…', inputLockedPlaceholder: 'Ассистент работает…', confirmPublish: 'Опубликовать', viewArticle: 'Открыть статью', showMeta: 'Показать исследование и проверку', hideMeta: 'Скрыть исследование и проверку', sharedView: 'Общий диалог'
     },
     agentChat: {
       title: 'Dindor-агент', back: 'Назад в рабочий стол',
@@ -96,7 +96,7 @@ export default {
       inputRequired: 'Сначала введите задачу для агента.', sendFailed: 'Не удалось отправить сообщение.', loadFailed: 'Не удалось загрузить диалог.',
       restoring: 'Восстановление диалога…', reconnecting: 'Соединение потеряно, переподключение…',
       unknownTool: 'Инструмент', working: 'Выполняется…', writing: 'Написание…', toolCalled: 'Инструмент вызван', toolResult: 'Результат инструмента', toolSucceeded: 'Успешно', toolFailed: 'Ошибка', viewBlog: 'Открыть блог',
-      generatingImage: 'Генерация изображения…', imageToolTitle: 'Генерация изображений ИИ', imageToolHint: 'Создание отдельной иллюстрации или обложки по вашему описанию; после завершения сохраняется в библиотеку медиа'
+      generatingImage: 'Генерация изображения…', imageToolTitle: 'Генерация изображений ИИ', imageToolHint: 'Создание отдельной иллюстрации или обложки по вашему описанию; после завершения сохраняется в библиотеку медиа', newChat: 'Новый чат', recentSessions: 'Недавние', tierFree: 'Бесплатно', quickGenerateImage: 'Создать изображение', quickWrite: 'Написать или отредактировать', quickWritePrompt: 'Написать или отредактировать статью', quickSearch: 'Поиск в интернете', share: 'Поделиться', shareDialog: 'Поделиться диалогом', shareLinkTitle: 'Ссылка на диалог', shareLinkHint: 'Любой, у кого есть ссылка, может просмотреть диалог без входа', shareGenerating: 'Создание…', copied: 'Скопировано', copyShareLink: 'Скопировать ссылку', startHeadline: 'С чего начнём?', generateImagePrompt: 'Создать изображение: {{query}}', searchPlaceholder: 'Поиск диалогов…', recentChats: 'Недавние диалоги', searchNoMatches: 'Совпадений не найдено', noSessions: 'Диалогов пока нет', user: 'Пользователь', expandSidebar: 'Развернуть список диалогов'
     },
     agentImages: {
       title: 'Изображения', inputPlaceholder: 'Опишите новое изображение', think: 'Подумать',
@@ -104,7 +104,9 @@ export default {
       loadFailed: 'Не удалось загрузить изображения. Повторите попытку позже.',
       emptyTitle: 'Пока нет сгенерированных изображений', emptyHint: 'Опишите изображение в поле ввода — агент создаст его и сохранит здесь',
       loadMore: 'Загрузить ещё', loadingMore: 'Загрузка…'
-    }
+    },
+    shareLinkCopied: 'Ссылка скопирована',
+    shareFailed: 'Не удалось поделиться'
   },
   blogPlans: {
     title: 'Запланированные публикации',
@@ -230,11 +232,12 @@ export default {
     loading: 'Загрузка…',
     markAll: 'Прочитать все',
     markedAll: 'Все уведомления прочитаны',
-    viewPlans: 'Перейти к планам публикации'
+    viewPlans: 'Перейти к планам публикации', testBroadcast: 'Тестовая SSE-трансляция', broadcasting: 'Трансляция…', broadcastSent: 'Тестовая SSE-трансляция отправлена ({{count}} подключений)', broadcastFailed: 'Не удалось отправить тестовую SSE-трансляцию'
   },
   common: {
     confirm: 'Подтвердить',
     cancel: 'Отмена',
+    delete: 'Удалить',
     close: 'Закрыть',
     save: 'Сохранить',
     pagination: {
@@ -1165,7 +1168,7 @@ export default {
       disableToast: 'Поставщик отключён',
       created: 'Поставщик создан',
       updated: 'Поставщик обновлён',
-      deleted: 'Поставщик удалён',
+      deleted: 'Поставщик удалён', delete: 'Удалить',
       deleteTitle: 'Удаление поставщика',
       deleteMessage: 'Удалить {{name}}? Поставщиков, на которых ссылаются конфигурации функций, удалить нельзя.',
       nameTaken: 'Поставщик с таким названием уже существует',
@@ -1175,6 +1178,25 @@ export default {
       loadFailed: 'Не удалось загрузить поставщиков',
       empty: 'Поставщиков пока нет',
       emptyHint: 'Добавьте первого поставщика, чтобы использовать маршрутизацию моделей',
+    },
+    wechatCredential: {
+      title: 'Учётные данные WeChat',
+      subtitle: 'Управление AppID / AppSecret мини-программы WeChat для входа. Секрет шифруется и больше не отображается.',
+      appId: 'AppID',
+      appIdPlaceholder: 'AppID мини-программы',
+      appSecret: 'AppSecret',
+      appSecretPlaceholder: 'AppSecret мини-программы',
+      appSecretHint: 'Хранится в зашифрованном виде; не отображается в интерфейсе и ответах API.',
+      formRequired: 'AppID и AppSecret обязательны',
+      saveFailed: 'Не удалось сохранить учётные данные',
+      loadFailed: 'Не удалось загрузить учётные данные',
+      saved: 'Учётные данные сохранены',
+      cleared: 'Учётные данные очищены',
+      clear: 'Очистить',
+      clearTitle: 'Очистить учётные данные WeChat',
+      clearMessage: 'Вход через WeChat будет отключён, пока не будут сохранены новые учётные данные. Продолжить?',
+      configured: 'Настроено',
+      notConfigured: 'Не настроено',
     },
     configs: {
       title: 'Конфигурации моделей функций',

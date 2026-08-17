@@ -83,7 +83,7 @@ export default {
     editor: { toolbar: 'Outils d’écriture', addBlock: 'Ajouter un bloc', text: 'Texte', h1: 'H1', h2: 'H2', todo: 'Tâche', list: 'Liste', quote: 'Citation', code: 'Code', insertContent: 'Insérer du contenu', imageGif: 'Image / GIF', video: 'Vidéo (bientôt)', divider: 'Séparateur', table: 'Tableau', codeBlock: 'Bloc de code', quoteBlock: 'Bloc de citation', characters: '{{count}} caractères', lines: '{{count}} lignes', markdownFormat: 'Format Markdown', previewMode: 'Mode aperçu' },
     agent: {
       title: 'Assistant de rédaction de blog', back: 'Retour au blog', headline: 'Transformez une idée en article publiable', description: 'Saisissez un thème ou un journal. L’assistant recherche, rédige et vérifie un article avec ses sources.', inputLabel: 'Votre thème ou journal', inputPlaceholder: 'Décrivez votre idée, votre expérience ou votre réflexion…', inputType: 'Type de saisie', audience: 'Public', tone: 'Ton', defaultAudience: 'Lecteurs intéressés par ce sujet', defaultTone: 'Clair, sincère et pratique', generate: 'Rechercher et rédiger', running: 'Recherche et rédaction…', waiting: 'En attente de votre saisie', ready: 'Prêt à relire', failed: 'L’assistant n’a pas terminé cette tâche', complete: 'Article prêt à être relu', workflow: 'Flux de l’assistant', guardrail: 'Les expériences personnelles restent attribuées à leur auteur. Les affirmations externes doivent avoir une source traçable et ne sont jamais publiées automatiquement.', stages: { analyze: 'Cadrer l’article', research: 'Rechercher et vérifier', write: 'Rédiger l’article', illustrate: 'Créer les illustrations', review: 'Relire avant publication' }, stageDescriptions: { analyze: 'Définit le lecteur, l’angle et les manques.', research: 'Vérifie les affirmations externes sur le web.', write: 'Produit un article Markdown complet.', illustrate: 'Crée des visuels utiles dans votre bibliothèque.', review: 'Vérifie les preuves et la clarté.' }, article: 'Article généré', toDraft: 'Ouvrir dans l’éditeur', draftCreated: 'Brouillon créé. Vous pouvez le modifier et le publier.', sources: 'Sources de recherche', noSources: 'Aucune source externe conservée.', review: 'Révision éditoriale', reviewPending: 'La révision apparaîtra une fois le travail terminé.', inputRequired: 'Saisissez d’abord un thème ou un journal.', contentFocus: 'Périmètre du contenu', mustCover: 'Sujet principal', relatedExpansion: 'Extensions directes', outOfScope: 'Non développé', knowledgeGraph: 'Graphe de connaissances', illustrations: 'Illustrations', illustrationStatuses: { running: 'Création des illustrations.', complete: 'Illustrations ajoutées à l’article et à votre bibliothèque.', partial: 'Certaines illustrations ont été créées.', failed: 'La création a échoué, mais l’article reste disponible.', disabled: 'Aucun modèle d’image configuré.', none: 'Aucune illustration supplémentaire n’est nécessaire.' },
-      processing: 'Traitement {{duration}}', processed: 'Traité {{duration}}', processedDone: 'Traité', processFailed: 'Échec du traitement', openPreview: 'Cliquer pour prévisualiser', previewEmpty: 'Sélectionnez un article à prévisualiser', untitled: 'Article sans titre', newTask: 'Nouvelle tâche', newConversation: 'Nouvelle conversation', conversations: 'Conversations', noConversations: 'Aucune conversation', restoring: 'Restauration de la tâche…', multiTurnHint: 'Décrivez une modification pour créer une nouvelle version.', revise: 'Modifier l’article', revisionComplete: 'Article mis à jour', waitingForStage: 'Préparation de l’étape suivante…', inputLockedPlaceholder: 'L’assistant travaille…', confirmPublish: 'Publier', viewArticle: 'Voir l’article', showMeta: 'Afficher recherche et révision', hideMeta: 'Masquer recherche et révision'
+      processing: 'Traitement {{duration}}', processed: 'Traité {{duration}}', processedDone: 'Traité', processFailed: 'Échec du traitement', openPreview: 'Cliquer pour prévisualiser', previewEmpty: 'Sélectionnez un article à prévisualiser', untitled: 'Article sans titre', newTask: 'Nouvelle tâche', newConversation: 'Nouvelle conversation', conversations: 'Conversations', noConversations: 'Aucune conversation', restoring: 'Restauration de la tâche…', multiTurnHint: 'Décrivez une modification pour créer une nouvelle version.', revise: 'Modifier l’article', revisionComplete: 'Article mis à jour', waitingForStage: 'Préparation de l’étape suivante…', inputLockedPlaceholder: 'L’assistant travaille…', confirmPublish: 'Publier', viewArticle: 'Voir l’article', showMeta: 'Afficher recherche et révision', hideMeta: 'Masquer recherche et révision', sharedView: 'Conversation partagée'
     },
     agentChat: {
       title: 'Agent Dindor', back: 'Retour à l’espace de travail',
@@ -96,7 +96,7 @@ export default {
       inputRequired: 'Saisissez d’abord la tâche demandée.', sendFailed: 'Envoi du message impossible.', loadFailed: 'Chargement de la conversation impossible.',
       restoring: 'Restauration de la conversation…', reconnecting: 'Connexion perdue, reconnexion…',
       unknownTool: 'Outil', working: 'En cours…', writing: 'Rédaction…', toolCalled: 'Outil appelé', toolResult: 'Résultat de l’outil', toolSucceeded: 'Réussi', toolFailed: 'Échec', viewBlog: 'Voir le blog',
-      generatingImage: 'Génération de l’image…', imageToolTitle: 'Génération d’image IA', imageToolHint: 'Création d’une illustration ou couverture à partir de votre description ; enregistrée dans votre bibliothèque de médias'
+      generatingImage: 'Génération de l’image…', imageToolTitle: 'Génération d’image IA', imageToolHint: 'Création d’une illustration ou couverture à partir de votre description ; enregistrée dans votre bibliothèque de médias', newChat: 'Nouvelle conversation', recentSessions: 'Récentes', tierFree: 'Gratuit', quickGenerateImage: 'Générer une image', quickWrite: 'Rédiger ou modifier', quickWritePrompt: 'Rédiger ou modifier un article', quickSearch: 'Rechercher sur le web', share: 'Partager', shareDialog: 'Partager la conversation', shareLinkTitle: 'Lien de partage de la conversation', shareLinkHint: 'Toute personne disposant de ce lien peut voir la conversation sans se connecter', shareGenerating: 'Génération…', copied: 'Copié', copyShareLink: 'Copier le lien de partage', startHeadline: 'Par où commencer ?', generateImagePrompt: 'Générer une image : {{query}}', searchPlaceholder: 'Rechercher des conversations…', recentChats: 'Conversations récentes', searchNoMatches: 'Aucune conversation trouvée', noSessions: 'Aucune conversation pour le moment', user: 'Utilisateur', expandSidebar: 'Déployer la liste des conversations'
     },
     agentImages: {
       title: 'Images', inputPlaceholder: 'Décrire une nouvelle image', think: 'Réfléchir',
@@ -104,7 +104,9 @@ export default {
       loadFailed: 'Impossible de charger les images. Veuillez réessayer plus tard.',
       emptyTitle: 'Aucune image générée pour le moment', emptyHint: 'Décrivez une image dans le champ de saisie ; l’agent la générera et l’enregistrera ici',
       loadMore: 'Charger plus', loadingMore: 'Chargement…'
-    }
+    },
+    shareLinkCopied: 'Lien de partage copié',
+    shareFailed: 'Échec du partage'
   },
   blogPlans: {
     title: 'Publications programmées',
@@ -230,11 +232,12 @@ export default {
     loading: 'Chargement…',
     markAll: 'Tout lire',
     markedAll: 'Toutes les notifications sont lues',
-    viewPlans: 'Voir les publications programmées'
+    viewPlans: 'Voir les publications programmées', testBroadcast: 'Tester la diffusion SSE', broadcasting: 'Diffusion…', broadcastSent: 'Diffusion SSE de test envoyée ({{count}} connexions)', broadcastFailed: 'Échec de l’envoi de la diffusion SSE'
   },
   common: {
     confirm: 'Confirmer',
     cancel: 'Annuler',
+    delete: 'Supprimer',
     close: 'Fermer',
     save: 'Enregistrer',
     pagination: {
@@ -1165,7 +1168,7 @@ export default {
       disableToast: 'Fournisseur désactivé',
       created: 'Fournisseur créé',
       updated: 'Fournisseur mis à jour',
-      deleted: 'Fournisseur supprimé',
+      deleted: 'Fournisseur supprimé', delete: 'Supprimer',
       deleteTitle: 'Supprimer le fournisseur',
       deleteMessage: 'Supprimer {{name}} ? Les fournisseurs référencés par les configurations ne peuvent pas être supprimés.',
       nameTaken: 'Un fournisseur portant ce nom existe déjà',
@@ -1175,6 +1178,25 @@ export default {
       loadFailed: 'Échec du chargement des fournisseurs',
       empty: 'Aucun fournisseur',
       emptyHint: 'Ajoutez votre premier fournisseur pour utiliser le routage administrateur',
+    },
+    wechatCredential: {
+      title: 'Identifiants de connexion WeChat',
+      subtitle: 'Gérez les AppID / AppSecret du mini-programme WeChat utilisés pour la connexion. Le secret est chiffré au repos et ne sera plus affiché.',
+      appId: 'AppID',
+      appIdPlaceholder: 'AppID du mini-programme',
+      appSecret: 'AppSecret',
+      appSecretPlaceholder: 'AppSecret du mini-programme',
+      appSecretHint: 'Stocké chiffré ; jamais affiché dans l’interface ni les réponses API.',
+      formRequired: 'AppID et AppSecret sont obligatoires',
+      saveFailed: 'Échec de l’enregistrement',
+      loadFailed: 'Échec du chargement',
+      saved: 'Identifiants enregistrés',
+      cleared: 'Identifiants effacés',
+      clear: 'Effacer',
+      clearTitle: 'Effacer les identifiants WeChat',
+      clearMessage: 'La connexion WeChat sera désactivée jusqu’à l’enregistrement de nouveaux identifiants. Continuer ?',
+      configured: 'Configuré',
+      notConfigured: 'Non configuré',
     },
     configs: {
       title: 'Configurations des modèles',
