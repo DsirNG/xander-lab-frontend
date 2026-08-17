@@ -16,6 +16,7 @@ const initialForm = () => ({
   timezone: 'Asia/Shanghai',
   triggerTime: '09:00',
   syncCsdn: false,
+  syncJuejin: false,
   audience: '',
   tone: '',
 });
@@ -38,6 +39,7 @@ const PlanFormModal = ({ isOpen, plan, onClose, onSaved }) => {
             timezone: plan.timezone,
             triggerTime: plan.triggerTime || plan.triggerTimes?.[0] || '09:00',
             syncCsdn: !!plan.syncCsdn,
+            syncJuejin: !!plan.syncJuejin,
             audience: plan.audience || '',
             tone: plan.tone || '',
           }
@@ -63,6 +65,7 @@ const PlanFormModal = ({ isOpen, plan, onClose, onSaved }) => {
         timezone: form.timezone,
         triggerTime: form.triggerTime,
         syncCsdn: form.syncCsdn,
+        syncJuejin: form.syncJuejin,
         audience: form.audience.trim(),
         tone: form.tone.trim(),
       };
@@ -135,12 +138,20 @@ const PlanFormModal = ({ isOpen, plan, onClose, onSaved }) => {
           </FormField>
         </div>
 
-        <label className="flex items-center gap-2 text-sm text-ink-secondary">
-          <input type="checkbox" checked={form.syncCsdn}
-            onChange={(e) => setForm({ ...form, syncCsdn: e.target.checked })}
-            className="h-4 w-4 rounded border-border text-accent focus:ring-accent" />
-          {t('blogPlans.syncCsdn')}
-        </label>
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <label className="flex items-center gap-2 text-sm text-ink-secondary">
+            <input type="checkbox" checked={form.syncCsdn}
+              onChange={(e) => setForm({ ...form, syncCsdn: e.target.checked })}
+              className="h-4 w-4 rounded border-border text-accent focus:ring-accent" />
+            {t('blogPlans.syncCsdn')}
+          </label>
+          <label className="flex items-center gap-2 text-sm text-ink-secondary">
+            <input type="checkbox" checked={form.syncJuejin}
+              onChange={(e) => setForm({ ...form, syncJuejin: e.target.checked })}
+              className="h-4 w-4 rounded border-border text-accent focus:ring-accent" />
+            {t('blogPlans.syncJuejin')}
+          </label>
+        </div>
 
         {error && <div className="text-xs text-red-600 dark:text-red-400">{error}</div>}
       </div>

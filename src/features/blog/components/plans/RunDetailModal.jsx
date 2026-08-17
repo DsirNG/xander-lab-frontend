@@ -17,7 +17,8 @@ const RunDetailModal = ({ isOpen, run, onClose }) => {
 
   const error = run.errorMessage
     || (run.reviewPass === false ? run.reviewReason : '')
-    || run.csdnErrorMessage;
+    || run.csdnErrorMessage
+    || run.juejinErrorMessage;
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={t('blogPlans.runDetailTitle')} width="max-w-lg">
@@ -47,6 +48,9 @@ const RunDetailModal = ({ isOpen, run, onClose }) => {
         <Row label="CSDN">{run.csdnStatus || '—'}</Row>
         {run.csdnExternalId && <Row label={t('blogPlans.csdnExternalId')}>{run.csdnExternalId}</Row>}
         {run.csdnErrorCode && <Row label={t('blogPlans.csdnErrorCode')}>{run.csdnErrorCode}</Row>}
+        <Row label={t('blogPlans.juejin')}>{run.juejinStatus || '—'}</Row>
+        {run.juejinExternalId && <Row label={t('blogPlans.juejinExternalId')}>{run.juejinExternalId}</Row>}
+        {run.juejinErrorCode && <Row label={t('blogPlans.juejinErrorCode')}>{run.juejinErrorCode}</Row>}
         {run.localPostId && (
           <Row label={t('blogPlans.localPost')}>
             <a href={`/blog/${run.localPostId}`} className="text-accent hover:underline">#{run.localPostId}</a>
@@ -55,6 +59,11 @@ const RunDetailModal = ({ isOpen, run, onClose }) => {
         {run.csdnUrl && (
           <Row label={t('blogPlans.csdnLink')}>
             <a href={run.csdnUrl} target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">CSDN</a>
+          </Row>
+        )}
+        {run.juejinUrl && (
+          <Row label={t('blogPlans.juejinLink')}>
+            <a href={run.juejinUrl} target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">{t('blogPlans.juejin')}</a>
           </Row>
         )}
         {error && (

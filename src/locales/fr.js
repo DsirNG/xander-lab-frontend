@@ -166,6 +166,7 @@ export default {
     tone: 'Ton',
     tonePlaceholder: 'ex. Clair, amical et pratique (optionnel)',
     syncCsdn: 'Publier aussi sur CSDN après génération',
+    syncJuejin: 'Publier aussi sur Juejin après génération',
     yes: 'Oui',
     no: 'Non',
     nextRun: 'Prochaine exécution',
@@ -209,6 +210,10 @@ export default {
     csdnExternalId: 'ID externe CSDN',
     csdnErrorCode: 'Code d\'erreur CSDN',
     csdnLink: 'Lien CSDN',
+    juejin: 'Juejin',
+    juejinExternalId: 'ID article Juejin',
+    juejinErrorCode: "Code d'erreur Juejin",
+    juejinLink: 'Lien Juejin',
     error: 'Erreur',
     runStatus: {
       GENERATING: 'Génération',

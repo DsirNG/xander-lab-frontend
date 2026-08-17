@@ -19,6 +19,7 @@ const initialForm = () => ({
   time: '09:00',
   timezone: 'Asia/Shanghai',
   syncCsdn: false,
+  syncJuejin: false,
   audience: '',
   tone: '',
 });
@@ -72,6 +73,7 @@ const PlanAiGenerateModal = ({ isOpen, onClose, onSaved }) => {
         time: form.time,
         timezone: form.timezone,
         syncCsdn: form.syncCsdn,
+        syncJuejin: form.syncJuejin,
         audience: form.audience.trim(),
         tone: form.tone.trim(),
       });
@@ -146,12 +148,20 @@ const PlanAiGenerateModal = ({ isOpen, onClose, onSaved }) => {
           </FormField>
         </div>
 
-        <label className="flex items-center gap-2 text-sm text-ink-secondary">
-          <input type="checkbox" checked={form.syncCsdn}
-            onChange={(e) => setForm({ ...form, syncCsdn: e.target.checked })}
-            className="h-4 w-4 rounded border-border text-accent focus:ring-accent" />
-          {t('blogPlans.syncCsdn')}
-        </label>
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <label className="flex items-center gap-2 text-sm text-ink-secondary">
+            <input type="checkbox" checked={form.syncCsdn}
+              onChange={(e) => setForm({ ...form, syncCsdn: e.target.checked })}
+              className="h-4 w-4 rounded border-border text-accent focus:ring-accent" />
+            {t('blogPlans.syncCsdn')}
+          </label>
+          <label className="flex items-center gap-2 text-sm text-ink-secondary">
+            <input type="checkbox" checked={form.syncJuejin}
+              onChange={(e) => setForm({ ...form, syncJuejin: e.target.checked })}
+              className="h-4 w-4 rounded border-border text-accent focus:ring-accent" />
+            {t('blogPlans.syncJuejin')}
+          </label>
+        </div>
 
         {createdPlans.length > 0 && (
           <div className="rounded-xl border border-border bg-surface p-4">

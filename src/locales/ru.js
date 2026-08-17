@@ -166,6 +166,7 @@ export default {
     tone: 'Тон',
     tonePlaceholder: 'напр. ясно, дружелюбно и практично (необязательно)',
     syncCsdn: 'Также публиковать на CSDN после генерации',
+    syncJuejin: 'Также публиковать на Juejin после генерации',
     yes: 'Да',
     no: 'Нет',
     nextRun: 'Следующий запуск',
@@ -209,6 +210,10 @@ export default {
     csdnExternalId: 'Внешний ID CSDN',
     csdnErrorCode: 'Код ошибки CSDN',
     csdnLink: 'Ссылка CSDN',
+    juejin: 'Juejin',
+    juejinExternalId: 'ID статьи Juejin',
+    juejinErrorCode: 'Код ошибки Juejin',
+    juejinLink: 'Ссылка Juejin',
     error: 'Ошибка',
     runStatus: {
       GENERATING: 'Генерация',

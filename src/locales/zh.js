@@ -174,6 +174,7 @@ export default {
     tone: '文风语气',
     tonePlaceholder: '例如：清晰、亲切、可操作（可选）',
     syncCsdn: '生成后同步发布到 CSDN',
+    syncJuejin: '生成后同步发布到掘金',
     yes: '是',
     no: '否',
     nextRun: '下次执行',
@@ -217,6 +218,10 @@ export default {
     csdnExternalId: 'CSDN 外部 ID',
     csdnErrorCode: 'CSDN 错误码',
     csdnLink: 'CSDN 链接',
+    juejin: '掘金',
+    juejinExternalId: '掘金文章 ID',
+    juejinErrorCode: '掘金错误码',
+    juejinLink: '掘金链接',
     error: '错误信息',
     runStatus: {
       GENERATING: '生成中',

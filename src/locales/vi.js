@@ -166,6 +166,7 @@ export default {
     tone: 'Giọng văn',
     tonePlaceholder: 'ví dụ: Rõ ràng, thân thiện và thực tế (tùy chọn)',
     syncCsdn: 'Đồng thời đăng lên CSDN sau khi tạo',
+    syncJuejin: 'Đồng thời đăng lên Juejin sau khi tạo',
     yes: 'Có',
     no: 'Không',
     nextRun: 'Lần chạy tới',
@@ -209,6 +210,10 @@ export default {
     csdnExternalId: 'ID ngoài CSDN',
     csdnErrorCode: 'Mã lỗi CSDN',
     csdnLink: 'Liên kết CSDN',
+    juejin: 'Juejin',
+    juejinExternalId: 'ID bài viết Juejin',
+    juejinErrorCode: 'Mã lỗi Juejin',
+    juejinLink: 'Liên kết Juejin',
     error: 'Lỗi',
     runStatus: {
       GENERATING: 'Đang tạo',

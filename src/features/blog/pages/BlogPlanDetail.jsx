@@ -81,7 +81,8 @@ const BlogPlanDetail = () => {
 
   const runError = (run) => run.errorMessage
     || (run.reviewPass === false ? run.reviewReason : '')
-    || run.csdnErrorMessage;
+    || run.csdnErrorMessage
+    || run.juejinErrorMessage;
 
   if (loading) return <LoadingSpinner fullScreen />;
 
@@ -110,7 +111,7 @@ const BlogPlanDetail = () => {
             <div className="min-w-0">
               <div className="truncate text-xl font-bold text-ink">{plan.topic}</div>
               <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-ink-faint">
-                <span>{(plan.triggerTimes?.length > 0 ? plan.triggerTimes.join(' / ') : plan.triggerTime)} ({plan.timezone}) · {t('blogPlans.syncCsdn')}: {plan.syncCsdn ? t('blogPlans.yes') : t('blogPlans.no')}</span>
+                <span>{(plan.triggerTimes?.length > 0 ? plan.triggerTimes.join(' / ') : plan.triggerTime)} ({plan.timezone}) · {t('blogPlans.syncCsdn')}: {plan.syncCsdn ? t('blogPlans.yes') : t('blogPlans.no')} · {t('blogPlans.syncJuejin')}: {plan.syncJuejin ? t('blogPlans.yes') : t('blogPlans.no')}</span>
                 {plan.runOnce && (
                   <span className="rounded-full bg-accent-soft px-2 py-0.5 text-xs font-medium text-accent-fg">
                     {t('blogPlans.oneShot')}
@@ -203,6 +204,7 @@ const BlogPlanDetail = () => {
                     <th className="px-4 py-2.5 font-medium">{t('blogPlans.triggerType')}</th>
                     <th className="px-4 py-2.5 font-medium">{t('blogPlans.status')}</th>
                     <th className="px-4 py-2.5 font-medium">CSDN</th>
+                    <th className="px-4 py-2.5 font-medium">{t('blogPlans.juejin')}</th>
                     <th className="px-4 py-2.5 font-medium">{t('blogPlans.result')}</th>
                     <th className="px-4 py-2.5 text-right font-medium">{t('blogPlans.detail')}</th>
                   </tr>
@@ -218,6 +220,7 @@ const BlogPlanDetail = () => {
                         </td>
                         <td className="px-4 py-2.5">{t(`blogPlans.runStatus.${run.status}`) || run.status}</td>
                         <td className="whitespace-nowrap px-4 py-2.5">{run.csdnStatus || '—'}</td>
+                        <td className="whitespace-nowrap px-4 py-2.5">{run.juejinStatus || '—'}</td>
                         <td className="max-w-[14rem] px-4 py-2.5">
                           {run.localPostId ? (
                             <a href={`/blog/${run.localPostId}`} className="text-accent hover:underline">#{run.localPostId}</a>
@@ -225,6 +228,8 @@ const BlogPlanDetail = () => {
                             <span className="line-clamp-1 text-red-600 dark:text-red-400" title={error}>{error}</span>
                           ) : run.csdnUrl ? (
                             <a href={run.csdnUrl} target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">CSDN</a>
+                          ) : run.juejinUrl ? (
+                            <a href={run.juejinUrl} target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">{t('blogPlans.juejin')}</a>
                           ) : '—'}
                         </td>
                         <td className="px-4 py-2.5 text-right">

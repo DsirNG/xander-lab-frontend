@@ -81,6 +81,7 @@ const BlogPlans = () => {
           </span>
           <span className="mt-1 block truncate text-caption font-medium text-ink-faint">
             {t('blogPlans.syncCsdn')}: {plan.syncCsdn ? t('blogPlans.yes') : t('blogPlans.no')}
+            {' · '}{t('blogPlans.syncJuejin')}: {plan.syncJuejin ? t('blogPlans.yes') : t('blogPlans.no')}
           </span>
         </div>
       ),

@@ -166,6 +166,7 @@ export default {
     tone: '文体',
     tonePlaceholder: '例：明快で親しみやすく実用的（任意）',
     syncCsdn: '生成後に CSDN にも公開する',
+    syncJuejin: '生成後に掘金にも公開する',
     yes: 'はい',
     no: 'いいえ',
     nextRun: '次回実行',
@@ -209,6 +210,10 @@ export default {
     csdnExternalId: 'CSDN 外部 ID',
     csdnErrorCode: 'CSDN エラーコード',
     csdnLink: 'CSDN リンク',
+    juejin: '掘金',
+    juejinExternalId: '掘金記事 ID',
+    juejinErrorCode: '掘金エラーコード',
+    juejinLink: '掘金リンク',
     error: 'エラー',
     runStatus: {
       GENERATING: '生成中',
