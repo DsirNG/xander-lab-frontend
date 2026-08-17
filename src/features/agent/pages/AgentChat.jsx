@@ -88,7 +88,7 @@ const AgentChatInputBar = ({ t, input, setInput, isActive, creating, hasConversa
   const locked = isActive || creating;
   return (
     <div className={`mx-auto w-full max-w-3xl ${hasConversation ? 'px-4 py-3 pb-safe sm:px-6' : 'px-4'}`}>
-      <div className="relative flex items-center rounded-3xl border border-border/80 bg-surface">
+      <div className="relative flex items-center rounded-3xl border border-border/80 bg-[#ffffff]">
         <button
           type="button"
           className="ml-2 flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-ink-muted transition hover:bg-surface-muted hover:text-ink"
@@ -444,7 +444,7 @@ const AgentChat = () => {
   );
 
   return (
-    <div className="flex h-dvh flex-col bg-surface font-chat text-ink">
+    <div className="flex h-dvh flex-col bg-[#fcfcfc] font-chat text-ink">
       <div className="relative flex min-h-0 flex-1 overflow-hidden">
         {!sidebarCollapsed && (
           <AgentSessionList
@@ -468,7 +468,7 @@ const AgentChat = () => {
           />
         )}
         {sidebarCollapsed && (
-          <div className="hidden lg:flex w-16 shrink-0 flex-col items-center border-r border-border bg-surface py-4">
+          <div className="hidden lg:flex w-16 shrink-0 flex-col items-center border-r border-border bg-[#fcfcfc] py-4">
             <div className="flex flex-col gap-3">
               <button onClick={() => setSidebarCollapsed(false)} className="grid h-10 w-10 place-items-center rounded-xl text-ink hover:bg-surface-muted transition" title="展开">
                 <Bot className="h-6 w-6" />
@@ -660,15 +660,15 @@ const AgentChat = () => {
               />
 
               <div className="mx-auto mt-6 flex w-full max-w-3xl flex-wrap justify-center gap-2">
-                <button onClick={() => setInput('生成图片')} className="flex items-center gap-2 rounded-xl border border-border bg-surface px-4 py-2 text-sm font-semibold text-ink transition hover:bg-surface-muted">
+                <button onClick={() => setInput('生成图片')} className="flex items-center gap-2 rounded-xl border border-border bg-[#ffffff] px-4 py-2 text-sm font-semibold text-ink transition hover:bg-surface-muted">
                   <ImageIcon className="h-4 w-4 text-emerald-500" />
                   生成图片
                 </button>
-                <button onClick={() => setInput('撰写或编辑文章')} className="flex items-center gap-2 rounded-xl border border-border bg-surface px-4 py-2 text-sm font-semibold text-ink transition hover:bg-surface-muted">
+                <button onClick={() => setInput('撰写或编辑文章')} className="flex items-center gap-2 rounded-xl border border-border bg-[#ffffff] px-4 py-2 text-sm font-semibold text-ink transition hover:bg-surface-muted">
                   <PenLine className="h-4 w-4 text-blue-500" />
                   撰写或编辑
                 </button>
-                <button onClick={() => setInput('搜索网页')} className="flex items-center gap-2 rounded-xl border border-border bg-surface px-4 py-2 text-sm font-semibold text-ink transition hover:bg-surface-muted">
+                <button onClick={() => setInput('搜索网页')} className="flex items-center gap-2 rounded-xl border border-border bg-[#ffffff] px-4 py-2 text-sm font-semibold text-ink transition hover:bg-surface-muted">
                   <Globe className="h-4 w-4 text-orange-500" />
                   搜索网页
                 </button>

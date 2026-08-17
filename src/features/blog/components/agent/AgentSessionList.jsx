@@ -76,7 +76,7 @@ const AgentSessionList = ({ sessions, activeId, loading, disableNew = false, mob
   const closeMenu = () => setMenuOpen(false);
 
   return (
-    <aside className={`${mobile ? 'flex h-full w-[260px] max-w-[calc(100vw-3rem)]' : 'hidden min-h-0 w-[260px] lg:flex'} relative shrink-0 flex-col bg-surface`}>
+    <aside className={`${mobile ? 'flex h-full w-[260px] max-w-[calc(100vw-3rem)]' : 'hidden min-h-0 w-[260px] lg:flex'} relative shrink-0 flex-col bg-[#fcfcfc]`}>
       {/* Top Header */}
       <div className="flex items-center justify-between px-3 pt-3 pb-2">
         <div className="flex items-center gap-2 px-2 py-1 hover:bg-surface-muted rounded-lg cursor-pointer transition">
