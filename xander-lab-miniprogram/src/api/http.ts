@@ -45,8 +45,6 @@ export class ApiError extends Error {
 
 type RequestOptions = Omit<Taro.request.Option, 'url' | 'success' | 'fail'> & {
   _retried?: boolean
-  /** SSE 流式接口：2xx 即视为成功，忽略响应体解析 */
-  _stream?: boolean
 }
 
 /** 无感刷新：并发 401 只触发一次刷新，成功后返回是否可重试原请求 */
@@ -112,8 +110,6 @@ export async function request<T>(path: string, options: RequestOptions = {}): Pr
       response.statusCode,
     )
   }
-
-  if (options._stream) return undefined as T
 
   if (!response.data || ![0, 200].includes(response.data.code)) {
     throw new ApiError(response.data?.message || '服务暂时不可用', response.data?.code || -1)

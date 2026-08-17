@@ -187,7 +187,7 @@ export default function Chat() {
       } catch (e) {
         const message = e instanceof Error ? e.message : ''
         if (message.includes('timeout') || message.includes('超时')) {
-          // 流式请求超时：服务端仍在执行，轮询负责收尾
+          // 触发请求超时：服务端可能已开始执行，轮询负责收尾
         } else {
           showToast(message || '发送失败')
         }

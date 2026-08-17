@@ -30,8 +30,7 @@ export type ConversationSnapshot = {
   messages: AgentMessage[]
 }
 
-/** 发送消息为 SSE 流式接口，小程序不支持流式读取：仅触发请求，以快照轮询作为状态事实来源 */
-const STREAM_TIMEOUT = 300000
+/** 小程序不支持 SSE 流式读取：触发后台执行后立即返回，以快照轮询作为状态事实来源 */
 
 export const agentApi = {
   listConversations: () =>
@@ -40,17 +39,14 @@ export const agentApi = {
     request<ConversationSnapshot>('/api/agent/conversations', {
       method: 'POST',
       data: { content },
-      timeout: STREAM_TIMEOUT,
     }),
   getConversation: (id: number) => request<ConversationSnapshot>(`/api/agent/conversations/${id}`),
   getMessages: (id: number) => request<AgentMessage[]>(`/api/agent/conversations/${id}/messages`),
-  /** 触发一轮智能体执行（流式响应被丢弃，轮询快照作为事实来源） */
+  /** 触发一轮智能体后台执行（非流式端点，立即返回；结果由轮询快照读取） */
   sendMessage: (id: number, content: string) =>
-    request<void>(`/api/agent/conversations/${id}/messages/stream`, {
+    request<number>(`/api/agent/conversations/${id}/messages`, {
       method: 'POST',
       data: { content },
-      timeout: STREAM_TIMEOUT,
-      _stream: true,
     }),
   cancel: (id: number) =>
     request<AgentConversation>(`/api/agent/conversations/${id}/cancel`, { method: 'POST' }),
