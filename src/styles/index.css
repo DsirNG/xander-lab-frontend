@@ -248,7 +248,7 @@ html {
    320px 手机 ≈14px → 1080p 桌面 ≈16px → 4K/超宽屏封顶 17px。
    不要再用固定 px 大字号写业务样式，随根字号缩放才稳定。 */
 html {
-  font-size: clamp(14px, 13.5px + 0.16vw, 17px);
+  font-size: clamp(14px, 14.7px + 0.16vw, 20px);
 }
 
 /* 超窄屏（≤360px 老款小屏机）：进一步收紧内边距 */
