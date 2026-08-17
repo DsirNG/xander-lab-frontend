@@ -38,6 +38,22 @@
 .profile-link {
   color: #5361ff;
 }
+.login-btn {
+  margin: 0 0 22px;
+  height: 76px;
+  line-height: 76px;
+  border-radius: 16px;
+  background: #5361ff;
+  color: #fff;
+  font-size: 28px;
+  font-weight: 600;
+}
+.login-btn::after {
+  border: none;
+}
+.login-btn[disabled] {
+  opacity: 0.7;
+}
 .stats {
   height: 112px;
   border: 1px solid #ececf1;

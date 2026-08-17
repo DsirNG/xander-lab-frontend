@@ -2,6 +2,6 @@
   "miniprogramRoot": "dist/",
   "projectname": "xander-lab-miniprogram",
   "description": "Xander Lab 小程序",
-  "appid": "wx63b2e6732ff75cc8",
+  "appid": "touristappid",
   "setting": { "urlCheck": false, "es6": true, "postcss": true, "minified": true }
 }
