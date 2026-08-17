@@ -3,9 +3,9 @@ import Taro from '@tarojs/taro'
 import { Icon } from './Icon'
 
 const items = [
-  ['discover', '对话', '/pages/discover/index'],
-  ['star', '计划', '/pages/favorites/index'],
-  ['article', '博客', '/pages/articles/index'],
+  ['chat', '对话', '/pages/chat/index'],
+  ['calendar', '计划', '/pages/plans/index'],
+  ['article', '博客', '/pages/blog/index'],
   ['user', '我的', '/pages/profile/index'],
 ] as const
 

@@ -1,0 +1,28 @@
+.plan-form-card {
+  background: #fff;
+  border: 1px solid #ececf1;
+  border-radius: 18px;
+  padding: 24px 22px 8px;
+  margin-bottom: 30px;
+}
+.form-textarea-short {
+  min-height: 110px;
+}
+.form-textarea-queue {
+  min-height: 180px;
+}
+.ai-row {
+  display: flex;
+  gap: 18px;
+}
+.ai-col {
+  flex: 1;
+  min-width: 0;
+}
+.publish-submit {
+  width: 100%;
+}
+.ai-tip {
+  text-align: center;
+  margin-top: 16px;
+}

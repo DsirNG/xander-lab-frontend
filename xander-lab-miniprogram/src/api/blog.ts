@@ -14,6 +14,10 @@ export type Article = {
   readTime: string
   tips: string | null
   views: number
+  status?: number
+  coverImage?: string | null
+  csdnSynced?: boolean
+  juejinSynced?: boolean
 }
 
 export type ArticlePage = {
@@ -32,6 +36,8 @@ export type Category = {
   count?: number
 }
 
+export type Tag = { name: string; count: number }
+
 export type ArticleQuery = {
   search?: string
   category?: string
@@ -40,7 +46,17 @@ export type ArticleQuery = {
   size?: number
 }
 
-const toQuery = (params: ArticleQuery) => {
+export type BlogPostPayload = {
+  title: string
+  summary?: string
+  content: string
+  categoryId?: number
+  coverImage?: string
+  tags?: string[]
+  publish: boolean
+}
+
+const toQuery = (params: Record<string, unknown>) => {
   const entries = Object.entries(params).filter(([, value]) => value !== '' && value != null)
   return entries.length
     ? `?${entries.map(([key, value]) => `${key}=${encodeURIComponent(String(value))}`).join('&')}`
@@ -53,8 +69,24 @@ export const blogApi = {
   getRecentArticles: (limit = 5) => request<Article[]>(`/api/blog/posts/recent?limit=${limit}`),
   getArticle: (id: string | number) => request<Article>(`/api/blog/posts/${id}`),
   getCategories: () => request<Category[]>('/api/blog/categories'),
-  getPopularTags: (limit = 8) =>
-    request<Array<{ name: string; count: number }>>(`/api/blog/tags/popular?limit=${limit}`),
+  getTags: () => request<Tag[]>('/api/blog/tags'),
+  getPopularTags: (limit = 10) => request<Tag[]>(`/api/blog/tags/popular?limit=${limit}`),
   recordView: (id: string | number) =>
     request<{ counted: boolean }>(`/api/blog/posts/${id}/view`, { method: 'POST' }),
+
+  /** 我的文章（status: 0 草稿 / 1 发布 / -1 回收站，不传为草稿+发布） */
+  getMyArticles: (
+    params: { status?: number; search?: string; page?: number; size?: number } = {},
+  ) => request<ArticlePage>(`/api/blog/posts/mine${toQuery({ page: 1, size: 10, ...params })}`),
+  getMyArticle: (id: string | number) => request<Article>(`/api/blog/posts/mine/${id}`),
+  createArticle: (payload: BlogPostPayload) =>
+    request<Article>('/api/blog/posts', { method: 'POST', data: payload }),
+  updateArticle: (id: string | number, payload: BlogPostPayload) =>
+    request<Article>(`/api/blog/posts/${id}`, { method: 'PUT', data: payload }),
+  updateArticleStatus: (id: string | number, status: number) =>
+    request<Article>(`/api/blog/posts/${id}/status`, { method: 'PATCH', data: { status } }),
+  deleteArticle: (id: string | number) =>
+    request<void>(`/api/blog/posts/${id}`, { method: 'DELETE' }),
+  permanentlyDeleteArticle: (id: string | number) =>
+    request<void>(`/api/blog/posts/${id}/permanent`, { method: 'DELETE' }),
 }

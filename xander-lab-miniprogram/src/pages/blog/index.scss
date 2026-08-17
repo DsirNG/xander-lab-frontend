@@ -1,0 +1,26 @@
+.search-placeholder {
+  color: #b0b0ba;
+}
+.search-clear {
+  font-size: 13px;
+  color: #9a9aa3;
+  flex-shrink: 0;
+  padding: 8px 0 8px 8px;
+}
+.filter-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 6px 4px 18px;
+}
+.filter-summary {
+  font-size: 13px;
+  color: #6b6b74;
+  flex: 1;
+}
+.filter-clear {
+  font-size: 13px;
+  color: #5361ff;
+  flex-shrink: 0;
+}

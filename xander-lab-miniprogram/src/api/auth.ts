@@ -27,8 +27,29 @@ export const authApi = {
     saveTokenPair(response)
     return response
   },
+  /** 账号密码登录（用户名或邮箱） */
+  login: async (account: string, password: string) => {
+    const response = await request<TokenResponse>('/api/auth/login', {
+      method: 'POST',
+      data: { type: 'password', account, password },
+    })
+    saveTokenPair(response)
+    return response
+  },
+  /** 邮箱注册（注册即登录） */
+  register: async (email: string, password: string, name: string) => {
+    const response = await request<TokenResponse>('/api/auth/register', {
+      method: 'POST',
+      data: { email, password, name },
+    })
+    saveTokenPair(response)
+    return response
+  },
   /** 如已登录，返回当前用户信息 */
   me: () => request<UserInfo>('/api/auth/me', { method: 'GET' }),
+  /** 更新昵称 / 头像 */
+  updateProfile: (data: { nickname?: string; avatar?: string }) =>
+    request<UserInfo>('/api/auth/profile', { method: 'PUT', data }),
   /** 登出当前设备 */
   logout: async () => {
     try {

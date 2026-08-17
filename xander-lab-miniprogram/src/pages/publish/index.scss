@@ -1,0 +1,19 @@
+.picker-value {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #222;
+}
+.picker-arrow {
+  color: #b0b0ba;
+  font-size: 18px;
+}
+.form-textarea-summary {
+  min-height: 120px;
+}
+.form-textarea-content {
+  min-height: 380px;
+}
+.action-btn {
+  flex: 1;
+}

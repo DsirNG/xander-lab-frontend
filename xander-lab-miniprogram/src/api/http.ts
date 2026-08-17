@@ -43,7 +43,11 @@ export class ApiError extends Error {
   }
 }
 
-type RequestOptions = Omit<Taro.request.Option, 'url' | 'success' | 'fail'> & { _retried?: boolean }
+type RequestOptions = Omit<Taro.request.Option, 'url' | 'success' | 'fail'> & {
+  _retried?: boolean
+  /** SSE 流式接口：2xx 即视为成功，忽略响应体解析 */
+  _stream?: boolean
+}
 
 /** 无感刷新：并发 401 只触发一次刷新，成功后返回是否可重试原请求 */
 let refreshing: Promise<boolean> | null = null
@@ -61,7 +65,11 @@ function refreshAccessToken(): Promise<boolean> {
         header: { 'Content-Type': 'application/json' },
         data: { refreshToken },
       })
-      if (response.statusCode === 200 && response.data?.code === 200 && response.data.data?.accessToken) {
+      if (
+        response.statusCode === 200 &&
+        response.data?.code === 200 &&
+        response.data.data?.accessToken
+      ) {
         tokenStorage.setTokens(response.data.data.accessToken, response.data.data.refreshToken)
         return true
       }
@@ -98,8 +106,14 @@ export async function request<T>(path: string, options: RequestOptions = {}): Pr
   }
 
   if (response.statusCode < 200 || response.statusCode >= 300) {
-    throw new ApiError(`请求失败（${response.statusCode}）`, response.statusCode)
+    throw new ApiError(
+      (response.data as ApiResult<unknown> | undefined)?.message ||
+        `请求失败（${response.statusCode}）`,
+      response.statusCode,
+    )
   }
+
+  if (options._stream) return undefined as T
 
   if (!response.data || ![0, 200].includes(response.data.code)) {
     throw new ApiError(response.data?.message || '服务暂时不可用', response.data?.code || -1)

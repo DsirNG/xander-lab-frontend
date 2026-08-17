@@ -12,7 +12,7 @@ export function ArticleCard({ article, featured = false }: ArticleCardProps) {
   return (
     <View
       className={`article-card ${featured ? 'featured' : ''}`}
-      onClick={() => Taro.navigateTo({ url: `/pages/article/index?id=${article.id}` })}
+      onClick={() => Taro.navigateTo({ url: `/pages/blog-detail/index?id=${article.id}` })}
     >
       <View className="article-info">
         {featured ? <Text className="featured-label">精选</Text> : null}

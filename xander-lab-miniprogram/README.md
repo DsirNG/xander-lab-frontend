@@ -1,6 +1,6 @@
 # DinQorAI 小程序
 
-基于 Taro 4、React 18 和 TypeScript 的微信/支付宝小程序版本，按照提供的 8 张 UI 设计图实现。同一套代码构建双端：`@tarojs/plugin-platform-weapp` + `@tarojs/plugin-platform-alipay`。
+基于 Taro 4、React 18 和 TypeScript 的微信/支付宝小程序，功能对齐 PC 端 DinQorAI 平台。同一套代码构建双端：`@tarojs/plugin-platform-weapp` + `@tarojs/plugin-platform-alipay`。
 
 ## 开发
 
@@ -27,26 +27,34 @@ pnpm dev:h5
 
 ## 后端接口
 
-文章数据与 PC 端共用 `/api/blog` 接口。H5 开发环境通过本地代理访问后端，微信/支付宝小程序直接请求 `https://api.dinqor.cn`。发布前需要在微信公众平台 / 支付宝开放平台把该域名加入 request 合法域名（经 web-view 嵌入 PC 页面的功能还需配 web-view 业务域名）。
+数据与 PC 端共用同一后端（默认 `https://api.dinqor.cn`，可在 `src/api/http.ts` 调整）。H5 开发环境通过本地代理访问后端；微信/支付宝小程序直接请求线上域名，发布前需在微信公众平台 / 支付宝开放平台把该域名加入 request 合法域名。
 
 ## 登录（微信一键登录）
 
-- 小程序端：个人中心页点击「微信一键登录」，`Taro.login()` 拿 code 调 `POST /api/auth/wechat-login`，后端 `jscode2session` 换 openid 并自动注册/绑定账号（`sys_user.openid` 唯一索引）。
-- 后端配置：环境变量 `WECHAT_MINI_APP_ID` / `WECHAT_MINI_APP_SECRET`（本地放 `application-local.yml`，不提交 git）；首次部署需手工执行 `sys_user_wechat_openid_migration.sql`。
-- `src/api/http.ts` 统一处理 token 存取、Authorization 头与 401 无感刷新，与 PC 端 `http.js` 语义一致。
+- 个人中心/对话页点击「微信一键登录」，`Taro.login()` 拿 code 调 `POST /api/auth/wechat-login`，后端 `jscode2session` 换 openid 并自动注册/绑定账号（未注册自动注册并赠送积分）。
+- 也支持账号密码登录/邮箱注册（`/api/auth/login`、`/api/auth/register`）。
+- `src/api/http.ts` 统一处理 token 存取（本地缓存）、Authorization 头与 401 无感刷新（accessToken 失效时用 refreshToken 换新并重试原请求），与 PC 端 `http.js` 语义一致。
 
 ## 页面
 
-- 发现首页
-- 全部文章
-- 搜索及结果
-- 文章详情
-- 全部评论
-- 前端专题
-- 我的收藏
-- 个人中心（微信一键登录）
+主页面（底部 TabBar，4 个）：
+
+- **对话** `pages/chat`：博客智能体聊天。小程序不支持 SSE 流式，发送消息走流式接口触发执行后，以 `/api/agent/conversations/{id}` 快照轮询作为事实来源，展示思考过程/工具步骤/流式回答，支持停止与断线续收。
+- **计划** `pages/plans`：定时发文计划列表（状态徽标、暂停/恢复/取消/删除/立即执行），支持自定义创建与 AI 生成。
+- **博客** `pages/blog`：文章列表（搜索、分类、热门标签筛选、分页加载）。
+- **我的** `pages/profile`：用户信息、积分卡片、功能入口与退出登录。
+
+子页面：
+
+- 登录/注册 `pages/login`
+- 文章详情 `pages/blog-detail`（自研轻量 Markdown 渲染）
+- 计划详情 `pages/plan-detail`（执行记录、手动触发、状态操作）
+- 新建计划 `pages/plan-create`（自定义 + AI 生成）
+- 发文/编辑 `pages/publish`
+- 我的博客 `pages/blog-manage`（草稿/发布/回收站管理）
+- 积分明细 `pages/points`
 
 ## 平台差异说明
 
 - 登录渠道：微信用 `Taro.login`（后端换取 openid）；支付宝渠道后端尚未接入，支付宝端登录入口待支付宝 AppID 配置后实现。
-- 流式 AI 对话（博客智能体）等重交互页面：采用 web-view 嵌入 PC 端 H5 实现，不原生复刻。
+- 流式 AI 对话采用「触发 + 快照轮询」而非 SSE（原生小程序无流式读取能力）；后端会话快照（`{conversation, messages}`）本就是事实来源，轮询降级与 PC 端语义一致。
