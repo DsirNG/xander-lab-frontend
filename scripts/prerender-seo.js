@@ -20,16 +20,16 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // ============ 配置 ============
-const SITE_URL = 'https://xander.dsircity.top';
+const SITE_URL = 'https://dinqor.cn';
 // 构建环境可通过 SEO_API_BASE 覆盖默认公网 API。生产 Docker 构建默认由
 // docker-compose 注入 host.docker.internal:30002/api，以直连部署机 Spring Boot 服务。
-const API_BASE = process.env.SEO_API_BASE || 'https://xander.dsircity.top/api';
+const API_BASE = process.env.SEO_API_BASE || 'https://api.dinqor.cn/api';
 const API_TIMEOUT_MS = 15_000;
 const API_RETRY_COUNT = 3;
 const DIST_DIR = path.join(__dirname, '..', 'dist');
 const INDEX_HTML_PATH = path.join(DIST_DIR, 'index.html');
 const OG_IMAGE = `${SITE_URL}/og-image.png`;
-const BRAND_KEYWORDS = 'xanderblog, 博客, xander博客, xanderlab, xander-lab';
+const BRAND_KEYWORDS = 'dinqorai, 博客, dinqor博客, dinqorai博客, dinqor';
 
 // ============ 工具函数 ============
 
@@ -140,7 +140,7 @@ function buildBlogMetaTags(blog) {
 
   return `
     <!-- Prerendered SEO: Blog #${blog.id} -->
-    <title>${title} | Xander Lab</title>
+    <title>${title} | DinQorAI</title>
     <meta name="description" content="${desc}" />
     ${keywords ? `<meta name="keywords" content="${keywords}" />` : ''}
     <meta name="robots" content="index, follow" />
@@ -148,13 +148,13 @@ function buildBlogMetaTags(blog) {
 
     <meta property="og:type" content="article" />
     <meta property="og:url" content="${url}" />
-    <meta property="og:title" content="${title} | Xander Lab" />
+    <meta property="og:title" content="${title} | DinQorAI" />
     <meta property="og:description" content="${desc}" />
     <meta property="og:image" content="${OG_IMAGE}" />
-    <meta property="og:site_name" content="Xander Lab" />
+    <meta property="og:site_name" content="DinQorAI" />
 
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="${title} | Xander Lab" />
+    <meta name="twitter:title" content="${title} | DinQorAI" />
     <meta name="twitter:description" content="${desc}" />
     <meta name="twitter:image" content="${OG_IMAGE}" />
   `.trim();
@@ -171,11 +171,11 @@ function buildBlogJsonLd(blog) {
     '@type': 'Article',
     headline: blog.title,
     description: blog.summary || extractSummary(blog.content),
-    author: { '@type': 'Person', name: blog.author || 'Xander Lab' },
+    author: { '@type': 'Person', name: blog.author || 'DinQorAI' },
     datePublished: blog.date || new Date().toISOString().split('T')[0],
     publisher: {
       '@type': 'Organization',
-      name: 'Xander Lab',
+      name: 'DinQorAI',
       logo: { '@type': 'ImageObject', url: `${SITE_URL}/logo-512.png` }
     },
     mainEntityOfPage: {
@@ -354,26 +354,26 @@ async function main() {
   // ---- 2. 博客列表页预渲染 ----
   console.log('📋 生成博客列表页...');
   const blogListMeta = `
-    <title>Blog | Xander Lab</title>
-    <meta name="description" content="Xander Lab 技术博客 — 前端架构、React 实践、UI 组件设计等技术文章" />
+    <title>Blog | DinQorAI</title>
+    <meta name="description" content="DinQorAI 技术博客 — 前端架构、React 实践、UI 组件设计等技术文章" />
     <meta name="robots" content="index, follow" />
     <link rel="canonical" href="${SITE_URL}/blog/" />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="${SITE_URL}/blog/" />
-    <meta property="og:title" content="Blog | Xander Lab" />
-    <meta property="og:description" content="Xander Lab 技术博客 — 前端架构、React 实践、UI 组件设计等技术文章" />
+    <meta property="og:title" content="Blog | DinQorAI" />
+    <meta property="og:description" content="DinQorAI 技术博客 — 前端架构、React 实践、UI 组件设计等技术文章" />
     <meta property="og:image" content="${OG_IMAGE}" />
-    <meta property="og:site_name" content="Xander Lab" />
+    <meta property="og:site_name" content="DinQorAI" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Blog | Xander Lab" />
-    <meta name="twitter:description" content="Xander Lab 技术博客 — 前端架构、React 实践、UI 组件设计等技术文章" />
+    <meta name="twitter:title" content="Blog | DinQorAI" />
+    <meta name="twitter:description" content="DinQorAI 技术博客 — 前端架构、React 实践、UI 组件设计等技术文章" />
     <meta name="twitter:image" content="${OG_IMAGE}" />
   `.trim();
 
   const blogListJsonLd = `<script type="application/ld+json">${JSON.stringify({
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
-    name: 'Blog | Xander Lab',
+    name: 'Blog | DinQorAI',
     description: 'Technical articles on frontend architecture, React patterns, and UI component design',
     url: `${SITE_URL}/blog/`,
     isPartOf: { '@id': `${SITE_URL}/#website` }
@@ -389,26 +389,26 @@ async function main() {
   // ---- 3. 标签页预渲染 ----
   console.log('🏷️  生成标签页...');
   const tagsMeta = `
-    <title>Tags | Xander Lab</title>
-    <meta name="description" content="Xander Lab 博客标签 — 按主题浏览前端技术文章" />
+    <title>Tags | DinQorAI</title>
+    <meta name="description" content="DinQorAI 博客标签 — 按主题浏览前端技术文章" />
     <meta name="robots" content="index, follow" />
     <link rel="canonical" href="${SITE_URL}/blog/tags/" />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="${SITE_URL}/blog/tags/" />
-    <meta property="og:title" content="Tags | Xander Lab" />
-    <meta property="og:description" content="Xander Lab 博客标签 — 按主题浏览前端技术文章" />
+    <meta property="og:title" content="Tags | DinQorAI" />
+    <meta property="og:description" content="DinQorAI 博客标签 — 按主题浏览前端技术文章" />
     <meta property="og:image" content="${OG_IMAGE}" />
-    <meta property="og:site_name" content="Xander Lab" />
+    <meta property="og:site_name" content="DinQorAI" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Tags | Xander Lab" />
-    <meta name="twitter:description" content="Xander Lab 博客标签 — 按主题浏览前端技术文章" />
+    <meta name="twitter:title" content="Tags | DinQorAI" />
+    <meta name="twitter:description" content="DinQorAI 博客标签 — 按主题浏览前端技术文章" />
     <meta name="twitter:image" content="${OG_IMAGE}" />
   `.trim();
 
   const tagsJsonLd = `<script type="application/ld+json">${JSON.stringify({
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
-    name: 'Tags | Xander Lab',
+    name: 'Tags | DinQorAI',
     url: `${SITE_URL}/blog/tags/`,
   })}</script>`;
 

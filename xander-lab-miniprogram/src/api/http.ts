@@ -6,7 +6,7 @@ type ApiResult<T> = {
   data: T
 }
 
-const API_ORIGIN = process.env.TARO_ENV === 'h5' ? '' : 'https://xander.dsircity.top'
+const API_ORIGIN = process.env.TARO_ENV === 'h5' ? '' : 'https://api.dinqor.cn'
 
 const ACCESS_TOKEN_KEY = 'xander_access_token'
 const REFRESH_TOKEN_KEY = 'xander_refresh_token'

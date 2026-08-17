@@ -5,7 +5,7 @@ const xml2js = require('xml2js');
 
 // 配置常量
 const API_KEY = 'e37f04dea21c4c038138db8ada5e62bc';
-const HOST = 'xander.dsircity.top';
+const HOST = 'dinqor.cn';
 const SITEMAP_PATH = path.join(__dirname, 'public', 'sitemap.xml');
 const API_KEY_FILE_PATH = path.join(__dirname, 'public', `${API_KEY}.txt`);
 
@@ -137,7 +137,7 @@ async function submitToBing(urlList) {
     }, {
       headers: {
         'Content-Type': 'application/json; charset=utf-8',
-        'User-Agent': 'XanderLab-SEO-Bot/2.0'
+        'User-Agent': 'DinQorAI-SEO-Bot/2.0'
       },
       timeout: 15000 // 15秒超时
     });
@@ -193,7 +193,7 @@ async function submitToBing(urlList) {
  * 主函数
  */
 async function main() {
-  console.log('🤖 Xander Lab - Bing IndexNow 提交工具');
+  console.log('🤖 DinQorAI - Bing IndexNow 提交工具');
   console.log('========================================');
 
   // 验证环境

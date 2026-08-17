@@ -302,6 +302,12 @@ export default {
       description: '当前版本已失效，请刷新页面后继续使用。',
       refresh: '立即刷新'
     },
+    domainRedirect: {
+      title: '网站已迁移',
+      description: '本网站已迁移至新域名 dinqor.cn，请访问新域名获取最新内容与完整功能。',
+      goToNew: '前往 dinqor.cn',
+      stay: '继续浏览'
+    },
     aria: {
       mainNav: '主导航',
       openMenu: '打开菜单',
@@ -323,7 +329,7 @@ export default {
       authSuccess: '验证成功，欢迎进入',
       authFailed: '验证失败，请检查邮箱和验证码',
       loginAccess: '登录访问',
-      loginDesc: '获取 Xander Lab 完整功能、博客管理及多维数据的访问权限。',
+      loginDesc: '获取 DinQorAI 完整功能、博客管理及多维数据的访问权限。',
       emailLabel: '邮箱地址',
       emailPlaceholder: '请输入邮箱',
       codeLabel: '验证码',
@@ -567,7 +573,7 @@ export default {
       emptyHint: '点击右上角新建定时邮件，选择发送时间并写好内容。',
       addTitle: '新建定时邮件',
       sideIntro: '一次创建，按计划自动触达收件人。',
-      senderHint: '邮件将由 Xander Lab 验证邮件账号统一发送。',
+      senderHint: '邮件将由 DinQorAI 验证邮件账号统一发送。',
       recipientEmail: '收件邮箱',
       recipientPlaceholder: 'name@example.com',
       scheduledAt: '发送时间',
@@ -707,7 +713,7 @@ export default {
     performance: '性能'
   },
   features: {
-    title: '为什么要做 Xander Lab？',
+    title: '为什么要做 DinQorAI？',
     desc: '在项目开发中，经常会遇到重复的问题和需求。通过记录和整理这些实践经验，既能帮助自己复习和沉淀知识，也能为其他开发者提供参考。所有内容都来自真实项目，包含完整的源码和实现思路。',
     composable: {
       title: '开箱即用',
@@ -1020,7 +1026,7 @@ export default {
         welcomeTitle: '欢迎访问系统实验室',
         welcomeReject: '我已熟悉，残忍拒绝',
         startTour: '启动教学向导',
-        welcomeDesc: '侦测到系统架构池处于初始完全清空状态，且您是第一次进入 Xander-Lab Workspace。为了帮助您最快熟悉这个"四合一"热重载沙盒，我们为您内置了一整套全局通知系统（Toast）的骨架。是否愿意花 30 秒的世界时间，跟随强光指引，一点点体验如何无脑将组件拼装、编译并最终发射运作？',
+        welcomeDesc: '侦测到系统架构池处于初始完全清空状态，且您是第一次进入 DinQorAI Workspace。为了帮助您最快熟悉这个"四合一"热重载沙盒，我们为您内置了一整套全局通知系统（Toast）的骨架。是否愿意花 30 秒的世界时间，跟随强光指引，一点点体验如何无脑将组件拼装、编译并最终发射运作？',
         fileExtensionHint: '推荐使用标准的前端扩展名如'
       }
     }
@@ -1099,7 +1105,7 @@ export default {
     },
     previews: {
       agent: { newTask: '新建任务', saved: '已保存', topic: '主题', topicValue: '构建可访问的组件', schedule: '执行时间', scheduleValue: '每周一 · 09:00', article: '文章', generating: '生成中', nextRun: '● 下次执行：2026 年 5 月 26 日', synced: '已同步' },
-      email: { to: '收件人', subscribers: '订阅者', cc: '抄送', subject: 'Xander Lab 每周更新', greeting: '你好，', body: '这是本周的最新内容。', signature: 'Xander Lab 团队', schedule: '每周五' },
+      email: { to: '收件人', subscribers: '订阅者', cc: '抄送', subject: 'DinQorAI 每周更新', greeting: '你好，', body: '这是本周的最新内容。', signature: 'DinQorAI 团队', schedule: '每周五' },
       demo: { preview: '预览', code: '代码', button: '按钮', primary: '主要按钮', secondary: '次要按钮', ghost: '幽灵按钮' }
     },
     articles: { title: '最新技术文章', all: '查看全部文章', items: { accessibility: { date: '2026 年 5 月 18 日', title: '构建可访问的组件', tag: '开发' }, designTokens: { date: '2026 年 5 月 11 日', title: '设计 Token 的实践方式', tag: '设计' }, automation: { date: '2026 年 5 月 4 日', title: '用定时任务自动化日常工作', tag: '效率' } } }
@@ -1107,11 +1113,11 @@ export default {
   seo: {
     home: {
       title: 'UI 基础设施与交互组件展示',
-      description: '探索 Xander Lab 的 UI 基础设施、React 组件、拖拽系统、锚点浮层与前端架构演示。'
+      description: '探索 DinQorAI 的 UI 基础设施、React 组件、拖拽系统、锚点浮层与前端架构演示。'
     },
     infra: {
       title: 'UI 基础设施系统',
-      description: '了解 Xander Lab 如何构建可复用的 UI 基础设施、定位系统与健壮的前端架构。'
+      description: '了解 DinQorAI 如何构建可复用的 UI 基础设施、定位系统与健壮的前端架构。'
     },
     modules: {
       title: '交互式前端模块',
@@ -1119,11 +1125,11 @@ export default {
     },
     components: {
       title: 'React 组件展示',
-      description: '浏览 Xander Lab 的可复用 React 组件、实现指南与交互式 UI 示例。'
+      description: '浏览 DinQorAI 的可复用 React 组件、实现指南与交互式 UI 示例。'
     },
     default: {
       title: '前端工程资源',
-      description: '探索 Xander Lab 的前端工程资源与交互式 UI 演示。'
+      description: '探索 DinQorAI 的前端工程资源与交互式 UI 演示。'
     }
   },
   admin: {

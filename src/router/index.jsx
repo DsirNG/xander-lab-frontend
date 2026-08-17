@@ -2,7 +2,7 @@
  * 路由配置
  * Router Configuration
  * @module router
- * @author Xander Lab Team
+ * @author DinQorAI Team
  * @created 2026-02-05
  */
 

@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Vietnamese translations
  * Bản dịch tiếng Việt
  */
@@ -294,6 +294,12 @@ export default {
       description: 'Phiên bản hiện tại không còn khả dụng. Hãy tải lại trang để tiếp tục.',
       refresh: 'Tải lại ngay'
     },
+    domainRedirect: {
+      title: 'Trang web đã chuyển',
+      description: 'Trang web này đã chuyển sang tên miền mới dinqor.cn. Vui lòng truy cập tên miền mới để xem nội dung mới nhất và đầy đủ tính năng.',
+      goToNew: 'Đi tới dinqor.cn',
+      stay: 'Ở lại đây'
+    },
     aria: {
       mainNav: 'Điều hướng chính',
       openMenu: 'Mở menu',
@@ -315,7 +321,7 @@ export default {
       authSuccess: 'Xác thực thành công, chào mừng',
       authFailed: 'Xác thực thất bại, kiểm tra thông tin đăng nhập',
       loginAccess: 'Truy cập đăng nhập',
-      loginDesc: 'Nhận quyền truy cập đầy đủ vào Xander Lab, quản lý blog và dữ liệu đa chiều.',
+      loginDesc: 'Nhận quyền truy cập đầy đủ vào DinQorAI, quản lý blog và dữ liệu đa chiều.',
       emailLabel: 'Địa chỉ email',
       emailPlaceholder: 'Nhập địa chỉ email',
       codeLabel: 'Mã xác minh',
@@ -540,7 +546,7 @@ export default {
       emptyHint: 'Tạo email hẹn giờ, chọn thời gian gửi và viết nội dung.',
       addTitle: 'Tạo email hẹn giờ',
       sideIntro: 'Tạo một lần, tự động gửi đúng lịch.',
-      senderHint: 'Email được gửi từ tài khoản xác minh của Xander Lab.',
+      senderHint: 'Email được gửi từ tài khoản xác minh của DinQorAI.',
       recipientEmail: 'Email người nhận',
       recipientPlaceholder: 'name@example.com',
       scheduledAt: 'Thời gian gửi',
@@ -680,7 +686,7 @@ export default {
     performance: 'Hiệu suất'
   },
   features: {
-    title: 'Tại sao xây dựng Xander Lab?',
+    title: 'Tại sao xây dựng DinQorAI?',
     desc: 'Trong phát triển dự án, chúng ta thường gặp vấn đề lặp lại. Bằng cách ghi lại kinh nghiệm thực tiễn, chúng ta giúp bản thân ôn tập và củng cố kiến thức, đồng thời cung cấp tham khảo cho các nhà phát triển khác.',
     composable: {
       title: 'Sẵn sàng sử dụng',
@@ -1072,7 +1078,7 @@ export default {
     },
     previews: {
       agent: { newTask: 'Tác vụ mới', saved: 'Đã lưu', topic: 'Chủ đề', topicValue: 'Xây dựng thành phần dễ tiếp cận', schedule: 'Lịch chạy', scheduleValue: 'Mỗi thứ Hai · 09:00', article: 'Bài viết', generating: 'Đang tạo', nextRun: '● Lần chạy tiếp theo: 26 tháng 5, 2026', synced: 'Đã đồng bộ' },
-      email: { to: 'Đến', subscribers: 'Người đăng ký', cc: 'CC', subject: 'Cập nhật tuần từ Xander Lab', greeting: 'Xin chào,', body: 'Đây là cập nhật tuần này.', signature: 'Đội ngũ Xander Lab', schedule: 'Mỗi thứ Sáu' },
+      email: { to: 'Đến', subscribers: 'Người đăng ký', cc: 'CC', subject: 'Cập nhật tuần từ DinQorAI', greeting: 'Xin chào,', body: 'Đây là cập nhật tuần này.', signature: 'Đội ngũ DinQorAI', schedule: 'Mỗi thứ Sáu' },
       demo: { preview: 'Xem trước', code: 'Mã nguồn', button: 'Nút', primary: 'Chính', secondary: 'Phụ', ghost: 'Trong suốt' }
     },
     articles: { title: 'Bài viết mới nhất', all: 'Xem tất cả bài viết', items: { accessibility: { date: '18 tháng 5, 2026', title: 'Xây dựng thành phần dễ tiếp cận', tag: 'Phát triển' }, designTokens: { date: '11 tháng 5, 2026', title: 'Design token trong thực tế', tag: 'Thiết kế' }, automation: { date: '4 tháng 5, 2026', title: 'Tự động hóa công việc bằng lịch', tag: 'Năng suất' } } }
@@ -1080,23 +1086,23 @@ export default {
   seo: {
     home: {
       title: 'Hạ tầng UI & trưng bày thành phần tương tác',
-      description: 'Khám phá hạ tầng UI của Xander Lab, các thành phần React, hệ thống kéo thả, lớp phủ neo và các demo kiến trúc frontend.',
+      description: 'Khám phá hạ tầng UI của DinQorAI, các thành phần React, hệ thống kéo thả, lớp phủ neo và các demo kiến trúc frontend.',
     },
     infra: {
       title: 'Hệ thống hạ tầng UI',
-      description: 'Tìm hiểu cách Xander Lab xây dựng hạ tầng UI tái sử dụng, hệ thống định vị và kiến trúc frontend bền vững.',
+      description: 'Tìm hiểu cách DinQorAI xây dựng hạ tầng UI tái sử dụng, hệ thống định vị và kiến trúc frontend bền vững.',
     },
     modules: {
       title: 'Mô-đun frontend tương tác',
-      description: 'Khám phá các mô-đun frontend thực tế và demo tương tác được xây dựng bằng React tại Xander Lab.',
+      description: 'Khám phá các mô-đun frontend thực tế và demo tương tác được xây dựng bằng React tại DinQorAI.',
     },
     components: {
       title: 'Trưng bày thành phần React',
-      description: 'Duyệt các thành phần React tái sử dụng, hướng dẫn triển khai và ví dụ UI tương tác từ Xander Lab.',
+      description: 'Duyệt các thành phần React tái sử dụng, hướng dẫn triển khai và ví dụ UI tương tác từ DinQorAI.',
     },
     default: {
       title: 'Tài nguyên kỹ thuật frontend',
-      description: 'Khám phá tài nguyên kỹ thuật frontend và demo UI tương tác của Xander Lab.',
+      description: 'Khám phá tài nguyên kỹ thuật frontend và demo UI tương tác của DinQorAI.',
     },
   },
   admin: {

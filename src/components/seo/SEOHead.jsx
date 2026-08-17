@@ -7,10 +7,10 @@
 
 import { Helmet } from 'react-helmet-async';
 
-const SITE_URL = 'https://xander.dsircity.top';
-const SITE_NAME = 'Xander Lab';
+const SITE_URL = 'https://dinqor.cn';
+const SITE_NAME = 'DinQorAI';
 const DEFAULT_OG_IMAGE = `${SITE_URL}/og-image.png`;
-const BRAND_KEYWORDS = 'xanderblog, 博客, xander博客, xanderlab, xander-lab';
+const BRAND_KEYWORDS = 'dinqorai, 博客, dinqor博客, dinqorai博客, dinqor';
 
 /**
  * SEOHead - 页面级 SEO 元信息注入

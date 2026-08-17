@@ -4,7 +4,7 @@ import process from 'node:process';
 import axios from 'axios';
 
 const ROOT = process.cwd();
-const HOST = process.env.INDEXNOW_HOST || 'xander.dsircity.top';
+const HOST = process.env.INDEXNOW_HOST || 'dinqor.cn';
 const KEY_FILE = process.env.INDEXNOW_KEY_FILE || 'e37f04dea21c4c038138db8ada5e62bc.txt';
 const SITEMAP = process.env.INDEXNOW_SITEMAP || path.join(ROOT, 'dist', 'sitemap.xml');
 const KEY_PATH = path.isAbsolute(KEY_FILE) ? KEY_FILE : path.join(ROOT, 'public', KEY_FILE);

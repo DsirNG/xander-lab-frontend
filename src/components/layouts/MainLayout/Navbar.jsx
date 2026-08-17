@@ -161,7 +161,7 @@ const Navbar = () => {
                     <div className={styles.navContent}>
                         <Link to="/" className={styles.logoArea} onClick={() => setIsMobileMenuOpen(false)}>
                             <span className={styles.logoText}>
-                                Xander Lab
+                                DinQorAI
                             </span>
                         </Link>
 

@@ -1,5 +1,5 @@
 @echo off
-REM Xander Lab Frontend - 阿里云镜像仓库部署脚本 (Windows版本)
+REM DinQorAI Frontend - 阿里云镜像仓库部署脚本 (Windows版本)
 REM 功能：
 REM   1. 打包镜像
 REM   2. 上传到阿里云个人镜像仓库
@@ -148,7 +148,7 @@ set FULL_IMAGE_NAME=!REGISTRY_URL!/!REGISTRY_NAMESPACE!/!IMAGE_NAME!:!TAG!
 set LOCAL_IMAGE_NAME=!IMAGE_NAME!:!TAG!
 
 echo ========================================
-echo   Xander Lab Frontend - 阿里云部署
+echo   DinQorAI Frontend - 阿里云部署
 echo ========================================
 echo.
 echo 配置信息:
@@ -299,7 +299,7 @@ call :deploy
 goto :end
 
 :show_help
-echo Xander Lab Frontend - 阿里云镜像仓库部署脚本 (Windows版本)
+echo DinQorAI Frontend - 阿里云镜像仓库部署脚本 (Windows版本)
 echo.
 echo 使用方法:
 echo   deploy-aliyun.bat [options]

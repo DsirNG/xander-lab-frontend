@@ -2,7 +2,7 @@
  * 博客发布页本地存储助手
  * Blog Publish Storage Helpers
  * @module features/blog/services/publishStorage
- * @author Xander Lab Team
+ * @author DinQorAI Team
  * @created 2026-08-13
  */
 

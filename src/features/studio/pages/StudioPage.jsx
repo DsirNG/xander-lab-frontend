@@ -71,9 +71,9 @@ export default function StudioPage() {
           aria-label="返回上一页"
           className="mb-3 inline-flex items-center gap-2 rounded-full bg-accent/5 px-3 py-1 text-micro font-bold uppercase tracking-widest text-accent transition-colors hover:bg-accent/10"
         >
-          <img src="/logo-512.png" alt="Xander Lab" className="h-5 w-5 rounded object-cover" />
+          <img src="/logo-512.png" alt="DinQorAI" className="h-5 w-5 rounded object-cover" />
           <FolderKanban className="h-3.5 w-3.5" />
-          Xander Lab Studio
+          DinQorAI Studio
         </button>
         <div className="text-xl font-black text-ink sm:text-2xl">
           选择入口，进入构建工作流

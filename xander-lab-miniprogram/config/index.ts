@@ -2,7 +2,7 @@ import { defineConfig } from '@tarojs/cli'
 import path from 'node:path'
 
 export default defineConfig({
-  projectName: 'xander-lab-miniprogram',
+  projectName: 'dinqorai-miniprogram',
   date: '2026-07-22',
   designWidth: 390,
   deviceRatio: { 390: 2 },
@@ -20,7 +20,7 @@ export default defineConfig({
       port: 10086,
       proxy: {
         '/api': {
-          target: 'http://xander.dsircity.top',
+          target: 'https://api.dinqor.cn',
           changeOrigin: true,
         },
       },

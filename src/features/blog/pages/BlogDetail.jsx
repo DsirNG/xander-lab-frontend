@@ -249,12 +249,12 @@ const BlogDetail = () => {
                     datePublished: blog.date,
                     publisher: {
                         '@type': 'Organization',
-                        name: 'Xander Lab',
-                        logo: { '@type': 'ImageObject', url: 'https://xander.dsircity.top/logo-512.png' }
+                        name: 'DinQorAI',
+                        logo: { '@type': 'ImageObject', url: 'https://dinqor.cn/logo-512.png' }
                     },
                     mainEntityOfPage: {
                         '@type': 'WebPage',
-                        '@id': `https://xander.dsircity.top/blog/${blog.id}/`
+                        '@id': `https://dinqor.cn/blog/${blog.id}/`
                     },
                     keywords: blog.tags?.join(', ') || ''
                 }}

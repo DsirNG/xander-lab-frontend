@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
 /**
- * Xander Lab SEO 工具集 (ES Module版本)
+ * DinQorAI SEO 工具集 (ES Module版本)
  * 集成sitemap生成、搜索引擎提交等功能
  *
- * @author Xander Lab Team
+ * @author DinQorAI Team
  * @version 1.0.0
  */
 
@@ -29,7 +29,7 @@ try {
 
 // 配置常量
 const CONFIG = {
-  HOST: 'xander.dsircity.top',
+  HOST: 'dinqor.cn',
   API_KEY: '7a05bd37ef5d47a3b0a1157e8421a998',
   PUBLIC_DIR: path.join(__dirname, 'public'),
   SITEMAP_FILE: 'sitemap.xml',
@@ -106,7 +106,7 @@ class SitemapGenerator {
       priority: 1.0,
       image: {
         url: `${this.baseUrl}/og-image.png`,
-        title: 'Xander Lab UI Infrastructure Showcase',
+        title: 'DinQorAI UI Infrastructure Showcase',
         caption: 'Cutting-edge UI infrastructure systems and interactive components platform'
       }
     });
@@ -194,7 +194,7 @@ class SearchEngineSubmitter {
       }, {
         headers: {
           'Content-Type': 'application/json; charset=utf-8',
-          'User-Agent': 'XanderLab-SEO-Tools/1.0'
+          'User-Agent': 'DinQorAI-SEO-Tools/1.0'
         },
         timeout: 15000
       });
@@ -301,7 +301,7 @@ class SEOTools {
    * 完整的SEO流程
    */
   static async runFullProcess() {
-    Logger.header('Xander Lab SEO 自动化流程');
+    Logger.header('DinQorAI SEO 自动化流程');
 
     try {
       // 1. 生成sitemap
@@ -350,7 +350,7 @@ async function main() {
 
   if (args.length === 0 || args.includes('--help') || args.includes('-h')) {
     console.log(`
-Xander Lab SEO 工具集
+DinQorAI SEO 工具集
 =====================
 
 用法:

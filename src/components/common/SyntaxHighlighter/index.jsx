@@ -1,4 +1,4 @@
-/** Lightweight Prism registry for the languages rendered by Xander Lab. */
+/** Lightweight Prism registry for the languages rendered by DinQorAI. */
 import { PrismLight } from 'react-syntax-highlighter'
 import bash from 'react-syntax-highlighter/dist/esm/languages/prism/bash'
 import css from 'react-syntax-highlighter/dist/esm/languages/prism/css'

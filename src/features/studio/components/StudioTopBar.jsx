@@ -31,7 +31,7 @@ export default function StudioTopBar({
         >
           <img
             src="/logo-512.png"
-            alt="Xander Lab"
+            alt="DinQorAI"
             className="h-8 w-8 rounded-lg object-cover"
           />
         </button>

@@ -1,4 +1,4 @@
-﻿/**
+/**
  * French translations
  * Traductions françaises
  */
@@ -294,6 +294,12 @@ export default {
       description: 'Cette version n’est plus disponible. Actualisez la page pour continuer.',
       refresh: 'Actualiser maintenant'
     },
+    domainRedirect: {
+      title: 'Site migré',
+      description: 'Ce site a migré vers le nouveau domaine dinqor.cn. Veuillez visiter le nouveau domaine pour le contenu le plus récent et toutes les fonctionnalités.',
+      goToNew: 'Aller sur dinqor.cn',
+      stay: 'Rester ici'
+    },
     aria: {
       mainNav: 'Navigation principale',
       openMenu: 'Ouvrir le menu',
@@ -315,7 +321,7 @@ export default {
       authSuccess: 'Authentification réussie, bienvenue',
       authFailed: 'Échec de l\'authentification, vérifiez vos identifiants',
       loginAccess: 'Accès par connexion',
-      loginDesc: 'Obtenez l\'accès complet à Xander Lab, la gestion du blog et les données multidimensionnelles.',
+      loginDesc: 'Obtenez l\'accès complet à DinQorAI, la gestion du blog et les données multidimensionnelles.',
       emailLabel: 'Adresse email',
       emailPlaceholder: 'Entrez votre adresse email',
       codeLabel: 'Code de vérification',
@@ -540,7 +546,7 @@ export default {
       emptyHint: 'Créez un e-mail programmé, choisissez l’heure et rédigez le message.',
       addTitle: 'Nouvel e-mail programmé',
       sideIntro: 'Créez une fois et touchez les destinataires à l’heure prévue.',
-      senderHint: 'Les messages sont envoyés depuis le compte de vérification Xander Lab.',
+      senderHint: 'Les messages sont envoyés depuis le compte de vérification DinQorAI.',
       recipientEmail: 'E-mail du destinataire',
       recipientPlaceholder: 'nom@exemple.com',
       scheduledAt: 'Heure d’envoi',
@@ -680,7 +686,7 @@ export default {
     performance: 'Performance'
   },
   features: {
-    title: 'Pourquoi créer Xander Lab ?',
+    title: 'Pourquoi créer DinQorAI ?',
     desc: 'Dans le développement de projets, nous rencontrons souvent des problèmes et des besoins répétitifs. En documentant ces expériences pratiques, nous pouvons nous aider à réviser et consolider nos connaissances, tout en fournissant des références à d\'autres développeurs.',
     composable: {
       title: 'Prêt à l\'emploi',
@@ -1072,7 +1078,7 @@ export default {
     },
     previews: {
       agent: { newTask: 'Nouvelle tâche', saved: 'Enregistré', topic: 'Sujet', topicValue: 'Créer des composants accessibles', schedule: 'Planification', scheduleValue: 'Chaque lundi · 09:00', article: 'Article', generating: 'Génération', nextRun: '● Prochaine exécution : 26 mai 2026', synced: 'Synchronisé' },
-      email: { to: 'À', subscribers: 'Abonnés', cc: 'CC', subject: 'Mise à jour hebdomadaire de Xander Lab', greeting: 'Bonjour,', body: 'Voici notre mise à jour de la semaine.', signature: 'L’équipe Xander Lab', schedule: 'Chaque vendredi' },
+      email: { to: 'À', subscribers: 'Abonnés', cc: 'CC', subject: 'Mise à jour hebdomadaire de DinQorAI', greeting: 'Bonjour,', body: 'Voici notre mise à jour de la semaine.', signature: 'L’équipe DinQorAI', schedule: 'Chaque vendredi' },
       demo: { preview: 'Aperçu', code: 'Code', button: 'Bouton', primary: 'Principal', secondary: 'Secondaire', ghost: 'Fantôme' }
     },
     articles: { title: 'Derniers articles', all: 'Voir tous les articles', items: { accessibility: { date: '18 mai 2026', title: 'Créer des composants accessibles', tag: 'Développement' }, designTokens: { date: '11 mai 2026', title: 'Les design tokens en pratique', tag: 'Design' }, automation: { date: '4 mai 2026', title: 'Automatiser votre travail planifié', tag: 'Productivité' } } }
@@ -1080,23 +1086,23 @@ export default {
   seo: {
     home: {
       title: 'Infrastructure UI et présentation de composants interactifs',
-      description: 'Découvrez l\'infrastructure UI de Xander Lab, les composants React, les systèmes de glisser-déposer, les overlays ancrés et les démonstrations d\'architecture frontend.',
+      description: 'Découvrez l\'infrastructure UI de DinQorAI, les composants React, les systèmes de glisser-déposer, les overlays ancrés et les démonstrations d\'architecture frontend.',
     },
     infra: {
       title: 'Systèmes d\'infrastructure UI',
-      description: 'Découvrez comment Xander Lab aborde l\'infrastructure UI réutilisable, les systèmes de positionnement et l\'architecture frontend résiliente.',
+      description: 'Découvrez comment DinQorAI aborde l\'infrastructure UI réutilisable, les systèmes de positionnement et l\'architecture frontend résiliente.',
     },
     modules: {
       title: 'Modules frontend interactifs',
-      description: 'Explorez des modules frontend pratiques et des démonstrations interactives construites avec React chez Xander Lab.',
+      description: 'Explorez des modules frontend pratiques et des démonstrations interactives construites avec React chez DinQorAI.',
     },
     components: {
       title: 'Vitrine de composants React',
-      description: 'Parcourez les composants React réutilisables, les guides d\'implémentation et les exemples UI interactifs de Xander Lab.',
+      description: 'Parcourez les composants React réutilisables, les guides d\'implémentation et les exemples UI interactifs de DinQorAI.',
     },
     default: {
       title: 'Ressources d\'ingénierie frontend',
-      description: 'Explorez les ressources d\'ingénierie frontend et les démonstrations UI interactives de Xander Lab.',
+      description: 'Explorez les ressources d\'ingénierie frontend et les démonstrations UI interactives de DinQorAI.',
     },
   },
   admin: {

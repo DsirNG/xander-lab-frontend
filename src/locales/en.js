@@ -1,4 +1,4 @@
-﻿/**
+/**
  * English translations
  * 英语翻译资源
  */
@@ -302,6 +302,12 @@ export default {
       description: 'This version is no longer available. Refresh the page to continue.',
       refresh: 'Refresh now'
     },
+    domainRedirect: {
+      title: 'Site migrated',
+      description: 'This site has migrated to the new domain dinqor.cn. Please visit the new domain for the latest content and full features.',
+      goToNew: 'Go to dinqor.cn',
+      stay: 'Stay here'
+    },
     aria: {
       mainNav: 'Main navigation',
       openMenu: 'Open menu',
@@ -323,7 +329,7 @@ export default {
       authSuccess: 'Authentication successful, welcome through the security gateway',
       authFailed: 'Authentication failed, please check your credentials',
       loginAccess: 'Login Access',
-      loginDesc: 'Get access to Xander Lab full features, blog management, and multi-dimensional data.',
+      loginDesc: 'Get access to DinQorAI full features, blog management, and multi-dimensional data.',
       emailLabel: 'Email',
       emailPlaceholder: 'Enter your email address',
       codeLabel: 'Verification Code',
@@ -548,7 +554,7 @@ export default {
       emptyHint: 'Create a scheduled email, choose a delivery time, and write your message.',
       addTitle: 'New scheduled email',
       sideIntro: 'Create once and reach recipients on schedule.',
-      senderHint: 'Messages are sent from the Xander Lab verification email account.',
+      senderHint: 'Messages are sent from the DinQorAI verification email account.',
       recipientEmail: 'Recipient email',
       recipientPlaceholder: 'name@example.com',
       scheduledAt: 'Delivery time',
@@ -688,7 +694,7 @@ export default {
     performance: 'Performance'
   },
   features: {
-    title: 'Why Build Xander Lab?',
+    title: 'Why Build DinQorAI?',
     desc: 'In project development, we often encounter repetitive problems and requirements. By documenting and organizing these practical experiences, we can help ourselves review and consolidate knowledge, while also providing references for other developers. All content comes from real projects, including complete source code and implementation ideas.',
     composable: {
       title: 'Ready to Use',
@@ -1001,7 +1007,7 @@ export default {
         welcomeTitle: 'Welcome to System Lab',
         welcomeReject: 'I\'m familiar, decline',
         startTour: 'Start Tutorial',
-        welcomeDesc: 'Detected that the system architecture pool is in its initial empty state, and this is your first time entering Xander-Lab Workspace. To help you get familiar with this "4-in-1" hot-reload sandbox, we have built in a complete skeleton of the global notification system (Toast). Would you like to spend 30 seconds of real time following the spotlight to experience how to assemble, compile, and launch components?',
+        welcomeDesc: 'Detected that the system architecture pool is in its initial empty state, and this is your first time entering DinQorAI Workspace. To help you get familiar with this "4-in-1" hot-reload sandbox, we have built in a complete skeleton of the global notification system (Toast). Would you like to spend 30 seconds of real time following the spotlight to experience how to assemble, compile, and launch components?',
         fileExtensionHint: 'It is recommended to use standard frontend extensions such as'
       }
     }
@@ -1080,7 +1086,7 @@ export default {
     },
     previews: {
       agent: { newTask: 'New task', saved: 'Saved', topic: 'Topic', topicValue: 'Building accessible components', schedule: 'Schedule', scheduleValue: 'Every Monday · 09:00', article: 'Article', generating: 'Generating', nextRun: '● Next run: May 26, 2026', synced: 'Synced' },
-      email: { to: 'To', subscribers: 'Subscribers', cc: 'CC', subject: 'Weekly update from Xander Lab', greeting: 'Hi there,', body: "Here's your weekly update.", signature: 'The Xander Lab Team', schedule: 'Every Friday' },
+      email: { to: 'To', subscribers: 'Subscribers', cc: 'CC', subject: 'Weekly update from DinQorAI', greeting: 'Hi there,', body: "Here's your weekly update.", signature: 'The DinQorAI Team', schedule: 'Every Friday' },
       demo: { preview: 'Preview', code: 'Code', button: 'Button', primary: 'Primary', secondary: 'Secondary', ghost: 'Ghost' }
     },
     articles: { title: 'Latest Articles', all: 'View all articles', items: { accessibility: { date: 'May 18, 2026', title: 'Building Accessible Components', tag: 'Development' }, designTokens: { date: 'May 11, 2026', title: 'Design Tokens in Practice', tag: 'Design' }, automation: { date: 'May 4, 2026', title: 'Automate Your Workflow with Schedules', tag: 'Productivity' } } }
@@ -1088,23 +1094,23 @@ export default {
   seo: {
     home: {
       title: 'UI Infrastructure & Interactive Component Showcase',
-      description: 'Explore Xander Lab UI infrastructure, React components, drag-and-drop systems, anchored overlays, and frontend architecture demonstrations.',
+      description: 'Explore DinQorAI UI infrastructure, React components, drag-and-drop systems, anchored overlays, and frontend architecture demonstrations.',
     },
     infra: {
       title: 'UI Infrastructure Systems',
-      description: 'Learn how Xander Lab approaches reusable UI infrastructure, positioning systems, and resilient frontend architecture.',
+      description: 'Learn how DinQorAI approaches reusable UI infrastructure, positioning systems, and resilient frontend architecture.',
     },
     modules: {
       title: 'Interactive Frontend Modules',
-      description: 'Explore practical frontend modules and interactive demonstrations built with React at Xander Lab.',
+      description: 'Explore practical frontend modules and interactive demonstrations built with React at DinQorAI.',
     },
     components: {
       title: 'React Component Showcase',
-      description: 'Browse reusable React components, implementation guides, and interactive UI examples from Xander Lab.',
+      description: 'Browse reusable React components, implementation guides, and interactive UI examples from DinQorAI.',
     },
     default: {
       title: 'Frontend Engineering Resource',
-      description: "Explore Xander Lab's frontend engineering resources and interactive UI demonstrations.",
+      description: "Explore DinQorAI's frontend engineering resources and interactive UI demonstrations.",
     },
   },
   admin: {

@@ -1,7 +1,7 @@
 /**
  * 应用入口文件
  * @module main
- * @author Xander Lab Team
+ * @author DinQorAI Team
  * @created 2026-02-05
  */
 

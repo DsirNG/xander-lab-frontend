@@ -82,7 +82,7 @@ export default function Article() {
   }, [id])
 
   useShareAppMessage(() => ({
-    title: article?.title || 'Xander Lab',
+    title: article?.title || 'DinQorAI',
     path: `/pages/article/index?id=${id}`,
   }))
 

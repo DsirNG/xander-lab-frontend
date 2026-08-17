@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 // 配置常量
-const HOST = 'xander.dsircity.top';
+const HOST = 'dinqor.cn';
 const API_KEY_FILE = 'e37f04dea21c4c038138db8ada5e62bc.txt';
 
 // 从文件读取API密钥
@@ -66,7 +66,7 @@ async function notifyBing(urls = URL_LIST, apiKey = getApiKey()) {
     }, {
       headers: {
         'Content-Type': 'application/json; charset=utf-8',
-        'User-Agent': 'XanderLab-Bot/1.0'
+        'User-Agent': 'DinQorAI-Bot/1.0'
       },
       timeout: 10000 // 10秒超时
     });

@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Japanese translations
  * 日本語翻訳リソース
  */
@@ -294,6 +294,12 @@ export default {
       description: '現在のバージョンは利用できません。ページを再読み込みしてください。',
       refresh: '今すぐ再読み込み'
     },
+    domainRedirect: {
+      title: 'サイト移転のお知らせ',
+      description: '当サイトは新しいドメイン dinqor.cn に移転しました。最新のコンテンツと全機能を利用するには、新しいドメインをご利用ください。',
+      goToNew: 'dinqor.cn へ移動',
+      stay: 'このまま利用'
+    },
     aria: {
       mainNav: 'メインナビゲーション',
       openMenu: 'メニューを開く',
@@ -315,7 +321,7 @@ export default {
       authSuccess: '認証成功、ようこそ',
       authFailed: '認証に失敗しました。認証情報を確認してください',
       loginAccess: 'ログインアクセス',
-      loginDesc: 'Xander Labの全機能、ブログ管理、多次元データへのアクセスを取得。',
+      loginDesc: 'DinQorAIの全機能、ブログ管理、多次元データへのアクセスを取得。',
       emailLabel: 'メールアドレス',
       emailPlaceholder: 'メールアドレスを入力',
       codeLabel: '確認コード',
@@ -540,7 +546,7 @@ export default {
       emptyHint: '予約メールを作成し、送信時刻と内容を設定してください。',
       addTitle: '予約メールを作成',
       sideIntro: '一度作成すれば、予定どおりに宛先へ届きます。',
-      senderHint: 'Xander Lab の認証メールアカウントから送信されます。',
+      senderHint: 'DinQorAI の認証メールアカウントから送信されます。',
       recipientEmail: '送信先メール',
       recipientPlaceholder: 'name@example.com',
       scheduledAt: '送信時刻',
@@ -680,7 +686,7 @@ export default {
     performance: 'パフォーマンス'
   },
   features: {
-    title: 'なぜ Xander Lab を作るのか？',
+    title: 'なぜ DinQorAI を作るのか？',
     desc: 'プロジェクト開発では、繰り返し発生する問題や要件に直面します。これらの実践経験を記録・整理することで、知識の復習と定着を助け、他の開発者にも参考を提供します。',
     composable: {
       title: 'すぐに使える',
@@ -993,7 +999,7 @@ export default {
         welcomeTitle: 'システムラボへようこそ',
         welcomeReject: '慣れているのでスキップ',
         startTour: 'チュートリアルを開始',
-        welcomeDesc: 'システムアーキテクチャプールが初期空状態であり、Xander-Lab Workspaceへの初回訪問です。「4-in-1」ホットリロードサンドボックスに慣れるため、グローバル通知システム（Toast）の骨格を内蔵しました。30秒間スポットライトに従って体験しますか？',
+        welcomeDesc: 'システムアーキテクチャプールが初期空状態であり、DinQorAI Workspaceへの初回訪問です。「4-in-1」ホットリロードサンドボックスに慣れるため、グローバル通知システム（Toast）の骨格を内蔵しました。30秒間スポットライトに従って体験しますか？',
         fileExtensionHint: '標準的なフロントエンド拡張子を使用することをお勧めします'
       }
     }
@@ -1072,7 +1078,7 @@ export default {
     },
     previews: {
       agent: { newTask: '新しいタスク', saved: '保存済み', topic: 'テーマ', topicValue: 'アクセシブルなコンポーネントを作る', schedule: 'スケジュール', scheduleValue: '毎週月曜 · 09:00', article: '記事', generating: '生成中', nextRun: '● 次回実行：2026年5月26日', synced: '同期済み' },
-      email: { to: '宛先', subscribers: '購読者', cc: 'CC', subject: 'Xander Lab 週間アップデート', greeting: 'こんにちは、', body: '今週のアップデートをお届けします。', signature: 'Xander Lab チーム', schedule: '毎週金曜' },
+      email: { to: '宛先', subscribers: '購読者', cc: 'CC', subject: 'DinQorAI 週間アップデート', greeting: 'こんにちは、', body: '今週のアップデートをお届けします。', signature: 'DinQorAI チーム', schedule: '毎週金曜' },
       demo: { preview: 'プレビュー', code: 'コード', button: 'ボタン', primary: 'プライマリ', secondary: 'セカンダリ', ghost: 'ゴースト' }
     },
     articles: { title: '最新記事', all: 'すべての記事を見る', items: { accessibility: { date: '2026年5月18日', title: 'アクセシブルなコンポーネントを作る', tag: '開発' }, designTokens: { date: '2026年5月11日', title: 'デザイントークンの実践', tag: 'デザイン' }, automation: { date: '2026年5月4日', title: '予約で日常業務を自動化する', tag: '生産性' } } }
@@ -1080,23 +1086,23 @@ export default {
   seo: {
     home: {
       title: 'UI インフラとインタラクティブコンポーネントショーケース',
-      description: 'Xander Lab の UI インフラ、React コンポーネント、ドラッグ＆ドロップシステム、アンカーオーバーレイ、フロントエンドアーキテクチャのデモを紹介します。',
+      description: 'DinQorAI の UI インフラ、React コンポーネント、ドラッグ＆ドロップシステム、アンカーオーバーレイ、フロントエンドアーキテクチャのデモを紹介します。',
     },
     infra: {
       title: 'UI インフラストラクチャシステム',
-      description: 'Xander Lab が再利用可能な UI インフラ、位置決めシステム、堅牢なフロントエンドアーキテクチャにどう取り組むかを学べます。',
+      description: 'DinQorAI が再利用可能な UI インフラ、位置決めシステム、堅牢なフロントエンドアーキテクチャにどう取り組むかを学べます。',
     },
     modules: {
       title: 'インタラクティブフロントエンドモジュール',
-      description: 'Xander Lab で React を使って作られた実践的なフロントエンドモジュールとインタラクティブデモを探索します。',
+      description: 'DinQorAI で React を使って作られた実践的なフロントエンドモジュールとインタラクティブデモを探索します。',
     },
     components: {
       title: 'React コンポーネントショーケース',
-      description: 'Xander Lab の再利用可能な React コンポーネント、実装ガイド、インタラクティブ UI の例を閲覧できます。',
+      description: 'DinQorAI の再利用可能な React コンポーネント、実装ガイド、インタラクティブ UI の例を閲覧できます。',
     },
     default: {
       title: 'フロントエンドエンジニアリングリソース',
-      description: 'Xander Lab のフロントエンドエンジニアリングリソースとインタラクティブ UI デモを探索します。',
+      description: 'DinQorAI のフロントエンドエンジニアリングリソースとインタラクティブ UI デモを探索します。',
     },
   },
   admin: {

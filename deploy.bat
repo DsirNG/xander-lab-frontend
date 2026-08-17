@@ -1,5 +1,5 @@
 @echo off
-REM Xander Lab Frontend - Docker Deployment Script for Windows
+REM DinQorAI Frontend - Docker Deployment Script for Windows
 REM Usage: deploy.bat [environment]
 REM Example: deploy.bat production
 
@@ -13,7 +13,7 @@ set ENVIRONMENT=%1
 if "%ENVIRONMENT%"=="" set ENVIRONMENT=production
 
 echo ========================================
-echo   Xander Lab Frontend Deployment
+echo   DinQorAI Frontend Deployment
 echo ========================================
 echo.
 

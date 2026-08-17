@@ -1,10 +1,10 @@
-# Xander Lab Frontend
+# DinQorAI Frontend
 
 一个现代化的 React 组件库和交互系统展示平台，采用企业级架构标准构建。
 
 ##  项目简介
 
-Xander Lab 是一个知识分享与学习平台，专注于记录和分享在项目开发过程中积累的实践经验。这里包含了：
+DinQorAI 是一个知识分享与学习平台，专注于记录和分享在项目开发过程中积累的实践经验。这里包含了：
 
 - **UI 组件** - 在项目中遇到或自己开发的组件，提供完整源码可直接复用
 - **自定义 Hooks** - 封装好的业务逻辑和通用功能，减少重复开发
@@ -314,7 +314,7 @@ docker run -p 80:80 xander-lab-frontend
 
 ##  作者
 
-Xander Lab Team
+DinQorAI Team
 
 ##  相关链接
 

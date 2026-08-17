@@ -12,7 +12,7 @@ const menus = [
   ['▤', '我的文章'],
   ['◴', '浏览历史'],
   ['□', '意见反馈'],
-  ['ⓘ', '关于 Xander Lab'],
+  ['ⓘ', '关于 DinQorAI'],
 ]
 
 function showToast(title: string) {

@@ -26,7 +26,7 @@ services:
       retries: 3
       start_period: 40s
     labels:
-      - "com.xander-lab.description=Xander Lab Frontend Application"
+      - "com.xander-lab.description=DinQorAI Frontend Application"
       - "com.xander-lab.version=1.0.0"
 
 networks:

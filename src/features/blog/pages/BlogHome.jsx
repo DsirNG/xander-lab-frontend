@@ -145,16 +145,16 @@ const BlogHome = () => {
             {/* SEO: 博客列表页 meta */}
             <SEOHead
                 title={t('blog.latestPosts', 'Blog')}
-                description="Xander Lab 技术博客 — 前端架构、React 实践、UI 组件设计等技术文章"
+                description="DinQorAI 技术博客 — 前端架构、React 实践、UI 组件设计等技术文章"
                 canonical="/blog/"
                 ogType="website"
                 jsonLd={{
                     '@context': 'https://schema.org',
                     '@type': 'CollectionPage',
-                    name: 'Blog | Xander Lab',
+                    name: 'Blog | DinQorAI',
                     description: 'Technical articles on frontend architecture, React patterns, and UI component design',
-                    url: 'https://xander.dsircity.top/blog/',
-                    isPartOf: { '@id': 'https://xander.dsircity.top/#website' }
+                    url: 'https://dinqor.cn/blog/',
+                    isPartOf: { '@id': 'https://dinqor.cn/#website' }
                 }}
             />
 

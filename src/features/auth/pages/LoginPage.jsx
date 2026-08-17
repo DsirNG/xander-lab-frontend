@@ -113,7 +113,7 @@ const LoginPage = () => {
                         </div>
                     </div>
                     <div className="flex flex-col min-w-0">
-                        <span className="font-black tracking-tighter text-xl text-ink leading-none truncate">XANDER LAB</span>
+                        <span className="font-black tracking-tighter text-xl text-ink leading-none truncate">DINQOR AI</span>
                         <span className="text-micro font-bold text-ink-faint leading-none mt-1 tracking-[0.2em] truncate">{t('auth.login.unifiedAuth')}</span>
                     </div>
                 </Link>

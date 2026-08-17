@@ -37,7 +37,7 @@ const skipPatterns = [
 ]
 
 const brandNames = new Set([
-  'Xander Lab', 'Xander-Lab', 'React', 'Vue', 'Angular',
+  'DinQorAI', 'DinQorAI', 'React', 'Vue', 'Angular',
   'TailwindCSS', 'Tailwind', 'Vite', 'Framer Motion',
   'Markdown', 'CSS', 'HTML', 'JSX', 'TSX', 'API', 'DOM',
   'RAF', 'ARIA', 'Context API', 'Hooks', 'Toast', 'Popover',

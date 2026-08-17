@@ -56,6 +56,7 @@
 | `DataTable` | `@components/common/DataTable` | 分页列表（定时邮箱 / 博客管理 / 定时发文等） | `columns: { key, title, width, align, render }[]`、`rows`、`loading`、`error`、`emptyTitle/emptyHint/emptyIcon`、`minWidth`、`paginationDisabled`、分页 props；列表区自带最小高度（220px），表格体随容器高度滚动。**列表页布局铁律：页面容器必须 `flex h-full min-h-0 flex-col overflow-hidden`，把 DataTable 放在 `flex-1 min-h-0` 的包一层里，让表格占满剩余空间、由表格内部滚动（外层 `minWidth` 管横向滚动）**；禁止给页面容器加 `overflow-y-auto` 让整页滚动，表头会因此脱离视口。参考样板：`src/features/blog/pages/BlogPlans.jsx`。 |
 | `Toast` | `@components/common/Toast` | 用户操作结果反馈 | 优先由 `http.js` 处理请求错误；页面主动提示使用 `window.__toast` 或现有 Toast 上下文，勿自行造 toast。 |
 | `TourSpotlight` | `@components/common/TourSpotlight` | 新功能引导和聚焦提示 | `targetConfig`、`onSkip`。 |
+| `DomainRedirectModal` | `@components/common/DomainRedirectModal` | 非官方域名 (dinqor.cn) 访问时的迁移提示弹窗 | 自挂载组件；仅生产环境且 hostname 非 `dinqor.cn`/`www.dinqor.cn` 且非本地网段时展示，点击「前往 dinqor.cn」跳转新域名；文案走 `common.domainRedirect.*`。 |
 | `LoadingSpinner` | `@components/common/LoadingSpinner` | 页面或局部加载态 | `fullScreen`、`text`、`size: sm/md/lg`。 |
 | `ThreeViewer` | `@features/img2three/components/ThreeViewer` | legacy nodes、ObjectSculptSpec 与图片浮雕协议的受限 WebGL 预览 | `sceneSpec`、`onReady({exportGlb})`、`onError(error)`；异步构建可取消，勿执行模型返回的 TS。 |
 | `ErrorBoundary` | `@components/common/ErrorBoundary` | 路由或高风险子树兜底 | 使用在页面/模块边界，不替代请求错误处理。 |

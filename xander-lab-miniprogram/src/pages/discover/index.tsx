@@ -34,7 +34,7 @@ export default function Discover() {
   return (
     <View className="page discover">
       <View className="top-title">
-        <Text className="brand">Xander Lab</Text>
+        <Text className="brand">DinQorAI</Text>
         <View className="avatar">X</View>
       </View>
       <View className="search-box" onClick={() => Taro.navigateTo({ url: '/pages/search/index' })}>

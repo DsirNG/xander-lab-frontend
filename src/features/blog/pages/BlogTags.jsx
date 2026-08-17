@@ -109,7 +109,7 @@ const BlogTags = () => {
             {/* SEO: 标签云页面 meta */}
             <SEOHead
                 title={t('blog.allTags', 'Tags')}
-                description="Xander Lab 博客标签 — 按主题浏览前端技术文章"
+                description="DinQorAI 博客标签 — 按主题浏览前端技术文章"
                 canonical="/blog/tags/"
             />
 

@@ -81,7 +81,7 @@ const buildClassic = (subject, body, time, zone) => wrapDocument(subject, `
     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:600px;background:#fffcf7;border-radius:4px;box-shadow:0 14px 36px rgba(26,35,50,.08);">
       <tr><td style="height:5px;background:#1d4ed8;font-size:0;line-height:0;">&nbsp;</td></tr>
       <tr><td style="padding:26px 28px 8px;">
-        <div style="font-size:10px;letter-spacing:.22em;color:#1d4ed8;font-weight:700;">XANDER LAB</div>
+        <div style="font-size:10px;letter-spacing:.22em;color:#1d4ed8;font-weight:700;">DINQOR AI</div>
         <h1 style="margin:14px 0 0;font-size:22px;line-height:1.3;font-weight:700;color:#0f172a;letter-spacing:-.02em;">${escapeHtml(subject)}</h1>
       </td></tr>
       <tr><td style="padding:8px 28px 26px;">
@@ -101,7 +101,7 @@ const buildMinimal = (subject, body, time, zone) => wrapDocument(subject, `
     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:540px;background:#ffffff;">
       <tr><td style="padding:30px 26px 8px;">
         <div style="width:28px;height:3px;background:#171717;"></div>
-        <div style="margin-top:16px;font-size:10px;letter-spacing:.18em;color:#737373;">XANDER LAB</div>
+        <div style="margin-top:16px;font-size:10px;letter-spacing:.18em;color:#737373;">DINQOR AI</div>
         <h1 style="margin:10px 0 0;font-size:24px;line-height:1.25;font-weight:600;color:#0a0a0a;letter-spacing:-.03em;">${escapeHtml(subject)}</h1>
       </td></tr>
       <tr><td style="padding:8px 26px 30px;">
@@ -140,7 +140,7 @@ const buildNotice = (subject, body, time, zone) => wrapDocument(subject, `
     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:590px;background:#ffffff;border-radius:16px;overflow:hidden;border:1px solid #c5d5d8;">
       <tr><td style="padding:22px 24px;background:#0f766e;color:#ecfdf5;">
         <table role="presentation" width="100%" cellspacing="0" cellpadding="0"><tr>
-          <td style="font-size:10px;letter-spacing:.2em;opacity:.85;">XANDER LAB</td>
+          <td style="font-size:10px;letter-spacing:.2em;opacity:.85;">DINQOR AI</td>
           <td align="right" style="font-size:10px;opacity:.75;">NOTICE</td>
         </tr></table>
         <h1 style="margin:12px 0 0;font-size:20px;line-height:1.35;font-weight:700;color:#fff;">${escapeHtml(subject)}</h1>
@@ -160,7 +160,7 @@ export const buildReminderPreviewHtml = ({
     scheduledLabel = '—',
     timezone = 'Asia/Shanghai',
 }) => {
-    const title = subject || 'Xander Lab';
+    const title = subject || 'DinQorAI';
     const text = message || '';
     const contentType = resolveContentType(text, templateId);
 

@@ -51,7 +51,7 @@ const ComponentShare = () => {
     const [tourStep, setTourStep] = useState(-1);
 
     useEffect(() => {
-        const isFirstTime = !localStorage.getItem('hasSeenTourXanderLab');
+        const isFirstTime = !localStorage.getItem('hasSeenTourDinQorAI');
         if (isFirstTime) setTimeout(() => setTourStep(-2), 600);
     }, []);
 
@@ -78,7 +78,7 @@ const ComponentShare = () => {
             const handleFinish = (e) => {
                 if (e.target.closest('#tour-run-btn')) {
                     setTourStep(-1);
-                    localStorage.setItem('hasSeenTourXanderLab', 'true');
+                    localStorage.setItem('hasSeenTourDinQorAI', 'true');
                     setTimeout(() => toast.success("太棒了！您已精通组件漫游沙盒，享受丝滑的编码之旅吧！"), 1000);
                 }
             };
@@ -160,7 +160,7 @@ const ComponentShare = () => {
                 ...meta, libraryCode: combinedLibCode, sourceCode: combinedLibCode, wrapperCode, cssCode,
                 scenarios: scenarios.map(s => ({ titleZh: s.titleZh, titleEn: s.titleEn, descriptionZh: s.titleZh, demoCode: s.code, codeSnippet: s.code }))
             });
-            toast.success("组件架构已成功同步至 Xander-Lab 全局资产库");
+            toast.success("组件架构已成功同步至 DinQorAI 全局资产库");
             navigate('/components');
         } catch (err) { toast.error(err.message); }
     };
@@ -208,7 +208,7 @@ const ComponentShare = () => {
 
     const handleTourSpotlightSkip = () => {
         setTourStep(-1);
-        localStorage.setItem('hasSeenTourXanderLab', 'true');
+        localStorage.setItem('hasSeenTourDinQorAI', 'true');
         toast.info("已中止向导。您可以随时点击右上角「新手向导」重新开始。");
     };
 
@@ -277,7 +277,7 @@ const ComponentShare = () => {
                 onConfirmDeleteScenario={confirmDeleteScenario}
                 onCloseHelpModal={() => setHelpModalOpen(false)} onApplySample={handleApplySample}
                 onCloseEditScenarioModal={() => setEditScenarioModalOpen(false)} onEditScenarioSubmit={handleEditScenarioSubmit}
-                onTourWelcomeSkip={() => { setTourStep(-1); localStorage.setItem('hasSeenTourXanderLab', 'true'); toast.info("已跳过向导。如果后续需要，您随时可以点击页面右上角的「新手向导」按钮重新进入。"); }}
+                onTourWelcomeSkip={() => { setTourStep(-1); localStorage.setItem('hasSeenTourDinQorAI', 'true'); toast.info("已跳过向导。如果后续需要，您随时可以点击页面右上角的「新手向导」按钮重新进入。"); }}
                 onTourWelcomeStart={() => setTourStep(0)}
                 onTourSpotlightSkip={handleTourSpotlightSkip}
                 newFileName={newFileName} setNewFileName={setNewFileName}

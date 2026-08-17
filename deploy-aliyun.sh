@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Xander Lab Frontend - 阿里云镜像仓库部署脚本
+# DinQorAI Frontend - 阿里云镜像仓库部署脚本
 # 功能：
 #   1. 打包镜像
 #   2. 上传到阿里云个人镜像仓库
@@ -95,7 +95,7 @@ parse_args() {
 # 显示帮助信息
 show_help() {
   cat << EOF
-${GREEN}Xander Lab Frontend - 阿里云镜像仓库部署脚本${NC}
+${GREEN}DinQorAI Frontend - 阿里云镜像仓库部署脚本${NC}
 
 ${YELLOW}使用方法:${NC}
   ./deploy-aliyun.sh [options]
@@ -298,7 +298,7 @@ show_deployment_info() {
 # 主函数
 main() {
   echo -e "${GREEN}========================================${NC}"
-  echo -e "${GREEN}  Xander Lab Frontend - 阿里云部署${NC}"
+  echo -e "${GREEN}  DinQorAI Frontend - 阿里云部署${NC}"
   echo -e "${GREEN}========================================${NC}"
   echo ""
   

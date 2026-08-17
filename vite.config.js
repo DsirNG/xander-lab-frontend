@@ -8,7 +8,7 @@ const projectRoot = fileURLToPath(new URL('.', import.meta.url))
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, projectRoot, 'VITE_')
-  const apiProxyTarget = env.VITE_API_PROXY_TARGET?.trim() || 'https://xander.dsircity.top'
+  const apiProxyTarget = env.VITE_API_PROXY_TARGET?.trim() || 'https://api.dinqor.cn'
   const appVersion = `${Date.now()}`
 
   const versionManifestPlugin = {
@@ -75,7 +75,7 @@ export default defineConfig(({ mode }) => {
           // rewrite: (path) => path.replace(/^\/api/, ''),
         },
         '/studio-api': {
-          target: 'https://xander.dsircity.top',
+          target: 'https://api.dinqor.cn',
           changeOrigin: true,
           secure: false,
           timeout: 600000, // 10 minutes for large file uploads

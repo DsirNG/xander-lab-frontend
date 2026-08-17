@@ -355,5 +355,5 @@ const apiUrl = import.meta.env.VITE_API_BASE_URL;
 ---
 
 **最后更新**: 2026-02-05
-**维护者**: Xander Lab Team
+**维护者**: DinQorAI Team
 

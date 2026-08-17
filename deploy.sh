@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Xander Lab Frontend - Docker Deployment Script
+# DinQorAI Frontend - Docker Deployment Script
 # Usage: ./deploy.sh [environment]
 # Example: ./deploy.sh production
 
@@ -20,7 +20,7 @@ ENVIRONMENT=${1:-production}
 INDEXNOW_ENABLED=${INDEXNOW_ENABLED:-true}
 
 echo -e "${GREEN}========================================${NC}"
-echo -e "${GREEN}  Xander Lab Frontend Deployment${NC}"
+echo -e "${GREEN}  DinQorAI Frontend Deployment${NC}"
 echo -e "${GREEN}========================================${NC}"
 echo ""
 

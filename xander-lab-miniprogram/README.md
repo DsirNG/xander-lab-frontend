@@ -1,4 +1,4 @@
-# Xander Lab 小程序
+# DinQorAI 小程序
 
 基于 Taro 4、React 18 和 TypeScript 的微信/支付宝小程序版本，按照提供的 8 张 UI 设计图实现。同一套代码构建双端：`@tarojs/plugin-platform-weapp` + `@tarojs/plugin-platform-alipay`。
 
@@ -27,7 +27,7 @@ pnpm dev:h5
 
 ## 后端接口
 
-文章数据与 PC 端共用 `/api/blog` 接口。H5 开发环境通过本地代理访问后端，微信/支付宝小程序直接请求 `https://xander.dsircity.top`。发布前需要在微信公众平台 / 支付宝开放平台把该域名加入 request 合法域名（经 web-view 嵌入 PC 页面的功能还需配 web-view 业务域名）。
+文章数据与 PC 端共用 `/api/blog` 接口。H5 开发环境通过本地代理访问后端，微信/支付宝小程序直接请求 `https://api.dinqor.cn`。发布前需要在微信公众平台 / 支付宝开放平台把该域名加入 request 合法域名（经 web-view 嵌入 PC 页面的功能还需配 web-view 业务域名）。
 
 ## 登录（微信一键登录）
 

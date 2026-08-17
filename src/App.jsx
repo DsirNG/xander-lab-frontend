@@ -1,7 +1,7 @@
 /**
  * 应用根组件
  * @module App
- * @author Xander Lab Team
+ * @author DinQorAI Team
  * @created 2026-02-05
  */
 
@@ -16,6 +16,7 @@ import { AuthSessionProvider } from './features/auth/context/AuthSessionProvider
 import { NotificationProvider } from './features/blog/context/NotificationContext'
 import AppUpdateModal from './features/appUpdate/AppUpdateModal'
 import useAppUpdate from './features/appUpdate/useAppUpdate'
+import DomainRedirectModal from './components/common/DomainRedirectModal'
 
 /**
  * 全局 Toast 桥接
@@ -57,6 +58,7 @@ function App() {
           </AuthSessionProvider>
           <ToastContainer />
           <AppUpdateModal isOpen={updateRequired} />
+          <DomainRedirectModal />
         </ToastProvider>
       </ErrorBoundary>
     </HelmetProvider>
