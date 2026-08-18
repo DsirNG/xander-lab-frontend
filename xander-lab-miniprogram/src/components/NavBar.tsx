@@ -12,6 +12,8 @@ interface NavBarProps {
   onBack?: () => void
   /** 右侧插槽（垂直居中，与胶囊同一水平） */
   right?: ReactNode
+  /** 左侧插槽（当没有返回键时展示） */
+  left?: ReactNode
   background?: string
   color?: string
 }
@@ -24,6 +26,7 @@ export function NavBar({
   title = '',
   showBack = false,
   onBack,
+  left,
   right,
   background = '#ffffff',
   color = '#111111',
@@ -48,7 +51,7 @@ export function NavBar({
               <View className="nav-bar-back" onClick={onBack ?? (() => Taro.navigateBack())}>
                 <Icon name="back" />
               </View>
-            ) : null}
+            ) : left}
           </View>
           <Text className="nav-bar-title" style={{ maxWidth: titleMaxWidth }}>
             {title}
