@@ -12,6 +12,7 @@ import { authApi } from '@/api/auth'
 import { tokenStorage } from '@/api/http'
 import { Markdown } from '@/components/Markdown'
 import { TabBar } from '@/components/TabBar'
+import { NavBar } from '@/components/NavBar'
 import { Icon } from '@/components/Icon'
 import { ensureLogin, useUserStore } from '@/store/user'
 import { formatDateTime } from '@/utils/format'
@@ -333,17 +334,18 @@ export default function Chat() {
     <View className="chat-page">
       {active ? (
         <>
-          <View className="chat-nav">
-            <View className="chat-nav-back" onClick={backToList}>
-              <Icon name="back" />
-            </View>
-            <Text className="chat-nav-title">{active.conversation.title || '智能体会话'}</Text>
-            {running ? (
-              <Text className="chat-cancel" onClick={handleCancel}>
-                停止
-              </Text>
-            ) : null}
-          </View>
+          <NavBar
+            title={active.conversation.title || '智能体会话'}
+            showBack
+            onBack={backToList}
+            right={
+              running ? (
+                <Text className="chat-cancel" onClick={handleCancel}>
+                  停止
+                </Text>
+              ) : undefined
+            }
+          />
           <ScrollView
             scrollY
             className="chat-messages"
@@ -420,13 +422,15 @@ export default function Chat() {
         </>
       ) : (
         <>
-          <View className="chat-nav">
-            <Text className="chat-nav-title">对话</Text>
-            <View className="chat-new-btn" onClick={backToList}>
-              <Icon name="chat" />
-              <Text>智能体</Text>
-            </View>
-          </View>
+          <NavBar
+            title="对话"
+            right={
+              <View className="chat-new-btn" onClick={backToList}>
+                <Icon name="chat" />
+                <Text>智能体</Text>
+              </View>
+            }
+          />
           <ScrollView scrollY className="chat-session-list">
             {!user ? (
               <View className="chat-empty">

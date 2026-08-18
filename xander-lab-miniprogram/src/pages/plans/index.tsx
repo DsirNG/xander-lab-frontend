@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { planApi, type Plan } from '@/api/plans'
 import { PlanCard } from '@/components/PlanCard'
 import { TabBar } from '@/components/TabBar'
+import { NavBar } from '@/components/NavBar'
 import { Icon } from '@/components/Icon'
 import { useUserStore } from '@/store/user'
 import './index.scss'
@@ -118,9 +119,7 @@ export default function Plans() {
   if (!user && !loading) {
     return (
       <View className="page">
-        <View className="page-header">
-          <Text>计划</Text>
-        </View>
+        <NavBar title="计划" />
         <View className="empty-state">
           <Text className="empty-title">登录后查看定时发文计划</Text>
           <Text className="empty-desc">登录后可使用博客智能体的定时发文能力</Text>
@@ -138,16 +137,18 @@ export default function Plans() {
 
   return (
     <View className="page plans-page">
-      <View className="page-header">
-        <Text>计划</Text>
-        <View
-          className="new-plan-btn"
-          onClick={() => Taro.navigateTo({ url: '/pages/plan-create/index' })}
-        >
-          <Icon name="plus" />
-          <Text>新建</Text>
-        </View>
-      </View>
+      <NavBar
+        title="计划"
+        right={
+          <View
+            className="new-plan-btn"
+            onClick={() => Taro.navigateTo({ url: '/pages/plan-create/index' })}
+          >
+            <Icon name="plus" />
+            <Text>新建</Text>
+          </View>
+        }
+      />
       {loading && plans.length === 0 ? <Text className="data-state">正在加载计划...</Text> : null}
       {loadedOnce && plans.length === 0 ? (
         <View className="empty-state">

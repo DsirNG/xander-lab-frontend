@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { blogApi, type Article, type Category, type Tag } from '@/api/blog'
 import { ArticleCard } from '@/components/ArticleCard'
 import { TabBar } from '@/components/TabBar'
+import { NavBar } from '@/components/NavBar'
 import { Icon } from '@/components/Icon'
 import './index.scss'
 
@@ -85,9 +86,7 @@ export default function Blog() {
 
   return (
     <View className="page blog-page">
-      <View className="page-header">
-        <Text>博客</Text>
-      </View>
+      <NavBar title="博客" />
       <View className="inline-search">
         <Icon name="search" />
         <Input

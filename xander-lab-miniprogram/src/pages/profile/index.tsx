@@ -3,6 +3,7 @@ import Taro, { useDidShow } from '@tarojs/taro'
 import { useState } from 'react'
 import { Icon } from '@/components/Icon'
 import { TabBar } from '@/components/TabBar'
+import { NavBar } from '@/components/NavBar'
 import { authApi } from '@/api/auth'
 import { pointsApi } from '@/api/points'
 import { useUserStore } from '@/store/user'
@@ -77,9 +78,7 @@ export default function Profile() {
 
   return (
     <View className="page profile-page">
-      <View className="page-header">
-        <Text>我的</Text>
-      </View>
+      <NavBar title="我的" />
       <View className="profile-head">
         <View className="profile-avatar">
           {user?.avatar ? (
