@@ -25,14 +25,6 @@ page {
   width: 24px;
   height: 24px;
 }
-.page-header {
-  height: 72px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 20px;
-  font-weight: 700;
-}
 .tab-bar-placeholder {
   height: calc(49px + env(safe-area-inset-bottom, 34px));
 }
@@ -573,23 +565,6 @@ page {
   display: flex;
   flex-direction: column;
   background: #fff;
-}
-.chat-nav {
-  height: 88px;
-  padding: 0 24px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  border-bottom: 1px solid #f2f2f7;
-  flex-shrink: 0;
-}
-.chat-nav-title {
-  flex: 1;
-  font-size: 17px;
-  font-weight: 700;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .chat-new-btn {
   display: flex;
