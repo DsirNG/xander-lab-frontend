@@ -1,5 +1,5 @@
 import { ScrollView, Text, Textarea, View } from '@tarojs/components'
-import Taro, { useDidShow } from '@tarojs/taro'
+import Taro, { useDidHide, useDidShow } from '@tarojs/taro'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import {
   agentApi,
@@ -43,10 +43,13 @@ export default function Chat() {
   const pollTimerRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const activeIdRef = useRef<number | null>(null)
   const closeStreamRef = useRef<(() => void) | null>(null)
+  const streamRunRef = useRef<number | null>(null)
   const [streamAnswer, setStreamAnswer] = useState('')
   const [streamThought, setStreamThought] = useState('')
+  const [streamTool, setStreamTool] = useState<string | null>(null)
 
   const closeStream = () => {
+    streamRunRef.current = null
     closeStreamRef.current?.()
     closeStreamRef.current = null
   }
@@ -55,24 +58,32 @@ export default function Chat() {
     closeStream()
     setStreamAnswer('')
     setStreamThought('')
-    // 事件流只负责增量推送 answer/thought；tool 过程与终态由轮询快照兜底。
-    closeStreamRef.current = connectAgentStream(id, runVersion, {
+    setStreamTool(null)
+    streamRunRef.current = runVersion
+    // WS 推全量 thought / 增量 answer_delta；tool 过程实时渲染，终态由轮询快照接管。
+    const close = connectAgentStream(id, runVersion, {
       onEvent: ev => {
         if (ev.event === 'answer_delta') {
           setStreamAnswer(prev => prev + String(ev.data ?? ''))
         } else if (ev.event === 'answer') {
           setStreamAnswer(String(ev.data ?? ''))
         } else if (ev.event === 'thought') {
-          setStreamThought(prev => prev + String(ev.data ?? ''))
+          setStreamThought(String(ev.data ?? ''))
+        } else if (ev.event === 'tool_start') {
+          setStreamTool(String((ev.data as { tool?: string } | undefined)?.tool ?? '内部工具'))
+        } else if (ev.event === 'tool_end' || ev.event === 'tool_error') {
+          setStreamTool(null)
         }
       },
       onClose: () => {
-        closeStreamRef.current = null
+        // 只清自己的引用，防止旧连接的异步回调误清新连接的句柄。
+        if (closeStreamRef.current === close) closeStreamRef.current = null
       },
       onError: () => {
-        closeStreamRef.current = null
+        if (closeStreamRef.current === close) closeStreamRef.current = null
       },
     })
+    closeStreamRef.current = close
   }
 
   const stopPolling = () => {
@@ -85,25 +96,37 @@ export default function Chat() {
   const startPolling = useCallback((id: number) => {
     const check = async () => {
       try {
+        // WS 健康时轮询作为看门狗不发请求；WS 关闭/失败后由轮询接管收尾与兜底。
+        if (closeStreamRef.current) return
         const snapshot = await agentApi.getConversation(id)
         if (activeIdRef.current !== id) return
         setActive(snapshot)
         setRunning(snapshot.conversation.status === 'running')
         if (snapshot.conversation.status !== 'running') {
           stopPolling()
-          // 快照已含完整 answer，清掉流式兜底的增量文本，避免重复展示。
+          // 终态：快照已有完整消息，流式增量全部作废。
           setStreamAnswer('')
           setStreamThought('')
+          setStreamTool(null)
+          streamRunRef.current = null
           if (snapshot.conversation.status === 'failed') {
             showToast(snapshot.conversation.errorMessage || '生成失败，请重试')
           }
-        } else {
-          // 轮询快照已持久化的消息（thought/answer）与事件流重叠时，以快照为准去重。
-          if (snapshot.messages.some(msg => msg.kind === 'thought')) setStreamThought('')
-          if (snapshot.messages.some(msg => msg.kind === 'answer')) setStreamAnswer('')
+        } else if (
+          streamRunRef.current != null &&
+          snapshot.conversation.runVersion !== streamRunRef.current
+        ) {
+          // 事件流对应的轮次已被新轮次取代，增量作废，交给快照展示。
+          setStreamAnswer('')
+          setStreamThought('')
+          setStreamTool(null)
         }
       } catch {
         stopPolling()
+        closeStream()
+        setStreamAnswer('')
+        setStreamThought('')
+        setStreamTool(null)
         setRunning(false)
       }
     }
@@ -111,6 +134,29 @@ export default function Chat() {
     setRunning(true)
     check()
     pollTimerRef.current = setInterval(check, POLL_INTERVAL)
+  }, [])
+
+  /**
+   * 恢复当前会话：进入页面 / 切 tab 回来 / 打开会话时统一走这里，
+   * running 状态恢复事件流 + 轮询，避免只轮询不开流。
+   */
+  const resumeActive = useCallback(() => {
+    const savedId = activeIdRef.current ?? Taro.getStorageSync<number>(ACTIVE_KEY)
+    if (!savedId) return
+    agentApi
+      .getConversation(savedId)
+      .then(snapshot => {
+        if (activeIdRef.current != null && activeIdRef.current !== savedId) return
+        activeIdRef.current = savedId
+        setActive(snapshot)
+        setRunning(snapshot.conversation.status === 'running')
+        if (snapshot.conversation.status === 'running') {
+          if (snapshot.conversation.runVersion)
+            openStream(savedId, snapshot.conversation.runVersion)
+          startPolling(savedId)
+        }
+      })
+      .catch(() => undefined)
   }, [])
 
   useEffect(() => {
@@ -147,17 +193,16 @@ export default function Chat() {
     } else {
       setLoading(false)
     }
-    const savedId = Taro.getStorageSync<number>(ACTIVE_KEY)
-    if (savedId && !activeIdRef.current) {
-      agentApi
-        .getConversation(savedId)
-        .then(snapshot => {
-          activeIdRef.current = savedId
-          setActive(snapshot)
-          if (snapshot.conversation.status === 'running') startPolling(savedId)
-        })
-        .catch(() => undefined)
-    }
+    resumeActive()
+  })
+
+  useDidHide(() => {
+    // tab 切换只触发 hide 不卸载页面：暂停轮询与事件流，回后台后由 useDidShow 恢复。
+    stopPolling()
+    closeStream()
+    setStreamAnswer('')
+    setStreamThought('')
+    setStreamTool(null)
   })
 
   useEffect(() => {
@@ -171,12 +216,16 @@ export default function Chat() {
   const openConversation = async (id: number) => {
     try {
       const snapshot = await agentApi.getConversation(id)
+      closeStream()
       activeIdRef.current = id
       Taro.setStorageSync(ACTIVE_KEY, id)
       setActive(snapshot)
+      setStreamAnswer('')
+      setStreamThought('')
+      setStreamTool(null)
       setRunning(snapshot.conversation.status === 'running')
       if (snapshot.conversation.status === 'running') {
-        // 重新进入进行中的会话：恢复事件流，轮询快照兜底。
+        // 重新进入进行中的会话：恢复事件流，轮询作为看门狗兜底。
         if (snapshot.conversation.runVersion) openStream(id, snapshot.conversation.runVersion)
         startPolling(id)
       }
@@ -193,6 +242,9 @@ export default function Chat() {
     setRunning(false)
     setInput('')
     setScrollTarget('')
+    setStreamAnswer('')
+    setStreamThought('')
+    setStreamTool(null)
     Taro.removeStorageSync(ACTIVE_KEY)
     loadConversations()
   }
@@ -309,6 +361,14 @@ export default function Chat() {
                   }
                 />
               ))}
+              {streamTool ? (
+                <View className="msg-row">
+                  <View className="msg-tool">
+                    <View className="msg-tool-dot" />
+                    <Text>正在使用工具：{streamTool}</Text>
+                  </View>
+                </View>
+              ) : null}
               {streamThought ? (
                 <View className="msg-row">
                   <View className="msg-thought">
@@ -325,7 +385,7 @@ export default function Chat() {
                   </View>
                 </View>
               ) : null}
-              {running ? (
+              {running && !streamAnswer ? (
                 <View className="msg-row">
                   <View className="chat-typing">
                     <View className="dot" />
