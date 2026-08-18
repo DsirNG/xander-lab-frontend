@@ -680,6 +680,18 @@ page {
   color: #23232b;
   border-bottom-left-radius: 6px;
 }
+.msg-stream-cursor {
+  display: inline-block;
+  margin-left: 2px;
+  color: #536dfe;
+  font-weight: 700;
+  animation: msg-cursor-blink 0.9s step-start infinite;
+}
+@keyframes msg-cursor-blink {
+  50% {
+    opacity: 0;
+  }
+}
 .msg-thought {
   max-width: 92%;
   background: #fbfbfe;

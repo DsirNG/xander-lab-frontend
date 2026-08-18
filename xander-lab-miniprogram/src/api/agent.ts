@@ -8,7 +8,7 @@ export type AgentConversation = {
   title: string
   status: ConversationStatus
   errorMessage?: string | null
-  runVersion: number
+  runVersion?: number | null
   cancelRequested?: number
   shareToken?: string | null
   createdAt: string

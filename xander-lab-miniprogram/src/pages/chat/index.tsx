@@ -7,6 +7,7 @@ import {
   type AgentMessage,
   type ConversationSnapshot,
 } from '@/api/agent'
+import { connectAgentStream } from '@/api/agentSocket'
 import { authApi } from '@/api/auth'
 import { tokenStorage } from '@/api/http'
 import { Markdown } from '@/components/Markdown'
@@ -41,6 +42,38 @@ export default function Chat() {
 
   const pollTimerRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const activeIdRef = useRef<number | null>(null)
+  const closeStreamRef = useRef<(() => void) | null>(null)
+  const [streamAnswer, setStreamAnswer] = useState('')
+  const [streamThought, setStreamThought] = useState('')
+
+  const closeStream = () => {
+    closeStreamRef.current?.()
+    closeStreamRef.current = null
+  }
+
+  const openStream = (id: number, runVersion: number) => {
+    closeStream()
+    setStreamAnswer('')
+    setStreamThought('')
+    // 事件流只负责增量推送 answer/thought；tool 过程与终态由轮询快照兜底。
+    closeStreamRef.current = connectAgentStream(id, runVersion, {
+      onEvent: ev => {
+        if (ev.event === 'answer_delta') {
+          setStreamAnswer(prev => prev + String(ev.data ?? ''))
+        } else if (ev.event === 'answer') {
+          setStreamAnswer(String(ev.data ?? ''))
+        } else if (ev.event === 'thought') {
+          setStreamThought(prev => prev + String(ev.data ?? ''))
+        }
+      },
+      onClose: () => {
+        closeStreamRef.current = null
+      },
+      onError: () => {
+        closeStreamRef.current = null
+      },
+    })
+  }
 
   const stopPolling = () => {
     if (pollTimerRef.current) {
@@ -58,9 +91,16 @@ export default function Chat() {
         setRunning(snapshot.conversation.status === 'running')
         if (snapshot.conversation.status !== 'running') {
           stopPolling()
+          // 快照已含完整 answer，清掉流式兜底的增量文本，避免重复展示。
+          setStreamAnswer('')
+          setStreamThought('')
           if (snapshot.conversation.status === 'failed') {
             showToast(snapshot.conversation.errorMessage || '生成失败，请重试')
           }
+        } else {
+          // 轮询快照已持久化的消息（thought/answer）与事件流重叠时，以快照为准去重。
+          if (snapshot.messages.some(msg => msg.kind === 'thought')) setStreamThought('')
+          if (snapshot.messages.some(msg => msg.kind === 'answer')) setStreamAnswer('')
         }
       } catch {
         stopPolling()
@@ -74,7 +114,11 @@ export default function Chat() {
   }, [])
 
   useEffect(() => {
-    return stopPolling
+    return () => {
+      stopPolling()
+      closeStream()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const loadConversations = useCallback(async () => {
@@ -131,7 +175,11 @@ export default function Chat() {
       Taro.setStorageSync(ACTIVE_KEY, id)
       setActive(snapshot)
       setRunning(snapshot.conversation.status === 'running')
-      if (snapshot.conversation.status === 'running') startPolling(id)
+      if (snapshot.conversation.status === 'running') {
+        // 重新进入进行中的会话：恢复事件流，轮询快照兜底。
+        if (snapshot.conversation.runVersion) openStream(id, snapshot.conversation.runVersion)
+        startPolling(id)
+      }
     } catch (e) {
       showToast(e instanceof Error ? e.message : '会话加载失败')
     }
@@ -139,6 +187,7 @@ export default function Chat() {
 
   const backToList = () => {
     stopPolling()
+    closeStream()
     activeIdRef.current = null
     setActive(null)
     setRunning(false)
@@ -183,7 +232,8 @@ export default function Chat() {
       }
       setInput('')
       try {
-        await agentApi.sendMessage(targetId, content)
+        const runVersion = await agentApi.sendMessage(targetId, content)
+        if (runVersion) openStream(targetId, runVersion)
       } catch (e) {
         const message = e instanceof Error ? e.message : ''
         if (message.includes('timeout') || message.includes('超时')) {
@@ -259,6 +309,22 @@ export default function Chat() {
                   }
                 />
               ))}
+              {streamThought ? (
+                <View className="msg-row">
+                  <View className="msg-thought">
+                    <Text className="msg-thought-title">思考过程</Text>
+                    <Text>{truncate(streamThought, 120)}</Text>
+                  </View>
+                </View>
+              ) : null}
+              {streamAnswer ? (
+                <View className="msg-row">
+                  <View className="msg-bubble ai stream">
+                    <Text>{streamAnswer}</Text>
+                    <Text className="msg-stream-cursor">▍</Text>
+                  </View>
+                </View>
+              ) : null}
               {running ? (
                 <View className="msg-row">
                   <View className="chat-typing">
