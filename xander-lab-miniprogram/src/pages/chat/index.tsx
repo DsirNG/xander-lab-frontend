@@ -1,4 +1,10 @@
-import { ScrollView, Text, View } from '@tarojs/components'
+import {
+  ScrollView,
+  Text,
+  View,
+  type CommonEventFunction,
+  type ITouchEvent,
+} from '@tarojs/components'
 import Taro, { useDidHide, useDidShow } from '@tarojs/taro'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
@@ -83,15 +89,60 @@ export default function Chat() {
   const [creating, setCreating] = useState(false)
   const [thoughtOpen, setThoughtOpen] = useState<Record<number, boolean>>({})
   const [scrollTarget, setScrollTarget] = useState('')
-  const [showHistory, setShowHistory] = useState(false)
+  const [drawerPhase, setDrawerPhase] = useState<'closed' | 'open' | 'closing'>('closed')
+  const drawerPhaseRef = useRef(drawerPhase)
+  const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  useEffect(() => {
+    drawerPhaseRef.current = drawerPhase
+  }, [drawerPhase])
 
   const openDrawer = useCallback(() => {
-    setShowHistory(true)
+    if (drawerPhaseRef.current !== 'closed') return
+    if (closeTimerRef.current) {
+      clearTimeout(closeTimerRef.current)
+      closeTimerRef.current = null
+    }
+    setDrawerPhase('open')
   }, [])
 
   const closeDrawer = useCallback(() => {
-    setShowHistory(false)
+    if (drawerPhaseRef.current !== 'open') return
+    if (closeTimerRef.current) return
+    setDrawerPhase('closing')
+    closeTimerRef.current = setTimeout(() => {
+      setDrawerPhase('closed')
+      closeTimerRef.current = null
+    }, 420)
   }, [])
+
+  // 左右滑动手势：右滑打开抽屉，左滑关闭。水平位移占优且超过阈值才算。
+  const touchStartRef = useRef<{ x: number; y: number } | null>(null)
+  const SWIPE_THRESHOLD = 60
+
+  const onShellTouchStart: CommonEventFunction = useCallback(e => {
+    const touch = (e as ITouchEvent).touches[0]
+    touchStartRef.current = { x: touch.clientX, y: touch.clientY }
+  }, [])
+
+  const onShellTouchEnd: CommonEventFunction = useCallback(
+    e => {
+      const start = touchStartRef.current
+      touchStartRef.current = null
+      if (!start) return
+      const end = (e as ITouchEvent).changedTouches[0]
+      if (!end) return
+      const dx = end.clientX - start.x
+      const dy = end.clientY - start.y
+      if (Math.abs(dx) < SWIPE_THRESHOLD || Math.abs(dx) <= Math.abs(dy) * 1.2) return
+      if (dx > 0) {
+        openDrawer()
+      } else {
+        closeDrawer()
+      }
+    },
+    [openDrawer, closeDrawer],
+  )
 
   const pollTimerRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const activeIdRef = useRef<number | null>(null)
@@ -375,7 +426,17 @@ export default function Chat() {
 
   return (
     <View className="chat-page">
-      <View className={`chat-main-shell ${showHistory ? 'is-drawer-open' : ''}`}>
+      <View
+        className={`chat-main-shell ${
+          drawerPhase === 'open'
+            ? 'is-drawer-open'
+            : drawerPhase === 'closing'
+              ? 'is-drawer-closing'
+              : ''
+        }`}
+        onTouchStart={onShellTouchStart}
+        onTouchEnd={onShellTouchEnd}
+      >
         {active ? (
           <>
             <NavBar
@@ -530,11 +591,11 @@ export default function Chat() {
           </>
         )}
         <View
-          className={`chat-drawer-dismiss ${showHistory ? 'show' : ''}`}
+          className={`chat-drawer-dismiss ${drawerPhase !== 'closed' ? 'show' : ''}`}
           role="button"
           ariaRole="button"
           ariaLabel={CHAT_COPY.history}
-          catchMove={showHistory}
+          catchMove={drawerPhase !== 'closed'}
           onClick={event => {
             event.stopPropagation()
             closeDrawer()
@@ -542,7 +603,8 @@ export default function Chat() {
         />
       </View>
       <ChatDrawer
-        visible={showHistory}
+        visible={drawerPhase !== 'closed'}
+        closing={drawerPhase === 'closing'}
         onClose={closeDrawer}
         conversations={conversations}
         activeId={activeIdRef.current}

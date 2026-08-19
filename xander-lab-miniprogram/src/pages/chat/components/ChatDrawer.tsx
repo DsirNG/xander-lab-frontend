@@ -8,6 +8,7 @@ import { useNavbarLayout } from '@/hooks/useNavbarLayout'
 
 interface ChatDrawerProps {
   visible: boolean
+  closing?: boolean
   onClose: () => void
   conversations: AgentConversation[]
   activeId: number | null
@@ -25,6 +26,7 @@ const PRODUCT_MENUS = [
 
 export function ChatDrawer({
   visible,
+  closing = false,
   onClose,
   conversations,
   activeId,
@@ -44,7 +46,12 @@ export function ChatDrawer({
 
   return (
     <View className="chat-drawer-layer" ariaLabel="最近对话">
-      <View className="chat-drawer-content" role="dialog" ariaRole="dialog" ariaLabel="最近对话">
+      <View
+        className={`chat-drawer-content ${closing ? 'is-closing' : ''}`}
+        role="dialog"
+        ariaRole="dialog"
+        ariaLabel="最近对话"
+      >
         <View className="drawer-header" style={{ paddingTop: statusBarHeight + 16 }}>
           <View className="drawer-brand">
             <View className="drawer-logo">
