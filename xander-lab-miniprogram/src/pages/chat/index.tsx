@@ -1,4 +1,4 @@
-import { ScrollView, Text, View } from '@tarojs/components'
+import { PageMeta, ScrollView, Text, View } from '@tarojs/components'
 import Taro, { useDidHide, useDidShow } from '@tarojs/taro'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
@@ -84,6 +84,14 @@ export default function Chat() {
   const [thoughtOpen, setThoughtOpen] = useState<Record<number, boolean>>({})
   const [scrollTarget, setScrollTarget] = useState('')
   const [showHistory, setShowHistory] = useState(false)
+
+  const openDrawer = useCallback(() => {
+    setShowHistory(true)
+  }, [])
+
+  const closeDrawer = useCallback(() => {
+    setShowHistory(false)
+  }, [])
 
   const pollTimerRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const activeIdRef = useRef<number | null>(null)
@@ -300,7 +308,7 @@ export default function Chat() {
     setStreamThought('')
     setStreamTool(null)
     Taro.removeStorageSync(ACTIVE_KEY)
-    setShowHistory(false)
+    closeDrawer()
   }
 
   const handleSend = async (forcedContent?: string) => {
@@ -367,10 +375,8 @@ export default function Chat() {
 
   return (
     <View className="chat-page">
-      <View
-        className={`chat-main-shell ${showHistory ? 'is-drawer-open' : ''}`}
-        onClick={showHistory ? () => setShowHistory(false) : undefined}
-      >
+      <PageMeta pageStyle={showHistory ? 'overflow: hidden' : undefined} />
+      <View className={`chat-main-shell ${showHistory ? 'is-drawer-open' : ''}`}>
         {active ? (
           <>
             <NavBar
@@ -381,7 +387,7 @@ export default function Chat() {
                   role="button"
                   ariaRole="button"
                   ariaLabel={CHAT_COPY.history}
-                  onClick={() => setShowHistory(true)}
+                  onClick={() => openDrawer()}
                 >
                   <Icon name="more" />
                 </View>
@@ -487,7 +493,7 @@ export default function Chat() {
                   role="button"
                   ariaRole="button"
                   ariaLabel={CHAT_COPY.history}
-                  onClick={() => setShowHistory(true)}
+                  onClick={() => openDrawer()}
                 >
                   <Icon name="more" />
                 </View>
@@ -524,23 +530,21 @@ export default function Chat() {
             </View>
           </>
         )}
-        {showHistory ? (
-          <View
-            className="chat-drawer-dismiss"
-            role="button"
-            ariaRole="button"
-            ariaLabel={CHAT_COPY.history}
-            catchMove
-            onClick={event => {
-              event.stopPropagation()
-              setShowHistory(false)
-            }}
-          />
-        ) : null}
+        <View
+          className={`chat-drawer-dismiss ${showHistory ? 'show' : ''}`}
+          role="button"
+          ariaRole="button"
+          ariaLabel={CHAT_COPY.history}
+          catchMove={showHistory}
+          onClick={event => {
+            event.stopPropagation()
+            closeDrawer()
+          }}
+        />
       </View>
       <ChatDrawer
         visible={showHistory}
-        onClose={() => setShowHistory(false)}
+        onClose={closeDrawer}
         conversations={conversations}
         activeId={activeIdRef.current}
         onSelect={openConversation}

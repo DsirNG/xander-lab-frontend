@@ -40,19 +40,11 @@ export function ChatDrawer({
     ? conversations.filter(c => c.title.toLowerCase().includes(keyword.toLowerCase()))
     : conversations
 
+  if (!visible) return null
+
   return (
-    <View
-      className={`chat-drawer-mask ${visible ? 'show' : ''}`}
-      catchMove={visible}
-      onClick={onClose}
-    >
-      <View
-        className={`chat-drawer-content ${visible ? 'show' : ''}`}
-        role="dialog"
-        ariaRole="dialog"
-        ariaLabel="最近对话"
-        onClick={e => e.stopPropagation()}
-      >
+    <View className="chat-drawer-layer" ariaLabel="最近对话">
+      <View className="chat-drawer-content" role="dialog" ariaRole="dialog" ariaLabel="最近对话">
         <View className="drawer-header" style={{ paddingTop: statusBarHeight + 16 }}>
           <View className="drawer-brand">
             <View className="drawer-logo">

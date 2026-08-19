@@ -60,6 +60,12 @@
   box-sizing: content-box;
 }
 
+// NavBar 默认 position: fixed，在页面根级容器里使用 fixed 存在渲染层不确定因素，
+// 这里改为 absolute：shell 为 relative 全屏容器，视觉一致。
+.chat-page .nav-bar {
+  position: absolute;
+}
+
 .chat-cancel,
 .chat-new-btn,
 .chat-history-trigger {
@@ -387,8 +393,8 @@
   background: var(--chat-ink-disabled);
 }
 
-// Keep the tab bar outside this layer so it stays anchored while the chat
-// surface reveals the history drawer, matching the native app interaction.
+// 抽屉是主面板下方的宿主层：主面板右移让位，露出左侧抽屉。
+// shell 的位移用 keyframes 挂载动画（is-drawer-open 挂 animation 类即播放）。
 .chat-main-shell {
   position: relative;
   z-index: 10;
@@ -398,46 +404,29 @@
   flex-direction: column;
   overflow: hidden;
   background: var(--chat-canvas);
-  transform: translateX(0);
   will-change: transform;
-  backface-visibility: hidden;
-  box-shadow: -12px 0 32px rgba(29, 33, 41, 0);
-  transition:
-    transform 420ms cubic-bezier(0.22, 1, 0.36, 1),
-    box-shadow 420ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .chat-main-shell.is-drawer-open {
-  transform: translateX(78%);
+  animation: chat-main-slide-aside 400ms cubic-bezier(0.33, 0.85, 0.33, 1) forwards;
   box-shadow: -12px 0 32px rgba(29, 33, 41, 0.16);
 }
 
-.chat-drawer-dismiss {
-  position: absolute;
-  z-index: 1000;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  display: block;
-  background: transparent;
+@keyframes chat-main-slide-aside {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(78%);
+  }
 }
 
-.chat-drawer-mask {
+.chat-drawer-layer {
   position: fixed;
-  // The drawer is a layer underneath the chat card. The card slides away to
-  // reveal it, instead of the drawer covering the conversation and tab bar.
-  z-index: 1;
+  z-index: 5;
   inset: 0;
   background: #ffffff;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 420ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.chat-drawer-mask.show {
-  opacity: 1;
-  pointer-events: auto;
 }
 
 .chat-drawer-content {
@@ -451,11 +440,36 @@
   flex-direction: column;
   background: #ffffff;
   box-shadow: var(--chat-drawer-shadow);
-  transform: translateX(0);
+  animation: chat-drawer-slide-in 400ms cubic-bezier(0.33, 0.85, 0.33, 1);
 }
 
-.chat-drawer-content.show {
-  transform: translateX(0);
+@keyframes chat-drawer-slide-in {
+  from {
+    transform: translateX(-100%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+
+// 抽屉打开后，覆盖主面板的透明点击层：关闭抽屉 / 拦截滑动。
+.chat-drawer-dismiss {
+  position: absolute;
+  z-index: 1000;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: block;
+  background: transparent;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.chat-drawer-dismiss.show {
+  visibility: visible;
+  pointer-events: auto;
 }
 
 .drawer-header {
@@ -737,9 +751,13 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .chat-drawer-mask,
+  .chat-main-shell.is-drawer-open {
+    animation: none;
+    transform: translateX(78%);
+  }
+
   .chat-drawer-content {
-    transition-duration: 0ms;
+    animation: none;
   }
 
   .msg-stream-cursor,
