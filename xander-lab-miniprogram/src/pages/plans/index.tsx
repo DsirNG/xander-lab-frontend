@@ -1,13 +1,12 @@
 import { Text, View } from '@tarojs/components'
 import Taro, { useDidShow, useReachBottom } from '@tarojs/taro'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { planApi, type Plan } from '@/api/plans'
 import { PlanCard } from '@/components/PlanCard'
 import { TabBar } from '@/components/TabBar'
 import { NavBar } from '@/components/NavBar'
 import { Icon } from '@/components/Icon'
 import { useUserStore } from '@/store/user'
-import './index.scss'
 import './index.scss'
 
 const PAGE_SIZE = 10
@@ -18,6 +17,7 @@ function showToast(title: string) {
 
 export default function Plans() {
   const user = useUserStore(state => state.user)
+  const userLoaded = useUserStore(state => state.loaded)
   const refreshUser = useUserStore(state => state.refresh)
 
   const [plans, setPlans] = useState<Plan[]>([])
@@ -27,36 +27,31 @@ export default function Plans() {
   const [loadedOnce, setLoadedOnce] = useState(false)
   const [busyId, setBusyId] = useState<number | null>(null)
 
-  const load = useCallback(
-    async (targetPage: number, append: boolean) => {
-      if (!user) return
-      setLoading(true)
-      try {
-        const result = await planApi.list({ page: targetPage, size: PAGE_SIZE })
-        setPlans(prev => (append ? [...prev, ...result.records] : result.records))
-        setTotal(result.total)
-        setPage(targetPage)
-      } catch (e) {
-        showToast(e instanceof Error ? e.message : '计划列表加载失败')
-      } finally {
-        setLoading(false)
-        setLoadedOnce(true)
-      }
-    },
-    [user],
-  )
-
-  useEffect(() => {
-    refreshUser().catch(() => undefined)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  const load = useCallback(async (targetPage: number, append: boolean) => {
+    if (!useUserStore.getState().user) {
+      setLoadedOnce(true)
+      return
+    }
+    setLoading(true)
+    try {
+      const result = await planApi.list({ page: targetPage, size: PAGE_SIZE })
+      setPlans(prev => (append ? [...prev, ...result.records] : result.records))
+      setTotal(result.total)
+      setPage(targetPage)
+    } catch (e) {
+      showToast(e instanceof Error ? e.message : '计划列表加载失败')
+    } finally {
+      setLoading(false)
+      setLoadedOnce(true)
+    }
   }, [])
 
   useDidShow(() => {
-    if (!user) {
-      refreshUser().catch(() => undefined)
-    } else {
-      load(1, false)
+    const restoreAndLoad = async () => {
+      if (!useUserStore.getState().loaded) await refreshUser()
+      await load(1, false)
     }
+    restoreAndLoad().catch(() => setLoadedOnce(true))
   })
 
   useReachBottom(() => {
@@ -64,7 +59,7 @@ export default function Plans() {
   })
 
   const runAction = async (id: number, action: string) => {
-    if (busyId) return
+    if (busyId !== null) return
     setBusyId(id)
     try {
       switch (action) {
@@ -114,6 +109,16 @@ export default function Plans() {
 
   const openDetail = (id: number) => {
     Taro.navigateTo({ url: `/pages/plan-detail/index?id=${id}` })
+  }
+
+  if (!userLoaded && !loadedOnce) {
+    return (
+      <View className="page plans-page">
+        <NavBar title="计划" />
+        <Text className="data-state">正在同步计划...</Text>
+        <TabBar active="calendar" />
+      </View>
+    )
   }
 
   if (!user && !loading) {
@@ -171,9 +176,6 @@ export default function Plans() {
       {loadedOnce && !loading && plans.length > 0 && plans.length >= total ? (
         <Text className="data-state">已展示全部计划</Text>
       ) : null}
-      <View className="fab" onClick={() => Taro.navigateTo({ url: '/pages/plan-create/index' })}>
-        <Icon name="plus" />
-      </View>
       <TabBar active="calendar" />
     </View>
   )

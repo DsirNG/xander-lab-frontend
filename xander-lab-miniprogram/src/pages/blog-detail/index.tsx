@@ -1,9 +1,10 @@
-import { Text, View } from '@tarojs/components'
+import { Button, Text, View } from '@tarojs/components'
 import Taro, { useRouter, useShareAppMessage } from '@tarojs/taro'
 import { useEffect, useState } from 'react'
 import { blogApi, type Article } from '@/api/blog'
 import { Icon } from '@/components/Icon'
 import { Markdown } from '@/components/Markdown'
+import { NavBar } from '@/components/NavBar'
 import './index.scss'
 
 export default function BlogDetail() {
@@ -44,18 +45,15 @@ export default function BlogDetail() {
 
   return (
     <View className="detail-page">
-      <View className="sub-nav">
-        <View className="nav-back" onClick={() => Taro.navigateBack()}>
-          <Icon name="back" />
-        </View>
-        <Text className="sub-nav-title">文章详情</Text>
-        <Text
-          className="share-trigger"
-          onClick={() => Taro.showShareMenu({ withShareTicket: false })}
-        >
-          分享
-        </Text>
-      </View>
+      <NavBar
+        title="文章详情"
+        showBack
+        right={
+          <Button className="share-trigger" openType="share">
+            分享
+          </Button>
+        }
+      />
       {loading ? <Text className="data-state">正在加载文章...</Text> : null}
       {error ? <Text className="data-state error">{error}</Text> : null}
       {article ? (
@@ -79,7 +77,13 @@ export default function BlogDetail() {
           {article.tags.length > 0 ? (
             <View className="tags detail-tags">
               {article.tags.map(tag => (
-                <Text className="tag" key={tag}>
+                <Text
+                  className="tag"
+                  key={tag}
+                  onClick={() =>
+                    Taro.redirectTo({ url: `/pages/blog/index?tag=${encodeURIComponent(tag)}` })
+                  }
+                >
                   {tag}
                 </Text>
               ))}

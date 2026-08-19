@@ -2,6 +2,7 @@ import { Button, Input, Text, View } from '@tarojs/components'
 import Taro, { useDidShow } from '@tarojs/taro'
 import { useState } from 'react'
 import { authApi } from '@/api/auth'
+import { NavBar } from '@/components/NavBar'
 import { useUserStore } from '@/store/user'
 import './index.scss'
 
@@ -12,8 +13,9 @@ function showToast(title: string) {
 }
 
 export default function Login() {
+  const supportsWechatLogin = Taro.getEnv() === Taro.ENV_TYPE.WEAPP
   const setUser = useUserStore(state => state.setUser)
-  const [mode, setMode] = useState<Mode>('wechat')
+  const [mode, setMode] = useState<Mode>(supportsWechatLogin ? 'wechat' : 'password')
   const [account, setAccount] = useState('')
   const [password, setPassword] = useState('')
   const [name, setName] = useState('')
@@ -87,8 +89,31 @@ export default function Login() {
     }
   }
 
+  const showUserAgreement = () => {
+    Taro.showModal({
+      title: '用户协议',
+      content: '请在使用前阅读 DinQorAI 官网公布的用户协议；继续登录或注册即表示你同意该协议。',
+      showCancel: false,
+      confirmText: '知道了',
+    })
+  }
+
+  const openPrivacyPolicy = () => {
+    const openPrivacyContract = (
+      Taro as typeof Taro & {
+        openPrivacyContract?: () => Promise<unknown>
+      }
+    ).openPrivacyContract
+    if (openPrivacyContract) {
+      Promise.resolve(openPrivacyContract()).catch(() => showToast('暂时无法打开隐私政策'))
+    } else {
+      showToast('请在小程序内查看隐私政策')
+    }
+  }
+
   return (
     <View className="login-page">
+      <NavBar title="账号登录" showBack />
       <Text className="login-brand">DinQorAI</Text>
       <Text className="login-subtitle">博客智能体 · 对话 / 计划 / 创作</Text>
 
@@ -105,7 +130,6 @@ export default function Login() {
           <Button className="btn btn-ghost" onClick={() => setMode('password')}>
             账号密码登录
           </Button>
-          <Text className="login-back">登录即代表同意平台的《用户协议》与《隐私政策》</Text>
         </>
       ) : null}
 
@@ -176,6 +200,16 @@ export default function Login() {
           )}
         </>
       ) : null}
+      <View className="login-legal">
+        <Text>登录即代表同意平台的</Text>
+        <Text className="login-legal-link" onClick={showUserAgreement}>
+          《用户协议》
+        </Text>
+        <Text>与</Text>
+        <Text className="login-legal-link" onClick={openPrivacyPolicy}>
+          《隐私政策》
+        </Text>
+      </View>
     </View>
   )
 }

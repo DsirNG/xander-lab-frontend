@@ -28,8 +28,8 @@ export function NavBar({
   onBack,
   left,
   right,
-  background = '#ffffff',
-  color = '#111111',
+  background,
+  color,
 }: NavBarProps) {
   const { statusBarHeight, contentHeight, navBarHeight, titleMaxWidth, rightSafeInset } =
     useNavbarLayout()
@@ -37,8 +37,8 @@ export function NavBar({
   const barStyle: CSSProperties = {
     paddingTop: statusBarHeight,
     height: navBarHeight,
-    background,
-    color,
+    ...(background ? { background } : {}),
+    ...(color ? { color } : {}),
   }
 
   return (
@@ -52,7 +52,11 @@ export function NavBar({
         >
           <View className="nav-bar-side nav-bar-side-left">
             {showBack ? (
-              <View className="nav-bar-back" onClick={onBack ?? (() => Taro.navigateBack())}>
+              <View
+                className="nav-bar-back"
+                hoverClass="nav-bar-back--pressed"
+                onClick={onBack ?? (() => Taro.navigateBack())}
+              >
                 <Icon name="back" />
               </View>
             ) : (

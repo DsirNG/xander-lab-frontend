@@ -100,6 +100,7 @@ export async function request<T>(path: string, options: RequestOptions = {}): Pr
       return request<T>(path, { ...options, _retried: true })
     }
     tokenStorage.clear()
+    Taro.eventCenter.trigger('auth:logout')
     throw new ApiError('未登录或登录已过期', 401)
   }
 

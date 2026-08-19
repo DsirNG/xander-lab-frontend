@@ -101,6 +101,20 @@
 | 图标注册 | `@features/components/registries/iconRegistry` | 增加可配置图标时登记。 |
 | Demo 注册 | `@features/components/registries/demoRegistry` | 增加组件 Demo 时登记。 |
 
+## 小程序共享组件
+
+小程序目录：`xander-lab-miniprogram/src`。页面优先使用以下基础能力；视觉基座统一从 `styles/tokens.scss` 取值，不在页面新增任意色值、字号或间距。
+
+| 能力                 | 路径                                                     | 适用场景                            | 关键 API / 说明                                                                                               |
+| -------------------- | -------------------------------------------------------- | ----------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| 小程序 Design Tokens | `xander-lab-miniprogram/src/styles/tokens.scss`          | 全部小程序页面与组件                | 提供 canvas / surface / ink / accent / semantic colors、4-32px 间距、11-24px 字阶与 44px 控件高度；禁止渐变。 |
+| `NavBar`             | `xander-lab-miniprogram/src/components/NavBar`           | 自定义导航栏页面                    | `title`、`showBack`、`onBack`、`left`、`right`、`background`、`color`；自动适配状态栏和小程序胶囊区域。       |
+| `TabBar`             | `xander-lab-miniprogram/src/components/TabBar`           | 对话 / 计划 / 博客 / 我的四个主页面 | `active` 指定当前图标 key；内置底部安全区和 44px 点击区域。                                                   |
+| `Button`             | `xander-lab-miniprogram/src/components/ui/Button`        | 主操作、次操作、弱操作、危险操作    | `variant: primary / secondary / ghost / danger`、`size: md / sm`、`block`；其余原生 Taro Button 属性透传。    |
+| `PageState`          | `xander-lab-miniprogram/src/components/ui/PageState`     | 加载、空态、错误态                  | `kind: empty / loading / error`、`icon`、`title`、`description`、`action`；组件不内置业务文案。               |
+| `SectionHeader`      | `xander-lab-miniprogram/src/components/ui/SectionHeader` | 页面区块标题和右侧操作              | `title`、`description`、`action`；透明布局，不创建额外卡片容器。                                              |
+| `ListRow`            | `xander-lab-miniprogram/src/components/ui/ListRow`       | 设置项、菜单项、信息列表            | `leading`、`title`、`description`、`meta`、`trailing`、`onClick`；默认无卡片边框。                            |
+
 ## 开发决策顺序
 
 1. 先在本目录按交互、布局和业务能力查找候选组件。

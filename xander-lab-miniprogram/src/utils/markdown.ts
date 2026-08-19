@@ -5,10 +5,10 @@
 const escapeHtml = (text: string) =>
   text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
 
-const H1 = { 'font-size': '22px', 'font-weight': '700', color: '#111', margin: '18px 0 8px' }
-const H2 = { 'font-size': '19px', 'font-weight': '700', color: '#111', margin: '16px 0 8px' }
-const H3 = { 'font-size': '17px', 'font-weight': '700', color: '#111', margin: '14px 0 6px' }
-const H4 = { 'font-size': '16px', 'font-weight': '700', color: '#111', margin: '12px 0 6px' }
+const H1 = { 'font-size': '22px', 'font-weight': '700', color: '#111', margin: '0' }
+const H2 = { 'font-size': '19px', 'font-weight': '700', color: '#111', margin: '0' }
+const H3 = { 'font-size': '17px', 'font-weight': '700', color: '#111', margin: '0' }
+const H4 = { 'font-size': '16px', 'font-weight': '700', color: '#111', margin: '0' }
 
 const styleOf = (styles: Record<string, string>) =>
   Object.entries(styles)
@@ -26,19 +26,19 @@ const H_STYLE: Record<number, string> = {
 
 const CODE_STYLE =
   'background:#f5f5f7;color:#c7254e;padding:1px 4px;border-radius:4px;font-size:90%'
-const PARAGRAPH_STYLE = 'margin:8px 0;line-height:1.7;font-size:15px;color:#333'
+const PARAGRAPH_STYLE = 'margin:0;line-height:1.7;font-size:15px;color:#333'
 const BLOCKQUOTE_STYLE =
-  'margin:10px 0;padding:8px 12px;background:#fafafc;border-radius:8px;color:#555;line-height:1.7;font-size:14px'
+  'margin:0;padding:8px 12px;background:#fafafc;border-radius:8px;color:#555;line-height:1.7;font-size:14px'
 const PRE_STYLE =
-  'background:#f5f5f7;color:#333;font-size:13px;line-height:1.6;padding:12px 14px;border-radius:10px;margin:10px 0;overflow-x:auto'
-const TABLE_STYLE = 'width:100%;border-collapse:collapse;margin:12px 0;font-size:13px;color:#333'
+  'background:#f5f5f7;color:#333;font-size:13px;line-height:1.6;padding:12px 14px;border-radius:10px;margin:0;overflow-x:auto'
+const TABLE_STYLE = 'width:100%;border-collapse:collapse;margin:0;font-size:13px;color:#333'
 const CELL_STYLE = 'border:1px solid #e0e0e8;padding:6px 10px'
 const LI_STYLE = 'line-height:1.8;font-size:15px;color:#333;margin:4px 0'
-const IMG_STYLE = 'max-width:100%;border-radius:8px;display:block;margin:10px 0'
-const LINK_STYLE = 'color:#5361ff'
-const HR_STYLE = 'margin:16px 0;border-top:1px solid #ececf1'
-
-type InlineResult = { html: string; rest: string }
+const IMG_STYLE = 'max-width:100%;border-radius:8px;display:block;margin:0'
+// RichText 节点内不能可靠继承页面 CSS 变量，使用与 --color-accent 一致的静态值。
+const LINK_STYLE = 'color:#1677ff'
+const HR_STYLE = 'margin:0;border-top:1px solid #ececf1'
+const BLOCK_GAP = '<div style="height:10px"></div>'
 
 /** 解析行内格式：返回转换后的 HTML 与剩余未处理文本 */
 function parseInline(input: string): string {
@@ -96,7 +96,7 @@ function renderRuns(
   }
   const tag = ordered ? 'ol' : 'ul'
   return {
-    html: `<${tag} style="margin:8px 0;padding-left:20px">${items.join('')}</${tag}>`,
+    html: `<${tag} style="margin:0;padding-left:20px">${items.join('')}</${tag}>`,
     next: cursor,
   }
 }
@@ -248,7 +248,7 @@ export function markdownToHtml(markdown: string): string {
     cursor += 1
   }
 
-  return `<div>${blocks.join('')}</div>`
+  return `<div>${blocks.join(BLOCK_GAP)}</div>`
 }
 
 /** 思考过程摘要：取前若干字符作为卡片预览 */

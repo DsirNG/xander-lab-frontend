@@ -13,6 +13,31 @@ function showToast(title: string) {
   Taro.showToast({ title, icon: 'none' })
 }
 
+function ProfileMenuRow({
+  icon,
+  label,
+  description,
+  onClick,
+}: {
+  icon: Parameters<typeof Icon>[0]['name']
+  label: string
+  description?: string
+  onClick: () => void
+}) {
+  return (
+    <View className="menu-row" onClick={onClick}>
+      <View className="menu-icon">
+        <Icon name={icon} />
+      </View>
+      <View className="menu-copy">
+        <Text className="menu-label">{label}</Text>
+        {description ? <Text className="menu-description">{description}</Text> : null}
+      </View>
+      <Text className="menu-arrow">›</Text>
+    </View>
+  )
+}
+
 export default function Profile() {
   const user = useUserStore(state => state.user)
   const setUser = useUserStore(state => state.setUser)
@@ -42,6 +67,10 @@ export default function Profile() {
   })
 
   const handleWechatLogin = async () => {
+    if (Taro.getEnv() !== Taro.ENV_TYPE.WEAPP) {
+      navigate('/pages/login/index')
+      return
+    }
     if (loading) return
     setLoading(true)
     try {
@@ -100,12 +129,12 @@ export default function Profile() {
         </Button>
       ) : (
         <Button className="login-btn" onClick={handleWechatLogin} loading={loading}>
-          微信一键登录
+          {Taro.getEnv() === Taro.ENV_TYPE.WEAPP ? '微信一键登录' : '登录 / 注册'}
         </Button>
       )}
 
       {user ? (
-        <View className="points-card" onClick={() => navigate('/pages/points/index')}>
+        <View className="points-card points-strip" onClick={() => navigate('/pages/points/index')}>
           <View>
             <Text className="points-balance">
               {balance == null ? '--' : balance.toLocaleString()}
@@ -118,7 +147,7 @@ export default function Profile() {
           </View>
         </View>
       ) : (
-        <View className="points-card" onClick={() => navigate('/pages/login/index')}>
+        <View className="points-card points-strip" onClick={() => navigate('/pages/login/index')}>
           <View>
             <Text className="points-balance">--</Text>
             <Text className="points-label">登录后查看积分</Text>
@@ -127,49 +156,72 @@ export default function Profile() {
         </View>
       )}
 
-      <View className="menu-card">
-        <View
-          className="menu-row"
-          onClick={() => (user ? navigate('/pages/publish/index') : navigate('/pages/login/index'))}
-        >
-          <Icon name="edit" />
-          <Text>发布文章</Text>
-          <Text className="menu-arrow">›</Text>
+      <View className="profile-section">
+        <Text className="profile-section-title">创作</Text>
+        <View className="menu-card">
+          <ProfileMenuRow
+            icon="edit"
+            label="发布文章"
+            description="写作、预览并发布 Markdown 文章"
+            onClick={() =>
+              user ? navigate('/pages/publish/index') : navigate('/pages/login/index')
+            }
+          />
+          <ProfileMenuRow
+            icon="article"
+            label="我的博客"
+            description="管理草稿、已发布文章与回收站"
+            onClick={() =>
+              user ? navigate('/pages/blog-manage/index') : navigate('/pages/login/index')
+            }
+          />
         </View>
-        <View
-          className="menu-row"
-          onClick={() =>
-            user ? navigate('/pages/blog-manage/index') : navigate('/pages/login/index')
-          }
-        >
-          <Icon name="article" />
-          <Text>我的博客</Text>
-          <Text className="menu-arrow">›</Text>
+      </View>
+
+      <View className="profile-section">
+        <Text className="profile-section-title">账户</Text>
+        <View className="menu-card">
+          <ProfileMenuRow
+            icon="chat"
+            label="通知中心"
+            description="查看计划执行与发布结果"
+            onClick={() =>
+              user ? navigate('/pages/notifications/index') : navigate('/pages/login/index')
+            }
+          />
+          <ProfileMenuRow
+            icon="points"
+            label="积分明细"
+            description="查看余额与使用记录"
+            onClick={() =>
+              user ? navigate('/pages/points/index') : navigate('/pages/login/index')
+            }
+          />
+          <ProfileMenuRow
+            icon="user"
+            label="账户设置"
+            description="更新昵称与头像"
+            onClick={() =>
+              user ? navigate('/pages/account-settings/index') : navigate('/pages/login/index')
+            }
+          />
         </View>
-        <View
-          className="menu-row"
-          onClick={() => (user ? navigate('/pages/points/index') : navigate('/pages/login/index'))}
-        >
-          <Icon name="points" />
-          <Text>积分明细</Text>
-          <Text className="menu-arrow">›</Text>
-        </View>
-        <View
-          className="menu-row"
-          onClick={() =>
-            !user
-              ? navigate('/pages/login/index')
-              : Taro.showModal({
-                  title: '关于 DinQorAI',
-                  content: 'DinQorAI — 博客智能体平台。对话、定时发文、博客管理一站式创作。',
-                  showCancel: false,
-                  confirmText: '知道了',
-                })
-          }
-        >
-          <Icon name="chat" />
-          <Text>关于 DinQorAI</Text>
-          <Text className="menu-arrow">›</Text>
+      </View>
+
+      <View className="profile-section">
+        <View className="menu-card">
+          <ProfileMenuRow
+            icon="chat"
+            label="关于 DinQorAI"
+            onClick={() =>
+              Taro.showModal({
+                title: '关于 DinQorAI',
+                content: 'DinQorAI — 博客智能体平台。对话、计划与发布形成完整创作闭环。',
+                showCancel: false,
+                confirmText: '知道了',
+              })
+            }
+          />
         </View>
       </View>
       <TabBar active="user" />

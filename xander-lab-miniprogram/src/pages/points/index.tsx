@@ -2,7 +2,8 @@ import { Text, View } from '@tarojs/components'
 import Taro, { useDidShow, useReachBottom } from '@tarojs/taro'
 import { useState } from 'react'
 import { pointsApi, type PointsOverview } from '@/api/points'
-import { Icon } from '@/components/Icon'
+import { NavBar } from '@/components/NavBar'
+import { useUserStore } from '@/store/user'
 import { formatDateTime } from '@/utils/format'
 import './index.scss'
 
@@ -36,11 +37,20 @@ export default function Points() {
   }
 
   useDidShow(() => {
-    pointsApi
-      .overview()
-      .then(setOverview)
-      .catch(() => setOverview(null))
-    load(1, false)
+    const restoreAndLoad = async () => {
+      await useUserStore.getState().refresh()
+      if (!useUserStore.getState().user) {
+        Taro.redirectTo({ url: '/pages/login/index' })
+        return
+      }
+      const overviewData = await pointsApi.overview()
+      setOverview(overviewData)
+      await load(1, false)
+    }
+    restoreAndLoad().catch(error => {
+      setOverview(null)
+      showToast(error instanceof Error ? error.message : '积分信息加载失败')
+    })
   })
 
   useReachBottom(() => {
@@ -49,12 +59,7 @@ export default function Points() {
 
   return (
     <View className="detail-page">
-      <View className="sub-nav">
-        <View className="nav-back" onClick={() => Taro.navigateBack()}>
-          <Icon name="back" />
-        </View>
-        <Text className="sub-nav-title">积分明细</Text>
-      </View>
+      <NavBar title="积分明细" showBack />
 
       <View className="points-card points-page-card">
         <View>

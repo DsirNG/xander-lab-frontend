@@ -5,29 +5,26 @@ import { Icon } from './Icon'
 import { PlanStatusBadge } from './StatusBadge'
 import { formatInstant } from '@/utils/format'
 
-type ActionKey = 'pause' | 'resume' | 'trigger' | 'cancel' | 'delete'
+export type PlanActionKey = 'pause' | 'resume' | 'trigger' | 'cancel' | 'delete'
 
 const ACTION_DEFS: Array<{
-  key: ActionKey
-  icon: string
+  key: PlanActionKey
   title: string
   show: (plan: Plan) => boolean
 }> = [
   {
     key: 'trigger',
-    icon: 'play',
     title: '立即执行',
     show: plan => !plan.runOnce && (plan.status === 'ACTIVE' || plan.status === 'PAUSED'),
   },
-  { key: 'pause', icon: 'pause', title: '暂停', show: plan => plan.status === 'ACTIVE' },
-  { key: 'resume', icon: 'play', title: '恢复', show: plan => plan.status === 'PAUSED' },
+  { key: 'pause', title: '暂停', show: plan => plan.status === 'ACTIVE' },
+  { key: 'resume', title: '恢复', show: plan => plan.status === 'PAUSED' },
   {
     key: 'cancel',
-    icon: 'close',
     title: '取消',
     show: plan => plan.status === 'ACTIVE' || plan.status === 'PAUSED',
   },
-  { key: 'delete', icon: 'trash', title: '删除', show: plan => plan.status !== 'RUNNING' },
+  { key: 'delete', title: '删除', show: plan => plan.status !== 'RUNNING' },
 ]
 
 export function PlanCard({
@@ -35,9 +32,25 @@ export function PlanCard({
   onAction,
 }: {
   plan: Plan
-  onAction: (action: ActionKey) => void
+  onAction: (action: PlanActionKey) => void
 }) {
   const visibleActions = ACTION_DEFS.filter(def => def.show(plan))
+
+  const showActions = async (event: { stopPropagation: () => void }) => {
+    event.stopPropagation()
+    if (visibleActions.length === 0) return
+    try {
+      const result = await Taro.showActionSheet({
+        itemList: visibleActions.map(action => action.title),
+      })
+      const selected = visibleActions[result.tapIndex]
+      if (!selected) return
+      Taro.vibrateShort({ type: 'light' }).catch(() => undefined)
+      onAction(selected.key)
+    } catch {
+      // 用户关闭操作菜单时不需要反馈。
+    }
+  }
 
   return (
     <View className="plan-card">
@@ -49,7 +62,14 @@ export function PlanCard({
             <Text className="plan-queue">队列 {plan.topics.length}</Text>
           ) : null}
         </View>
-        <PlanStatusBadge status={plan.status} />
+        <View className="plan-card-status">
+          <PlanStatusBadge status={plan.status} />
+          {visibleActions.length > 0 ? (
+            <View className="plan-more" aria-label="计划操作" onClick={showActions}>
+              <Icon name="more" />
+            </View>
+          ) : null}
+        </View>
       </View>
       <View className="plan-card-meta">
         <Text className="plan-meta-item">
@@ -64,23 +84,6 @@ export function PlanCard({
         </View>
       </View>
       {plan.errorMessage ? <Text className="plan-error">{plan.errorMessage}</Text> : null}
-      {visibleActions.length > 0 ? (
-        <View className="plan-actions" onClick={e => e.stopPropagation()}>
-          {visibleActions.map(({ key, icon, title }) => (
-            <View
-              className="plan-action-btn"
-              key={key}
-              onClick={() => {
-                Taro.vibrateShort({ type: 'light' }).catch(() => undefined)
-                onAction(key)
-              }}
-            >
-              <Icon name={icon as any} className="plan-action-icon" />
-              <Text className="plan-action-text">{title}</Text>
-            </View>
-          ))}
-        </View>
-      ) : null}
     </View>
   )
 }

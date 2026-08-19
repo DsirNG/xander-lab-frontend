@@ -2,7 +2,7 @@ import { Text, View } from '@tarojs/components'
 import Taro, { useReachBottom, useRouter } from '@tarojs/taro'
 import { useCallback, useEffect, useState } from 'react'
 import { planApi, type Plan, type PlanRun } from '@/api/plans'
-import { Icon } from '@/components/Icon'
+import { NavBar } from '@/components/NavBar'
 import { PlanStatusBadge, RunStatusBadge } from '@/components/StatusBadge'
 import { formatDateTime, formatInstant } from '@/utils/format'
 import './index.scss'
@@ -136,15 +136,48 @@ export default function PlanDetail() {
     }
   }
 
+  const copyExternalLink = (url: string) => {
+    Taro.setClipboardData({ data: url }).then(() => showToast('链接已复制'))
+  }
+
+  const showPlanActions = async () => {
+    if (!plan || busy) return
+    const actions: Array<{ label: string; run: () => unknown | Promise<unknown> }> = []
+    if (plan.status !== 'RUNNING' && plan.status !== 'FINISHED') {
+      actions.push({
+        label: '编辑计划',
+        run: () => Taro.navigateTo({ url: `/pages/plan-create/index?id=${plan.id}` }),
+      })
+    }
+    if (plan.status === 'ACTIVE') {
+      actions.push(
+        { label: '暂停', run: () => runAction('pause') },
+        { label: '立即执行', run: () => runAction('trigger') },
+        { label: '取消', run: () => runAction('cancel') },
+      )
+    } else if (plan.status === 'PAUSED') {
+      actions.push(
+        { label: '恢复', run: () => runAction('resume') },
+        { label: '立即执行', run: () => runAction('trigger') },
+        { label: '取消', run: () => runAction('cancel') },
+      )
+    }
+    if (plan.status !== 'RUNNING') {
+      actions.push({ label: '删除', run: () => runAction('delete') })
+    }
+    if (actions.length === 0) return
+    try {
+      const result = await Taro.showActionSheet({ itemList: actions.map(item => item.label) })
+      await actions[result.tapIndex]?.run()
+    } catch {
+      // 用户关闭操作菜单时不需要反馈。
+    }
+  }
+
   if (loading) {
     return (
       <View className="detail-page">
-        <View className="sub-nav">
-          <View className="nav-back" onClick={() => Taro.navigateBack()}>
-            <Icon name="back" />
-          </View>
-          <Text className="sub-nav-title">计划详情</Text>
-        </View>
+        <NavBar title="计划详情" showBack />
         <Text className="data-state">正在加载计划...</Text>
       </View>
     )
@@ -153,12 +186,7 @@ export default function PlanDetail() {
   if (!plan) {
     return (
       <View className="detail-page">
-        <View className="sub-nav">
-          <View className="nav-back" onClick={() => Taro.navigateBack()}>
-            <Icon name="back" />
-          </View>
-          <Text className="sub-nav-title">计划详情</Text>
-        </View>
+        <NavBar title="计划详情" showBack />
         <View className="empty-state">
           <Text className="empty-title">计划不存在</Text>
         </View>
@@ -166,39 +194,28 @@ export default function PlanDetail() {
     )
   }
 
-  const actions: Array<[ActionKey, string]> = []
-  if (plan.status === 'ACTIVE')
-    actions.push(['pause', '暂停'], ['trigger', '立即执行'], ['cancel', '取消'], ['delete', '删除'])
-  if (plan.status === 'PAUSED')
-    actions.push(
-      ['resume', '恢复'],
-      ['trigger', '立即执行'],
-      ['cancel', '取消'],
-      ['delete', '删除'],
-    )
-  if (plan.status === 'RUNNING') actions.push(['delete', '删除'])
-  if (plan.status === 'FINISHED' || plan.status === 'FAILED' || plan.status === 'CANCELLED')
-    actions.push(['delete', '删除'])
-
   return (
     <View className="detail-page">
-      <View className="sub-nav">
-        <View className="nav-back" onClick={() => Taro.navigateBack()}>
-          <Icon name="back" />
-        </View>
-        <Text className="sub-nav-title">计划详情</Text>
-        <PlanStatusBadge status={plan.status} />
-      </View>
+      <NavBar
+        title="计划详情"
+        showBack
+        right={
+          <Text className="nav-action" onClick={showPlanActions}>
+            管理
+          </Text>
+        }
+      />
 
       <View className="plan-info-card">
-        <Text className="plan-info-topic">{plan.topic}</Text>
-        {plan.runOnce ? <Text className="badge badge-purple plan-info-badges">一次性</Text> : null}
-        {plan.syncCsdn ? (
-          <Text className="badge badge-blue plan-info-badges">同步 CSDN</Text>
-        ) : null}
-        {plan.syncJuejin ? (
-          <Text className="badge badge-blue plan-info-badges">同步掘金</Text>
-        ) : null}
+        <View className="plan-info-heading">
+          <Text className="plan-info-topic">{plan.topic}</Text>
+          <PlanStatusBadge status={plan.status} />
+        </View>
+        <View className="plan-info-tags">
+          {plan.runOnce ? <Text className="badge badge-purple">一次性</Text> : null}
+          {plan.syncCsdn ? <Text className="badge badge-blue">同步 CSDN</Text> : null}
+          {plan.syncJuejin ? <Text className="badge badge-blue">同步掘金</Text> : null}
+        </View>
         <View className="plan-info-rows">
           <View className="plan-info-row">
             <Text className="plan-info-label">触发时间</Text>
@@ -236,20 +253,6 @@ export default function PlanDetail() {
         </View>
       </View>
 
-      {actions.length > 0 ? (
-        <View className="detail-actions">
-          {actions.map(([key, label]) => (
-            <View
-              key={key}
-              className={`manage-btn ${key === 'delete' || key === 'cancel' ? 'danger' : 'primary'}`}
-              onClick={() => runAction(key)}
-            >
-              {label}
-            </View>
-          ))}
-        </View>
-      ) : null}
-
       <View className="section-title">
         <Text>执行记录（{runsTotal}）</Text>
       </View>
@@ -281,6 +284,16 @@ export default function PlanDetail() {
             {run.reviewReason ? (
               <Text className="link-chip" onClick={() => showRunDetail(run)}>
                 审核说明
+              </Text>
+            ) : null}
+            {run.csdnUrl ? (
+              <Text className="link-chip" onClick={() => copyExternalLink(run.csdnUrl!)}>
+                复制 CSDN 链接
+              </Text>
+            ) : null}
+            {run.juejinUrl ? (
+              <Text className="link-chip" onClick={() => copyExternalLink(run.juejinUrl!)}>
+                复制掘金链接
               </Text>
             ) : null}
             <Text className="link-chip" onClick={() => showRunDetail(run)}>

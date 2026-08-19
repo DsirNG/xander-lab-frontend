@@ -56,6 +56,11 @@ export type BlogPostPayload = {
   publish: boolean
 }
 
+export type PublishStatus = {
+  status: 'pending' | 'published' | 'failed' | string
+  articleId?: number
+}
+
 const toQuery = (params: Record<string, unknown>) => {
   const entries = Object.entries(params).filter(([, value]) => value !== '' && value != null)
   return entries.length
@@ -79,8 +84,20 @@ export const blogApi = {
     params: { status?: number; search?: string; page?: number; size?: number } = {},
   ) => request<ArticlePage>(`/api/blog/posts/mine${toQuery({ page: 1, size: 10, ...params })}`),
   getMyArticle: (id: string | number) => request<Article>(`/api/blog/posts/mine/${id}`),
-  createArticle: (payload: BlogPostPayload) =>
-    request<Article>('/api/blog/posts', { method: 'POST', data: payload }),
+  createArticle: (payload: BlogPostPayload, requestId?: string) =>
+    request<Article>('/api/blog/posts', {
+      method: 'POST',
+      data: payload,
+      timeout: payload.publish ? 60000 : 15000,
+      header: requestId ? { 'Idempotency-Key': requestId } : undefined,
+    }),
+  getPublishStatus: (requestId: string) =>
+    request<PublishStatus>(
+      `/api/blog/posts/publish-status?requestId=${encodeURIComponent(requestId)}`,
+      {
+        timeout: 5000,
+      },
+    ),
   updateArticle: (id: string | number, payload: BlogPostPayload) =>
     request<Article>(`/api/blog/posts/${id}`, { method: 'PUT', data: payload }),
   updateArticleStatus: (id: string | number, status: number) =>

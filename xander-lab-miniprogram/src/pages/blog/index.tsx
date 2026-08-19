@@ -1,5 +1,5 @@
 import { Input, ScrollView, Text, View } from '@tarojs/components'
-import Taro, { useReachBottom } from '@tarojs/taro'
+import Taro, { useReachBottom, useRouter } from '@tarojs/taro'
 import { useCallback, useEffect, useState } from 'react'
 import { blogApi, type Article, type Category, type Tag } from '@/api/blog'
 import { ArticleCard } from '@/components/ArticleCard'
@@ -15,11 +15,12 @@ function showToast(title: string) {
 }
 
 export default function Blog() {
+  const { params } = useRouter()
   const [articles, setArticles] = useState<Article[]>([])
   const [categories, setCategories] = useState<Category[]>([])
   const [popularTags, setPopularTags] = useState<Tag[]>([])
   const [category, setCategory] = useState('')
-  const [tag, setTag] = useState('')
+  const [tag, setTag] = useState(params.tag ? decodeURIComponent(params.tag) : '')
   const [searchInput, setSearchInput] = useState('')
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(1)

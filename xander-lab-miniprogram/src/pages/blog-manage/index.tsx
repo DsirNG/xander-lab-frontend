@@ -1,8 +1,9 @@
-import { Text, View } from '@tarojs/components'
+import { Input, Text, View } from '@tarojs/components'
 import Taro, { useDidShow, useReachBottom } from '@tarojs/taro'
 import { useCallback, useState } from 'react'
 import { blogApi, type Article } from '@/api/blog'
 import { Icon } from '@/components/Icon'
+import { NavBar } from '@/components/NavBar'
 import { BLOG_STATUS_TEXT } from '@/utils/format'
 import './index.scss'
 
@@ -24,13 +25,22 @@ export default function BlogManage() {
   const [total, setTotal] = useState(0)
   const [loading, setLoading] = useState(false)
   const [loadedOnce, setLoadedOnce] = useState(false)
+  const [searchInput, setSearchInput] = useState('')
+  const [search, setSearch] = useState('')
+  const [busyId, setBusyId] = useState<number | null>(null)
 
   const load = useCallback(
-    async (targetPage: number, append: boolean) => {
+    async (
+      targetPage: number,
+      append: boolean,
+      nextStatus: number | undefined = status,
+      nextSearch: string = search,
+    ) => {
       setLoading(true)
       try {
         const result = await blogApi.getMyArticles({
-          status,
+          status: nextStatus,
+          search: nextSearch || undefined,
           page: targetPage,
           size: 10,
         })
@@ -44,7 +54,7 @@ export default function BlogManage() {
         setLoadedOnce(true)
       }
     },
-    [status],
+    [search, status],
   )
 
   useDidShow(() => {
@@ -60,26 +70,32 @@ export default function BlogManage() {
     setArticles([])
     setPage(1)
     setLoadedOnce(false)
-    load(1, false)
+    load(1, false, value, search)
   }
 
   const changeStatus = async (article: Article, target: number) => {
+    if (busyId !== null) return
+    setBusyId(article.id)
     try {
       await blogApi.updateArticleStatus(article.id, target)
       showToast(target === 1 ? '已发布' : target === 0 ? '已转为草稿' : '已移入回收站')
       load(1, false)
     } catch (e) {
       showToast(e instanceof Error ? e.message : '操作失败')
+    } finally {
+      setBusyId(null)
     }
   }
 
   const removeArticle = async (article: Article, permanent: boolean) => {
+    if (busyId !== null) return
     const confirmed = await Taro.showModal({
       title: permanent ? '永久删除' : '删除文章',
       content: permanent ? '永久删除后不可恢复，确定继续吗？' : '文章将移入回收站，可随时恢复',
       confirmColor: '#d14343',
     })
     if (!confirmed.confirm) return
+    setBusyId(article.id)
     try {
       if (permanent) {
         await blogApi.permanentlyDeleteArticle(article.id)
@@ -91,22 +107,98 @@ export default function BlogManage() {
       load(1, false)
     } catch (e) {
       showToast(e instanceof Error ? e.message : '操作失败')
+    } finally {
+      setBusyId(null)
     }
   }
 
   const gotoDetail = (article: Article) => {
     if (article.status === 1) {
       Taro.navigateTo({ url: `/pages/blog-detail/index?id=${article.id}` })
+    } else {
+      Taro.navigateTo({ url: `/pages/publish/index?id=${article.id}` })
     }
+  }
+
+  const showArticleActions = async (event: { stopPropagation: () => void }, article: Article) => {
+    event.stopPropagation()
+    const actions: Array<{ label: string; run: () => unknown | Promise<unknown> }> = [
+      {
+        label: '编辑',
+        run: () => Taro.navigateTo({ url: `/pages/publish/index?id=${article.id}` }),
+      },
+    ]
+    if (article.status === 1) {
+      actions.push(
+        {
+          label: '查看文章',
+          run: () => Taro.navigateTo({ url: `/pages/blog-detail/index?id=${article.id}` }),
+        },
+        { label: '转为草稿', run: () => changeStatus(article, 0) },
+      )
+    } else if (article.status === 0) {
+      actions.push({ label: '发布', run: () => changeStatus(article, 1) })
+    } else {
+      actions.push(
+        { label: '恢复到草稿', run: () => changeStatus(article, 0) },
+        { label: '永久删除', run: () => removeArticle(article, true) },
+      )
+    }
+    if (article.status !== -1) {
+      actions.push({ label: '移入回收站', run: () => removeArticle(article, false) })
+    }
+    try {
+      const result = await Taro.showActionSheet({ itemList: actions.map(item => item.label) })
+      await actions[result.tapIndex]?.run()
+    } catch {
+      // 用户关闭操作菜单时不需要反馈。
+    }
+  }
+
+  const submitSearch = (value: string) => {
+    const nextSearch = value.trim()
+    setSearch(nextSearch)
+    setArticles([])
+    setLoadedOnce(false)
+    load(1, false, status, nextSearch)
   }
 
   return (
     <View className="detail-page">
-      <View className="sub-nav">
-        <View className="nav-back" onClick={() => Taro.navigateBack()}>
-          <Icon name="back" />
-        </View>
-        <Text className="sub-nav-title">我的博客</Text>
+      <NavBar
+        title="我的博客"
+        showBack
+        right={
+          <Text
+            className="nav-action"
+            onClick={() => Taro.navigateTo({ url: '/pages/publish/index' })}
+          >
+            写文章
+          </Text>
+        }
+      />
+
+      <View className="inline-search manage-search">
+        <Icon name="search" />
+        <Input
+          className="inline-search-input"
+          placeholder="搜索我的文章"
+          value={searchInput}
+          confirmType="search"
+          onInput={event => setSearchInput(event.detail.value)}
+          onConfirm={event => submitSearch(event.detail.value)}
+        />
+        {searchInput ? (
+          <Text
+            className="search-clear"
+            onClick={() => {
+              setSearchInput('')
+              submitSearch('')
+            }}
+          >
+            清除
+          </Text>
+        ) : null}
       </View>
 
       <View className="segmented manage-segmented">
@@ -142,43 +234,18 @@ export default function BlogManage() {
             <Text className="badge badge-gray">
               {BLOG_STATUS_TEXT[article.status ?? 1] || '未知'}
             </Text>
+            <View
+              className={`manage-more ${busyId === article.id ? 'is-busy' : ''}`}
+              aria-label="文章操作"
+              onClick={event => showArticleActions(event, article)}
+            >
+              <Icon name="more" />
+            </View>
           </View>
           <View className="manage-meta">
             {article.categoryName ? <Text>{article.categoryName}</Text> : null}
             <Text>{article.date}</Text>
             {article.views != null ? <Text>{article.views} 阅读</Text> : null}
-          </View>
-          <View className="manage-actions" onClick={e => e.stopPropagation()}>
-            <View
-              className="manage-btn"
-              onClick={() => Taro.navigateTo({ url: `/pages/publish/index?id=${article.id}` })}
-            >
-              编辑
-            </View>
-            {article.status === 0 ? (
-              <View className="manage-btn primary" onClick={() => changeStatus(article, 1)}>
-                发布
-              </View>
-            ) : null}
-            {article.status === 1 ? (
-              <View className="manage-btn" onClick={() => changeStatus(article, 0)}>
-                转为草稿
-              </View>
-            ) : null}
-            {article.status === -1 ? (
-              <>
-                <View className="manage-btn" onClick={() => changeStatus(article, 0)}>
-                  恢复
-                </View>
-                <View className="manage-btn danger" onClick={() => removeArticle(article, true)}>
-                  彻底删除
-                </View>
-              </>
-            ) : (
-              <View className="manage-btn danger" onClick={() => removeArticle(article, false)}>
-                删除
-              </View>
-            )}
           </View>
         </View>
       ))}

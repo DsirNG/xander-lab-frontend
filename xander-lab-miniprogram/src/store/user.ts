@@ -2,6 +2,8 @@ import { create } from 'zustand'
 import Taro from '@tarojs/taro'
 import { authApi, type UserInfo } from '@/api/auth'
 
+export type { UserInfo } from '@/api/auth'
+
 type UserState = {
   user: UserInfo | null
   loaded: boolean
@@ -39,7 +41,7 @@ export const useUserStore = create<UserState>(set => ({
 }))
 
 export function ensureLogin(): boolean {
-  if (useUserStore.getState().user) return true
+  if (useUserStore.getState().user || authApi.isLoggedIn()) return true
   Taro.navigateTo({ url: '/pages/login/index' })
   return false
 }
