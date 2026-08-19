@@ -1,4 +1,4 @@
-import { PageMeta, ScrollView, Text, View } from '@tarojs/components'
+import { ScrollView, Text, View } from '@tarojs/components'
 import Taro, { useDidHide, useDidShow } from '@tarojs/taro'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
@@ -375,7 +375,6 @@ export default function Chat() {
 
   return (
     <View className="chat-page">
-      <PageMeta pageStyle={showHistory ? 'overflow: hidden' : undefined} />
       <View className={`chat-main-shell ${showHistory ? 'is-drawer-open' : ''}`}>
         {active ? (
           <>
