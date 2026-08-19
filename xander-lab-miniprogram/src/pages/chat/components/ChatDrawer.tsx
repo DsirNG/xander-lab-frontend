@@ -5,6 +5,7 @@ import type { AgentConversation } from '@/api/agent'
 import type { UserInfo } from '@/store/user'
 import { useState } from 'react'
 import { useNavbarLayout } from '@/hooks/useNavbarLayout'
+import { useScreenCorners } from '@/hooks/useScreenCorners'
 
 interface ChatDrawerProps {
   visible: boolean
@@ -37,10 +38,13 @@ export function ChatDrawer({
 }: ChatDrawerProps) {
   const [keyword, setKeyword] = useState('')
   const { statusBarHeight } = useNavbarLayout()
+  const { topLeft, bottomLeft } = useScreenCorners()
 
   const filteredConversations = keyword
     ? conversations.filter(c => c.title.toLowerCase().includes(keyword.toLowerCase()))
     : conversations
+
+  console.log('border' + topLeft)
 
   if (!visible) return null
 
@@ -48,6 +52,10 @@ export function ChatDrawer({
     <View className="chat-drawer-layer" ariaLabel="最近对话">
       <View
         className={`chat-drawer-content ${closing ? 'is-closing' : ''}`}
+        style={{
+          borderTopLeftRadius: `${topLeft}px`,
+          borderBottomLeftRadius: `${bottomLeft}px`,
+        }}
         role="dialog"
         ariaRole="dialog"
         ariaLabel="最近对话"
