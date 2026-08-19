@@ -1,6 +1,6 @@
-import { ScrollView, Text, Textarea, View } from '@tarojs/components'
+import { ScrollView, Text, View } from '@tarojs/components'
 import Taro, { useDidHide, useDidShow } from '@tarojs/taro'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   agentApi,
   type AgentConversation,
@@ -8,15 +8,14 @@ import {
   type ConversationSnapshot,
 } from '@/api/agent'
 import { connectAgentStream } from '@/api/agentSocket'
-import { authApi } from '@/api/auth'
 import { tokenStorage } from '@/api/http'
 import { Markdown } from '@/components/Markdown'
 import { TabBar } from '@/components/TabBar'
 import { NavBar } from '@/components/NavBar'
 import { Icon } from '@/components/Icon'
 import { ensureLogin, useUserStore } from '@/store/user'
-import { formatDateTime } from '@/utils/format'
 import { truncate } from '@/utils/markdown'
+import { ChatComposer } from './components/ChatComposer'
 import { ChatDrawer } from './components/ChatDrawer'
 import './index.scss'
 
@@ -24,6 +23,50 @@ const ACTIVE_KEY = 'chat_active_id'
 const POLL_INTERVAL = 1200
 
 const QUICK_PROMPTS = ['写一篇技术博客', '搜索并整理资料', '我有一个问题']
+const CHAT_COPY = {
+  history: '最近对话',
+  inputPlaceholder: '有什么问题，随时问我...',
+  newChat: '新建对话',
+  stop: '停止',
+} as const
+
+type MessageTurn = {
+  key: string
+  id: string
+  role: 'user' | 'assistant'
+  messages: AgentMessage[]
+}
+
+const EMPTY_MESSAGES: AgentMessage[] = []
+
+function groupMessagesIntoTurns(messages: AgentMessage[]): MessageTurn[] {
+  return messages.reduce<MessageTurn[]>((turns, message) => {
+    if (message.role === 'user') {
+      turns.push({
+        key: `user-${message.id}`,
+        id: `msg-${message.id}`,
+        role: 'user',
+        messages: [message],
+      })
+      return turns
+    }
+
+    const previous = turns[turns.length - 1]
+    if (previous?.role === 'assistant') {
+      previous.messages.push(message)
+      previous.id = `msg-${message.id}`
+      return turns
+    }
+
+    turns.push({
+      key: `assistant-${message.id}`,
+      id: `msg-${message.id}`,
+      role: 'assistant',
+      messages: [message],
+    })
+    return turns
+  }, [])
+}
 
 function showToast(title: string) {
   Taro.showToast({ title, icon: 'none' })
@@ -38,7 +81,6 @@ export default function Chat() {
   const [input, setInput] = useState('')
   const [running, setRunning] = useState(false)
   const [creating, setCreating] = useState(false)
-  const [loading, setLoading] = useState(true)
   const [thoughtOpen, setThoughtOpen] = useState<Record<number, boolean>>({})
   const [scrollTarget, setScrollTarget] = useState('')
   const [showHistory, setShowHistory] = useState(false)
@@ -50,6 +92,9 @@ export default function Chat() {
   const [streamAnswer, setStreamAnswer] = useState('')
   const [streamThought, setStreamThought] = useState('')
   const [streamTool, setStreamTool] = useState<string | null>(null)
+  const messages = active?.messages ?? EMPTY_MESSAGES
+  const messageTurns = useMemo(() => groupMessagesIntoTurns(messages), [messages])
+  const lastMessageId = messages[messages.length - 1]?.id
 
   const closeStream = () => {
     streamRunRef.current = null
@@ -177,8 +222,6 @@ export default function Chat() {
       setConversations(list)
     } catch (e) {
       showToast(e instanceof Error ? e.message : '会话列表加载失败')
-    } finally {
-      setLoading(false)
     }
   }, [])
 
@@ -193,8 +236,6 @@ export default function Chat() {
     }
     if (tokenStorage.getAccessToken()) {
       loadConversations()
-    } else {
-      setLoading(false)
     }
     resumeActive()
   })
@@ -209,12 +250,22 @@ export default function Chat() {
   })
 
   useEffect(() => {
-    const last = active?.messages?.slice(-1)[0]
-    if (last) {
-      const timer = setTimeout(() => setScrollTarget(`msg-${last.id}`), 60)
-      return () => clearTimeout(timer)
-    }
-  }, [active?.messages])
+    if (!active) return
+    const timer = setTimeout(() => {
+      setScrollTarget(current =>
+        current === 'chat-scroll-bottom-a' ? 'chat-scroll-bottom-b' : 'chat-scroll-bottom-a',
+      )
+    }, 60)
+    return () => clearTimeout(timer)
+  }, [
+    active?.conversation.id,
+    lastMessageId,
+    messages.length,
+    running,
+    streamAnswer.length,
+    streamThought.length,
+    streamTool,
+  ])
 
   const openConversation = async (id: number) => {
     try {
@@ -235,22 +286,6 @@ export default function Chat() {
     } catch (e) {
       showToast(e instanceof Error ? e.message : '会话加载失败')
     }
-  }
-
-  const backToList = () => {
-    stopPolling()
-    closeStream()
-    activeIdRef.current = null
-    setActive(null)
-    setRunning(false)
-    setInput('')
-    setScrollTarget('')
-    setStreamAnswer('')
-    setStreamThought('')
-    setStreamTool(null)
-    Taro.removeStorageSync(ACTIVE_KEY)
-    loadConversations()
-    setShowHistory(true)
   }
 
   const startNewChat = () => {
@@ -315,7 +350,7 @@ export default function Chat() {
       }
       startPolling(targetId)
     } catch (e) {
-      if (creating) setCreating(false)
+      setCreating(false)
       showToast(e instanceof Error ? e.message : '发送失败，请重试')
     }
   }
@@ -330,175 +365,179 @@ export default function Chat() {
     }
   }
 
-  const handleWechatLogin = async () => {
-    try {
-      const loginResult = await Taro.login()
-      if (!loginResult.code) {
-        showToast('获取微信登录凭证失败')
-        return
-      }
-      const response = await authApi.wechatLogin(loginResult.code)
-      useUserStore.getState().setUser(response.userInfo)
-      loadConversations()
-      showToast('登录成功')
-    } catch (e) {
-      showToast(e instanceof Error ? e.message : '登录失败，请重试')
-    }
-  }
-
-  const messages = active?.messages || []
-
   return (
     <View className="chat-page">
-      {active ? (
-        <>
-          <NavBar
-            title={active.conversation.title || '智能体会话'}
-            left={
-              <View
-                className="chat-history-trigger chat-history-trigger-left"
-                onClick={() => setShowHistory(true)}
-              >
-                <Icon name="more" />
+      <View
+        className={`chat-main-shell ${showHistory ? 'is-drawer-open' : ''}`}
+        onClick={showHistory ? () => setShowHistory(false) : undefined}
+      >
+        {active ? (
+          <>
+            <NavBar
+              title={active.conversation.title || '智能体会话'}
+              left={
+                <View
+                  className="chat-history-trigger chat-history-trigger-left"
+                  role="button"
+                  ariaRole="button"
+                  ariaLabel={CHAT_COPY.history}
+                  onClick={() => setShowHistory(true)}
+                >
+                  <Icon name="more" />
+                </View>
+              }
+              right={
+                running ? (
+                  <Text className="chat-cancel" onClick={handleCancel}>
+                    {CHAT_COPY.stop}
+                  </Text>
+                ) : (
+                  <View
+                    className="chat-new-btn"
+                    role="button"
+                    ariaRole="button"
+                    ariaLabel={CHAT_COPY.newChat}
+                    onClick={startNewChat}
+                  >
+                    <Icon name="edit" />
+                  </View>
+                )
+              }
+            />
+            <ScrollView
+              scrollY
+              className="chat-messages"
+              scrollIntoView={scrollTarget}
+              scrollWithAnimation
+            >
+              <View className="chat-messages-inner">
+                <View className="chat-turn-list">
+                  {messageTurns.map(turn => (
+                    <View id={turn.id} className={`chat-turn ${turn.role}`} key={turn.key}>
+                      {turn.messages.map(message => (
+                        <MessagePart
+                          key={message.id}
+                          message={message}
+                          open={Boolean(thoughtOpen[message.id])}
+                          onToggleThought={() =>
+                            setThoughtOpen(previous => ({
+                              ...previous,
+                              [message.id]: !previous[message.id],
+                            }))
+                          }
+                        />
+                      ))}
+                    </View>
+                  ))}
+                  {streamTool || streamThought || streamAnswer || running ? (
+                    <View className="chat-turn assistant is-streaming" role="status">
+                      {streamTool ? (
+                        <View className="msg-tool">
+                          <View className="msg-tool-dot" />
+                          <Text>正在使用工具：{streamTool}</Text>
+                        </View>
+                      ) : null}
+                      {streamThought ? (
+                        <View className="msg-thought">
+                          <Text className="msg-thought-title">思考过程</Text>
+                          <Text>{truncate(streamThought, 120)}</Text>
+                        </View>
+                      ) : null}
+                      {streamAnswer ? (
+                        <View className="msg-answer stream">
+                          <Markdown content={streamAnswer} />
+                          <Text className="msg-stream-cursor">▍</Text>
+                        </View>
+                      ) : null}
+                      {running && !streamAnswer ? (
+                        <View className="chat-typing">
+                          <View className="dot" />
+                          <View className="dot" />
+                          <View className="dot" />
+                        </View>
+                      ) : null}
+                    </View>
+                  ) : null}
+                </View>
+                <View className="chat-scroll-sentinels">
+                  <View id="chat-scroll-bottom-a" className="chat-scroll-sentinel" />
+                  <View id="chat-scroll-bottom-b" className="chat-scroll-sentinel" />
+                </View>
               </View>
-            }
-            right={
-              running ? (
-                <Text className="chat-cancel" onClick={handleCancel}>
-                  停止
-                </Text>
-              ) : (
-                <View className="chat-new-btn" onClick={startNewChat}>
-                  <Icon name="edit" />
+            </ScrollView>
+            <ChatComposer
+              value={input}
+              placeholder={CHAT_COPY.inputPlaceholder}
+              sendLabel={CHAT_COPY.inputPlaceholder}
+              stopLabel={CHAT_COPY.stop}
+              running={running}
+              creating={creating}
+              onChange={setInput}
+              onSubmit={() => handleSend()}
+              onStop={handleCancel}
+            />
+          </>
+        ) : (
+          <>
+            <NavBar
+              title="DinQor"
+              left={
+                <View
+                  className="chat-history-trigger chat-history-trigger-left"
+                  role="button"
+                  ariaRole="button"
+                  ariaLabel={CHAT_COPY.history}
+                  onClick={() => setShowHistory(true)}
+                >
+                  <Icon name="more" />
                 </View>
-              )
-            }
-          />
-          <ScrollView
-            scrollY
-            className="chat-messages"
-            scrollIntoView={scrollTarget}
-            scrollWithAnimation
-          >
-            <View className="chat-messages-inner">
-              {messages.map(message => (
-                <MessageRow
-                  key={message.id}
-                  message={message}
-                  open={Boolean(thoughtOpen[message.id])}
-                  onToggleThought={() =>
-                    setThoughtOpen(prev => ({ ...prev, [message.id]: !prev[message.id] }))
-                  }
-                />
-              ))}
-              {streamTool ? (
-                <View className="msg-row">
-                  <View className="msg-tool">
-                    <View className="msg-tool-dot" />
-                    <Text>正在使用工具：{streamTool}</Text>
+              }
+            />
+            <View className="chat-home-empty">
+              <Text className="chat-home-title">我们先从哪里开始呢？</Text>
+              <View className="chat-home-quick-list">
+                {QUICK_PROMPTS.map(prompt => (
+                  <View
+                    key={prompt}
+                    className="chat-home-quick"
+                    role="button"
+                    ariaRole="button"
+                    ariaLabel={prompt}
+                    onClick={() => setInput(prompt)}
+                  >
+                    <Text>{prompt}</Text>
                   </View>
-                </View>
-              ) : null}
-              {streamThought ? (
-                <View className="msg-row">
-                  <View className="msg-thought">
-                    <Text className="msg-thought-title">思考过程</Text>
-                    <Text>{truncate(streamThought, 120)}</Text>
-                  </View>
-                </View>
-              ) : null}
-              {streamAnswer ? (
-                <View className="msg-row assistant-output">
-                  <View className="msg-answer stream">
-                    <Markdown content={streamAnswer} />
-                    <Text className="msg-stream-cursor">▍</Text>
-                  </View>
-                </View>
-              ) : null}
-              {running && !streamAnswer ? (
-                <View className="msg-row">
-                  <View className="chat-typing">
-                    <View className="dot" />
-                    <View className="dot" />
-                    <View className="dot" />
-                  </View>
-                </View>
-              ) : null}
-              <View id="msg-bottom" />
-            </View>
-          </ScrollView>
-          <View className="chat-input-bar">
-            <View className="chat-input-container">
-              <Textarea
-                className="chat-input"
+                ))}
+              </View>
+              <ChatComposer
+                home
                 value={input}
-                maxlength={4000}
-                autoHeight
-                placeholder="有什么问题，随时问我..."
-                placeholderClass="chat-input-placeholder"
-                onInput={e => setInput(e.detail.value)}
-                confirmType="send"
-                onConfirm={() => handleSend()}
-                cursorSpacing={24}
-                showConfirmBar={false}
+                placeholder={CHAT_COPY.inputPlaceholder}
+                sendLabel={CHAT_COPY.inputPlaceholder}
+                stopLabel={CHAT_COPY.stop}
+                running={running}
+                creating={creating}
+                onChange={setInput}
+                onSubmit={() => handleSend()}
+                onStop={handleCancel}
               />
             </View>
-            <View
-              className={`chat-send-new ${running || creating ? 'busy' : input.trim() ? 'ready' : 'idle'}`}
-              onClick={() => (running ? handleCancel() : handleSend())}
-            >
-              {running ? <View className="chat-stop" /> : <Icon name="send" />}
-            </View>
-          </View>
-        </>
-      ) : (
-        <>
-          <NavBar
-            title="DinQor"
-            left={
-              <View
-                className="chat-history-trigger chat-history-trigger-left"
-                onClick={() => setShowHistory(true)}
-              >
-                <Icon name="more" />
-              </View>
-            }
+          </>
+        )}
+        {showHistory ? (
+          <View
+            className="chat-drawer-dismiss"
+            role="button"
+            ariaRole="button"
+            ariaLabel={CHAT_COPY.history}
+            catchMove
+            onClick={event => {
+              event.stopPropagation()
+              setShowHistory(false)
+            }}
           />
-          <View className="chat-home-empty">
-            <Text className="chat-home-title">我们先从哪里开始呢？</Text>
-            <View className="chat-home-quick-list">
-              {QUICK_PROMPTS.map(prompt => (
-                <View key={prompt} className="chat-home-quick" onClick={() => setInput(prompt)}>
-                  <Text>{prompt}</Text>
-                </View>
-              ))}
-            </View>
-            <View className="chat-input-bar chat-input-bar-home">
-              <View className="chat-input-container">
-                <Textarea
-                  className="chat-input"
-                  value={input}
-                  maxlength={4000}
-                  autoHeight
-                  placeholder="有什么问题，随时问我..."
-                  placeholderClass="chat-input-placeholder"
-                  onInput={e => setInput(e.detail.value)}
-                  confirmType="send"
-                  onConfirm={() => handleSend()}
-                  cursorSpacing={24}
-                  showConfirmBar={false}
-                />
-              </View>
-              <View
-                className={`chat-send-new ${running || creating ? 'busy' : input.trim() ? 'ready' : 'idle'}`}
-                onClick={() => (running ? handleCancel() : handleSend())}
-              >
-                {running ? <View className="chat-stop" /> : <Icon name="send" />}
-              </View>
-            </View>
-          </View>
-        </>
-      )}
+        ) : null}
+      </View>
       <ChatDrawer
         visible={showHistory}
         onClose={() => setShowHistory(false)}
@@ -514,7 +553,7 @@ export default function Chat() {
   )
 }
 
-function MessageRow({
+function MessagePart({
   message,
   open,
   onToggleThought,
@@ -524,46 +563,40 @@ function MessageRow({
   onToggleThought: () => void
 }) {
   if (message.role === 'user' && message.kind === 'message') {
-    return (
-      <View className="msg-row user">
-        <View className="msg-bubble user">{message.content}</View>
-      </View>
-    )
+    return <View className="msg-bubble user">{message.content}</View>
   }
   if (message.kind === 'thought') {
     return (
-      <View className="msg-row assistant-output">
-        <View className="msg-thought" onClick={onToggleThought}>
-          <Text className="msg-thought-title">思考过程</Text>
-          <Text>{open ? message.content : truncate(message.content, 120)}</Text>
-        </View>
+      <View
+        className="msg-thought"
+        role="button"
+        ariaRole="button"
+        ariaLabel="思考过程"
+        onClick={onToggleThought}
+      >
+        <Text className="msg-thought-title">思考过程</Text>
+        <Text>{open ? message.content : truncate(message.content, 120)}</Text>
       </View>
     )
   }
   if (message.kind === 'tool_call') {
     return (
-      <View className="msg-row assistant-output">
-        <View className="msg-tool">
-          <View className="msg-tool-dot" />
-          <Text>正在使用工具：{message.toolName || '内部工具'}</Text>
-        </View>
+      <View className="msg-tool">
+        <View className="msg-tool-dot" />
+        <Text>正在使用工具：{message.toolName || '内部工具'}</Text>
       </View>
     )
   }
   if (message.kind === 'tool_result') {
     return (
-      <View className="msg-row assistant-output">
-        <View className="msg-tool">
-          <Text>工具执行完成</Text>
-        </View>
+      <View className="msg-tool is-complete">
+        <Text>工具执行完成</Text>
       </View>
     )
   }
   return (
-    <View className="msg-row assistant-output">
-      <View className="msg-answer">
-        <Markdown content={message.content || '（空回复）'} />
-      </View>
+    <View className="msg-answer">
+      <Markdown content={message.content || '（空回复）'} />
     </View>
   )
 }

@@ -11,9 +11,13 @@ export default defineAppConfig({
     'pages/publish/index',
     'pages/blog-manage/index',
     'pages/points/index',
+    'pages/notifications/index',
+    'pages/account-settings/index',
   ],
   window: {
     navigationStyle: 'custom',
+    navigationBarBackgroundColor: '#ffffff',
+    navigationBarTextStyle: 'black',
     backgroundColor: '#ffffff',
     backgroundTextStyle: 'dark',
   },

@@ -4,6 +4,7 @@ import { formatDateTime } from '@/utils/format'
 import type { AgentConversation } from '@/api/agent'
 import type { UserInfo } from '@/store/user'
 import { useState } from 'react'
+import { useNavbarLayout } from '@/hooks/useNavbarLayout'
 
 interface ChatDrawerProps {
   visible: boolean
@@ -33,38 +34,40 @@ export function ChatDrawer({
   user,
 }: ChatDrawerProps) {
   const [keyword, setKeyword] = useState('')
+  const { statusBarHeight } = useNavbarLayout()
 
   const filteredConversations = keyword
     ? conversations.filter(c => c.title.toLowerCase().includes(keyword.toLowerCase()))
     : conversations
 
   return (
-    <View className={`chat-drawer-mask ${visible ? 'show' : ''}`} onClick={onClose}>
+    <View
+      className={`chat-drawer-mask ${visible ? 'show' : ''}`}
+      catchMove={visible}
+      onClick={onClose}
+    >
       <View
         className={`chat-drawer-content ${visible ? 'show' : ''}`}
+        role="dialog"
+        ariaRole="dialog"
+        ariaLabel="最近对话"
         onClick={e => e.stopPropagation()}
       >
-        <View className="drawer-header">
+        <View className="drawer-header" style={{ paddingTop: statusBarHeight + 16 }}>
           <View className="drawer-brand">
             <View className="drawer-logo">
               <Icon name="play" />
             </View>
             <Text className="drawer-title">DinQor</Text>
           </View>
-          <View
-            className="drawer-edit-btn"
-            onClick={() => {
-              onNewChat()
-              onClose()
-            }}
-          >
-            <Icon name="edit" />
-          </View>
         </View>
 
         <View className="drawer-new-chat-wrap">
           <View
             className="drawer-new-chat-btn"
+            role="button"
+            ariaRole="button"
+            ariaLabel="新建对话"
             onClick={() => {
               onNewChat()
               onClose()
@@ -82,6 +85,7 @@ export function ChatDrawer({
               className="drawer-search-input"
               placeholder="搜索对话"
               placeholderClass="drawer-search-placeholder"
+              ariaLabel="搜索对话"
               value={keyword}
               onInput={e => setKeyword(e.detail.value)}
             />
@@ -94,6 +98,9 @@ export function ChatDrawer({
               <View
                 key={menu.url}
                 className="drawer-menu-item"
+                role="button"
+                ariaRole="button"
+                ariaLabel={menu.name}
                 onClick={() => {
                   onNavigate(menu.url)
                   onClose()
@@ -112,6 +119,9 @@ export function ChatDrawer({
                 <View
                   key={conversation.id}
                   className={`drawer-chat-item ${activeId === conversation.id ? 'active' : ''}`}
+                  role="button"
+                  ariaRole="button"
+                  ariaLabel={conversation.title || '新对话'}
                   onClick={() => {
                     onSelect(conversation.id)
                     onClose()
@@ -128,7 +138,6 @@ export function ChatDrawer({
                     <Text className="chat-item-time">
                       {formatDateTime(conversation.updatedAt).split(' ')[1] || '昨天'}
                     </Text>
-                    <Icon name="more" className="chat-item-more" />
                   </View>
                 </View>
               ))}
@@ -139,6 +148,9 @@ export function ChatDrawer({
         {user ? (
           <View
             className="drawer-footer"
+            role="button"
+            ariaRole="button"
+            ariaLabel={PRODUCT_MENUS[2].name}
             onClick={() => {
               onNavigate('/pages/profile/index')
               onClose()
