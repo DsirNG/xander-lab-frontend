@@ -23,7 +23,7 @@ import './index.scss'
 const ACTIVE_KEY = 'chat_active_id'
 const POLL_INTERVAL = 1200
 
-const QUICK_PROMPTS = ['写一篇技术博客', '生成一张图片', '搜索今天的 AI 行业动态']
+const QUICK_PROMPTS = ['写一篇技术博客', '搜索并整理资料', '我有一个问题']
 
 function showToast(title: string) {
   Taro.showToast({ title, icon: 'none' })
@@ -355,8 +355,11 @@ export default function Chat() {
           <NavBar
             title={active.conversation.title || '智能体会话'}
             left={
-              <View className="nav-bar-back" onClick={() => setShowHistory(true)}>
-                <Icon name="more" style={{ transform: 'rotate(90deg)' }} />
+              <View
+                className="chat-history-trigger chat-history-trigger-left"
+                onClick={() => setShowHistory(true)}
+              >
+                <Icon name="more" />
               </View>
             }
             right={
@@ -405,9 +408,9 @@ export default function Chat() {
                 </View>
               ) : null}
               {streamAnswer ? (
-                <View className="msg-row">
-                  <View className="msg-bubble ai stream">
-                    <Text>{streamAnswer}</Text>
+                <View className="msg-row assistant-output">
+                  <View className="msg-answer stream">
+                    <Markdown content={streamAnswer} />
                     <Text className="msg-stream-cursor">▍</Text>
                   </View>
                 </View>
@@ -439,89 +442,59 @@ export default function Chat() {
                 cursorSpacing={24}
                 showConfirmBar={false}
               />
-              <View className="chat-input-mic" onClick={() => showToast('语音输入开发中')}>
-                <Icon name="discover" />
-              </View>
             </View>
             <View
-              className={`chat-send-new ${running || creating ? 'busy' : 'ready'}`}
+              className={`chat-send-new ${running || creating ? 'busy' : input.trim() ? 'ready' : 'idle'}`}
               onClick={() => (running ? handleCancel() : handleSend())}
             >
-              {running ? <View className="chat-stop" /> : <Icon name={input.trim() ? "send" : "plus"} />}
+              {running ? <View className="chat-stop" /> : <Icon name="send" />}
             </View>
           </View>
         </>
       ) : (
         <>
           <NavBar
+            title="DinQor"
             left={
-              <View className="chat-nav-menu" onClick={() => setShowHistory(true)}>
-                <Icon name="more" style={{ transform: 'rotate(90deg)' }} />
-              </View>
-            }
-            right={
-              <View className="chat-new-btn" onClick={startNewChat}>
-                <Icon name="edit" />
+              <View
+                className="chat-history-trigger chat-history-trigger-left"
+                onClick={() => setShowHistory(true)}
+              >
+                <Icon name="more" />
               </View>
             }
           />
-          <ScrollView scrollY className="chat-home-scroll">
-            <View className="chat-welcome-area left-aligned">
-              <View className="chat-welcome-logo">
-                <Icon name="play" />
-              </View>
-              <View className="chat-welcome-text-wrap">
-                <View className="chat-welcome-title">
-                  你好，<br/>我是 <Text className="brand-text">DinQor</Text>
-                </View>
-                <Text className="chat-welcome-subtitle">你的 AI 智能助手，随时为你提供帮助</Text>
-              </View>
-            </View>
-
-            <View className="chat-recommend-vertical">
-              {[
-                { title: '帮我写一篇技术博客', desc: '生成高质量的技术文章', icon: 'edit', color: '#5361FF', bg: '#F0EFFF' },
-                { title: '搜索并整理资料', desc: '联网搜索并总结关键信息', icon: 'search', color: '#188A4F', bg: '#E5F6EE' },
-                { title: '帮我写一个产品方案', desc: '生成完整的产品方案', icon: 'article', color: '#6B4FE0', bg: '#F0ECFF' },
-                { title: '我有一个问题', desc: '随时提问，得到专业解答', icon: 'star', color: '#B27A18', bg: '#FBF1DD' },
-              ].map(card => (
-                <View key={card.title} className="chat-recommend-card vertical" onClick={() => handleSend(card.title)}>
-                  <View className="chat-recommend-icon-wrap" style={{ background: card.bg }}>
-                    <Icon name={card.icon as any} style={{ filter: 'none', color: card.color }} />
-                  </View>
-                  <View className="chat-recommend-info">
-                    <Text className="chat-recommend-title">{card.title}</Text>
-                    <Text className="chat-recommend-desc">{card.desc}</Text>
-                  </View>
-                  <Icon name="right" className="chat-recommend-arrow" />
+          <View className="chat-home-empty">
+            <Text className="chat-home-title">我们先从哪里开始呢？</Text>
+            <View className="chat-home-quick-list">
+              {QUICK_PROMPTS.map(prompt => (
+                <View key={prompt} className="chat-home-quick" onClick={() => setInput(prompt)}>
+                  <Text>{prompt}</Text>
                 </View>
               ))}
             </View>
-          </ScrollView>
-          <View className="chat-input-bar">
-            <View className="chat-input-container">
-              <Textarea
-                className="chat-input"
-                value={input}
-                maxlength={4000}
-                autoHeight
-                placeholder="有什么问题，随时问我..."
-                placeholderClass="chat-input-placeholder"
-                onInput={e => setInput(e.detail.value)}
-                confirmType="send"
-                onConfirm={() => handleSend()}
-                cursorSpacing={24}
-                showConfirmBar={false}
-              />
-              <View className="chat-input-mic" onClick={() => showToast('语音输入开发中')}>
-                <Icon name="discover" />
+            <View className="chat-input-bar chat-input-bar-home">
+              <View className="chat-input-container">
+                <Textarea
+                  className="chat-input"
+                  value={input}
+                  maxlength={4000}
+                  autoHeight
+                  placeholder="有什么问题，随时问我..."
+                  placeholderClass="chat-input-placeholder"
+                  onInput={e => setInput(e.detail.value)}
+                  confirmType="send"
+                  onConfirm={() => handleSend()}
+                  cursorSpacing={24}
+                  showConfirmBar={false}
+                />
               </View>
-            </View>
-            <View
-              className={`chat-send-new ${running || creating ? 'busy' : 'ready'}`}
-              onClick={() => (running ? handleCancel() : handleSend())}
-            >
-              {running ? <View className="chat-stop" /> : <Icon name={input.trim() ? "send" : "plus"} />}
+              <View
+                className={`chat-send-new ${running || creating ? 'busy' : input.trim() ? 'ready' : 'idle'}`}
+                onClick={() => (running ? handleCancel() : handleSend())}
+              >
+                {running ? <View className="chat-stop" /> : <Icon name="send" />}
+              </View>
             </View>
           </View>
         </>
@@ -533,6 +506,7 @@ export default function Chat() {
         activeId={activeIdRef.current}
         onSelect={openConversation}
         onNewChat={startNewChat}
+        onNavigate={url => Taro.redirectTo({ url })}
         user={user}
       />
       <TabBar active="chat" />
@@ -553,16 +527,12 @@ function MessageRow({
     return (
       <View className="msg-row user">
         <View className="msg-bubble user">{message.content}</View>
-        <View className="chat-avatar user-avatar">
-          <Icon name="user" />
-        </View>
       </View>
     )
   }
   if (message.kind === 'thought') {
     return (
-      <View className="msg-row">
-        <View className="chat-avatar-placeholder" />
+      <View className="msg-row assistant-output">
         <View className="msg-thought" onClick={onToggleThought}>
           <Text className="msg-thought-title">思考过程</Text>
           <Text>{open ? message.content : truncate(message.content, 120)}</Text>
@@ -572,8 +542,7 @@ function MessageRow({
   }
   if (message.kind === 'tool_call') {
     return (
-      <View className="msg-row">
-        <View className="chat-avatar-placeholder" />
+      <View className="msg-row assistant-output">
         <View className="msg-tool">
           <View className="msg-tool-dot" />
           <Text>正在使用工具：{message.toolName || '内部工具'}</Text>
@@ -583,8 +552,7 @@ function MessageRow({
   }
   if (message.kind === 'tool_result') {
     return (
-      <View className="msg-row">
-        <View className="chat-avatar-placeholder" />
+      <View className="msg-row assistant-output">
         <View className="msg-tool">
           <Text>工具执行完成</Text>
         </View>
@@ -592,11 +560,8 @@ function MessageRow({
     )
   }
   return (
-    <View className="msg-row">
-      <View className="chat-avatar ai-avatar">
-        <Icon name="play" />
-      </View>
-      <View className="msg-bubble ai">
+    <View className="msg-row assistant-output">
+      <View className="msg-answer">
         <Markdown content={message.content || '（空回复）'} />
       </View>
     </View>

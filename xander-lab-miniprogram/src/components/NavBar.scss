@@ -4,10 +4,10 @@
   left: 0;
   right: 0;
   z-index: 30;
-  border-bottom: 1px solid #f2f2f7;
   box-sizing: border-box;
 }
 .nav-bar-body {
+  position: relative;
   display: flex;
   align-items: center;
   padding: 0 16px;
@@ -19,6 +19,7 @@
   flex-shrink: 0;
   height: 100%;
   overflow: hidden;
+  z-index: 1;
 }
 .nav-bar-side-left {
   justify-content: flex-start;
@@ -27,8 +28,10 @@
   justify-content: flex-end;
 }
 .nav-bar-title {
-  flex: 1;
-  min-width: 0;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 176px);
   text-align: center;
   font-size: 17px;
   font-weight: 700;

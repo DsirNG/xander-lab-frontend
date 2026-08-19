@@ -7,7 +7,7 @@
     "urlCheck": false,
     "es6": true,
     "postcss": true,
-    "minified": false,
-    "uploadWithSourceMap": true
+    "minified": true,
+    "uploadWithSourceMap": false
   }
 }

@@ -15,6 +15,7 @@ export interface NavbarLayout {
   /** 胶囊宽度 */
   capsuleWidth: number
   /** 是否取到了真实胶囊数据（false 为降级值，多发生在 H5 / 开发工具） */
+  rightSafeInset: number
   ready: boolean
 }
 
@@ -59,6 +60,7 @@ function buildLayout(): NavbarLayout {
       contentHeight,
       navBarHeight: contentTop + contentHeight,
       capsuleWidth: capsule.width,
+      rightSafeInset: Math.max(16, windowWidth - capsule.left + 8),
       // 标题最右不超过胶囊左缘，留 8px 呼吸间距
       titleMaxWidth: capsule.left - 8,
       ready: true,
@@ -71,6 +73,7 @@ function buildLayout(): NavbarLayout {
     contentHeight: FALLBACK_CONTENT_HEIGHT,
     navBarHeight: statusBarHeight + FALLBACK_CONTENT_HEIGHT,
     capsuleWidth: FALLBACK_CAPSULE_WIDTH,
+    rightSafeInset: 16,
     titleMaxWidth: windowWidth - FALLBACK_CAPSULE_WIDTH - 32,
     ready: false,
   }

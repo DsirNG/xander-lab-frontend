@@ -12,16 +12,14 @@ interface ChatDrawerProps {
   activeId: number | null
   onSelect: (id: number) => void
   onNewChat: () => void
+  onNavigate: (url: string) => void
   user: UserInfo | null
 }
 
-const GLOBAL_MENUS = [
-  { name: '对话列表', icon: 'chat', active: true },
-  { name: '智能体', icon: 'user' },
-  { name: '知识库', icon: 'article' },
-  { name: '定时任务', icon: 'clock' },
-  { name: '插件中心', icon: 'discover' },
-  { name: '设置', icon: 'more' },
+const PRODUCT_MENUS = [
+  { name: '内容计划', icon: 'calendar', url: '/pages/plans/index' },
+  { name: '浏览博客', icon: 'article', url: '/pages/blog/index' },
+  { name: '个人中心', icon: 'user', url: '/pages/profile/index' },
 ]
 
 export function ChatDrawer({
@@ -31,6 +29,7 @@ export function ChatDrawer({
   activeId,
   onSelect,
   onNewChat,
+  onNavigate,
   user,
 }: ChatDrawerProps) {
   const [keyword, setKeyword] = useState('')
@@ -52,13 +51,25 @@ export function ChatDrawer({
             </View>
             <Text className="drawer-title">DinQor</Text>
           </View>
-          <View className="drawer-edit-btn" onClick={() => { onNewChat(); onClose() }}>
+          <View
+            className="drawer-edit-btn"
+            onClick={() => {
+              onNewChat()
+              onClose()
+            }}
+          >
             <Icon name="edit" />
           </View>
         </View>
 
         <View className="drawer-new-chat-wrap">
-          <View className="drawer-new-chat-btn" onClick={() => { onNewChat(); onClose() }}>
+          <View
+            className="drawer-new-chat-btn"
+            onClick={() => {
+              onNewChat()
+              onClose()
+            }}
+          >
             <Icon name="plus" />
             <Text>新建对话</Text>
           </View>
@@ -79,8 +90,15 @@ export function ChatDrawer({
 
         <ScrollView scrollY className="drawer-scroll">
           <View className="drawer-menu-list">
-            {GLOBAL_MENUS.map(menu => (
-              <View key={menu.name} className={`drawer-menu-item ${menu.active ? 'active' : ''}`}>
+            {PRODUCT_MENUS.map(menu => (
+              <View
+                key={menu.url}
+                className="drawer-menu-item"
+                onClick={() => {
+                  onNavigate(menu.url)
+                  onClose()
+                }}
+              >
                 <Icon name={menu.icon as any} />
                 <Text>{menu.name}</Text>
               </View>
@@ -107,7 +125,9 @@ export function ChatDrawer({
                     </Text>
                   </View>
                   <View className="chat-item-meta">
-                    <Text className="chat-item-time">{formatDateTime(conversation.updatedAt).split(' ')[1] || '昨天'}</Text>
+                    <Text className="chat-item-time">
+                      {formatDateTime(conversation.updatedAt).split(' ')[1] || '昨天'}
+                    </Text>
                     <Icon name="more" className="chat-item-more" />
                   </View>
                 </View>
@@ -117,12 +137,17 @@ export function ChatDrawer({
         </ScrollView>
 
         {user ? (
-          <View className="drawer-footer">
+          <View
+            className="drawer-footer"
+            onClick={() => {
+              onNavigate('/pages/profile/index')
+              onClose()
+            }}
+          >
             <View className="drawer-user-avatar">
               <Icon name="user" />
             </View>
             <Text className="drawer-user-name">{user.nickname || '用户'}</Text>
-            <View className="drawer-user-badge">专业版</View>
             <Icon name="right" className="drawer-user-arrow" />
           </View>
         ) : null}

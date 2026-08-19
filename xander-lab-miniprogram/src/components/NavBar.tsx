@@ -31,7 +31,8 @@ export function NavBar({
   background = '#ffffff',
   color = '#111111',
 }: NavBarProps) {
-  const { statusBarHeight, contentHeight, navBarHeight, titleMaxWidth } = useNavbarLayout()
+  const { statusBarHeight, contentHeight, navBarHeight, titleMaxWidth, rightSafeInset } =
+    useNavbarLayout()
 
   const barStyle: CSSProperties = {
     paddingTop: statusBarHeight,
@@ -45,13 +46,18 @@ export function NavBar({
       {/* 占位：维持文档流，避免内容被固定在顶部的导航遮盖 */}
       <View style={{ height: navBarHeight }} />
       <View className="nav-bar" style={barStyle}>
-        <View className="nav-bar-body" style={{ height: contentHeight }}>
+        <View
+          className="nav-bar-body"
+          style={{ height: contentHeight, paddingRight: rightSafeInset }}
+        >
           <View className="nav-bar-side nav-bar-side-left">
             {showBack ? (
               <View className="nav-bar-back" onClick={onBack ?? (() => Taro.navigateBack())}>
                 <Icon name="back" />
               </View>
-            ) : left}
+            ) : (
+              left
+            )}
           </View>
           <Text className="nav-bar-title" style={{ maxWidth: titleMaxWidth }}>
             {title}

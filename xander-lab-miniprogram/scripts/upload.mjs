@@ -6,7 +6,8 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const rootDir = path.resolve(__dirname, '..')
 
 const APPID = process.env.WX_APPID || 'wx63b2e6732ff75cc8'
-const PRIVATE_KEY_PATH = process.env.WX_PRIVATE_KEY_PATH || path.join(rootDir, 'keys', `private.${APPID}.key`)
+const PRIVATE_KEY_PATH =
+  process.env.WX_PRIVATE_KEY_PATH || path.join(rootDir, 'keys', `private.${APPID}.key`)
 const VERSION = process.env.WX_VERSION || process.argv[2] || '1.0.0'
 const DESC = process.env.WX_DESC || process.argv[3] || 'DinQorAI 小程序体验版'
 const ROBOT = Number(process.env.WX_ROBOT || 1)
@@ -28,12 +29,12 @@ ci.upload({
   desc: DESC,
   setting: {
     es6: true,
-    minified: false,
-    uploadWithSourceMap: true,
+    minified: true,
+    uploadWithSourceMap: false,
     urlCheck: false,
   },
   robot: ROBOT,
-  onProgressUpdate: (info) => {
+  onProgressUpdate: info => {
     if (info.status === 'uploading') {
       console.log(`progress: ${info.current}/${info.total} ${info.name}`)
     }
@@ -42,7 +43,7 @@ ci.upload({
   .then(() => {
     console.log('upload success. open WeChat DevTools to set the trial/experience version.')
   })
-  .catch((err) => {
+  .catch(err => {
     console.error('upload failed:', err)
     process.exit(1)
   })
