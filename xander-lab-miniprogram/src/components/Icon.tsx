@@ -10,6 +10,7 @@ const icons = {
   search: require('@/assets/icons/search.svg'),
   eye: require('@/assets/icons/eye.svg'),
   back: require('@/assets/icons/back.svg'),
+  home: require('@/assets/icons/home.svg'),
   more: require('@/assets/icons/more.svg'),
   plus: require('@/assets/icons/plus.svg'),
   send: require('@/assets/icons/send.svg'),

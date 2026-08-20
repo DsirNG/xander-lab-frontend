@@ -45,15 +45,7 @@ export default function BlogDetail() {
 
   return (
     <View className="detail-page">
-      <NavBar
-        title="文章详情"
-        showBack
-        right={
-          <Button className="share-trigger" openType="share">
-            分享
-          </Button>
-        }
-      />
+      <NavBar title="文章详情" showBack />
       {loading ? <Text className="data-state">正在加载文章...</Text> : null}
       {error ? <Text className="data-state error">{error}</Text> : null}
       {article ? (
@@ -91,6 +83,11 @@ export default function BlogDetail() {
           ) : null}
           <View className="markdown-body">
             <Markdown content={article.content || ''} />
+          </View>
+          <View className="detail-share-row">
+            <Button className="share-trigger" openType="share">
+              分享
+            </Button>
           </View>
         </>
       ) : null}

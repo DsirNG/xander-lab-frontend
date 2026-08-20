@@ -1,3 +1,18 @@
+.manage-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: var(--space-3);
+}
+
+.manage-write {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--color-accent);
+  font-size: var(--text-body);
+  font-weight: 600;
+}
+
 .manage-search {
   margin-top: var(--space-3);
 }

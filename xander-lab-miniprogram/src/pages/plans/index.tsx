@@ -142,18 +142,16 @@ export default function Plans() {
 
   return (
     <View className="page plans-page">
-      <NavBar
-        title="计划"
-        right={
-          <View
-            className="new-plan-btn"
-            onClick={() => Taro.navigateTo({ url: '/pages/plan-create/index' })}
-          >
-            <Icon name="plus" />
-            <Text>新建</Text>
-          </View>
-        }
-      />
+      <NavBar title="计划" />
+      <View className="plans-toolbar">
+        <View
+          className="new-plan-btn"
+          onClick={() => Taro.navigateTo({ url: '/pages/plan-create/index' })}
+        >
+          <Icon name="plus" />
+          <Text>新建</Text>
+        </View>
+      </View>
       {loading && plans.length === 0 ? <Text className="data-state">正在加载计划...</Text> : null}
       {loadedOnce && plans.length === 0 ? (
         <View className="empty-state">

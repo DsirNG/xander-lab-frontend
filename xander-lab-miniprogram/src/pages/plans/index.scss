@@ -8,6 +8,12 @@
   font-weight: 600;
 }
 
+.plans-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: var(--space-3);
+}
+
 .new-plan-btn .icon {
   width: 20px;
   height: 20px;

@@ -66,8 +66,6 @@
   position: absolute;
 }
 
-.chat-cancel,
-.chat-new-btn,
 .chat-history-trigger {
   display: flex;
   width: var(--chat-control-size);
@@ -77,19 +75,9 @@
   justify-content: center;
 }
 
-.chat-cancel {
-  color: var(--chat-danger);
-  font-size: 13px;
-  font-weight: 600;
-}
-
-.chat-new-btn .icon,
 .chat-history-trigger .icon {
   width: 22px;
   height: 22px;
-}
-
-.chat-history-trigger .icon {
   transform: rotate(90deg);
 }
 

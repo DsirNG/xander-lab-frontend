@@ -32,7 +32,6 @@ const QUICK_PROMPTS = ['写一篇技术博客', '搜索并整理资料', '我有
 const CHAT_COPY = {
   history: '最近对话',
   inputPlaceholder: '有什么问题，随时问我...',
-  newChat: '新建对话',
   stop: '停止',
 } as const
 
@@ -466,23 +465,6 @@ export default function Chat() {
                 >
                   <Icon name="more" />
                 </View>
-              }
-              right={
-                running ? (
-                  <Text className="chat-cancel" onClick={handleCancel}>
-                    {CHAT_COPY.stop}
-                  </Text>
-                ) : (
-                  <View
-                    className="chat-new-btn"
-                    role="button"
-                    ariaRole="button"
-                    ariaLabel={CHAT_COPY.newChat}
-                    onClick={startNewChat}
-                  >
-                    <Icon name="edit" />
-                  </View>
-                )
               }
             />
             <ScrollView

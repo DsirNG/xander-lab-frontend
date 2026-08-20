@@ -165,18 +165,16 @@ export default function BlogManage() {
 
   return (
     <View className="detail-page">
-      <NavBar
-        title="我的博客"
-        showBack
-        right={
-          <Text
-            className="nav-action"
-            onClick={() => Taro.navigateTo({ url: '/pages/publish/index' })}
-          >
-            写文章
-          </Text>
-        }
-      />
+      <NavBar title="我的博客" showBack />
+
+      <View className="manage-toolbar">
+        <Text
+          className="manage-write"
+          onClick={() => Taro.navigateTo({ url: '/pages/publish/index' })}
+        >
+          写文章
+        </Text>
+      </View>
 
       <View className="inline-search manage-search">
         <Icon name="search" />

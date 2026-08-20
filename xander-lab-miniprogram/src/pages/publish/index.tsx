@@ -225,16 +225,13 @@ export default function Publish() {
 
   return (
     <View className="publish-page">
-      <NavBar
-        title={editId ? '编辑文章' : '发布文章'}
-        showBack
-        onBack={handleBack}
-        right={
-          <Text className="publish-save-state">
-            {!editId && draftSavedAt ? '已自动保存' : dirty ? '未保存' : ''}
-          </Text>
-        }
-      />
+      <NavBar title={editId ? '编辑文章' : '发布文章'} showBack onBack={handleBack} />
+
+      <View className="publish-status-row">
+        <Text className="publish-save-state">
+          {!editId && draftSavedAt ? '已自动保存' : dirty ? '未保存' : ''}
+        </Text>
+      </View>
 
       <View className="segmented publish-mode">
         <Text

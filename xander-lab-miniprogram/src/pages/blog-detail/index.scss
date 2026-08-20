@@ -1,10 +1,13 @@
 .share-trigger {
   display: flex;
   align-items: center;
+  justify-content: center;
+  min-width: 112px;
   min-height: 44px;
-  padding: 0;
+  padding: 0 var(--space-4);
   border: 0;
-  background: transparent;
+  border-radius: var(--radius-pill);
+  background: var(--color-accent-soft);
   color: var(--color-accent);
   font-size: var(--text-body);
   font-weight: 600;
@@ -12,6 +15,12 @@
 
 .share-trigger::after {
   border: 0;
+}
+
+.detail-share-row {
+  display: flex;
+  justify-content: center;
+  margin-top: var(--space-6);
 }
 
 .detail-category {

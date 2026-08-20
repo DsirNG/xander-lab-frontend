@@ -7,6 +7,12 @@
   font-size: var(--text-caption);
 }
 
+.publish-status-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: var(--space-3);
+}
+
 .publish-mode {
   margin-top: var(--space-3);
 }

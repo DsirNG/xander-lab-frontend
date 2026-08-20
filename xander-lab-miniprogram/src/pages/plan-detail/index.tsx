@@ -196,20 +196,17 @@ export default function PlanDetail() {
 
   return (
     <View className="detail-page">
-      <NavBar
-        title="计划详情"
-        showBack
-        right={
-          <Text className="nav-action" onClick={showPlanActions}>
-            管理
-          </Text>
-        }
-      />
+      <NavBar title="计划详情" showBack />
 
       <View className="plan-info-card">
         <View className="plan-info-heading">
           <Text className="plan-info-topic">{plan.topic}</Text>
-          <PlanStatusBadge status={plan.status} />
+          <View className="plan-info-actions">
+            <PlanStatusBadge status={plan.status} />
+            <Text className="plan-manage" onClick={showPlanActions}>
+              管理
+            </Text>
+          </View>
         </View>
         <View className="plan-info-tags">
           {plan.runOnce ? <Text className="badge badge-purple">一次性</Text> : null}
