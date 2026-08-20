@@ -233,3 +233,31 @@
     display: none;
   }
 }
+
+.account-settings-code-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.account-settings-code-btn {
+  height: 48px;
+  flex: 0 0 auto;
+  margin: 0;
+  padding: 0 16px;
+  border-radius: 12px;
+  background: var(--color-surface);
+  color: var(--color-accent);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 48px;
+  box-shadow: inset 0 0 0 1px var(--color-surface-muted);
+
+  &[disabled] {
+    color: var(--color-ink-muted);
+  }
+
+  &::after {
+    display: none;
+  }
+}

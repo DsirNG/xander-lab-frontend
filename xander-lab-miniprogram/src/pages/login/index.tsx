@@ -1,15 +1,23 @@
 import { Button, Input, Text, View } from '@tarojs/components'
-import Taro, { useDidShow } from '@tarojs/taro'
-import { useState } from 'react'
-import { authApi } from '@/api/auth'
+import Taro, { useDidShow, useLoad } from '@tarojs/taro'
+import { useEffect, useRef, useState } from 'react'
+import { authApi, type UserInfo } from '@/api/auth'
 import { NavBar } from '@/components/NavBar'
+import { t } from '@/i18n'
 import { useUserStore } from '@/store/user'
 import './index.scss'
 
-type Mode = 'wechat' | 'password' | 'register'
+type Mode = 'wechat' | 'bind' | 'password' | 'register'
+
+const EMAIL_PATTERN = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/
 
 function showToast(title: string) {
   Taro.showToast({ title, icon: 'none' })
+}
+
+function isInvalidEmail(value: string): boolean {
+  const trimmed = value.trim()
+  return !trimmed || !EMAIL_PATTERN.test(trimmed)
 }
 
 export default function Login() {
@@ -21,11 +29,43 @@ export default function Login() {
   const [name, setName] = useState('')
   const [loading, setLoading] = useState(false)
 
+  // 首次微信登录（先绑定后建号）流程状态
+  const [pendingBindToken, setPendingBindToken] = useState('')
+  const [bindEmail, setBindEmail] = useState('')
+  const [bindCode, setBindCode] = useState('')
+  const [bindCountdown, setBindCountdown] = useState(0)
+  const [sendingCode, setSendingCode] = useState(false)
+
+  // 从「我的」页首次登录跳转而来（?autologin=1）：自动发起微信登录并进入绑定/跳过流程
+  const autoLoginRef = useRef(false)
+  useLoad(params => {
+    if (params?.autologin === '1' && !autoLoginRef.current && supportsWechatLogin) {
+      autoLoginRef.current = true
+      setTimeout(() => {
+        void handleWechatLogin()
+      }, 0)
+    }
+  })
+
+  useEffect(() => {
+    let timer: ReturnType<typeof setTimeout> | undefined
+    if (bindCountdown > 0) {
+      timer = setTimeout(() => setBindCountdown(bindCountdown - 1), 1000)
+    }
+    return () => {
+      if (timer) clearTimeout(timer)
+    }
+  }, [bindCountdown])
+
   useDidShow(() => {
     if (useUserStore.getState().user) {
       Taro.navigateBack().catch(() => undefined)
     }
   })
+
+  const finishLogin = (userInfo: UserInfo | undefined) => {
+    if (userInfo) setUser(userInfo)
+  }
 
   const handleWechatLogin = async () => {
     if (loading) return
@@ -33,15 +73,85 @@ export default function Login() {
     try {
       const loginResult = await Taro.login()
       if (!loginResult.code) {
-        showToast('获取微信登录凭证失败')
+        showToast(t('login.wxCredentialFailed'))
         return
       }
       const response = await authApi.wechatLogin(loginResult.code)
-      setUser(response.userInfo)
-      showToast('登录成功')
+      if (response.pendingBind) {
+        // 未建号：引导绑定邮箱（与 PC 同号）或跳过
+        setPendingBindToken(response.pendingBindToken ?? '')
+        setMode('bind')
+        return
+      }
+      finishLogin(response.userInfo)
+      showToast(t('login.loginSuccess'))
       setTimeout(() => Taro.navigateBack().catch(() => undefined), 600)
     } catch (e) {
-      showToast(e instanceof Error ? e.message : '登录失败，请重试')
+      showToast(e instanceof Error ? e.message : t('login.loginFailed'))
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleSendBindCode = async () => {
+    if (sendingCode || bindCountdown > 0) return
+    if (isInvalidEmail(bindEmail)) {
+      showToast(t('login.invalidEmail'))
+      return
+    }
+    setSendingCode(true)
+    try {
+      await authApi.sendCode(bindEmail.trim())
+      setBindCountdown(60)
+      showToast(t('login.codeSent'))
+    } catch (e) {
+      showToast(e instanceof Error ? e.message : t('login.codeSendFailed'))
+    } finally {
+      setSendingCode(false)
+    }
+  }
+
+  const handleBindEmail = async () => {
+    if (!pendingBindToken) {
+      showToast(t('login.bindCredentialExpired'))
+      return
+    }
+    if (isInvalidEmail(bindEmail)) {
+      showToast(t('login.invalidEmail'))
+      return
+    }
+    if (!bindCode.trim()) {
+      showToast(t('login.codeRequired'))
+      return
+    }
+    if (loading) return
+    setLoading(true)
+    try {
+      const response = await authApi.bindWechat(pendingBindToken, bindEmail.trim(), bindCode.trim())
+      finishLogin(response.userInfo)
+      showToast(t('login.bindSuccess'))
+      setTimeout(() => Taro.navigateBack().catch(() => undefined), 600)
+    } catch (e) {
+      showToast(e instanceof Error ? e.message : t('login.bindFailed'))
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleSkipBind = async () => {
+    if (!pendingBindToken) {
+      showToast(t('login.bindCredentialExpired'))
+      return
+    }
+    if (loading) return
+    setLoading(true)
+    try {
+      const response = await authApi.skipBind(pendingBindToken)
+      finishLogin(response.userInfo)
+      showToast(t('login.loginSuccess'))
+      setTimeout(() => Taro.navigateBack().catch(() => undefined), 600)
+    } catch (e) {
+      showToast(e instanceof Error ? e.message : t('login.skipFailed'))
     } finally {
       setLoading(false)
     }
@@ -49,18 +159,18 @@ export default function Login() {
 
   const handlePasswordLogin = async () => {
     if (!account.trim() || !password) {
-      showToast('请输入账号和密码')
+      showToast(t('login.fillAccountAndPassword'))
       return
     }
     if (loading) return
     setLoading(true)
     try {
       const response = await authApi.login(account.trim(), password)
-      setUser(response.userInfo)
-      showToast('登录成功')
+      finishLogin(response.userInfo)
+      showToast(t('login.loginSuccess'))
       setTimeout(() => Taro.navigateBack().catch(() => undefined), 600)
     } catch (e) {
-      showToast(e instanceof Error ? e.message : '登录失败，请重试')
+      showToast(e instanceof Error ? e.message : t('login.loginFailed'))
     } finally {
       setLoading(false)
     }
@@ -68,22 +178,22 @@ export default function Login() {
 
   const handleRegister = async () => {
     if (!name.trim() || !account.trim() || !password) {
-      showToast('请完整填写注册信息')
+      showToast(t('login.fillRegisterRequired'))
       return
     }
     if (password.length < 6) {
-      showToast('密码至少 6 位')
+      showToast(t('login.passwordTooShort'))
       return
     }
     if (loading) return
     setLoading(true)
     try {
       const response = await authApi.register(account.trim(), password, name.trim())
-      setUser(response.userInfo)
-      showToast('注册成功')
+      finishLogin(response.userInfo)
+      showToast(t('login.registerSuccess'))
       setTimeout(() => Taro.navigateBack().catch(() => undefined), 600)
     } catch (e) {
-      showToast(e instanceof Error ? e.message : '注册失败，请重试')
+      showToast(e instanceof Error ? e.message : t('login.registerFailed'))
     } finally {
       setLoading(false)
     }
@@ -91,10 +201,10 @@ export default function Login() {
 
   const showUserAgreement = () => {
     Taro.showModal({
-      title: '用户协议',
-      content: '请在使用前阅读 DinQorAI 官网公布的用户协议；继续登录或注册即表示你同意该协议。',
+      title: t('login.agreementTitle'),
+      content: t('login.agreementContent'),
       showCancel: false,
-      confirmText: '知道了',
+      confirmText: t('login.agree'),
     })
   }
 
@@ -105,17 +215,17 @@ export default function Login() {
       }
     ).openPrivacyContract
     if (openPrivacyContract) {
-      Promise.resolve(openPrivacyContract()).catch(() => showToast('暂时无法打开隐私政策'))
+      Promise.resolve(openPrivacyContract()).catch(() => showToast(t('login.privacyUnavailable')))
     } else {
-      showToast('请在小程序内查看隐私政策')
+      showToast(t('login.privacyUnavailable'))
     }
   }
 
   return (
     <View className="login-page">
-      <NavBar title="账号登录" showBack />
+      <NavBar title={t('nav.login')} showBack />
       <Text className="login-brand">DinQorAI</Text>
-      <Text className="login-subtitle">博客智能体 · 对话 / 计划 / 创作</Text>
+      <Text className="login-subtitle">{t('login.subtitle')}</Text>
 
       {mode === 'wechat' ? (
         <>
@@ -124,13 +234,61 @@ export default function Login() {
             loading={loading}
             onClick={handleWechatLogin}
           >
-            微信一键登录
+            {t('login.wechatOneTap')}
           </Button>
-          <View className="login-divider">或</View>
+          <View className="login-divider">{t('login.or')}</View>
           <Button className="btn btn-ghost" onClick={() => setMode('password')}>
-            账号密码登录
+            {t('login.accountPassword')}
           </Button>
         </>
+      ) : null}
+
+      {mode === 'bind' ? (
+        <View className="login-form">
+          <Text className="login-bind-title">{t('login.bindTitle')}</Text>
+          <Text className="login-bind-subtitle">{t('login.bindSubtitle')}</Text>
+          <View className="form-item">
+            <Text className="form-label">{t('login.emailLabel')}</Text>
+            <Input
+              className="form-input"
+              type="text"
+              placeholder={t('login.emailPlaceholder')}
+              value={bindEmail}
+              onInput={e => setBindEmail(e.detail.value)}
+            />
+          </View>
+          <View className="form-item">
+            <Text className="form-label">{t('login.codeLabel')}</Text>
+            <View className="form-code-row">
+              <Input
+                className="form-input form-code-input"
+                type="number"
+                placeholder={t('login.codePlaceholder')}
+                value={bindCode}
+                maxlength={6}
+                onInput={e => setBindCode(e.detail.value)}
+              />
+              <Button
+                className="btn btn-ghost form-code-btn"
+                disabled={sendingCode || bindCountdown > 0}
+                loading={sendingCode}
+                onClick={handleSendBindCode}
+              >
+                {bindCountdown > 0 ? `${bindCountdown}s` : t('login.sendCode')}
+              </Button>
+            </View>
+          </View>
+          <Button
+            className="btn btn-primary login-submit"
+            loading={loading}
+            onClick={handleBindEmail}
+          >
+            {t('login.bindAndLogin')}
+          </Button>
+          <Button className="btn btn-ghost login-skip" onClick={handleSkipBind}>
+            {t('login.skipBind')}
+          </Button>
+        </View>
       ) : null}
 
       {mode === 'password' || mode === 'register' ? (
@@ -140,22 +298,22 @@ export default function Login() {
               className={`segment ${mode === 'password' ? 'active' : ''}`}
               onClick={() => setMode('password')}
             >
-              登录
+              {t('login.login')}
             </Text>
             <Text
               className={`segment ${mode === 'register' ? 'active' : ''}`}
               onClick={() => setMode('register')}
             >
-              注册
+              {t('login.register')}
             </Text>
           </View>
           <View className="login-form">
             {mode === 'register' ? (
               <View className="form-item">
-                <Text className="form-label">昵称</Text>
+                <Text className="form-label">{t('login.nickname')}</Text>
                 <Input
                   className="form-input"
-                  placeholder="你的昵称"
+                  placeholder={t('login.nicknamePlaceholder')}
                   value={name}
                   maxlength={30}
                   onInput={e => setName(e.detail.value)}
@@ -164,20 +322,20 @@ export default function Login() {
             ) : null}
             <View className="form-item">
               <Text className="form-label">
-                {mode === 'register' ? '邮箱' : '账号（用户名或邮箱）'}
+                {mode === 'register' ? t('login.emailLabel') : t('login.accountLabel')}
               </Text>
               <Input
                 className="form-input"
-                placeholder="请输入账号"
+                placeholder={t('login.accountPlaceholder')}
                 value={account}
                 onInput={e => setAccount(e.detail.value)}
               />
             </View>
             <View className="form-item">
-              <Text className="form-label">密码</Text>
+              <Text className="form-label">{t('login.passwordLabel')}</Text>
               <Input
                 className="form-input"
-                placeholder="请输入密码"
+                placeholder={t('login.passwordPlaceholder')}
                 password
                 value={password}
                 maxlength={50}
@@ -191,23 +349,23 @@ export default function Login() {
             loading={loading}
             onClick={mode === 'password' ? handlePasswordLogin : handleRegister}
           >
-            {mode === 'password' ? '登录' : '注册并登录'}
+            {mode === 'password' ? t('login.login') : t('login.registerAndLogin')}
           </Button>
           {mode === 'register' ? (
-            <Text className="login-back">已有账号？点击上方「登录」切换</Text>
+            <Text className="login-back">{t('login.switchToLogin')}</Text>
           ) : (
-            <Text className="login-back">还没有账号？点击上方「注册」</Text>
+            <Text className="login-back">{t('login.switchToRegister')}</Text>
           )}
         </>
       ) : null}
       <View className="login-legal">
-        <Text>登录即代表同意平台的</Text>
+        <Text>{t('login.legal')}</Text>
         <Text className="login-legal-link" onClick={showUserAgreement}>
-          《用户协议》
+          {t('login.agreement')}
         </Text>
-        <Text>与</Text>
+        <Text>{t('login.and')}</Text>
         <Text className="login-legal-link" onClick={openPrivacyPolicy}>
-          《隐私政策》
+          {t('login.privacy')}
         </Text>
       </View>
     </View>

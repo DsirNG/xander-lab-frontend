@@ -6,6 +6,7 @@ import { TabBar } from '@/components/TabBar'
 import { NavBar } from '@/components/NavBar'
 import { authApi } from '@/api/auth'
 import { pointsApi } from '@/api/points'
+import { t } from '@/i18n'
 import { useUserStore } from '@/store/user'
 import './index.scss'
 
@@ -76,14 +77,19 @@ export default function Profile() {
     try {
       const loginResult = await Taro.login()
       if (!loginResult.code) {
-        showToast('获取微信登录凭证失败')
+        showToast(t('login.wxCredentialFailed'))
         return
       }
       const response = await authApi.wechatLogin(loginResult.code)
-      setUser(response.userInfo)
-      showToast('登录成功')
+      if (response.pendingBind) {
+        // 未建号：跳转登录页完成「绑定邮箱 / 跳过」流程
+        navigate('/pages/login/index?autologin=1')
+        return
+      }
+      setUser(response.userInfo ?? null)
+      showToast(t('login.loginSuccess'))
     } catch (e) {
-      showToast(e instanceof Error ? e.message : '登录失败，请重试')
+      showToast(e instanceof Error ? e.message : t('login.loginFailed'))
     } finally {
       setLoading(false)
     }

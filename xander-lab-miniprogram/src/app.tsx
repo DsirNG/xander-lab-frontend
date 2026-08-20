@@ -14,7 +14,9 @@ export default function App({ children }: { children: ReactNode }) {
   useEffect(() => {
     const handleLogout = () => setUser(null)
     Taro.eventCenter.on('auth:logout', handleLogout)
-    return () => Taro.eventCenter.off('auth:logout', handleLogout)
+    return () => {
+      Taro.eventCenter.off('auth:logout', handleLogout)
+    }
   }, [setUser])
 
   return children

@@ -9,6 +9,7 @@ import './index.scss'
 
 const MAX_NICKNAME_LENGTH = 30
 const MAX_AVATAR_LENGTH = 255
+const EMAIL_PATTERN = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/
 const dateLocales: Record<Locale, string> = {
   zh: 'zh-CN',
   en: 'en-US',
@@ -54,6 +55,13 @@ export default function AccountSettingsPage() {
   const [loadError, setLoadError] = useState<string | null>(null)
   const [fieldError, setFieldError] = useState<string | null>(null)
   const [avatarPreviewFailed, setAvatarPreviewFailed] = useState(false)
+
+  // 未绑定邮箱的微信临时账号：补绑邮箱（邮箱已是既有 PC 账号时自动合并）
+  const [bindEmail, setBindEmail] = useState('')
+  const [bindCode, setBindCode] = useState('')
+  const [bindCountdown, setBindCountdown] = useState(0)
+  const [sendingCode, setSendingCode] = useState(false)
+  const [binding, setBinding] = useState(false)
 
   const loadProfile = useCallback(async () => {
     setLoading(true)
@@ -124,6 +132,58 @@ export default function AccountSettingsPage() {
     setAvatar(value)
     setAvatarPreviewFailed(false)
     setFieldError(null)
+  }
+
+  const canBindEmail = !profile || !profile.email || profile.email.trim() === ''
+
+  const handleSendBindCode = async () => {
+    if (sendingCode || bindCountdown > 0) return
+    const trimmedEmail = bindEmail.trim()
+    if (!EMAIL_PATTERN.test(trimmedEmail)) {
+      showToast(t('login.invalidEmail'))
+      return
+    }
+    setSendingCode(true)
+    try {
+      await authApi.sendCode(trimmedEmail)
+      setBindCountdown(60)
+      showToast(t('login.codeSent'))
+    } catch (e) {
+      showToast(e instanceof Error ? e.message : t('accountSettings.sendCodeError'))
+    } finally {
+      setSendingCode(false)
+    }
+  }
+
+  const handleBindEmail = async () => {
+    if (binding) return
+    if (!canBindEmail) {
+      showToast(t('accountSettings.alreadyBound'))
+      return
+    }
+    const trimmedEmail = bindEmail.trim()
+    if (!EMAIL_PATTERN.test(trimmedEmail)) {
+      showToast(t('login.invalidEmail'))
+      return
+    }
+    if (!bindCode.trim()) {
+      showToast(t('login.codeRequired'))
+      return
+    }
+    setBinding(true)
+    try {
+      const response = await authApi.bindExisting(trimmedEmail, bindCode.trim())
+      const updated = { ...(profile as UserInfo), ...(response.userInfo as UserInfo) }
+      setProfile(updated)
+      setStoredUser(updated)
+      setBindEmail('')
+      setBindCode('')
+      showToast(t('accountSettings.bindSuccess'))
+    } catch (e) {
+      showToast(e instanceof Error ? e.message : t('accountSettings.bindError'))
+    } finally {
+      setBinding(false)
+    }
   }
 
   const roleLabel = profile ? getRoleLabel(profile.role) : t('common.notAvailable')
@@ -252,6 +312,54 @@ export default function AccountSettingsPage() {
               </View>
             </View>
           </View>
+
+          {canBindEmail ? (
+            <View className="account-settings-section">
+              <Text className="account-settings-section-title">
+                {t('accountSettings.bindSectionTitle')}
+              </Text>
+              <Text className="account-settings-help">{t('accountSettings.bindSectionHint')}</Text>
+              <View className="account-settings-field">
+                <Text className="account-settings-label">{t('accountSettings.email')}</Text>
+                <Input
+                  className="account-settings-input"
+                  placeholderClass="account-settings-placeholder"
+                  value={bindEmail}
+                  placeholder={t('accountSettings.emailPlaceholder')}
+                  onInput={event => setBindEmail(event.detail.value)}
+                />
+              </View>
+              <View className="account-settings-field">
+                <Text className="account-settings-label">{t('accountSettings.code')}</Text>
+                <View className="account-settings-code-row">
+                  <Input
+                    className="account-settings-input"
+                    placeholderClass="account-settings-placeholder"
+                    value={bindCode}
+                    maxlength={6}
+                    placeholder={t('accountSettings.codePlaceholder')}
+                    onInput={event => setBindCode(event.detail.value)}
+                  />
+                  <Button
+                    className="account-settings-code-btn"
+                    disabled={sendingCode || bindCountdown > 0}
+                    loading={sendingCode}
+                    onClick={handleSendBindCode}
+                  >
+                    {bindCountdown > 0 ? `${bindCountdown}s` : t('accountSettings.sendCode')}
+                  </Button>
+                </View>
+              </View>
+              <Button
+                className="account-settings-save"
+                disabled={binding}
+                loading={binding}
+                onClick={handleBindEmail}
+              >
+                {t('accountSettings.bindCta')}
+              </Button>
+            </View>
+          ) : null}
 
           <Button
             className="account-settings-save"
