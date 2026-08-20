@@ -587,6 +587,7 @@
 }
 
 .drawer-search-box {
+  position: relative;
   display: flex;
   height: 40px;
   align-items: center;
@@ -609,8 +610,20 @@
   font-size: 14px;
 }
 
+// 自定义占位文本（原生 placeholder 在抽屉动画/渲染时会出现延迟显示与轻微位移，
+// 改用普通 Text 覆盖层渲染，与页面其他文字同一渲染层，即时显示且随内容同步移动）。
 .drawer-search-placeholder {
+  position: absolute;
+  top: 0;
+  right: var(--chat-space-3);
+  left: 38px; /* box padding 12 + icon 18 + gap 8，与 input 文字起点对齐 */
+  height: 40px;
+  overflow: hidden;
+  line-height: 40px;
   color: var(--chat-ink-disabled);
+  font-size: 14px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .drawer-scroll {

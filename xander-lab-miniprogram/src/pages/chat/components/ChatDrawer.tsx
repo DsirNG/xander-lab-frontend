@@ -43,6 +43,7 @@ export function ChatDrawer({
   user,
 }: ChatDrawerProps) {
   const [keyword, setKeyword] = useState('')
+  const [focused, setFocused] = useState(false)
   const { statusBarHeight } = useNavbarLayout()
 
   // 抽屉内部左滑收起：与主面板一致的阈值与方向判定。
@@ -72,7 +73,6 @@ export function ChatDrawer({
   const filteredConversations = keyword
     ? conversations.filter(c => c.title.toLowerCase().includes(keyword.toLowerCase()))
     : conversations
-
 
   return (
     <View
@@ -117,12 +117,18 @@ export function ChatDrawer({
             <Icon name="search" />
             <Input
               className="drawer-search-input"
-              placeholder="搜索对话"
-              placeholderClass="drawer-search-placeholder"
-              ariaLabel="搜索对话"
               value={keyword}
+              focus={focused}
               onInput={e => setKeyword(e.detail.value)}
+              onFocus={() => setFocused(true)}
+              onBlur={() => setFocused(false)}
+              ariaLabel="搜索对话"
             />
+            {!keyword && !focused ? (
+              <View className="drawer-search-placeholder" onClick={() => setFocused(true)}>
+                搜索对话
+              </View>
+            ) : null}
           </View>
         </View>
 
