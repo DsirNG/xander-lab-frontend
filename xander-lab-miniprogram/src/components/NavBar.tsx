@@ -74,7 +74,7 @@ export function NavBar({
           <View className="nav-bar-side nav-bar-side-left">
             {showBack ? (
               <View
-                className="nav-bar-back"
+                className={`nav-bar-back${canGoBack ? '' : ' nav-bar-back--home'}`}
                 hoverClass="nav-bar-back--pressed"
                 onClick={onBack ?? handleDefaultBack}
               >
