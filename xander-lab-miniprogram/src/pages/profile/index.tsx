@@ -1,10 +1,11 @@
-import { Button, Image, Text, View } from '@tarojs/components'
+import { Image, Text, View } from '@tarojs/components'
 import Taro, { useDidShow } from '@tarojs/taro'
 import { useState } from 'react'
 import { Icon } from '@/components/Icon'
 import { TabBar } from '@/components/TabBar'
 import { NavBar } from '@/components/NavBar'
 import { authApi } from '@/api/auth'
+import { blogApi } from '@/api/blog'
 import { pointsApi } from '@/api/points'
 import { t } from '@/i18n'
 import { useUserStore } from '@/store/user'
@@ -17,24 +18,23 @@ function showToast(title: string) {
 function ProfileMenuRow({
   icon,
   label,
-  description,
   onClick,
 }: {
   icon: Parameters<typeof Icon>[0]['name']
   label: string
-  description?: string
   onClick: () => void
 }) {
   return (
-    <View className="menu-row" onClick={onClick}>
+    <View
+      className="menu-row profile-menu-row"
+      hoverClass="profile-menu-row--pressed"
+      onClick={onClick}
+    >
       <View className="menu-icon">
         <Icon name={icon} />
       </View>
-      <View className="menu-copy">
-        <Text className="menu-label">{label}</Text>
-        {description ? <Text className="menu-description">{description}</Text> : null}
-      </View>
-      <Text className="menu-arrow">›</Text>
+      <Text className="menu-label">{label}</Text>
+      <Icon name="right" className="menu-arrow-icon" />
     </View>
   )
 }
@@ -42,32 +42,44 @@ function ProfileMenuRow({
 export default function Profile() {
   const user = useUserStore(state => state.user)
   const setUser = useUserStore(state => state.setUser)
-  const logout = useUserStore(state => state.logout)
   const [balance, setBalance] = useState<number | null>(null)
-  const [consumedToday, setConsumedToday] = useState<number | null>(null)
+  const [blogCount, setBlogCount] = useState<number | null>(null)
   const [loading, setLoading] = useState(false)
 
   useDidShow(() => {
     useUserStore
       .getState()
       .refresh()
-      .then(() => {
-        if (useUserStore.getState().user) {
-          pointsApi
-            .overview()
-            .then(result => {
-              setBalance(result.balance)
-              setConsumedToday(result.consumedToday)
-            })
-            .catch(() => setBalance(null))
-        } else {
+      .then(async () => {
+        if (!useUserStore.getState().user) {
           setBalance(null)
+          setBlogCount(null)
+          return
         }
+
+        const [pointsResult, blogsResult] = await Promise.allSettled([
+          pointsApi.overview(),
+          blogApi.getMyArticles({ page: 1, size: 1 }),
+        ])
+        setBalance(pointsResult.status === 'fulfilled' ? pointsResult.value.balance : null)
+        setBlogCount(blogsResult.status === 'fulfilled' ? blogsResult.value.total : null)
       })
       .catch(() => undefined)
   })
 
+  const navigate = (url: string) => {
+    Taro.navigateTo({ url })
+  }
+
+  const navigateForUser = (url: string) => {
+    navigate(user ? url : '/pages/login/index')
+  }
+
   const handleWechatLogin = async () => {
+    if (user) {
+      navigate('/pages/account-settings/index')
+      return
+    }
     if (Taro.getEnv() !== Taro.ENV_TYPE.WEAPP) {
       navigate('/pages/login/index')
       return
@@ -82,39 +94,29 @@ export default function Profile() {
       }
       const response = await authApi.wechatLogin(loginResult.code)
       if (response.pendingBind) {
-        // 未建号：跳转登录页完成「绑定邮箱 / 跳过」流程
         navigate('/pages/login/index?autologin=1')
         return
       }
       setUser(response.userInfo ?? null)
       showToast(t('login.loginSuccess'))
-    } catch (e) {
-      showToast(e instanceof Error ? e.message : t('login.loginFailed'))
+    } catch (error) {
+      showToast(error instanceof Error ? error.message : t('login.loginFailed'))
     } finally {
       setLoading(false)
     }
   }
 
-  const handleLogout = async () => {
-    const confirmed = await Taro.showModal({
-      title: '退出登录',
-      content: '确定退出当前账号吗？',
-      confirmColor: '#d14343',
-    })
-    if (!confirmed.confirm) return
-    await logout()
-    setBalance(null)
-    showToast('已退出登录')
-  }
-
-  const navigate = (url: string) => {
-    Taro.navigateTo({ url })
-  }
+  const showComingSoon = () => showToast(t('profile.comingSoon'))
 
   return (
     <View className="page profile-page">
-      <NavBar title="我的" />
-      <View className="profile-head">
+      <NavBar left={<Text className="profile-nav-title">{t('profile.title')}</Text>} />
+
+      <View
+        className={`profile-head${loading ? ' profile-head--loading' : ''}`}
+        hoverClass="profile-head--pressed"
+        onClick={handleWechatLogin}
+      >
         <View className="profile-avatar">
           {user?.avatar ? (
             <Image className="profile-avatar-img" src={user.avatar} mode="aspectFill" />
@@ -122,114 +124,76 @@ export default function Profile() {
             <Text>{user ? user.nickname?.charAt(0) || 'X' : 'X'}</Text>
           )}
         </View>
-        <View>
-          <Text className="profile-name">{user ? user.nickname : '未登录'}</Text>
+        <View className="profile-identity">
+          <View className="profile-name-line">
+            <Text className="profile-name">{user ? user.nickname : t('profile.guest')}</Text>
+            <Text className="profile-badge">
+              {user ? t('profile.member') : t('profile.signIn')}
+            </Text>
+          </View>
           <Text className="profile-role">
-            {user ? user.email || '微信小程序用户' : '登录后同步博客与计划数据'}
+            {user ? t('profile.assistant') : t('profile.guestDescription')}
           </Text>
         </View>
       </View>
-      {user ? (
-        <Button className="logout-btn" onClick={handleLogout}>
-          退出登录
-        </Button>
-      ) : (
-        <Button className="login-btn" onClick={handleWechatLogin} loading={loading}>
-          {Taro.getEnv() === Taro.ENV_TYPE.WEAPP ? '微信一键登录' : '登录 / 注册'}
-        </Button>
-      )}
 
-      {user ? (
-        <View className="points-card points-strip" onClick={() => navigate('/pages/points/index')}>
-          <View>
-            <Text className="points-balance">
-              {balance == null ? '--' : balance.toLocaleString()}
-            </Text>
-            <Text className="points-label">可用积分</Text>
+      <View className="profile-stats-card">
+        <View
+          className="profile-stat"
+          hoverClass="profile-stat--pressed"
+          onClick={() => navigateForUser('/pages/points/index')}
+        >
+          <View className="profile-stat-label">
+            <Icon name="points" />
+            <Text>{t('profile.points')}</Text>
           </View>
-          <View className="points-today">
-            {consumedToday != null ? `今日已用 ${consumedToday}` : ''}
-            {'\n'}点击查看明细
-          </View>
+          <Text className="profile-stat-value">
+            {balance == null ? '--' : balance.toLocaleString()}
+          </Text>
         </View>
-      ) : (
-        <View className="points-card points-strip" onClick={() => navigate('/pages/login/index')}>
-          <View>
-            <Text className="points-balance">--</Text>
-            <Text className="points-label">登录后查看积分</Text>
+        <View className="profile-stat-divider" />
+        <View
+          className="profile-stat"
+          hoverClass="profile-stat--pressed"
+          onClick={() => navigateForUser('/pages/blog-manage/index')}
+        >
+          <View className="profile-stat-label">
+            <Icon name="article" />
+            <Text>{t('profile.blogCount')}</Text>
           </View>
-          <View className="points-today">去登录 {'\n'}›</View>
-        </View>
-      )}
-
-      <View className="profile-section">
-        <Text className="profile-section-title">创作</Text>
-        <View className="menu-card">
-          <ProfileMenuRow
-            icon="edit"
-            label="发布文章"
-            description="写作、预览并发布 Markdown 文章"
-            onClick={() =>
-              user ? navigate('/pages/publish/index') : navigate('/pages/login/index')
-            }
-          />
-          <ProfileMenuRow
-            icon="article"
-            label="我的博客"
-            description="管理草稿、已发布文章与回收站"
-            onClick={() =>
-              user ? navigate('/pages/blog-manage/index') : navigate('/pages/login/index')
-            }
-          />
+          <Text className="profile-stat-value">{blogCount == null ? '--' : blogCount}</Text>
         </View>
       </View>
 
-      <View className="profile-section">
-        <Text className="profile-section-title">账户</Text>
-        <View className="menu-card">
-          <ProfileMenuRow
-            icon="chat"
-            label="通知中心"
-            description="查看计划执行与发布结果"
-            onClick={() =>
-              user ? navigate('/pages/notifications/index') : navigate('/pages/login/index')
-            }
-          />
-          <ProfileMenuRow
-            icon="points"
-            label="积分明细"
-            description="查看余额与使用记录"
-            onClick={() =>
-              user ? navigate('/pages/points/index') : navigate('/pages/login/index')
-            }
-          />
-          <ProfileMenuRow
-            icon="user"
-            label="账户设置"
-            description="更新昵称与头像"
-            onClick={() =>
-              user ? navigate('/pages/account-settings/index') : navigate('/pages/login/index')
-            }
-          />
-        </View>
+      <View className="profile-menu-group profile-menu-group--primary">
+        <ProfileMenuRow
+          icon="calendar"
+          label={t('profile.plans')}
+          onClick={() => navigateForUser('/pages/plans/index')}
+        />
+        <ProfileMenuRow
+          icon="article"
+          label={t('profile.blogs')}
+          onClick={() => navigateForUser('/pages/blog-manage/index')}
+        />
       </View>
 
-      <View className="profile-section">
-        <View className="menu-card">
-          <ProfileMenuRow
-            icon="chat"
-            label="关于 DinQorAI"
-            onClick={() =>
-              Taro.showModal({
-                title: '关于 DinQorAI',
-                content: 'DinQorAI — 博客智能体平台。对话、计划与发布形成完整创作闭环。',
-                showCancel: false,
-                confirmText: '知道了',
-              })
-            }
-          />
-        </View>
+      <View className="profile-menu-group profile-menu-group--secondary">
+        <ProfileMenuRow
+          icon="chat"
+          label={t('profile.notifications')}
+          onClick={() => navigateForUser('/pages/notifications/index')}
+        />
+        <ProfileMenuRow icon="star" label={t('profile.favorites')} onClick={showComingSoon} />
+        <ProfileMenuRow icon="discover" label={t('profile.help')} onClick={showComingSoon} />
+        <ProfileMenuRow icon="chat" label={t('profile.feedback')} onClick={showComingSoon} />
+        <ProfileMenuRow
+          icon="user"
+          label={t('profile.settings')}
+          onClick={() => navigateForUser('/pages/account-settings/index')}
+        />
       </View>
+
       <TabBar active="user" />
     </View>
   )
