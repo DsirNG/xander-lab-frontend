@@ -93,6 +93,20 @@ export default function Chat() {
   const drawerPhaseRef = useRef(drawerPhase)
   const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
+  // 主面板左缘圆角对齐屏幕物理圆角：取窗口安全区顶部高度注入 CSS 变量。
+  const shellStyle = useMemo(() => {
+    const fallback = 0
+    let topRadius = fallback
+    try {
+      const { safeArea } = Taro.getWindowInfo()
+      if (safeArea?.top != null) topRadius = safeArea.top
+      console.log('topRadius', topRadius)
+    } catch {
+      /* 无兜底 */
+    }
+    return { '--chat-shell-top-radius': `${topRadius}px` } as any
+  }, [])
+
   useEffect(() => {
     drawerPhaseRef.current = drawerPhase
   }, [drawerPhase])
@@ -434,6 +448,7 @@ export default function Chat() {
               ? 'is-drawer-closing'
               : ''
         }`}
+        style={shellStyle}
         onTouchStart={onShellTouchStart}
         onTouchEnd={onShellTouchEnd}
       >

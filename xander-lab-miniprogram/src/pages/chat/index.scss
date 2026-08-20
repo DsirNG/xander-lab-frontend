@@ -410,8 +410,7 @@
 .chat-main-shell.is-drawer-open {
   animation: chat-main-slide-aside 400ms cubic-bezier(0.33, 0.85, 0.33, 1) forwards;
   box-shadow: -24rpx 0 64rpx rgba(29, 33, 41, 0.16);
-  border-top-left-radius: 54px;
-  border-bottom-left-radius: 54px;
+  border-top-left-radius: var(--chat-shell-top-radius, 54px);
 }
 
 .chat-main-shell.is-drawer-closing {
