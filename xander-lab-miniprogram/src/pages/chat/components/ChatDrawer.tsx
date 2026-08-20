@@ -1,9 +1,16 @@
-import { ScrollView, Text, View, Input } from '@tarojs/components'
+import {
+  ScrollView,
+  Text,
+  View,
+  Input,
+  type CommonEventFunction,
+  type ITouchEvent,
+} from '@tarojs/components'
 import { Icon } from '@/components/Icon'
 import { formatDateTime } from '@/utils/format'
 import type { AgentConversation } from '@/api/agent'
 import type { UserInfo } from '@/store/user'
-import { useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import { useNavbarLayout } from '@/hooks/useNavbarLayout'
 
 interface ChatDrawerProps {
@@ -38,6 +45,30 @@ export function ChatDrawer({
   const [keyword, setKeyword] = useState('')
   const { statusBarHeight } = useNavbarLayout()
 
+  // 抽屉内部左滑收起：与主面板一致的阈值与方向判定。
+  const drawerTouchStartRef = useRef<{ x: number; y: number } | null>(null)
+  const SWIPE_THRESHOLD = 60
+
+  const onDrawerTouchStart: CommonEventFunction = useCallback(e => {
+    const touch = (e as ITouchEvent).touches[0]
+    drawerTouchStartRef.current = { x: touch.clientX, y: touch.clientY }
+  }, [])
+
+  const onDrawerTouchEnd: CommonEventFunction = useCallback(
+    e => {
+      const start = drawerTouchStartRef.current
+      drawerTouchStartRef.current = null
+      if (!start) return
+      const end = (e as ITouchEvent).changedTouches[0]
+      if (!end) return
+      const dx = end.clientX - start.x
+      const dy = end.clientY - start.y
+      if (Math.abs(dx) < SWIPE_THRESHOLD || Math.abs(dx) <= Math.abs(dy) * 1.2) return
+      if (dx < 0) onClose()
+    },
+    [onClose],
+  )
+
   const filteredConversations = keyword
     ? conversations.filter(c => c.title.toLowerCase().includes(keyword.toLowerCase()))
     : conversations
@@ -53,6 +84,8 @@ export function ChatDrawer({
         role="dialog"
         ariaRole="dialog"
         ariaLabel="最近对话"
+        onTouchStart={onDrawerTouchStart}
+        onTouchEnd={onDrawerTouchEnd}
       >
         <View className="drawer-header" style={{ paddingTop: statusBarHeight + 16 }}>
           <View className="drawer-brand">
