@@ -36,6 +36,7 @@ function buildLayout(): NavbarLayout {
   let statusBarHeight = FALLBACK_STATUS_BAR
   try {
     const info = Taro.getWindowInfo()
+    console.log('windowInfo', info)
     windowWidth = info.windowWidth || windowWidth
     statusBarHeight = info.statusBarHeight || statusBarHeight
   } catch {
