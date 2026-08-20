@@ -42,10 +42,12 @@ export function ChatDrawer({
     ? conversations.filter(c => c.title.toLowerCase().includes(keyword.toLowerCase()))
     : conversations
 
-  if (!visible) return null
 
   return (
-    <View className="chat-drawer-layer" ariaLabel="最近对话">
+    <View
+      className={`chat-drawer-layer ${visible ? 'is-visible' : 'is-hidden'}`}
+      ariaLabel="最近对话"
+    >
       <View
         className={`chat-drawer-content ${closing ? 'is-closing' : ''}`}
         role="dialog"
