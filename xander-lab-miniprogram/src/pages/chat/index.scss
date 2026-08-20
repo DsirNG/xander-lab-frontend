@@ -443,6 +443,18 @@
   z-index: 5;
   inset: 0;
   background: #ffffff;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.chat-drawer-layer.is-visible {
+  visibility: visible;
+  pointer-events: auto;
+}
+
+// 打开时挂载动画：每次 is-visible 生效都会重放缩放放大效果。
+.chat-drawer-layer.is-visible .chat-drawer-content {
+  animation: chat-drawer-slide-in 400ms cubic-bezier(0.33, 0.85, 0.33, 1);
 }
 
 .chat-drawer-content {
@@ -455,7 +467,6 @@
   display: flex;
   flex-direction: column;
   background: #ffffff;
-  animation: chat-drawer-slide-in 400ms cubic-bezier(0.33, 0.85, 0.33, 1);
 }
 
 @keyframes chat-drawer-slide-in {
@@ -470,7 +481,8 @@
   }
 }
 
-.chat-drawer-content.is-closing {
+// 优先级需高于打开动画规则，保证关闭时播放的是淡出缩放。
+.chat-drawer-layer.is-visible .chat-drawer-content.is-closing {
   animation: chat-drawer-fade-out 320ms ease forwards;
 }
 
@@ -794,7 +806,7 @@
     transform: translateX(0);
   }
 
-  .chat-drawer-content {
+  .chat-drawer-layer.is-visible .chat-drawer-content {
     animation: none;
   }
 
