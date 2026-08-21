@@ -5,8 +5,7 @@ import { Icon } from '@/components/Icon'
 import { TabBar } from '@/components/TabBar'
 import { NavBar } from '@/components/NavBar'
 import { authApi } from '@/api/auth'
-import { blogApi } from '@/api/blog'
-import { pointsApi } from '@/api/points'
+import { profileApi } from '@/api/profile'
 import { t } from '@/i18n'
 import { useUserStore } from '@/store/user'
 import './index.scss'
@@ -47,24 +46,25 @@ export default function Profile() {
   const [loading, setLoading] = useState(false)
 
   useDidShow(() => {
-    useUserStore
-      .getState()
-      .refresh()
-      .then(async () => {
-        if (!useUserStore.getState().user) {
-          setBalance(null)
-          setBlogCount(null)
-          return
-        }
+    if (!authApi.isLoggedIn()) {
+      setUser(null)
+      setBalance(null)
+      setBlogCount(null)
+      return
+    }
 
-        const [pointsResult, blogsResult] = await Promise.allSettled([
-          pointsApi.overview(),
-          blogApi.getMyArticles({ page: 1, size: 1 }),
-        ])
-        setBalance(pointsResult.status === 'fulfilled' ? pointsResult.value.balance : null)
-        setBlogCount(blogsResult.status === 'fulfilled' ? blogsResult.value.total : null)
+    profileApi
+      .overview()
+      .then(result => {
+        setUser(result.user)
+        setBalance(result.points)
+        setBlogCount(result.blogCount)
       })
-      .catch(() => undefined)
+      .catch(() => {
+        if (!authApi.isLoggedIn()) setUser(null)
+        setBalance(null)
+        setBlogCount(null)
+      })
   })
 
   const navigate = (url: string) => {
