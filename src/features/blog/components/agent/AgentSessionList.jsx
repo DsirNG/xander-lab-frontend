@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useAuthSession } from '@features/auth/context/authSessionContextValue';
 import { authService } from '@features/auth/services/authService';
-import { pointsService } from '@features/profile/services/pointsService';
+import { pointsService, formatPoints } from '@features/profile/services/pointsService';
 import { useToast } from '@hooks/useToast';
 
 /** 工作台功能入口，与 WorkspaceLayout 菜单一致（当前页面外的独立全屏页面） */
@@ -218,7 +218,7 @@ const AgentSessionList = ({ sessions, activeId, loading, disableNew = false, mob
                   </span>
                   <div className="min-w-0">
                     <div className="text-micro font-medium text-ink-faint">{t('workspace.points')}</div>
-                    <div className="text-xs font-bold text-ink">{points ? points.balance : '—'}</div>
+                    <div className="text-xs font-bold text-ink">{points ? formatPoints(points.balance) : '—'}</div>
                   </div>
                 </div>
                 <div className="flex items-center gap-2.5 rounded-lg bg-surface px-3 py-2">

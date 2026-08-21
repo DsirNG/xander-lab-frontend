@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { ChevronDown, Coins, Loader2, LogOut, Settings2, Shield, UserRound } from 'lucide-react';
 import { useAuthSession } from '@features/auth/context/authSessionContextValue';
 import { authService } from '@features/auth/services/authService';
-import { pointsService } from '@features/profile/services/pointsService';
+import { pointsService, formatPoints } from '@features/profile/services/pointsService';
 import { useToast } from '@hooks/useToast';
 
 const getDisplayName = (userInfo) => userInfo?.nickname || userInfo?.username || '';
@@ -78,7 +78,7 @@ const UserMenu = ({ onOpenSettings }) => {
         <span className="hidden min-w-0 text-left min-[420px]:block">
           <span className="block max-w-[8rem] truncate text-xs font-bold text-ink">{displayName}</span>
           <span className="mt-0.5 block max-w-[8rem] truncate text-micro font-medium text-ink-faint">
-            {points ? `${t('workspace.points')}: ${points.balance}` : t('workspace.title')}
+            {points ? `${t('workspace.points')}: ${formatPoints(points.balance)}` : t('workspace.title')}
           </span>
         </span>
         <ChevronDown className={`hidden h-3.5 w-3.5 text-ink-faint transition-transform min-[420px]:block ${open ? 'rotate-180' : ''}`} />
@@ -118,7 +118,7 @@ const UserMenu = ({ onOpenSettings }) => {
               </span>
               <div className="min-w-0">
                 <div className="text-micro font-medium text-ink-faint">{t('workspace.points')}</div>
-                <div className="text-xs font-bold text-ink">{points ? points.balance : '—'}</div>
+                <div className="text-xs font-bold text-ink">{points ? formatPoints(points.balance) : '—'}</div>
               </div>
             </div>
             <div className="flex items-center gap-2.5 rounded-lg bg-surface px-3 py-2">
