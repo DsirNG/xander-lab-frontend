@@ -1,263 +1,35 @@
-.account-settings-page {
+.settings-page {
   min-height: 100vh;
-  box-sizing: border-box;
-  padding-bottom: 24px;
-  background: var(--color-canvas);
-  color: var(--color-ink);
-}
-
-.account-settings-state {
-  display: flex;
-  min-height: 420px;
-  box-sizing: border-box;
-  padding: 24px;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  text-align: center;
-}
-
-.account-settings-state-title {
-  max-width: 560px;
-  color: var(--color-ink);
-  font-size: 16px;
-  font-weight: 600;
-  line-height: 1.5;
-}
-
-.account-settings-retry {
-  width: auto;
-  min-width: 112px;
-  height: 44px;
-  margin: 8px 0 0;
-  padding: 0 20px;
-  border-radius: 12px;
-  background: var(--color-accent);
-  color: var(--color-canvas);
-  font-size: 14px;
-  font-weight: 600;
-  line-height: 44px;
-
-  &::after {
-    display: none;
-  }
-}
-
-.account-settings-content {
-  padding: 20px 16px 24px;
-}
-
-.account-settings-description {
-  display: block;
-  max-width: 680px;
-  color: var(--color-ink-secondary);
-  font-size: 15px;
-  line-height: 1.65;
-}
-
-.account-settings-section {
-  margin-top: 24px;
-}
-
-.account-settings-section-title {
-  display: block;
-  margin-bottom: 16px;
-  color: var(--color-ink);
-  font-size: 18px;
-  font-weight: 700;
-  line-height: 1.4;
-}
-
-.avatar-editor {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: 24px;
-}
-
-.avatar-preview {
-  display: flex;
-  width: 72px;
-  height: 72px;
-  flex: 0 0 auto;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  border-radius: 50%;
-  background: var(--color-surface-muted);
-}
-
-.avatar-preview-image {
-  width: 100%;
-  height: 100%;
-}
-
-.avatar-preview-initial {
-  color: var(--color-accent);
-  font-size: 26px;
-  font-weight: 700;
-}
-
-.avatar-preview-copy {
-  display: flex;
-  min-width: 0;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.avatar-preview-label {
-  color: var(--color-ink);
-  font-size: 15px;
-  font-weight: 600;
-}
-
-.avatar-preview-error {
-  color: var(--color-danger);
-  font-size: 13px;
-  line-height: 1.45;
-}
-
-.account-settings-field + .account-settings-field {
-  margin-top: 20px;
-}
-
-.account-settings-label-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-.account-settings-label {
-  display: block;
-  margin-bottom: 8px;
-  color: var(--color-ink);
-  font-size: 14px;
-  font-weight: 600;
-  line-height: 1.4;
-}
-
-.account-settings-counter {
-  margin-bottom: 8px;
-  color: var(--color-ink-muted);
-  font-size: 12px;
-  line-height: 1.4;
-}
-
-.account-settings-input {
-  width: 100%;
-  height: 48px;
-  box-sizing: border-box;
-  padding: 0 16px;
-  border: 0;
-  border-radius: 12px;
   background: var(--color-surface);
   color: var(--color-ink);
-  font-size: 15px;
-  line-height: 48px;
-  box-shadow: inset 0 0 0 1px var(--color-surface-muted);
 }
-
-.account-settings-placeholder {
-  color: var(--color-ink-muted);
+.settings-content {
+  padding: var(--space-2) var(--space-5) var(--space-8);
 }
-
-.account-settings-help {
+.settings-section-title {
   display: block;
-  margin-top: 8px;
+  margin: var(--space-6) 0 var(--space-2);
   color: var(--color-ink-muted);
-  font-size: 12px;
-  line-height: 1.5;
+  font-size: var(--text-caption);
+  line-height: var(--leading-caption);
 }
-
-.account-settings-field-error {
-  display: block;
-  margin-top: 16px;
-  color: var(--color-danger);
-  font-size: 13px;
-  font-weight: 600;
-  line-height: 1.5;
-}
-
-.account-settings-meta {
+.settings-list {
   background: var(--color-surface);
 }
-
-.account-settings-meta-row {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 20px;
-  padding: 16px 0;
-  box-shadow: inset 0 -1px 0 var(--color-surface-muted);
-
-  &:last-child {
-    box-shadow: none;
-  }
+.settings-row .ui-list-row-leading {
+  min-width: 32px;
+  min-height: 32px;
 }
-
-.account-settings-meta-label {
-  flex-shrink: 0;
-  color: var(--color-ink-muted);
-  font-size: 14px;
-  line-height: 1.5;
+.settings-row .ui-list-row-leading .icon {
+  width: 20px;
+  height: 20px;
 }
-
-.account-settings-meta-value {
-  min-width: 0;
-  color: var(--color-ink-secondary);
-  font-size: 14px;
-  line-height: 1.5;
-  text-align: right;
-  word-break: break-all;
+.settings-row .ui-list-row-trailing {
+  min-width: 24px;
+  min-height: 24px;
 }
-
-.account-settings-save {
-  height: 48px;
-  margin: 24px 0 0;
-  padding: 0 20px;
-  border-radius: 12px;
-  background: var(--color-accent);
-  color: var(--color-canvas);
-  font-size: 16px;
-  font-weight: 650;
-  line-height: 48px;
-
-  &[disabled] {
-    background: var(--color-surface-muted);
-    color: var(--color-ink-muted);
-  }
-
-  &::after {
-    display: none;
-  }
-}
-
-.account-settings-code-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.account-settings-code-btn {
-  height: 48px;
-  flex: 0 0 auto;
-  margin: 0;
-  padding: 0 16px;
-  border-radius: 12px;
-  background: var(--color-surface);
-  color: var(--color-accent);
-  font-size: 14px;
-  font-weight: 600;
-  line-height: 48px;
-  box-shadow: inset 0 0 0 1px var(--color-surface-muted);
-
-  &[disabled] {
-    color: var(--color-ink-muted);
-  }
-
-  &::after {
-    display: none;
-  }
+.settings-row .ui-list-row-trailing .icon {
+  width: 16px;
+  height: 16px;
+  opacity: 0.55;
 }

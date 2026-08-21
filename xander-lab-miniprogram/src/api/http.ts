@@ -6,7 +6,7 @@ type ApiResult<T> = {
   data: T
 }
 
-const API_ORIGIN = process.env.TARO_ENV === 'h5' ? '' : 'https://api.dinqor.cn'
+export const API_ORIGIN = process.env.TARO_ENV === 'h5' ? '' : 'https://api.dinqor.cn'
 
 const ACCESS_TOKEN_KEY = 'xander_access_token'
 const REFRESH_TOKEN_KEY = 'xander_refresh_token'
@@ -117,4 +117,24 @@ export async function request<T>(path: string, options: RequestOptions = {}): Pr
   }
 
   return response.data.data
+}
+
+export async function uploadFile<T>(path: string, filePath: string): Promise<T> {
+  const accessToken = tokenStorage.getAccessToken()
+  const response = await Taro.uploadFile({
+    url: `${API_ORIGIN}${path}`,
+    filePath,
+    name: 'file',
+    header: accessToken ? { Authorization: `Bearer ${accessToken}` } : {},
+  })
+  let body: ApiResult<T>
+  try {
+    body = JSON.parse(response.data) as ApiResult<T>
+  } catch {
+    throw new ApiError('上传响应格式错误', response.statusCode)
+  }
+  if (response.statusCode < 200 || response.statusCode >= 300 || ![0, 200].includes(body.code)) {
+    throw new ApiError(body.message || '上传失败', body.code || response.statusCode)
+  }
+  return body.data
 }

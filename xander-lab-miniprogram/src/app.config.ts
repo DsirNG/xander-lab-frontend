@@ -13,6 +13,8 @@ export default defineAppConfig({
     'pages/points/index',
     'pages/notifications/index',
     'pages/account-settings/index',
+    'pages/account-profile/index',
+    'pages/security-center/index',
   ],
   window: {
     navigationStyle: 'custom',

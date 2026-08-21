@@ -132,7 +132,7 @@ export default function Profile() {
             </Text>
           </View>
           <Text className="profile-role">
-            {user ? t('profile.assistant') : t('profile.guestDescription')}
+            {user ? user.username : t('profile.guestDescription')}
           </Text>
         </View>
       </View>

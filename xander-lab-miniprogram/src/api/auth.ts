@@ -1,4 +1,4 @@
-import { request, saveTokenPair, tokenStorage, type TokenPair } from './http'
+import { request, saveTokenPair, tokenStorage, uploadFile, type TokenPair } from './http'
 
 export type UserInfo = {
   username: string
@@ -105,8 +105,17 @@ export const authApi = {
   /** 如已登录，返回当前用户信息 */
   me: () => request<UserInfo>('/api/auth/me', { method: 'GET' }),
   /** 更新昵称 / 头像 */
-  updateProfile: (data: { nickname?: string; avatar?: string }) =>
+  updateProfile: (data: { username?: string; nickname?: string; avatar?: string }) =>
     request<UserInfo>('/api/auth/profile', { method: 'PUT', data }),
+  uploadAvatar: (filePath: string) =>
+    uploadFile<{ url: string }>('/api/upload/oss?type=avatar', filePath),
+  changePassword: (currentPassword: string, newPassword: string) =>
+    request<void>('/api/auth/password', { method: 'PUT', data: { currentPassword, newPassword } }),
+  resetPassword: (email: string, code: string, newPassword: string) =>
+    request<void>('/api/auth/reset-password', {
+      method: 'POST',
+      data: { email, code, newPassword },
+    }),
   /** 登出当前设备 */
   logout: async () => {
     try {
