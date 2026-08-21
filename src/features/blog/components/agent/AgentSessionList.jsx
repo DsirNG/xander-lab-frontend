@@ -25,6 +25,7 @@ const FEATURE_ENTRIES = [
 const ADMIN_ENTRIES = [
   { to: '/workspace/admin/users', icon: Users, labelKey: 'admin.users.title' },
   { to: '/workspace/admin/model-providers', icon: Server, labelKey: 'admin.providers.title' },
+  { to: '/workspace/admin/model-pricing', icon: Coins, labelKey: 'admin.pricing.title' },
   { to: '/workspace/admin/feature-model-configs', icon: SlidersHorizontal, labelKey: 'admin.configs.title' },
 ];
 

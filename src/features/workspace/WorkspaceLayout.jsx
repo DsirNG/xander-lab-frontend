@@ -5,6 +5,7 @@ import {
   Bot,
   CalendarClock,
   Code2,
+  Coins,
   Mail,
   MessageCircle,
   NotebookPen,
@@ -35,6 +36,7 @@ const MENU = [
 const ADMIN_MENU = [
   { to: '/workspace/admin/users', icon: Users, labelKey: 'admin.users.title' },
   { to: '/workspace/admin/model-providers', icon: Server, labelKey: 'admin.providers.title' },
+  { to: '/workspace/admin/model-pricing', icon: Coins, labelKey: 'admin.pricing.title' },
   { to: '/workspace/admin/feature-model-configs', icon: SlidersHorizontal, labelKey: 'admin.configs.title' },
   { to: '/workspace/admin/wechat-credential', icon: MessageCircle, labelKey: 'admin.wechatCredential.title' },
 ];

@@ -44,6 +44,7 @@ const BlogManagePage = React.lazy(() => import('@features/workspace/pages/BlogMa
 const EmailRemindersPage = React.lazy(() => import('@features/workspace/pages/EmailRemindersPage'));
 const AdminUsersPage = React.lazy(() => import('@features/admin/pages/AdminUsersPage'));
 const AdminModelProvidersPage = React.lazy(() => import('@features/admin/pages/AdminModelProvidersPage'));
+const AdminModelPricingPage = React.lazy(() => import('@features/admin/pages/AdminModelPricingPage'));
 const AdminFeatureModelConfigsPage = React.lazy(() => import('@features/admin/pages/AdminFeatureModelConfigsPage'));
 const AdminWechatCredentialPage = React.lazy(() => import('@features/admin/pages/AdminWechatCredentialPage'));
 const RequireAdmin = React.lazy(() => import('@features/admin/components/RequireAdmin'));
@@ -207,6 +208,10 @@ export const createRouter = () => {
             {
               path: 'model-providers',
               element: <LazyPage><AdminModelProvidersPage /></LazyPage>,
+            },
+            {
+              path: 'model-pricing',
+              element: <LazyPage><AdminModelPricingPage /></LazyPage>,
             },
             {
               path: 'feature-model-configs',

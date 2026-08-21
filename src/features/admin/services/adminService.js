@@ -29,6 +29,13 @@ export const adminService = {
   updateFeatureConfig: (featureKey, payload, config) =>
     put(`/api/admin/feature-model-configs/${featureKey}`, payload, config),
 
+  /* ---------- 模型 token 定价（计费按 model 精确匹配，未配置回退服务端默认价） ---------- */
+  listModelPrices: (config) => get('/api/admin/billing/model-prices', undefined, config),
+  upsertModelPrice: (model, payload, config) =>
+    put(`/api/admin/billing/model-prices/${encodeURIComponent(model)}`, payload, config),
+  deleteModelPrice: (model, config) =>
+    del(`/api/admin/billing/model-prices/${encodeURIComponent(model)}`, undefined, config),
+
   /* ---------- 微信登录凭据（AppSecret 只进不出） ---------- */
   getWechatCredential: (config) => get('/api/admin/wechat-credential', undefined, config),
   saveWechatCredential: (payload, config) => put('/api/admin/wechat-credential', payload, config),
