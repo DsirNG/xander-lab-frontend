@@ -1,7 +1,7 @@
 import { Text, View } from '@tarojs/components'
 import Taro, { useDidShow, useReachBottom } from '@tarojs/taro'
 import { useState } from 'react'
-import { pointsApi, type PointsOverview } from '@/api/points'
+import { formatPoints, pointsApi, type PointsLedgerItem, type PointsOverview } from '@/api/points'
 import { NavBar } from '@/components/NavBar'
 import { useUserStore } from '@/store/user'
 import { formatDateTime } from '@/utils/format'
@@ -13,9 +13,7 @@ function showToast(title: string) {
 
 export default function Points() {
   const [overview, setOverview] = useState<PointsOverview | null>(null)
-  const [ledger, setLedger] = useState<
-    Array<{ id: number; amount: number; reason: string; createdAt: string }>
-  >([])
+  const [ledger, setLedger] = useState<PointsLedgerItem[]>([])
   const [page, setPage] = useState(1)
   const [total, setTotal] = useState(0)
   const [loading, setLoading] = useState(false)
@@ -63,14 +61,12 @@ export default function Points() {
 
       <View className="points-card points-page-card">
         <View>
-          <Text className="points-balance">
-            {overview ? overview.balance.toLocaleString() : '--'}
-          </Text>
+          <Text className="points-balance">{overview ? formatPoints(overview.balance) : '--'}</Text>
           <Text className="points-label">可用积分</Text>
         </View>
         <View className="points-today">
           {overview?.consumedToday != null
-            ? `今日已用 ${overview.consumedToday.toLocaleString()}`
+            ? `今日已用 ${formatPoints(overview.consumedToday)}`
             : ''}
         </View>
       </View>
@@ -85,11 +81,11 @@ export default function Points() {
       {ledger.map(item => (
         <View className="ledger-item" key={item.id}>
           <View className="ledger-info">
-            <Text className="ledger-reason">{item.reason || '积分变动'}</Text>
+            <Text className="ledger-reason">{item.remark || item.reason || '积分变动'}</Text>
             <Text className="ledger-time">{formatDateTime(item.createdAt)}</Text>
           </View>
-          <Text className={`ledger-amount ${item.amount >= 0 ? 'positive' : 'negative'}`}>
-            {item.amount >= 0 ? `+${item.amount}` : item.amount}
+          <Text className={`ledger-amount ${item.delta >= 0 ? 'positive' : 'negative'}`}>
+            {item.delta >= 0 ? `+${formatPoints(item.delta)}` : formatPoints(item.delta)}
           </Text>
         </View>
       ))}

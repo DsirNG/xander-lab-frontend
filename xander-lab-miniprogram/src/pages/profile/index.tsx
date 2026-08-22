@@ -6,6 +6,7 @@ import { TabBar } from '@/components/TabBar'
 import { NavBar } from '@/components/NavBar'
 import { authApi } from '@/api/auth'
 import { profileApi } from '@/api/profile'
+import { formatPoints } from '@/api/points'
 import { t } from '@/i18n'
 import { useUserStore } from '@/store/user'
 import './index.scss'
@@ -148,7 +149,7 @@ export default function Profile() {
             <Text>{t('profile.points')}</Text>
           </View>
           <Text className="profile-stat-value">
-            {balance == null ? '--' : balance.toLocaleString()}
+            {balance == null ? '--' : formatPoints(balance)}
           </Text>
         </View>
         <View className="profile-stat-divider" />
