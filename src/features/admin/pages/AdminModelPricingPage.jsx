@@ -7,13 +7,11 @@ import ConfirmModal from '@components/common/ConfirmModal';
 import { useToast } from '@/hooks/useToast';
 import { adminService } from '../services/adminService';
 import PricingFormModal from '../components/PricingFormModal';
-
-/** 毫分/1K → 元/1M 展示换算（¥2/M = 200 毫分/1K）。 */
-const MILLI_PER_1K_TO_YUAN_PER_M = 1 / 100;
+import { milliPer1kToYuanPerM } from '../utils/pricingUnits';
 
 const formatPrice = (milli) => {
   if (milli === null || milli === undefined) return '—';
-  const yuan = milli * MILLI_PER_1K_TO_YUAN_PER_M;
+  const yuan = milliPer1kToYuanPerM(milli);
   return `¥${Number.isInteger(yuan) ? yuan : yuan.toFixed(2).replace(/\.?0+$/, '')}`;
 };
 

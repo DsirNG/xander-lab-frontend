@@ -6,13 +6,11 @@ import FormField from '@components/common/FormField';
 import { formInputCls } from '@components/common/formStyles';
 import { useToast } from '@/hooks/useToast';
 import { adminService } from '../services/adminService';
-
-/** 表单单价单位为「元 / 1M tokens」，后端存储为「毫分 / 每 1K token」，换算倍率 100（¥2/M = 200）。 */
-const YUAN_PER_M_TO_MILLI_PER_1K = 100;
+import { milliPer1kToYuanPerM, yuanPerMToMilliPer1k } from '../utils/pricingUnits';
 
 const toYuanPerM = (milli) => {
   if (milli === null || milli === undefined) return '';
-  return String(milli / YUAN_PER_M_TO_MILLI_PER_1K);
+  return String(milliPer1kToYuanPerM(milli));
 };
 
 /**
@@ -61,7 +59,7 @@ const PricingFormModal = ({ isOpen, price, onClose, onSaved }) => {
     if (value === '' || value === null || value === undefined) return null;
     const num = Number(value);
     if (!Number.isFinite(num) || num < 0) return null;
-    return Math.round(num * YUAN_PER_M_TO_MILLI_PER_1K);
+    return yuanPerMToMilliPer1k(num);
   };
 
   const handleSubmit = async () => {
