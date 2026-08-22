@@ -65,10 +65,24 @@
 }
 .recitation-report-title {
   display: block;
-  margin-bottom: var(--space-3);
   color: var(--color-ink);
   font-size: var(--text-title);
   font-weight: 600;
+}
+.recitation-report-heading,
+.recitation-difference-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+.recitation-report-heading {
+  margin-bottom: var(--space-3);
+}
+.recitation-report-count,
+.recitation-difference-position {
+  color: var(--color-ink-muted);
+  font-size: var(--text-micro);
 }
 .recitation-report-text {
   color: var(--color-ink-secondary);
@@ -76,18 +90,52 @@
   line-height: var(--leading-body);
   white-space: pre-wrap;
 }
+.recitation-report-title + .recitation-report-text {
+  display: block;
+  margin-top: var(--space-3);
+}
 .recitation-perfect {
   color: var(--color-success);
   font-size: var(--text-body);
 }
 .recitation-difference {
-  display: flex;
-  justify-content: space-between;
-  gap: var(--space-3);
   padding: var(--space-3);
   margin-top: var(--space-2);
   font-size: var(--text-body);
   border-radius: var(--radius-md);
+}
+.recitation-difference-badge {
+  padding: var(--space-1) var(--space-2);
+  font-size: var(--text-micro);
+  font-weight: 600;
+  background: var(--color-surface);
+  border-radius: var(--radius-pill);
+}
+.recitation-tail-warning {
+  display: block;
+  margin-top: var(--space-2);
+  font-size: var(--text-caption);
+  font-weight: 600;
+}
+.recitation-difference-context {
+  display: block;
+  margin-top: var(--space-3);
+  color: var(--color-ink-secondary);
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+  word-break: break-all;
+}
+.recitation-difference-focus {
+  color: var(--color-danger);
+  font-weight: 700;
+  text-decoration: underline;
+}
+.recitation-difference-detail {
+  display: block;
+  margin-top: var(--space-2);
+  font-size: var(--text-caption);
+  line-height: var(--leading-caption);
+  word-break: break-all;
 }
 .recitation-difference--missing,
 .recitation-difference--wrong {

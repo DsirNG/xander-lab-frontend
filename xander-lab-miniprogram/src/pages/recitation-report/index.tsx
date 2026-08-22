@@ -17,6 +17,53 @@ function differenceText(difference: RecitationDifference) {
   return t('recitation.wrongDetail', { expected: difference.expected, actual: difference.actual })
 }
 
+function differenceLabel(difference: RecitationDifference) {
+  if (difference.type === 'MISSING') return t('recitation.missing')
+  if (difference.type === 'EXTRA') return t('recitation.extra')
+  return t('recitation.wrong')
+}
+
+function groupReportDifferences(
+  source: RecitationDifference[],
+  normalizedExpected: string,
+): RecitationDifference[] {
+  const grouped: RecitationDifference[] = []
+  source.forEach(current => {
+    const previous = grouped[grouped.length - 1]
+    const previousLength = previous ? Array.from(previous.expected).length : 0
+    const adjacent =
+      previous?.type === current.type &&
+      (current.type === 'EXTRA'
+        ? previous.expectedIndex === current.expectedIndex
+        : previous.expectedIndex + previousLength === current.expectedIndex)
+    if (previous && adjacent) {
+      previous.expected += current.expected
+      previous.actual += current.actual
+      return
+    }
+    grouped.push({ ...current })
+  })
+
+  const expectedCharacters = Array.from(normalizedExpected)
+  return grouped.map(difference => {
+    const expectedLength = Array.from(difference.expected).length
+    const endIndex = Math.min(expectedCharacters.length, difference.expectedIndex + expectedLength)
+    return {
+      ...difference,
+      contextBefore:
+        difference.contextBefore ??
+        expectedCharacters
+          .slice(Math.max(0, difference.expectedIndex - 8), difference.expectedIndex)
+          .join(''),
+      contextAfter:
+        difference.contextAfter ?? expectedCharacters.slice(endIndex, endIndex + 8).join(''),
+      tailOmission:
+        difference.tailOmission ??
+        (difference.type === 'MISSING' && endIndex === expectedCharacters.length),
+    }
+  })
+}
+
 export default function RecitationReportPage() {
   const [attemptId, setAttemptId] = useState(0)
   const [attempt, setAttempt] = useState<RecitationAttempt | null>(null)
@@ -115,6 +162,7 @@ export default function RecitationReportPage() {
   }
 
   const result = attempt.result
+  const differences = groupReportDifferences(result.differences, result.normalizedExpected)
   return (
     <View className="page recitation-report-page">
       <NavBar title={t('recitation.report')} showBack />
@@ -158,17 +206,41 @@ export default function RecitationReportPage() {
         </View>
 
         <View className="recitation-report-section">
-          <Text className="recitation-report-title">{t('recitation.differences')}</Text>
-          {result.differences.length === 0 ? (
+          <View className="recitation-report-heading">
+            <Text className="recitation-report-title">{t('recitation.differences')}</Text>
+            <Text className="recitation-report-count">
+              {t('recitation.differenceCount', { count: differences.length })}
+            </Text>
+          </View>
+          {differences.length === 0 ? (
             <Text className="recitation-perfect">{t('recitation.perfect')}</Text>
           ) : (
-            result.differences.slice(0, 100).map((difference, index) => (
+            differences.map((difference, index) => (
               <View
                 key={`${difference.expectedIndex}-${index}`}
                 className={`recitation-difference recitation-difference--${difference.type.toLowerCase()}`}
               >
-                <Text>{differenceText(difference)}</Text>
-                <Text>#{difference.expectedIndex + 1}</Text>
+                <View className="recitation-difference-heading">
+                  <Text className="recitation-difference-badge">{differenceLabel(difference)}</Text>
+                  <Text className="recitation-difference-position">
+                    {t('recitation.differencePosition', {
+                      position: difference.expectedIndex + 1,
+                    })}
+                  </Text>
+                </View>
+                {difference.tailOmission ? (
+                  <Text className="recitation-tail-warning">{t('recitation.tailOmission')}</Text>
+                ) : null}
+                {difference.contextBefore || difference.contextAfter ? (
+                  <Text className="recitation-difference-context">
+                    {difference.contextBefore}
+                    {difference.expected ? (
+                      <Text className="recitation-difference-focus">{difference.expected}</Text>
+                    ) : null}
+                    {difference.contextAfter}
+                  </Text>
+                ) : null}
+                <Text className="recitation-difference-detail">{differenceText(difference)}</Text>
               </View>
             ))
           )}

@@ -14,6 +14,9 @@ export type RecitationDifference = {
   expected: string
   actual: string
   expectedIndex: number
+  contextBefore?: string
+  contextAfter?: string
+  tailOmission?: boolean
 }
 
 export type RecitationResult = {
@@ -50,5 +53,7 @@ export const recitationApi = {
     }),
   createAttempt: (materialId: number, filePath: string) =>
     uploadFile<RecitationAttempt>(`/api/recitations/materials/${materialId}/attempts`, filePath),
+  listAttempts: (materialId: number) =>
+    request<RecitationAttempt[]>(`/api/recitations/materials/${materialId}/attempts`),
   getAttempt: (id: number) => request<RecitationAttempt>(`/api/recitations/attempts/${id}`),
 }

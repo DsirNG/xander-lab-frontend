@@ -60,6 +60,10 @@ export default function RecitationPage() {
     Taro.navigateTo({ url: `/pages/recitation-practice/index?id=${material.id}` })
   }
 
+  const openHistory = (material: RecitationMaterial) => {
+    Taro.navigateTo({ url: `/pages/recitation-history/index?id=${material.id}` })
+  }
+
   return (
     <View className="page recitation-page">
       <NavBar title={t('recitation.title')} showBack />
@@ -100,19 +104,22 @@ export default function RecitationPage() {
         ) : (
           <View className="recitation-material-list">
             {materials.map(material => (
-              <View
-                key={material.id}
-                className="recitation-material-row"
-                hoverClass="recitation-material-row--pressed"
-                onClick={() => openMaterial(material)}
-              >
+              <View key={material.id} className="recitation-material-row">
                 <View className="recitation-material-main">
                   <Text className="recitation-material-title">{material.title}</Text>
                   <Text className="recitation-material-preview">{material.content}</Text>
+                  <Text className="recitation-material-meta">
+                    {t('recitation.characterCount', { count: material.characterCount })}
+                  </Text>
                 </View>
-                <Text className="recitation-material-meta">
-                  {t('recitation.characterCount', { count: material.characterCount })}
-                </Text>
+                <View className="recitation-material-actions">
+                  <Button size="sm" variant="ghost" onClick={() => openHistory(material)}>
+                    {t('recitation.history')}
+                  </Button>
+                  <Button size="sm" onClick={() => openMaterial(material)}>
+                    {t('recitation.practice')}
+                  </Button>
+                </View>
               </View>
             ))}
           </View>

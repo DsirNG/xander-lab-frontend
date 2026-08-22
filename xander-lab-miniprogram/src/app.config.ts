@@ -18,6 +18,7 @@ export default defineAppConfig({
     'pages/recitation/index',
     'pages/recitation-practice/index',
     'pages/recitation-report/index',
+    'pages/recitation-history/index',
   ],
   window: {
     navigationStyle: 'custom',
