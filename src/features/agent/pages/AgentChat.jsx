@@ -13,6 +13,7 @@ import { blogAgentService } from '@/features/blog/services/blogAgentService';
 import useIsMobile from '@/hooks/useIsMobile';
 import useClickOutside from '@/hooks/useClickOutside';
 import { useAgentConversation } from '../hooks/useAgentConversation';
+import { parseToolPayload } from '../services/agentConversationService';
 import AgentMarkdown from '../components/AgentMarkdown';
 import AgentImagesPage from './AgentImagesPage';
 import ProfileModal from '@features/workspace/components/ProfileModal';
@@ -23,6 +24,61 @@ const ThoughtCard = ({ content }) => (
     <Sparkles className="mt-0.5 h-3.5 w-3.5 shrink-0 text-ink-muted" />
     <span className="whitespace-pre-wrap">{content}</span>
   </div>
+);
+
+const IMAGE_TOOL = 'image_generate';
+
+const imageToolResult = (message) => {
+  if (message?.kind !== 'tool_result') return null;
+  const payload = parseToolPayload(message.content);
+  const tool = payload?.tool || message.toolName;
+  return tool === IMAGE_TOOL && payload?.url ? payload : null;
+};
+
+const containsResultUrl = (content, urls) => {
+  if (!content || urls.size === 0) return false;
+  for (const url of urls) {
+    if (content.includes(url)) return true;
+  }
+  return false;
+};
+
+export const ImageToolProgressPanel = ({ message }) => {
+  const { t } = useTranslation();
+  return (
+    <div
+      className="relative flex h-64 w-64 flex-col overflow-hidden rounded-[2rem] bg-surface-muted p-5 sm:h-80 sm:w-80 sm:p-6"
+      role="status"
+      aria-live="polite"
+    >
+      <div
+        className="absolute inset-0 animate-pulse opacity-10"
+        style={{ backgroundImage: 'radial-gradient(circle, currentColor 1.5px, transparent 1.5px)', backgroundSize: '24px 24px' }}
+        aria-hidden="true"
+      />
+      <div className="absolute left-1/2 top-1/2 h-32 w-32 -translate-x-1/2 -translate-y-1/2 animate-pulse rounded-full bg-ink/5 blur-3xl" />
+      <div className="relative z-10 flex items-center gap-1.5 text-sm font-semibold text-ink-secondary">
+        <Sparkles className="h-4 w-4 animate-pulse text-ink-muted" aria-hidden="true" />
+        <span>{message || t('blog.agentChat.generatingImage')}</span>
+        <span className="ml-1 mt-1 flex items-center gap-0.5" aria-hidden="true">
+          {[0, 1, 2].map((index) => (
+            <span
+              key={index}
+              className="h-1 w-1 animate-bounce rounded-full bg-current opacity-70"
+              style={{ animationDelay: `${index * 150}ms` }}
+            />
+          ))}
+        </span>
+      </div>
+      <div className="relative z-10 flex flex-1 items-center justify-center">
+        <ImageIcon className="h-12 w-12 animate-pulse text-ink-faint" aria-hidden="true" />
+      </div>
+    </div>
+  );
+};
+
+export const ImageToolResult = ({ url, title = '' }) => (
+  <AgentMarkdown content={`![${title.replaceAll('[', '').replaceAll(']', '')}](${url})`} />
 );
 
 const cleanImageMarkdown = (text) => {
@@ -235,6 +291,39 @@ const AgentChat = () => {
     () => steps.some((step) => step.type === 'answer' || step.type === 'answer_delta'),
     [steps],
   );
+
+  const activeImageGeneration = useMemo(() => {
+    let active = false;
+    let message = '';
+    steps.forEach((step) => {
+      if (step.type !== 'tool' || step.tool !== IMAGE_TOOL) return;
+      if (step.phase === 'start') {
+        active = true;
+        message = '';
+      } else if (step.phase === 'progress') {
+        active = true;
+        message = step.message || message;
+      } else if (step.phase === 'end' || step.phase === 'error') {
+        active = false;
+      }
+    });
+    return active ? { message } : null;
+  }, [steps]);
+
+  const historicalImageUrls = useMemo(() => {
+    const urls = new Set();
+    messages.forEach((message) => {
+      const result = imageToolResult(message);
+      if (result?.url) urls.add(result.url);
+    });
+    return urls;
+  }, [messages]);
+
+  const liveImageUrls = useMemo(() => new Set(
+    steps
+      .filter((step) => step.type === 'tool' && step.tool === IMAGE_TOOL && step.phase === 'end' && step.result?.url)
+      .map((step) => step.result.url),
+  ), [steps]);
 
   useEffect(() => {
     if (stickToBottomRef.current) chatEndRef.current?.scrollIntoView({ behavior: 'auto', block: 'end' });
@@ -697,7 +786,12 @@ const AgentChat = () => {
                       if (message.kind === 'thought') {
                         return <ThoughtCard key={message.id} content={message.content} />;
                       }
+                      if (message.kind === 'tool_result') {
+                        const result = imageToolResult(message);
+                        return result ? <ImageToolResult key={message.id} url={result.url} title={result.title} /> : null;
+                      }
                       if (message.kind === 'answer' || message.kind === 'message') {
+                        if (containsResultUrl(message.content, historicalImageUrls)) return null;
                         return <ConversationMessage key={message.id} role="assistant" content={message.content} />;
                       }
                       return null;
@@ -705,7 +799,14 @@ const AgentChat = () => {
                     {steps.map((step, index) => {
                       if (step.type === 'user') return <ConversationMessage key={`live-${index}`} role="user" content={step.content} />;
                       if (step.type === 'thought') return <ThoughtCard key={`live-${index}`} content={step.content} />;
+                      if (step.type === 'tool') {
+                        if (step.tool === IMAGE_TOOL && step.phase === 'end' && step.result?.url) {
+                          return <ImageToolResult key={`live-${index}`} url={step.result.url} title={step.result.title} />;
+                        }
+                        return null;
+                      }
                       if (step.type === 'answer' || step.type === 'answer_delta') {
+                        if (containsResultUrl(step.content, liveImageUrls)) return null;
                         return <ConversationMessage key={`live-${index}`} role="assistant" content={step.content} isStreaming={step.type === 'answer_delta'} />;
                       }
                       if (step.type === 'error') {
@@ -718,7 +819,10 @@ const AgentChat = () => {
                       }
                       return null;
                     })}
-                    {(isActive || creating || (loading && steps.length > 0)) && !streamingAnswer && (
+                    {activeImageGeneration ? (
+                      <ImageToolProgressPanel message={activeImageGeneration.message} />
+                    ) : null}
+                    {(isActive || creating || (loading && steps.length > 0)) && !streamingAnswer && !activeImageGeneration && (
                       <ThinkingIndicator label={t('blog.agentChat.thinking')} />
                     )}
                     <div ref={chatEndRef} className="h-2" />
