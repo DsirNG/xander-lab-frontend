@@ -15,7 +15,18 @@ export type AgentStreamHandlers = {
   onEvent: (event: AgentStreamEvent) => void
   onOpen?: () => void
   onReconnect?: (attempt: number) => void
-  onError?: () => void
+  onError?: (message: string) => void
+}
+
+type SocketError = {
+  errMsg?: string
+}
+
+function safeErrorMessage(error: unknown, token: string) {
+  const message = String(
+    (error as SocketError | undefined)?.errMsg || 'WebSocket connection failed',
+  )
+  return token ? message.split(token).join('[REDACTED]') : message
 }
 
 /**
@@ -117,13 +128,17 @@ export function connectAgentStream(
           }
         })
         task.onClose(handleDisconnect)
-        task.onError(() => {
-          handlers.onError?.()
+        task.onError(error => {
+          const message = safeErrorMessage(error, token)
+          console.warn(`[AgentWS] connection error: ${message}`)
+          handlers.onError?.(message)
           handleDisconnect()
         })
       })
-      .catch(() => {
-        handlers.onError?.()
+      .catch(error => {
+        const message = safeErrorMessage(error, token)
+        console.warn(`[AgentWS] connectSocket failed: ${message}`)
+        handlers.onError?.(message)
         scheduleReconnect()
       })
   }
