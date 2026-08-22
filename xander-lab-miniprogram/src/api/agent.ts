@@ -30,7 +30,7 @@ export type ConversationSnapshot = {
   messages: AgentMessage[]
 }
 
-/** 小程序不支持 SSE 流式读取：触发后台执行后立即返回，以快照轮询作为状态事实来源 */
+/** 小程序不支持 SSE 流式读取：HTTP 触发执行，WebSocket 消费实时事件。 */
 
 export const agentApi = {
   listConversations: () =>
@@ -42,7 +42,7 @@ export const agentApi = {
     }),
   getConversation: (id: number) => request<ConversationSnapshot>(`/api/agent/conversations/${id}`),
   getMessages: (id: number) => request<AgentMessage[]>(`/api/agent/conversations/${id}/messages`),
-  /** 触发一轮智能体后台执行（非流式端点，立即返回；结果由轮询快照读取） */
+  /** 触发一轮智能体后台执行（非流式端点，立即返回 runVersion 用于订阅 WebSocket） */
   sendMessage: (id: number, content: string) =>
     request<number>(`/api/agent/conversations/${id}/messages`, {
       method: 'POST',

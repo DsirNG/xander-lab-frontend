@@ -28,7 +28,6 @@ import { ChatDrawer } from './components/ChatDrawer'
 import './index.scss'
 
 const ACTIVE_KEY = 'chat_active_id'
-const POLL_INTERVAL = 1200
 const IMAGE_TOOL = 'image_generate'
 
 const QUICK_PROMPTS = ['写一篇技术博客', '搜索并整理资料', '我有一个问题']
@@ -191,7 +190,6 @@ export default function Chat() {
     [openDrawer, closeDrawer],
   )
 
-  const pollTimerRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const activeIdRef = useRef<number | null>(null)
   const closeStreamRef = useRef<(() => void) | null>(null)
   const streamRunRef = useRef<number | null>(null)
@@ -209,6 +207,38 @@ export default function Chat() {
     closeStreamRef.current = null
   }
 
+  const clearStreamState = () => {
+    setStreamAnswer('')
+    setStreamThought('')
+    setStreamTool(null)
+    setStreamImageResult(null)
+  }
+
+  const applyTerminalSnapshot = async (id: number, runVersion: number) => {
+    try {
+      const snapshot = await agentApi.getConversation(id)
+      if (activeIdRef.current !== id || streamRunRef.current !== runVersion) return
+      setActive(snapshot)
+      setRunning(snapshot.conversation.status === 'running')
+      if (snapshot.conversation.status === 'running' && snapshot.conversation.runVersion) {
+        openStream(id, snapshot.conversation.runVersion)
+        return
+      }
+      closeStream()
+      clearStreamState()
+      if (snapshot.conversation.status === 'failed') {
+        showToast(snapshot.conversation.errorMessage || '生成失败，请重试')
+      }
+      void loadConversations()
+      void refreshUser().catch(() => undefined)
+    } catch (error) {
+      if (activeIdRef.current !== id || streamRunRef.current !== runVersion) return
+      closeStream()
+      setRunning(false)
+      showToast(error instanceof Error ? error.message : '对话同步失败')
+    }
+  }
+
   const openStream = (id: number, runVersion: number) => {
     closeStream()
     setStreamAnswer('')
@@ -216,7 +246,7 @@ export default function Chat() {
     setStreamTool(null)
     setStreamImageResult(null)
     streamRunRef.current = runVersion
-    // WS 推全量 thought / 增量 answer_delta；tool 过程实时渲染，终态由轮询快照接管。
+    // WS 推全量 thought / 增量 answer_delta；终态到达后只读取一次持久化快照。
     const close = connectAgentStream(id, runVersion, {
       onEvent: ev => {
         if (ev.event === 'answer_delta') {
@@ -247,75 +277,17 @@ export default function Chat() {
           setStreamTool(null)
         } else if (ev.event === 'tool_error') {
           setStreamTool(null)
+        } else if (ev.event === 'complete' || ev.event === 'error') {
+          void applyTerminalSnapshot(id, runVersion)
         }
-      },
-      onClose: () => {
-        // 只清自己的引用，防止旧连接的异步回调误清新连接的句柄。
-        if (closeStreamRef.current === close) closeStreamRef.current = null
-      },
-      onError: () => {
-        if (closeStreamRef.current === close) closeStreamRef.current = null
       },
     })
     closeStreamRef.current = close
   }
 
-  const stopPolling = () => {
-    if (pollTimerRef.current) {
-      clearInterval(pollTimerRef.current)
-      pollTimerRef.current = null
-    }
-  }
-
-  const startPolling = useCallback((id: number) => {
-    const check = async () => {
-      try {
-        // WS 健康时轮询作为看门狗不发请求；WS 关闭/失败后由轮询接管收尾与兜底。
-        if (closeStreamRef.current) return
-        const snapshot = await agentApi.getConversation(id)
-        if (activeIdRef.current !== id) return
-        setActive(snapshot)
-        setRunning(snapshot.conversation.status === 'running')
-        if (snapshot.conversation.status !== 'running') {
-          stopPolling()
-          // 终态：快照已有完整消息，流式增量全部作废。
-          setStreamAnswer('')
-          setStreamThought('')
-          setStreamTool(null)
-          setStreamImageResult(null)
-          streamRunRef.current = null
-          if (snapshot.conversation.status === 'failed') {
-            showToast(snapshot.conversation.errorMessage || '生成失败，请重试')
-          }
-        } else if (
-          streamRunRef.current != null &&
-          snapshot.conversation.runVersion !== streamRunRef.current
-        ) {
-          // 事件流对应的轮次已被新轮次取代，增量作废，交给快照展示。
-          setStreamAnswer('')
-          setStreamThought('')
-          setStreamTool(null)
-          setStreamImageResult(null)
-        }
-      } catch {
-        stopPolling()
-        closeStream()
-        setStreamAnswer('')
-        setStreamThought('')
-        setStreamTool(null)
-        setStreamImageResult(null)
-        setRunning(false)
-      }
-    }
-    stopPolling()
-    setRunning(true)
-    check()
-    pollTimerRef.current = setInterval(check, POLL_INTERVAL)
-  }, [])
-
   /**
    * 恢复当前会话：进入页面 / 切 tab 回来 / 打开会话时统一走这里，
-   * running 状态恢复事件流 + 轮询，避免只轮询不开流。
+   * running 状态恢复 WebSocket 事件流。
    */
   const resumeActive = useCallback(() => {
     const savedId = activeIdRef.current ?? Taro.getStorageSync<number>(ACTIVE_KEY)
@@ -330,7 +302,6 @@ export default function Chat() {
         if (snapshot.conversation.status === 'running') {
           if (snapshot.conversation.runVersion)
             openStream(savedId, snapshot.conversation.runVersion)
-          startPolling(savedId)
         }
       })
       .catch(() => undefined)
@@ -338,7 +309,6 @@ export default function Chat() {
 
   useEffect(() => {
     return () => {
-      stopPolling()
       closeStream()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -370,8 +340,7 @@ export default function Chat() {
   })
 
   useDidHide(() => {
-    // tab 切换只触发 hide 不卸载页面：暂停轮询与事件流，回后台后由 useDidShow 恢复。
-    stopPolling()
+    // tab 切换只触发 hide 不卸载页面：关闭事件流，回前台后重新读取快照并续接 WS。
     closeStream()
     setStreamAnswer('')
     setStreamThought('')
@@ -411,9 +380,8 @@ export default function Chat() {
       setStreamImageResult(null)
       setRunning(snapshot.conversation.status === 'running')
       if (snapshot.conversation.status === 'running') {
-        // 重新进入进行中的会话：恢复事件流，轮询作为看门狗兜底。
+        // 重新进入进行中的会话：恢复 WebSocket 事件流。
         if (snapshot.conversation.runVersion) openStream(id, snapshot.conversation.runVersion)
-        startPolling(id)
       }
     } catch (e) {
       showToast(e instanceof Error ? e.message : '会话加载失败')
@@ -421,7 +389,6 @@ export default function Chat() {
   }
 
   const startNewChat = () => {
-    stopPolling()
     closeStream()
     activeIdRef.current = null
     setActive(null)
@@ -452,6 +419,7 @@ export default function Chat() {
 
     let targetId: number
     try {
+      setRunning(true)
       if (!active) {
         setCreating(true)
         const snapshot = await agentApi.createConversation(content)
@@ -476,14 +444,22 @@ export default function Chat() {
       } catch (e) {
         const message = e instanceof Error ? e.message : ''
         if (message.includes('timeout') || message.includes('超时')) {
-          // 触发请求超时：服务端可能已开始执行，轮询负责收尾
+          // 请求可能已在服务端启动；读取一次快照拿到 runVersion 后续接 WS。
+          const snapshot = await agentApi.getConversation(targetId)
+          if (activeIdRef.current !== targetId) return
+          setActive(snapshot)
+          setRunning(snapshot.conversation.status === 'running')
+          if (snapshot.conversation.status === 'running' && snapshot.conversation.runVersion) {
+            openStream(targetId, snapshot.conversation.runVersion)
+          }
         } else {
+          setRunning(false)
           showToast(message || '发送失败')
         }
       }
-      startPolling(targetId)
     } catch (e) {
       setCreating(false)
+      setRunning(false)
       showToast(e instanceof Error ? e.message : '发送失败，请重试')
     }
   }
