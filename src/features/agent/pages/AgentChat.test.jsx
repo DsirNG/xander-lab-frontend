@@ -8,7 +8,8 @@ describe('ThinkingIndicator', () => {
     const { container } = render(<ThinkingIndicator label="Working..." />);
 
     expect(screen.getByRole('status')).toHaveAttribute('aria-live', 'polite');
-    expect(screen.getByText('Working...')).toBeInTheDocument();
+    expect(screen.getByRole('status')).toHaveAttribute('aria-label', 'Working...');
+    expect(screen.queryByText('Working...')).not.toBeInTheDocument();
     expect(container.querySelectorAll('.animate-bounce')).toHaveLength(3);
   });
 });

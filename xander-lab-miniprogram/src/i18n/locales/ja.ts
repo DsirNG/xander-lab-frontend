@@ -9,6 +9,10 @@ export default {
     save: '保存',
     saving: '保存中…',
   },
+  chat: {
+    generatingImage: '画像を生成中…',
+    generatedImage: '生成された画像',
+  },
   nav: {
     notifications: '通知',
     accountSettings: 'アカウント設定',

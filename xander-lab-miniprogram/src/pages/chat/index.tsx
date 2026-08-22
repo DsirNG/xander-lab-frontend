@@ -1,4 +1,5 @@
 import {
+  Image,
   ScrollView,
   Text,
   View,
@@ -14,19 +15,21 @@ import {
   type ConversationSnapshot,
 } from '@/api/agent'
 import { connectAgentStream } from '@/api/agentSocket'
-import { tokenStorage } from '@/api/http'
+import { API_ORIGIN, tokenStorage } from '@/api/http'
 import { Markdown } from '@/components/Markdown'
 import { TabBar } from '@/components/TabBar'
 import { NavBar } from '@/components/NavBar'
 import { Icon } from '@/components/Icon'
 import { ensureLogin, useUserStore } from '@/store/user'
 import { truncate } from '@/utils/markdown'
+import { t } from '@/i18n'
 import { ChatComposer } from './components/ChatComposer'
 import { ChatDrawer } from './components/ChatDrawer'
 import './index.scss'
 
 const ACTIVE_KEY = 'chat_active_id'
 const POLL_INTERVAL = 1200
+const IMAGE_TOOL = 'image_generate'
 
 const QUICK_PROMPTS = ['写一篇技术博客', '搜索并整理资料', '我有一个问题']
 const CHAT_COPY = {
@@ -43,6 +46,37 @@ type MessageTurn = {
 }
 
 const EMPTY_MESSAGES: AgentMessage[] = []
+
+type StreamToolState = {
+  name: string
+  message: string
+}
+
+type GeneratedImageResult = {
+  url: string
+  title?: string
+}
+
+type ToolEventData = {
+  tool?: string
+  message?: string
+  result?: { url?: string; title?: string }
+}
+
+function absoluteMediaUrl(url: string) {
+  if (/^https?:\/\//i.test(url)) return url
+  return `${API_ORIGIN}${url.startsWith('/') ? url : `/${url}`}`
+}
+
+function parseImageToolResult(message: AgentMessage): GeneratedImageResult | null {
+  if (message.kind !== 'tool_result' || message.toolName !== IMAGE_TOOL) return null
+  try {
+    const payload = JSON.parse(message.content) as { url?: string; title?: string }
+    return payload.url ? { url: absoluteMediaUrl(payload.url), title: payload.title } : null
+  } catch {
+    return null
+  }
+}
 
 function groupMessagesIntoTurns(messages: AgentMessage[]): MessageTurn[] {
   return messages.reduce<MessageTurn[]>((turns, message) => {
@@ -163,7 +197,8 @@ export default function Chat() {
   const streamRunRef = useRef<number | null>(null)
   const [streamAnswer, setStreamAnswer] = useState('')
   const [streamThought, setStreamThought] = useState('')
-  const [streamTool, setStreamTool] = useState<string | null>(null)
+  const [streamTool, setStreamTool] = useState<StreamToolState | null>(null)
+  const [streamImageResult, setStreamImageResult] = useState<GeneratedImageResult | null>(null)
   const messages = active?.messages ?? EMPTY_MESSAGES
   const messageTurns = useMemo(() => groupMessagesIntoTurns(messages), [messages])
   const lastMessageId = messages[messages.length - 1]?.id
@@ -179,6 +214,7 @@ export default function Chat() {
     setStreamAnswer('')
     setStreamThought('')
     setStreamTool(null)
+    setStreamImageResult(null)
     streamRunRef.current = runVersion
     // WS 推全量 thought / 增量 answer_delta；tool 过程实时渲染，终态由轮询快照接管。
     const close = connectAgentStream(id, runVersion, {
@@ -190,8 +226,26 @@ export default function Chat() {
         } else if (ev.event === 'thought') {
           setStreamThought(String(ev.data ?? ''))
         } else if (ev.event === 'tool_start') {
-          setStreamTool(String((ev.data as { tool?: string } | undefined)?.tool ?? '内部工具'))
-        } else if (ev.event === 'tool_end' || ev.event === 'tool_error') {
+          const data = ev.data as ToolEventData | undefined
+          const name = String(data?.tool ?? '内部工具')
+          setStreamTool({ name, message: '' })
+          if (name === IMAGE_TOOL) setStreamImageResult(null)
+        } else if (ev.event === 'tool_progress') {
+          const data = ev.data as ToolEventData | undefined
+          setStreamTool(previous => ({
+            name: String(data?.tool ?? previous?.name ?? '内部工具'),
+            message: String(data?.message ?? previous?.message ?? ''),
+          }))
+        } else if (ev.event === 'tool_end') {
+          const data = ev.data as ToolEventData | undefined
+          if (data?.tool === IMAGE_TOOL && data.result?.url) {
+            setStreamImageResult({
+              url: absoluteMediaUrl(data.result.url),
+              title: data.result.title,
+            })
+          }
+          setStreamTool(null)
+        } else if (ev.event === 'tool_error') {
           setStreamTool(null)
         }
       },
@@ -228,6 +282,7 @@ export default function Chat() {
           setStreamAnswer('')
           setStreamThought('')
           setStreamTool(null)
+          setStreamImageResult(null)
           streamRunRef.current = null
           if (snapshot.conversation.status === 'failed') {
             showToast(snapshot.conversation.errorMessage || '生成失败，请重试')
@@ -240,6 +295,7 @@ export default function Chat() {
           setStreamAnswer('')
           setStreamThought('')
           setStreamTool(null)
+          setStreamImageResult(null)
         }
       } catch {
         stopPolling()
@@ -247,6 +303,7 @@ export default function Chat() {
         setStreamAnswer('')
         setStreamThought('')
         setStreamTool(null)
+        setStreamImageResult(null)
         setRunning(false)
       }
     }
@@ -319,6 +376,7 @@ export default function Chat() {
     setStreamAnswer('')
     setStreamThought('')
     setStreamTool(null)
+    setStreamImageResult(null)
   })
 
   useEffect(() => {
@@ -337,6 +395,7 @@ export default function Chat() {
     streamAnswer.length,
     streamThought.length,
     streamTool,
+    streamImageResult?.url,
   ])
 
   const openConversation = async (id: number) => {
@@ -349,6 +408,7 @@ export default function Chat() {
       setStreamAnswer('')
       setStreamThought('')
       setStreamTool(null)
+      setStreamImageResult(null)
       setRunning(snapshot.conversation.status === 'running')
       if (snapshot.conversation.status === 'running') {
         // 重新进入进行中的会话：恢复事件流，轮询作为看门狗兜底。
@@ -371,6 +431,7 @@ export default function Chat() {
     setStreamAnswer('')
     setStreamThought('')
     setStreamTool(null)
+    setStreamImageResult(null)
     Taro.removeStorageSync(ACTIVE_KEY)
     closeDrawer()
   }
@@ -475,44 +536,60 @@ export default function Chat() {
             >
               <View className="chat-messages-inner">
                 <View className="chat-turn-list">
-                  {messageTurns.map(turn => (
-                    <View id={turn.id} className={`chat-turn ${turn.role}`} key={turn.key}>
-                      {turn.messages.map(message => (
-                        <MessagePart
-                          key={message.id}
-                          message={message}
-                          open={Boolean(thoughtOpen[message.id])}
-                          onToggleThought={() =>
-                            setThoughtOpen(previous => ({
-                              ...previous,
-                              [message.id]: !previous[message.id],
-                            }))
-                          }
-                        />
-                      ))}
-                    </View>
-                  ))}
-                  {streamTool || streamThought || streamAnswer || running ? (
+                  {messageTurns.map(turn => {
+                    const imageResultUrls = new Set(
+                      turn.messages
+                        .map(parseImageToolResult)
+                        .filter((result): result is GeneratedImageResult => Boolean(result))
+                        .map(result => result.url),
+                    )
+                    return (
+                      <View id={turn.id} className={`chat-turn ${turn.role}`} key={turn.key}>
+                        {turn.messages.map(message => (
+                          <MessagePart
+                            key={message.id}
+                            message={message}
+                            imageResultUrls={imageResultUrls}
+                            open={Boolean(thoughtOpen[message.id])}
+                            onToggleThought={() =>
+                              setThoughtOpen(previous => ({
+                                ...previous,
+                                [message.id]: !previous[message.id],
+                              }))
+                            }
+                          />
+                        ))}
+                      </View>
+                    )
+                  })}
+                  {streamTool || streamImageResult || streamThought || streamAnswer || running ? (
                     <View className="chat-turn assistant is-streaming" role="status">
-                      {streamTool ? (
+                      {streamTool?.name === IMAGE_TOOL ? (
+                        <ImageGenerationPanel message={streamTool.message} />
+                      ) : streamTool ? (
                         <View className="msg-tool">
                           <View className="msg-tool-dot" />
-                          <Text>正在使用工具：{streamTool}</Text>
+                          <Text>正在使用工具：{streamTool.name}</Text>
                         </View>
                       ) : null}
+                      {streamImageResult ? <GeneratedImage result={streamImageResult} /> : null}
                       {streamThought ? (
                         <View className="msg-thought">
                           <Text className="msg-thought-title">思考过程</Text>
                           <Text>{truncate(streamThought, 120)}</Text>
                         </View>
                       ) : null}
-                      {streamAnswer ? (
+                      {streamAnswer &&
+                      !streamAnswer.includes(streamImageResult?.url || '\u0000') ? (
                         <View className="msg-answer stream">
                           <Markdown content={streamAnswer} />
                           <Text className="msg-stream-cursor">▍</Text>
                         </View>
                       ) : null}
-                      {running && !streamAnswer ? (
+                      {running &&
+                      !streamAnswer &&
+                      !streamImageResult &&
+                      streamTool?.name !== IMAGE_TOOL ? (
                         <View className="chat-typing">
                           <View className="dot" />
                           <View className="dot" />
@@ -617,10 +694,12 @@ export default function Chat() {
 
 function MessagePart({
   message,
+  imageResultUrls,
   open,
   onToggleThought,
 }: {
   message: AgentMessage
+  imageResultUrls: Set<string>
   open: boolean
   onToggleThought: () => void
 }) {
@@ -642,6 +721,7 @@ function MessagePart({
     )
   }
   if (message.kind === 'tool_call') {
+    if (message.toolName === IMAGE_TOOL) return null
     return (
       <View className="msg-tool">
         <View className="msg-tool-dot" />
@@ -650,15 +730,55 @@ function MessagePart({
     )
   }
   if (message.kind === 'tool_result') {
+    const result = parseImageToolResult(message)
+    if (result) return <GeneratedImage result={result} />
     return (
       <View className="msg-tool is-complete">
         <Text>工具执行完成</Text>
       </View>
     )
   }
+  for (const url of imageResultUrls) {
+    if (message.content?.includes(url)) return null
+  }
   return (
     <View className="msg-answer">
       <Markdown content={message.content || '（空回复）'} />
+    </View>
+  )
+}
+
+function ImageGenerationPanel({ message }: { message?: string }) {
+  return (
+    <View className="msg-image-generating">
+      <View className="msg-image-pattern" />
+      <View className="msg-image-generating-title">
+        <Text className="msg-image-sparkle">✦</Text>
+        <Text>{message || t('chat.generatingImage')}</Text>
+        <View className="msg-image-generating-dots">
+          <View className="dot" />
+          <View className="dot" />
+          <View className="dot" />
+        </View>
+      </View>
+      <View className="msg-image-placeholder">
+        <View className="msg-image-placeholder-frame" />
+        <Text className="msg-image-placeholder-sparkle">✦</Text>
+      </View>
+    </View>
+  )
+}
+
+function GeneratedImage({ result }: { result: GeneratedImageResult }) {
+  return (
+    <View
+      className="msg-generated-image"
+      role="button"
+      ariaRole="button"
+      ariaLabel={result.title || t('chat.generatedImage')}
+      onClick={() => Taro.previewImage({ current: result.url, urls: [result.url] })}
+    >
+      <Image className="msg-generated-image-content" src={result.url} mode="widthFix" lazyLoad />
     </View>
   )
 }

@@ -123,19 +123,15 @@ const ConversationMessage = ({ role, content, isStreaming }) => (
 );
 
 export const ThinkingIndicator = ({ label }) => (
-  <div className="flex justify-start" role="status" aria-live="polite">
-    <div className="flex min-h-10 items-center gap-2 rounded-2xl border border-border bg-canvas px-4 py-2.5 text-sm text-ink-muted shadow-sm">
-      <Sparkles className="h-4 w-4 animate-pulse text-ink-muted" aria-hidden="true" />
-      <span>{label}</span>
-      <span className="flex items-center gap-1" aria-hidden="true">
-        {[0, 1, 2].map((index) => (
-          <span
-            key={index}
-            className="h-1.5 w-1.5 animate-bounce rounded-full bg-ink-muted"
-            style={{ animationDelay: `${index * 140}ms` }}
-          />
-        ))}
-      </span>
+  <div className="flex justify-start" role="status" aria-live="polite" aria-label={label}>
+    <div className="inline-flex min-h-8 items-center gap-1 px-1" aria-hidden="true">
+      {[0, 1, 2].map((index) => (
+        <span
+          key={index}
+          className="h-1.5 w-1.5 animate-bounce rounded-full bg-ink-muted"
+          style={{ animationDelay: `${index * 140}ms` }}
+        />
+      ))}
     </div>
   </div>
 );

@@ -9,6 +9,10 @@ export default {
     save: '保存',
     saving: '保存中…',
   },
+  chat: {
+    generatingImage: '正在生成图片…',
+    generatedImage: '生成的图片',
+  },
   nav: {
     notifications: '消息通知',
     accountSettings: '账户设置',

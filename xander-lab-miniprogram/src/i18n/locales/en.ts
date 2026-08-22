@@ -9,6 +9,10 @@ export default {
     save: 'Save',
     saving: 'Saving…',
   },
+  chat: {
+    generatingImage: 'Generating image…',
+    generatedImage: 'Generated image',
+  },
   nav: {
     notifications: 'Notifications',
     accountSettings: 'Account settings',

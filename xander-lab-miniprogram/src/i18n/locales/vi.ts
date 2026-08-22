@@ -9,6 +9,10 @@ export default {
     save: 'Lưu',
     saving: 'Đang lưu…',
   },
+  chat: {
+    generatingImage: 'Đang tạo hình ảnh…',
+    generatedImage: 'Hình ảnh đã tạo',
+  },
   nav: {
     notifications: 'Thông báo',
     accountSettings: 'Cài đặt tài khoản',
