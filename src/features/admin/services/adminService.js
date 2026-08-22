@@ -6,7 +6,7 @@
 
 import { delete as del, get, patch, post, put } from '@api';
 
-export const FEATURE_KEYS = ['agent', 'blog_agent', 'blog_agent_image', 'img2three_vision'];
+export const FEATURE_KEYS = ['agent', 'blog_agent', 'blog_agent_image', 'img2three_vision', 'recitation_asr'];
 
 export const adminService = {
   /* ---------- 用户封禁/解封 ---------- */

@@ -17,6 +17,7 @@ const API_STYLE_IMAGES = 'IMAGES_GENERATIONS';
 const API_STYLE_CHAT = 'CHAT_COMPLETIONS';
 const API_STYLE_CHAT_PROMPT = 'CHAT_PROMPT';
 const API_STYLE_RESPONSES = 'RESPONSES';
+const API_STYLE_DASHSCOPE_ASR = 'DASHSCOPE_ASR';
 
 const providerLabel = (provider) => {
   if (!provider.baseUrl) return provider.name;
@@ -53,9 +54,12 @@ const FeatureConfigModal = ({ isOpen, config, providers, onClose, onSaved }) => 
   );
   const styleOptions = useMemo(() => {
     const isImage = config?.featureKey === 'blog_agent_image';
-    const options = isImage
-      ? [API_STYLE_CHAT, API_STYLE_CHAT_PROMPT, API_STYLE_IMAGES]
-      : [API_STYLE_CHAT, API_STYLE_RESPONSES];
+    const isSpeech = config?.featureKey === 'recitation_asr';
+    const options = isSpeech
+      ? [API_STYLE_DASHSCOPE_ASR]
+      : isImage
+        ? [API_STYLE_CHAT, API_STYLE_CHAT_PROMPT, API_STYLE_IMAGES]
+        : [API_STYLE_CHAT, API_STYLE_RESPONSES];
     return options.map((style) => ({
       value: style,
       label: style === API_STYLE_IMAGES
@@ -64,7 +68,9 @@ const FeatureConfigModal = ({ isOpen, config, providers, onClose, onSaved }) => 
           ? t('admin.configs.apiStyleChat')
           : style === API_STYLE_CHAT_PROMPT
             ? t('admin.configs.apiStyleChatPrompt')
-            : t('admin.configs.apiStyleResponses'),
+            : style === API_STYLE_DASHSCOPE_ASR
+              ? t('admin.configs.apiStyleDashscopeAsr')
+              : t('admin.configs.apiStyleResponses'),
     }));
   }, [config?.featureKey, t]);
 
@@ -89,6 +95,13 @@ const FeatureConfigModal = ({ isOpen, config, providers, onClose, onSaved }) => 
     }
     setFormError('');
   }, [isOpen, config]);
+
+  const handlePrimaryProviderChange = (providerId) => {
+    setPrimaryProviderId(providerId);
+    if (providerId && config?.featureKey === 'recitation_asr') {
+      setPrimaryApiStyle(API_STYLE_DASHSCOPE_ASR);
+    }
+  };
 
   const handleSubmit = async () => {
     const primaryModelTrimmed = primaryModel.trim();
@@ -191,7 +204,7 @@ const FeatureConfigModal = ({ isOpen, config, providers, onClose, onSaved }) => 
                 size="xs"
                 options={providerOptions}
                 value={primaryProviderId}
-                onChange={setPrimaryProviderId}
+                onChange={handlePrimaryProviderChange}
                 placeholder={t('admin.configs.selectProvider')}
               />
             </FormField>
@@ -200,7 +213,7 @@ const FeatureConfigModal = ({ isOpen, config, providers, onClose, onSaved }) => 
                 id="admin-config-primary-model"
                 value={primaryModel}
                 onChange={(e) => setPrimaryModel(e.target.value)}
-                placeholder="gpt-4o"
+                placeholder={config?.featureKey === 'recitation_asr' ? 'paraformer-v2' : 'gpt-4o'}
                 className={formInputCls}
                 disabled={!primaryProviderId}
               />
@@ -230,6 +243,8 @@ const FeatureConfigModal = ({ isOpen, config, providers, onClose, onSaved }) => 
                   if (value === '') {
                     setFallbackModel('');
                     setFallbackApiStyle('');
+                  } else if (config?.featureKey === 'recitation_asr') {
+                    setFallbackApiStyle(API_STYLE_DASHSCOPE_ASR);
                   }
                 }}
                 placeholder={t('admin.configs.selectProvider')}
@@ -240,7 +255,7 @@ const FeatureConfigModal = ({ isOpen, config, providers, onClose, onSaved }) => 
                 id="admin-config-fallback-model"
                 value={fallbackModel}
                 onChange={(e) => setFallbackModel(e.target.value)}
-                placeholder="gpt-4o-mini"
+                placeholder={config?.featureKey === 'recitation_asr' ? 'paraformer-v2' : 'gpt-4o-mini'}
                 className={formInputCls}
                 disabled={!fallbackProviderId}
               />

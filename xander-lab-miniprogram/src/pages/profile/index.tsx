@@ -168,6 +168,11 @@ export default function Profile() {
 
       <View className="profile-menu-group profile-menu-group--primary">
         <ProfileMenuRow
+          icon="star"
+          label={t('profile.recitation')}
+          onClick={() => navigateForUser('/pages/recitation/index')}
+        />
+        <ProfileMenuRow
           icon="calendar"
           label={t('profile.plans')}
           onClick={() => navigateForUser('/pages/plans/index')}

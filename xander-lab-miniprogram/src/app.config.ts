@@ -15,6 +15,9 @@ export default defineAppConfig({
     'pages/account-settings/index',
     'pages/account-profile/index',
     'pages/security-center/index',
+    'pages/recitation/index',
+    'pages/recitation-practice/index',
+    'pages/recitation-report/index',
   ],
   window: {
     navigationStyle: 'custom',
