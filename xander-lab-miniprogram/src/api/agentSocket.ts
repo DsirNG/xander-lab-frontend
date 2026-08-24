@@ -47,7 +47,14 @@ export function connectAgentStream(
   let reconnectAttempt = 0
   let lastEventId = 0
   let socketTask: Taro.SocketTask | null = null
+  let receivedFirstEvent = false
   const url = `wss://api.dinqor.cn/ws/agent?conversationId=${conversationId}&runVersion=${runVersion}`
+
+  const trace = (message: string, extra = '') => {
+    console.info(
+      `[AgentWS] ${message} conversationId=${conversationId} runVersion=${runVersion}${extra}`,
+    )
+  }
 
   const clearHeartbeat = () => {
     if (heartbeatTimer) {
@@ -59,6 +66,7 @@ export function connectAgentStream(
   const scheduleReconnect = () => {
     if (closed || terminal || reconnectTimer) return
     reconnectAttempt += 1
+    trace('reconnect scheduled', ` attempt=${reconnectAttempt}`)
     handlers.onReconnect?.(reconnectAttempt)
     const delay = Math.min(
       INITIAL_RECONNECT_DELAY * 2 ** Math.max(0, reconnectAttempt - 1),
@@ -74,12 +82,14 @@ export function connectAgentStream(
     if (closed || terminal) return
     let settled = false
     const token = tokenStorage.getAccessToken()
+    trace('connecting', ` attempt=${reconnectAttempt + 1} tokenPresent=${Boolean(token)}`)
     Taro.connectSocket({
       url,
       header: token ? { Authorization: `Bearer ${token}` } : {},
     })
       .then(task => {
         if (closed || terminal) {
+          trace('socket task resolved after local close')
           task.close({ code: 1000 })
           return
         }
@@ -95,6 +105,7 @@ export function connectAgentStream(
         task.onOpen(() => {
           if (closed || terminal) return
           clearHeartbeat()
+          trace('connected')
           handlers.onOpen?.()
           heartbeatTimer = setInterval(() => {
             task.send({ data: JSON.stringify({ event: 'ping' }) })
@@ -114,6 +125,10 @@ export function connectAgentStream(
               return
             }
             reconnectAttempt = 0
+            if (!receivedFirstEvent) {
+              receivedFirstEvent = true
+              trace('first event received', ` event=${payload.event} id=${payload.id ?? '-'}`)
+            }
             if (payload.id != null) {
               const eventId = Number(payload.id)
               if (Number.isSafeInteger(eventId) && eventId > 0) {
@@ -121,23 +136,40 @@ export function connectAgentStream(
                 lastEventId = eventId
               }
             }
-            if (payload.event === 'complete' || payload.event === 'error') terminal = true
+            if (payload.event === 'complete' || payload.event === 'error') {
+              terminal = true
+              trace('terminal event received', ` event=${payload.event} id=${payload.id ?? '-'}`)
+            }
             handlers.onEvent(payload)
-          } catch {
+          } catch (error) {
+            console.warn(
+              `[AgentWS] malformed frame conversationId=${conversationId} runVersion=${runVersion}`,
+              error,
+            )
             // 忽略畸形帧，后续合法帧和断线重放仍可继续处理。
           }
         })
-        task.onClose(handleDisconnect)
+        task.onClose(result => {
+          trace(
+            'closed',
+            ` code=${result.code ?? '-'} reason=${result.reason || '-'} terminal=${terminal} local=${closed}`,
+          )
+          handleDisconnect()
+        })
         task.onError(error => {
           const message = safeErrorMessage(error, token)
-          console.warn(`[AgentWS] connection error: ${message}`)
+          console.warn(
+            `[AgentWS] connection error conversationId=${conversationId} runVersion=${runVersion}: ${message}`,
+          )
           handlers.onError?.(message)
           handleDisconnect()
         })
       })
       .catch(error => {
         const message = safeErrorMessage(error, token)
-        console.warn(`[AgentWS] connectSocket failed: ${message}`)
+        console.warn(
+          `[AgentWS] connectSocket failed conversationId=${conversationId} runVersion=${runVersion}: ${message}`,
+        )
         handlers.onError?.(message)
         scheduleReconnect()
       })
@@ -147,6 +179,7 @@ export function connectAgentStream(
 
   return () => {
     closed = true
+    trace('closing locally', ` receivedFirstEvent=${receivedFirstEvent}`)
     clearHeartbeat()
     if (reconnectTimer) {
       clearTimeout(reconnectTimer)
