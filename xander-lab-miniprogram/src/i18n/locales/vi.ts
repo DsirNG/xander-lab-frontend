@@ -11,6 +11,12 @@ export default {
   },
   chat: {
     generatingImage: 'Đang tạo hình ảnh…',
+    chooseImage: 'Tải ảnh lên',
+    chooseFile: 'Tải tệp lên',
+    attachmentLimit: 'Tối đa 5 tệp đính kèm',
+    attachmentTooLarge: 'Mỗi tệp phải nhỏ hơn 20 MB',
+    attachmentUploadFailed: 'Tải tệp đính kèm thất bại',
+    analyzeAttachments: 'Hãy phân tích các tệp tôi đã tải lên.',
     generatedImage: 'Hình ảnh đã tạo',
   },
   nav: {

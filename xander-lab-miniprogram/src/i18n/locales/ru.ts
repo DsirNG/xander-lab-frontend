@@ -11,6 +11,12 @@ export default {
   },
   chat: {
     generatingImage: 'Генерация изображения…',
+    chooseImage: 'Загрузить изображение',
+    chooseFile: 'Загрузить файл',
+    attachmentLimit: 'Не более 5 вложений',
+    attachmentTooLarge: 'Каждое вложение должно быть меньше 20 МБ',
+    attachmentUploadFailed: 'Не удалось загрузить вложение',
+    analyzeAttachments: 'Проанализируй загруженные вложения.',
     generatedImage: 'Созданное изображение',
   },
   nav: {

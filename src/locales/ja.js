@@ -90,6 +90,8 @@ export default {
       headline: 'Dindor エージェントです。何をしましょうか？',
       description: 'ブログ作成、情報調査、その他のタスクを実行できます。例：「Xについてのブログを書いて」…',
       inputPlaceholder: 'Dindor にやりたいことを伝えてください…',
+      addAttachment: '添付を追加', uploadImagesFiles: '画像とファイルを追加', uploadFromDevice: '端末からアップロード', file: 'ファイル', removeAttachment: '添付を削除',
+      attachmentLimit: '一度に最大5件まで添付できます。', attachmentTooLarge: '「{{name}}」は20MBを超えています。', attachmentUploadFailed: '一部の添付ファイルをアップロードできませんでした。', analyzeAttachments: 'アップロードした添付ファイルを分析してください。',
       inputLockedPlaceholder: 'Dindor が処理中です…',
       send: '送信', stop: '停止', running: '実行中…', thinking: '考え中…', callingTool: 'ツール呼び出し中…', ready: '次のメッセージをどうぞ', failed: 'このターンは失敗しました',
       multiTurnHint: '続けて依頼してください。Agentが適切なツールを選択します。',

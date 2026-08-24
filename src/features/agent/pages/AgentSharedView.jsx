@@ -72,7 +72,7 @@ const AgentSharedView = () => {
       <header className="flex h-14 shrink-0 items-center gap-3 border-b border-border px-4 sm:px-6">
         <Bot className="h-5 w-5 text-accent" />
         <div className="min-w-0 flex-1">
-          <h1 className="truncate text-sm font-bold text-ink">{conversation?.title || 'DinQorGPT'}</h1>
+          <h1 className="truncate text-sm font-bold text-ink">{conversation?.title || 'DinQorAI'}</h1>
         </div>
         <span className="shrink-0 rounded-full bg-surface-muted px-2.5 py-1 text-xs font-semibold text-ink-muted">
           {t('blog.agent.sharedView', '分享的对话')}

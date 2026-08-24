@@ -153,6 +153,7 @@ describe('useAgentConversation new conversation', () => {
     await waitFor(() => expect(agentConversationService.sendMessageStream).toHaveBeenCalledWith(
       '42',
       'hello',
+      [],
       expect.any(Function),
       expect.objectContaining({ _silent: true }),
     ))

@@ -81,7 +81,7 @@ const AgentSessionList = ({ sessions, activeId, loading, disableNew = false, mob
       {/* Top Header */}
       <div className="flex items-center justify-between px-3 pt-3 pb-2">
         <div onClick={() => navigate('/workspace')} className="flex items-center gap-2 px-2 py-1 hover:bg-surface-muted rounded-lg cursor-pointer transition">
-          <span className="font-bold text-base text-ink">DinQorGPT</span>
+          <span className="font-bold text-base text-ink">DinQorAI</span>
         </div>
         <div className="flex items-center gap-1 text-ink-muted">
           <button onClick={onSearch} className="p-1.5 hover:bg-surface-muted rounded-lg transition"><Search className="h-4 w-4" /></button>

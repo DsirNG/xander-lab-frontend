@@ -11,6 +11,12 @@ export default {
   },
   chat: {
     generatingImage: '画像を生成中…',
+    chooseImage: '画像をアップロード',
+    chooseFile: 'ファイルをアップロード',
+    attachmentLimit: '添付は最大5件です',
+    attachmentTooLarge: '各添付は20MB未満にしてください',
+    attachmentUploadFailed: '添付のアップロードに失敗しました',
+    analyzeAttachments: 'アップロードした添付ファイルを分析してください。',
     generatedImage: '生成された画像',
   },
   nav: {

@@ -98,6 +98,8 @@ export default {
       headline: 'Hi, I am your Dindor agent. What would you like to do?',
       description: 'I can write blogs, research topics, or handle other tasks. Try: "write a blog about X".',
       inputPlaceholder: 'Tell Dindor what to do…',
+      addAttachment: 'Add attachment', uploadImagesFiles: 'Add images and files', uploadFromDevice: 'Upload from device', file: 'File', removeAttachment: 'Remove attachment',
+      attachmentLimit: 'You can upload up to 5 attachments at a time.', attachmentTooLarge: '“{{name}}” exceeds 20 MB.', attachmentUploadFailed: 'Some attachments failed to upload. Try again.', analyzeAttachments: 'Please analyze the attachments I uploaded.',
       inputLockedPlaceholder: 'Dindor is working…',
       send: 'Send', stop: 'Stop', running: 'Working…', thinking: 'Thinking…', callingTool: 'Calling tool…', ready: 'Ready for your next message', failed: 'The agent failed this turn',
       multiTurnHint: 'Keep asking; the agent will pick the right tools by itself.',

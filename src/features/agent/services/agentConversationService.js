@@ -2,13 +2,16 @@
  * 博客智能体对话 API 封装
  * Agent conversation API wrapper
  */
-import { get, post, postStream, getStream } from '@api';
+import { get, post, postStream, getStream, upload } from '@api';
 
 const BASE = '/api/agent/conversations';
 
 export const agentConversationService = {
   /** 用首条消息确定标题并创建会话壳；消息随后经 /messages/stream 执行。 */
   create: (content, config) => post(BASE, { content }, { dedupe: false, ...config }),
+  /** 上传一个待随消息发送的图片或文档。 */
+  uploadAttachment: (file, onProgress, config) =>
+    upload(`${BASE}/attachments`, file, { onProgress, config: { _silent: true, ...config } }),
   /** 会话列表 */
   list: (config) => get(BASE, undefined, config),
   /** 会话详情，返回 { conversation, messages } */
@@ -16,8 +19,8 @@ export const agentConversationService = {
   /** 消息列表 */
   getMessages: (id, config) => get(`${BASE}/${id}/messages`, undefined, config),
   /** 发送消息并消费流式事件（一轮 agent loop） */
-  sendMessageStream: (id, content, onEvent, config) =>
-    postStream(`${BASE}/${id}/messages/stream`, { content }, { onEvent, ...config }),
+  sendMessageStream: (id, content, attachments, onEvent, config) =>
+    postStream(`${BASE}/${id}/messages/stream`, { content, attachments }, { onEvent, ...config }),
   /** 请求停止当前正在执行的一轮 */
   cancel: (id, config) => post(`${BASE}/${id}/cancel`, undefined, config),
   /** 订阅可续传事件流（断线恢复用），支持 Last-Event-ID 游标 */

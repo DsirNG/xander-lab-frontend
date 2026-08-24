@@ -98,6 +98,8 @@ export default {
       headline: '我是你的 Dindor 智能体，想做点什么？',
       description: '我可以帮你写博客、查资料或处理其他任务。试试：「帮我写一篇关于 X 的博客」。',
       inputPlaceholder: '告诉 Dindor 你想做什么…',
+      addAttachment: '添加附件', uploadImagesFiles: '添加图片和文件', uploadFromDevice: '从电脑上传', file: '文件', removeAttachment: '移除附件',
+      attachmentLimit: '每次最多上传 5 个附件。', attachmentTooLarge: '“{{name}}”超过 20MB。', attachmentUploadFailed: '部分附件上传失败，请重试。', analyzeAttachments: '请分析我上传的附件。',
       inputLockedPlaceholder: 'Dindor 执行中，请稍候',
       send: '发送', stop: '停止', running: '执行中…', thinking: '思考中…', callingTool: '工具调用中…', ready: '可以继续对话', failed: '本轮执行失败',
       multiTurnHint: 'DinQor 也会犯错，请注意甄别。',

@@ -11,6 +11,12 @@ export default {
   },
   chat: {
     generatingImage: '正在生成图片…',
+    chooseImage: '上传图片',
+    chooseFile: '上传文件',
+    attachmentLimit: '每次最多上传5个附件',
+    attachmentTooLarge: '单个附件不能超过20MB',
+    attachmentUploadFailed: '附件上传失败，请重试',
+    analyzeAttachments: '请分析我上传的附件。',
     generatedImage: '生成的图片',
   },
   nav: {

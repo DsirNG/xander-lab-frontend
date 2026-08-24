@@ -3,7 +3,8 @@ import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
   AlertCircle, ArrowLeft, Bot, Loader2, MessageSquareText, Plus,
-  Send, Sparkles, X, Globe, PenLine, Image as ImageIcon, Mic, Menu, PanelLeftOpen, Link2, Search, Square, SquarePen
+  Send, Sparkles, X, Globe, PenLine, Image as ImageIcon, Mic, Menu, PanelLeftOpen, Link2, Search, Square, SquarePen,
+  Paperclip, FileText
 } from 'lucide-react';
 import { useToast } from '@/hooks/useToast';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
@@ -13,7 +14,7 @@ import { blogAgentService } from '@/features/blog/services/blogAgentService';
 import useIsMobile from '@/hooks/useIsMobile';
 import useClickOutside from '@/hooks/useClickOutside';
 import { useAgentConversation } from '../hooks/useAgentConversation';
-import { parseToolPayload } from '../services/agentConversationService';
+import { agentConversationService, parseToolPayload } from '../services/agentConversationService';
 import AgentMarkdown from '../components/AgentMarkdown';
 import AgentImagesPage from './AgentImagesPage';
 import ProfileModal from '@features/workspace/components/ProfileModal';
@@ -89,13 +90,28 @@ const cleanImageMarkdown = (text) => {
   return text;
 };
 
-const ConversationMessage = ({ role, content, isStreaming }) => (
+const MessageAttachments = ({ attachments = [] }) => attachments.length ? (
+  <div className="mb-2 flex max-w-full flex-wrap gap-2">
+    {attachments.map((attachment) => attachment.contentType?.startsWith('image/') ? (
+      <a key={`${attachment.url}-${attachment.name}`} href={attachment.url} target="_blank" rel="noreferrer" className="block">
+        <img src={attachment.url} alt={attachment.name} className="h-24 w-24 rounded-2xl border border-border object-cover" />
+      </a>
+    ) : (
+      <a key={`${attachment.url}-${attachment.name}`} href={attachment.url} target="_blank" rel="noreferrer" className="flex max-w-64 items-center gap-2 rounded-2xl border border-border bg-surface px-3 py-2 text-caption text-ink hover:bg-surface-muted">
+        <FileText className="h-5 w-5 shrink-0 text-ink-muted" />
+        <span className="truncate">{attachment.name}</span>
+      </a>
+    ))}
+  </div>
+) : null;
+
+const ConversationMessage = ({ role, content, attachments, isStreaming }) => (
   <div className={`flex w-full ${role === 'user' ? 'justify-end' : 'justify-start'}`}>
     <div className={role === 'user'
       ? 'max-w-[85%] rounded-3xl bg-surface-muted px-4 py-2.5 text-sm leading-6 text-ink sm:max-w-[75%]'
       : 'w-full min-w-0 py-1 text-sm leading-6 text-ink'}>
       {role === 'user' ? (
-        <span className="whitespace-pre-wrap">{content}</span>
+        <><MessageAttachments attachments={attachments} /><span className="whitespace-pre-wrap">{content}</span></>
       ) : isStreaming ? (
         content ? (
           <div className="flex items-start gap-0.5">
@@ -136,35 +152,78 @@ export const ThinkingIndicator = ({ label }) => (
   </div>
 );
 
-const AgentChatInputBar = ({ t, input, setInput, isActive, creating, hasConversation, onSubmit, onStop }) => {
+const AgentChatInputBar = ({
+  t, input, setInput, attachments, uploading, isActive, creating, hasConversation,
+  onFilesSelected, onRemoveAttachment, onSubmit, onStop,
+}) => {
   const locked = isActive || creating;
+  const [menuOpen, setMenuOpen] = useState(false);
+  const fileInputRef = useRef(null);
+  const textareaRef = useRef(null);
+  const menuRef = useRef(null);
+  useClickOutside(menuRef, () => setMenuOpen(false));
+
+  useEffect(() => {
+    const element = textareaRef.current;
+    if (!element) return;
+    element.style.height = 'auto';
+    element.style.height = `${Math.min(element.scrollHeight, 144)}px`;
+    element.style.overflowY = element.scrollHeight > 144 ? 'auto' : 'hidden';
+  }, [input]);
+
+  const canSend = Boolean(input.trim() || attachments.length) && !uploading;
   return (
     <div className={`mx-auto w-full max-w-3xl ${hasConversation ? 'px-4 py-3 pb-safe sm:px-6' : 'px-4'}`}>
-      <div className="relative flex items-center rounded-3xl border border-border/80 bg-[#ffffff]">
-        <button
-          type="button"
-          className="ml-2 flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-ink-muted transition hover:bg-surface-muted hover:text-ink"
-          title="Add attachment"
-        >
-          <Plus className="h-5 w-5" />
-        </button>
-
-        <input
-          type="text"
-          value={input}
-          onChange={(event) => setInput(event.target.value)}
-          disabled={locked}
-          placeholder={locked ? t('blog.agentChat.inputLockedPlaceholder') : "有问题，随便问"}
-          onKeyDown={(event) => {
-            if (event.key === 'Enter' && !event.shiftKey) {
-              event.preventDefault();
-              if (!locked) onSubmit();
-            }
-          }}
-          className="min-h-[44px] min-w-0 flex-1 bg-transparent px-3 py-2 text-base leading-6 outline-none placeholder:text-ink-faint disabled:opacity-60"
-        />
-
-        <div className="mr-2 flex items-center gap-1">
+      <div className="relative rounded-3xl border border-border/80 bg-surface p-2 shadow-sm focus-within:border-border-strong">
+        {attachments.length ? (
+          <div className="flex flex-wrap gap-2 px-1 pb-2">
+            {attachments.map((attachment) => (
+              <div key={attachment.url} className="group relative">
+                {attachment.contentType.startsWith('image/') ? (
+                  <img src={attachment.url} alt={attachment.name} className="h-24 w-24 rounded-2xl border border-border object-cover" />
+                ) : (
+                  <div className="flex h-14 max-w-72 items-center gap-2 rounded-2xl border border-border px-3 pr-9">
+                    <FileText className="h-5 w-5 shrink-0 text-ink-muted" />
+                    <div className="min-w-0"><div className="truncate text-caption font-semibold text-ink">{attachment.name}</div><div className="text-micro text-ink-muted">{t('blog.agentChat.file')}</div></div>
+                  </div>
+                )}
+                <button type="button" onClick={() => onRemoveAttachment(attachment.url)} aria-label={t('blog.agentChat.removeAttachment')} className="absolute right-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-ink/75 text-white">
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              </div>
+            ))}
+          </div>
+        ) : null}
+        <div className="flex items-end gap-1">
+          <div ref={menuRef} className="relative shrink-0 self-end">
+            <button type="button" disabled={locked || uploading} onClick={() => setMenuOpen((open) => !open)} className="flex h-9 w-9 items-center justify-center rounded-full text-ink-muted transition hover:bg-surface-muted hover:text-ink disabled:opacity-50" aria-label={t('blog.agentChat.addAttachment')}>
+              {uploading ? <Loader2 className="h-5 w-5 animate-spin" /> : <Plus className="h-5 w-5" />}
+            </button>
+            {menuOpen ? (
+              <div className="absolute bottom-12 left-0 z-30 w-72 rounded-2xl border border-border bg-surface p-2 shadow-xl">
+                <button type="button" onClick={() => { setMenuOpen(false); fileInputRef.current?.click(); }} className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left hover:bg-surface-muted">
+                  <Paperclip className="h-5 w-5 text-ink-muted" /><span><span className="block text-body text-ink">{t('blog.agentChat.uploadImagesFiles')}</span><span className="block text-caption text-ink-muted">{t('blog.agentChat.uploadFromDevice')}</span></span>
+                </button>
+              </div>
+            ) : null}
+            <input ref={fileInputRef} type="file" multiple className="hidden" accept="image/png,image/jpeg,image/webp,image/gif,.pdf,.txt,.md,.json,.html,.xml,.doc,.docx,.rtf,.odt,.ppt,.pptx,.csv,.xls,.xlsx,.tsv,.java,.js,.jsx,.ts,.tsx,.py,.css" onChange={(event) => { onFilesSelected(Array.from(event.target.files || [])); event.target.value = ''; }} />
+          </div>
+          <textarea
+            ref={textareaRef}
+            rows={1}
+            value={input}
+            onChange={(event) => setInput(event.target.value)}
+            disabled={locked}
+            placeholder={locked ? t('blog.agentChat.inputLockedPlaceholder') : t('blog.agentChat.inputPlaceholder')}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                if (!locked && canSend) onSubmit();
+              }
+            }}
+            className="min-h-9 min-w-0 flex-1 resize-none bg-transparent px-2 py-1.5 text-base leading-6 outline-none placeholder:text-ink-faint disabled:opacity-60"
+          />
+          <div className="flex shrink-0 items-center gap-1 self-end">
           <button
             type="button"
             className="flex h-8 w-8 items-center justify-center rounded-full text-ink-muted transition hover:bg-surface-muted hover:text-ink"
@@ -191,12 +250,13 @@ const AgentChatInputBar = ({ t, input, setInput, isActive, creating, hasConversa
             <button
               type="button"
               onClick={onSubmit}
-              disabled={locked || !input.trim()}
+              disabled={locked || !canSend}
               className="flex h-8 w-8 items-center justify-center rounded-full bg-ink text-white transition hover:bg-ink-secondary disabled:opacity-50"
             >
               <Send className="h-4 w-4" />
             </button>
           )}
+          </div>
         </div>
       </div>
       <div className="mt-2 text-center text-xs text-ink-muted">{t('blog.agentChat.multiTurnHint')}</div>
@@ -220,6 +280,8 @@ const AgentChat = () => {
   const avatar = userInfo?.avatar;
 
   const [input, setInput] = useState('');
+  const [attachments, setAttachments] = useState([]);
+  const [uploadingAttachments, setUploadingAttachments] = useState(false);
   const [view, setView] = useState('chat'); // 'chat' | 'images'：图片画廊是智能体对话内的视图
   const [mobileSessionsOpen, setMobileSessionsOpen] = useState(false);
   const [artifactData, setArtifactData] = useState(null);
@@ -326,17 +388,49 @@ const AgentChat = () => {
   }, [messages, steps]);
 
   const handleSubmit = async () => {
-    if (!input.trim()) {
+    if (!input.trim() && attachments.length === 0) {
       toast.warning(t('blog.agentChat.inputRequired'));
       return;
     }
-    await submitText(input);
+    await submitText(input, attachments);
   };
 
+  const handleFilesSelected = useCallback(async (files) => {
+    const remaining = Math.max(0, 5 - attachments.length);
+    if (!remaining) {
+      toast.warning(t('blog.agentChat.attachmentLimit'));
+      return;
+    }
+    const selected = files.slice(0, remaining);
+    if (files.length > remaining) toast.warning(t('blog.agentChat.attachmentLimit'));
+    const valid = selected.filter((file) => {
+      if (file.size <= 20 * 1024 * 1024) return true;
+      toast.warning(t('blog.agentChat.attachmentTooLarge', { name: file.name }));
+      return false;
+    });
+    if (!valid.length) return;
+    setUploadingAttachments(true);
+    try {
+      const settled = await Promise.allSettled(valid.map((file) =>
+        agentConversationService.uploadAttachment(file)));
+      const uploaded = settled.filter((item) => item.status === 'fulfilled').map((item) => item.value);
+      if (uploaded.length) setAttachments((current) => [...current, ...uploaded].slice(0, 5));
+      if (settled.some((item) => item.status === 'rejected')) {
+        toast.error(t('blog.agentChat.attachmentUploadFailed'));
+      }
+    } finally {
+      setUploadingAttachments(false);
+    }
+  }, [attachments.length, t, toast]);
+
+  const handleRemoveAttachment = useCallback((url) => {
+    setAttachments((current) => current.filter((attachment) => attachment.url !== url));
+  }, []);
+
   /** 发送一段文本：无会话时先建会话壳再经流式接口发首条消息，否则直接发到当前会话。 */
-  const submitText = useCallback(async (text) => {
-    const trimmed = text.trim();
-    if (!trimmed) return;
+  const submitText = useCallback(async (text, selectedAttachments = []) => {
+    const trimmed = text.trim() || t('blog.agentChat.analyzeAttachments');
+    if (!trimmed && selectedAttachments.length === 0) return;
     stickToBottomRef.current = true;
     setTimeout(() => {
       chatEndRef.current?.scrollIntoView({ behavior: 'auto', block: 'end' });
@@ -344,22 +438,25 @@ const AgentChat = () => {
 
     if (!conversationId) {
       try {
-        const detail = await createConversation(trimmed);
+        const detail = await createConversation(trimmed, selectedAttachments);
         if (!detail?.conversation?.id) return;
         navigate(`/workspace/agent/${detail.conversation.id}`, { replace: true });
         setInput('');
+        setAttachments([]);
       } catch (error) {
         toast.error(error.message || t('blog.agentChat.sendFailed'));
       }
       return;
     }
     setInput('');
-    await sendMessage(trimmed);
+    setAttachments([]);
+    await sendMessage(trimmed, { attachments: selectedAttachments });
   }, [conversationId, createConversation, navigate, sendMessage, t, toast]);
 
   const handleNewConversation = () => {
     reset();
     setInput('');
+    setAttachments([]);
     setView('chat');
     navigate('/workspace/agent', { replace: true });
   };
@@ -640,7 +737,7 @@ const AgentChat = () => {
                   >
                     <PanelLeftOpen className="h-5 w-5" />
                   </button>
-                  <span className="font-bold text-base text-ink lg:hidden">DinQorGPT</span>
+                  <span className="font-bold text-base text-ink lg:hidden">DinQorAI</span>
                 </>
               )}
               {!sidebarCollapsed && (
@@ -731,15 +828,19 @@ const AgentChat = () => {
 
           {messages.length === 0 && steps.length === 0 && !loading ? (
             <div className="flex h-full flex-col items-center justify-center px-4 pt-10">
-              <h1 className="mb-8 text-3xl font-semibold text-ink">我们先从哪里开始呢？</h1>
-              
+              <div className="mb-8 text-display text-ink">{t('blog.agentChat.startHeadline')}</div>
+
               <AgentChatInputBar
                 t={t}
                 input={input}
                 setInput={setInput}
+                attachments={attachments}
+                uploading={uploadingAttachments}
                 isActive={isActive}
                 creating={creating}
                 hasConversation={false}
+                onFilesSelected={handleFilesSelected}
+                onRemoveAttachment={handleRemoveAttachment}
                 onSubmit={handleSubmit}
                 onStop={handleStop}
               />
@@ -777,7 +878,7 @@ const AgentChat = () => {
                   <div className="mx-auto flex max-w-3xl flex-col gap-5">
                     {messages.map((message) => {
                       if (message.role === 'user') {
-                        return <ConversationMessage key={message.id} role="user" content={message.content} />;
+                        return <ConversationMessage key={message.id} role="user" content={message.content} attachments={message.attachments} />;
                       }
                       if (message.kind === 'thought') {
                         return <ThoughtCard key={message.id} content={message.content} />;
@@ -793,7 +894,7 @@ const AgentChat = () => {
                       return null;
                     })}
                     {steps.map((step, index) => {
-                      if (step.type === 'user') return <ConversationMessage key={`live-${index}`} role="user" content={step.content} />;
+                      if (step.type === 'user') return <ConversationMessage key={`live-${index}`} role="user" content={step.content} attachments={step.attachments} />;
                       if (step.type === 'thought') return <ThoughtCard key={`live-${index}`} content={step.content} />;
                       if (step.type === 'tool') {
                         if (step.tool === IMAGE_TOOL && step.phase === 'end' && step.result?.url) {
@@ -831,9 +932,13 @@ const AgentChat = () => {
                   t={t}
                   input={input}
                   setInput={setInput}
+                  attachments={attachments}
+                  uploading={uploadingAttachments}
                   isActive={isActive}
                   creating={creating}
                   hasConversation={true}
+                  onFilesSelected={handleFilesSelected}
+                  onRemoveAttachment={handleRemoveAttachment}
                   onSubmit={handleSubmit}
                   onStop={handleStop}
                 />

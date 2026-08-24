@@ -12,6 +12,7 @@ import {
   agentApi,
   type AgentConversation,
   type AgentMessage,
+  type AgentAttachment,
   type ConversationSnapshot,
 } from '@/api/agent'
 import { connectAgentStream } from '@/api/agentSocket'
@@ -117,6 +118,8 @@ export default function Chat() {
   const [conversations, setConversations] = useState<AgentConversation[]>([])
   const [active, setActive] = useState<ConversationSnapshot | null>(null)
   const [input, setInput] = useState('')
+  const [attachments, setAttachments] = useState<AgentAttachment[]>([])
+  const [uploadingAttachments, setUploadingAttachments] = useState(false)
   const [running, setRunning] = useState(false)
   const [creating, setCreating] = useState(false)
   const [thoughtOpen, setThoughtOpen] = useState<Record<number, boolean>>({})
@@ -394,6 +397,7 @@ export default function Chat() {
     setActive(null)
     setRunning(false)
     setInput('')
+    setAttachments([])
     setScrollTarget('')
     setStreamAnswer('')
     setStreamThought('')
@@ -403,9 +407,57 @@ export default function Chat() {
     closeDrawer()
   }
 
+  const handleAddAttachment = async () => {
+    if (running || creating || uploadingAttachments) return
+    const remaining = 5 - attachments.length
+    if (remaining <= 0) {
+      showToast(t('chat.attachmentLimit'))
+      return
+    }
+    try {
+      const action = await Taro.showActionSheet({
+        itemList: [t('chat.chooseImage'), t('chat.chooseFile')],
+      })
+      let selected: Array<{ path: string; size: number }> = []
+      if (action.tapIndex === 0) {
+        const result = await Taro.chooseImage({
+          count: remaining,
+          sizeType: ['compressed', 'original'],
+        })
+        selected = result.tempFiles.map(file => ({ path: file.path, size: file.size }))
+      } else {
+        const result = await Taro.chooseMessageFile({ count: remaining, type: 'file' })
+        selected = result.tempFiles.map(file => ({ path: file.path, size: file.size }))
+      }
+      const valid = selected.filter(file => file.size <= 20 * 1024 * 1024)
+      if (valid.length !== selected.length) showToast(t('chat.attachmentTooLarge'))
+      if (!valid.length) return
+      setUploadingAttachments(true)
+      const settled = await Promise.allSettled(
+        valid.map(file => agentApi.uploadAttachment(file.path)),
+      )
+      const uploaded = settled
+        .filter(
+          (item): item is PromiseFulfilledResult<AgentAttachment> => item.status === 'fulfilled',
+        )
+        .map(item => item.value)
+      if (uploaded.length) setAttachments(current => [...current, ...uploaded].slice(0, 5))
+      if (settled.some(item => item.status === 'rejected'))
+        showToast(t('chat.attachmentUploadFailed'))
+    } catch (error) {
+      const message = error instanceof Error ? error.message : ''
+      if (message && !message.includes('cancel')) showToast(t('chat.attachmentUploadFailed'))
+    } finally {
+      setUploadingAttachments(false)
+    }
+  }
+
   const handleSend = async (forcedContent?: string) => {
-    const content = (forcedContent ?? input).trim()
-    if (!content || running || creating) return
+    const selectedAttachments = attachments
+    const rawContent = (forcedContent ?? input).trim()
+    if ((!rawContent && !selectedAttachments.length) || running || creating || uploadingAttachments)
+      return
+    const content = rawContent || t('chat.analyzeAttachments')
     if (!ensureLogin()) return
 
     const tempUser: AgentMessage = {
@@ -414,6 +466,7 @@ export default function Chat() {
       role: 'user',
       kind: 'message',
       content,
+      attachments: selectedAttachments,
       createdAt: new Date().toISOString(),
     }
 
@@ -438,8 +491,9 @@ export default function Chat() {
         Taro.setStorageSync(ACTIVE_KEY, targetId)
       }
       setInput('')
+      setAttachments([])
       try {
-        const runVersion = await agentApi.sendMessage(targetId, content)
+        const runVersion = await agentApi.sendMessage(targetId, content, selectedAttachments)
         if (runVersion) openStream(targetId, runVersion)
       } catch (e) {
         const message = e instanceof Error ? e.message : ''
@@ -588,7 +642,13 @@ export default function Chat() {
               stopLabel={CHAT_COPY.stop}
               running={running}
               creating={creating}
+              attachments={attachments}
+              uploading={uploadingAttachments}
               onChange={setInput}
+              onAddAttachment={handleAddAttachment}
+              onRemoveAttachment={url =>
+                setAttachments(current => current.filter(item => item.url !== url))
+              }
               onSubmit={() => handleSend()}
               onStop={handleCancel}
             />
@@ -633,7 +693,13 @@ export default function Chat() {
                 stopLabel={CHAT_COPY.stop}
                 running={running}
                 creating={creating}
+                attachments={attachments}
+                uploading={uploadingAttachments}
                 onChange={setInput}
+                onAddAttachment={handleAddAttachment}
+                onRemoveAttachment={url =>
+                  setAttachments(current => current.filter(item => item.url !== url))
+                }
                 onSubmit={() => handleSend()}
                 onStop={handleCancel}
               />
@@ -680,7 +746,30 @@ function MessagePart({
   onToggleThought: () => void
 }) {
   if (message.role === 'user' && message.kind === 'message') {
-    return <View className="msg-bubble user">{message.content}</View>
+    return (
+      <View className="msg-bubble user">
+        {message.attachments?.length ? (
+          <View className="msg-user-attachments">
+            {message.attachments.map(attachment =>
+              attachment.contentType.startsWith('image/') ? (
+                <Image
+                  key={attachment.url}
+                  className="msg-user-attachment-image"
+                  src={absoluteMediaUrl(attachment.url)}
+                  mode="aspectFill"
+                />
+              ) : (
+                <View key={attachment.url} className="msg-user-file">
+                  <Icon name="article" />
+                  <Text>{attachment.name}</Text>
+                </View>
+              ),
+            )}
+          </View>
+        ) : null}
+        <Text>{message.content}</Text>
+      </View>
+    )
   }
   if (message.kind === 'thought') {
     return (

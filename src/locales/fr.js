@@ -90,6 +90,8 @@ export default {
       headline: 'Bonjour, je suis Dindor. Que puis-je faire pour vous ?',
       description: 'Je peux écrire des blogs, faire des recherches ou gérer d’autres tâches. Essayez : « écris un blog sur X ».',
       inputPlaceholder: 'Dites à Dindor ce que vous voulez…',
+      addAttachment: 'Ajouter une pièce jointe', uploadImagesFiles: 'Ajouter des images et fichiers', uploadFromDevice: 'Importer depuis l’appareil', file: 'Fichier', removeAttachment: 'Retirer la pièce jointe',
+      attachmentLimit: 'Vous pouvez importer jusqu’à 5 pièces jointes.', attachmentTooLarge: '« {{name}} » dépasse 20 Mo.', attachmentUploadFailed: 'Certaines pièces jointes n’ont pas été importées.', analyzeAttachments: 'Veuillez analyser les pièces jointes importées.',
       inputLockedPlaceholder: 'Dindor travaille…',
       send: 'Envoyer', stop: 'Arrêter', running: 'En cours…', thinking: 'Réflexion…', callingTool: 'Appel d’outil…', ready: 'Prêt pour votre prochain message', failed: 'Échec de ce tour',
       multiTurnHint: 'Continuez à demander ; l’agent choisira lui-même les bons outils.',

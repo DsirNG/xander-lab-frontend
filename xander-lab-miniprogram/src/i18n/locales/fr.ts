@@ -11,6 +11,12 @@ export default {
   },
   chat: {
     generatingImage: 'Génération de l’image…',
+    chooseImage: 'Importer une image',
+    chooseFile: 'Importer un fichier',
+    attachmentLimit: '5 pièces jointes maximum',
+    attachmentTooLarge: 'Chaque pièce jointe doit faire moins de 20 Mo',
+    attachmentUploadFailed: 'Échec de l’importation',
+    analyzeAttachments: 'Veuillez analyser les pièces jointes importées.',
     generatedImage: 'Image générée',
   },
   nav: {

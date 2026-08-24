@@ -385,7 +385,7 @@ export const useAgentConversation = ({ conversationId }) => {
   }, [applySnapshot, clearLiveState, isCurrent, loadSessions, recoverConversation, t]);
 
   /** Send subsequent turns. New conversations are started by create() on the server. */
-  const sendMessage = useCallback(async (content, { displayUserMessage = true } = {}) => {
+  const sendMessage = useCallback(async (content, { displayUserMessage = true, attachments = [] } = {}) => {
     const id = activeIdRef.current;
     const text = content?.trim();
     if (!id || !text || runningRef.current || creatingRef.current) return false;
@@ -396,7 +396,13 @@ export const useAgentConversation = ({ conversationId }) => {
     beginRunGeneration(null, { clearLive: displayUserMessage });
     updateRunning(true);
     setConversation((current) => current ? { ...current, status: 'running' } : current);
-    if (displayUserMessage) pushStep({ type: 'user', content: text });
+    if (displayUserMessage) {
+      pushStep({
+        type: 'user',
+        content: text,
+        ...(attachments.length > 0 ? { attachments } : {}),
+      });
+    }
 
     try {
       const streamEpoch = ++streamEpochRef.current;
@@ -404,6 +410,7 @@ export const useAgentConversation = ({ conversationId }) => {
         await agentConversationService.sendMessageStream(
           id,
           text,
+          attachments,
           (payload) => applyEvent(id, streamEpoch, payload),
           { _silent: true, signal: controller.signal },
         );
@@ -453,7 +460,7 @@ export const useAgentConversation = ({ conversationId }) => {
   }, [isCurrent, t]);
 
   /** 创建会话壳；首条消息在会话快照就绪后经 /messages/stream 发送，与后续轮次共用同一流式接口。 */
-  const createConversation = useCallback(async (content) => {
+  const createConversation = useCallback(async (content, attachments = []) => {
     const text = content?.trim();
     if (!text) throw new Error(t('blog.agentChat.inputRequired'));
     if (creatingRef.current) return null;
@@ -473,13 +480,17 @@ export const useAgentConversation = ({ conversationId }) => {
       });
       const id = detail?.conversation?.id;
       if (id) {
-        pushStep({ type: 'user', content: text });
+        pushStep({
+          type: 'user',
+          content: text,
+          ...(attachments.length > 0 ? { attachments } : {}),
+        });
         setSessions((current) => [
           detail.conversation,
           ...current.filter((session) => String(session.id) !== String(id)),
         ]);
         pendingFirstMessageRef.current = {
-          id: String(id), text, detail, routeInitialized: false, sent: false,
+          id: String(id), text, attachments, detail, routeInitialized: false, sent: false,
         };
       }
       return detail;
@@ -574,7 +585,7 @@ export const useAgentConversation = ({ conversationId }) => {
     if (pending.id !== convId || String(conversation.id) !== convId) return;
     if (conversation.status === 'running') return;
     pending.sent = true;
-    sendMessage(pending.text, { displayUserMessage: false });
+    sendMessage(pending.text, { displayUserMessage: false, attachments: pending.attachments });
   }, [loading, conversation, sendMessage]);
 
   useEffect(() => () => {

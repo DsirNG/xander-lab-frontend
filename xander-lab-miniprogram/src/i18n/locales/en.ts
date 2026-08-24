@@ -11,6 +11,12 @@ export default {
   },
   chat: {
     generatingImage: 'Generating image…',
+    chooseImage: 'Upload image',
+    chooseFile: 'Upload file',
+    attachmentLimit: 'Up to 5 attachments per message',
+    attachmentTooLarge: 'Each attachment must be under 20 MB',
+    attachmentUploadFailed: 'Attachment upload failed. Try again.',
+    analyzeAttachments: 'Please analyze the attachments I uploaded.',
     generatedImage: 'Generated image',
   },
   nav: {

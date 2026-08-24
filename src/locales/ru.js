@@ -90,6 +90,8 @@ export default {
       headline: 'Я ваш Dindor-агент. Что сделать?',
       description: 'Могу написать блог, исследовать тему или выполнить другие задачи. Попробуйте: «напиши блог о X».',
       inputPlaceholder: 'Расскажите Dindor, что сделать…',
+      addAttachment: 'Добавить вложение', uploadImagesFiles: 'Добавить изображения и файлы', uploadFromDevice: 'Загрузить с устройства', file: 'Файл', removeAttachment: 'Удалить вложение',
+      attachmentLimit: 'Можно загрузить не более 5 вложений.', attachmentTooLarge: 'Файл «{{name}}» превышает 20 МБ.', attachmentUploadFailed: 'Не удалось загрузить некоторые вложения.', analyzeAttachments: 'Проанализируй загруженные вложения.',
       inputLockedPlaceholder: 'Dindor работает…',
       send: 'Отправить', stop: 'Остановить', running: 'Выполняется…', thinking: 'Размышляю…', callingTool: 'Вызов инструмента…', ready: 'Готов к следующему сообщению', failed: 'Этот ход не удался',
       multiTurnHint: 'Продолжайте просить; агент сам выберет нужные инструменты.',

@@ -90,6 +90,8 @@ export default {
       headline: 'Tôi là Dindor của bạn. Bạn muốn làm gì?',
       description: 'Tôi có thể viết blog, tra cứu thông tin hoặc xử lý các tác vụ khác. Thử: «viết blog về X».',
       inputPlaceholder: 'Cho Dindor biết bạn muốn làm gì…',
+      addAttachment: 'Thêm tệp đính kèm', uploadImagesFiles: 'Thêm ảnh và tệp', uploadFromDevice: 'Tải lên từ thiết bị', file: 'Tệp', removeAttachment: 'Xóa tệp đính kèm',
+      attachmentLimit: 'Mỗi lần chỉ có thể tải lên tối đa 5 tệp.', attachmentTooLarge: '“{{name}}” vượt quá 20 MB.', attachmentUploadFailed: 'Một số tệp tải lên không thành công.', analyzeAttachments: 'Hãy phân tích các tệp tôi đã tải lên.',
       inputLockedPlaceholder: 'Dindor đang xử lý…',
       send: 'Gửi', stop: 'Dừng', running: 'Đang xử lý…', thinking: 'Đang suy nghĩ…', callingTool: 'Đang gọi công cụ…', ready: 'Sẵn sàng cho tin nhắn tiếp theo', failed: 'Lượt này thất bại',
       multiTurnHint: 'Tiếp tục yêu cầu; agent sẽ tự chọn công cụ phù hợp.',
