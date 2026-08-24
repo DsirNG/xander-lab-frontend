@@ -42,6 +42,7 @@ const Img2ThreePage = React.lazy(() => import('@features/img2three/pages/Img2Thr
 const WorkspaceLayout = React.lazy(() => import('@features/workspace/WorkspaceLayout'));
 const BlogManagePage = React.lazy(() => import('@features/workspace/pages/BlogManagePage'));
 const EmailRemindersPage = React.lazy(() => import('@features/workspace/pages/EmailRemindersPage'));
+const KnowledgeMirrorPage = React.lazy(() => import('@features/knowledge/pages/KnowledgeMirrorPage'));
 const AdminUsersPage = React.lazy(() => import('@features/admin/pages/AdminUsersPage'));
 const AdminModelProvidersPage = React.lazy(() => import('@features/admin/pages/AdminModelProvidersPage'));
 const AdminModelPricingPage = React.lazy(() => import('@features/admin/pages/AdminModelPricingPage'));
@@ -187,6 +188,10 @@ export const createRouter = () => {
         {
           path: 'email-reminders',
           element: <LazyPage><EmailRemindersPage /></LazyPage>,
+        },
+        {
+          path: 'knowledge/:materialId?',
+          element: <LazyPage><KnowledgeMirrorPage /></LazyPage>,
         },
         {
           path: 'studio',

@@ -1066,6 +1066,14 @@ export default {
       cancelled: '请求已取消'
     }
   },
+  knowledge: {
+    title: '个人知识镜像', subtitle: '持续记录你需要掌握的知识、测试证据与复习节奏。', add: '添加知识', loading: '正在加载知识镜像…', created: '知识已加入个人镜像', createTitle: '添加需要掌握的知识', create: '加入知识库', empty: '从第一个知识点开始', emptyHint: '添加原文或知识点，系统会持续记录你的掌握程度。', library: '我的知识', mastery: '掌握度', original: '知识原文', originalHidden: '原文已隐藏，请根据记忆完成背诵。', reviewCount: '已测试 {{count}} 次', audioTest: '录音背诵测试', audioHint: '隐藏原文后开始背诵，AI 将转写录音并检查与原文的差异。', start: '开始录音', stop: '结束并检查', recording: '正在录音…', microphoneUnavailable: '无法使用麦克风，请检查浏览器权限。', testComingSoon: 'AI 问答与同类题测试将在下一阶段接入。当前知识已保存，可持续完善。', latestResult: '最近一次测试', score: '准确度', correct: '正确', missing: '遗漏', wrong: '错误', transcript: '录音转写', nextReview: '建议下次复习：{{time}}',
+    stats: { total: '知识总数', learning: '正在掌握', mastered: '稳定掌握', average: '平均掌握度' },
+    form: { title: '知识点名称', type: '知识类型', content: '原文或知识内容', contentHint: '首版支持直接粘贴文字；图片 OCR 与文档自动拆分将在后续接入。' },
+    types: { RECITATION: '背诵材料', CONCEPT: '概念知识', MATH: '数学题' },
+    levels: { NEW: '需要掌握', FAMILIAR: '已有印象', RECALLING: '能够回忆', APPLYING: '能够应用', MASTERED: '稳定掌握' },
+    status: { UPLOADING: '上传录音', PENDING: '等待处理', SUBMITTING: '提交识别', PROCESSING: '正在转写', POLLING: '正在分析', SUCCEEDED: '检查完成', FAILED: '检查失败' },
+  },
   img2three: {
     title: '图片转三维场景',
     subtitle: '上传参考图，生成受限 Three.js 场景规格，并预览与下载结果。',

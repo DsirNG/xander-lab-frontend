@@ -1039,6 +1039,10 @@ export default {
       cancelled: 'Requête annulée'
     }
   },
+  knowledge: {
+    title: 'Miroir de connaissances', subtitle: 'Suivez les connaissances à acquérir, les preuves de maîtrise et les révisions.', add: 'Ajouter', loading: 'Chargement du miroir…', created: 'Connaissance ajoutée', createTitle: 'Ajouter une connaissance', create: 'Ajouter à la bibliothèque', empty: 'Commencez par une connaissance', emptyHint: 'Ajoutez une source pour suivre votre maîtrise dans le temps.', library: 'Mes connaissances', mastery: 'Maîtrise', original: 'Texte source', originalHidden: 'Le texte est masqué. Récitez-le de mémoire.', reviewCount: '{{count}} tests effectués', audioTest: 'Test de récitation audio', audioHint: 'Récitez de mémoire. L’IA transcrit et compare avec la source.', start: 'Enregistrer', stop: 'Arrêter et vérifier', recording: 'Enregistrement…', microphoneUnavailable: 'Microphone indisponible. Vérifiez les autorisations du navigateur.', testComingSoon: 'Les questions IA et exercices arriveront à l’étape suivante.', latestResult: 'Dernier test', score: 'Précision', correct: 'Correct', missing: 'Oubli', wrong: 'Erreur', transcript: 'Transcription', nextReview: 'Prochaine révision conseillée : {{time}}',
+    stats: { total: 'Connaissances', learning: 'En cours', mastered: 'Maîtrisées', average: 'Maîtrise moyenne' }, form: { title: 'Titre', type: 'Type', content: 'Source ou contenu', contentHint: 'La première version accepte du texte collé. OCR et découpage de documents suivront.' }, types: { RECITATION: 'Récitation', CONCEPT: 'Concept', MATH: 'Mathématiques' }, levels: { NEW: 'À apprendre', FAMILIAR: 'Familier', RECALLING: 'Mémorisé', APPLYING: 'Applicable', MASTERED: 'Maîtrisé' }, status: { UPLOADING: 'Téléversement', PENDING: 'En attente', SUBMITTING: 'Envoi', PROCESSING: 'Transcription', POLLING: 'Analyse', SUCCEEDED: 'Terminé', FAILED: 'Échec' },
+  },
   img2three: {
     title: 'Image vers scène 3D',
     subtitle: 'Téléversez une image de référence et générez une spécification Three.js contrainte avec aperçu et téléchargements.',

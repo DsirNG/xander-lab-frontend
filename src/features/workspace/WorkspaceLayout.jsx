@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import {
   Bot,
   CalendarClock,
+  BrainCircuit,
   Code2,
   Coins,
   Mail,
@@ -24,6 +25,7 @@ import UserMenu from './components/UserMenu';
 
 const MENU = [
   { to: '/workspace/agent', icon: Bot, labelKey: 'blog.agentChat.title' },
+  { to: '/workspace/knowledge', icon: BrainCircuit, labelKey: 'knowledge.title' },
   { to: '/workspace/publish', icon: Send, labelKey: 'blog.publish' },
   { to: '/workspace/plans', icon: CalendarClock, labelKey: 'nav.plans' },
   { to: '/workspace/blog-manage', icon: NotebookPen, labelKey: 'profile.blogManage.title' },

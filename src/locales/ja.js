@@ -1039,6 +1039,10 @@ export default {
       cancelled: 'リクエストがキャンセルされました'
     }
   },
+  knowledge: {
+    title: '個人知識ミラー', subtitle: '学ぶ内容、習得の証拠、復習時期を継続的に記録します。', add: '知識を追加', loading: '知識ミラーを読み込み中…', created: '知識を追加しました', createTitle: '習得する知識を追加', create: 'ライブラリに追加', empty: '最初の知識から始めましょう', emptyHint: '原文や知識を追加すると、習得度を継続して記録します。', library: '自分の知識', mastery: '習得度', original: '原文', originalHidden: '原文を非表示にしました。記憶から暗唱してください。', reviewCount: '{{count}} 回テスト済み', audioTest: '音声暗唱テスト', audioHint: '記憶から暗唱すると、AI が文字起こしして原文との差を確認します。', start: '録音開始', stop: '終了して確認', recording: '録音中…', microphoneUnavailable: 'マイクを使用できません。ブラウザの権限を確認してください。', testComingSoon: 'AI 問答と類題テストは次の段階で追加されます。', latestResult: '最新テスト', score: '正確度', correct: '正解', missing: '不足', wrong: '誤り', transcript: '文字起こし', nextReview: '次回復習の目安：{{time}}',
+    stats: { total: '知識数', learning: '習得中', mastered: '習得済み', average: '平均習得度' }, form: { title: '知識名', type: '知識タイプ', content: '原文または内容', contentHint: '初版はテキスト貼り付けに対応。画像 OCR と文書分割は後日追加します。' }, types: { RECITATION: '暗唱', CONCEPT: '概念', MATH: '数学問題' }, levels: { NEW: '要習得', FAMILIAR: '見覚えあり', RECALLING: '思い出せる', APPLYING: '応用できる', MASTERED: '安定習得' }, status: { UPLOADING: 'アップロード中', PENDING: '待機中', SUBMITTING: '送信中', PROCESSING: '文字起こし中', POLLING: '分析中', SUCCEEDED: '完了', FAILED: '失敗' },
+  },
   img2three: {
     title: '画像から3Dシーンへ',
     subtitle: '参考画像をアップロードし、制限付き Three.js シーン仕様を生成してプレビューとダウンロードができます。',

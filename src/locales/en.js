@@ -1047,6 +1047,14 @@ export default {
       cancelled: 'Request cancelled'
     }
   },
+  knowledge: {
+    title: 'Knowledge Mirror', subtitle: 'Track what you need to learn, the evidence of mastery, and when to review.', add: 'Add knowledge', loading: 'Loading your knowledge mirror…', created: 'Knowledge added to your mirror', createTitle: 'Add something to master', create: 'Add to library', empty: 'Start with your first knowledge point', emptyHint: 'Add source material and the system will track your mastery over time.', library: 'My knowledge', mastery: 'Mastery', original: 'Source material', originalHidden: 'The source is hidden. Recite it from memory.', reviewCount: '{{count}} tests completed', audioTest: 'Spoken recitation test', audioHint: 'Recite from memory. AI transcribes the recording and compares it with the source.', start: 'Start recording', stop: 'Stop and check', recording: 'Recording…', microphoneUnavailable: 'The microphone is unavailable. Check your browser permission.', testComingSoon: 'AI Q&A and practice-problem tests are coming next. This knowledge is already saved.', latestResult: 'Latest test', score: 'Accuracy', correct: 'Correct', missing: 'Missing', wrong: 'Wrong', transcript: 'Transcript', nextReview: 'Suggested next review: {{time}}',
+    stats: { total: 'Knowledge points', learning: 'In progress', mastered: 'Mastered', average: 'Average mastery' },
+    form: { title: 'Knowledge title', type: 'Knowledge type', content: 'Source or knowledge content', contentHint: 'The first version accepts pasted text. Image OCR and document splitting come next.' },
+    types: { RECITATION: 'Recitation', CONCEPT: 'Concept', MATH: 'Math problem' },
+    levels: { NEW: 'To learn', FAMILIAR: 'Familiar', RECALLING: 'Can recall', APPLYING: 'Can apply', MASTERED: 'Mastered' },
+    status: { UPLOADING: 'Uploading', PENDING: 'Queued', SUBMITTING: 'Submitting', PROCESSING: 'Transcribing', POLLING: 'Analyzing', SUCCEEDED: 'Complete', FAILED: 'Failed' },
+  },
   img2three: {
     title: 'Image to 3D Scene',
     subtitle: 'Upload a reference image and generate a constrained Three.js scene spec with preview and downloads.',

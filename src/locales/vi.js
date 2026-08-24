@@ -1039,6 +1039,10 @@ export default {
       cancelled: 'Yêu cầu đã bị hủy'
     }
   },
+  knowledge: {
+    title: 'Gương kiến thức cá nhân', subtitle: 'Theo dõi điều cần học, bằng chứng làm chủ và lịch ôn tập.', add: 'Thêm kiến thức', loading: 'Đang tải gương kiến thức…', created: 'Đã thêm kiến thức', createTitle: 'Thêm kiến thức cần nắm', create: 'Thêm vào thư viện', empty: 'Bắt đầu với kiến thức đầu tiên', emptyHint: 'Thêm nội dung nguồn để theo dõi mức độ làm chủ theo thời gian.', library: 'Kiến thức của tôi', mastery: 'Mức độ làm chủ', original: 'Nội dung gốc', originalHidden: 'Nội dung gốc đã được ẩn. Hãy đọc lại từ trí nhớ.', reviewCount: 'Đã kiểm tra {{count}} lần', audioTest: 'Kiểm tra đọc thuộc', audioHint: 'Đọc lại từ trí nhớ. AI sẽ chuyển giọng nói và so sánh với bản gốc.', start: 'Bắt đầu ghi âm', stop: 'Dừng và kiểm tra', recording: 'Đang ghi âm…', microphoneUnavailable: 'Không thể dùng micrô. Hãy kiểm tra quyền của trình duyệt.', testComingSoon: 'Hỏi đáp AI và bài tập tương tự sẽ được bổ sung ở giai đoạn sau.', latestResult: 'Lần kiểm tra gần nhất', score: 'Độ chính xác', correct: 'Đúng', missing: 'Thiếu', wrong: 'Sai', transcript: 'Bản chuyển lời', nextReview: 'Gợi ý ôn lại: {{time}}',
+    stats: { total: 'Tổng kiến thức', learning: 'Đang học', mastered: 'Đã làm chủ', average: 'Mức trung bình' }, form: { title: 'Tên kiến thức', type: 'Loại kiến thức', content: 'Nguồn hoặc nội dung', contentHint: 'Bản đầu hỗ trợ dán văn bản. OCR ảnh và tách tài liệu sẽ được bổ sung sau.' }, types: { RECITATION: 'Học thuộc', CONCEPT: 'Khái niệm', MATH: 'Toán học' }, levels: { NEW: 'Cần học', FAMILIAR: 'Đã quen', RECALLING: 'Có thể nhớ', APPLYING: 'Có thể áp dụng', MASTERED: 'Đã làm chủ' }, status: { UPLOADING: 'Đang tải lên', PENDING: 'Đang chờ', SUBMITTING: 'Đang gửi', PROCESSING: 'Đang chuyển lời', POLLING: 'Đang phân tích', SUCCEEDED: 'Hoàn tất', FAILED: 'Thất bại' },
+  },
   img2three: {
     title: 'Ảnh thành cảnh 3D',
     subtitle: 'Tải ảnh tham chiếu lên và tạo scene spec Three.js có giới hạn cùng xem trước và tải xuống.',
