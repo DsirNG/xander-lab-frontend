@@ -26,6 +26,8 @@ const KnowledgeMirrorPage = () => {
   const [attempt, setAttempt] = useState(null);
   const [recording, setRecording] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [permissionOpen, setPermissionOpen] = useState(false);
+  const [permissionBlocked, setPermissionBlocked] = useState(false);
   const recorderRef = useRef(null);
   const streamRef = useRef(null);
   const chunksRef = useRef([]);
@@ -120,7 +122,7 @@ const KnowledgeMirrorPage = () => {
     }
   }, [activeMaterial, setSearchParams]);
 
-  const startRecording = async () => {
+  const requestMicrophone = async () => {
     if (!navigator.mediaDevices?.getUserMedia || !window.MediaRecorder) {
       window.__toast?.('error', t('knowledge.microphoneUnavailable'));
       return;
@@ -129,9 +131,11 @@ const KnowledgeMirrorPage = () => {
     try {
       stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     } catch {
-      window.__toast?.('error', t('knowledge.microphoneUnavailable'));
+      setPermissionBlocked(true);
+      setPermissionOpen(true);
       return;
     }
+    setPermissionOpen(false);
     streamRef.current = stream;
     chunksRef.current = [];
     const recorder = new MediaRecorder(stream);
@@ -147,6 +151,24 @@ const KnowledgeMirrorPage = () => {
     };
     recorder.start();
     setRecording(true);
+  };
+
+  const startRecording = async () => {
+    if (!navigator.mediaDevices?.getUserMedia || !window.MediaRecorder) {
+      window.__toast?.('error', t('knowledge.microphoneUnavailable'));
+      return;
+    }
+    try {
+      const permission = await navigator.permissions?.query?.({ name: 'microphone' });
+      if (permission?.state === 'granted') {
+        await requestMicrophone();
+        return;
+      }
+      setPermissionBlocked(permission?.state === 'denied');
+    } catch {
+      setPermissionBlocked(false);
+    }
+    setPermissionOpen(true);
   };
 
   const stopRecording = () => {
@@ -239,6 +261,18 @@ const KnowledgeMirrorPage = () => {
           <FormField label={t('knowledge.form.type')}><CustomSelect value={form.knowledgeType} onChange={(value) => setForm((current) => ({ ...current, knowledgeType: value, testMode: value === 'RECITATION' ? 'AUDIO_RECITATION' : value === 'MATH' ? 'PRACTICE' : 'AI_QA' }))} options={['RECITATION', 'CONCEPT', 'MATH'].map((value) => ({ value, label: typeLabel(value) }))} /></FormField>
           <FormField label={t('knowledge.form.content')} htmlFor="knowledge-content" hint={t('knowledge.form.contentHint')}><textarea id="knowledge-content" className={`${formInputCls} min-h-48 resize-y`} value={form.content} maxLength={10000} onChange={(event) => setForm((current) => ({ ...current, content: event.target.value }))} /></FormField>
         </form>
+      </Modal>
+      <Modal
+        isOpen={permissionOpen}
+        onClose={() => setPermissionOpen(false)}
+        title={t('knowledge.permissionTitle')}
+        width="max-w-md"
+        footer={<><Button variant="ghost" onClick={() => setPermissionOpen(false)}>{t('common.cancel')}</Button><Button icon={Mic} onClick={requestMicrophone}>{t('knowledge.allowMicrophone')}</Button></>}
+      >
+        <div className="rounded-2xl bg-accent-soft p-4 text-body text-ink-secondary">
+          {permissionBlocked ? t('knowledge.permissionBlockedHint') : t('knowledge.permissionHint')}
+        </div>
+        <div className="mt-4 text-caption text-ink-muted">{t('knowledge.permissionPrivacy')}</div>
       </Modal>
     </div>
   );

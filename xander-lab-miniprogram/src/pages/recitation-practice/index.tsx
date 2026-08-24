@@ -121,8 +121,7 @@ export default function RecitationPracticePage() {
       Taro.showToast({ title: t('recitation.wechatOnly'), icon: 'none' })
       return
     }
-    try {
-      await Taro.authorize({ scope: 'scope.record' })
+    const beginRecording = () => {
       recorderRef.current?.start({
         duration: 600000,
         sampleRate: 16000,
@@ -130,12 +129,33 @@ export default function RecitationPracticePage() {
         encodeBitRate: 48000,
         format: 'mp3',
       })
-    } catch {
-      Taro.showModal({
+    }
+    try {
+      const settings = await Taro.getSetting()
+      const recordPermission = settings.authSetting['scope.record']
+      if (recordPermission === true) {
+        beginRecording()
+        return
+      }
+      if (recordPermission === false) {
+        const result = await Taro.showModal({
+          title: t('recitation.permissionTitle'),
+          content: t('recitation.permissionBlockedHint'),
+          confirmText: t('recitation.openSettings'),
+        })
+        if (result.confirm) await Taro.openSetting()
+        return
+      }
+      const consent = await Taro.showModal({
         title: t('recitation.permissionTitle'),
         content: t('recitation.permissionHint'),
-        showCancel: false,
+        confirmText: t('recitation.allowRecording'),
       })
+      if (!consent.confirm) return
+      await Taro.authorize({ scope: 'scope.record' })
+      beginRecording()
+    } catch {
+      Taro.showToast({ title: t('recitation.permissionDenied'), icon: 'none' })
     }
   }
 

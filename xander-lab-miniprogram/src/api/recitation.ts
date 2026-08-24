@@ -5,6 +5,13 @@ export type RecitationMaterial = {
   title: string
   content: string
   characterCount: number
+  knowledgeType: 'RECITATION' | 'CONCEPT' | 'MATH'
+  testMode: 'AUDIO_RECITATION' | 'AI_QA' | 'PRACTICE'
+  masteryScore: number
+  masteryLevel: 'NEW' | 'FAMILIAR' | 'RECALLING' | 'APPLYING' | 'MASTERED'
+  reviewCount: number
+  lastReviewAt?: string
+  nextReviewAt?: string
   createdAt: string
   updatedAt: string
 }
@@ -46,10 +53,24 @@ export type RecitationAttempt = {
 export const recitationApi = {
   listMaterials: () => request<RecitationMaterial[]>('/api/recitations/materials'),
   getMaterial: (id: number) => request<RecitationMaterial>(`/api/recitations/materials/${id}`),
-  createMaterial: (title: string, content: string) =>
+  createMaterial: (
+    title: string,
+    content: string,
+    knowledgeType: RecitationMaterial['knowledgeType'] = 'RECITATION',
+  ) =>
     request<RecitationMaterial>('/api/recitations/materials', {
       method: 'POST',
-      data: { title, content },
+      data: {
+        title,
+        content,
+        knowledgeType,
+        testMode:
+          knowledgeType === 'RECITATION'
+            ? 'AUDIO_RECITATION'
+            : knowledgeType === 'MATH'
+              ? 'PRACTICE'
+              : 'AI_QA',
+      },
     }),
   createAttempt: (materialId: number, filePath: string) =>
     uploadFile<RecitationAttempt>(`/api/recitations/materials/${materialId}/attempts`, filePath),
