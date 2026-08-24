@@ -50,12 +50,19 @@ type RequestOptions = Omit<Taro.request.Option, 'url' | 'success' | 'fail'> & {
 /** 无感刷新：并发 401 只触发一次刷新，成功后返回是否可重试原请求 */
 let refreshing: Promise<boolean> | null = null
 
+function logOutgoingRequest(method: Taro.request.Method | 'UPLOAD', path: string) {
+  // 查询参数、请求头和请求体可能包含凭据或用户数据，发送日志只记录安全的路由信息。
+  const pathname = path.split('?')[0]
+  console.info(`[HTTP] Sending request: method=${method} path=${pathname}`)
+}
+
 function refreshAccessToken(): Promise<boolean> {
   if (refreshing) return refreshing
   refreshing = Promise.resolve()
     .then(async () => {
       const refreshToken = tokenStorage.getRefreshToken()
       if (!refreshToken) return false
+      logOutgoingRequest('POST', '/api/auth/refresh')
       const response = await Taro.request<ApiResult<TokenPair>>({
         url: `${API_ORIGIN}/api/auth/refresh`,
         method: 'POST',
@@ -82,6 +89,7 @@ function refreshAccessToken(): Promise<boolean> {
 
 export async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
   const accessToken = tokenStorage.getAccessToken()
+  logOutgoingRequest(options.method || 'GET', path)
   const response = await Taro.request<ApiResult<T>>({
     ...options,
     url: `${API_ORIGIN}${path}`,
@@ -121,6 +129,7 @@ export async function request<T>(path: string, options: RequestOptions = {}): Pr
 
 export async function uploadFile<T>(path: string, filePath: string): Promise<T> {
   const accessToken = tokenStorage.getAccessToken()
+  logOutgoingRequest('UPLOAD', path)
   const response = await Taro.uploadFile({
     url: `${API_ORIGIN}${path}`,
     filePath,
