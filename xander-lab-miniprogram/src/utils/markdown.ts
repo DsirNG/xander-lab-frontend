@@ -53,6 +53,8 @@ function parseInline(input: string): string {
   text = text.replace(/`([^`]+)`/g, (_, code: string) =>
     stash(`<code style="${CODE_STYLE}">${code}</code>`),
   )
+  // 兼容模型偶尔返回的 HTML 换行；仅放行 br，其他 HTML 仍保持转义。
+  text = text.replace(/&lt;br\s*\/?&gt;/gi, '<br/>')
   // 图片
   text = text.replace(
     /!\[([^\]]*)\]\(([^)\s]+)(\s+"[^"]*")?\)/g,
