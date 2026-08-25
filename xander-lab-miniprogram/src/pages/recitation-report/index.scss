@@ -39,10 +39,12 @@
   margin: var(--space-4) 0;
 }
 .recitation-stat {
+  min-width: 0;
   padding: var(--space-3) var(--space-1);
   text-align: center;
   background: var(--color-surface);
   border-radius: var(--radius-md);
+  word-break: break-all;
 }
 .recitation-stat text {
   display: block;
@@ -68,6 +70,7 @@
   color: var(--color-ink);
   font-size: var(--text-title);
   font-weight: 600;
+  word-break: break-all;
 }
 .recitation-report-heading,
 .recitation-difference-heading {
@@ -89,6 +92,7 @@
   font-size: var(--text-body);
   line-height: var(--leading-body);
   white-space: pre-wrap;
+  word-break: break-all;
 }
 .recitation-report-title + .recitation-report-text {
   display: block;

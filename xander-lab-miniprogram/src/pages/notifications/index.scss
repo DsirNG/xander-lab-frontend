@@ -166,6 +166,7 @@
   font-size: 16px;
   font-weight: 650;
   line-height: 1.45;
+  word-break: break-all;
 }
 
 .notification-row.is-read .notification-title {
@@ -191,6 +192,7 @@
   color: var(--color-ink-secondary);
   font-size: 14px;
   line-height: 1.6;
+  word-break: break-all;
 }
 
 .notification-meta {

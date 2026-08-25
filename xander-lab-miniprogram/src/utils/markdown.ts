@@ -25,14 +25,14 @@ const H_STYLE: Record<number, string> = {
 }
 
 const CODE_STYLE =
-  'background:#f5f5f7;color:#c7254e;padding:1px 4px;border-radius:4px;font-size:90%'
-const PARAGRAPH_STYLE = 'margin:0;line-height:1.7;font-size:15px;color:#333'
+  'background:#f8f9fa;color:#c7254e;padding:1px 4px;border-radius:4px;font-size:90%;word-break:break-all;border:1px solid #f0f0f4'
+const PARAGRAPH_STYLE = 'margin:0;line-height:1.7;font-size:15px;color:#333;word-break:break-word'
 const BLOCKQUOTE_STYLE =
-  'margin:0;padding:8px 12px;background:#fafafc;border-radius:8px;color:#555;line-height:1.7;font-size:14px'
+  'margin:0;padding:8px 12px;background:#ffffff;border-left:3px solid #1677ff;color:#555;line-height:1.7;font-size:14px;word-break:break-word;border-top:1px solid #f0f0f4;border-right:1px solid #f0f0f4;border-bottom:1px solid #f0f0f4;border-radius:0 8px 8px 0'
 const PRE_STYLE =
-  'background:#f5f5f7;color:#333;font-size:13px;line-height:1.6;padding:12px 14px;border-radius:10px;margin:0;overflow-x:auto'
-const TABLE_STYLE = 'width:100%;border-collapse:collapse;margin:0;font-size:13px;color:#333'
-const CELL_STYLE = 'border:1px solid #e0e0e8;padding:6px 10px'
+  'background:#fafafa;color:#333;font-size:13px;line-height:1.6;padding:12px 14px;border-radius:10px;margin:0;overflow-x:auto;white-space:pre-wrap;word-break:break-all;border:1px solid #eeeeee'
+const TABLE_STYLE = 'width:100%;border-collapse:collapse;margin:0;font-size:13px;color:#333;table-layout:fixed'
+const CELL_STYLE = 'border:1px solid #e0e0e8;padding:6px 10px;word-break:break-all'
 const LI_STYLE = 'line-height:1.8;font-size:15px;color:#333;margin:4px 0'
 const IMG_STYLE = 'max-width:100%;border-radius:8px;display:block;margin:0'
 // RichText 节点内不能可靠继承页面 CSS 变量，使用与 --color-accent 一致的静态值。

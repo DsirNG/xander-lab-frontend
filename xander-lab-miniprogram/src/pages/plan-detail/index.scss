@@ -30,10 +30,12 @@
 .plan-info-topic {
   display: block;
   flex: 1;
+  min-width: 0;
   color: var(--color-ink);
   font-size: var(--text-heading);
   font-weight: 700;
   line-height: var(--leading-heading);
+  word-break: break-all;
 }
 
 .plan-info-tags {
@@ -58,7 +60,10 @@
 }
 
 .run-title {
+  flex: 1;
+  min-width: 0;
   color: var(--color-ink);
   font-size: var(--text-body);
   font-weight: 600;
+  word-break: break-all;
 }

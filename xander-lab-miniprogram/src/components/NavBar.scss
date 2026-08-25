@@ -50,15 +50,11 @@
 .nav-bar-back {
   display: flex;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
   width: var(--control-height);
   height: var(--control-height);
   margin-left: calc(var(--space-2) * -1);
   border-radius: var(--radius-pill);
-}
-
-.nav-bar-back--home {
-  justify-content: center;
 }
 
 .nav-bar-back--pressed {

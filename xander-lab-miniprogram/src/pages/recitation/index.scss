@@ -105,6 +105,7 @@
   font-size: var(--text-title);
   line-height: var(--leading-title);
   font-weight: 600;
+  word-break: break-all;
 }
 .recitation-material-preview {
   overflow: hidden;

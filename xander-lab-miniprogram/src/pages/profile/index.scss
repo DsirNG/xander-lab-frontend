@@ -46,7 +46,9 @@
 }
 
 .profile-name {
-  max-width: 190px;
+  flex: 0 1 auto;
+  min-width: 0;
+  max-width: 100%;
   overflow: hidden;
   font-size: var(--text-title);
   font-weight: 700;

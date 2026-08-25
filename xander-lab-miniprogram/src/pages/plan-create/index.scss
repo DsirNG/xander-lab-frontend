@@ -95,10 +95,12 @@
 
 .generated-plan-topic {
   flex: 1;
+  min-width: 0;
   color: var(--color-ink);
   font-size: var(--text-body);
   font-weight: 600;
   line-height: var(--leading-body);
+  word-break: break-all;
 }
 
 .generated-plan-time {
