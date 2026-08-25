@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import { BookOpen, Brain, CheckCircle2, CirclePlus, Clock3, Mic, Square, Target } from 'lucide-react';
+import { BookOpen, Brain, CheckCircle2, CirclePlus, Clock3, Mic, Sparkles, Square, Target } from 'lucide-react';
 import Button from '@components/common/Button';
 import CustomSelect from '@components/common/CustomSelect';
 import FormField from '@components/common/FormField';
@@ -24,6 +24,7 @@ const KnowledgeMirrorPage = () => {
   const [creating, setCreating] = useState(false);
   const [form, setForm] = useState({ title: '', content: '', knowledgeType: 'RECITATION', testMode: 'AUDIO_RECITATION' });
   const [attempt, setAttempt] = useState(null);
+  const [quizzes, setQuizzes] = useState([]);
   const [recording, setRecording] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [permissionOpen, setPermissionOpen] = useState(false);
@@ -82,6 +83,23 @@ const KnowledgeMirrorPage = () => {
   useEffect(() => {
     if (!materialId && materials.length > 0) navigate(`/workspace/knowledge/${materials[0].id}`, { replace: true });
   }, [materialId, materials, navigate]);
+
+  // 概念题和练习题的成绩单由智能体判分后落库，切换知识时读一次最近记录。
+  useEffect(() => {
+    if (!activeMaterial || activeMaterial.testMode === 'AUDIO_RECITATION') {
+      setQuizzes([]);
+      return undefined;
+    }
+    let active = true;
+    const controller = new AbortController();
+    knowledgeService.listQuizzes(activeMaterial.id, { signal: controller.signal, _silent: true })
+      .then((data) => { if (active) setQuizzes(Array.isArray(data) ? data : []); })
+      .catch(() => { if (active) setQuizzes([]); });
+    return () => {
+      active = false;
+      controller.abort();
+    };
+  }, [activeMaterial]);
 
   const stats = useMemo(() => {
     const mastered = materials.filter((item) => item.masteryLevel === 'MASTERED').length;
@@ -176,6 +194,12 @@ const KnowledgeMirrorPage = () => {
     setRecording(false);
   };
 
+  // 出题和判分都发生在对话里，所以这里只是带着一句开场白跳进智能体，由它调用 quiz_knowledge。
+  const startAgentQuiz = () => {
+    if (!activeMaterial) return;
+    navigate(`/workspace/agent?q=${encodeURIComponent(t('knowledge.quizPrompt', { title: activeMaterial.title }))}`);
+  };
+
   if (loading) return <LoadingSpinner fullScreen text={t('knowledge.loading')} />;
 
   const levelLabel = (level) => t(`knowledge.levels.${level || 'NEW'}`);
@@ -238,7 +262,7 @@ const KnowledgeMirrorPage = () => {
                   {recording ? <div className="mt-4 flex items-center gap-2 text-body text-danger"><span className="h-2.5 w-2.5 animate-pulse rounded-full bg-danger" />{t('knowledge.recording')}</div> : null}
                 </div>
               ) : (
-                <div className="mt-5 rounded-2xl border border-border bg-surface-muted p-4 text-body text-ink-muted">{t('knowledge.testComingSoon')}</div>
+                <AgentQuizPanel quiz={quizzes[0] ?? null} onStart={startAgentQuiz} />
               )}
 
               {attempt ? (
@@ -279,5 +303,61 @@ const KnowledgeMirrorPage = () => {
 };
 
 const ResultStat = ({ label, value }) => <div className="rounded-xl bg-surface-muted p-3"><div className="text-micro text-ink-muted">{label}</div><div className="mt-1 text-title text-ink">{value}</div></div>;
+
+/**
+ * 概念题与练习题的测验面板：一个进对话的入口，加上最近一次的逐题判分。
+ *
+ * 分数与逐题证据都来自服务端（智能体调用 grade_answer 时落库），这里只负责显示，
+ * 不在前端重算总分——否则页面和掌握度统计就可能各说一套。
+ */
+export const AgentQuizPanel = ({ quiz = null, onStart }) => {
+  const { t } = useTranslation();
+  const items = Array.isArray(quiz?.items) ? quiz.items : [];
+  const creditLabel = (credit) => {
+    const value = Number(credit ?? 0);
+    if (value >= 1) return t('knowledge.creditFull');
+    return value > 0 ? t('knowledge.creditPartial') : t('knowledge.creditNone');
+  };
+  return (
+    <div className="mt-5 rounded-2xl border border-border p-4">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <div className="text-title text-ink">{t('knowledge.agentTest')}</div>
+          <div className="mt-1 text-caption text-ink-muted">{t('knowledge.agentTestHint')}</div>
+        </div>
+        <Button icon={Sparkles} onClick={onStart}>{t('knowledge.askAgentToQuiz')}</Button>
+      </div>
+      {quiz ? (
+        <div className="mt-4 border-t border-border pt-4">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div className="text-caption font-semibold text-ink-secondary">{t('knowledge.latestResult')}</div>
+            {quiz.createdAt ? <span className="text-caption text-ink-muted">{t('knowledge.quizAt')}：{new Date(quiz.createdAt).toLocaleString()}</span> : null}
+          </div>
+          <div className="mt-3 grid gap-3 sm:grid-cols-2">
+            <ResultStat label={t('knowledge.score')} value={`${Math.round(Number(quiz.score ?? 0))}%`} />
+            <ResultStat label={t('knowledge.correct')} value={`${quiz.correctCount ?? 0}/${quiz.questionCount ?? 0}`} />
+          </div>
+          {quiz.verdict ? <div className="mt-3 whitespace-pre-wrap text-body text-ink-muted">{quiz.verdict}</div> : null}
+          {items.length > 0 ? (
+            <ol className="mt-3 space-y-2">
+              {items.map((item, index) => (
+                <li key={index} className="rounded-xl bg-surface-muted p-3">
+                  <div className="flex items-start justify-between gap-2">
+                    <span className="text-body text-ink">{item?.question}</span>
+                    <span className="shrink-0 rounded-full bg-canvas px-2 py-1 text-micro text-ink-muted">{creditLabel(item?.credit)}</span>
+                  </div>
+                  {item?.userAnswer ? <div className="mt-2 text-caption text-ink-muted"><span className="font-semibold text-ink-secondary">{t('knowledge.yourAnswer')}：</span>{item.userAnswer}</div> : null}
+                  {item?.comment ? <div className="mt-1 text-caption text-ink-muted">{item.comment}</div> : null}
+                </li>
+              ))}
+            </ol>
+          ) : null}
+        </div>
+      ) : (
+        <div className="mt-4 border-t border-border pt-4 text-body text-ink-muted">{t('knowledge.noQuizYet')}</div>
+      )}
+    </div>
+  );
+};
 
 export default KnowledgeMirrorPage;
