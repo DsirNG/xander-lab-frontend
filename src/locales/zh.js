@@ -103,6 +103,8 @@ export default {
       inputLockedPlaceholder: 'Dindor 执行中，请稍候',
       send: '发送', stop: '停止', running: '执行中…', thinking: '思考中…', callingTool: '工具调用中…', ready: '可以继续对话', failed: '本轮执行失败',
       multiTurnHint: 'DinQor 也会犯错，请注意甄别。',
+      planTitle: '任务计划', planPending: '待办', planInProgress: '进行中', planDone: '已完成', planDropped: '已放弃',
+      reflectionTitle: '自检', reflectionRound: '自检 · 第 {{round}} 轮',
       inputRequired: '请先输入你想让智能体做什么。', sendFailed: '消息发送失败。', loadFailed: '对话加载失败。',
       restoring: '正在恢复对话…', reconnecting: '连接已断开，正在重连…',
       unknownTool: '工具', working: '处理中…', writing: '正在写作…', toolCalled: '已调用工具', toolResult: '工具返回结果', toolSucceeded: '调用成功', toolFailed: '调用失败', viewBlog: '查看博客',

@@ -95,6 +95,8 @@ export default {
       inputLockedPlaceholder: 'Dindor работает…',
       send: 'Отправить', stop: 'Остановить', running: 'Выполняется…', thinking: 'Размышляю…', callingTool: 'Вызов инструмента…', ready: 'Готов к следующему сообщению', failed: 'Этот ход не удался',
       multiTurnHint: 'Продолжайте просить; агент сам выберет нужные инструменты.',
+      planTitle: 'План задач', planPending: 'Ожидает', planInProgress: 'В работе', planDone: 'Готово', planDropped: 'Отменено',
+      reflectionTitle: 'Самопроверка', reflectionRound: 'Самопроверка · раунд {{round}}',
       inputRequired: 'Сначала введите задачу для агента.', sendFailed: 'Не удалось отправить сообщение.', loadFailed: 'Не удалось загрузить диалог.',
       restoring: 'Восстановление диалога…', reconnecting: 'Соединение потеряно, переподключение…',
       unknownTool: 'Инструмент', working: 'Выполняется…', writing: 'Написание…', toolCalled: 'Инструмент вызван', toolResult: 'Результат инструмента', toolSucceeded: 'Успешно', toolFailed: 'Ошибка', viewBlog: 'Открыть блог',

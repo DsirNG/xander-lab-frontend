@@ -95,6 +95,8 @@ export default {
       inputLockedPlaceholder: 'Dindor travaille…',
       send: 'Envoyer', stop: 'Arrêter', running: 'En cours…', thinking: 'Réflexion…', callingTool: 'Appel d’outil…', ready: 'Prêt pour votre prochain message', failed: 'Échec de ce tour',
       multiTurnHint: 'Continuez à demander ; l’agent choisira lui-même les bons outils.',
+      planTitle: 'Plan de tâches', planPending: 'À faire', planInProgress: 'En cours', planDone: 'Terminé', planDropped: 'Abandonné',
+      reflectionTitle: 'Autocontrôle', reflectionRound: 'Autocontrôle · tour {{round}}',
       inputRequired: 'Saisissez d’abord la tâche demandée.', sendFailed: 'Envoi du message impossible.', loadFailed: 'Chargement de la conversation impossible.',
       restoring: 'Restauration de la conversation…', reconnecting: 'Connexion perdue, reconnexion…',
       unknownTool: 'Outil', working: 'En cours…', writing: 'Rédaction…', toolCalled: 'Outil appelé', toolResult: 'Résultat de l’outil', toolSucceeded: 'Réussi', toolFailed: 'Échec', viewBlog: 'Voir le blog',

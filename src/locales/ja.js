@@ -95,6 +95,8 @@ export default {
       inputLockedPlaceholder: 'Dindor が処理中です…',
       send: '送信', stop: '停止', running: '実行中…', thinking: '考え中…', callingTool: 'ツール呼び出し中…', ready: '次のメッセージをどうぞ', failed: 'このターンは失敗しました',
       multiTurnHint: '続けて依頼してください。Agentが適切なツールを選択します。',
+      planTitle: 'タスク計画', planPending: '未着手', planInProgress: '進行中', planDone: '完了', planDropped: '中止',
+      reflectionTitle: 'セルフチェック', reflectionRound: 'セルフチェック · {{round}} 回目',
       inputRequired: 'まずAgentに依頼内容を入力してください。', sendFailed: 'メッセージを送信できませんでした。', loadFailed: '会話を読み込めませんでした。',
       restoring: '会話を復元中…', reconnecting: '接続が切れました。再接続中…',
       unknownTool: 'ツール', working: '処理中…', writing: '執筆中…', toolCalled: 'ツール呼び出し', toolResult: 'ツール結果', toolSucceeded: '成功', toolFailed: '失敗', viewBlog: 'ブログを見る',

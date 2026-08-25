@@ -103,6 +103,8 @@ export default {
       inputLockedPlaceholder: 'Dindor is working…',
       send: 'Send', stop: 'Stop', running: 'Working…', thinking: 'Thinking…', callingTool: 'Calling tool…', ready: 'Ready for your next message', failed: 'The agent failed this turn',
       multiTurnHint: 'Keep asking; the agent will pick the right tools by itself.',
+      planTitle: 'Task plan', planPending: 'Pending', planInProgress: 'In progress', planDone: 'Done', planDropped: 'Dropped',
+      reflectionTitle: 'Self-check', reflectionRound: 'Self-check · round {{round}}',
       inputRequired: 'Enter what you want the agent to do first.', sendFailed: 'Could not send the message.', loadFailed: 'Could not load the conversation.',
       restoring: 'Restoring conversation…', reconnecting: 'Connection lost, reconnecting…',
       unknownTool: 'Tool', working: 'Working…', writing: 'Writing…', toolCalled: 'Tool called', toolResult: 'Tool result', toolSucceeded: 'Succeeded', toolFailed: 'Failed', viewBlog: 'View blog',
