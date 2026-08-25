@@ -1,7 +1,13 @@
 import React from 'react';
-import { fireEvent, render, screen } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
-import { AgentQuizPanel } from './KnowledgeMirrorPage';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { beforeAll, describe, expect, it, vi } from 'vitest';
+import i18n from '@locales/index';
+import { AgentQuizPanel, KnowledgeActions } from './KnowledgeMirrorPage';
+
+// 语言由浏览器环境探测，不同机器上的 jsdom 未必一致；断言按钮文案前先把语言钉死。
+beforeAll(async () => {
+  await i18n.changeLanguage('zh');
+});
 
 const quiz = {
   id: 5,
@@ -59,5 +65,70 @@ describe('AgentQuizPanel', () => {
     expect(screen.getByText('0%')).toBeInTheDocument();
     expect(screen.getByText('0/0')).toBeInTheDocument();
     expect(screen.getAllByRole('listitem')).toHaveLength(2);
+  });
+});
+
+const active = { id: 3, title: '牛顿第二定律', archivedAt: null };
+const archived = { id: 4, title: '勾股定理', archivedAt: '2026-08-01T09:00:00' };
+const noop = () => {};
+
+describe('KnowledgeActions', () => {
+  it('删除必须先二次确认，点一下按钮不会直接删掉', () => {
+    const onDelete = vi.fn();
+    render(<KnowledgeActions material={active} onEdit={noop} onArchive={noop} onDelete={onDelete} />);
+
+    fireEvent.click(screen.getByRole('button', { name: '删除' }));
+
+    expect(onDelete).not.toHaveBeenCalled();
+    expect(screen.getByText('删除这条知识？')).toBeInTheDocument();
+  });
+
+  it('确认弹窗点名要删的是哪一条，并提示归档这个可逆的选择', async () => {
+    const onDelete = vi.fn().mockResolvedValue(undefined);
+    render(<KnowledgeActions material={active} onEdit={noop} onArchive={noop} onDelete={onDelete} />);
+    fireEvent.click(screen.getByRole('button', { name: '删除' }));
+
+    expect(screen.getByText(/牛顿第二定律/)).toBeInTheDocument();
+    expect(screen.getByText(/改用归档/)).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: '确认删除' }));
+
+    await waitFor(() => expect(onDelete).toHaveBeenCalledWith(active));
+  });
+
+  it('取消就是不删：关掉弹窗不会顺手触发删除', () => {
+    const onDelete = vi.fn();
+    render(<KnowledgeActions material={active} onEdit={noop} onArchive={noop} onDelete={onDelete} />);
+    fireEvent.click(screen.getByRole('button', { name: '删除' }));
+
+    fireEvent.click(screen.getByRole('button', { name: '取消' }));
+
+    expect(onDelete).not.toHaveBeenCalled();
+  });
+
+  it('在用的知识给归档入口，归档过的给恢复入口——否则归档就成了单向出口', () => {
+    const onArchive = vi.fn().mockResolvedValue(undefined);
+    const { unmount } = render(
+      <KnowledgeActions material={active} onEdit={noop} onArchive={onArchive} onDelete={noop} />,
+    );
+
+    expect(screen.queryByRole('button', { name: '恢复' })).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: '归档' }));
+    expect(onArchive).toHaveBeenCalledWith(active, true);
+    unmount();
+
+    render(<KnowledgeActions material={archived} onEdit={noop} onArchive={onArchive} onDelete={noop} />);
+    expect(screen.queryByRole('button', { name: '归档' })).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: '恢复' }));
+    expect(onArchive).toHaveBeenLastCalledWith(archived, false);
+  });
+
+  it('编辑入口把这条知识交给调用方，自己不改数据', () => {
+    const onEdit = vi.fn();
+    render(<KnowledgeActions material={active} onEdit={onEdit} onArchive={noop} onDelete={noop} />);
+
+    fireEvent.click(screen.getByRole('button', { name: '编辑' }));
+
+    expect(onEdit).toHaveBeenCalledWith(active);
   });
 });

@@ -3,6 +3,8 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 const apiMock = vi.hoisted(() => ({
   get: vi.fn(),
   post: vi.fn(),
+  put: vi.fn(),
+  delete: vi.fn(),
   upload: vi.fn(),
 }))
 
@@ -41,6 +43,34 @@ describe('knowledgeService', () => {
     knowledgeService.uploadRecording(9, file, { signal: 1 })
     expect(apiMock.upload).toHaveBeenCalledWith(
       '/api/recitations/materials/9/attempts', file, { fieldName: 'file', config: { signal: 1 } },
+    )
+  })
+
+  it('部分更新走 PUT，只带要改的字段', () => {
+    knowledgeService.update(9, { title: '改个标题' })
+    expect(apiMock.put).toHaveBeenCalledWith('/api/recitations/materials/9', { title: '改个标题' }, undefined)
+  })
+
+  it('归档和恢复是同一个端点，靠 archived 参数区分', () => {
+    knowledgeService.archive(9, true)
+    expect(apiMock.post).toHaveBeenCalledWith(
+      '/api/recitations/materials/9/archive', null, { params: { archived: true } },
+    )
+    knowledgeService.archive(9, false)
+    expect(apiMock.post).toHaveBeenCalledWith(
+      '/api/recitations/materials/9/archive', null, { params: { archived: false } },
+    )
+  })
+
+  it('删除打在这一条知识上，不能退化成删整个列表', () => {
+    knowledgeService.remove(9)
+    expect(apiMock.delete).toHaveBeenCalledWith('/api/recitations/materials/9', undefined, undefined)
+  })
+
+  it('归档视图靠 archive 参数拉列表，服务端过滤', () => {
+    knowledgeService.list({ archive: 'ARCHIVED' }, { _silent: true })
+    expect(apiMock.get).toHaveBeenCalledWith(
+      '/api/recitations/materials', { archive: 'ARCHIVED' }, { _silent: true },
     )
   })
 })

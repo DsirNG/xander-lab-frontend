@@ -1,7 +1,10 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import { BookOpen, Brain, CheckCircle2, CirclePlus, Clock3, Mic, Sparkles, Square, Target } from 'lucide-react';
+import {
+  Archive, ArchiveRestore, BookOpen, Brain, CheckCircle2, CirclePlus, Clock3, Mic, Pencil,
+  Sparkles, Square, Target, Trash2,
+} from 'lucide-react';
 import Button from '@components/common/Button';
 import CustomSelect from '@components/common/CustomSelect';
 import FormField from '@components/common/FormField';
@@ -11,6 +14,7 @@ import { formInputCls } from '@components/common/formStyles';
 import { knowledgeService } from '../services/knowledgeService';
 
 const TERMINAL_ATTEMPT_STATUSES = new Set(['SUCCEEDED', 'FAILED']);
+const EMPTY_FORM = { title: '', content: '', knowledgeType: 'RECITATION', testMode: 'AUDIO_RECITATION' };
 
 const KnowledgeMirrorPage = () => {
   const { t } = useTranslation();
@@ -20,9 +24,12 @@ const KnowledgeMirrorPage = () => {
   const attemptId = searchParams.get('attemptId');
   const [materials, setMaterials] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [createOpen, setCreateOpen] = useState(false);
-  const [creating, setCreating] = useState(false);
-  const [form, setForm] = useState({ title: '', content: '', knowledgeType: 'RECITATION', testMode: 'AUDIO_RECITATION' });
+  // 归档视图是归档这个动作的另一半：没有它，归档就成了单向出口，用户再也拿不回内容。
+  const [view, setView] = useState('ACTIVE');
+  const [editorOpen, setEditorOpen] = useState(false);
+  const [editingId, setEditingId] = useState(null);
+  const [saving, setSaving] = useState(false);
+  const [form, setForm] = useState(EMPTY_FORM);
   const [attempt, setAttempt] = useState(null);
   const [quizzes, setQuizzes] = useState([]);
   const [recording, setRecording] = useState(false);
@@ -35,12 +42,17 @@ const KnowledgeMirrorPage = () => {
 
   const loadMaterials = useCallback(async (signal) => {
     try {
-      const data = await knowledgeService.list({ signal, _silent: true });
-      setMaterials(Array.isArray(data) ? data : []);
+      const data = await knowledgeService.list(
+        view === 'ARCHIVED' ? { archive: 'ARCHIVED' } : undefined,
+        { signal, _silent: true },
+      );
+      const next = Array.isArray(data) ? data : [];
+      setMaterials(next);
+      return next;
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [view]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -110,20 +122,63 @@ const KnowledgeMirrorPage = () => {
     return { mastered, learning: materials.length - mastered, due, average };
   }, [materials]);
 
-  const createMaterial = async (event) => {
+  const openCreate = () => {
+    setEditingId(null);
+    setForm(EMPTY_FORM);
+    setEditorOpen(true);
+  };
+
+  const openEdit = (material) => {
+    setEditingId(material.id);
+    setForm({
+      title: material.title ?? '',
+      content: material.content ?? '',
+      knowledgeType: material.knowledgeType ?? 'RECITATION',
+      testMode: material.testMode ?? 'AUDIO_RECITATION',
+    });
+    setEditorOpen(true);
+  };
+
+  const submitEditor = async (event) => {
     event.preventDefault();
     if (!form.title.trim() || !form.content.trim()) return;
-    setCreating(true);
+    setSaving(true);
     try {
-      const created = await knowledgeService.create(form);
-      setMaterials((current) => [created, ...current]);
-      setCreateOpen(false);
-      setForm({ title: '', content: '', knowledgeType: 'RECITATION', testMode: 'AUDIO_RECITATION' });
-      navigate(`/workspace/knowledge/${created.id}`);
-      window.__toast?.('success', t('knowledge.created'));
+      if (editingId == null) {
+        const created = await knowledgeService.create(form);
+        setMaterials((current) => [created, ...current]);
+        navigate(`/workspace/knowledge/${created.id}`);
+        window.__toast?.('success', t('knowledge.created'));
+      } else {
+        // 服务端只写真正变了的字段，所以整份表单回传是安全的：没改的字段不会刷新 updated_at。
+        const updated = await knowledgeService.update(editingId, form);
+        setMaterials((current) => current.map((item) => (item.id === updated.id ? updated : item)));
+        window.__toast?.('success', t('knowledge.updated'));
+      }
+      setEditorOpen(false);
+      setEditingId(null);
+      setForm(EMPTY_FORM);
     } finally {
-      setCreating(false);
+      setSaving(false);
     }
+  };
+
+  // 归档、恢复和删除都会让这条知识离开当前视图，所以统一重新拉一次并把焦点交给第一条。
+  const reloadAndFocusFirst = async () => {
+    const next = await loadMaterials();
+    navigate(next.length > 0 ? `/workspace/knowledge/${next[0].id}` : '/workspace/knowledge', { replace: true });
+  };
+
+  const archiveMaterial = async (material, archived) => {
+    await knowledgeService.archive(material.id, archived);
+    window.__toast?.('success', t(archived ? 'knowledge.archived' : 'knowledge.restored'));
+    await reloadAndFocusFirst();
+  };
+
+  const deleteMaterial = async (material) => {
+    await knowledgeService.remove(material.id);
+    window.__toast?.('success', t('knowledge.deleted'));
+    await reloadAndFocusFirst();
   };
 
   const submitRecording = useCallback(async (blob) => {
@@ -213,24 +268,26 @@ const KnowledgeMirrorPage = () => {
             <div className="text-display text-ink">{t('knowledge.title')}</div>
             <div className="mt-1 text-body text-ink-muted">{t('knowledge.subtitle')}</div>
           </div>
-          <Button icon={CirclePlus} onClick={() => setCreateOpen(true)}>{t('knowledge.add')}</Button>
+          <Button icon={CirclePlus} onClick={openCreate}>{t('knowledge.add')}</Button>
         </div>
 
-        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-          {[
-            [BookOpen, t('knowledge.stats.total'), materials.length],
-            [Target, t('knowledge.stats.learning'), stats.learning],
-            [CheckCircle2, t('knowledge.stats.mastered'), stats.mastered],
-            [Brain, t('knowledge.stats.average'), `${stats.average}%`],
-          ].map(([Icon, label, value]) => (
-            <div key={label} className="rounded-2xl border border-border bg-surface p-4">
-              <div className="flex items-center justify-between text-ink-muted"><span className="text-caption">{label}</span><Icon className="h-4 w-4" /></div>
-              <div className="mt-3 text-display text-ink">{value}</div>
-            </div>
-          ))}
-        </div>
+        {view === 'ACTIVE' ? (
+          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+            {[
+              [BookOpen, t('knowledge.stats.total'), materials.length],
+              [Target, t('knowledge.stats.learning'), stats.learning],
+              [CheckCircle2, t('knowledge.stats.mastered'), stats.mastered],
+              [Brain, t('knowledge.stats.average'), `${stats.average}%`],
+            ].map(([Icon, label, value]) => (
+              <div key={label} className="rounded-2xl border border-border bg-surface p-4">
+                <div className="flex items-center justify-between text-ink-muted"><span className="text-caption">{label}</span><Icon className="h-4 w-4" /></div>
+                <div className="mt-3 text-display text-ink">{value}</div>
+              </div>
+            ))}
+          </div>
+        ) : null}
 
-        {materials.length === 0 ? (
+        {view === 'ACTIVE' && materials.length === 0 ? (
           <div className="grid min-h-80 place-items-center rounded-3xl border border-dashed border-border bg-surface p-8 text-center">
             <div><Brain className="mx-auto h-10 w-10 text-accent" /><div className="mt-4 text-title text-ink">{t('knowledge.empty')}</div><div className="mt-2 text-body text-ink-muted">{t('knowledge.emptyHint')}</div></div>
           </div>
@@ -238,22 +295,45 @@ const KnowledgeMirrorPage = () => {
           <div className="grid min-h-[520px] gap-4 lg:grid-cols-[320px_minmax(0,1fr)]">
             <div className="rounded-3xl border border-border bg-surface p-3">
               <div className="px-2 py-2 text-title text-ink">{t('knowledge.library')}</div>
-              <div className="mt-1 space-y-2">
-                {materials.map((item) => (
-                  <button key={item.id} type="button" onClick={() => navigate(`/workspace/knowledge/${item.id}`)} className={`w-full rounded-2xl border p-3 text-left transition ${activeMaterial?.id === item.id ? 'border-accent bg-accent-soft' : 'border-transparent hover:border-border hover:bg-surface-muted'}`}>
-                    <div className="flex items-start justify-between gap-2"><span className="text-body font-semibold text-ink">{item.title}</span><span className="rounded-full bg-canvas px-2 py-1 text-micro text-ink-muted">{item.masteryScore ?? 0}%</span></div>
-                    <div className="mt-2 flex items-center justify-between text-caption text-ink-muted"><span>{typeLabel(item.knowledgeType)}</span><span>{levelLabel(item.masteryLevel)}</span></div>
-                    <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-border"><div className="h-full rounded-full bg-accent" style={{ width: `${item.masteryScore ?? 0}%` }} /></div>
+              <div className="flex gap-1 rounded-full bg-surface-muted p-1 text-caption" role="tablist">
+                {['ACTIVE', 'ARCHIVED'].map((value) => (
+                  <button
+                    key={value}
+                    type="button"
+                    role="tab"
+                    aria-selected={view === value}
+                    onClick={() => setView(value)}
+                    className={`flex-1 rounded-full px-3 py-1.5 transition ${view === value ? 'bg-surface text-ink shadow-sm' : 'text-ink-muted hover:text-ink'}`}
+                  >
+                    {t(`knowledge.view.${value}`)}
                   </button>
                 ))}
               </div>
+              {materials.length === 0 ? (
+                <div className="px-2 py-8 text-center text-caption text-ink-muted">{t('knowledge.archivedEmpty')}</div>
+              ) : (
+                <div className="mt-2 space-y-2">
+                  {materials.map((item) => (
+                    <button key={item.id} type="button" onClick={() => navigate(`/workspace/knowledge/${item.id}`)} className={`w-full rounded-2xl border p-3 text-left transition ${activeMaterial?.id === item.id ? 'border-accent bg-accent-soft' : 'border-transparent hover:border-border hover:bg-surface-muted'}`}>
+                      <div className="flex items-start justify-between gap-2"><span className="text-body font-semibold text-ink">{item.title}</span><span className="rounded-full bg-canvas px-2 py-1 text-micro text-ink-muted">{item.masteryScore ?? 0}%</span></div>
+                      <div className="mt-2 flex items-center justify-between text-caption text-ink-muted"><span>{typeLabel(item.knowledgeType)}</span><span>{levelLabel(item.masteryLevel)}</span></div>
+                      <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-border"><div className="h-full rounded-full bg-accent" style={{ width: `${item.masteryScore ?? 0}%` }} /></div>
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
 
+            {activeMaterial ? (
             <div className="rounded-3xl border border-border bg-surface p-5 sm:p-6">
               <div className="flex flex-wrap items-start justify-between gap-3 border-b border-border pb-5">
                 <div><div className="text-heading text-ink">{activeMaterial.title}</div><div className="mt-1 text-caption text-ink-muted">{typeLabel(activeMaterial.knowledgeType)} · {levelLabel(activeMaterial.masteryLevel)} · {t('knowledge.reviewCount', { count: activeMaterial.reviewCount ?? 0 })}</div></div>
-                <div className="rounded-2xl bg-accent-soft px-4 py-2 text-center"><div className="text-micro text-accent">{t('knowledge.mastery')}</div><div className="text-heading text-accent">{activeMaterial.masteryScore ?? 0}%</div></div>
+                <div className="flex flex-wrap items-center gap-3">
+                  <div className="rounded-2xl bg-accent-soft px-4 py-2 text-center"><div className="text-micro text-accent">{t('knowledge.mastery')}</div><div className="text-heading text-accent">{activeMaterial.masteryScore ?? 0}%</div></div>
+                  <KnowledgeActions material={activeMaterial} onEdit={openEdit} onArchive={archiveMaterial} onDelete={deleteMaterial} />
+                </div>
               </div>
+              {activeMaterial.archivedAt ? <div className="mt-4 rounded-2xl bg-surface-muted p-3 text-caption text-ink-muted">{t('knowledge.archivedNotice')}</div> : null}
               <div className="mt-5 rounded-2xl bg-surface-muted p-4"><div className="text-caption font-semibold text-ink-secondary">{t('knowledge.original')}</div><div className="mt-2 whitespace-pre-wrap text-body text-ink">{recording ? t('knowledge.originalHidden') : activeMaterial.content}</div></div>
 
               {activeMaterial.testMode === 'AUDIO_RECITATION' ? (
@@ -275,15 +355,28 @@ const KnowledgeMirrorPage = () => {
               ) : null}
               {activeMaterial.nextReviewAt ? <div className="mt-4 flex items-center gap-2 text-caption text-ink-muted"><Clock3 className="h-4 w-4" />{t('knowledge.nextReview', { time: new Date(activeMaterial.nextReviewAt).toLocaleString() })}</div> : null}
             </div>
+            ) : (
+              <div className="grid place-items-center rounded-3xl border border-dashed border-border bg-surface p-8 text-center text-body text-ink-muted">
+                {t('knowledge.archivedEmptyHint')}
+              </div>
+            )}
           </div>
         )}
       </div>
 
-      <Modal isOpen={createOpen} onClose={() => setCreateOpen(false)} title={t('knowledge.createTitle')} width="max-w-2xl" footer={<><Button variant="ghost" onClick={() => setCreateOpen(false)}>{t('common.cancel')}</Button><Button type="submit" form="knowledge-create-form" loading={creating}>{t('knowledge.create')}</Button></>}>
-        <form id="knowledge-create-form" className="space-y-4" onSubmit={createMaterial}>
+      <Modal
+        isOpen={editorOpen}
+        onClose={() => setEditorOpen(false)}
+        title={t(editingId == null ? 'knowledge.createTitle' : 'knowledge.editTitle')}
+        width="max-w-2xl"
+        footer={<><Button variant="ghost" onClick={() => setEditorOpen(false)}>{t('common.cancel')}</Button><Button type="submit" form="knowledge-editor-form" loading={saving}>{t(editingId == null ? 'knowledge.create' : 'knowledge.save')}</Button></>}
+      >
+        <form id="knowledge-editor-form" className="space-y-4" onSubmit={submitEditor}>
           <FormField label={t('knowledge.form.title')} htmlFor="knowledge-title"><input id="knowledge-title" className={formInputCls} value={form.title} maxLength={100} onChange={(event) => setForm((current) => ({ ...current, title: event.target.value }))} /></FormField>
           <FormField label={t('knowledge.form.type')}><CustomSelect value={form.knowledgeType} onChange={(value) => setForm((current) => ({ ...current, knowledgeType: value, testMode: value === 'RECITATION' ? 'AUDIO_RECITATION' : value === 'MATH' ? 'PRACTICE' : 'AI_QA' }))} options={['RECITATION', 'CONCEPT', 'MATH'].map((value) => ({ value, label: typeLabel(value) }))} /></FormField>
           <FormField label={t('knowledge.form.content')} htmlFor="knowledge-content" hint={t('knowledge.form.contentHint')}><textarea id="knowledge-content" className={`${formInputCls} min-h-48 resize-y`} value={form.content} maxLength={10000} onChange={(event) => setForm((current) => ({ ...current, content: event.target.value }))} /></FormField>
+          {/* 改正文会把掌握度清零，这件事必须在保存之前说，而不是等分数掉了让用户自己猜。 */}
+          {editingId == null ? null : <div className="rounded-2xl bg-surface-muted p-3 text-caption text-ink-muted">{t('knowledge.editResetHint')}</div>}
         </form>
       </Modal>
       <Modal
@@ -303,6 +396,53 @@ const KnowledgeMirrorPage = () => {
 };
 
 const ResultStat = ({ label, value }) => <div className="rounded-xl bg-surface-muted p-3"><div className="text-micro text-ink-muted">{label}</div><div className="mt-1 text-title text-ink">{value}</div></div>;
+
+/**
+ * 一条知识的编辑、归档与删除入口。
+ *
+ * 删除的二次确认放在这个组件里而不是调用方：删除会连带清掉录音记录和测验留档且不可恢复，
+ * 这个保证不能取决于每个调用方是否记得自己加一层确认。归档是可逆的，所以直接执行。
+ */
+export const KnowledgeActions = ({ material, onEdit, onArchive, onDelete }) => {
+  const { t } = useTranslation();
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [busy, setBusy] = useState('');
+  const archived = Boolean(material?.archivedAt);
+  const run = async (kind, action) => {
+    setBusy(kind);
+    try {
+      await action();
+    } finally {
+      setBusy('');
+    }
+  };
+  return (
+    <>
+      <div className="flex flex-wrap items-center gap-2">
+        <Button variant="ghost" icon={Pencil} onClick={() => onEdit(material)}>{t('knowledge.edit')}</Button>
+        <Button
+          variant="ghost"
+          icon={archived ? ArchiveRestore : Archive}
+          loading={busy === 'archive'}
+          onClick={() => run('archive', () => onArchive(material, !archived))}
+        >
+          {t(archived ? 'knowledge.restore' : 'knowledge.archive')}
+        </Button>
+        <Button variant="danger" icon={Trash2} onClick={() => setConfirmOpen(true)}>{t('knowledge.delete')}</Button>
+      </div>
+      <Modal
+        isOpen={confirmOpen}
+        onClose={() => setConfirmOpen(false)}
+        title={t('knowledge.deleteTitle')}
+        width="max-w-md"
+        footer={<><Button variant="ghost" onClick={() => setConfirmOpen(false)}>{t('common.cancel')}</Button><Button variant="danger" icon={Trash2} loading={busy === 'delete'} onClick={() => run('delete', async () => { await onDelete(material); setConfirmOpen(false); })}>{t('knowledge.deleteConfirm')}</Button></>}
+      >
+        <div className="text-body text-ink-secondary">{t('knowledge.deleteWarning', { title: material?.title })}</div>
+        <div className="mt-3 text-caption text-ink-muted">{t('knowledge.deleteArchiveHint')}</div>
+      </Modal>
+    </>
+  );
+};
 
 /**
  * 概念题与练习题的测验面板：一个进对话的入口，加上最近一次的逐题判分。
