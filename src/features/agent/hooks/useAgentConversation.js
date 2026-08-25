@@ -187,6 +187,24 @@ export const useAgentConversation = ({ conversationId }) => {
         ...current.filter((step) => step.type !== 'answer_delta'),
         { type: 'answer', content: String(data ?? '') },
       ].slice(-LIVE_STEP_LIMIT));
+    } else if (event === 'plan') {
+      const items = Array.isArray(data?.items) ? data.items : [];
+      // 计划是会话状态而不是流水日志：整体替换已渲染的那一条，避免每次改写都堆一份旧计划。
+      setLiveSteps((current) => {
+        const step = { type: 'plan', items };
+        const index = current.findIndex((entry) => entry.type === 'plan');
+        if (index < 0) return [...current, step].slice(-LIVE_STEP_LIMIT);
+        const next = [...current];
+        next[index] = step;
+        return next;
+      });
+    } else if (event === 'reflection') {
+      // 自检驳回时用户已经看到了流式回复草稿；先撤掉它，否则会同时出现“已完成”和批评意见。
+      answerDeltaRef.current = '';
+      setLiveSteps((current) => [
+        ...current.filter((step) => step.type !== 'answer_delta'),
+        { type: 'reflection', round: data?.round, content: String(data?.critique ?? '') },
+      ].slice(-LIVE_STEP_LIMIT));
     } else if (event === 'error') {
       const message = typeof data === 'string' ? data : data?.message || t('blog.agentChat.failed');
       setErrorMessage(message);

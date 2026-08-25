@@ -95,6 +95,8 @@ export default {
       inputLockedPlaceholder: 'Dindor が処理中です…',
       send: '送信', stop: '停止', running: '実行中…', thinking: '考え中…', callingTool: 'ツール呼び出し中…', ready: '次のメッセージをどうぞ', failed: 'このターンは失敗しました',
       multiTurnHint: '続けて依頼してください。Agentが適切なツールを選択します。',
+      planTitle: 'タスク計画', planPending: '未着手', planInProgress: '進行中', planDone: '完了', planDropped: '中止',
+      reflectionTitle: 'セルフチェック', reflectionRound: 'セルフチェック · {{round}} 回目',
       inputRequired: 'まずAgentに依頼内容を入力してください。', sendFailed: 'メッセージを送信できませんでした。', loadFailed: '会話を読み込めませんでした。',
       restoring: '会話を復元中…', reconnecting: '接続が切れました。再接続中…',
       unknownTool: 'ツール', working: '処理中…', writing: '執筆中…', toolCalled: 'ツール呼び出し', toolResult: 'ツール結果', toolSucceeded: '成功', toolFailed: '失敗', viewBlog: 'ブログを見る',
@@ -1042,7 +1044,7 @@ export default {
     }
   },
   knowledge: {
-    title: '個人知識ミラー', subtitle: '学ぶ内容、習得の証拠、復習時期を継続的に記録します。', add: '知識を追加', loading: '知識ミラーを読み込み中…', created: '知識を追加しました', createTitle: '習得する知識を追加', create: 'ライブラリに追加', empty: '最初の知識から始めましょう', emptyHint: '原文や知識を追加すると、習得度を継続して記録します。', library: '自分の知識', mastery: '習得度', original: '原文', originalHidden: '原文を非表示にしました。記憶から暗唱してください。', reviewCount: '{{count}} 回テスト済み', audioTest: '音声暗唱テスト', audioHint: '記憶から暗唱すると、AI が文字起こしして原文との差を確認します。', start: '録音開始', stop: '終了して確認', recording: '録音中…', microphoneUnavailable: 'マイクを使用できません。HTTPS またはブラウザ設定を確認してください。', permissionTitle: 'マイクの使用を許可', permissionHint: '暗唱テストには音声録音が必要です。続行するとブラウザの許可画面が表示されます。', permissionBlockedHint: '以前に拒否されています。アドレスバー横の権限アイコンからマイクを許可してください。', permissionPrivacy: '音声は文字起こしと習得度確認だけに使用し、無断で録音しません。', allowMicrophone: '同意して許可', testComingSoon: 'AI 問答と類題テストは次の段階で追加されます。', latestResult: '最新テスト', score: '正確度', correct: '正解', missing: '不足', wrong: '誤り', transcript: '文字起こし', nextReview: '次回復習の目安：{{time}}',
+    title: '個人知識ミラー', subtitle: '学ぶ内容、習得の証拠、復習時期を継続的に記録します。', add: '知識を追加', loading: '知識ミラーを読み込み中…', created: '知識を追加しました', createTitle: '習得する知識を追加', create: 'ライブラリに追加', empty: '最初の知識から始めましょう', emptyHint: '原文や知識を追加すると、習得度を継続して記録します。', library: '自分の知識', mastery: '習得度', original: '原文', originalHidden: '原文を非表示にしました。記憶から暗唱してください。', reviewCount: '{{count}} 回テスト済み', audioTest: '音声暗唱テスト', audioHint: '記憶から暗唱すると、AI が文字起こしして原文との差を確認します。', start: '録音開始', stop: '終了して確認', recording: '録音中…', microphoneUnavailable: 'マイクを使用できません。HTTPS またはブラウザ設定を確認してください。', permissionTitle: 'マイクの使用を許可', permissionHint: '暗唱テストには音声録音が必要です。続行するとブラウザの許可画面が表示されます。', permissionBlockedHint: '以前に拒否されています。アドレスバー横の権限アイコンからマイクを許可してください。', permissionPrivacy: '音声は文字起こしと習得度確認だけに使用し、無断で録音しません。', allowMicrophone: '同意して許可', agentTest: 'エージェントテスト', agentTestHint: 'エージェントがこの知識から問題を作り、あなたの回答を一問ずつ採点して習熟度を更新します。', askAgentToQuiz: 'エージェントに出題してもらう', quizPrompt: '「{{title}}」について出題してください。何問か出して、私が答えたら一問ずつ採点してください。', noQuizYet: 'まだテスト記録がありません。一度受けると、得点と各問の採点がここに表示されます。', quizAt: '実施日時', yourAnswer: 'あなたの回答', creditFull: '正解', creditPartial: '半分正解', creditNone: '不正解', latestResult: '最新テスト', score: '正確度', correct: '正解', missing: '不足', wrong: '誤り', transcript: '文字起こし', nextReview: '次回復習の目安：{{time}}',
     stats: { total: '知識数', learning: '習得中', mastered: '習得済み', average: '平均習得度' }, form: { title: '知識名', type: '知識タイプ', content: '原文または内容', contentHint: '初版はテキスト貼り付けに対応。画像 OCR と文書分割は後日追加します。' }, types: { RECITATION: '暗唱', CONCEPT: '概念', MATH: '数学問題' }, levels: { NEW: '要習得', FAMILIAR: '見覚えあり', RECALLING: '思い出せる', APPLYING: '応用できる', MASTERED: '安定習得' }, status: { UPLOADING: 'アップロード中', PENDING: '待機中', SUBMITTING: '送信中', PROCESSING: '文字起こし中', POLLING: '分析中', SUCCEEDED: '完了', FAILED: '失敗' },
   },
   img2three: {

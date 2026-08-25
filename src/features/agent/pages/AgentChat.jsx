@@ -2,8 +2,8 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
-  AlertCircle, ArrowLeft, Bot, Loader2, MessageSquareText, Plus,
-  Send, Sparkles, X, Globe, PenLine, Image as ImageIcon, Mic, Menu, PanelLeftOpen, Link2, Search, Square, SquarePen,
+  AlertCircle, ArrowLeft, Ban, Bot, Check, Circle, CircleDot, ListChecks, Loader2, MessageSquareText, Plus,
+  Send, ShieldAlert, Sparkles, X, Globe, PenLine, Image as ImageIcon, Mic, Menu, PanelLeftOpen, Link2, Search, Square, SquarePen,
   Paperclip, FileText
 } from 'lucide-react';
 import { useToast } from '@/hooks/useToast';
@@ -26,6 +26,58 @@ const ThoughtCard = ({ content }) => (
     <span className="whitespace-pre-wrap">{content}</span>
   </div>
 );
+
+const PLAN_STATUS = {
+  DONE: { Icon: Check, tone: 'text-emerald-600', label: 'planDone', strike: true },
+  IN_PROGRESS: { Icon: CircleDot, tone: 'text-orange-500', label: 'planInProgress', strike: false },
+  DROPPED: { Icon: Ban, tone: 'text-ink-faint', label: 'planDropped', strike: true },
+  PENDING: { Icon: Circle, tone: 'text-ink-faint', label: 'planPending', strike: false },
+};
+
+export const PlanCard = ({ items = [] }) => {
+  const { t } = useTranslation();
+  if (items.length === 0) return null;
+  return (
+    <div className="rounded-xl border border-border bg-canvas px-3 py-2.5 text-xs leading-5">
+      <div className="flex items-center gap-2 font-semibold text-ink-secondary">
+        <ListChecks className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+        <span>{t('blog.agentChat.planTitle')}</span>
+      </div>
+      <ol className="mt-1.5 flex flex-col gap-1">
+        {items.map((item, index) => {
+          const status = PLAN_STATUS[item?.status] || PLAN_STATUS.PENDING;
+          const { Icon } = status;
+          return (
+            <li key={`${index}-${item?.title ?? ''}`} className="flex items-start gap-2 text-ink-muted">
+              <Icon className={`mt-0.5 h-3.5 w-3.5 shrink-0 ${status.tone}`} aria-hidden="true" />
+              <span className="min-w-0">
+                <span className={status.strike ? 'line-through opacity-70' : ''}>{item?.title}</span>
+                <span className="sr-only">{` (${t(`blog.agentChat.${status.label}`)})`}</span>
+                {item?.note ? <span className="text-ink-faint">{` — ${item.note}`}</span> : null}
+              </span>
+            </li>
+          );
+        })}
+      </ol>
+    </div>
+  );
+};
+
+export const ReflectionCard = ({ content, round }) => {
+  const { t } = useTranslation();
+  if (!content) return null;
+  return (
+    <div className="rounded-xl border border-orange-500/25 bg-orange-500/5 px-3 py-2 text-xs leading-5 text-ink-muted">
+      <div className="flex items-center gap-2 font-semibold text-orange-600">
+        <ShieldAlert className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+        <span>
+          {round ? t('blog.agentChat.reflectionRound', { round }) : t('blog.agentChat.reflectionTitle')}
+        </span>
+      </div>
+      <p className="mt-1 whitespace-pre-wrap">{content}</p>
+    </div>
+  );
+};
 
 const IMAGE_TOOL = 'image_generate';
 
@@ -883,6 +935,9 @@ const AgentChat = () => {
                       if (message.kind === 'thought') {
                         return <ThoughtCard key={message.id} content={message.content} />;
                       }
+                      if (message.kind === 'reflection') {
+                        return <ReflectionCard key={message.id} content={message.content} />;
+                      }
                       if (message.kind === 'tool_result') {
                         const result = imageToolResult(message);
                         return result ? <ImageToolResult key={message.id} url={result.url} title={result.title} /> : null;
@@ -896,6 +951,8 @@ const AgentChat = () => {
                     {steps.map((step, index) => {
                       if (step.type === 'user') return <ConversationMessage key={`live-${index}`} role="user" content={step.content} attachments={step.attachments} />;
                       if (step.type === 'thought') return <ThoughtCard key={`live-${index}`} content={step.content} />;
+                      if (step.type === 'plan') return <PlanCard key={`live-${index}`} items={step.items} />;
+                      if (step.type === 'reflection') return <ReflectionCard key={`live-${index}`} content={step.content} round={step.round} />;
                       if (step.type === 'tool') {
                         if (step.tool === IMAGE_TOOL && step.phase === 'end' && step.result?.url) {
                           return <ImageToolResult key={`live-${index}`} url={step.result.url} title={step.result.title} />;

@@ -162,3 +162,97 @@ describe('useAgentConversation new conversation', () => {
     expect(agentConversationService.get).not.toHaveBeenCalled()
   })
 })
+
+describe('useAgentConversation autonomy events', () => {
+  // 拿到服务端流的 onEvent 回调，直接喂 plan/reflection 事件，不必真的起一条 SSE。
+  const streamHarness = async () => {
+    const { useAgentConversation } = await import('./useAgentConversation.js')
+    const shell = { conversation: { id: 42, status: 'ready', runVersion: 0 }, messages: [] }
+    let onEvent
+    agentConversationService.create.mockResolvedValue(shell)
+    agentConversationService.get.mockResolvedValue(shell)
+    agentConversationService.sendMessageStream.mockImplementation((id, text, files, listener) => {
+      onEvent = listener
+      return new Promise(() => {})
+    })
+
+    const { result, rerender } = renderHook(
+      ({ conversationId }) => useAgentConversation({ conversationId }),
+      { initialProps: { conversationId: null } },
+    )
+    await act(async () => {
+      await result.current.createConversation('hello')
+    })
+    rerender({ conversationId: '42' })
+    await waitFor(() => expect(typeof onEvent).toBe('function'))
+
+    return {
+      result,
+      emit: async (payload) => {
+        await act(async () => {
+          onEvent(payload)
+        })
+      },
+    }
+  }
+
+  it('keeps one plan step and replaces it whenever the agent rewrites the plan', async () => {
+    const { result, emit } = await streamHarness()
+
+    await emit({ id: 1, event: 'plan', data: { items: [{ title: '查知识库', status: 'IN_PROGRESS' }] } })
+    await emit({ id: 2, event: 'thought', data: '先看看素材库里有什么' })
+    await emit({
+      id: 3,
+      event: 'plan',
+      data: {
+        items: [
+          { title: '查知识库', status: 'DONE' },
+          { title: '整理复习清单', status: 'PENDING', note: '按掌握度排序' },
+        ],
+      },
+    })
+
+    const planSteps = result.current.liveSteps.filter((step) => step.type === 'plan')
+    expect(planSteps).toHaveLength(1)
+    expect(planSteps[0].items).toEqual([
+      { title: '查知识库', status: 'DONE' },
+      { title: '整理复习清单', status: 'PENDING', note: '按掌握度排序' },
+    ])
+    // 计划就地替换，但不能吃掉它之后到达的其他步骤。
+    expect(result.current.liveSteps).toContainEqual({ type: 'thought', content: '先看看素材库里有什么' })
+  })
+
+  it('drops a malformed plan payload instead of rendering a broken card', async () => {
+    const { result, emit } = await streamHarness()
+
+    await emit({ id: 1, event: 'plan', data: { items: 'not-an-array' } })
+
+    expect(result.current.liveSteps).toContainEqual({ type: 'plan', items: [] })
+  })
+
+  it('withdraws the streamed answer draft when the self-check rejects the reply', async () => {
+    const { result, emit } = await streamHarness()
+
+    await emit({ id: 1, event: 'answer_delta', data: '都办好了' })
+    await waitFor(() => expect(result.current.liveSteps).toContainEqual({
+      type: 'answer_delta',
+      content: '都办好了',
+    }))
+
+    await emit({ id: 2, event: 'reflection', data: { round: 1, critique: '还有 1 个步骤没有收口' } })
+
+    expect(result.current.liveSteps.some((step) => step.type === 'answer_delta')).toBe(false)
+    expect(result.current.liveSteps).toContainEqual({
+      type: 'reflection',
+      round: 1,
+      content: '还有 1 个步骤没有收口',
+    })
+
+    // 缓冲里的草稿也必须清掉，否则下一帧会把"已完成"重新画回来。
+    await emit({ id: 3, event: 'answer_delta', data: '实际结论是查询失败' })
+    await waitFor(() => expect(result.current.liveSteps).toContainEqual({
+      type: 'answer_delta',
+      content: '实际结论是查询失败',
+    }))
+  })
+})
