@@ -1,13 +1,111 @@
 import React from 'react';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import { beforeAll, describe, expect, it, vi } from 'vitest';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import i18n from '@locales/index';
-import { AgentQuizPanel, KnowledgeActions } from './KnowledgeMirrorPage';
+import KnowledgeMirrorPage, { AgentQuizPanel, KnowledgeActions } from './KnowledgeMirrorPage';
 import { buildKnowledgeQuizPath } from '../utils/knowledgeNavigation';
+import { knowledgeService } from '../services/knowledgeService';
+
+vi.mock('../services/knowledgeService', () => ({
+  knowledgeService: {
+    list: vi.fn(),
+    listQuizzes: vi.fn(),
+    getAttempt: vi.fn(),
+    create: vi.fn(),
+    update: vi.fn(),
+    archive: vi.fn(),
+    remove: vi.fn(),
+    uploadRecording: vi.fn(),
+  },
+}));
 
 // 语言由浏览器环境探测，不同机器上的 jsdom 未必一致；断言按钮文案前先把语言钉死。
 beforeAll(async () => {
   await i18n.changeLanguage('zh');
+});
+
+const recitationMaterial = {
+  id: 9,
+  title: '岳阳楼记',
+  content: '先天下之忧而忧',
+  knowledgeType: 'RECITATION',
+  testMode: 'AUDIO_RECITATION',
+  masteryLevel: 'NEW',
+  masteryScore: 0,
+};
+
+beforeEach(() => {
+  vi.clearAllMocks();
+  knowledgeService.list.mockResolvedValue([recitationMaterial]);
+  knowledgeService.listQuizzes.mockResolvedValue([]);
+});
+
+const renderPage = (entry = '/workspace/knowledge/9') => render(
+  <MemoryRouter initialEntries={[entry]}>
+    <Routes>
+      <Route path="/workspace/knowledge/:materialId?" element={<KnowledgeMirrorPage />} />
+    </Routes>
+  </MemoryRouter>,
+);
+
+describe('KnowledgeMirrorPage reliability', () => {
+  it('加载失败显示错误态，重试成功后才显示知识内容', async () => {
+    knowledgeService.list
+      .mockRejectedValueOnce(new Error('temporary network failure'))
+      .mockResolvedValueOnce([recitationMaterial]);
+
+    renderPage();
+
+    expect(await screen.findByText('知识库加载失败')).toBeInTheDocument();
+    expect(screen.queryByText('从第一个知识点开始')).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: '重新加载' }));
+
+    expect(await screen.findAllByText('岳阳楼记')).toHaveLength(2);
+    expect(knowledgeService.list).toHaveBeenCalledTimes(2);
+  });
+
+  it('任务查询失败保留 URL 中的任务并允许手动恢复', async () => {
+    knowledgeService.getAttempt
+      .mockRejectedValueOnce(new Error('temporary network failure'))
+      .mockResolvedValueOnce({ id: 77, status: 'SUCCEEDED', score: 88, result: {} });
+
+    renderPage('/workspace/knowledge/9?attemptId=77');
+
+    expect(await screen.findByText(/暂时无法刷新录音任务/)).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: '立即重试' }));
+
+    expect(await screen.findByText('检查完成')).toBeInTheDocument();
+    expect(screen.getByText('88%')).toBeInTheDocument();
+    expect(knowledgeService.getAttempt).toHaveBeenCalledTimes(2);
+  });
+
+  it('麦克风权限被拒绝时给出明确恢复指引', async () => {
+    const originalPermissions = navigator.permissions;
+    const originalMediaDevices = navigator.mediaDevices;
+    const originalMediaRecorder = window.MediaRecorder;
+    Object.defineProperty(navigator, 'permissions', {
+      configurable: true,
+      value: { query: vi.fn().mockResolvedValue({ state: 'denied' }) },
+    });
+    Object.defineProperty(navigator, 'mediaDevices', {
+      configurable: true,
+      value: { getUserMedia: vi.fn() },
+    });
+    Object.defineProperty(window, 'MediaRecorder', { configurable: true, value: vi.fn() });
+
+    try {
+      renderPage();
+      fireEvent.click(await screen.findByRole('button', { name: '开始录音' }));
+
+      expect(await screen.findByText(/麦克风权限此前已被拒绝/)).toBeInTheDocument();
+      expect(screen.getByText(/点击地址栏左侧的权限图标/)).toBeInTheDocument();
+    } finally {
+      Object.defineProperty(navigator, 'permissions', { configurable: true, value: originalPermissions });
+      Object.defineProperty(navigator, 'mediaDevices', { configurable: true, value: originalMediaDevices });
+      Object.defineProperty(window, 'MediaRecorder', { configurable: true, value: originalMediaRecorder });
+    }
+  });
 });
 
 const quiz = {

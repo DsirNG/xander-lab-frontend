@@ -15,6 +15,8 @@ import { knowledgeService } from '../services/knowledgeService';
 import { buildKnowledgeQuizPath } from '../utils/knowledgeNavigation';
 
 const TERMINAL_ATTEMPT_STATUSES = new Set(['SUCCEEDED', 'FAILED']);
+const ATTEMPT_POLL_INTERVAL_MS = 2000;
+const ATTEMPT_POLL_RETRY_LIMIT = 3;
 const EMPTY_FORM = { title: '', content: '', knowledgeType: 'RECITATION', testMode: 'AUDIO_RECITATION' };
 
 const newClientRequestId = () => globalThis.crypto?.randomUUID?.()
@@ -28,6 +30,7 @@ const KnowledgeMirrorPage = () => {
   const attemptId = searchParams.get('attemptId');
   const [materials, setMaterials] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   // 归档视图是归档这个动作的另一半：没有它，归档就成了单向出口，用户再也拿不回内容。
   const [view, setView] = useState('ACTIVE');
   const [editorOpen, setEditorOpen] = useState(false);
@@ -35,6 +38,8 @@ const KnowledgeMirrorPage = () => {
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState(EMPTY_FORM);
   const [attempt, setAttempt] = useState(null);
+  const [attemptPollError, setAttemptPollError] = useState(false);
+  const [attemptRetryVersion, setAttemptRetryVersion] = useState(0);
   const [quizzes, setQuizzes] = useState([]);
   const [recording, setRecording] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -52,15 +57,21 @@ const KnowledgeMirrorPage = () => {
       );
       const next = Array.isArray(data) ? data : [];
       setMaterials(next);
+      setLoadError(false);
       return next;
+    } catch (error) {
+      if (!signal?.aborted) setLoadError(true);
+      throw error;
     } finally {
-      setLoading(false);
+      if (!signal?.aborted) setLoading(false);
     }
   }, [view]);
 
   useEffect(() => {
     const controller = new AbortController();
-    loadMaterials(controller.signal);
+    setLoading(true);
+    setLoadError(false);
+    loadMaterials(controller.signal).catch(() => {});
     return () => controller.abort();
   }, [loadMaterials]);
 
@@ -71,15 +82,28 @@ const KnowledgeMirrorPage = () => {
     }
     let active = true;
     let timer;
+    let retryCount = 0;
+    setAttemptPollError(false);
     const refresh = async () => {
       try {
         const next = await knowledgeService.getAttempt(attemptId, { _silent: true });
         if (!active) return;
         setAttempt(next);
-        if (!TERMINAL_ATTEMPT_STATUSES.has(next.status)) timer = window.setTimeout(refresh, 2000);
-        if (next.status === 'SUCCEEDED') loadMaterials();
+        setAttemptPollError(false);
+        retryCount = 0;
+        if (!TERMINAL_ATTEMPT_STATUSES.has(next.status)) {
+          timer = window.setTimeout(refresh, ATTEMPT_POLL_INTERVAL_MS);
+        }
+        if (next.status === 'SUCCEEDED') loadMaterials().catch(() => {});
       } catch {
-        if (active) setAttempt(null);
+        if (!active) return;
+        setAttemptPollError(true);
+        retryCount += 1;
+        // 短暂网络抖动不能抹掉已经落库的任务；有限退避后停下，交给用户手动恢复。
+        if (retryCount <= ATTEMPT_POLL_RETRY_LIMIT) {
+          const delay = ATTEMPT_POLL_INTERVAL_MS * (2 ** (retryCount - 1));
+          timer = window.setTimeout(refresh, delay);
+        }
       }
     };
     refresh();
@@ -87,7 +111,7 @@ const KnowledgeMirrorPage = () => {
       active = false;
       window.clearTimeout(timer);
     };
-  }, [attemptId, loadMaterials]);
+  }, [attemptId, attemptRetryVersion, loadMaterials]);
 
   useEffect(() => () => streamRef.current?.getTracks().forEach((track) => track.stop()), []);
 
@@ -257,6 +281,11 @@ const KnowledgeMirrorPage = () => {
     setRecording(false);
   };
 
+  const retryAttempt = () => {
+    setAttemptPollError(false);
+    setAttemptRetryVersion((current) => current + 1);
+  };
+
   // 出题和判分都发生在对话里，所以这里只是带着一句开场白跳进智能体，由它调用 quiz_knowledge。
   const startAgentQuiz = () => {
     if (!activeMaterial) return;
@@ -265,12 +294,32 @@ const KnowledgeMirrorPage = () => {
 
   if (loading) return <LoadingSpinner fullScreen text={t('knowledge.loading')} />;
 
+  if (loadError && materials.length === 0) {
+    return (
+      <div className="grid h-full min-h-80 place-items-center bg-canvas p-6 text-center">
+        <div className="max-w-md rounded-3xl border border-border bg-surface p-8">
+          <div className="text-heading text-ink">{t('knowledge.loadErrorTitle')}</div>
+          <div className="mt-2 text-body text-ink-muted">{t('knowledge.loadErrorHint')}</div>
+          <Button className="mt-5" onClick={() => { setLoading(true); loadMaterials().catch(() => {}); }}>
+            {t('knowledge.retry')}
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   const levelLabel = (level) => t(`knowledge.levels.${level || 'NEW'}`);
   const typeLabel = (type) => t(`knowledge.types.${type || 'RECITATION'}`);
 
   return (
     <div className="flex h-full min-h-0 flex-col overflow-y-auto bg-canvas p-4 sm:p-6 lg:p-8">
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-6">
+        {loadError ? (
+          <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-warning/30 bg-warning-soft p-3 text-body text-warning-fg">
+            <span>{t('knowledge.staleDataWarning')}</span>
+            <Button variant="outline" size="sm" onClick={() => loadMaterials().catch(() => {})}>{t('knowledge.retry')}</Button>
+          </div>
+        ) : null}
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
             <div className="text-display text-ink">{t('knowledge.title')}</div>
@@ -353,12 +402,13 @@ const KnowledgeMirrorPage = () => {
                 <AgentQuizPanel quiz={quizzes[0] ?? null} onStart={startAgentQuiz} />
               )}
 
-              {attempt ? (
+              {attempt || attemptPollError ? (
                 <div className="mt-5 rounded-2xl border border-border p-4">
-                  <div className="flex items-center justify-between gap-3"><div className="text-title text-ink">{t('knowledge.latestResult')}</div><span className="rounded-full bg-surface-muted px-3 py-1 text-caption text-ink-muted">{t(`knowledge.status.${attempt.status}`)}</span></div>
-                  {attempt.status === 'SUCCEEDED' ? <div className="mt-4 grid gap-3 sm:grid-cols-4"><ResultStat label={t('knowledge.score')} value={`${attempt.score}%`} /><ResultStat label={t('knowledge.correct')} value={attempt.result?.correctCount ?? 0} /><ResultStat label={t('knowledge.missing')} value={attempt.result?.missingCount ?? 0} /><ResultStat label={t('knowledge.wrong')} value={attempt.result?.wrongCount ?? 0} /></div> : null}
-                  {attempt.transcript ? <div className="mt-4 text-body text-ink-muted"><span className="font-semibold text-ink-secondary">{t('knowledge.transcript')}：</span>{attempt.transcript}</div> : null}
-                  {attempt.errorMessage ? <div className="mt-4 text-body text-danger">{attempt.errorMessage}</div> : null}
+                  <div className="flex items-center justify-between gap-3"><div className="text-title text-ink">{t('knowledge.latestResult')}</div>{attempt ? <span className="rounded-full bg-surface-muted px-3 py-1 text-caption text-ink-muted">{t(`knowledge.status.${attempt.status}`)}</span> : null}</div>
+                  {attempt?.status === 'SUCCEEDED' ? <div className="mt-4 grid gap-3 sm:grid-cols-4"><ResultStat label={t('knowledge.score')} value={`${attempt.score}%`} /><ResultStat label={t('knowledge.correct')} value={attempt.result?.correctCount ?? 0} /><ResultStat label={t('knowledge.missing')} value={attempt.result?.missingCount ?? 0} /><ResultStat label={t('knowledge.wrong')} value={attempt.result?.wrongCount ?? 0} /></div> : null}
+                  {attempt?.transcript ? <div className="mt-4 text-body text-ink-muted"><span className="font-semibold text-ink-secondary">{t('knowledge.transcript')}：</span>{attempt.transcript}</div> : null}
+                  {attempt?.errorMessage ? <div className="mt-4 text-body text-danger">{attempt.errorMessage}</div> : null}
+                  {attemptPollError ? <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-xl bg-warning-soft p-3 text-caption text-warning-fg"><span>{t('knowledge.attemptPollError')}</span><Button variant="outline" size="sm" onClick={retryAttempt}>{t('knowledge.retryAttempt')}</Button></div> : null}
                 </div>
               ) : null}
               {activeMaterial.nextReviewAt ? <div className="mt-4 flex items-center gap-2 text-caption text-ink-muted"><Clock3 className="h-4 w-4" />{t('knowledge.nextReview', { time: new Date(activeMaterial.nextReviewAt).toLocaleString() })}</div> : null}
