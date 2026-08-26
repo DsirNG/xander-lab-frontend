@@ -12,9 +12,13 @@ import LoadingSpinner from '@components/common/LoadingSpinner';
 import Modal from '@components/common/Modal';
 import { formInputCls } from '@components/common/formStyles';
 import { knowledgeService } from '../services/knowledgeService';
+import { buildKnowledgeQuizPath } from '../utils/knowledgeNavigation';
 
 const TERMINAL_ATTEMPT_STATUSES = new Set(['SUCCEEDED', 'FAILED']);
 const EMPTY_FORM = { title: '', content: '', knowledgeType: 'RECITATION', testMode: 'AUDIO_RECITATION' };
+
+const newClientRequestId = () => globalThis.crypto?.randomUUID?.()
+  ?? `recitation-${Date.now()}-${Math.random().toString(36).slice(2)}`;
 
 const KnowledgeMirrorPage = () => {
   const { t } = useTranslation();
@@ -187,7 +191,11 @@ const KnowledgeMirrorPage = () => {
     try {
       const extension = blob.type.includes('ogg') ? 'ogg' : 'webm';
       const file = new File([blob], `recitation-${Date.now()}.${extension}`, { type: blob.type || 'audio/webm' });
-      const created = await knowledgeService.uploadRecording(activeMaterial.id, file);
+      const created = await knowledgeService.uploadRecording(
+        activeMaterial.id,
+        file,
+        newClientRequestId(),
+      );
       setAttempt(created);
       setSearchParams({ attemptId: String(created.id) }, { replace: true });
     } finally {
@@ -252,7 +260,7 @@ const KnowledgeMirrorPage = () => {
   // 出题和判分都发生在对话里，所以这里只是带着一句开场白跳进智能体，由它调用 quiz_knowledge。
   const startAgentQuiz = () => {
     if (!activeMaterial) return;
-    navigate(`/workspace/agent?q=${encodeURIComponent(t('knowledge.quizPrompt', { title: activeMaterial.title }))}`);
+    navigate(buildKnowledgeQuizPath(t, activeMaterial));
   };
 
   if (loading) return <LoadingSpinner fullScreen text={t('knowledge.loading')} />;

@@ -20,9 +20,9 @@ export const knowledgeService = {
   listAttempts: (materialId, config) => get(`${BASE}/materials/${materialId}/attempts`, undefined, config),
   listQuizzes: (materialId, config) => get(`${BASE}/materials/${materialId}/quizzes`, undefined, config),
   getAttempt: (attemptId, config) => get(`${BASE}/attempts/${attemptId}`, undefined, config),
-  uploadRecording: (materialId, file, config) => upload(
+  uploadRecording: (materialId, file, clientRequestId, config) => upload(
     `${BASE}/materials/${materialId}/attempts`,
     file,
-    { fieldName: 'file', config },
+    { fieldName: 'file', extraData: { clientRequestId }, config },
   ),
 };

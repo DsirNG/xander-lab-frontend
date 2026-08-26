@@ -40,9 +40,10 @@ describe('knowledgeService', () => {
     knowledgeService.create({ title: '和角公式' })
     expect(apiMock.post).toHaveBeenCalledWith('/api/recitations/materials', { title: '和角公式' }, undefined)
     const file = new File(['x'], 'a.webm')
-    knowledgeService.uploadRecording(9, file, { signal: 1 })
+    knowledgeService.uploadRecording(9, file, 'request-123', { signal: 1 })
     expect(apiMock.upload).toHaveBeenCalledWith(
-      '/api/recitations/materials/9/attempts', file, { fieldName: 'file', config: { signal: 1 } },
+      '/api/recitations/materials/9/attempts', file,
+      { fieldName: 'file', extraData: { clientRequestId: 'request-123' }, config: { signal: 1 } },
     )
   })
 

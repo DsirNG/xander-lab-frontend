@@ -3,6 +3,7 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { beforeAll, describe, expect, it, vi } from 'vitest';
 import i18n from '@locales/index';
 import { AgentQuizPanel, KnowledgeActions } from './KnowledgeMirrorPage';
+import { buildKnowledgeQuizPath } from '../utils/knowledgeNavigation';
 
 // 语言由浏览器环境探测，不同机器上的 jsdom 未必一致；断言按钮文案前先把语言钉死。
 beforeAll(async () => {
@@ -21,6 +22,18 @@ const quiz = {
     { question: '怎么推导', userAnswer: '画单位圆…', comment: '方向对了但写错了符号', credit: 0.5 },
   ],
 };
+
+describe('knowledge quiz handoff', () => {
+  it('把 materialId 带进智能体开场白，同名知识也不会靠标题猜', () => {
+    const path = buildKnowledgeQuizPath(
+      (_key, values) => `测验 ${values.title}，知识 ID ${values.materialId}`,
+      { id: 91, title: '同名知识' },
+    );
+
+    expect(decodeURIComponent(path)).toContain('知识 ID 91');
+    expect(path).toMatch(/^\/workspace\/agent\?q=/);
+  });
+});
 
 describe('AgentQuizPanel', () => {
   it('把服务端算出的分数和逐题判分原样摆出来，不在前端重算总分', () => {
