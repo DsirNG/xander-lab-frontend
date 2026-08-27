@@ -527,7 +527,7 @@ const WorkspaceAgentChat = () => {
         </aside>
       ) : (
         /* 收起态 Slim Left Sidebar (64px) - 显示 Logo 与 新增会话 */
-        <aside className="relative flex h-full w-[64px] shrink-0 flex-col items-center border-r border-[#ececf4] bg-[#fcfcfd] py-4 transition-all duration-200">
+        <aside className="relative flex h-full w-[64px] shrink-0 flex-col items-center bg-[#fcfcfd] py-4 transition-all duration-200">
           {/* Logo Orb Graphic */}
           <button
             type="button"
