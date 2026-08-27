@@ -418,6 +418,10 @@ export default {
       collapseDrawer: '收起对话框',
       expandDrawer: '展开对话框',
       loadMore: '加载更多 ({{count}})',
+      pin: '置顶',
+      unpin: '取消置顶',
+      pinFailed: '置顶操作失败，请重试',
+      status: { generating: '生成中', done: '已生成完成' },
       tabs: { all: '全部', pinned: '置顶', favorite: '收藏' },
       groups: { pinned: '置顶', recent: '最近', today: '今天', yesterday: '昨天', earlier: '更早' },
       actions: {

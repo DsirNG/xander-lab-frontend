@@ -418,6 +418,10 @@ export default {
       collapseDrawer: 'Collapse panel',
       expandDrawer: 'Expand panel',
       loadMore: 'Load more ({{count}})',
+      pin: 'Pin',
+      unpin: 'Unpin',
+      pinFailed: 'Failed to update pin, please retry',
+      status: { generating: 'Generating', done: 'Generation finished' },
       tabs: { all: 'All', pinned: 'Pinned', favorite: 'Favorites' },
       groups: { pinned: 'Pinned', recent: 'Recent', today: 'Today', yesterday: 'Yesterday', earlier: 'Earlier' },
       actions: {

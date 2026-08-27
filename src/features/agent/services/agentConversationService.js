@@ -2,7 +2,7 @@
  * 博客智能体对话 API 封装
  * Agent conversation API wrapper
  */
-import { get, post, postStream, getStream, upload } from '@api';
+import { delete as del, get, post, postStream, getStream, upload } from '@api';
 
 const BASE = '/api/agent/conversations';
 
@@ -23,6 +23,12 @@ export const agentConversationService = {
     postStream(`${BASE}/${id}/messages/stream`, { content, attachments }, { onEvent, ...config }),
   /** 请求停止当前正在执行的一轮 */
   cancel: (id, config) => post(`${BASE}/${id}/cancel`, undefined, config),
+  /** 上报已读：清掉列表上的“生成完成”提醒，不改变会话排序时间 */
+  markRead: (id, config) => post(`${BASE}/${id}/read`, undefined, config),
+  /** 置顶会话 */
+  pin: (id, config) => post(`${BASE}/${id}/pin`, undefined, config),
+  /** 取消置顶 */
+  unpin: (id, config) => del(`${BASE}/${id}/pin`, undefined, config),
   /** 订阅可续传事件流（断线恢复用），支持 Last-Event-ID 游标 */
   subscribeEvents: (id, afterEventId, onEvent, config) =>
     getStream(`${BASE}/${id}/events`, {

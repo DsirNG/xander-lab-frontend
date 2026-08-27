@@ -18,6 +18,9 @@ vi.mock('../services/agentConversationService.js', () => ({
     sendMessageStream: vi.fn(),
     subscribeEvents: vi.fn(),
     cancel: vi.fn(),
+    markRead: vi.fn(() => Promise.resolve(null)),
+    pin: vi.fn(() => Promise.resolve(null)),
+    unpin: vi.fn(() => Promise.resolve(null)),
   },
   parseToolPayload: (content) => {
     if (!content) return null

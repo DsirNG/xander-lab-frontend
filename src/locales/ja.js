@@ -410,6 +410,10 @@ export default {
       collapseDrawer: 'パネルを折りたたむ',
       expandDrawer: 'パネルを展開',
       loadMore: 'さらに読み込む ({{count}})',
+      pin: 'ピン留め',
+      unpin: 'ピン留めを解除',
+      pinFailed: 'ピン留めの更新に失敗しました。再試行してください',
+      status: { generating: '生成中', done: '生成が完了しました' },
       tabs: { all: 'すべて', pinned: 'ピン留め', favorite: 'お気に入り' },
       groups: { pinned: 'ピン留め', recent: '最近', today: '今日', yesterday: '昨日', earlier: '以前' },
       actions: {

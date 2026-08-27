@@ -410,6 +410,10 @@ export default {
       collapseDrawer: 'Thu gọn bảng',
       expandDrawer: 'Mở rộng bảng',
       loadMore: 'Tải thêm ({{count}})',
+      pin: 'Ghim',
+      unpin: 'Bỏ ghim',
+      pinFailed: 'Cập nhật ghim thất bại, vui lòng thử lại',
+      status: { generating: 'Đang tạo', done: 'Đã tạo xong' },
       tabs: { all: 'Tất cả', pinned: 'Đã ghim', favorite: 'Yêu thích' },
       groups: { pinned: 'Đã ghim', recent: 'Gần đây', today: 'Hôm nay', yesterday: 'Hôm qua', earlier: 'Trước đó' },
       actions: {

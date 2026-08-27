@@ -4,6 +4,8 @@ import { agentConversationService, parseToolPayload } from '../services/agentCon
 
 const LIVE_STEP_LIMIT = 100;
 const MAX_RECONNECT_DELAY_MS = 5000;
+/** 后台会话状态只能从列表快照得知，有会话在执行时才轮询，全部收口后自动停止。 */
+const SESSIONS_POLL_INTERVAL_MS = 5000;
 
 const asId = (value) => (value == null ? null : String(value));
 const normalizeRunVersion = (value) => String(value ?? 0);
@@ -65,6 +67,7 @@ export const useAgentConversation = ({ conversationId }) => {
   const creatingRef = useRef(false);
   const runningRef = useRef(false);
   const pendingFirstMessageRef = useRef(null);
+  const readReportedRef = useRef(new Set());
   const answerDeltaRef = useRef('');
   const toolDeltaRef = useRef(new Map());
   const streamFrameRef = useRef(null);
@@ -269,12 +272,13 @@ export const useAgentConversation = ({ conversationId }) => {
     }
   }, [applySnapshot, isCurrent]);
 
-  const loadSessions = useCallback(async () => {
+  /** quiet 用于轮询刷新：不闪列表骨架，失败也保留上一次的列表。 */
+  const loadSessions = useCallback(async ({ quiet = false } = {}) => {
     const requestId = ++sessionsRequestRef.current;
     sessionsControllerRef.current?.abort();
     const controller = new AbortController();
     sessionsControllerRef.current = controller;
-    setSessionsLoading(true);
+    if (!quiet) setSessionsLoading(true);
     try {
       const list = await agentConversationService.list({
         _silent: true,
@@ -283,10 +287,57 @@ export const useAgentConversation = ({ conversationId }) => {
       });
       if (requestId === sessionsRequestRef.current) setSessions(Array.isArray(list) ? list : []);
     } catch (error) {
-      if (!isAbortError(error) && requestId === sessionsRequestRef.current) setSessions([]);
+      if (!quiet && !isAbortError(error) && requestId === sessionsRequestRef.current) setSessions([]);
     } finally {
       if (requestId === sessionsRequestRef.current) setSessionsLoading(false);
     }
+  }, []);
+
+  /** 上报已读：把列表上的“生成完成”蓝点去掉，失败不打断对话，下次打开会重试。 */
+  const markConversationRead = useCallback(async (id) => {
+    const key = String(id);
+    setSessions((current) => current.map((session) => (
+      String(session.id) === key ? { ...session, unread: false } : session
+    )));
+    try {
+      await agentConversationService.markRead(key, { _silent: true, dedupe: false });
+      return true;
+    } catch {
+      return false;
+    }
+  }, []);
+
+  /** 置顶/取消置顶：先乐观更新列表分组，失败回滚并把错误交给调用方提示。 */
+  const setConversationPinned = useCallback(async (id, pinned) => {
+    const key = String(id);
+    const apply = (value) => setSessions((current) => current.map((session) => (
+      String(session.id) === key ? { ...session, isPinned: value } : session
+    )));
+    apply(pinned ? 1 : 0);
+    try {
+      const updated = pinned
+        ? await agentConversationService.pin(key, { _silent: true, dedupe: false })
+        : await agentConversationService.unpin(key, { _silent: true, dedupe: false });
+      if (updated?.id != null) {
+        setSessions((current) => current.map((session) => (
+          String(session.id) === key ? { ...session, ...updated } : session
+        )));
+      }
+      return true;
+    } catch (error) {
+      apply(pinned ? 0 : 1);
+      throw error;
+    }
+  }, []);
+
+  /** 一轮开始时先本地置为 running：即使离开该会话，列表也会转圈并触发轮询。 */
+  const markSessionRunning = useCallback((id) => {
+    const key = String(id);
+    setSessions((current) => current.map((session) => (
+      String(session.id) === key
+        ? { ...session, status: 'running', unread: false, updatedAt: new Date().toISOString() }
+        : session
+    )));
   }, []);
 
   const refreshMessages = useCallback(async (id, config = {}) => {
@@ -414,6 +465,7 @@ export const useAgentConversation = ({ conversationId }) => {
     beginRunGeneration(null, { clearLive: displayUserMessage });
     updateRunning(true);
     setConversation((current) => current ? { ...current, status: 'running' } : current);
+    markSessionRunning(id);
     if (displayUserMessage) {
       pushStep({
         type: 'user',
@@ -458,7 +510,7 @@ export const useAgentConversation = ({ conversationId }) => {
     } finally {
       if (turnControllerRef.current === controller) turnControllerRef.current = null;
     }
-  }, [applyEvent, beginRunGeneration, isCurrent, loadSessions, pushStep, recoverConversation, refreshAfterClientError, t, updateRunning]);
+  }, [applyEvent, beginRunGeneration, isCurrent, loadSessions, markSessionRunning, pushStep, recoverConversation, refreshAfterClientError, t, updateRunning]);
 
   const cancelTurn = useCallback(async () => {
     const id = activeIdRef.current;
@@ -607,6 +659,37 @@ export const useAgentConversation = ({ conversationId }) => {
     sendMessage(pending.text, { displayUserMessage: false, attachments: pending.attachments });
   }, [loading, conversation, sendMessage]);
 
+  // 已读时机：正在看的会话不在执行中（打开旧会话，或在本会话里看到这一轮收口）。
+  useEffect(() => {
+    const id = activeIdRef.current;
+    if (!id || !conversation || String(conversation.id) !== id) return;
+    if (conversation.status === 'running' || !conversation.unread) return;
+    const key = `${id}:${conversation.lastCompletedAt ?? ''}`;
+    if (readReportedRef.current.has(key)) return;
+    readReportedRef.current.add(key);
+    setConversation((current) => (
+      current && String(current.id) === id ? { ...current, unread: false } : current
+    ));
+    markConversationRead(id).then((ok) => {
+      if (!ok) readReportedRef.current.delete(key);
+    });
+  }, [conversation, markConversationRead]);
+
+  // 有会话在执行时轮询列表：离开该会话后仍能看到转圈变蓝点；全部收口后自动停。
+  const hasRunningSession = sessions.some((session) => session.status === 'running');
+  useEffect(() => {
+    if (!hasRunningSession) return undefined;
+    const refresh = () => {
+      if (document.visibilityState !== 'hidden') loadSessions({ quiet: true });
+    };
+    const timer = window.setInterval(refresh, SESSIONS_POLL_INTERVAL_MS);
+    document.addEventListener('visibilitychange', refresh);
+    return () => {
+      window.clearInterval(timer);
+      document.removeEventListener('visibilitychange', refresh);
+    };
+  }, [hasRunningSession, loadSessions]);
+
   useEffect(() => () => {
     streamEpochRef.current += 1;
     routeControllerRef.current?.abort();
@@ -632,6 +715,8 @@ export const useAgentConversation = ({ conversationId }) => {
     sendMessage,
     cancelTurn,
     createConversation,
+    setConversationPinned,
+    markConversationRead,
     reset,
     refreshMessages,
   };

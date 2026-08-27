@@ -410,6 +410,10 @@ export default {
       collapseDrawer: 'Свернуть панель',
       expandDrawer: 'Развернуть панель',
       loadMore: 'Загрузить еще ({{count}})',
+      pin: 'Закрепить',
+      unpin: 'Открепить',
+      pinFailed: 'Не удалось изменить закрепление, попробуйте снова',
+      status: { generating: 'Генерация', done: 'Генерация завершена' },
       tabs: { all: 'Все', pinned: 'Закрепленные', favorite: 'Избранное' },
       groups: { pinned: 'Закрепленные', recent: 'Недавние', today: 'Сегодня', yesterday: 'Вчера', earlier: 'Ранее' },
       actions: {

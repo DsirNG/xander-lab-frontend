@@ -169,6 +169,7 @@ const WorkspaceAgentChat = () => {
     sendMessage,
     cancelTurn,
     createConversation,
+    setConversationPinned,
     reset,
   } = useAgentConversation({ conversationId });
 
@@ -307,6 +308,18 @@ const WorkspaceAgentChat = () => {
     navigate('/workspace/ai', { replace: true });
   };
 
+  // 置顶失败时回滚由 hook 负责，这里只补一个提示。
+  const handleTogglePin = useCallback(
+    async (sessionId, pinned) => {
+      try {
+        await setConversationPinned(sessionId, pinned);
+      } catch (error) {
+        toast.error(error.message || t('workspace.agent.pinFailed'));
+      }
+    },
+    [setConversationPinned, t, toast],
+  );
+
   useEffect(() => {
     if (!queryParam || conversationId || creating || pendingQueryRef.current === queryParam) return;
     pendingQueryRef.current = queryParam;
@@ -331,10 +344,10 @@ const WorkspaceAgentChat = () => {
         open={drawerOpen}
         sessions={sessions}
         activeConversationId={conversationId}
-        locked={locked}
         onOpenChange={setDrawerOpen}
         onNewConversation={handleNewConversation}
         onSelectConversation={(sessionId) => navigate(`/workspace/ai/${sessionId}`)}
+        onTogglePin={handleTogglePin}
         t={t}
       />
 

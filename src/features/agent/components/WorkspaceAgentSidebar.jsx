@@ -1,15 +1,21 @@
 import { useMemo, useState } from 'react';
-import { CheckSquare, ChevronDown, MessageCircle, PanelLeftClose, PanelLeftOpen, Plus, Search, X } from 'lucide-react';
+import { CheckSquare, ChevronDown, Loader2, MessageCircle, PanelLeftClose, PanelLeftOpen, Pin, PinOff, Plus, Search, X } from 'lucide-react';
 import Modal from '@components/common/Modal';
 
+/** 后端返回 'yyyy-MM-dd HH:mm:ss'，补上 T 以免部分浏览器解析失败导致排序错乱。 */
+const parseSessionTime = (value) => {
+  if (!value) return 0;
+  const time = new Date(typeof value === 'string' ? value.replace(' ', 'T') : value).getTime();
+  return Number.isNaN(time) ? 0 : time;
+};
+
 const formatSessionTime = (dateStr, t) => {
-  if (!dateStr) return '';
-  const date = new Date(dateStr);
-  if (Number.isNaN(date.getTime())) return '';
+  const time = parseSessionTime(dateStr);
+  if (!time) return '';
+  const date = new Date(time);
   const now = new Date();
   const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
   const yesterdayStart = todayStart - 86400000;
-  const time = date.getTime();
 
   if (time >= todayStart) {
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -18,26 +24,54 @@ const formatSessionTime = (dateStr, t) => {
   return date.toLocaleDateString([], { month: 'numeric', day: 'numeric' });
 };
 
-const SessionItem = ({ session, active, onSelect, t }) => {
+const SessionItem = ({ session, active, onSelect, onTogglePin, t }) => {
   const formattedTime = formatSessionTime(session.updatedAt || session.createdAt, t);
+  const running = session.status === 'running';
+  // 蓝点只提醒“不在这个会话里”的完成结果；正在看的会话直接看到结果本身。
+  const unread = !running && !active && Boolean(session.unread);
+  const pinned = Number(session.isPinned) === 1;
+  const statusLabel = running
+    ? t('workspace.agent.status.generating', '生成中')
+    : t('workspace.agent.status.done', '已生成完成');
 
   return (
-    <button
-      type="button"
-      onClick={() => onSelect(session.id)}
-      className={`flex w-full items-center gap-3 rounded-xl px-2.5 py-2 text-left transition-colors ${
+    <div
+      className={`group relative flex w-full items-center rounded-xl transition-colors ${
         active ? 'bg-[#f2f1fd]' : 'hover:bg-[#f7f6fc]'
       }`}
     >
-      <div className="min-w-0 flex-1">
-        <div className="flex items-center justify-between gap-2">
-          <span className={`truncate text-sm font-normal ${active ? 'text-[#6055f6]' : 'text-[#0d0d0d]'}`}>
-            {session.title || t('blog.agent.untitled', '未命名对话')}
-          </span>
-          {formattedTime ? <span className="shrink-0 text-xs text-[#9ea3b9]">{formattedTime}</span> : null}
-        </div>
+      <button
+        type="button"
+        onClick={() => onSelect(session.id)}
+        className="flex min-w-0 flex-1 items-center gap-2 py-2 pl-2.5 text-left"
+      >
+        {/* 固定宽度的状态位：转圈 / 蓝点 / 占位，保证标题左边缘始终对齐 */}
+        <span
+          className="grid h-4 w-4 shrink-0 place-items-center"
+          {...(running || unread ? { role: 'img', 'aria-label': statusLabel, title: statusLabel } : { 'aria-hidden': true })}
+        >
+          {running ? <Loader2 className="h-3.5 w-3.5 animate-spin text-[#9ea3b9]" /> : null}
+          {unread ? <span className="h-2 w-2 rounded-full bg-[#3b82f6]" /> : null}
+        </span>
+        <span className={`truncate text-sm font-normal ${active ? 'text-[#6055f6]' : 'text-[#0d0d0d]'}`}>
+          {session.title || t('blog.agent.untitled', '未命名对话')}
+        </span>
+      </button>
+      <div className="flex shrink-0 items-center pr-2.5 pl-2">
+        {formattedTime ? (
+          <span className="text-xs text-[#9ea3b9] group-hover:hidden">{formattedTime}</span>
+        ) : null}
+        <button
+          type="button"
+          onClick={() => onTogglePin(session.id, !pinned)}
+          className="hidden h-6 w-6 place-items-center rounded-lg text-[#6c7293] transition-colors group-hover:grid hover:bg-[#e8e6fb] hover:text-[#6055f6]"
+          title={pinned ? t('workspace.agent.unpin', '取消置顶') : t('workspace.agent.pin', '置顶')}
+          aria-label={pinned ? t('workspace.agent.unpin', '取消置顶') : t('workspace.agent.pin', '置顶')}
+        >
+          {pinned ? <PinOff className="h-3.5 w-3.5" /> : <Pin className="h-3.5 w-3.5" />}
+        </button>
       </div>
-    </button>
+    </div>
   );
 };
 
@@ -124,7 +158,7 @@ const ConversationSearchModal = ({ open, sessions, onClose, onSelect, t }) => {
   );
 };
 
-const CollapsedSidebarRail = ({ locked, onExpand, onNewConversation, onSearch, t }) => (
+const CollapsedSidebarRail = ({ onExpand, onNewConversation, onSearch, t }) => (
   <aside className="absolute inset-y-0 left-0 z-20 flex w-16 flex-col items-center bg-[#fdfdfe] px-3 py-4">
     <button
       type="button"
@@ -146,8 +180,7 @@ const CollapsedSidebarRail = ({ locked, onExpand, onNewConversation, onSearch, t
       <button
         type="button"
         onClick={onNewConversation}
-        disabled={locked}
-        className="grid h-9 w-9 place-items-center rounded-xl bg-[#5d55fa] text-white transition-colors hover:bg-[#4d44f3] disabled:opacity-50"
+        className="grid h-9 w-9 place-items-center rounded-xl bg-[#5d55fa] text-white transition-colors hover:bg-[#4d44f3]"
         title={t('workspace.agent.newConversation', '新建对话')}
         aria-label={t('workspace.agent.newConversation', '新建对话')}
       >
@@ -179,22 +212,24 @@ const WorkspaceAgentSidebar = ({
   open,
   sessions,
   activeConversationId,
-  locked,
   onOpenChange,
   onNewConversation,
   onSelectConversation,
+  onTogglePin,
   t,
 }) => {
   const [searchOpen, setSearchOpen] = useState(false);
   const [expandedPinned, setExpandedPinned] = useState(false);
 
+  // 置顶与普通两组，组内各自按时间倒序；本地排序让置顶/发起对话立刻归位。
   const { pinnedSessions, recentSessions } = useMemo(() => {
-    const pinned = sessions.filter((session) => session.isPinned);
-    const recent = sessions.filter((session) => !session.isPinned);
-    if (pinned.length === 0 && sessions.length > 0) {
-      return { pinnedSessions: sessions.slice(0, 3), recentSessions: sessions.slice(3) };
-    }
-    return { pinnedSessions: pinned, recentSessions: recent };
+    const byTimeDesc = (a, b) => (
+      parseSessionTime(b.updatedAt || b.createdAt) - parseSessionTime(a.updatedAt || a.createdAt)
+    );
+    return {
+      pinnedSessions: sessions.filter((session) => Number(session.isPinned) === 1).sort(byTimeDesc),
+      recentSessions: sessions.filter((session) => Number(session.isPinned) !== 1).sort(byTimeDesc),
+    };
   }, [sessions]);
 
   const visiblePinnedSessions = expandedPinned ? pinnedSessions : pinnedSessions.slice(0, 3);
@@ -241,8 +276,7 @@ const WorkspaceAgentSidebar = ({
           <button
             type="button"
             onClick={onNewConversation}
-            disabled={locked}
-            className="flex h-9 w-full items-center rounded-xl bg-[#5d55fa] text-white transition-colors hover:bg-[#4d44f3] disabled:opacity-50"
+            className="flex h-9 w-full items-center rounded-xl bg-[#5d55fa] text-white transition-colors hover:bg-[#4d44f3]"
             title={t('workspace.agent.newConversation', '新建对话')}
           >
             <span className="grid h-9 w-8 shrink-0 place-items-center">
@@ -266,6 +300,7 @@ const WorkspaceAgentSidebar = ({
                   session={session}
                   active={String(activeConversationId) === String(session.id)}
                   onSelect={onSelectConversation}
+                  onTogglePin={onTogglePin}
                   t={t}
                 />
               ))}
@@ -293,6 +328,7 @@ const WorkspaceAgentSidebar = ({
                   session={session}
                   active={String(activeConversationId) === String(session.id)}
                   onSelect={onSelectConversation}
+                  onTogglePin={onTogglePin}
                   t={t}
                 />
               ))}
@@ -308,7 +344,6 @@ const WorkspaceAgentSidebar = ({
         </aside>
       ) : (
         <CollapsedSidebarRail
-          locked={locked}
           onExpand={() => onOpenChange(true)}
           onNewConversation={onNewConversation}
           onSearch={() => setSearchOpen(true)}

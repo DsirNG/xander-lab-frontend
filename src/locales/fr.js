@@ -407,6 +407,10 @@ export default {
       collapseDrawer: 'Réduire le panneau',
       expandDrawer: 'Agrandir le panneau',
       loadMore: 'Charger plus ({{count}})',
+      pin: 'Épingler',
+      unpin: 'Désépingler',
+      pinFailed: 'Échec de la mise à jour de l\'épingle, veuillez réessayer',
+      status: { generating: 'Génération en cours', done: 'Génération terminée' },
       tabs: { all: 'Tout', pinned: 'Epinglés', favorite: 'Favoris' },
       groups: { pinned: 'Epinglés', recent: 'Récents', today: 'Aujourd\'hui', yesterday: 'Hier', earlier: 'Plus ancien' },
       actions: {
