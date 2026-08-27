@@ -176,6 +176,10 @@ html {
   background-clip: padding-box;
 }
 
+button {
+    cursor: pointer;
+}
+
 @layer base {
   html {
     -webkit-tap-highlight-color: transparent;
