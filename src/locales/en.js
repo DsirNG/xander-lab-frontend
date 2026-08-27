@@ -380,7 +380,6 @@ export default {
         practice: { title: 'Generate practice', description: 'Create exercises from knowledge' },
         publish: { title: 'Publish blog', description: 'Share your thoughts on the blog' },
       },
-      loading: 'Loading workspace…',
       continueTitle: 'Continue',
       viewAll: 'View all',
       sections: {

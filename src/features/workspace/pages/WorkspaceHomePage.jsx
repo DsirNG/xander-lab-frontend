@@ -2,7 +2,6 @@ import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import {
   ArrowRight,
-  Bell,
   BookOpen,
   CalendarDays,
   Check,
@@ -20,7 +19,7 @@ import {
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuthSession } from '@features/auth/context/authSessionContextValue';
-import LoadingSpinner from '@components/common/LoadingSpinner';
+import WorkspaceHomeSkeleton from '@features/workspace/components/WorkspaceHomeSkeleton';
 import NotificationBell from '@features/blog/components/NotificationBell';
 import { agentConversationService } from '@features/agent/services/agentConversationService';
 import { knowledgeService } from '@features/knowledge/services/knowledgeService';
@@ -160,7 +159,7 @@ const WorkspaceHomePage = () => {
   }, []);
 
   if (loading) {
-    return <LoadingSpinner fullScreen text={t('workspace.home.loading')} />;
+    return <WorkspaceHomeSkeleton />;
   }
 
   const sectionItems = {

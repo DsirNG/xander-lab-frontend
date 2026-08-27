@@ -89,7 +89,7 @@ const WorkspaceSidebar = ({ userInfo, onOpenSettings }) => {
       <button
         type="button"
         onClick={onOpenSettings}
-        className="mt-5 flex min-h-[70px] w-full items-center gap-3 rounded-2xl border border-[#f4f4f9] bg-[#fefefe] px-3.5 text-left transition-colors hover:bg-[#faf9fd] focus:outline-none focus:ring-2 focus:ring-accent-200"
+        className="mt-5 flex min-h-[70px] w-full items-center gap-3 rounded-2xl border border-[#f4f4f9] bg-[#fefefe] px-3.5 text-left transition-colors hover:bg-[#faf9fd]"
         aria-label={t('workspace.settings')}
       >
         <span className="relative grid h-10 w-10 shrink-0 place-items-center overflow-hidden rounded-full border border-[#dddddd] bg-white text-micro font-bold text-accent">

@@ -372,7 +372,6 @@ export default {
         practice: { title: '練習を生成', description: '知識から練習問題を作成' },
         publish: { title: 'ブログを公開', description: '考えをブログで共有' },
       },
-      loading: 'ワークスペースを読み込み中…',
       continueTitle: '続きから',
       viewAll: 'すべて表示',
       sections: {

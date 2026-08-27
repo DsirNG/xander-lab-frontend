@@ -372,7 +372,6 @@ export default {
         practice: { title: 'Créer des exercices', description: 'Générez des exercices depuis vos connaissances' },
         publish: { title: 'Publier un blog', description: 'Partagez vos réflexions sur le blog' },
       },
-      loading: 'Chargement de l’espace…',
       continueTitle: 'Continuer',
       viewAll: 'Tout voir',
       sections: {

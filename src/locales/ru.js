@@ -372,7 +372,6 @@ export default {
         practice: { title: 'Создать практику', description: 'Создайте упражнения из знаний' },
         publish: { title: 'Опубликовать блог', description: 'Поделитесь мыслями в блоге' },
       },
-      loading: 'Загрузка рабочего пространства…',
       continueTitle: 'Продолжить',
       viewAll: 'Смотреть все',
       sections: {

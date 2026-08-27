@@ -372,7 +372,6 @@ export default {
         practice: { title: 'Tạo bài luyện tập', description: 'Tạo bài tập từ kiến thức' },
         publish: { title: 'Đăng blog', description: 'Chia sẻ suy nghĩ trên blog' },
       },
-      loading: 'Đang tải không gian làm việc…',
       continueTitle: 'Tiếp tục',
       viewAll: 'Xem tất cả',
       sections: {

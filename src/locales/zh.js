@@ -380,7 +380,6 @@ export default {
         practice: { title: '生成练习', description: '根据知识生成练习题' },
         publish: { title: '发布博客', description: '将思考发布到博客' },
       },
-      loading: '正在加载工作台…',
       continueTitle: '继续进行',
       viewAll: '查看全部',
       sections: {
