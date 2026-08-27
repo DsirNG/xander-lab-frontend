@@ -443,7 +443,7 @@ const WorkspaceAgentChat = () => {
     <div className="relative flex h-full w-full min-w-0 overflow-hidden bg-[#fafafa]">
       {/* AI 会话 Side Drawer */}
       {drawerOpen ? (
-        <aside className="relative flex h-full w-[250px] shrink-0 flex-col border-r border-[#ececf4] bg-[#fcfcfd] p-4 transition-all duration-200">
+        <aside className="relative flex h-full w-[250px] shrink-0 flex-col bg-[#fcfcfd] p-4 transition-all duration-200">
           {/*Drawer Title & Actions*/}
           <div className="px-1 pt-1 pb-2 flex items-center justify-between">
             <h2 className="text-xl font-bold text-[#111426]">
