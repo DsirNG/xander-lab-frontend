@@ -337,6 +337,37 @@ html {
   animation: progress-linear linear forwards;
 }
 
+@keyframes workspace-border-flow {
+  to {
+    background-position: 200% 0;
+  }
+}
+
+.workspace-quick-action::before {
+  position: absolute;
+  z-index: 20;
+  inset: 0;
+  padding: 1px;
+  border-radius: inherit;
+  background: linear-gradient(90deg, transparent 0%, #8d87ff 24%, #72d6ff 48%, #ff9ee4 72%, transparent 100%);
+  background-position: 0 0;
+  background-size: 200% 100%;
+  content: "";
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 200ms ease-out;
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+}
+
+.workspace-quick-action:hover::before,
+.workspace-quick-action:focus-visible::before {
+  animation: workspace-border-flow 1.5s linear infinite;
+  opacity: 1;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

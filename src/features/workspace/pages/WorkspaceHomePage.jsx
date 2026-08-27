@@ -182,14 +182,16 @@ const WorkspaceHomePage = () => {
                 <Link
                   key={action.key}
                   to={action.to}
-                  className={`${action.tone} flex min-h-[5rem] min-w-0 items-center gap-3 rounded-2xl border border-white/65 px-4 transition-transform`}
+                  className={`${action.tone} workspace-quick-action group relative isolate flex min-h-[5rem] min-w-0 items-center gap-3 overflow-hidden rounded-2xl border border-white/65 px-4 transition-[transform,box-shadow] duration-300 ease-out focus-visible:-translate-y-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#817bf2]/45 focus-visible:ring-offset-2 motion-reduce:transform-none motion-reduce:transition-none`}
                 >
-                  <img src={action.image} alt="" className="h-11 w-11 shrink-0 object-contain" aria-hidden="true" />
+                  <span className="relative z-10 shrink-0 transition-transform duration-500 ease-out group-hover:rotate-6 group-hover:scale-110 group-focus-visible:rotate-6 group-focus-visible:scale-110 motion-reduce:transform-none motion-reduce:transition-none">
+                    <img src={action.image} alt="" className="h-11 w-11 object-contain" aria-hidden="true" />
+                  </span>
                   <span className="min-w-0 flex-1">
                     <span className="block truncate text-body font-semibold text-[#242741]">{t(`workspace.home.actions.${action.key}.title`)}</span>
                     <span className="mt-0.5 block truncate text-caption text-[#8e94aa]">{t(`workspace.home.actions.${action.key}.description`)}</span>
                   </span>
-                  <ChevronDown className="h-4 w-4 -rotate-90 text-[#858ca8]" aria-hidden="true" />
+                  <ChevronDown className="h-4 w-4 -rotate-90 text-[#858ca8] transition-transform duration-300 group-hover:translate-x-1 group-focus-visible:translate-x-1 motion-reduce:transition-none" aria-hidden="true" />
                 </Link>
               ))}
             </div>
