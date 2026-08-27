@@ -40,6 +40,7 @@ const CompilerPage = React.lazy(() => import('@features/studio/pages/CompilerPag
 const PublicSourcePage = React.lazy(() => import('@features/studio/pages/PublicSourcePage'));
 const Img2ThreePage = React.lazy(() => import('@features/img2three/pages/Img2ThreePage'));
 const WorkspaceLayout = React.lazy(() => import('@features/workspace/WorkspaceLayout'));
+const WorkspaceHomePage = React.lazy(() => import('@features/workspace/pages/WorkspaceHomePage'));
 const BlogManagePage = React.lazy(() => import('@features/workspace/pages/BlogManagePage'));
 const EmailRemindersPage = React.lazy(() => import('@features/workspace/pages/EmailRemindersPage'));
 const KnowledgeMirrorPage = React.lazy(() => import('@features/knowledge/pages/KnowledgeMirrorPage'));
@@ -163,7 +164,7 @@ export const createRouter = () => {
       children: [
         {
           index: true,
-          element: <Navigate to="/workspace/plans" replace />,
+          element: <LazyPage><WorkspaceHomePage /></LazyPage>,
         },
         {
           path: 'plans',
