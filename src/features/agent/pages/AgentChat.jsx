@@ -863,15 +863,6 @@ const AgentChat = () => {
             </div>
           </header>
 
-          {(reconnecting || errorMessage) && (
-            <div className={`absolute top-14 left-0 right-0 z-10 flex items-center gap-2 border-b px-4 py-2 text-xs font-semibold ${
-              errorMessage ? 'border-danger/20 bg-danger/5 text-danger' : 'border-border bg-surface-muted text-ink-secondary'
-            }`}>
-              {errorMessage ? <AlertCircle className="h-3.5 w-3.5" /> : <Loader2 className="h-3.5 w-3.5 animate-spin" />}
-              <span className="truncate">{errorMessage || statusLine}</span>
-            </div>
-          )}
-
           {loading && messages.length > 0 && (
             <div className="absolute top-14 left-0 right-0 z-10 h-0.5 overflow-hidden bg-border">
               <div className="h-full w-1/3 animate-pulse rounded-full bg-accent" />
@@ -978,6 +969,14 @@ const AgentChat = () => {
                     ) : null}
                     {(isActive || creating || (loading && steps.length > 0)) && !streamingAnswer && !activeImageGeneration && (
                       <ThinkingIndicator label={t('blog.agentChat.thinking')} />
+                    )}
+                    {(reconnecting || errorMessage) && (
+                      <div className={`flex items-center gap-2 rounded-xl border px-3 py-2 text-xs font-semibold ${
+                        errorMessage ? 'border-danger/20 bg-danger/5 text-danger' : 'border-border bg-surface-muted text-ink-secondary'
+                      }`}>
+                        {errorMessage ? <AlertCircle className="h-3.5 w-3.5 shrink-0" /> : <Loader2 className="h-3.5 w-3.5 shrink-0 animate-spin" />}
+                        <span className="truncate">{errorMessage || statusLine}</span>
+                      </div>
                     )}
                     <div ref={chatEndRef} className="h-2" />
                   </div>

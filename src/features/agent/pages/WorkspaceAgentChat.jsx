@@ -351,19 +351,6 @@ const WorkspaceAgentChat = () => {
           </button>
         </header>
 
-        {(reconnecting || errorMessage) && (
-          <div
-            className={`flex items-center gap-2 border-b px-4 py-2 text-xs font-semibold ${
-              errorMessage
-                ? 'border-danger/20 bg-danger/5 text-danger'
-                : 'border-border bg-surface-muted text-ink-secondary'
-            }`}
-          >
-            {errorMessage ? <AlertCircle className="h-3.5 w-3.5" /> : <Loader2 className="h-3.5 w-3.5 animate-spin" />}
-            <span className="truncate">{errorMessage || (reconnecting ? t('blog.agentChat.reconnecting') : '')}</span>
-          </div>
-        )}
-
         {messages.length === 0 && steps.length === 0 && !loading ? (
           /* Empty / Welcome State */
           <div className="flex min-h-0 flex-1 flex-col items-center justify-center px-4 pb-12 pt-4 text-center">
@@ -526,6 +513,24 @@ const WorkspaceAgentChat = () => {
                     !activeImageGeneration && (
                       <ThinkingIndicator label={t('blog.agentChat.thinking')} />
                     )}
+                  {(reconnecting || errorMessage) && (
+                    <div
+                      className={`flex items-center gap-2 rounded-xl border px-3 py-2 text-xs font-semibold ${
+                        errorMessage
+                          ? 'border-danger/20 bg-danger/5 text-danger'
+                          : 'border-border bg-surface-muted text-ink-secondary'
+                      }`}
+                    >
+                      {errorMessage ? (
+                        <AlertCircle className="h-3.5 w-3.5 shrink-0" />
+                      ) : (
+                        <Loader2 className="h-3.5 w-3.5 shrink-0 animate-spin" />
+                      )}
+                      <span className="truncate">
+                        {errorMessage || (reconnecting ? t('blog.agentChat.reconnecting') : '')}
+                      </span>
+                    </div>
+                  )}
                   <div ref={chatEndRef} className="h-2" />
                 </div>
               )}

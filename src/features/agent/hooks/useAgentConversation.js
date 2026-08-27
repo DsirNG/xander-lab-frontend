@@ -578,13 +578,14 @@ export const useAgentConversation = ({ conversationId }) => {
       return undefined;
     }
 
-    // 切换会话时保留已渲染的消息直至新快照就绪，避免整页刷新感。
+    // 切换会话时重置消息列表，触发即时骨架屏加载，消除响应滞后感。
     setConversation(null);
     if (isNewlyCreated && pending?.detail) {
       applySnapshot(id, pending.detail);
       setLoading(false);
       return undefined;
     }
+    setMessages([]);
     setLoading(true);
     const controller = new AbortController();
     routeControllerRef.current = controller;
