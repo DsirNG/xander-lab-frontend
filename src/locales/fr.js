@@ -401,7 +401,7 @@ export default {
     agent: {
       subtitle: 'Votre assistant IA, prêt à vous fournir une aide professionnelle et fiable',
       inputPlaceholder: 'Dites à DinQor ce que vous souhaitez faire...',
-      drawerTitle: 'Discussions IA',
+      drawerTitle: 'DinQorAI',
       newConversation: 'Nouvelle conversation',
       searchPlaceholder: 'Rechercher des conversations',
       collapseDrawer: 'Réduire le panneau',

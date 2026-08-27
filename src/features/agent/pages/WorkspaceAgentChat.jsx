@@ -108,7 +108,7 @@ const ConversationMessage = ({ role, content, attachments, isStreaming }) => (
     <div
       className={
         role === 'user'
-          ? 'max-w-[85%] rounded-3xl bg-[#5d55fa] px-4 py-2.5 text-sm leading-6 text-white sm:max-w-[75%]'
+          ? 'max-w-[85%] rounded-3xl bg-[#f2f1fd] px-4 py-2.5 text-sm leading-6 text-black sm:max-w-[75%]'
           : 'w-full min-w-0 py-1 text-sm leading-6 text-[#242741]'
       }
     >
@@ -414,9 +414,9 @@ const WorkspaceAgentChat = () => {
           isActiveSession ? 'bg-[#f2f1fd]' : 'hover:bg-[#f7f6fc]'
         }`}
       >
-        <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-[#f0effe] text-[#6055f6]">
-          <CheckSquare className="h-4.5 w-4.5" />
-        </span>
+        {/*<span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-[#f0effe] text-[#6055f6]">*/}
+        {/*  <CheckSquare className="h-4.5 w-4.5" />*/}
+        {/*</span>*/}
         <div className="min-w-0 flex-1">
           <div className="flex items-center justify-between gap-2">
             <span className={`truncate text-sm font-bold ${isActiveSession ? 'text-[#6055f6]' : 'text-[#1a1c2e]'}`}>
@@ -442,12 +442,20 @@ const WorkspaceAgentChat = () => {
     <div className="relative flex h-full w-full min-w-0 overflow-hidden bg-[#fafafa]">
       {/* AI 会话 Side Drawer */}
       {drawerOpen && (
-        <aside className="relative flex h-full w-[310px] shrink-0 flex-col border-r border-[#ececf4] bg-[#fcfcfd] p-4">
+        <aside className="relative flex h-full w-[250px] shrink-0 flex-col border-r border-[#ececf4] bg-[#fcfcfd] p-4">
            {/*Drawer Title*/}
-          <div className="px-1 pt-1 pb-2">
+          <div className="px-1 pt-1 pb-2 flex items-center justify-between">
             <h2 className="text-xl font-bold text-[#111426]">
-              {t('workspace.agent.drawerTitle', 'AI 会话')}
+              {t('workspace.agent.drawerTitle', '')}
             </h2>
+              <button
+                  type="button"
+                  onClick={() => setSearchOpen(true)}
+                  className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-white text-[#6c7293] transition-colors hover:bg-[#f7f6fc] hover:border-[#dcd9fc] cursor-pointer"
+                  title={t('blog.agentChat.searchPlaceholder', '搜索会话...')}
+              >
+                  <Search className="h-5 w-5" />
+              </button>
           </div>
 
           {/* Top Actions: + 新建对话 & 搜索 Icon Button */}
@@ -456,19 +464,10 @@ const WorkspaceAgentChat = () => {
               type="button"
               onClick={handleNewConversation}
               disabled={locked}
-              className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-[#5d55fa] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#4d44f3] active:scale-[0.98] disabled:opacity-50 cursor-pointer"
+              className="flex flex-1 mx-1 items-center justify-center gap-2 rounded-xl bg-[#5d55fa] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#4d44f3] active:scale-[0.98] disabled:opacity-50 cursor-pointer"
             >
               <Plus className="h-4.5 w-4.5" />
               <span>{t('workspace.agent.newConversation', '新建对话')}</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setSearchOpen(true)}
-              className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-white text-[#6c7293] transition-colors hover:bg-[#f7f6fc] hover:border-[#dcd9fc] cursor-pointer"
-              title={t('blog.agentChat.searchPlaceholder', '搜索会话...')}
-            >
-              <Search className="h-5 w-5" />
             </button>
           </div>
 

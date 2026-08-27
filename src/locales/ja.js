@@ -404,7 +404,7 @@ export default {
     agent: {
       subtitle: 'あなたのAIパートナーが、いつでもプロフェッショナルで信頼できるヘルプを提供します',
       inputPlaceholder: 'DinQorにしたいことを教えてください...',
-      drawerTitle: 'AI チャット',
+      drawerTitle: 'DinQorAI',
       newConversation: '新しい対話',
       searchPlaceholder: '対話を検索',
       collapseDrawer: 'パネルを折りたたむ',

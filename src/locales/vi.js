@@ -404,7 +404,7 @@ export default {
     agent: {
       subtitle: 'Trợ lý AI của bạn, sẵn sàng cung cấp sự trợ giúp chuyên nghiệp và tin cậy',
       inputPlaceholder: 'Nói cho DinQor biết bạn muốn làm gì...',
-      drawerTitle: 'Trò chuyện AI',
+      drawerTitle: 'DinQorAI',
       newConversation: 'Cuộc trò chuyện mới',
       searchPlaceholder: 'Tìm kiếm cuộc trò chuyện',
       collapseDrawer: 'Thu gọn bảng',

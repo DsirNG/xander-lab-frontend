@@ -404,7 +404,7 @@ export default {
     agent: {
       subtitle: 'Ваш ИИ-помощник, готовый предоставить профессиональную и надежную помощь',
       inputPlaceholder: 'Расскажите DinQor, что вы хотите сделать...',
-      drawerTitle: 'ИИ Чаты',
+      drawerTitle: 'DinQorAI',
       newConversation: 'Новый диалог',
       searchPlaceholder: 'Поиск диалогов',
       collapseDrawer: 'Свернуть панель',

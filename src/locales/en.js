@@ -412,7 +412,7 @@ export default {
     agent: {
       subtitle: 'Your AI assistant, ready to provide professional and reliable help anytime',
       inputPlaceholder: 'Tell DinQor what you want to do...',
-      drawerTitle: 'AI Chat',
+      drawerTitle: 'DinQorAI',
       newConversation: 'New conversation',
       searchPlaceholder: 'Search conversations',
       collapseDrawer: 'Collapse panel',

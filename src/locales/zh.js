@@ -412,7 +412,7 @@ export default {
     agent: {
       subtitle: '你的 AI 智能体伙伴，随时为你提供专业、可靠的帮助',
       inputPlaceholder: '告诉 DinQor 你想做什么...',
-      drawerTitle: 'AI 会话',
+      drawerTitle: 'DinQorAI',
       newConversation: '新建对话',
       searchPlaceholder: '搜索对话',
       collapseDrawer: '收起对话框',
