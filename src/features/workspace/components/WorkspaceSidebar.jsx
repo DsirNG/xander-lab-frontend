@@ -12,7 +12,7 @@ const MENU = [
     labelKey: 'workspace.title',
   },
   {
-    to: '/workspace/agent',
+    to: '/workspace/ai',
     activeIcon: '/assets/workspace/sidebar-icons/dinqorai-active.svg',
     icon: '/assets/workspace/sidebar-icons/dinqorai.svg',
     labelKey: 'workspace.menu.dinqorai',

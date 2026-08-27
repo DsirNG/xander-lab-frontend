@@ -41,6 +41,7 @@ const PublicSourcePage = React.lazy(() => import('@features/studio/pages/PublicS
 const Img2ThreePage = React.lazy(() => import('@features/img2three/pages/Img2ThreePage'));
 const WorkspaceLayout = React.lazy(() => import('@features/workspace/WorkspaceLayout'));
 const WorkspaceHomePage = React.lazy(() => import('@features/workspace/pages/WorkspaceHomePage'));
+const WorkspaceAgentChat = React.lazy(() => import('@features/agent/pages/WorkspaceAgentChat'));
 const BlogManagePage = React.lazy(() => import('@features/workspace/pages/BlogManagePage'));
 const EmailRemindersPage = React.lazy(() => import('@features/workspace/pages/EmailRemindersPage'));
 const KnowledgeMirrorPage = React.lazy(() => import('@features/knowledge/pages/KnowledgeMirrorPage'));
@@ -165,6 +166,10 @@ export const createRouter = () => {
         {
           index: true,
           element: <LazyPage><WorkspaceHomePage /></LazyPage>,
+        },
+        {
+          path: 'ai/:conversationId?',
+          element: <LazyPage><WorkspaceAgentChat /></LazyPage>,
         },
         {
           path: 'plans',

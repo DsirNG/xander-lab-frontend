@@ -29,7 +29,7 @@ import { blogService } from '@features/blog/services/blogService';
 const HOME_ASSET_ROOT = '/assets/workspace/home';
 
 const QUICK_ACTIONS = [
-  { key: 'chat', to: '/workspace/agent', image: `${HOME_ASSET_ROOT}/action-chat.svg`, tone: 'bg-[#f5f2ff]' },
+  { key: 'chat', to: '/workspace/ai', image: `${HOME_ASSET_ROOT}/action-chat.svg`, tone: 'bg-[#f5f2ff]' },
   { key: 'import', to: '/workspace/knowledge', image: `${HOME_ASSET_ROOT}/action-import.svg`, tone: 'bg-[#f2f7ff]' },
   { key: 'practice', to: '/workspace/knowledge', image: `${HOME_ASSET_ROOT}/action-practice.svg`, tone: 'bg-[#f2faf4]' },
   { key: 'publish', to: '/workspace/publish', image: `${HOME_ASSET_ROOT}/action-publish.svg`, tone: 'bg-[#fff7f1]' },
@@ -40,7 +40,7 @@ const CONTINUE_SECTIONS = [
     key: 'conversations',
     icon: MessageCircle,
     accent: 'bg-[#f0edff] text-[#7772f8]',
-    to: '/workspace/agent',
+    to: '/workspace/ai',
   },
   {
     key: 'knowledge',
@@ -234,7 +234,7 @@ const WorkspaceHomePage = () => {
                 </div>
                 <div className="mt-2 text-body text-[#8b91a9]">{t('workspace.home.subtitle')}</div>
                 <Link
-                  to="/workspace/agent"
+                  to="/workspace/ai"
                   className="mt-5 flex min-h-[3.5rem] max-w-[56rem] items-center gap-3 rounded-[1.125rem] border border-white bg-white/90 px-5 shadow-[0_0.75rem_2rem_rgba(91,85,190,0.06)]"
                 >
                   <Sparkles className="h-5 w-5 shrink-0 text-[#7771ed]" aria-hidden="true" />
