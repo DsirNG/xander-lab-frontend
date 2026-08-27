@@ -371,7 +371,7 @@ export default {
       search: '全局搜索',
       notifications: '通知',
       quickActions: '快捷操作',
-      welcome: '欢迎回来，',
+      welcome: '欢迎回来',
       subtitle: '你的 AI + 个人知识协作空间，持续学习，不断创造。',
       prompt: '告诉 DinQor 你想做什么...',
       actions: {

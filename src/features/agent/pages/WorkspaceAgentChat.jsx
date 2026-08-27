@@ -13,6 +13,8 @@ import {
   Image as ImageIcon,
   Loader2,
   Mic,
+  PanelLeftClose,
+  PanelLeftOpen,
   Paperclip,
   PenLine,
   Plus,
@@ -403,7 +405,6 @@ const WorkspaceAgentChat = () => {
   const renderSessionItem = (session) => {
     const isActiveSession = String(conversationId) === String(session.id);
     const formattedTime = formatSessionTime(session.updatedAt || session.createdAt, t);
-    const previewText = session.lastMessage || session.summary || session.title || '';
 
     return (
       <button
@@ -441,24 +442,34 @@ const WorkspaceAgentChat = () => {
   return (
     <div className="relative flex h-full w-full min-w-0 overflow-hidden bg-[#fafafa]">
       {/* AI 会话 Side Drawer */}
-      {drawerOpen && (
-        <aside className="relative flex h-full w-[250px] shrink-0 flex-col border-r border-[#ececf4] bg-[#fcfcfd] p-4">
-           {/*Drawer Title*/}
+      {drawerOpen ? (
+        <aside className="relative flex h-full w-[250px] shrink-0 flex-col border-r border-[#ececf4] bg-[#fcfcfd] p-4 transition-all duration-200">
+          {/*Drawer Title & Actions*/}
           <div className="px-1 pt-1 pb-2 flex items-center justify-between">
             <h2 className="text-xl font-bold text-[#111426]">
               {t('workspace.agent.drawerTitle', '')}
             </h2>
+            <div className="flex items-center gap-1">
               <button
-                  type="button"
-                  onClick={() => setSearchOpen(true)}
-                  className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-white text-[#6c7293] transition-colors hover:bg-[#f7f6fc] hover:border-[#dcd9fc] cursor-pointer"
-                  title={t('blog.agentChat.searchPlaceholder', '搜索会话...')}
+                type="button"
+                onClick={() => setSearchOpen(true)}
+                className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-white text-[#6c7293] transition-colors hover:bg-[#f7f6fc] hover:border-[#dcd9fc] cursor-pointer"
+                title={t('blog.agentChat.searchPlaceholder', '搜索会话...')}
               >
-                  <Search className="h-5 w-5" />
+                <Search className="h-5 w-5" />
               </button>
+              <button
+                type="button"
+                onClick={() => setDrawerOpen(false)}
+                className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-white text-[#6c7293] transition-colors hover:bg-[#f7f6fc] hover:border-[#dcd9fc] cursor-pointer"
+                title={t('workspace.agent.collapseDrawer', '收起对话框')}
+              >
+                <PanelLeftClose className="h-5 w-5" />
+              </button>
+            </div>
           </div>
 
-          {/* Top Actions: + 新建对话 & 搜索 Icon Button */}
+          {/* Top Actions: + 新建对话 */}
           <div className="mt-2 flex items-center gap-2.5">
             <button
               type="button"
@@ -514,19 +525,47 @@ const WorkspaceAgentChat = () => {
             )}
           </div>
         </aside>
+      ) : (
+        /* 收起态 Slim Left Sidebar (64px) - 显示 Logo 与 新增会话 */
+        <aside className="relative flex h-full w-[64px] shrink-0 flex-col items-center border-r border-[#ececf4] bg-[#fcfcfd] py-4 transition-all duration-200">
+          {/* Logo Orb Graphic */}
+          <button
+            type="button"
+            onClick={() => setDrawerOpen(true)}
+            className="group grid h-10 w-10 place-items-center rounded-2xl transition-transform cursor-pointer"
+            title={t('workspace.home.welcome', '欢迎回来')}
+          >
+            <img
+              src="/assets/workspace/workspace-logo.svg"
+              alt="DinQor AI Logo"
+              className="h-8 w-8 object-contain"
+            />
+          </button>
+
+          {/* 新增会话 Icon Button */}
+          <button
+            type="button"
+            onClick={handleNewConversation}
+            disabled={locked}
+            className="mt-4 grid h-8 w-8 place-items-center rounded-xl bg-[#5d55fa] text-white shadow-sm transition-colors hover:bg-[#4d44f3] disabled:opacity-50 cursor-pointer"
+            title={t('workspace.agent.newConversation', '新建对话')}
+          >
+            <Plus className="h-5 w-5" />
+          </button>
+        </aside>
       )}
 
       {/* Toggle Arrow Button */}
-      <button
-        type="button"
-        onClick={() => setDrawerOpen((prev) => !prev)}
-        className="absolute top-1/2 -translate-y-1/2 z-30 flex h-8 w-5 items-center justify-center rounded-r-lg border border-[#ececf4] bg-white text-[#7771ed] transition-all hover:bg-[#f5f2ff]"
-        style={{ left: drawerOpen ? '310px' : '0px' }}
-        title={drawerOpen ? t('workspace.agent.collapseDrawer', '收起对话框') : t('workspace.agent.expandDrawer', '展开对话框')}
-        aria-label={drawerOpen ? t('workspace.agent.collapseDrawer', '收起对话框') : t('workspace.agent.expandDrawer', '展开对话框')}
-      >
-        {drawerOpen ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-      </button>
+      {/*<button*/}
+      {/*  type="button"*/}
+      {/*  onClick={() => setDrawerOpen((prev) => !prev)}*/}
+      {/*  className="absolute top-1/2 -translate-y-1/2 z-30 flex h-8 w-5 items-center justify-center rounded-r-lg border border-[#ececf4] bg-white text-[#7771ed] transition-all hover:bg-[#f5f2ff]"*/}
+      {/*  style={{ left: drawerOpen ? '250px' : '64px' }}*/}
+      {/*  title={drawerOpen ? t('workspace.agent.collapseDrawer', '收起对话框') : t('workspace.agent.expandDrawer', '展开对话框')}*/}
+      {/*  aria-label={drawerOpen ? t('workspace.agent.collapseDrawer', '收起对话框') : t('workspace.agent.expandDrawer', '展开对话框')}*/}
+      {/*>*/}
+      {/*  {drawerOpen ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}*/}
+      {/*</button>*/}
 
       {/* Main Chat Content Area */}
       <main className="relative flex min-h-0 min-w-0 flex-1 flex-col bg-[#fdfdfe]">
