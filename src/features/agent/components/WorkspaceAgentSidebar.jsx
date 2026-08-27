@@ -66,7 +66,7 @@ const ConversationSearchModal = ({ open, sessions, onClose, onSelect, t }) => {
       width="max-w-lg"
     >
       <div className="flex flex-col gap-3">
-        <div className="flex items-center gap-3 rounded-xl border border-[#ececf4] bg-[#f9f9fc] px-3.5 py-2.5">
+        <div className="flex items-center gap-3 rounded-xl border border-[#ececf4] px-3.5 py-2.5">
           <Search className="h-4 w-4 shrink-0 text-[#8e94aa]" />
           <input
             type="text"

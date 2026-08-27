@@ -16,10 +16,10 @@ import { twMerge } from 'tailwind-merge';
  * - 纯图标按钮（有 icon 且无 children）自动正方形（w=h），且必须传 aria-label。
  */
 const SIZE_CLASSES = {
-    xs: 'h-8 gap-1.5 px-3 text-caption rounded-lg',
-    sm: 'h-9 gap-1.5 px-3.5 text-caption rounded-lg',
-    md: 'h-10 gap-2 px-4 text-sm rounded-xl',
-    lg: 'h-11 gap-2 px-5 text-sm rounded-xl',
+    xs: 'h-8 gap-1.5 text-caption rounded-lg',
+    sm: 'h-9 gap-1.5 text-caption rounded-lg',
+    md: 'h-10 gap-2 text-sm rounded-xl',
+    lg: 'h-11 gap-2 text-sm rounded-xl',
 };
 
 const ICON_CLASSES = {

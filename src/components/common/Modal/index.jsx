@@ -165,7 +165,7 @@ const Modal = ({
                         )}
 
                         {/* 主体自适应滚动区域 */}
-                        <div className="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar p-6 text-ink-muted">
+                        <div className="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar px-6 pb-6 text-ink-muted">
                             {children}
                         </div>
 

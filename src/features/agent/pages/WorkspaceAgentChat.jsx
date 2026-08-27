@@ -16,6 +16,7 @@ import { agentConversationService, parseToolPayload } from '../services/agentCon
 import AgentMarkdown from '../components/AgentMarkdown';
 import AgentComposer from '../components/AgentComposer';
 import WorkspaceAgentSidebar from '../components/WorkspaceAgentSidebar';
+import WorkspaceAgentSkeleton from '../components/WorkspaceAgentSkeleton';
 import {
   ImageToolProgressPanel,
   ImageToolResult,
@@ -421,9 +422,7 @@ const WorkspaceAgentChat = () => {
               className="min-h-0 min-w-0 flex-1 overflow-y-auto overscroll-contain px-4 pb-6 pt-4 sm:px-8"
             >
               {loading && !creating && !running && steps.length === 0 && messages.length === 0 ? (
-                <div className="flex h-full min-h-48 items-center justify-center">
-                  <LoadingSpinner fullScreen={false} text={t('blog.agentChat.restoring')} />
-                </div>
+                <WorkspaceAgentSkeleton />
               ) : (
                 <div className="mx-auto flex max-w-3xl flex-col gap-5">
                   {messages.map((message) => {
