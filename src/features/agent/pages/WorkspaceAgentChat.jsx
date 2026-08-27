@@ -410,7 +410,7 @@ const WorkspaceAgentChat = () => {
         key={session.id}
         type="button"
         onClick={() => navigate(`/workspace/ai/${session.id}`)}
-        className={`flex w-full items-center gap-3 rounded-2xl px-2.5 py-3 text-left transition-colors ${
+        className={`flex w-full items-center gap-3 rounded-xl px-2.5 py-2 text-left transition-colors ${
           isActiveSession ? 'bg-[#f2f1fd]' : 'hover:bg-[#f7f6fc]'
         }`}
       >
@@ -419,7 +419,7 @@ const WorkspaceAgentChat = () => {
         {/*</span>*/}
         <div className="min-w-0 flex-1">
           <div className="flex items-center justify-between gap-2">
-            <span className={`truncate text-sm font-bold ${isActiveSession ? 'text-[#6055f6]' : 'text-[#1a1c2e]'}`}>
+            <span className={`truncate text-sm font-normal ${isActiveSession ? 'text-[#6055f6]' : 'text-[#0d0d0d]'}`}>
               {session.title || t('blog.agent.untitled', '未命名对话')}
             </span>
             {formattedTime && (
@@ -428,11 +428,11 @@ const WorkspaceAgentChat = () => {
               </span>
             )}
           </div>
-          {previewText && (
-            <div className="mt-0.5 truncate text-xs text-[#9ea3b9]">
-              {previewText}
-            </div>
-          )}
+          {/*{previewText && (*/}
+          {/*  <div className="mt-0.5 truncate text-xs text-[#9ea3b9]">*/}
+          {/*    {previewText}*/}
+          {/*  </div>*/}
+          {/*)}*/}
         </div>
       </button>
     );
@@ -857,7 +857,7 @@ const WorkspaceAgentChat = () => {
             {/* Bottom Input Bar for Active Chat */}
             <div className="shrink-0 bg-gradient-to-t from-[#fdfdfe] via-[#fdfdfe]/90 to-transparent p-4">
               <div className="mx-auto w-full max-w-3xl">
-                <div className="relative rounded-[1.75rem] border border-[#e5e7f2] bg-white p-3 shadow-[0_4px_20px_rgba(103,101,246,0.04)] focus-within:border-[#817bf2] focus-within:ring-2 focus-within:ring-[#817bf2]/20 transition-all">
+                <div className="relative rounded-[1.75rem] border border-[#e5e7f2] bg-white p-1 shadow-[0_4px_20px_rgba(103,101,246,0.04)] focus-within:border-[#817bf2] focus-within:ring-2 focus-within:ring-[#817bf2]/20 transition-all">
                   {attachments.length > 0 && (
                     <div className="flex flex-wrap gap-2 px-2 pb-2">
                       {attachments.map((attachment) => (
