@@ -443,7 +443,7 @@ const WorkspaceAgentChat = () => {
       {/* AI 会话 Side Drawer */}
       {drawerOpen && (
         <aside className="relative flex h-full w-[310px] shrink-0 flex-col border-r border-[#ececf4] bg-[#fcfcfd] p-4">
-          {/* Drawer Title */}
+           {/*Drawer Title*/}
           <div className="px-1 pt-1 pb-2">
             <h2 className="text-xl font-bold text-[#111426]">
               {t('workspace.agent.drawerTitle', 'AI 会话')}
@@ -456,7 +456,7 @@ const WorkspaceAgentChat = () => {
               type="button"
               onClick={handleNewConversation}
               disabled={locked}
-              className="flex flex-1 items-center justify-center gap-2 rounded-2xl bg-[#5d55fa] px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#4d44f3] active:scale-[0.98] disabled:opacity-50"
+              className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-[#5d55fa] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#4d44f3] active:scale-[0.98] disabled:opacity-50 cursor-pointer"
             >
               <Plus className="h-4.5 w-4.5" />
               <span>{t('workspace.agent.newConversation', '新建对话')}</span>
@@ -465,7 +465,7 @@ const WorkspaceAgentChat = () => {
             <button
               type="button"
               onClick={() => setSearchOpen(true)}
-              className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl border border-[#ececf4] bg-white text-[#6c7293] transition-colors hover:bg-[#f7f6fc] hover:border-[#dcd9fc]"
+              className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-white text-[#6c7293] transition-colors hover:bg-[#f7f6fc] hover:border-[#dcd9fc] cursor-pointer"
               title={t('blog.agentChat.searchPlaceholder', '搜索会话...')}
             >
               <Search className="h-5 w-5" />
@@ -563,7 +563,7 @@ const WorkspaceAgentChat = () => {
               <img
                 src="/assets/workspace/home/hero-orb.svg"
                 alt=""
-                className="h-28 w-28 object-contain transition-transform duration-700 hover:scale-105"
+                className="h-28 w-28 object-contain transition-transform duration-700"
               />
             </div>
 
@@ -579,7 +579,7 @@ const WorkspaceAgentChat = () => {
 
             {/* Workbench Input Container */}
             <div className="mt-8 w-full max-w-2xl px-2">
-              <div className="relative rounded-[1.75rem] border border-[#e5e7f2] bg-white p-3 shadow-[0_4px_20px_rgba(103,101,246,0.04)] focus-within:border-[#817bf2] focus-within:ring-2 focus-within:ring-[#817bf2]/20 transition-all">
+              <div className="relative rounded-[1.75rem] border border-[#e5e7f2] bg-white p-1 shadow-[0_4px_20px_rgba(103,101,246,0.04)] transition-all">
                 {attachments.length > 0 && (
                   <div className="flex flex-wrap gap-2 px-2 pb-2">
                     {attachments.map((attachment) => (
@@ -613,7 +613,7 @@ const WorkspaceAgentChat = () => {
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
                     disabled={locked || uploadingAttachments}
-                    className="grid h-9 w-9 shrink-0 place-items-center rounded-full text-[#8e94aa] transition-colors hover:bg-[#f5f4fb] hover:text-[#6765f6] disabled:opacity-50"
+                    className="grid h-9 w-9 shrink-0 cursor-pointer place-items-center rounded-full text-[#8e94aa] transition-colors hover:bg-[#f5f4fb] hover:text-[#6765f6] disabled:opacity-50"
                     title={t('blog.agentChat.addAttachment', '添加附件')}
                   >
                     {uploadingAttachments ? (
@@ -656,7 +656,7 @@ const WorkspaceAgentChat = () => {
 
                   <button
                     type="button"
-                    className="grid h-9 w-9 shrink-0 place-items-center rounded-full text-[#8e94aa] transition-colors hover:bg-[#f5f4fb] hover:text-[#6765f6]"
+                    className="grid h-9 w-9 cursor-pointer shrink-0 place-items-center rounded-full text-[#8e94aa] transition-colors hover:bg-[#f5f4fb] hover:text-[#6765f6]"
                     title="Voice input"
                   >
                     <Mic className="h-5 w-5" />
@@ -666,7 +666,7 @@ const WorkspaceAgentChat = () => {
                     <button
                       type="button"
                       onClick={cancelTurn}
-                      className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-[#111426] text-white transition-colors hover:bg-[#2e334e]"
+                      className="grid h-9 w-9 cursor-pointer shrink-0 place-items-center rounded-full bg-[#111426] text-white transition-colors hover:bg-[#2e334e]"
                     >
                       <Square className="h-3.5 w-3.5 fill-current" />
                     </button>
@@ -675,7 +675,7 @@ const WorkspaceAgentChat = () => {
                       type="button"
                       onClick={handleSubmit}
                       disabled={locked || !canSend}
-                      className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-[#5d55fa] text-white transition-colors hover:bg-[#4d44f3] disabled:opacity-40"
+                      className="grid h-9 w-9 cursor-pointer shrink-0 place-items-center rounded-full bg-[#5d55fa] text-white transition-colors hover:bg-[#4d44f3] disabled:opacity-40"
                     >
                       <Send className="h-4 w-4" />
                     </button>
@@ -688,7 +688,7 @@ const WorkspaceAgentChat = () => {
                 <button
                   type="button"
                   onClick={() => setInput(t('workspace.agent.actions.generateImage', '生成图片'))}
-                  className="flex items-center gap-2 rounded-xl border border-[#ececf4] bg-white px-3.5 py-2 text-xs font-semibold text-[#33364d] transition-all hover:border-[#817bf2] hover:bg-[#f9f8fe]"
+                  className="flex cursor-pointer items-center gap-2 rounded-xl border border-[#ececf4] bg-white px-3.5 py-2 text-xs font-semibold text-[#33364d] transition-all hover:border-[#817bf2] hover:bg-[#f9f8fe]"
                 >
                   <span className="grid h-5 w-5 place-items-center rounded-md bg-emerald-50 text-emerald-500">
                     <ImageIcon className="h-3.5 w-3.5" />
@@ -699,7 +699,7 @@ const WorkspaceAgentChat = () => {
                 <button
                   type="button"
                   onClick={() => setInput(t('workspace.agent.actions.searchWeb', '搜索网页'))}
-                  className="flex items-center gap-2 rounded-xl border border-[#ececf4] bg-white px-3.5 py-2 text-xs font-semibold text-[#33364d] transition-all hover:border-[#817bf2] hover:bg-[#f9f8fe]"
+                  className="flex cursor-pointer items-center gap-2 rounded-xl border border-[#ececf4] bg-white px-3.5 py-2 text-xs font-semibold text-[#33364d] transition-all hover:border-[#817bf2] hover:bg-[#f9f8fe]"
                 >
                   <span className="grid h-5 w-5 place-items-center rounded-md bg-orange-50 text-orange-500">
                     <Globe className="h-3.5 w-3.5" />
@@ -710,7 +710,7 @@ const WorkspaceAgentChat = () => {
                 <button
                   type="button"
                   onClick={() => setInput(t('workspace.agent.actions.generatePractice', '生成练习'))}
-                  className="flex items-center gap-2 rounded-xl border border-[#ececf4] bg-white px-3.5 py-2 text-xs font-semibold text-[#33364d] transition-all hover:border-[#817bf2] hover:bg-[#f9f8fe]"
+                  className="flex cursor-pointer items-center gap-2 rounded-xl border border-[#ececf4] bg-white px-3.5 py-2 text-xs font-semibold text-[#33364d] transition-all hover:border-[#817bf2] hover:bg-[#f9f8fe]"
                 >
                   <span className="grid h-5 w-5 place-items-center rounded-md bg-blue-50 text-blue-500">
                     <PenLine className="h-3.5 w-3.5" />
@@ -721,7 +721,7 @@ const WorkspaceAgentChat = () => {
                 <button
                   type="button"
                   onClick={() => setInput(t('workspace.agent.actions.importKnowledge', '导入知识'))}
-                  className="flex items-center gap-2 rounded-xl border border-[#ececf4] bg-white px-3.5 py-2 text-xs font-semibold text-[#33364d] transition-all hover:border-[#817bf2] hover:bg-[#f9f8fe]"
+                  className="flex cursor-pointer items-center gap-2 rounded-xl border border-[#ececf4] bg-white px-3.5 py-2 text-xs font-semibold text-[#33364d] transition-all hover:border-[#817bf2] hover:bg-[#f9f8fe]"
                 >
                   <span className="grid h-5 w-5 place-items-center rounded-md bg-purple-50 text-purple-500">
                     <BookOpen className="h-3.5 w-3.5" />
