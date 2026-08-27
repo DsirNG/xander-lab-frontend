@@ -49,6 +49,8 @@ export const blogPlanService = {
     post('/api/blog-plans/ai-generate', payload, config),
 
   /* ---------- 用户通知 ---------- */
+  /** 未读通知数（工作台铃铛角标） */
+  getUnreadCount: (config) => get('/api/notifications/unread-count', undefined, config),
   listNotifications: ({ page = 1, size = 20 } = {}, config) =>
     get('/api/notifications', { page, size }, config),
   markNotificationRead: (id, config) =>

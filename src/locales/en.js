@@ -380,9 +380,11 @@ export default {
         practice: { title: 'Generate practice', description: 'Create exercises from knowledge' },
         publish: { title: 'Publish blog', description: 'Share your thoughts on the blog' },
       },
+      loading: 'Loading workspace…',
       continueTitle: 'Continue',
       viewAll: 'View all',
       sections: {
+        empty: 'No data',
         conversations: { title: 'Recent conversations', items: { architecture: 'Intermediate frontend knowledge system', fileSystem: 'Download flow: File System Access API', websocket: 'WebSocket vs SSE and their uses' } },
         knowledge: { title: 'Recent knowledge', items: { engineering: 'Frontend engineering notes', javascript: 'JavaScript core knowledge map', productDesign: 'AI product design methodology' } },
         plans: { title: 'Recent plans', items: { dailyStudy: 'Daily learning check-in', frontendPractice: 'Frontend interview reinforcement', blogWeekly: 'Weekly blog plan' } },

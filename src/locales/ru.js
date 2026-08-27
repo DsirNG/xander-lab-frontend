@@ -372,9 +372,11 @@ export default {
         practice: { title: 'Создать практику', description: 'Создайте упражнения из знаний' },
         publish: { title: 'Опубликовать блог', description: 'Поделитесь мыслями в блоге' },
       },
+      loading: 'Загрузка рабочего пространства…',
       continueTitle: 'Продолжить',
       viewAll: 'Смотреть все',
       sections: {
+        empty: 'Нет данных',
         conversations: { title: 'Недавние диалоги', items: { architecture: 'Система знаний frontend среднего уровня', fileSystem: 'Загрузка: File System Access API', websocket: 'WebSocket, SSE и их применение' } },
         knowledge: { title: 'Недавние знания', items: { engineering: 'Заметки по frontend-инженерии', javascript: 'Карта основных знаний JavaScript', productDesign: 'Методология дизайна ИИ-продуктов' } },
         plans: { title: 'Недавние планы', items: { dailyStudy: 'Ежедневный план обучения', frontendPractice: 'Подготовка к frontend-собеседованию', blogWeekly: 'Еженедельный план блога' } },

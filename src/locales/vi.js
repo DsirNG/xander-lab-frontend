@@ -372,9 +372,11 @@ export default {
         practice: { title: 'Tạo bài luyện tập', description: 'Tạo bài tập từ kiến thức' },
         publish: { title: 'Đăng blog', description: 'Chia sẻ suy nghĩ trên blog' },
       },
+      loading: 'Đang tải không gian làm việc…',
       continueTitle: 'Tiếp tục',
       viewAll: 'Xem tất cả',
       sections: {
+        empty: 'Không có dữ liệu',
         conversations: { title: 'Cuộc trò chuyện gần đây', items: { architecture: 'Hệ thống kiến thức frontend trung cấp', fileSystem: 'Luồng tải xuống: File System Access API', websocket: 'WebSocket, SSE và cách ứng dụng' } },
         knowledge: { title: 'Kiến thức gần đây', items: { engineering: 'Ghi chú kỹ thuật frontend', javascript: 'Bản đồ kiến thức JavaScript cốt lõi', productDesign: 'Phương pháp thiết kế sản phẩm AI' } },
         plans: { title: 'Kế hoạch gần đây', items: { dailyStudy: 'Điểm danh học tập hằng ngày', frontendPractice: 'Củng cố phỏng vấn frontend', blogWeekly: 'Kế hoạch blog hằng tuần' } },

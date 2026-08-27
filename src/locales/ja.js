@@ -372,9 +372,11 @@ export default {
         practice: { title: '練習を生成', description: '知識から練習問題を作成' },
         publish: { title: 'ブログを公開', description: '考えをブログで共有' },
       },
+      loading: 'ワークスペースを読み込み中…',
       continueTitle: '続きから',
       viewAll: 'すべて表示',
       sections: {
+        empty: 'データなし',
         conversations: { title: '最近の対話', items: { architecture: '中級フロントエンド知識体系', fileSystem: 'ダウンロード設計：File System Access API', websocket: 'WebSocket と SSE の違いと用途' } },
         knowledge: { title: '最近の知識', items: { engineering: 'フロントエンド工学ノート', javascript: 'JavaScript コア知識マップ', productDesign: 'AI プロダクト設計方法論' } },
         plans: { title: '最近の計画', items: { dailyStudy: '毎日の学習チェックイン', frontendPractice: 'フロントエンド面接対策', blogWeekly: 'ブログ週間更新計画' } },

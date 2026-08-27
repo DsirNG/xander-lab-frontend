@@ -380,9 +380,11 @@ export default {
         practice: { title: '生成练习', description: '根据知识生成练习题' },
         publish: { title: '发布博客', description: '将思考发布到博客' },
       },
+      loading: '正在加载工作台…',
       continueTitle: '继续进行',
       viewAll: '查看全部',
       sections: {
+        empty: '暂无数据',
         conversations: { title: '最近对话', items: { architecture: '中级前端开发知识体系梳理', fileSystem: '下载链路设计：File System Access API', websocket: 'WebSocket 和 SSE 的区别与应用' } },
         knowledge: { title: '最近知识库', items: { engineering: '前端工程化实践笔记', javascript: 'JavaScript 核心知识图谱', productDesign: 'AI 产品设计方法论' } },
         plans: { title: '最近计划', items: { dailyStudy: '每日学习打卡计划', frontendPractice: '前端面试知识强化', blogWeekly: '博客周更计划' } },

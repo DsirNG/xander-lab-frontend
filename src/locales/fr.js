@@ -372,9 +372,11 @@ export default {
         practice: { title: 'Créer des exercices', description: 'Générez des exercices depuis vos connaissances' },
         publish: { title: 'Publier un blog', description: 'Partagez vos réflexions sur le blog' },
       },
+      loading: 'Chargement de l’espace…',
       continueTitle: 'Continuer',
       viewAll: 'Tout voir',
       sections: {
+        empty: 'Aucune donnée',
         conversations: { title: 'Conversations récentes', items: { architecture: 'Système de connaissances frontend intermédiaire', fileSystem: 'Téléchargement : File System Access API', websocket: 'WebSocket, SSE et leurs usages' } },
         knowledge: { title: 'Connaissances récentes', items: { engineering: 'Notes d’ingénierie frontend', javascript: 'Carte des connaissances JavaScript', productDesign: 'Méthodologie de conception produit IA' } },
         plans: { title: 'Plans récents', items: { dailyStudy: 'Suivi quotidien d’apprentissage', frontendPractice: 'Révision des entretiens frontend', blogWeekly: 'Plan hebdomadaire du blog' } },
