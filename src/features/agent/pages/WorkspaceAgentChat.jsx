@@ -146,7 +146,7 @@ const WorkspaceAgentChat = () => {
   const [input, setInput] = useState('');
   const [attachments, setAttachments] = useState([]);
   const [uploadingAttachments, setUploadingAttachments] = useState(false);
-  const [drawerOpen, setDrawerOpen] = useState(true);
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   const fileInputRef = useRef(null);
   const textareaRef = useRef(null);
