@@ -39,6 +39,7 @@ const DataTable = ({
     onPageSizeChange,
     paginationDisabled = false,
     header,
+    onRowClick,
 }) => {
     const alignClass = (align) => ALIGN_CLASSES[align] || ALIGN_CLASSES.left;
 
@@ -101,7 +102,11 @@ const DataTable = ({
                         </thead>
                         <tbody>
                             {rows.map((row) => (
-                                <tr key={rowKey(row)} className="even:bg-surface-muted/30 hover:bg-surface-muted/40">
+                                <tr 
+                                    key={rowKey(row)} 
+                                    className={`even:bg-surface-muted/30 hover:bg-surface-muted/40 ${onRowClick ? 'cursor-pointer' : ''}`}
+                                    onClick={() => onRowClick && onRowClick(row)}
+                                >
                                     {columns.map((column) => (
                                         <td
                                             key={column.key}

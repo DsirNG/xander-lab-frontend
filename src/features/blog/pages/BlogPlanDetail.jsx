@@ -40,9 +40,10 @@ const BlogPlanDetail = () => {
     try {
       const data = await blogPlanService.getPlan(id);
       setPlan(data);
-    } catch {
+      setLoading(false);
+    } catch (error) {
+      if (error?.isCancelled) return;
       setNotFound(true);
-    } finally {
       setLoading(false);
     }
   }, [id]);
@@ -53,9 +54,10 @@ const BlogPlanDetail = () => {
       const data = await blogPlanService.listRuns(id, { page, size: RUN_PAGE_SIZE });
       setRuns(data?.records || []);
       setRunsTotal(Number(data?.total) || 0);
-    } catch {
+      setRunsLoading(false);
+    } catch (error) {
+      if (error?.isCancelled) return;
       toast.error(t('blogPlans.loadFailed'));
-    } finally {
       setRunsLoading(false);
     }
   }, [id, t, toast]);
@@ -124,7 +126,7 @@ const BlogPlanDetail = () => {
 
           <div className="mt-4 grid grid-cols-1 gap-x-8 divide-y divide-border sm:grid-cols-2 sm:gap-y-0 sm:divide-y-0">
             <div className="divide-y divide-border">
-              {infoRow(t('blogPlans.nextRun'), plan.nextRunAt ? new Date(plan.nextRunAt).toLocaleString() : '—')}
+              {infoRow(t('blogPlans.nextRun'), plan.nextRunAt ? new Date(plan.nextRunAt).toLocaleDateString() : '—')}
               {infoRow(t('blogPlans.lastRunAt'), plan.lastRunAt ? new Date(plan.lastRunAt).toLocaleString() : '—')}
             </div>
             <div className="divide-y divide-border">

@@ -111,7 +111,7 @@ const RowActionsMenu = ({ actions = [], size = 'md', align = 'right', ariaLabel 
               ref={menuRef}
               role="menu"
               style={position ? { top: position.top, left: position.left, width: position.width } : undefined}
-              className={`fixed z-50 max-h-[70vh] overflow-y-auto overflow-x-hidden rounded-xl bg-canvas py-1.5 shadow-lg shadow-black/10 ${position ? 'min-w-36' : 'invisible'}`}
+              className={`fixed z-50 max-h-[70vh] w-40 overflow-y-auto overflow-x-hidden rounded-xl bg-canvas py-1.5 shadow-lg shadow-black/10 ${position ? '' : 'invisible'}`}
             >
               {actions.map((item) => {
                 const Icon = item.icon;

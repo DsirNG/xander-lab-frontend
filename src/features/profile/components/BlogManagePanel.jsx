@@ -2,40 +2,38 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
-    CheckCircle2,
-    CloudUpload,
-    Eye,
-    FilePenLine,
-    FileText,
-    Plus,
-    RotateCcw,
-    Search,
-    Send,
-    Trash2,
-    Undo,
+    CheckCircle2, CloudUpload, Eye, FilePenLine, FileText, Plus, RotateCcw,
+    Search, Send, Trash2, Undo, Globe, LayoutTemplate, Code, Calendar, Star, Lightbulb, Link2, ChevronDown, CheckSquare, Layers, ArrowUpDown
 } from 'lucide-react';
 import ConfirmModal from '@components/common/ConfirmModal';
-import CustomSelect from '@components/common/CustomSelect';
 import DataTable from '@components/common/DataTable';
 import RowActionsMenu from '@components/common/RowActionsMenu';
 import { useToast } from '@hooks/useToast';
 import { blogService, BLOG_STATUS } from '@features/blog/services/blogService';
 import CsdnSyncDialog from './CsdnSyncDialog';
 import JuejinSyncDialog from './JuejinSyncDialog';
+import ArticleOverviewCard from './manage/ArticleOverviewCard';
+import ArticlePerformanceCard from './manage/ArticlePerformanceCard';
+import BlogPreviewModal from './manage/BlogPreviewModal';
 
 const DEFAULT_PAGE_SIZE = 10;
 const SEARCH_DEBOUNCE_MS = 300;
 
 const FILTERS = [
-    { id: 'all', status: undefined },
-    { id: 'published', status: BLOG_STATUS.PUBLISHED },
-    { id: 'draft', status: BLOG_STATUS.DRAFT },
+    { id: 'all', status: undefined, label: '全部状态' },
+    { id: 'published', status: BLOG_STATUS.PUBLISHED, label: '已发布' },
+    { id: 'draft', status: BLOG_STATUS.DRAFT, label: '草稿' },
 ];
 
-const STATUS_STYLES = {
-    [BLOG_STATUS.DRAFT]: 'bg-warning-soft text-warning-fg',
-    [BLOG_STATUS.PUBLISHED]: 'bg-success-soft text-success-fg',
-    [BLOG_STATUS.TRASH]: 'bg-surface text-ink-muted',
+const getTopicStyle = (topic = '') => {
+  if (topic.includes('设计') || topic.includes('API')) return { icon: FileText, color: 'text-blue-500', bg: 'bg-blue-50' };
+  if (topic.includes('Websocket') || topic.includes('网络') || topic.includes('区别')) return { icon: Globe, color: 'text-blue-500', bg: 'bg-blue-50' };
+  if (topic.includes('CSS') || topic.includes('样式') || topic.includes('盒模型')) return { icon: LayoutTemplate, color: 'text-green-500', bg: 'bg-green-50' };
+  if (topic.includes('中级') || topic.includes('开发')) return { icon: Code, color: 'text-orange-500', bg: 'bg-orange-50' };
+  if (topic.includes('闭包') || topic.includes('JS') || topic.includes('JavaScript')) return { icon: Calendar, color: 'text-purple-500', bg: 'bg-purple-50' };
+  if (topic.includes('资讯') || topic.includes('精选')) return { icon: Star, color: 'text-blue-500', bg: 'bg-blue-50' };
+  if (topic.includes('面试') || topic.includes('解析')) return { icon: Lightbulb, color: 'text-red-500', bg: 'bg-red-50' };
+  return { icon: Link2, color: 'text-accent', bg: 'bg-accent-soft' };
 };
 
 const getList = (result) => {
@@ -44,13 +42,18 @@ const getList = (result) => {
     return [];
 };
 
+
+
 const BlogManagePanel = () => {
     const { t } = useTranslation();
     const toast = useToast();
     const navigate = useNavigate();
 
-    const [tab, setTab] = useState('all');
-    const [trashMode, setTrashMode] = useState(false);
+    const [statusFilter, setStatusFilter] = useState('all');
+    const [platformFilter, setPlatformFilter] = useState('all');
+    const [tagFilter, setTagFilter] = useState('all');
+    const [sortFilter, setSortFilter] = useState('updated_desc');
+
     const [searchInput, setSearchInput] = useState('');
     const [search, setSearch] = useState('');
     const [page, setPage] = useState(1);
@@ -63,12 +66,14 @@ const BlogManagePanel = () => {
     const [confirmAction, setConfirmAction] = useState(null);
     const [csdnPost, setCsdnPost] = useState(null);
     const [juejinPost, setJuejinPost] = useState(null);
+    const [selectedIds, setSelectedIds] = useState([]);
+    const [previewPostId, setPreviewPostId] = useState(null);
 
     const abortRef = useRef(null);
     const requestSeq = useRef(0);
 
-    const activeFilter = FILTERS.find((item) => item.id === tab) || FILTERS[0];
-    const effectiveStatus = trashMode ? BLOG_STATUS.TRASH : activeFilter.status;
+    const activeFilter = FILTERS.find((item) => item.id === statusFilter) || FILTERS[0];
+    const effectiveStatus = activeFilter.status;
 
     const loadPosts = useCallback(async ({ showLoading = true } = {}) => {
         abortRef.current?.abort();
@@ -124,7 +129,6 @@ const BlogManagePanel = () => {
             setConfirmAction(null);
             await loadPosts({ showLoading: false });
         } catch {
-            // Shared HTTP handling presents the server error.
         } finally {
             setActionKey('');
         }
@@ -149,283 +153,240 @@ const BlogManagePanel = () => {
             );
             return;
         }
-        if (type === 'permanent') {
-            await runAction(
-                `permanent-${post.id}`,
-                () => blogService.permanentlyDeleteBlog(post.id),
-                'profile.blogManage.permanentlyDeleted'
-            );
-        }
     };
 
-    const confirming = Boolean(actionKey) && Boolean(confirmAction);
-
     return (
-        <div className="flex h-full min-h-0 flex-col">
-            <div className="flex shrink-0 flex-col gap-3 px-4 py-4 px-ultra-tight sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:px-6">
+        <div className="flex h-full flex-col overflow-hidden bg-surface">
+            {/* Header */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between shrink-0 mb-6 gap-4 px-4 sm:px-6 pt-4 sm:pt-6">
                 <div className="min-w-0">
-                    <div className="text-base font-bold text-ink">{t('profile.blogManage.title')}</div>
-                    <div className="mt-0.5 text-caption font-medium text-ink-faint">
-                        {t('profile.blogManage.description')}
-                    </div>
+                    <h1 className="text-[24px] font-bold text-ink">{t('profile.blogManage.title', '发布文章')}</h1>
+                    <p className="mt-1 text-sm text-ink-muted">
+                        {t('profile.blogManage.description', '创建、发布与管理你的多平台文章内容，让优质内容触达更多读者。')}
+                    </p>
                 </div>
-
-                <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center sm:justify-end sm:gap-2">
-                    <div className={`w-full sm:w-32 ${trashMode ? 'pointer-events-none opacity-50' : ''}`}>
-                        <CustomSelect
-                            size="sm"
-                            value={tab}
-                            options={FILTERS.map((item) => ({
-                                value: item.id,
-                                label: t(`profile.blogManage.tabs.${item.id}`),
-                            }))}
-                            onChange={(value) => {
-                                setTrashMode(false);
-                                setTab(value);
-                                setPage(1);
-                            }}
-                        />
-                    </div>
-                    <div className="relative min-w-0 flex-1 sm:flex-none">
-                        <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-ink-faint" />
+                <div className="flex items-center gap-3 shrink-0">
+                    <div className="relative w-64 hidden sm:block">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-faint" />
                         <input
                             value={searchInput}
                             onChange={(e) => setSearchInput(e.target.value)}
-                            placeholder={t('profile.blogManage.searchPlaceholder')}
-                            className="h-9 w-full rounded-xl bg-surface pl-9 pr-3 text-sm font-medium text-ink outline-none transition placeholder:text-ink-faint focus:bg-canvas focus:ring-4 focus:ring-accent/15 sm:w-56"
+                            placeholder={t('blogManage.searchPlaceholder', '搜索文章标题、内容或标签')}
+                            className="w-full h-10 pl-9 pr-4 rounded-full bg-white border-none shadow-[0_2px_10px_rgba(0,0,0,0.02)] text-sm outline-none focus:ring-2 focus:ring-accent/20"
                         />
                     </div>
                     <button
-                        type="button"
-                        onClick={() => {
-                            setTrashMode((current) => !current);
-                            setPage(1);
-                        }}
-                        className={`inline-flex min-h-9 items-center justify-center gap-1.5 rounded-xl px-3.5 py-1.5 text-sm font-semibold transition ${
-                            trashMode
-                                ? 'bg-accent-soft text-ink'
-                                : 'bg-surface text-ink-muted hover:bg-surface-muted hover:text-ink-secondary'
-                        }`}
-                    >
-                        <Trash2 className="h-3.5 w-3.5" />
-                        {t('profile.blogManage.tabs.trash')}
-                    </button>
-                    <button
-                        type="button"
                         onClick={() => navigate('/workspace/publish')}
-                        className="inline-flex min-h-9 items-center justify-center gap-1.5 rounded-xl bg-ink px-3.5 py-1.5 text-sm font-semibold text-white transition hover:bg-accent"
+                        className="h-10 px-5 rounded-full bg-indigo-500 text-white text-sm font-bold flex items-center gap-1.5 shadow-md hover:bg-indigo-600 transition"
                     >
-                        <Plus className="h-3.5 w-3.5" />
-                        {t('profile.blogManage.createNew')}
+                        <Plus className="w-4 h-4" /> {t('blogManage.createNew', '新建文章')}
                     </button>
                 </div>
             </div>
 
-            <div className="flex min-h-0 min-w-0 flex-1 flex-col px-4 py-3 px-ultra-tight sm:px-6">
-                <DataTable
-                    columns={[
-                        {
-                            key: 'article',
-                            title: t('profile.blogManage.articleColumn'),
-                            width: '38%',
-                            render: (post) => {
-                                const isCsdnSynced = post.csdnSynced === true;
-                                const isJuejinSynced = post.juejinSynced === true;
-                                return (
-                                    <div className="min-w-0">
-                                        <div className="flex flex-wrap items-center gap-2">
-                                            <div className="truncate text-sm font-semibold text-ink">
-                                                {post.title || t('profile.blogManage.untitled')}
+            {/* Content Area */}
+            <div className="flex flex-1 min-h-0 min-w-0 gap-6 px-4 sm:px-6 pb-4 sm:pb-6">
+                {/* Left Table Area */}
+                <div className="flex flex-1 min-w-0 flex-col bg-white rounded-[24px] shadow-[0_2px_15px_rgba(0,0,0,0.02)] border border-border/20 overflow-hidden">
+                   {/* Table */}
+                   <div className="flex-1 min-h-0 p-5">
+                       <DataTable
+                            onRowClick={(post) => setPreviewPostId(post.id)}
+                            columns={[
+                                {
+                                    key: 'article',
+                                    title: t('profile.blogManage.articleColumn', '文章信息'),
+                                    width: '30%',
+                                    render: (post) => {
+                                        const style = getTopicStyle(post.title || post.categoryName);
+                                        const Icon = style.icon;
+                                        return (
+                                            <div className="flex items-start gap-3 min-w-0 py-1">
+                                                <div className={`mt-0.5 shrink-0 w-8 h-8 rounded-lg flex items-center justify-center ${style.bg}`}>
+                                                    <Icon className={`w-4 h-4 ${style.color}`} />
+                                                </div>
+                                                <div className="min-w-0 flex-1">
+                                                    <div className="truncate text-sm font-bold text-ink">
+                                                        {post.title || t('profile.blogManage.untitled', '未命名')}
+                                                    </div>
+                                                    <div className="mt-1 line-clamp-1 text-[11px] text-ink-faint">
+                                                        {post.summary || post.categoryName || '—'}
+                                                    </div>
+                                                </div>
                                             </div>
-                                            {isCsdnSynced ? (
-                                                <span
-                                                    title={t('profile.blogManage.csdn.synced')}
-                                                    className="inline-flex shrink-0 items-center gap-1 rounded-full bg-success-soft px-2 py-0.5 text-xs font-medium text-success-fg"
-                                                >
-                                                    <CheckCircle2 className="h-3 w-3" />
-                                                    CSDN
-                                                </span>
-                                            ) : null}
-                                            {isJuejinSynced ? (
-                                                <span
-                                                    title={t('profile.blogManage.juejin.synced')}
-                                                    className="inline-flex shrink-0 items-center gap-1 rounded-full bg-success-soft px-2 py-0.5 text-xs font-medium text-success-fg"
-                                                >
-                                                    <CheckCircle2 className="h-3 w-3" />
-                                                    {t('profile.blogManage.juejin.badge')}
-                                                </span>
-                                            ) : null}
+                                        );
+                                    },
+                                },
+                                {
+                                    key: 'tags',
+                                    title: t('profile.blogManage.category', '标签'),
+                                    width: '15%',
+                                    render: (post) => (
+                                        <div className="flex flex-wrap gap-1.5">
+                                            {(post.categoryName ? [post.categoryName] : [t('profile.blogManage.tagFrontend', '前端')]).map((tag, i) => (
+                                                <span key={i} className="px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-600 text-[11px] font-medium border border-indigo-100">{tag}</span>
+                                            ))}
                                         </div>
-                                        <div className="mt-1 line-clamp-1 text-caption font-medium text-ink-faint">
-                                            {post.summary || post.categoryName || '—'}
+                                    ),
+                                },
+                                {
+                                    key: 'status',
+                                    title: t('profile.blogManage.statusLabel', '状态'),
+                                    width: '10%',
+                                    render: (post) => {
+                                        const status = Number(post.status);
+                                        if (status === BLOG_STATUS.PUBLISHED) {
+                                            return <span className="inline-flex rounded bg-green-50 px-1.5 py-0.5 text-[11px] font-medium text-green-600 border border-green-100">{t('profile.blogManage.status.published', '已发布')}</span>;
+                                        }
+                                        return <span className="inline-flex rounded bg-orange-50 px-1.5 py-0.5 text-[11px] font-medium text-orange-600 border border-orange-100">{t('profile.blogManage.status.draft', '待发布')}</span>;
+                                    },
+                                },
+                                {
+                                    key: 'platform',
+                                    title: t('profile.blogManage.platform', '平台'),
+                                    width: '15%',
+                                    render: (post) => (
+                                        <div className="flex flex-wrap gap-1.5">
+                                            {post.csdnSynced && <span className="px-1.5 py-0.5 rounded text-[11px] font-medium text-ink-muted border border-border">CSDN</span>}
+                                            {post.juejinSynced && <span className="px-1.5 py-0.5 rounded text-[11px] font-medium text-ink-muted border border-border">{t('profile.blogManage.platformJuejin', '掘金')}</span>}
+                                            {!post.csdnSynced && !post.juejinSynced && <span className="px-1.5 py-0.5 rounded text-[11px] font-medium text-ink-muted border border-border">{t('profile.blogManage.platformWechat', '公众号')}</span>}
                                         </div>
-                                    </div>
-                                );
-                            },
-                        },
-                        {
-                            key: 'category',
-                            title: t('profile.blogManage.category'),
-                            width: '18%',
-                            render: (post) => (
-                                <span className="block truncate text-sm font-medium text-ink-muted" title={post.categoryName}>
-                                    {post.categoryName || '—'}
-                                </span>
-                            ),
-                        },
-                        {
-                            key: 'status',
-                            title: t('profile.blogManage.statusLabel'),
-                            width: '14%',
-                            render: (post) => {
-                                const status = Number(post.status);
-                                const statusKey = status === BLOG_STATUS.PUBLISHED
-                                    ? 'published'
-                                    : status === BLOG_STATUS.TRASH
-                                        ? 'trash'
-                                        : 'draft';
-                                return (
-                                    <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_STYLES[status] || STATUS_STYLES[BLOG_STATUS.DRAFT]}`}>
-                                        {t(`profile.blogManage.status.${statusKey}`)}
-                                    </span>
-                                );
-                            },
-                        },
-                        {
-                            key: 'actions',
-                            title: t('profile.blogManage.actionsColumn'),
-                            width: '10%',
+                                    ),
+                                },
+                                {
+                                    key: 'time',
+                                    title: t('profile.blogManage.updatedAt', '更新时间'),
+                                    width: '15%',
+                                    render: (post) => (
+                                        <span className="text-[12px] text-ink-muted font-medium">
+                                            {new Date(post.updatedAt || post.createdAt || Date.now()).toLocaleString('zh-CN', { hour12: false, year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                                        </span>
+                                    ),
+                                },
+                                {
+                                    key: 'actions',
+                                    title: t('profile.blogManage.actionsColumn', '操作'),
+                                    width: '10%',
+                                    render: (post) => {
+                                        const status = Number(post.status);
+                                        const menuItems = [];
 
-                            render: (post) => {
-                                const status = Number(post.status);
-                                const isBusy = Boolean(actionKey) && actionKey.includes(String(post.id));
-                                const items = [];
-                                if (status === BLOG_STATUS.PUBLISHED) {
-                                    items.push({
-                                        key: 'view',
-                                        label: t('profile.blogManage.actions.view'),
-                                        icon: Eye,
-                                        onClick: () => navigate(`/blog/${post.id}`),
-                                    });
-                                }
-                                if (status !== BLOG_STATUS.TRASH) {
-                                    items.push({
-                                        key: 'edit',
-                                        label: t('profile.blogManage.actions.edit'),
-                                        icon: FilePenLine,
-                                        disabled: Boolean(actionKey),
-                                        onClick: () => navigate(`/workspace/publish?id=${post.id}`),
-                                    });
-                                }
-                                if (status === BLOG_STATUS.DRAFT) {
-                                    items.push({
-                                        key: 'publish',
-                                        label: t('profile.blogManage.actions.publish'),
-                                        icon: Send,
-                                        disabled: Boolean(actionKey),
-                                        loading: isBusy && actionKey.includes(`status-${post.id}-${BLOG_STATUS.PUBLISHED}`),
-                                        onClick: () => handleStatus(post, BLOG_STATUS.PUBLISHED, 'profile.blogManage.published'),
-                                    });
-                                }
-                                if (status === BLOG_STATUS.PUBLISHED) {
-                                    items.push({
-                                        key: 'unpublish',
-                                        label: t('profile.blogManage.actions.unpublish'),
-                                        icon: Undo,
-                                        disabled: Boolean(actionKey),
-                                        loading: isBusy && actionKey.includes(`status-${post.id}-${BLOG_STATUS.DRAFT}`),
-                                        onClick: () => handleStatus(post, BLOG_STATUS.DRAFT, 'profile.blogManage.unpublished'),
-                                    });
-                                }
-                                if (status !== BLOG_STATUS.TRASH) {
-                                    items.push({
-                                        key: 'syncCsdn',
-                                        label: t('profile.blogManage.actions.syncCsdn'),
-                                        icon: CloudUpload,
-                                        disabled: Boolean(actionKey),
-                                        onClick: () => setCsdnPost(post),
-                                    });
-                                    items.push({
-                                        key: 'syncJuejin',
-                                        label: t('profile.blogManage.actions.syncJuejin'),
-                                        icon: CloudUpload,
-                                        disabled: Boolean(actionKey),
-                                        onClick: () => setJuejinPost(post),
-                                    });
-                                    items.push({
-                                        key: 'trash',
-                                        label: t('profile.blogManage.actions.trash'),
-                                        icon: Trash2,
-                                        danger: true,
-                                        disabled: Boolean(actionKey),
-                                        onClick: () => setConfirmAction({ type: 'trash', post }),
-                                    });
-                                } else {
-                                    items.push({
-                                        key: 'restore',
-                                        label: t('profile.blogManage.actions.restore'),
-                                        icon: RotateCcw,
-                                        disabled: Boolean(actionKey),
-                                        loading: isBusy && actionKey.includes(`status-${post.id}-${BLOG_STATUS.DRAFT}`),
-                                        onClick: () => handleStatus(post, BLOG_STATUS.DRAFT, 'profile.blogManage.restored'),
-                                    });
-                                    items.push({
-                                        key: 'permanentDelete',
-                                        label: t('profile.blogManage.actions.permanentDelete'),
-                                        icon: Trash2,
-                                        danger: true,
-                                        disabled: Boolean(actionKey),
-                                        onClick: () => setConfirmAction({ type: 'permanent', post }),
-                                    });
-                                }
-                                return <RowActionsMenu actions={items} size="sm" />;
-                            },
-                        },
-                    ]}
-                    rows={posts}
-                    loading={loading}
-                    loadingText={t('profile.blogManage.loading')}
-                    error={loadError ? t('profile.blogManage.loadError') : ''}
-                    onRetry={loadPosts}
-                    onRetryLabel={t('profile.blogManage.retry')}
-                    emptyTitle={trashMode
-                        ? t('profile.blogManage.emptyTrash')
-                        : t('profile.blogManage.emptyTitle')}
-                    emptyHint={trashMode
-                        ? t('profile.blogManage.emptyTrashHint')
-                        : t('profile.blogManage.emptyHint')}
-                    emptyIcon={FileText}
-                    minWidth="840px"
-                    page={page}
-                    pageSize={pageSize}
-                    total={total}
-                    onPageChange={setPage}
-                    onPageSizeChange={(size) => {
-                        setPageSize(size);
-                        setPage(1);
-                    }}
-                    paginationDisabled={loading}
-                />
+                                        menuItems.push({
+                                            key: 'view',
+                                            label: t('profile.blogManage.actions.view', '查看'),
+                                            icon: Eye,
+                                            onClick: (e) => {
+                                                e.stopPropagation();
+                                                setPreviewPostId(post.id);
+                                            },
+                                        });
+
+                                        menuItems.push({
+                                            key: 'edit',
+                                            label: t('profile.blogManage.actions.edit', '编辑'),
+                                            icon: FilePenLine,
+                                            onClick: (e) => {
+                                                e.stopPropagation();
+                                                navigate(`/workspace/publish?id=${post.id}`);
+                                            },
+                                        });
+
+                                        if (status === BLOG_STATUS.DRAFT) {
+                                            menuItems.push({
+                                                key: 'publish',
+                                                label: t('profile.blogManage.actions.publish', '发布'),
+                                                icon: Send,
+                                                onClick: (e) => {
+                                                    e.stopPropagation();
+                                                    handleStatus(post, BLOG_STATUS.PUBLISHED, 'profile.blogManage.published');
+                                                },
+                                            });
+                                        }
+
+                                        if (status === BLOG_STATUS.PUBLISHED) {
+                                            menuItems.push({
+                                                key: 'unpublish',
+                                                label: t('profile.blogManage.actions.unpublish', '取消发布'),
+                                                icon: Undo,
+                                                onClick: (e) => {
+                                                    e.stopPropagation();
+                                                    handleStatus(post, BLOG_STATUS.DRAFT, 'profile.blogManage.unpublished');
+                                                },
+                                            });
+                                        }
+
+                                        menuItems.push({
+                                            key: 'syncCsdn',
+                                            label: t('profile.blogManage.actions.syncCsdn', '同步到 CSDN'),
+                                            icon: CloudUpload,
+                                            onClick: (e) => {
+                                                e.stopPropagation();
+                                                setCsdnPost(post);
+                                            },
+                                        });
+
+                                        menuItems.push({
+                                            key: 'trash',
+                                            label: t('profile.blogManage.actions.trash', '删除'),
+                                            icon: Trash2,
+                                            danger: true,
+                                            onClick: (e) => {
+                                                e.stopPropagation();
+                                                setConfirmAction({ type: 'trash', post });
+                                            },
+                                        });
+
+                                        return (
+                                            <div className="flex items-center justify-start ml-2" onClick={(e) => e.stopPropagation()}>
+                                                <RowActionsMenu actions={menuItems} size="sm" />
+                                            </div>
+                                        );
+                                    },
+                                },
+                            ]}
+                            rows={posts}
+                            loading={loading}
+                            loadingText={t('profile.blogManage.loading')}
+                            error={loadError ? t('profile.blogManage.loadError') : ''}
+                            onRetry={loadPosts}
+                            onRetryLabel={t('profile.blogManage.retry')}
+                            minWidth="940px"
+                            page={page}
+                            pageSize={pageSize}
+                            total={total}
+                            onPageChange={setPage}
+                            onPageSizeChange={(size) => {
+                                setPageSize(size);
+                                setPage(1);
+                            }}
+                            paginationDisabled={loading}
+                            className="!bg-transparent [&_th]:!bg-transparent [&_th]:!border-b [&_th]:!border-border/40 [&_td]:!border-b [&_td]:!border-border/20 [&_tr:last-child_td]:!border-b-0 [&_tr]:!bg-transparent hover:[&_tr]:!bg-surface-muted/20"
+                       />
+                   </div>
+                </div>
+
+                {/* Right Sidebar */}
+                <div className="hidden w-[320px] shrink-0 xl:flex flex-col gap-5 overflow-y-auto pb-2 pr-1">
+                    <ArticleOverviewCard />
+                    <ArticlePerformanceCard />
+                </div>
             </div>
 
             <ConfirmModal
                 isOpen={Boolean(confirmAction)}
-                onClose={() => !confirming && setConfirmAction(null)}
+                onClose={() => !actionKey && setConfirmAction(null)}
                 onConfirm={handleConfirm}
-                confirming={confirming}
-                title={confirmAction?.type === 'permanent'
-                    ? t('profile.blogManage.confirmPermanentTitle')
-                    : t('profile.blogManage.confirmTrashTitle')}
-                message={t(
-                    confirmAction?.type === 'permanent'
-                        ? 'profile.blogManage.confirmPermanentMessage'
-                        : 'profile.blogManage.confirmTrashMessage',
-                    { title: confirmAction?.post?.title || t('profile.blogManage.untitled') }
-                )}
-                confirmText={confirmAction?.type === 'permanent'
-                    ? t('profile.blogManage.actions.permanentDelete')
-                    : t('profile.blogManage.actions.trash')}
+                confirming={Boolean(actionKey)}
+                title={t('profile.blogManage.confirmTrashTitle')}
+                message={t('profile.blogManage.confirmTrashMessage', { title: confirmAction?.post?.title || t('profile.blogManage.untitled') })}
+                confirmText={t('profile.blogManage.actions.trash')}
             />
+            
+            <BlogPreviewModal 
+                postId={previewPostId} 
+                onClose={() => setPreviewPostId(null)} 
+            />
+
             {csdnPost && (
                 <CsdnSyncDialog
                     post={csdnPost}

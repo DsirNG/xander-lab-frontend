@@ -2,11 +2,11 @@ import { useTranslation } from 'react-i18next';
 import { PLAN_STATUS } from '../../services/blogPlanService';
 
 const STYLE = {
-  [PLAN_STATUS.ACTIVE]: 'bg-success-soft text-success-fg',
-  [PLAN_STATUS.RUNNING]: 'bg-info-soft text-info-fg',
-  [PLAN_STATUS.PAUSED]: 'bg-warning-soft text-warning-fg',
+  [PLAN_STATUS.ACTIVE]: 'bg-blue-50 text-blue-600',
+  [PLAN_STATUS.RUNNING]: 'bg-blue-50 text-blue-600',
+  [PLAN_STATUS.PAUSED]: 'bg-orange-50 text-orange-600',
   [PLAN_STATUS.CANCELLED]: 'bg-surface text-ink-muted ring-1 ring-border',
-  [PLAN_STATUS.FINISHED]: 'bg-accent-soft text-accent-fg',
+  [PLAN_STATUS.FINISHED]: 'bg-green-50 text-green-600',
   [PLAN_STATUS.FAILED]: 'bg-red-50 text-red-600 ring-1 ring-red-200',
 };
 
