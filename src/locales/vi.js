@@ -122,6 +122,8 @@ export default {
     createCustom: 'Kế hoạch tùy chỉnh',
     createCustomTitle: 'Kế hoạch tùy chỉnh mới',
     customDailyHint: 'Mỗi ngày tự động tạo và đăng một bài vào cùng một thời điểm; AI đảm bảo nội dung mỗi ngày không trùng lặp',
+    knowledgeBase: 'Nguồn kiến thức', noKnowledgeBase: 'Không liên kết kiến thức', autoPublish: 'Tự động đăng lên các nền tảng đã chọn sau khi tạo',
+    scheduleType: 'Loại kế hoạch', typeOnce: 'Một lần', typeOnceHint: 'Chạy một lần vào ngày đã chọn', typeDaily: 'Hàng ngày', typeDailyHint: 'Chạy cùng giờ mỗi ngày', typeWeekly: 'Hàng tuần', typeWeeklyHint: 'Chạy cùng ngày mỗi tuần', executionDate: 'Ngày thực hiện', firstExecutionDate: 'Ngày thực hiện đầu tiên', publishPlatforms: 'Nền tảng đăng bài', aiDirection: 'Định hướng AI', aiDeep: 'Phân tích sâu', aiDeepHint: 'Giải thích nguyên lý và thực tiễn tốt', aiPractical: 'Hướng dẫn thực hành', aiPracticalHint: 'Các bước rõ ràng và ví dụ', aiNews: 'Phân tích tin tức', aiNewsHint: 'Xu hướng và thông tin chính', aiOpinion: 'Quan điểm', aiOpinionHint: 'Lập luận có dẫn chứng', localPlatform: 'Trang này (mặc định)',
     aiGenerate: 'Tạo kế hoạch bằng AI',
     aiGenerateTitle: 'Tạo kế hoạch nhiều ngày bằng AI',
     aiGenerateDesc: 'Nhập định hướng chủ đề, AI sẽ tách thành chủ đề theo ngày và tự động đăng một bài mỗi ngày cùng thời điểm, bắt đầu từ ngày mai',

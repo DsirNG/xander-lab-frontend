@@ -122,6 +122,8 @@ export default {
     createCustom: 'Plan personnalisé',
     createCustomTitle: 'Nouveau plan personnalisé',
     customDailyHint: 'Un article est généré et publié chaque jour à la même heure ; l’IA garantit un contenu différent chaque jour',
+    knowledgeBase: 'Base de connaissances', noKnowledgeBase: 'Aucune base liée', autoPublish: 'Publier automatiquement sur les plateformes choisies',
+    scheduleType: 'Type de plan', typeOnce: 'Une fois', typeOnceHint: 'Exécuter une fois à la date choisie', typeDaily: 'Quotidien', typeDailyHint: 'Exécuter chaque jour à la même heure', typeWeekly: 'Hebdomadaire', typeWeeklyHint: 'Exécuter le même jour chaque semaine', executionDate: "Date d’exécution", firstExecutionDate: 'Première exécution', publishPlatforms: 'Plateformes de publication', aiDirection: 'Orientation IA', aiDeep: 'Analyse approfondie', aiDeepHint: 'Principes et bonnes pratiques', aiPractical: 'Tutoriel pratique', aiPracticalHint: 'Étapes claires et démonstrations', aiNews: "Analyse d’actualité", aiNewsHint: 'Tendances et informations clés', aiOpinion: 'Point de vue', aiOpinionHint: 'Opinion argumentée', localPlatform: 'Ce site (par défaut)',
     aiGenerate: 'Générer avec IA',
     aiGenerateTitle: 'Générer plusieurs jours avec IA',
     aiGenerateDesc: 'Indiquez une direction de thème ; l’IA la découpe en thèmes quotidiens et publie un article chaque jour à la même heure à partir de demain',

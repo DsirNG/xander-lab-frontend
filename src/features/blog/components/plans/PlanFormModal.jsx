@@ -1,289 +1,351 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { X, Calendar, Clock, Book, Check, Sparkles, ChevronDown } from 'lucide-react';
+import { CalendarDays, Check, Clock3, Sparkles } from 'lucide-react';
+import Modal from '@components/common/Modal';
+import Button from '@components/common/Button';
+import TimezoneSelect from '@components/common/TimezoneSelect';
+import TimeInput from '@components/common/TimeInput';
+import FormField from '@components/common/FormField';
+import CustomSelect from '@components/common/CustomSelect';
+import { formInputCls } from '@components/common/formStyles';
 import { blogPlanService } from '../../services/blogPlanService';
 import { useToast } from '@/hooks/useToast';
+import { knowledgeService } from '@/features/knowledge/services/knowledgeService';
 
 const TIME_RE = /^([01]\d|2[0-3]):[0-5]\d$/;
 
+const tomorrow = () => {
+  const date = new Date();
+  date.setDate(date.getDate() + 1);
+  return date.toISOString().slice(0, 10);
+};
+
 const initialForm = () => ({
   topic: '',
-  knowledgeBase: 'frontend',
-  planType: 'once', // once, daily, weekly
-  date: '2026/08/18',
-  triggerTime: '12:00',
-  platforms: ['juejin', 'zhihu', 'wechat', 'csdn', 'weibo'],
-  aiOption: 'deep', // deep, practical, news, opinion
+  scheduleType: 'DAILY',
+  scheduledDate: tomorrow(),
+  timezone: 'Asia/Shanghai',
+  triggerTime: '09:00',
+  syncCsdn: false,
+  syncJuejin: false,
+  audience: '',
+  tone: '',
+  aiOption: 'DEEP',
+  knowledgeMaterialId: '',
   autoPublish: true,
 });
 
+const nextRunParts = (triggerTime, timezone, locale, scheduleType, scheduledDate) => {
+  try {
+    if (scheduleType !== 'DAILY' && scheduledDate) {
+      const date = new Date(`${scheduledDate}T00:00:00Z`);
+      return {
+        date: scheduledDate.replaceAll('-', '/'),
+        weekday: new Intl.DateTimeFormat(locale, { weekday: 'short', timeZone: 'UTC' }).format(date),
+      };
+    }
+    const parts = Object.fromEntries(new Intl.DateTimeFormat('en-CA', {
+      timeZone: timezone,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      hourCycle: 'h23',
+    }).formatToParts(new Date()).map(({ type, value }) => [type, value]));
+    const today = Date.UTC(Number(parts.year), Number(parts.month) - 1, Number(parts.day));
+    const nextDay = `${parts.hour}:${parts.minute}` < triggerTime ? today : today + 86_400_000;
+    const date = new Date(nextDay);
+    return {
+      date: `${date.getUTCFullYear()}/${String(date.getUTCMonth() + 1).padStart(2, '0')}/${String(date.getUTCDate()).padStart(2, '0')}`,
+      weekday: new Intl.DateTimeFormat(locale, { weekday: 'short', timeZone: 'UTC' }).format(date),
+    };
+  } catch {
+    return { date: '—', weekday: '' };
+  }
+};
+
+/** 自定义计划：单主题 + 每日单触发时间。 */
 const PlanFormModal = ({ isOpen, plan, onClose, onSaved }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const toast = useToast();
   const [form, setForm] = useState(initialForm());
+  const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
+  const [knowledgeMaterials, setKnowledgeMaterials] = useState([]);
 
   useEffect(() => {
-    if (isOpen) {
-      setForm(plan?.id
-        ? {
-            ...initialForm(),
-            topic: plan.topic || '',
-            triggerTime: plan.triggerTime || plan.triggerTimes?.[0] || '12:00',
-          }
-        : initialForm());
-    }
+    if (!isOpen) return;
+    setForm(plan?.id
+      ? {
+          topic: plan.topic || '',
+          scheduleType: plan.scheduleType || (plan.runOnce ? 'ONCE' : 'DAILY'),
+          scheduledDate: plan.scheduledDate || tomorrow(),
+          timezone: plan.timezone || 'Asia/Shanghai',
+          triggerTime: plan.triggerTime || plan.triggerTimes?.[0] || '09:00',
+          syncCsdn: !!plan.syncCsdn,
+          syncJuejin: !!plan.syncJuejin,
+          audience: plan.audience || '',
+          tone: plan.tone || '',
+          aiOption: plan.aiOption || 'DEEP',
+          knowledgeMaterialId: plan.knowledgeMaterialId ? String(plan.knowledgeMaterialId) : '',
+          autoPublish: plan.autoPublish !== false,
+        }
+      : initialForm());
+    setError('');
+    knowledgeService.list({ archive: 'ACTIVE' }, { _silent: true })
+      .then((items) => setKnowledgeMaterials(Array.isArray(items) ? items : []))
+      .catch(() => setKnowledgeMaterials([]));
   }, [isOpen, plan]);
+
+  const updateForm = (field, value) => {
+    setForm((current) => ({ ...current, [field]: value }));
+    if (error) setError('');
+  };
 
   const submit = async () => {
     if (!form.topic.trim()) {
-      toast.error('请输入文章主题');
+      setError(t('blogPlans.topicRequired'));
       return;
     }
+    if (!TIME_RE.test(form.triggerTime)) {
+      setError(t('blogPlans.timeInvalid'));
+      return;
+    }
+    if (form.scheduleType !== 'DAILY' && !form.scheduledDate) {
+      setError(t('blogPlans.executionDate'));
+      return;
+    }
+
     setSaving(true);
+    setError('');
     try {
       const payload = {
         topic: form.topic.trim(),
-        timezone: 'Asia/Shanghai',
+        scheduleType: form.scheduleType,
+        scheduledDate: form.scheduleType === 'DAILY' ? null : form.scheduledDate,
+        timezone: form.timezone,
         triggerTime: form.triggerTime,
-        // The original backend payload expects some of these fields. 
-        // We will just map what we can.
-        syncCsdn: form.platforms.includes('csdn'),
-        syncJuejin: form.platforms.includes('juejin'),
-        audience: '',
-        tone: '',
+        syncCsdn: form.syncCsdn,
+        syncJuejin: form.syncJuejin,
+        audience: form.audience.trim(),
+        tone: form.tone.trim(),
+        aiOption: form.aiOption,
+        knowledgeMaterialId: form.knowledgeMaterialId ? Number(form.knowledgeMaterialId) : null,
+        autoPublish: form.autoPublish,
       };
       if (plan?.id) {
         await blogPlanService.updatePlan(plan.id, payload);
-        toast.success(t('blogPlans.updated', '更新成功'));
+        toast.success(t('blogPlans.updated'));
       } else {
         await blogPlanService.createPlan(payload);
-        toast.success(t('blogPlans.created', '创建成功'));
+        toast.success(t('blogPlans.created'));
       }
       onClose();
       await onSaved?.();
     } catch (e) {
-      toast.error(e?.response?.data?.message || t('blogPlans.saveFailed', '保存失败'));
+      toast.error(e?.response?.data?.message || t('blogPlans.saveFailed'));
     } finally {
       setSaving(false);
     }
   };
 
-  if (!isOpen) return null;
+  const footer = (
+    <>
+      <Button onClick={onClose} disabled={saving} variant="outline">
+        {t('common.cancel')}
+      </Button>
+      <Button onClick={submit} loading={saving} variant="primary">
+        {t('common.save')}
+      </Button>
+    </>
+  );
+
+  const nextRun = nextRunParts(
+    form.triggerTime, form.timezone, i18n.resolvedLanguage, form.scheduleType, form.scheduledDate,
+  );
+  const planTypes = [
+    ['ONCE', 'typeOnce', 'typeOnceHint'],
+    ['DAILY', 'typeDaily', 'typeDailyHint'],
+    ['WEEKLY', 'typeWeekly', 'typeWeeklyHint'],
+  ];
+  const aiOptions = [
+    ['DEEP', 'aiDeep', 'aiDeepHint'],
+    ['PRACTICAL', 'aiPractical', 'aiPracticalHint'],
+    ['NEWS', 'aiNews', 'aiNewsHint'],
+    ['OPINION', 'aiOpinion', 'aiOpinionHint'],
+  ];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 sm:p-6">
-      <div className="flex w-full max-w-5xl flex-col overflow-hidden rounded-[24px] bg-white shadow-2xl animate-in zoom-in-95 duration-200">
-        {/* Header */}
-        <div className="flex items-center justify-between border-b border-border/40 px-8 py-5 shrink-0">
-          <h2 className="text-xl font-bold text-ink">{plan?.id ? '编辑发布计划' : '新建发布计划'}</h2>
-          <button onClick={onClose} className="rounded-full p-2 text-ink-muted hover:bg-surface hover:text-ink transition-colors">
-            <X className="h-5 w-5" />
-          </button>
-        </div>
-        
-        {/* Body */}
-        <div className="flex flex-1 min-h-[600px] overflow-hidden">
-          {/* Left: Form */}
-          <div className="flex-1 overflow-y-auto px-8 py-6 custom-scrollbar">
-            <div className="space-y-7 max-w-2xl">
-              
-              {/* 文章主题 */}
-              <div>
-                <label className="mb-2.5 block text-[15px] font-bold text-ink">文章主题</label>
-                <div className="relative">
-                  <input 
-                    type="text" 
-                    value={form.topic}
-                    onChange={e => setForm({...form, topic: e.target.value})}
-                    placeholder="前端性能优化：从加载到渲染的核心策略"
-                    className="w-full rounded-xl border border-border/60 bg-white px-4 py-3 text-[14px] text-ink font-medium outline-none transition-all focus:border-accent focus:ring-1 focus:ring-accent pr-16 shadow-sm"
-                  />
-                  <div className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-medium text-ink-faint">
-                    {form.topic.length}/100
-                  </div>
-                </div>
-              </div>
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={plan?.id ? t('blogPlans.editTitle') : t('blogPlans.createCustomTitle')}
+      width="max-w-4xl"
+      footer={footer}
+      closeOnOutsideClick={!saving}
+    >
+      <div className="grid min-h-0 grid-cols-1 gap-5 lg:grid-cols-[minmax(0,1fr)_17rem]">
+        <div className="space-y-5">
+          <FormField label={t('blogPlans.topic')} hint={t('blogPlans.customDailyHint')}>
+            <div className="relative">
+              <input className={`${formInputCls} pr-16`} value={form.topic} maxLength={500}
+                onChange={(e) => updateForm('topic', e.target.value)}
+                placeholder={t('blogPlans.topicPlaceholder')} />
+              <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-micro text-ink-faint">
+                {form.topic.length}/500
+              </span>
+            </div>
+          </FormField>
 
-              {/* 绑定知识库 */}
-              <div>
-                <label className="mb-2.5 block text-[15px] font-bold text-ink">绑定知识库</label>
-                <div className="flex w-full items-center justify-between rounded-xl border border-border/60 px-4 py-3 cursor-pointer hover:bg-surface transition-colors shadow-sm">
-                  <div className="flex items-center gap-2">
-                    <Book className="w-4 h-4 text-purple-500" />
-                    <span className="text-[14px] text-ink font-bold">中级前端开发知识体系（笔记）</span>
-                    <X className="w-3.5 h-3.5 text-ink-muted hover:text-ink ml-1" />
-                  </div>
-                  <ChevronDown className="w-4 h-4 text-ink-muted" />
-                </div>
-              </div>
+          <FormField label={t('blogPlans.knowledgeBase')}>
+            <CustomSelect size="sm" value={form.knowledgeMaterialId}
+              onChange={(value) => updateForm('knowledgeMaterialId', value)}
+              options={[
+                { value: '', label: t('blogPlans.noKnowledgeBase') },
+                ...knowledgeMaterials.map((item) => ({ value: String(item.id), label: item.title })),
+              ]} />
+          </FormField>
 
-              {/* 计划类型 */}
-              <div>
-                <label className="mb-2.5 block text-[15px] font-bold text-ink">计划类型</label>
-                <div className="grid grid-cols-3 gap-3">
-                  <div className={`flex flex-col rounded-xl border ${form.planType === 'once' ? 'border-purple-500 bg-purple-50/40' : 'border-border/60 bg-white hover:border-border'} p-3.5 cursor-pointer transition-colors shadow-sm`} onClick={() => setForm({...form, planType: 'once'})}>
-                    <div className={`text-[15px] font-bold ${form.planType === 'once' ? 'text-purple-600' : 'text-ink'}`}>一次性</div>
-                    <div className={`text-[12px] font-medium mt-1 ${form.planType === 'once' ? 'text-purple-500/80' : 'text-ink-muted'}`}>仅执行一次</div>
-                  </div>
-                  <div className={`flex flex-col rounded-xl border ${form.planType === 'daily' ? 'border-purple-500 bg-purple-50/40' : 'border-border/60 bg-white hover:border-border'} p-3.5 cursor-pointer transition-colors shadow-sm`} onClick={() => setForm({...form, planType: 'daily'})}>
-                    <div className={`text-[15px] font-bold ${form.planType === 'daily' ? 'text-purple-600' : 'text-ink'}`}>每日</div>
-                    <div className={`text-[12px] font-medium mt-1 ${form.planType === 'daily' ? 'text-purple-500/80' : 'text-ink-muted'}`}>每天固定时间执行</div>
-                  </div>
-                  <div className={`flex flex-col rounded-xl border ${form.planType === 'weekly' ? 'border-purple-500 bg-purple-50/40' : 'border-border/60 bg-white hover:border-border'} p-3.5 cursor-pointer transition-colors shadow-sm`} onClick={() => setForm({...form, planType: 'weekly'})}>
-                    <div className={`text-[15px] font-bold ${form.planType === 'weekly' ? 'text-purple-600' : 'text-ink'}`}>每周</div>
-                    <div className={`text-[12px] font-medium mt-1 ${form.planType === 'weekly' ? 'text-purple-500/80' : 'text-ink-muted'}`}>每周固定日执行</div>
-                  </div>
-                </div>
-              </div>
-
-              {/* 执行时间 */}
-              <div>
-                <label className="mb-2.5 block text-[15px] font-bold text-ink">执行时间</label>
-                <div className="flex items-center gap-3">
-                  <div className="flex-1 flex items-center gap-2.5 rounded-xl border border-border/60 px-4 py-3 shadow-sm">
-                    <Calendar className="w-4 h-4 text-ink-muted" />
-                    <input type="text" className="w-full bg-transparent text-[14px] font-medium text-ink outline-none" value={form.date} onChange={e => setForm({...form, date: e.target.value})} />
-                    <ChevronDown className="w-4 h-4 text-ink-muted ml-auto" />
-                  </div>
-                  <div className="flex-1 flex items-center gap-2.5 rounded-xl border border-border/60 px-4 py-3 shadow-sm">
-                    <Clock className="w-4 h-4 text-ink-muted" />
-                    <input type="text" className="w-full bg-transparent text-[14px] font-medium text-ink outline-none" value={form.triggerTime} onChange={e => setForm({...form, triggerTime: e.target.value})} />
-                  </div>
-                </div>
-              </div>
-
-              {/* 发布平台 */}
-              <div>
-                <label className="mb-2.5 block text-[15px] font-bold text-ink">发布平台</label>
-                <div className="flex flex-wrap items-center gap-2">
-                  <div className="flex items-center gap-1.5 rounded-full border border-blue-500/40 bg-blue-50/50 px-3 py-1.5 text-xs font-bold text-blue-600">
-                    <div className="w-3.5 h-3.5 rounded bg-blue-500 flex items-center justify-center text-white text-[9px]">掘</div> 掘金
-                  </div>
-                  <div className="flex items-center gap-1.5 rounded-full border border-blue-500/40 bg-blue-50/50 px-3 py-1.5 text-xs font-bold text-blue-600">
-                    <div className="w-3.5 h-3.5 rounded bg-blue-500 flex items-center justify-center text-white text-[9px]">知</div> 知乎
-                  </div>
-                  <div className="flex items-center gap-1.5 rounded-full border border-green-500/40 bg-green-50/50 px-3 py-1.5 text-xs font-bold text-green-600">
-                    <div className="w-3.5 h-3.5 rounded bg-green-500 flex items-center justify-center text-white text-[9px]">公</div> 公众号
-                  </div>
-                  <div className="flex items-center gap-1.5 rounded-full border border-orange-500/40 bg-orange-50/50 px-3 py-1.5 text-xs font-bold text-orange-600">
-                    <div className="w-3.5 h-3.5 rounded bg-orange-500 flex items-center justify-center text-white text-[9px]">C</div> CSDN
-                  </div>
-                  <div className="flex items-center gap-1.5 rounded-full border border-red-500/40 bg-red-50/50 px-3 py-1.5 text-xs font-bold text-red-600">
-                    <div className="w-3.5 h-3.5 rounded bg-red-500 flex items-center justify-center text-white text-[9px]">微</div> 微博
-                  </div>
-                  <div className="flex items-center gap-1 rounded-full border border-border/60 bg-white px-2 py-1.5 text-xs font-bold text-ink-muted cursor-pointer hover:bg-surface">
-                    +2 <ChevronDown className="w-3 h-3" />
-                  </div>
-                </div>
-              </div>
-
-              {/* AI 规划选项 */}
-              <div>
-                <label className="mb-2.5 block text-[15px] font-bold text-ink">AI 规划选项</label>
-                <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-                  <div className={`relative flex flex-col rounded-xl border ${form.aiOption === 'deep' ? 'border-purple-500 bg-purple-50/40' : 'border-border/60 bg-white hover:border-border'} p-3.5 cursor-pointer transition-colors shadow-sm`} onClick={() => setForm({...form, aiOption: 'deep'})}>
-                    {form.aiOption === 'deep' && (
-                      <div className="absolute right-0 top-0 translate-x-2 -translate-y-2 rounded-full bg-purple-500 p-0.5 text-white shadow-sm"><Check className="w-3.5 h-3.5" /></div>
-                    )}
-                    <div className={`text-[14px] font-bold ${form.aiOption === 'deep' ? 'text-purple-600' : 'text-ink'}`}>深度解析</div>
-                    <div className="text-[11px] text-ink-muted mt-1.5 leading-tight font-medium">深入拆解知识<br/>点透技术本质</div>
-                  </div>
-                  <div className={`relative flex flex-col rounded-xl border ${form.aiOption === 'practical' ? 'border-purple-500 bg-purple-50/40' : 'border-border/60 bg-white hover:border-border'} p-3.5 cursor-pointer transition-colors shadow-sm`} onClick={() => setForm({...form, aiOption: 'practical'})}>
-                    <div className={`text-[14px] font-bold ${form.aiOption === 'practical' ? 'text-purple-600' : 'text-ink'}`}>实战教程</div>
-                    <div className="text-[11px] text-ink-muted mt-1.5 leading-tight font-medium">步骤图解，<br/>注重实操演示</div>
-                  </div>
-                  <div className={`relative flex flex-col rounded-xl border ${form.aiOption === 'news' ? 'border-purple-500 bg-purple-50/40' : 'border-border/60 bg-white hover:border-border'} p-3.5 cursor-pointer transition-colors shadow-sm`} onClick={() => setForm({...form, aiOption: 'news'})}>
-                    <div className={`text-[14px] font-bold ${form.aiOption === 'news' ? 'text-purple-600' : 'text-ink'}`}>资讯解读</div>
-                    <div className="text-[11px] text-ink-muted mt-1.5 leading-tight font-medium">快速解读热点，<br/>传递关键信息</div>
-                  </div>
-                  <div className={`relative flex flex-col rounded-xl border ${form.aiOption === 'opinion' ? 'border-purple-500 bg-purple-50/40' : 'border-border/60 bg-white hover:border-border'} p-3.5 cursor-pointer transition-colors shadow-sm`} onClick={() => setForm({...form, aiOption: 'opinion'})}>
-                    <div className={`text-[14px] font-bold ${form.aiOption === 'opinion' ? 'text-purple-600' : 'text-ink'}`}>观点评论</div>
-                    <div className="text-[11px] text-ink-muted mt-1.5 leading-tight font-medium">表达观点，<br/>适合讨论与思考</div>
-                  </div>
-                </div>
-              </div>
-
-              {/* 自动生成后同步发布 */}
-              <div className="flex items-center gap-3 pt-2 pb-6">
-                <button 
-                  className={`relative h-[22px] w-[40px] rounded-full transition-colors ${form.autoPublish ? 'bg-purple-500' : 'bg-border'}`}
-                  onClick={() => setForm({...form, autoPublish: !form.autoPublish})}
-                >
-                  <div className={`absolute left-[3px] top-[3px] h-4 w-4 rounded-full bg-white transition-transform ${form.autoPublish ? 'translate-x-[18px]' : 'translate-x-0'}`} />
-                </button>
-                <span className="text-[14px] font-medium text-ink-muted">内容生成完成后，将自动发布到已选平台</span>
-              </div>
+          <div>
+            <div className="mb-2 text-caption font-semibold text-ink">{t('blogPlans.scheduleType')}</div>
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+              {planTypes.map(([value, titleKey, hintKey]) => {
+                const selected = form.scheduleType === value;
+                return <button key={value} type="button" onClick={() => updateForm('scheduleType', value)}
+                  className={`relative rounded-xl border px-4 py-3 text-left transition-colors ${selected ? 'border-accent bg-accent-soft shadow-sm' : 'border-border bg-canvas hover:border-border-strong'}`}>
+                  {selected && <Check className="absolute right-3 top-3 h-4 w-4 text-accent" />}
+                  <div className={`text-body font-semibold ${selected ? 'text-accent' : 'text-ink'}`}>{t(`blogPlans.${titleKey}`)}</div>
+                  <div className="mt-1 pr-4 text-micro text-ink-faint">{t(`blogPlans.${hintKey}`)}</div>
+                </button>;
+              })}
             </div>
           </div>
 
-          {/* Right: Summary */}
-          <div className="w-[320px] shrink-0 bg-[#F4F6FE] px-8 py-8 border-l border-border/40 flex flex-col overflow-y-auto">
-            <h3 className="text-[15px] font-bold text-ink mb-7">计划摘要</h3>
-            
-            <div className="space-y-1.5 mb-7">
-              <div className="text-[13px] font-bold text-ink mb-2">下次执行</div>
-              <div className="text-[22px] font-black text-ink mb-1">2026/08/18 <span className="text-[14px] font-bold text-ink-muted ml-1">(周二)</span> 12:00</div>
-              <div className="text-[12px] font-bold text-ink-muted">预计在 3 天后执行</div>
+          <FormField label={t('blogPlans.triggerTime')}>
+            <div className={`grid grid-cols-1 gap-3 ${form.scheduleType === 'DAILY' ? 'sm:grid-cols-2' : 'sm:grid-cols-3'}`}>
+              {form.scheduleType !== 'DAILY' && <input type="date" className={formInputCls}
+                min={tomorrow()} value={form.scheduledDate}
+                onChange={(e) => updateForm('scheduledDate', e.target.value)}
+                aria-label={t(form.scheduleType === 'ONCE' ? 'blogPlans.executionDate' : 'blogPlans.firstExecutionDate')} />}
+              <TimeInput size="sm" value={form.triggerTime}
+                onChange={(e) => updateForm('triggerTime', e.target.value)} />
+              <TimezoneSelect size="sm" value={form.timezone}
+                onChange={(value) => updateForm('timezone', value)} />
             </div>
+          </FormField>
 
-            <div className="h-px bg-border/50 w-full mb-7"></div>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <FormField label={t('blogPlans.audience')}>
+              <input className={formInputCls} value={form.audience} maxLength={120}
+                onChange={(e) => updateForm('audience', e.target.value)}
+                placeholder={t('blogPlans.audiencePlaceholder')} />
+            </FormField>
+            <FormField label={t('blogPlans.tone')}>
+              <input className={formInputCls} value={form.tone} maxLength={60}
+                onChange={(e) => updateForm('tone', e.target.value)}
+                placeholder={t('blogPlans.tonePlaceholder')} />
+            </FormField>
+          </div>
 
-            <div className="space-y-5 mb-8">
-              <h4 className="text-[14px] font-bold text-ink mb-4">预期产出</h4>
-              
-              <div className="flex flex-col">
-                <div className="text-[12px] font-medium text-ink-muted mb-1">文章类型</div>
-                <div className="text-[14px] font-bold text-ink">技术文章</div>
-              </div>
-              
-              <div className="flex flex-col">
-                <div className="text-[12px] font-medium text-ink-muted mb-1">预计字数</div>
-                <div className="text-[14px] font-bold text-ink">1,200 - 1,800 字</div>
-              </div>
-
-              <div className="flex flex-col">
-                <div className="text-[12px] font-medium text-ink-muted mb-1">内容来源</div>
-                <div className="text-[14px] font-bold text-ink">中级前端开发知识体系（笔记）</div>
-              </div>
-
-              <div className="flex flex-col">
-                <div className="text-[12px] font-medium text-ink-muted mb-1">发布平台</div>
-                <div className="flex items-center gap-1.5 mt-1">
-                  <div className="w-[18px] h-[18px] rounded-[4px] bg-blue-500 flex items-center justify-center text-white text-[10px] font-bold">掘</div>
-                  <div className="w-[18px] h-[18px] rounded-[4px] bg-blue-500 flex items-center justify-center text-white text-[10px] font-bold">知</div>
-                  <div className="w-[18px] h-[18px] rounded-[4px] bg-green-500 flex items-center justify-center text-white text-[10px] font-bold">公</div>
-                  <div className="w-[18px] h-[18px] rounded-[4px] bg-orange-500 flex items-center justify-center text-white text-[10px] font-bold">C</div>
-                  <div className="text-[12px] font-bold text-ink-muted ml-1">等 6 个平台</div>
-                </div>
-              </div>
-
-              <div className="flex flex-col">
-                <div className="text-[12px] font-medium text-ink-muted mb-1">AI 规划方向</div>
-                <div className="text-[14px] font-bold text-ink">深度解析</div>
-              </div>
-            </div>
-
-            <div className="mt-auto bg-[#E8EBFC] rounded-2xl p-4 flex gap-3 shadow-sm border border-white/50">
-              <Sparkles className="w-5 h-5 text-purple-600 shrink-0 mt-0.5" />
-              <div className="text-[13px] text-indigo-900/80 leading-relaxed font-bold">
-                AI 将基于知识库内容生成结构化文章，包含核心原理，实战案例与最佳实践。
-              </div>
+          <div>
+            <div className="mb-2 text-caption font-semibold text-ink">{t('blogPlans.aiDirection')}</div>
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+              {aiOptions.map(([value, titleKey, hintKey]) => {
+                const selected = form.aiOption === value;
+                return <button key={value} type="button" onClick={() => updateForm('aiOption', value)}
+                  className={`relative rounded-xl border p-3 text-left transition-colors ${selected ? 'border-accent bg-accent-soft' : 'border-border bg-canvas hover:border-border-strong'}`}>
+                  {selected && <Check className="absolute right-2 top-2 h-3.5 w-3.5 text-accent" />}
+                  <div className={`text-caption font-semibold ${selected ? 'text-accent' : 'text-ink'}`}>{t(`blogPlans.${titleKey}`)}</div>
+                  <div className="mt-1 pr-2 text-micro text-ink-faint">{t(`blogPlans.${hintKey}`)}</div>
+                </button>;
+              })}
             </div>
           </div>
+
+          <div>
+            <div className="mb-2 text-caption font-semibold text-ink">{t('blogPlans.publishPlatforms')}</div>
+            <div className={`flex flex-wrap gap-2 ${form.autoPublish ? '' : 'opacity-50'}`}>
+              <div className="flex items-center gap-2 rounded-xl border border-accent bg-accent-soft px-3 py-2 text-caption text-accent">
+                <Check className="h-4 w-4" /> {t('blogPlans.localPlatform')}
+              </div>
+              {[
+                ['syncJuejin', form.syncJuejin, t('blogPlans.syncJuejin')],
+                ['syncCsdn', form.syncCsdn, t('blogPlans.syncCsdn')],
+              ].map(([field, checked, label]) => (
+                <label key={field} className={`flex cursor-pointer items-center gap-2 rounded-xl border px-3 py-2 text-caption transition-colors ${checked ? 'border-accent bg-accent-soft text-accent' : 'border-border bg-canvas text-ink-secondary'}`}>
+                  <input type="checkbox" checked={checked} disabled={!form.autoPublish}
+                    onChange={(e) => updateForm(field, e.target.checked)}
+                    className="h-4 w-4 rounded border-border text-accent focus:ring-accent" />
+                  {label}
+                </label>
+              ))}
+            </div>
+          </div>
+
+          <label className="flex cursor-pointer items-center gap-3 text-body text-ink-secondary">
+            <input type="checkbox" checked={form.autoPublish}
+              onChange={(e) => updateForm('autoPublish', e.target.checked)}
+              className="h-4 w-4 rounded border-border text-accent focus:ring-accent" />
+            {t('blogPlans.autoPublish')}
+          </label>
+
+          {error && <div role="alert" className="text-caption text-danger">{error}</div>}
         </div>
 
-        {/* Footer */}
-        <div className="flex items-center justify-end gap-3 border-t border-border/40 px-8 py-5 bg-white shrink-0">
-          <button onClick={onClose} className="rounded-xl border border-border/60 bg-white px-7 py-3 text-[14px] font-bold text-ink hover:bg-surface transition-colors">
-            保存草稿
-          </button>
-          <button onClick={submit} disabled={saving} className="rounded-xl bg-purple-600 px-7 py-3 text-[14px] font-bold text-white shadow-md hover:bg-purple-700 transition-colors disabled:opacity-50">
-            {saving ? '创建中...' : '创建计划'}
-          </button>
-        </div>
+        <aside className="flex flex-col rounded-2xl border border-border bg-surface-muted p-5 text-ink-secondary">
+          <div className="text-title text-ink">{t('blogPlans.title')}</div>
+          <div className="mt-5 text-caption font-semibold text-ink">{t('blogPlans.nextRun')}</div>
+          <div className="mt-2 flex items-center gap-2">
+            <CalendarDays className="h-4 w-4 shrink-0 text-accent" />
+            <span className="text-title text-ink">{nextRun.date}</span>
+            <span className="text-caption text-ink-muted">{nextRun.weekday}</span>
+          </div>
+          <div className="mt-1 flex items-center gap-2 text-body text-ink">
+            <Clock3 className="h-4 w-4 text-ink-faint" /> {form.triggerTime}
+          </div>
+
+          <div className="my-5 h-px bg-border" />
+          <div className="space-y-4">
+            <div>
+              <div className="text-micro text-ink-faint">{t('blogPlans.topic')}</div>
+              <div className="mt-1 break-words text-body font-semibold text-ink">{form.topic.trim() || t('blogPlans.topicPlaceholder')}</div>
+            </div>
+            <div>
+              <div className="text-micro text-ink-faint">{t('blogPlans.timezone')}</div>
+              <div className="mt-1 text-body font-semibold text-ink">{form.timezone}</div>
+            </div>
+            <div>
+              <div className="text-micro text-ink-faint">{t('blogPlans.scheduleType')}</div>
+              <div className="mt-1 text-body font-semibold text-ink">
+                {t(`blogPlans.${planTypes.find(([value]) => value === form.scheduleType)?.[1]}`)}
+              </div>
+            </div>
+            <div>
+              <div className="text-micro text-ink-faint">{t('blogPlans.publishPlatforms')}</div>
+              <div className="mt-1 text-body font-semibold text-ink">
+                {[t('blogPlans.localPlatform'), form.syncCsdn && 'CSDN', form.syncJuejin && '掘金'].filter(Boolean).join(' · ')}
+              </div>
+            </div>
+            {form.audience.trim() && <div>
+              <div className="text-micro text-ink-faint">{t('blogPlans.audience')}</div>
+              <div className="mt-1 text-body font-semibold text-ink">{form.audience.trim()}</div>
+            </div>}
+            {form.tone.trim() && <div>
+              <div className="text-micro text-ink-faint">{t('blogPlans.tone')}</div>
+              <div className="mt-1 text-body font-semibold text-ink">{form.tone.trim()}</div>
+            </div>}
+          </div>
+
+          <div className="mt-auto pt-5">
+            <div className="flex gap-3 rounded-xl bg-accent-soft p-4 text-caption text-accent-fg">
+              <Sparkles className="h-4 w-4 shrink-0 text-accent" />
+              <span>{t('blogPlans.customDailyHint')}</span>
+            </div>
+          </div>
+        </aside>
       </div>
-    </div>
+    </Modal>
   );
 };
 

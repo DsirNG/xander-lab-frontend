@@ -130,6 +130,8 @@ export default {
     createCustom: 'Custom plan',
     createCustomTitle: 'New custom plan',
     customDailyHint: 'One article is generated and published at the same time every day; the AI keeps each day’s content fresh',
+    knowledgeBase: 'Knowledge source', noKnowledgeBase: 'No knowledge source', autoPublish: 'Publish automatically to selected platforms after generation',
+    scheduleType: 'Plan type', typeOnce: 'One-time', typeOnceHint: 'Run once on a selected date', typeDaily: 'Daily', typeDailyHint: 'Run at the same time every day', typeWeekly: 'Weekly', typeWeeklyHint: 'Run on the same weekday', executionDate: 'Execution date', firstExecutionDate: 'First execution date', publishPlatforms: 'Publishing platforms', aiDirection: 'AI direction', aiDeep: 'Deep analysis', aiDeepHint: 'Explain principles and best practices', aiPractical: 'Hands-on tutorial', aiPracticalHint: 'Clear steps and practical demos', aiNews: 'News analysis', aiNewsHint: 'Highlight trends and key facts', aiOpinion: 'Opinion', aiOpinionHint: 'Present a position with evidence', localPlatform: 'This site (default)',
     aiGenerate: 'AI generate plans',
     aiGenerateTitle: 'AI generate multi-day plans',
     aiGenerateDesc: 'Enter a topic direction; the AI splits it into daily topics and publishes one article at the same time every day from tomorrow',
