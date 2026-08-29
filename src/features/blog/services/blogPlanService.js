@@ -30,7 +30,7 @@ export const blogPlanService = {
   listPlans: ({ page = 1, size = 10 } = {}, config) =>
     get('/api/blog-plans', { page, size }, config),
   getPublishRhythm: (config) =>
-    get('/api/blog/posts/mine/publish-rhythm', undefined, config),
+    get('/api/blog/posts/publish-rhythm', undefined, config),
   getPlan: (id, config) => get(`/api/blog-plans/${id}`, undefined, config),
   updatePlan: (id, payload, config) => patch(`/api/blog-plans/${id}`, payload, config),
   updatePlanStatus: (id, action, config) => patch(`/api/blog-plans/${id}/status`, { action }, config),

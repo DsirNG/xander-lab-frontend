@@ -59,7 +59,10 @@ const BlogPlans = () => {
       const [data, summary, rhythm] = await Promise.all([
         blogPlanService.listPlans({ page, size: pageSize }),
         blogPlanService.listPlans({ page: 1, size: 50 }, { _silent: true }),
-        blogPlanService.getPublishRhythm({ _silent: true }),
+        blogPlanService.getPublishRhythm({ _silent: true }).catch((error) => {
+          console.error('loadPublishRhythm error:', error);
+          return null;
+        }),
       ]);
       setPlans(data?.records || []);
       setSummaryPlans(summary?.records || []);
