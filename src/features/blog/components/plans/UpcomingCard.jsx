@@ -1,63 +1,48 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { CalendarClock } from 'lucide-react';
 import { PLAN_STATUS } from '../../services/blogPlanService';
-import { Code, Link as LinkIcon, CalendarDays } from 'lucide-react';
 
-const UpcomingCard = () => {
+const isToday = (instant) => {
+  if (!instant) return false;
+  const date = new Date(instant);
+  const now = new Date();
+  return date.getFullYear() === now.getFullYear()
+    && date.getMonth() === now.getMonth()
+    && date.getDate() === now.getDate();
+};
+
+const UpcomingCard = ({ plans }) => {
   const { t } = useTranslation();
-  // Use mock data if API doesn't have upcoming plans yet to match the design
-  const items = [
-    {
-      id: '1',
-      title: '中级前端开发知识',
-      time: t('blogPlans.timeFormat', '今天 12:51'),
-      icon: Code,
-      iconColor: 'text-orange-500',
-      iconBg: 'bg-orange-50'
-    },
-    {
-      id: '2',
-      title: '下载链路设计: File System Access API 实践',
-      time: t('blogPlans.timeFormat2', '明天 12:00'),
-      icon: LinkIcon,
-      iconColor: 'text-blue-500',
-      iconBg: 'bg-blue-50'
-    },
-    {
-      id: '3',
-      title: 'JavaScript 闭包深入理解',
-      time: t('blogPlans.timeFormat3', '明天 20:00'),
-      icon: CalendarDays,
-      iconColor: 'text-purple-500',
-      iconBg: 'bg-purple-50'
-    }
-  ];
+  const items = plans
+    .filter((plan) => plan.status === PLAN_STATUS.ACTIVE && isToday(plan.nextRunAt))
+    .sort((a, b) => new Date(a.nextRunAt) - new Date(b.nextRunAt));
 
   return (
-    <div className="flex flex-col shrink-0 rounded-[20px] bg-white p-5 shadow-sm flex-1 min-h-[240px]">
-      <div className="flex items-center justify-between mb-4 gap-2">
-        <h3 className="text-base font-bold text-ink min-w-0 truncate" title={t('blogPlans.upcomingExecution', '即将执行')}>{t('blogPlans.upcomingExecution', '即将执行')}</h3>
-        <button className="text-[13px] font-medium text-blue-600 hover:opacity-80 transition-opacity shrink-0">
-          {t('blogPlans.viewAll', '查看全部')}
-        </button>
-      </div>
-
-      <div className="flex flex-col gap-[22px]">
-        {items.map((item) => (
-          <div key={item.id} className="flex items-center gap-3.5">
-            <div className={`shrink-0 w-10 h-10 rounded-full flex items-center justify-center ${item.iconBg}`}>
-               <item.icon className={`w-5 h-5 ${item.iconColor}`} />
+    <div className="flex min-h-[220px] flex-1 flex-col rounded-[20px] bg-white p-5 shadow-sm">
+      <div className="text-title text-ink">{t('blogPlans.upcomingToday')}</div>
+      {items.length === 0 ? (
+        <div className="flex flex-1 flex-col items-center justify-center py-6 text-center">
+          <CalendarClock className="h-8 w-8 text-ink-faint" />
+          <div className="mt-3 text-caption text-ink-muted">{t('blogPlans.noUpcomingToday')}</div>
+        </div>
+      ) : (
+        <div className="mt-4 space-y-4">
+          {items.map((item) => (
+            <div key={item.id} className="flex items-center gap-3">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-accent-soft text-accent">
+                <CalendarClock className="h-4 w-4" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="truncate text-caption font-semibold text-ink" title={item.topic}>{item.topic}</div>
+                <div className="mt-1 text-micro text-ink-muted">
+                  {new Date(item.nextRunAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                </div>
+              </div>
             </div>
-            <div className="min-w-0 flex-1">
-              <div className="text-[13px] font-bold text-ink truncate mb-1" title={item.title}>{item.title}</div>
-              <div className="text-[11px] text-ink-muted">{item.time}</div>
-            </div>
-            <div className="shrink-0 rounded-[6px] bg-indigo-50/80 px-2 py-0.5 text-[11px] font-medium text-indigo-600 border border-indigo-100/50">
-              {t('blogPlans.upcomingExecution', '即将执行')}
-            </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

@@ -43,6 +43,8 @@ const BlogPlans = () => {
   const navigate = useNavigate();
   const toast = useToast();
   const [plans, setPlans] = useState([]);
+  const [summaryPlans, setSummaryPlans] = useState([]);
+  const [publishRhythm, setPublishRhythm] = useState(null);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [formOpen, setFormOpen] = useState(false);
@@ -54,8 +56,14 @@ const BlogPlans = () => {
   const loadPlans = useCallback(async () => {
     try {
       setLoading(true);
-      const data = await blogPlanService.listPlans({ page, size: pageSize });
+      const [data, summary, rhythm] = await Promise.all([
+        blogPlanService.listPlans({ page, size: pageSize }),
+        blogPlanService.listPlans({ page: 1, size: 50 }, { _silent: true }),
+        blogPlanService.getPublishRhythm({ _silent: true }),
+      ]);
       setPlans(data?.records || []);
+      setSummaryPlans(summary?.records || []);
+      setPublishRhythm(rhythm || null);
       setTotal(Number(data?.total) || 0);
       setLoading(false);
     } catch (error) {
@@ -274,9 +282,9 @@ const BlogPlans = () => {
 
       {/* Right Column: Sidebar */}
       <div className="hidden w-[320px] shrink-0 xl:flex flex-col gap-5 overflow-y-auto pb-2 pr-1">
-        <OverviewCard plans={plans} total={total} />
-        <RhythmCard />
-        <UpcomingCard plans={plans} />
+        <OverviewCard plans={summaryPlans} total={total} />
+        <RhythmCard rhythm={publishRhythm} />
+        <UpcomingCard plans={summaryPlans} />
       </div>
 
       <PlanFormModal

@@ -123,6 +123,7 @@ export default {
     createCustomTitle: '新規カスタムプラン',
     customDailyHint: '毎日同じ時刻に記事を1本自動生成・公開します。AIが日ごとに内容の重複を防ぎます',
     knowledgeBase: 'ナレッジを紐付け', noKnowledgeBase: '紐付けなし', autoPublish: '生成後に選択した公開先へ自動公開',
+    overview: 'プラン概要', totalPlans: '合計', activePlans: '実行待ち', pausedPlans: '一時停止', completedPlans: '完了', publishRhythm: '公開ペース', localDailyPublish: 'サイト内の1日公開数', postsPerDay: '件/日', upcomingToday: '今日の実行予定', noUpcomingToday: '今日の実行予定はありません',
     scheduleType: 'プランの種類', typeOnce: '一回のみ', typeOnceHint: '指定日に一度だけ実行', typeDaily: '毎日', typeDailyHint: '毎日同じ時刻に実行', typeWeekly: '毎週', typeWeeklyHint: '毎週同じ曜日に実行', executionDate: '実行日', firstExecutionDate: '初回実行日', publishPlatforms: '公開先', aiDirection: 'AI の方向性', aiDeep: '深掘り解説', aiDeepHint: '原理とベストプラクティスを解説', aiPractical: '実践チュートリアル', aiPracticalHint: '手順と実例を重視', aiNews: 'ニュース解説', aiNewsHint: 'トレンドと要点を整理', aiOpinion: '意見・論評', aiOpinionHint: '根拠のある見解を提示', localPlatform: 'このサイト（既定）',
     aiGenerate: 'AIプラン生成',
     aiGenerateTitle: 'AIで複数日プランを生成',

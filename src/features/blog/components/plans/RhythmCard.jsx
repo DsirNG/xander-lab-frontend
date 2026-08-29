@@ -1,51 +1,50 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
-const RhythmCard = () => {
-  const { t } = useTranslation();
-  const days = [
-    t('blogPlans.days.mon', '一'),
-    t('blogPlans.days.tue', '二'),
-    t('blogPlans.days.wed', '三'),
-    t('blogPlans.days.thu', '四'),
-    t('blogPlans.days.fri', '五'),
-    t('blogPlans.days.sat', '六'),
-    t('blogPlans.days.sun', '日')
-  ];
-  const values = [20, 30, 40, 100, 50, 10, 15]; // percentages
-  
+const parseLocalDate = (value) => {
+  const [year, month, day] = String(value || '').split('-').map(Number);
+  return year && month && day ? new Date(year, month - 1, day) : null;
+};
+
+const RhythmCard = ({ rhythm }) => {
+  const { t, i18n } = useTranslation();
+  const days = rhythm?.days || [];
+  const maxCount = Math.max(...days.map((day) => Number(day.count) || 0), 1);
+  const today = new Date();
+  const todayKey = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+  const weekday = new Intl.DateTimeFormat(i18n?.resolvedLanguage || 'zh-CN', { weekday: 'narrow' });
+
   return (
-    <div className="flex flex-col shrink-0 rounded-[20px] bg-white p-5 shadow-sm min-h-[200px]">
-      <div className="flex items-center justify-between mb-4 gap-2">
-        <h3 className="text-base font-bold text-ink min-w-0 truncate" title={t('blogPlans.publishRhythm', '发布节奏')}>{t('blogPlans.publishRhythm', '发布节奏')}</h3>
-        <button className="text-[13px] font-medium text-blue-600 hover:opacity-80 transition-opacity shrink-0">
-          {t('blogPlans.editRhythm', '编辑节奏')}
-        </button>
-      </div>
-
-      <div className="mb-2">
-        <div className="text-[13px] font-medium text-ink-muted mb-1">{t('blogPlans.dailyPublish', '每日发布')}</div>
-        <div className="flex items-baseline gap-1">
-          <span className="text-[26px] font-bold text-ink tracking-tight">2.1</span>
-          <span className="text-[13px] text-ink-muted">{t('blogPlans.unitPosts', '篇')}</span>
+    <div className="shrink-0 rounded-[20px] bg-white p-5 shadow-sm">
+      <div className="text-title text-ink">{t('blogPlans.publishRhythm')}</div>
+      <div className="mt-4 rounded-2xl border border-slate-100 bg-white px-4 py-3.5">
+        <div className="text-caption text-ink-muted">{t('blogPlans.localDailyPublish')}</div>
+        <div className="mt-0.5 flex items-baseline gap-1">
+          <span className="text-[24px] font-semibold leading-tight text-ink">
+            {Number(rhythm?.dailyAverage || 0).toFixed(1)}
+          </span>
+          <span className="text-caption text-ink-muted">{t('blogPlans.postsPerDay')}</span>
         </div>
-      </div>
-
-      <div className="flex items-end justify-between h-[68px] pt-4 mt-auto">
-        {days.map((day, i) => {
-          const isToday = i === 3;
-          return (
-            <div key={day} className="flex flex-col items-center gap-2.5 w-full">
-               <div className="w-[10px] bg-surface-muted rounded-full overflow-hidden flex flex-col justify-end" style={{ height: '42px' }}>
-                  <div 
-                    className={`w-full rounded-full transition-all duration-500 ${isToday ? 'bg-indigo-500' : 'bg-border-strong/50'}`} 
-                    style={{ height: `${values[i]}%` }}
-                  ></div>
-               </div>
-               <div className="text-[11px] text-ink-muted font-medium">{day}</div>
-            </div>
-          );
-        })}
+        <div className="mt-4 grid h-[58px] grid-cols-7 items-end gap-3">
+          {days.map((day) => {
+            const date = parseLocalDate(day.date);
+            const isToday = day.date === todayKey;
+            const height = Math.max(5, Math.round(((Number(day.count) || 0) / maxCount) * 32));
+            return (
+              <div key={day.date} className="flex h-full min-w-0 flex-col items-center justify-end gap-2">
+                <div
+                  data-testid="rhythm-bar"
+                  aria-label={`${day.date}: ${day.count}`}
+                  className={`w-2 rounded-full ${isToday ? 'bg-accent' : 'bg-[#E9ECF7]'}`}
+                  style={{ height: `${height}px` }}
+                />
+                <span className={`text-[10px] leading-none ${isToday ? 'font-semibold text-accent' : 'text-ink-muted'}`}>
+                  {date ? weekday.format(date) : '—'}
+                </span>
+              </div>
+            );
+          })}
+        </div>
       </div>
     </div>
   );

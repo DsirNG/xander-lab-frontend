@@ -123,6 +123,7 @@ export default {
     createCustomTitle: 'Новая своя программа',
     customDailyHint: 'Одна статья генерируется и публикуется ежедневно в одно и то же время; ИИ гарантирует разные статьи каждый день',
     knowledgeBase: 'База знаний', noKnowledgeBase: 'Без базы знаний', autoPublish: 'Автоматически публиковать после генерации',
+    overview: 'Обзор планов', totalPlans: 'Всего', activePlans: 'Ожидают', pausedPlans: 'Приостановлены', completedPlans: 'Завершены', publishRhythm: 'Ритм публикаций', localDailyPublish: 'Публикаций на сайте в день', postsPerDay: 'статей/день', upcomingToday: 'Запуски сегодня', noUpcomingToday: 'На сегодня запусков нет',
     scheduleType: 'Тип плана', typeOnce: 'Один раз', typeOnceHint: 'Выполнить один раз в выбранную дату', typeDaily: 'Ежедневно', typeDailyHint: 'Выполнять каждый день в одно время', typeWeekly: 'Еженедельно', typeWeeklyHint: 'Выполнять в один день недели', executionDate: 'Дата выполнения', firstExecutionDate: 'Дата первого запуска', publishPlatforms: 'Платформы публикации', aiDirection: 'Направление ИИ', aiDeep: 'Глубокий анализ', aiDeepHint: 'Принципы и лучшие практики', aiPractical: 'Практическое руководство', aiPracticalHint: 'Пошаговые примеры', aiNews: 'Разбор новостей', aiNewsHint: 'Тренды и ключевые факты', aiOpinion: 'Мнение', aiOpinionHint: 'Позиция с аргументами', localPlatform: 'Этот сайт (по умолчанию)',
     aiGenerate: 'Создать с ИИ',
     aiGenerateTitle: 'Создать план на несколько дней с ИИ',

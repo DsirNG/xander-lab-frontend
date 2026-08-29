@@ -29,6 +29,8 @@ export const blogPlanService = {
   createPlan: (payload, config) => post('/api/blog-plans', payload, config),
   listPlans: ({ page = 1, size = 10 } = {}, config) =>
     get('/api/blog-plans', { page, size }, config),
+  getPublishRhythm: (config) =>
+    get('/api/blog/posts/mine/publish-rhythm', undefined, config),
   getPlan: (id, config) => get(`/api/blog-plans/${id}`, undefined, config),
   updatePlan: (id, payload, config) => patch(`/api/blog-plans/${id}`, payload, config),
   updatePlanStatus: (id, action, config) => patch(`/api/blog-plans/${id}/status`, { action }, config),

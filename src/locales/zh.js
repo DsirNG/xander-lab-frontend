@@ -131,6 +131,7 @@ export default {
     createCustomTitle: '新建自定义计划',
     customDailyHint: '每天同一时刻自动生成并发布一篇，AI 会保证每天的文章内容不重复',
     knowledgeBase: '绑定知识库', noKnowledgeBase: '不绑定知识库', autoPublish: '内容生成后自动发布到已选平台',
+    overview: '计划概览', totalPlans: '计划总数', activePlans: '待执行', pausedPlans: '已暂停', completedPlans: '已完成', publishRhythm: '发布节奏', localDailyPublish: '本站每日发布数量', postsPerDay: '篇/天', upcomingToday: '今日即将执行', noUpcomingToday: '今天没有待执行计划',
     scheduleType: '计划类型', typeOnce: '一次性', typeOnceHint: '仅在指定日期执行一次', typeDaily: '每日', typeDailyHint: '每天同一时间执行', typeWeekly: '每周', typeWeeklyHint: '每周同一天执行', executionDate: '执行日期', firstExecutionDate: '首次执行日期', publishPlatforms: '发布平台', aiDirection: 'AI 规划选项', aiDeep: '深度解析', aiDeepHint: '深入拆解原理与最佳实践', aiPractical: '实战教程', aiPracticalHint: '步骤清晰，注重操作演示', aiNews: '资讯解读', aiNewsHint: '提炼热点与关键信息', aiOpinion: '观点评论', aiOpinionHint: '表达观点并给出论据', localPlatform: '本站（默认）',
     aiGenerate: 'AI 生成计划',
     aiGenerateTitle: 'AI 生成多日计划',
