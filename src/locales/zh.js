@@ -365,6 +365,7 @@ export default {
       dinqorai: 'DinQorAI',
       knowledge: '知识',
       writing: '写作',
+      plans: '计划',
     },
     home: {
       greeting: { morning: '上午好', afternoon: '下午好', evening: '晚上好' },

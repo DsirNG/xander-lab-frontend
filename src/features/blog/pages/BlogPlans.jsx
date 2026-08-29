@@ -10,6 +10,9 @@ import { usePlanActions } from '../hooks/usePlanActions';
 import PlanStatusBadge from '../components/plans/PlanStatusBadge';
 import PlanFormModal from '../components/plans/PlanFormModal';
 import PlanAiGenerateModal from '../components/plans/PlanAiGenerateModal';
+import OverviewCard from '../components/plans/OverviewCard';
+import RhythmCard from '../components/plans/RhythmCard';
+import UpcomingCard from '../components/plans/UpcomingCard';
 
 /**
  * 定时发文计划：分页列表 + 自定义/AI 生成双入口 + 操作；执行记录进入详情页
@@ -63,8 +66,9 @@ const BlogPlans = () => {
             )}
           </div>
           {plan.topics?.length > 0 && (
-            <div className="mt-1 line-clamp-1 text-caption font-medium text-ink-faint">
-              {t('blogPlans.topicsQueue')}: {plan.topics.length}{t('blogPlans.topicsQueueUnit')}
+            <div className="mt-1 flex flex-wrap items-center gap-1.5 text-xs font-medium text-ink-muted">
+              <span className="rounded-md bg-surface-muted px-1.5 py-0.5">{plan.topics[0]?.topic || '内容生成'}</span>
+              <span className="rounded-md bg-surface-muted px-1.5 py-0.5">{plan.runOnce ? '一次性' : '自动生成'}</span>
             </div>
           )}
         </div>
@@ -76,12 +80,11 @@ const BlogPlans = () => {
       width: '20%',
       render: (plan) => (
         <div className="min-w-0">
-          <span className="block truncate text-sm font-medium text-ink-muted">
-            {(plan.triggerTimes?.length > 0 ? plan.triggerTimes.join(' / ') : plan.triggerTime)} ({plan.timezone})
+          <span className="block truncate text-sm font-medium text-ink">
+            {(plan.triggerTimes?.length > 0 ? plan.triggerTimes.join(' / ') : plan.triggerTime)}
           </span>
-          <span className="mt-1 block truncate text-caption font-medium text-ink-faint">
-            {t('blogPlans.syncCsdn')}: {plan.syncCsdn ? t('blogPlans.yes') : t('blogPlans.no')}
-            {' · '}{t('blogPlans.syncJuejin')}: {plan.syncJuejin ? t('blogPlans.yes') : t('blogPlans.no')}
+          <span className="mt-1 block truncate text-xs text-ink-muted">
+            {plan.timezone}
           </span>
         </div>
       ),
@@ -91,9 +94,11 @@ const BlogPlans = () => {
       title: t('blogPlans.nextRun'),
       width: '18%',
       render: (plan) => (
-        <span className="block truncate text-sm font-medium text-ink-muted" title={plan.nextRunAt}>
-          {plan.nextRunAt ? new Date(plan.nextRunAt).toLocaleString() : '—'}
-        </span>
+        <div className="min-w-0">
+          <span className="block truncate text-sm font-medium text-ink" title={plan.nextRunAt}>
+            {plan.nextRunAt ? new Date(plan.nextRunAt).toLocaleString() : '—'}
+          </span>
+        </div>
       ),
     },
     {
@@ -106,7 +111,6 @@ const BlogPlans = () => {
       key: 'actions',
       title: t('blogPlans.actions'),
       width: '10%',
-
       render: (plan) => {
         const items = [];
         if (plan.status === PLAN_STATUS.ACTIVE || plan.status === PLAN_STATUS.PAUSED) {
@@ -176,44 +180,61 @@ const BlogPlans = () => {
   ];
 
   return (
-    <div className="flex h-full min-h-0 flex-col">
-      <div className="flex shrink-0 flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:px-6">
-        <div className="min-w-0">
-          <div className="text-base font-bold text-ink">{t('blogPlans.title')}</div>
-          <div className="mt-0.5 text-caption font-medium text-ink-faint">{t('blogPlans.subtitle')}</div>
+    <div className="flex h-full min-h-0 bg-surface flex-row gap-6 p-4 sm:p-6 overflow-hidden">
+      {/* Left Column: Main area */}
+      <div className="flex min-w-0 flex-1 flex-col gap-6">
+        {/* Banner */}
+        <div className="relative flex shrink-0 items-center justify-between overflow-hidden rounded-2xl bg-gradient-to-r from-[#F2F5FE] to-[#F7F2FE] p-6 sm:p-8">
+          <div className="relative z-10 min-w-0">
+            <h1 className="text-2xl font-bold text-ink">{t('blogPlans.title', '发布计划')}</h1>
+            <p className="mt-2 text-sm text-ink-muted">
+              {t('blogPlans.subtitle', '设置主题与发布时间，自动生成并定时发布文章，让内容创作持续发生。')}
+            </p>
+          </div>
+          <div className="relative z-10 ml-4 flex shrink-0 items-center gap-3">
+            <button
+              onClick={() => setAiOpen(true)}
+              className="inline-flex min-h-10 items-center gap-1.5 rounded-xl bg-white px-5 py-2.5 text-sm font-bold text-accent shadow-sm hover:bg-surface-muted transition-colors"
+            >
+              <Sparkles className="w-4 h-4" /> {t('blogPlans.aiGenerate', 'AI 生成计划')}
+            </button>
+            <button
+              onClick={openCreate}
+              className="inline-flex min-h-10 items-center gap-1.5 rounded-xl bg-accent px-5 py-2.5 text-sm font-bold text-white shadow-sm hover:opacity-90 transition-opacity"
+            >
+              <Plus className="w-4 h-4" /> {t('blogPlans.createCustom', '新建计划')}
+            </button>
+          </div>
+          {/* Abstract background shapes */}
+          <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-accent/5 blur-3xl"></div>
+          <div className="absolute right-40 -bottom-20 h-48 w-48 rounded-full bg-purple-500/5 blur-2xl"></div>
         </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <button
-            onClick={() => setAiOpen(true)}
-            className="inline-flex min-h-11 items-center gap-1.5 rounded-xl border border-border px-4 py-2 text-sm font-bold text-ink-secondary hover:bg-surface-muted"
-          >
-            <Sparkles className="w-4 h-4 text-accent" /> {t('blogPlans.aiGenerate')}
-          </button>
-          <button
-            onClick={openCreate}
-            className="inline-flex min-h-11 items-center gap-1.5 rounded-xl bg-accent px-4 py-2 text-sm font-bold text-white hover:opacity-90"
-          >
-            <Plus className="w-4 h-4" /> {t('blogPlans.createCustom')}
-          </button>
+
+        {/* List */}
+        <div className="flex min-h-0 flex-1 flex-col rounded-2xl bg-white shadow-sm border border-border p-4 sm:p-5">
+          <DataTable
+            columns={columns}
+            rows={plans}
+            loading={loading}
+            emptyTitle={t('blogPlans.empty')}
+            emptyHint={t('blogPlans.emptyHint')}
+            emptyIcon={CalendarClock}
+            minWidth="840px"
+            page={page}
+            pageSize={pageSize}
+            total={total}
+            onPageChange={setPage}
+            onPageSizeChange={(s) => { setPageSize(s); setPage(1); }}
+            paginationDisabled={loading}
+          />
         </div>
       </div>
 
-      <div className="flex min-h-0 min-w-0 flex-1 flex-col px-4 py-3 sm:px-6">
-        <DataTable
-          columns={columns}
-          rows={plans}
-          loading={loading}
-          emptyTitle={t('blogPlans.empty')}
-          emptyHint={t('blogPlans.emptyHint')}
-          emptyIcon={CalendarClock}
-          minWidth="840px"
-          page={page}
-          pageSize={pageSize}
-          total={total}
-          onPageChange={setPage}
-          onPageSizeChange={(s) => { setPageSize(s); setPage(1); }}
-          paginationDisabled={loading}
-        />
+      {/* Right Column: Sidebar */}
+      <div className="hidden w-[340px] shrink-0 xl:flex flex-col gap-6 overflow-y-auto pb-2 pr-1">
+        <OverviewCard plans={plans} total={total} />
+        <RhythmCard />
+        <UpcomingCard plans={plans} />
       </div>
 
       <PlanFormModal
@@ -233,3 +254,4 @@ const BlogPlans = () => {
 };
 
 export default BlogPlans;
+

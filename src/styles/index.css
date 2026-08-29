@@ -2,7 +2,7 @@
  * 全局样式入口 + UI Design Tokens
  * Global Styles Entry Point & Design System
  *
- * Accent (#0284c7) is for accents only (avatar, CTA, focus, links).
+ * Accent (#6765f6) is for accents only (avatar, CTA, focus, links).
  * Ink / surface / border carry the rest of the UI.
  */
 
@@ -17,24 +17,24 @@
   --breakpoint-3xl: 112rem;
   --container-8xl: 90rem;
 
-  /* ── Accent (theme accent, sky-600 family) ── */
-  --color-accent: #0284c7;
-  --color-accent-50: #f0f9ff;
-  --color-accent-100: #e0f2fe;
-  --color-accent-200: #bae6fd;
-  --color-accent-300: #7dd3fc;
-  --color-accent-400: #38bdf8;
-  --color-accent-500: #0ea5e9;
-  --color-accent-600: #0284c7;
-  --color-accent-700: #0369a1;
-  --color-accent-800: #075985;
-  --color-accent-900: #0c4a6e;
-  --color-accent-soft: #f0f9ff;
-  --color-accent-muted: #e0f2fe;
-  --color-accent-fg: #0369a1;
+  /* ── Accent (theme accent, violet-600 family) ── */
+  --color-accent: #6765f6;
+  --color-accent-50: #faf9ff;
+  --color-accent-100: #f2f1fd;
+  --color-accent-200: #e5e3fc;
+  --color-accent-300: #c9c6fb;
+  --color-accent-400: #a7a3f8;
+  --color-accent-500: #827df5;
+  --color-accent-600: #6765f6;
+  --color-accent-700: #514dcc;
+  --color-accent-800: #403da3;
+  --color-accent-900: #2e2c73;
+  --color-accent-soft: #f2f1fd;
+  --color-accent-muted: #e5e3fc;
+  --color-accent-fg: #514dcc;
 
   /* primary = accent alias (legacy class names) */
-  --color-primary: #0284c7;
+  --color-primary: #6765f6;
   --color-primary-50: #f0f9ff;
   --color-primary-100: #e0f2fe;
   --color-primary-200: #bae6fd;
@@ -74,9 +74,9 @@
   --color-danger: #e11d48;
   --color-danger-soft: #fff1f2;
   --color-danger-fg: #be123c;
-  --color-info: #0284c7;
-  --color-info-soft: #f0f9ff;
-  --color-info-fg: #0369a1;
+  --color-info: #6765f6;
+  --color-info-soft: #f2f1fd;
+  --color-info-fg: #514dcc;
 
   /* ── Typography ── */
   /* 全项目统一使用 Plus Jakarta Sans；仅代码块保留 JetBrains Mono 等宽字体。 */

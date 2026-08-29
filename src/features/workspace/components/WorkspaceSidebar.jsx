@@ -29,6 +29,12 @@ const MENU = [
     icon: '/assets/workspace/sidebar-icons/writing.svg',
     labelKey: 'workspace.menu.writing',
   },
+  {
+    to: '/workspace/plans',
+    activeIcon: '/assets/workspace/sidebar-icons/writing-active.svg',
+    icon: '/assets/workspace/sidebar-icons/writing.svg',
+    labelKey: 'workspace.menu.plans',
+  },
 ];
 
 const getDisplayName = (userInfo) => userInfo?.nickname || userInfo?.username || 'DinQorAI';
