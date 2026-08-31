@@ -11,6 +11,7 @@
     "build:h5": "taro build --type h5",
     "upload:weapp": "taro build --type weapp && node scripts/fix-weapp-ci-deps.mjs && node scripts/upload.mjs",
     "fix:weapp-ci-deps": "node scripts/fix-weapp-ci-deps.mjs",
+    "test": "vitest run",
     "postinstall": "node scripts/fix-weapp-ci-deps.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
@@ -42,6 +43,7 @@
     "miniprogram-ci": "^2.1.31",
     "prettier": "^3.9.6",
     "typescript": "5.9.3",
+    "vitest": "^4.1.11",
     "webpack": "5.91.0"
   }
 }

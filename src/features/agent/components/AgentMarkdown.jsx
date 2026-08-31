@@ -1,14 +1,32 @@
 import React, { memo, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import remarkMath from "remark-math";
+import rehypeKatex from "rehype-katex";
+import "katex/dist/katex.min.css";
 import CodeBlock from "@/components/common/CodeBlock";
 import Modal from "@/components/common/Modal";
 
-/** 模型常把 Markdown 反引号写成 \` 转义，CommonMark 会把它渲染成裸反引号；这里还原为真正的反引号。 */
-const normalizeAnswer = (text) =>
-    typeof text === "string" && text.includes("\\`")
-        ? text.replace(/\\`/g, "`")
-        : text;
+/** 模型常把 Markdown 反引号写成 \` 转义，并用普通括号包裹 TeX；统一为 remark-math 可识别的定界符。 */
+const normalizeAnswer = (text) => {
+    if (typeof text !== "string") return text;
+
+    return text
+        .replace(/\\`/g, "`")
+        .replace(
+            /\\\[([\s\S]*?)\\\]/g,
+            (_, formula) => `\n$$\n${formula}\n$$\n`,
+        )
+        .replace(/\\\(([\s\S]*?)\\\)/g, (_, formula) => `$${formula}$`)
+        .replace(
+            /\(([^()\n]*\\[a-zA-Z]+[^()\n]*)\)/g,
+            (_, formula) => `$${formula}$`,
+        )
+        .replace(
+            /\[([^\n]*\\[a-zA-Z]+[^\n]*)\]/g,
+            (_, formula) => `$$${formula}$$`,
+        );
+};
 
 /** 标题统一渲染为 div + 排版 token（display/heading/title → 800，body → 400/600/700），不使用 h1-h6 标签。 */
 const HEADING_CLASSES = {
@@ -150,7 +168,8 @@ const AgentMarkdown = memo(({ content, codeAppearance = "conversation" }) => {
         <>
             <div className="prose prose-sm min-w-0 max-w-none break-words prose-li:my-0.5 prose-li:text-ink-secondary prose-strong:text-ink prose-pre:my-3 prose-pre:bg-transparent prose-pre:p-0 prose-table:text-sm">
                 <ReactMarkdown
-                    remarkPlugins={[remarkGfm]}
+                    remarkPlugins={[remarkGfm, remarkMath]}
+                    rehypePlugins={[rehypeKatex]}
                     components={components}
                 >
                     {normalizeAnswer(content || "")}

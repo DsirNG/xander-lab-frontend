@@ -40,6 +40,102 @@ const IMG_STYLE = 'max-width:100%;border-radius:8px;display:block;margin:0'
 const LINK_STYLE = 'color:#1677ff'
 const HR_STYLE = 'margin:0;border-top:1px solid #ececf1'
 const BLOCK_GAP = '<div style="height:10px"></div>'
+const MATH_STYLE = 'font-family:serif;white-space:nowrap'
+
+const MATH_SYMBOLS: Record<string, string> = {
+  alpha: 'α',
+  beta: 'β',
+  gamma: 'γ',
+  delta: 'δ',
+  theta: 'θ',
+  lambda: 'λ',
+  mu: 'μ',
+  pi: 'π',
+  rho: 'ρ',
+  sigma: 'σ',
+  phi: 'φ',
+  omega: 'ω',
+  sin: 'sin',
+  cos: 'cos',
+  tan: 'tan',
+  cot: 'cot',
+  sec: 'sec',
+  csc: 'csc',
+  circ: '°',
+}
+
+const SUPERSCRIPTS: Record<string, string> = {
+  0: '⁰',
+  1: '¹',
+  2: '²',
+  3: '³',
+  4: '⁴',
+  5: '⁵',
+  6: '⁶',
+  7: '⁷',
+  8: '⁸',
+  9: '⁹',
+  '+': '⁺',
+  '-': '⁻',
+  '=': '⁼',
+  '(': '⁽',
+  ')': '⁾',
+  n: 'ⁿ',
+  i: 'ⁱ',
+}
+
+const SUBSCRIPTS: Record<string, string> = {
+  0: '₀',
+  1: '₁',
+  2: '₂',
+  3: '₃',
+  4: '₄',
+  5: '₅',
+  6: '₆',
+  7: '₇',
+  8: '₈',
+  9: '₉',
+  '+': '₊',
+  '-': '₋',
+  '=': '₌',
+  '(': '₍',
+  ')': '₎',
+  a: 'ₐ',
+  e: 'ₑ',
+  h: 'ₕ',
+  i: 'ᵢ',
+  j: 'ⱼ',
+  k: 'ₖ',
+  l: 'ₗ',
+  m: 'ₘ',
+  n: 'ₙ',
+  o: 'ₒ',
+  p: 'ₚ',
+  r: 'ᵣ',
+  s: 'ₛ',
+  t: 'ₜ',
+  u: 'ᵤ',
+  v: 'ᵥ',
+  x: 'ₓ',
+}
+
+const toScript = (value: string, table: Record<string, string>) =>
+  [...value].map(char => table[char] ?? char).join('')
+
+/** RichText 不支持 KaTeX DOM；将常见 TeX 转为原生富文本可显示的数学字符。 */
+function renderMath(formula: string): string {
+  let value = formula.trim()
+  value = value.replace(/\\frac\s*\{([^{}]*)\}\s*\{([^{}]*)\}/g, '($1)/($2)')
+  value = value.replace(/\\frac\s*([^\s{}])\s*([^\s{}])/g, '($1)/($2)')
+  value = value.replace(/\\([a-zA-Z]+)/g, (_, name: string) => MATH_SYMBOLS[name] ?? name)
+  value = value.replace(/\^\{([^{}]*)\}/g, (_, exponent: string) =>
+    toScript(exponent, SUPERSCRIPTS),
+  )
+  value = value.replace(/_\{([^{}]*)\}/g, (_, subscript: string) => toScript(subscript, SUBSCRIPTS))
+  value = value.replace(/\^([^\s^_{}])/g, (_, exponent: string) => toScript(exponent, SUPERSCRIPTS))
+  value = value.replace(/_([^\s^_{}])/g, (_, subscript: string) => toScript(subscript, SUBSCRIPTS))
+  return `<span style="${MATH_STYLE}">${value}</span>`
+}
 
 /** 解析行内格式：返回转换后的 HTML 与剩余未处理文本 */
 function parseInline(input: string): string {
@@ -56,6 +152,12 @@ function parseInline(input: string): string {
   )
   // 兼容模型偶尔返回的 HTML 换行；仅放行 br，其他 HTML 仍保持转义。
   text = text.replace(/&lt;br\s*\/?&gt;/gi, '<br/>')
+  // 标准 TeX 定界符及模型常输出的括号包裹形式。
+  text = text
+    .replace(/\\\[([\s\S]*?)\\\]/g, (_, formula: string) => renderMath(formula))
+    .replace(/\\\(([\s\S]*?)\\\)/g, (_, formula: string) => renderMath(formula))
+    .replace(/\(([^()\n]*\\[a-zA-Z]+[^()\n]*)\)/g, (_, formula: string) => renderMath(formula))
+    .replace(/\[([^\n]*\\[a-zA-Z]+[^\n]*)\]/g, (_, formula: string) => renderMath(formula))
   // 图片
   text = text.replace(
     /!\[([^\]]*)\]\(([^)\s]+)(\s+"[^"]*")?\)/g,

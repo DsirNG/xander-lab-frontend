@@ -1,7 +1,29 @@
 import React from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import remarkMath from "remark-math";
+import rehypeKatex from "rehype-katex";
+import "katex/dist/katex.min.css";
 import CodeBlock from "@/components/common/CodeBlock";
+
+const normalizeMath = (text) => {
+    if (typeof text !== "string") return text;
+
+    return text
+        .replace(
+            /\\\[([\s\S]*?)\\\]/g,
+            (_, formula) => `\n$$\n${formula}\n$$\n`,
+        )
+        .replace(/\\\(([\s\S]*?)\\\)/g, (_, formula) => `$${formula}$`)
+        .replace(
+            /\(([^()\n]*\\[a-zA-Z]+[^()\n]*)\)/g,
+            (_, formula) => `$${formula}$`,
+        )
+        .replace(
+            /\[([^\n]*\\[a-zA-Z]+[^\n]*)\]/g,
+            (_, formula) => `$$${formula}$$`,
+        );
+};
 
 const markdownComponents = {
     /** 标题/段落统一渲染为 div + 排版 token，不使用 h1-h6 / p 标签。 */
@@ -144,10 +166,11 @@ const BlogMarkdown = ({ content, className = "" }) => (
         className={`prose prose-sm max-w-none break-words min-w-0 sm:prose-base prose-li:leading-relaxed prose-li:text-ink-secondary prose-strong:text-ink prose-li:my-0.5 prose-pre:m-0 prose-pre:bg-transparent prose-pre:p-0 ${className}`}
     >
         <ReactMarkdown
-            remarkPlugins={[remarkGfm]}
+            remarkPlugins={[remarkGfm, remarkMath]}
+            rehypePlugins={[rehypeKatex]}
             components={markdownComponents}
         >
-            {content || ""}
+            {normalizeMath(content || "")}
         </ReactMarkdown>
     </div>
 );
