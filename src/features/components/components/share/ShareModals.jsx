@@ -1,13 +1,17 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { useTranslation } from 'react-i18next';
+import React from "react";
+import PropTypes from "prop-types";
+import { useTranslation } from "react-i18next";
 import {
-    Info, FileCode, Edit2,
-    Trash2, HelpCircle, Compass
-} from 'lucide-react';
-import Modal from '@/components/common/Modal';
-import TourSpotlight from '@/components/common/TourSpotlight';
-import Button from '@components/common/Button';
+    Info,
+    FileCode,
+    Edit2,
+    Trash2,
+    HelpCircle,
+    Compass,
+} from "lucide-react";
+import Modal from "@/components/common/Modal";
+import TourSpotlight from "@/components/common/TourSpotlight";
+import Button from "@components/common/Button";
 
 const ShareModals = ({
     // Modal visibility
@@ -59,32 +63,64 @@ const ShareModals = ({
                         <div className="w-8 h-8 rounded-xl bg-accent-soft flex items-center justify-center">
                             <FileCode className="w-4 h-4 text-accent" />
                         </div>
-                        <span className="text-body">{t('components.share.modals.newFile')}</span>
+                        <span className="text-body">
+                            {t("components.share.modals.newFile")}
+                        </span>
                     </div>
                 }
                 width="max-w-[400px]"
                 footer={
                     <>
-                        <Button onClick={onCloseAddModal} variant="ghost" size="md">{t('components.share.modals.cancel')}</Button>
-                        <Button onClick={onAddFileSubmit} variant="primary" size="md">{t('components.share.modals.confirmCreate')}</Button>
+                        <Button
+                            onClick={onCloseAddModal}
+                            variant="ghost"
+                            size="md"
+                        >
+                            {t("components.share.modals.cancel")}
+                        </Button>
+                        <Button
+                            onClick={onAddFileSubmit}
+                            variant="primary"
+                            size="md"
+                        >
+                            {t("components.share.modals.confirmCreate")}
+                        </Button>
                     </>
                 }
             >
                 <div className="space-y-4 py-2">
                     <div>
-                        <label className="text-micro font-black text-ink-faint uppercase tracking-widest pl-1 block mb-2">File Name</label>
+                        <label className="text-micro font-black text-ink-faint uppercase tracking-widest pl-1 block mb-2">
+                            File Name
+                        </label>
                         <input
                             autoFocus
                             value={newFileName}
                             onChange={(e) => setNewFileName(e.target.value)}
-                            onKeyDown={(e) => { if (e.key === 'Enter') onAddFileSubmit(); }}
+                            onKeyDown={(e) => {
+                                if (e.key === "Enter") onAddFileSubmit();
+                            }}
                             className="w-full px-4 py-3 bg-surface  border border-border  rounded-2xl text-body font-mono text-ink  focus:border-accent focus:ring-4 focus:ring-accent/10 outline-none transition-all placeholder:text-ink-faint "
                             placeholder="e.g. Button.tsx"
                         />
                     </div>
                     <div className="bg-warning-soft text-warning p-3 flex gap-3 text-caption rounded-xl font-medium border border-warning/20 ">
                         <Info className="w-4 h-4 flex-shrink-0 mt-0.5" />
-                        <div>{t('components.share.modals.fileExtensionHint')} <code className="bg-warning/10 px-1 py-0.5 rounded font-black italic">.jsx</code>, <code className="bg-warning/10 px-1 py-0.5 rounded font-black italic">.ts</code>, <code className="bg-warning/10 px-1 py-0.5 rounded font-black italic">.tsx</code>。</div>
+                        <div>
+                            {t("components.share.modals.fileExtensionHint")}{" "}
+                            <code className="bg-warning/10 px-1 py-0.5 rounded font-black italic">
+                                .jsx
+                            </code>
+                            ,{" "}
+                            <code className="bg-warning/10 px-1 py-0.5 rounded font-black italic">
+                                .ts
+                            </code>
+                            ,{" "}
+                            <code className="bg-warning/10 px-1 py-0.5 rounded font-black italic">
+                                .tsx
+                            </code>
+                            。
+                        </div>
                     </div>
                 </div>
             </Modal>
@@ -93,13 +129,24 @@ const ShareModals = ({
             <Modal
                 isOpen={deleteModalOpen}
                 onClose={onCloseDeleteModal}
-                title={t('components.share.modals.deleteConfirm')}
+                title={t("components.share.modals.deleteConfirm")}
                 width="max-w-[360px]"
                 footer={
                     <>
-                        <Button onClick={onCloseDeleteModal} variant="ghost" size="md">{t('components.share.modals.cancel')}</Button>
-                        <Button onClick={onConfirmDeleteFile} variant="danger" size="md" icon={Trash2}>
-                            {t('components.share.modals.confirmDelete')}
+                        <Button
+                            onClick={onCloseDeleteModal}
+                            variant="ghost"
+                            size="md"
+                        >
+                            {t("components.share.modals.cancel")}
+                        </Button>
+                        <Button
+                            onClick={onConfirmDeleteFile}
+                            variant="danger"
+                            size="md"
+                            icon={Trash2}
+                        >
+                            {t("components.share.modals.confirmDelete")}
                         </Button>
                     </>
                 }
@@ -109,11 +156,16 @@ const ShareModals = ({
                         <Trash2 className="w-5 h-5" />
                     </div>
                     <div>
-                        {t('components.share.modals.deleteWarning')}<br />
+                        {t("components.share.modals.deleteWarning")}
+                        <br />
                         <span className="text-ink  font-black italic border-b border-danger/30 mt-2 inline-block">
-                            {fileToDeleteIdx !== null ? libFiles[fileToDeleteIdx].name : ''}
+                            {fileToDeleteIdx !== null
+                                ? libFiles[fileToDeleteIdx].name
+                                : ""}
                         </span>
-                        <div className="text-caption text-ink-faint mt-2">{t('components.share.modals.deleteLoseWarning')}</div>
+                        <div className="text-caption text-ink-faint mt-2">
+                            {t("components.share.modals.deleteLoseWarning")}
+                        </div>
                     </div>
                 </div>
             </Modal>
@@ -122,13 +174,24 @@ const ShareModals = ({
             <Modal
                 isOpen={deleteScenarioModalOpen}
                 onClose={onCloseDeleteScenarioModal}
-                title={t('components.share.modals.deleteScenarioConfirm')}
+                title={t("components.share.modals.deleteScenarioConfirm")}
                 width="max-w-[360px]"
                 footer={
                     <>
-                        <Button onClick={onCloseDeleteScenarioModal} variant="ghost" size="md">{t('components.share.modals.cancel')}</Button>
-                        <Button onClick={onConfirmDeleteScenario} variant="danger" size="md" icon={Trash2}>
-                            {t('components.share.modals.confirmDelete')}
+                        <Button
+                            onClick={onCloseDeleteScenarioModal}
+                            variant="ghost"
+                            size="md"
+                        >
+                            {t("components.share.modals.cancel")}
+                        </Button>
+                        <Button
+                            onClick={onConfirmDeleteScenario}
+                            variant="danger"
+                            size="md"
+                            icon={Trash2}
+                        >
+                            {t("components.share.modals.confirmDelete")}
                         </Button>
                     </>
                 }
@@ -138,13 +201,20 @@ const ShareModals = ({
                         <Trash2 className="w-5 h-5" />
                     </div>
                     <div>
-                        {t('components.share.modals.deleteScenarioWarning')}<br />
+                        {t("components.share.modals.deleteScenarioWarning")}
+                        <br />
                         <span className="text-ink font-black italic border-b border-danger/30 mt-2 inline-block">
                             {scenarioToDeleteIdx !== null
-                                ? (scenarios[scenarioToDeleteIdx]?.titleZh || scenarios[scenarioToDeleteIdx]?.titleEn || '')
-                                : ''}
+                                ? scenarios[scenarioToDeleteIdx]?.titleZh ||
+                                  scenarios[scenarioToDeleteIdx]?.titleEn ||
+                                  ""
+                                : ""}
                         </span>
-                        <div className="text-caption text-ink-faint mt-2">{t('components.share.modals.deleteScenarioLoseWarning')}</div>
+                        <div className="text-caption text-ink-faint mt-2">
+                            {t(
+                                "components.share.modals.deleteScenarioLoseWarning",
+                            )}
+                        </div>
                     </div>
                 </div>
             </Modal>
@@ -158,26 +228,45 @@ const ShareModals = ({
                         <div className="w-8 h-8 rounded-xl bg-accent-soft flex items-center justify-center">
                             <HelpCircle className="w-4 h-4 text-accent" />
                         </div>
-                        <span className="text-body">{t('components.share.modals.presetSamples')} - {helpType.toUpperCase()}</span>
+                        <span className="text-body">
+                            {t("components.share.modals.presetSamples")} -{" "}
+                            {helpType.toUpperCase()}
+                        </span>
                     </div>
                 }
                 width="max-w-[420px]"
                 footer={
                     <>
-                        <Button onClick={onCloseHelpModal} variant="ghost" size="md">{t('components.share.modals.cancel')}</Button>
-                        <Button id="tour-apply-btn" onClick={onApplySample} variant="primary" size="md">
-                            {t('components.share.modals.oneClickLoad')}
+                        <Button
+                            onClick={onCloseHelpModal}
+                            variant="ghost"
+                            size="md"
+                        >
+                            {t("components.share.modals.cancel")}
+                        </Button>
+                        <Button
+                            id="tour-apply-btn"
+                            onClick={onApplySample}
+                            variant="primary"
+                            size="md"
+                        >
+                            {t("components.share.modals.oneClickLoad")}
                         </Button>
                     </>
                 }
             >
                 <div className="py-2 text-body text-ink-muted  leading-relaxed font-medium">
-                    {t('components.share.modals.helpIntro')} <strong>『全局物理通知组件 (Toast)』</strong>。<br /><br />
-                    {helpType === 'meta' && t('components.share.modals.helpMeta')}
-                    {helpType === 'scenario' && t('components.share.modals.helpScenario')}
-                    {helpType === 'logic' && t('components.share.modals.helpLogic')}
-                    {helpType === 'env' && t('components.share.modals.helpEnv')}
-                    {helpType === 'css' && t('components.share.modals.helpCss')}
+                    {t("components.share.modals.helpIntro")}{" "}
+                    <strong>『全局物理通知组件 (Toast)』</strong>。<br />
+                    <br />
+                    {helpType === "meta" &&
+                        t("components.share.modals.helpMeta")}
+                    {helpType === "scenario" &&
+                        t("components.share.modals.helpScenario")}
+                    {helpType === "logic" &&
+                        t("components.share.modals.helpLogic")}
+                    {helpType === "env" && t("components.share.modals.helpEnv")}
+                    {helpType === "css" && t("components.share.modals.helpCss")}
                 </div>
             </Modal>
 
@@ -190,37 +279,59 @@ const ShareModals = ({
                         <div className="w-8 h-8 rounded-xl bg-accent-soft flex items-center justify-center">
                             <Edit2 className="w-4 h-4 text-accent" />
                         </div>
-                        <span className="text-body">{t('components.share.modals.editScenario')}</span>
+                        <span className="text-body">
+                            {t("components.share.modals.editScenario")}
+                        </span>
                     </div>
                 }
                 width="max-w-[400px]"
                 footer={
                     <>
-                        <Button onClick={onCloseEditScenarioModal} variant="ghost" size="md">{t('components.share.modals.cancel')}</Button>
-                        <Button onClick={onEditScenarioSubmit} variant="primary" size="md">
-                            {t('components.share.modals.saveChanges')}
+                        <Button
+                            onClick={onCloseEditScenarioModal}
+                            variant="ghost"
+                            size="md"
+                        >
+                            {t("components.share.modals.cancel")}
+                        </Button>
+                        <Button
+                            onClick={onEditScenarioSubmit}
+                            variant="primary"
+                            size="md"
+                        >
+                            {t("components.share.modals.saveChanges")}
                         </Button>
                     </>
                 }
             >
                 <div className="space-y-4 py-2">
                     <div>
-                        <label className="text-micro font-black text-ink-faint uppercase tracking-widest pl-1 block mb-2">{t('components.share.modals.chineseName')}</label>
+                        <label className="text-micro font-black text-ink-faint uppercase tracking-widest pl-1 block mb-2">
+                            {t("components.share.modals.chineseName")}
+                        </label>
                         <input
                             autoFocus
                             value={editScenTitleZh}
                             onChange={(e) => setEditScenTitleZh(e.target.value)}
-                            onKeyDown={(e) => { if (e.key === 'Enter') onEditScenarioSubmit(); }}
+                            onKeyDown={(e) => {
+                                if (e.key === "Enter") onEditScenarioSubmit();
+                            }}
                             className="w-full px-4 py-3 bg-surface  border border-border  rounded-2xl text-body font-bold text-ink  focus:border-accent focus:ring-4 focus:ring-accent/10 outline-none transition-all placeholder:text-ink-faint"
-                            placeholder={t('components.share.modals.chineseNamePlaceholder')}
+                            placeholder={t(
+                                "components.share.modals.chineseNamePlaceholder",
+                            )}
                         />
                     </div>
                     <div>
-                        <label className="text-micro font-black text-ink-faint uppercase tracking-widest pl-1 block mb-2">English Title</label>
+                        <label className="text-micro font-black text-ink-faint uppercase tracking-widest pl-1 block mb-2">
+                            English Title
+                        </label>
                         <input
                             value={editScenTitleEn}
                             onChange={(e) => setEditScenTitleEn(e.target.value)}
-                            onKeyDown={(e) => { if (e.key === 'Enter') onEditScenarioSubmit(); }}
+                            onKeyDown={(e) => {
+                                if (e.key === "Enter") onEditScenarioSubmit();
+                            }}
                             className="w-full px-4 py-3 bg-surface  border border-border  rounded-2xl text-body font-bold text-ink  focus:border-accent focus:ring-4 focus:ring-accent/10 outline-none transition-all placeholder:text-ink-faint"
                             placeholder="e.g. Interaction Study"
                         />
@@ -232,25 +343,37 @@ const ShareModals = ({
             <Modal
                 isOpen={tourWelcomeOpen}
                 onClose={onTourWelcomeSkip}
-                title={t('components.share.modals.welcomeTitle')}
+                title={t("components.share.modals.welcomeTitle")}
                 footer={
                     <>
-                        <Button onClick={onTourWelcomeSkip} variant="ghost" size="md">
-                            {t('components.share.modals.welcomeReject')}
+                        <Button
+                            onClick={onTourWelcomeSkip}
+                            variant="ghost"
+                            size="md"
+                        >
+                            {t("components.share.modals.welcomeReject")}
                         </Button>
-                        <Button onClick={onTourWelcomeStart} variant="primary" size="md" icon={Compass}>
-                            {t('components.share.modals.startTour')}
+                        <Button
+                            onClick={onTourWelcomeStart}
+                            variant="primary"
+                            size="md"
+                            icon={Compass}
+                        >
+                            {t("components.share.modals.startTour")}
                         </Button>
                     </>
                 }
             >
                 <div className="text-ink-muted  text-body leading-loose">
-                    {t('components.share.modals.welcomeDesc')}
+                    {t("components.share.modals.welcomeDesc")}
                 </div>
             </Modal>
 
             {/* --- Tour Spotlight --- */}
-            <TourSpotlight targetConfig={currentTourTarget} onSkip={onTourSpotlightSkip} />
+            <TourSpotlight
+                targetConfig={currentTourTarget}
+                onSkip={onTourSpotlightSkip}
+            />
         </>
     );
 };

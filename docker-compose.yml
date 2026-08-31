@@ -1,34 +1,38 @@
-version: '3.8'
+version: "3.8"
 
 services:
-  xander-lab-frontend:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      args:
-        # Read the Spring Boot service directly during the image build. This
-        # avoids relying on public DNS / Cloudflare from the Docker builder.
-        SEO_API_BASE: ${SEO_API_BASE:-http://host.docker.internal:30002/api}
-    container_name: xander-lab-frontend
-    restart: unless-stopped
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-    ports:
-      - "30001:30001"
-    environment:
-      - NODE_ENV=production
-    networks:
-      - xander-network
-    healthcheck:
-      test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:30001/ > /dev/null || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
-    labels:
-      - "com.xander-lab.description=DinQorAI Frontend Application"
-      - "com.xander-lab.version=1.0.0"
+    xander-lab-frontend:
+        build:
+            context: .
+            dockerfile: Dockerfile
+            args:
+                # Read the Spring Boot service directly during the image build. This
+                # avoids relying on public DNS / Cloudflare from the Docker builder.
+                SEO_API_BASE: ${SEO_API_BASE:-http://host.docker.internal:30002/api}
+        container_name: xander-lab-frontend
+        restart: unless-stopped
+        extra_hosts:
+            - "host.docker.internal:host-gateway"
+        ports:
+            - "30001:30001"
+        environment:
+            - NODE_ENV=production
+        networks:
+            - xander-network
+        healthcheck:
+            test:
+                [
+                    "CMD-SHELL",
+                    "curl -fsS http://127.0.0.1:30001/ > /dev/null || exit 1",
+                ]
+            interval: 30s
+            timeout: 10s
+            retries: 3
+            start_period: 40s
+        labels:
+            - "com.xander-lab.description=DinQorAI Frontend Application"
+            - "com.xander-lab.version=1.0.0"
 
 networks:
-  xander-network:
-    driver: bridge
+    xander-network:
+        driver: bridge

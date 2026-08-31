@@ -77,15 +77,15 @@ deploy-aliyun.bat --tag v1.0.0 --step deploy
 
 ## 📝 参数说明
 
-| 参数 | 简写 | 说明 | 默认值 |
-|------|------|------|--------|
-| `--tag` | `-t` | 镜像版本标签 | `latest` |
-| `--env` | `-e` | 部署环境 | `production` |
-| `--registry` | `-r` | 阿里云镜像仓库地址 | 从环境变量读取 |
-| `--namespace` | `-n` | 命名空间 | 从环境变量读取 |
-| `--image` | `-i` | 镜像名称 | `xander-lab-frontend` |
-| `--step` | `-s` | 执行步骤 | `all` |
-| `--help` | `-h` | 显示帮助信息 | - |
+| 参数          | 简写 | 说明               | 默认值                |
+| ------------- | ---- | ------------------ | --------------------- |
+| `--tag`       | `-t` | 镜像版本标签       | `latest`              |
+| `--env`       | `-e` | 部署环境           | `production`          |
+| `--registry`  | `-r` | 阿里云镜像仓库地址 | 从环境变量读取        |
+| `--namespace` | `-n` | 命名空间           | 从环境变量读取        |
+| `--image`     | `-i` | 镜像名称           | `xander-lab-frontend` |
+| `--step`      | `-s` | 执行步骤           | `all`                 |
+| `--help`      | `-h` | 显示帮助信息       | -                     |
 
 ### 执行步骤说明
 
@@ -99,17 +99,17 @@ deploy-aliyun.bat --tag v1.0.0 --step deploy
 ### 完整流程（`--step all`）
 
 1. **构建镜像**
-   - 使用 `Dockerfile` 构建本地镜像
-   - 标记镜像为阿里云镜像仓库地址格式
+    - 使用 `Dockerfile` 构建本地镜像
+    - 标记镜像为阿里云镜像仓库地址格式
 
 2. **推送镜像**
-   - 登录阿里云镜像仓库
-   - 推送镜像到远程仓库
+    - 登录阿里云镜像仓库
+    - 推送镜像到远程仓库
 
 3. **部署服务**
-   - 从阿里云拉取镜像
-   - 停止并删除现有容器
-   - 启动新容器
+    - 从阿里云拉取镜像
+    - 停止并删除现有容器
+    - 启动新容器
 
 ### 分步执行
 
@@ -199,6 +199,7 @@ export ALIYUN_REGISTRY_PASSWORD="$CI_REGISTRY_PASSWORD"
 ```
 
 **解决方案:**
+
 - 检查用户名和密码是否正确
 - 确认镜像仓库地址是否正确
 - 检查网络连接
@@ -210,6 +211,7 @@ export ALIYUN_REGISTRY_PASSWORD="$CI_REGISTRY_PASSWORD"
 ```
 
 **解决方案:**
+
 - 确认命名空间和镜像名称是否正确
 - 检查是否有推送权限
 - 确认镜像是否已构建成功
@@ -221,6 +223,7 @@ export ALIYUN_REGISTRY_PASSWORD="$CI_REGISTRY_PASSWORD"
 ```
 
 **解决方案:**
+
 - 确认镜像已成功推送到仓库
 - 检查镜像地址是否正确
 - 确认登录凭证是否有效
@@ -232,6 +235,7 @@ export ALIYUN_REGISTRY_PASSWORD="$CI_REGISTRY_PASSWORD"
 ```
 
 **解决方案:**
+
 ```bash
 # 查看容器日志
 docker logs xander-lab-frontend
@@ -272,5 +276,3 @@ docker rmi registry.cn-hangzhou.aliyuncs.com/your-namespace/xander-lab-frontend:
 ---
 
 **最后更新**: 2026-02-05
-
-

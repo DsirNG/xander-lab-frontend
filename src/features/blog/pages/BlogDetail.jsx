@@ -1,11 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useParams, Link } from 'react-router-dom';
-import { Calendar, Clock, User, Tag, ChevronLeft, Eye, BookOpen, Minimize2 } from 'lucide-react';
-import SEOHead from '@components/seo/SEOHead';
-import { blogService } from '../services/blogService';
-import BlogMarkdown from '../components/BlogMarkdown';
-import usePureReading from '@/hooks/usePureReading';
+import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
+import { useParams, Link } from "react-router-dom";
+import {
+    Calendar,
+    Clock,
+    User,
+    Tag,
+    ChevronLeft,
+    Eye,
+    BookOpen,
+    Minimize2,
+} from "lucide-react";
+import SEOHead from "@components/seo/SEOHead";
+import { blogService } from "../services/blogService";
+import BlogMarkdown from "../components/BlogMarkdown";
+import usePureReading from "@/hooks/usePureReading";
 
 /**
  * Markdown 自定义渲染组件映射
@@ -102,12 +111,15 @@ const BlogDetail = () => {
         const fetchBlog = async () => {
             setLoading(true);
             try {
-                const data = await blogService.getBlogById(id, { signal: controller.signal });
+                const data = await blogService.getBlogById(id, {
+                    signal: controller.signal,
+                });
                 setBlog(data);
                 // 记录阅读（fire-and-forget，后端按 userId/IP 24h 去重防刷）
                 blogService.recordView(id).catch(() => {});
             } catch (err) {
-                if (err.name === 'CanceledError' || err.code === 'ERR_CANCELED') return;
+                if (err.name === "CanceledError" || err.code === "ERR_CANCELED")
+                    return;
                 setError(err.message);
             } finally {
                 setLoading(false);
@@ -202,12 +214,14 @@ const BlogDetail = () => {
         return (
             <div className="flex flex-col items-center justify-center min-h-[400px] text-center">
                 <div className="text-xl font-bold text-ink mb-2">404</div>
-                <div className="text-sm text-ink-muted mb-5">{t('blog.articleNotFound')}</div>
+                <div className="text-sm text-ink-muted mb-5">
+                    {t("blog.articleNotFound")}
+                </div>
                 <Link
                     to="/blog/"
                     className="px-5 py-2 text-sm bg-accent text-white rounded-lg hover:bg-accent/90 transition-colors"
                 >
-                    {t('blog.backToBlog')}
+                    {t("blog.backToBlog")}
                 </Link>
             </div>
         );
@@ -222,10 +236,13 @@ const BlogDetail = () => {
                         type="button"
                         onClick={togglePureReading}
                         className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full bg-ink/90 text-canvas hover:bg-ink backdrop-blur-md shadow-lg text-xs font-bold transition-all hover:scale-105 border border-white/20 active:scale-95 cursor-pointer"
-                        title={t('blog.pureReadingHint', '纯净阅读模式 (按 Esc 退出)')}
+                        title={t(
+                            "blog.pureReadingHint",
+                            "纯净阅读模式 (按 Esc 退出)",
+                        )}
                     >
                         <Minimize2 className="w-4 h-4 text-accent" />
-                        <span>{t('blog.exitPureReading', '退出纯净阅读')}</span>
+                        <span>{t("blog.exitPureReading", "退出纯净阅读")}</span>
                         <kbd className="hidden sm:inline-block px-1.5 py-0.5 text-[10px] font-mono bg-canvas/20 rounded text-canvas/80 ml-1">
                             ESC
                         </kbd>
@@ -236,27 +253,33 @@ const BlogDetail = () => {
             {/* SEO: 每篇博客独立的 meta 信息和结构化数据 */}
             <SEOHead
                 title={blog.title}
-                description={blog.summary || blog.content?.slice(0, 160).replace(/[#*`\n]/g, '')}
-                keywords={blog.tags?.join(', ')}
+                description={
+                    blog.summary ||
+                    blog.content?.slice(0, 160).replace(/[#*`\n]/g, "")
+                }
+                keywords={blog.tags?.join(", ")}
                 canonical={`/blog/${blog.id}/`}
                 ogType="article"
                 jsonLd={{
-                    '@context': 'https://schema.org',
-                    '@type': 'Article',
+                    "@context": "https://schema.org",
+                    "@type": "Article",
                     headline: blog.title,
-                    description: blog.summary || '',
-                    author: { '@type': 'Person', name: blog.author },
+                    description: blog.summary || "",
+                    author: { "@type": "Person", name: blog.author },
                     datePublished: blog.date,
                     publisher: {
-                        '@type': 'Organization',
-                        name: 'DinQorAI',
-                        logo: { '@type': 'ImageObject', url: 'https://dinqor.cn/logo-512.png' }
+                        "@type": "Organization",
+                        name: "DinQorAI",
+                        logo: {
+                            "@type": "ImageObject",
+                            url: "https://dinqor.cn/logo-512.png",
+                        },
                     },
                     mainEntityOfPage: {
-                        '@type': 'WebPage',
-                        '@id': `https://dinqor.cn/blog/${blog.id}/`
+                        "@type": "WebPage",
+                        "@id": `https://dinqor.cn/blog/${blog.id}/`,
                     },
-                    keywords: blog.tags?.join(', ') || ''
+                    keywords: blog.tags?.join(", ") || "",
                 }}
             />
 
@@ -265,36 +288,45 @@ const BlogDetail = () => {
                     to="/blog/"
                     className="inline-flex items-center text-xs font-medium text-ink-muted hover:text-accent transition-colors"
                 >
-                    <ChevronLeft aria-hidden="true" className="w-4 h-4 mr-0.5" />
-                    {t('blog.backToBlog')}
+                    <ChevronLeft
+                        aria-hidden="true"
+                        className="w-4 h-4 mr-0.5"
+                    />
+                    {t("blog.backToBlog")}
                 </Link>
 
-            {/* 窗口固定纯净阅读按钮 (非纯净模式下固定悬浮在窗口右下角) */}
-            {!isPureReading && (
-                <div className="fixed bottom-8 right-8 z-40">
+                {/* 窗口固定纯净阅读按钮 (非纯净模式下固定悬浮在窗口右下角) */}
+                {!isPureReading && (
+                    <div className="fixed bottom-8 right-8 z-40">
+                        <button
+                            type="button"
+                            onClick={togglePureReading}
+                            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-surface/90 text-ink hover:text-accent hover:border-accent backdrop-blur-md shadow-xl border border-border text-xs font-bold transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer group"
+                            title={t(
+                                "blog.pureReadingHint",
+                                "纯净阅读模式 (按 Esc 退出)",
+                            )}
+                        >
+                            <BookOpen className="w-4 h-4 text-accent group-hover:scale-110 transition-transform" />
+                            <span>{t("blog.pureReading", "纯净阅读")}</span>
+                        </button>
+                    </div>
+                )}
+
+                {!isPureReading && (
                     <button
                         type="button"
                         onClick={togglePureReading}
-                        className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-surface/90 text-ink hover:text-accent hover:border-accent backdrop-blur-md shadow-xl border border-border text-xs font-bold transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer group"
-                        title={t('blog.pureReadingHint', '纯净阅读模式 (按 Esc 退出)')}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-muted text-ink-secondary hover:bg-accent/10 hover:text-accent text-xs font-bold transition-all shadow-xs border border-border/60 cursor-pointer"
+                        title={t(
+                            "blog.pureReadingHint",
+                            "纯净阅读模式 (按 Esc 退出)",
+                        )}
                     >
-                        <BookOpen className="w-4 h-4 text-accent group-hover:scale-110 transition-transform" />
-                        <span>{t('blog.pureReading', '纯净阅读')}</span>
+                        <BookOpen className="w-3.5 h-3.5 text-accent" />
+                        <span>{t("blog.pureReading", "纯净阅读")}</span>
                     </button>
-                </div>
-            )}
-
-            {!isPureReading && (
-                <button
-                    type="button"
-                    onClick={togglePureReading}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-muted text-ink-secondary hover:bg-accent/10 hover:text-accent text-xs font-bold transition-all shadow-xs border border-border/60 cursor-pointer"
-                    title={t('blog.pureReadingHint', '纯净阅读模式 (按 Esc 退出)')}
-                >
-                    <BookOpen className="w-3.5 h-3.5 text-accent" />
-                    <span>{t('blog.pureReading', '纯净阅读')}</span>
-                </button>
-            )}
+                )}
             </div>
 
             {/* 文章头部 */}
@@ -309,20 +341,34 @@ const BlogDetail = () => {
 
                 <div className="flex flex-wrap items-center gap-4 text-xs text-ink-muted">
                     <div className="flex items-center">
-                        <User aria-hidden="true" className="w-3.5 h-3.5 mr-1.5 text-ink-faint" />
-                        <span className="font-medium text-ink-secondary">{blog.author}</span>
+                        <User
+                            aria-hidden="true"
+                            className="w-3.5 h-3.5 mr-1.5 text-ink-faint"
+                        />
+                        <span className="font-medium text-ink-secondary">
+                            {blog.author}
+                        </span>
                     </div>
                     <div className="flex items-center">
-                        <Calendar aria-hidden="true" className="w-3.5 h-3.5 mr-1.5 text-ink-faint" />
+                        <Calendar
+                            aria-hidden="true"
+                            className="w-3.5 h-3.5 mr-1.5 text-ink-faint"
+                        />
                         <time dateTime={blog.date}>{blog.date}</time>
                     </div>
                     <div className="flex items-center">
-                        <Clock aria-hidden="true" className="w-3.5 h-3.5 mr-1.5 text-ink-faint" />
+                        <Clock
+                            aria-hidden="true"
+                            className="w-3.5 h-3.5 mr-1.5 text-ink-faint"
+                        />
                         <span>{blog.readTime}</span>
                     </div>
                     {blog.views != null && (
                         <div className="flex items-center">
-                            <Eye aria-hidden="true" className="w-3.5 h-3.5 mr-1.5 text-ink-faint" />
+                            <Eye
+                                aria-hidden="true"
+                                className="w-3.5 h-3.5 mr-1.5 text-ink-faint"
+                            />
                             <span>{blog.views.toLocaleString()}</span>
                         </div>
                     )}
@@ -335,7 +381,9 @@ const BlogDetail = () => {
                     <div className="flex gap-3">
                         <div className="flex-shrink-0 mt-0.5">
                             <div className="w-5 h-5 rounded-full bg-warning-soft flex items-center justify-center ring-1 ring-warning/30">
-                                <span className="text-warning text-xs font-bold font-mono">i</span>
+                                <span className="text-warning text-xs font-bold font-mono">
+                                    i
+                                </span>
                             </div>
                         </div>
                         <div className="text-sm text-warning-fg leading-relaxed font-medium break-words">
@@ -351,13 +399,16 @@ const BlogDetail = () => {
             {/* 底部标签 */}
             <div className="border-t border-border pt-6">
                 <div className="flex flex-wrap gap-2">
-                    {blog.tags.map(tag => (
+                    {blog.tags.map((tag) => (
                         <Link
                             key={tag}
                             to={`/blog/tags/?tag=${encodeURIComponent(tag)}`}
                             className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-surface-muted text-ink-secondary hover:bg-accent hover:text-white transition-colors"
                         >
-                            <Tag aria-hidden="true" className="w-3 h-3 mr-1.5" />
+                            <Tag
+                                aria-hidden="true"
+                                className="w-3 h-3 mr-1.5"
+                            />
                             {tag}
                         </Link>
                     ))}

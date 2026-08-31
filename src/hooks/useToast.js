@@ -1,5 +1,5 @@
-import { useContext, useMemo } from 'react';
-import ToastContext from '../components/common/Toast/toastContextValue';
+import { useContext, useMemo } from "react";
+import ToastContext from "../components/common/Toast/toastContextValue";
 
 /**
  * 返回稳定的 toast 方法对象。
@@ -9,11 +9,11 @@ import ToastContext from '../components/common/Toast/toastContextValue';
 export const useToast = () => {
     const context = useContext(ToastContext);
     if (!context) {
-        throw new Error('useToast must be used within a ToastProvider');
+        throw new Error("useToast must be used within a ToastProvider");
     }
     const { success, error, info, warning, remove } = context;
     return useMemo(
         () => ({ success, error, info, warning, remove }),
-        [success, error, info, warning, remove]
+        [success, error, info, warning, remove],
     );
 };

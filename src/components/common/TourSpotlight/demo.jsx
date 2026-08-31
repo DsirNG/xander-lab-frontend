@@ -1,7 +1,7 @@
-import React, { useState, useMemo } from 'react';
-import { Play } from 'lucide-react';
-import TourSpotlight from './index';
-import Button from '@components/common/Button';
+import React, { useState, useMemo } from "react";
+import { Play } from "lucide-react";
+import TourSpotlight from "./index";
+import Button from "@components/common/Button";
 
 /**
  * TourSpotlight 的使用演示 Demo
@@ -15,22 +15,26 @@ export const TourSpotlightDemo = () => {
     // id 对应页面上的真实 DOM ID
     const currentTourTarget = useMemo(() => {
         switch (tourStep) {
-            case 0: return {
-                id: 'demo-btn-1',
-                text: '第一步：关注这里',
-                desc: '这是我们为您添加的第一个震撼级按钮功能区。点击它即可执行某种炫酷操作！'
-            };
-            case 1: return {
-                id: 'demo-card-2',
-                text: '第二步：底层数据面板',
-                desc: '这里是您的专属信息展览区，可以实时看到所有的编译分析状态。'
-            };
-            case 2: return {
-                id: 'demo-input-3',
-                text: '第三步：终端输入',
-                desc: '最后一步！您可以在这个输入框内打字，随时修改底层参数。'
-            };
-            default: return null;
+            case 0:
+                return {
+                    id: "demo-btn-1",
+                    text: "第一步：关注这里",
+                    desc: "这是我们为您添加的第一个震撼级按钮功能区。点击它即可执行某种炫酷操作！",
+                };
+            case 1:
+                return {
+                    id: "demo-card-2",
+                    text: "第二步：底层数据面板",
+                    desc: "这里是您的专属信息展览区，可以实时看到所有的编译分析状态。",
+                };
+            case 2:
+                return {
+                    id: "demo-input-3",
+                    text: "第三步：终端输入",
+                    desc: "最后一步！您可以在这个输入框内打字，随时修改底层参数。",
+                };
+            default:
+                return null;
         }
     }, [tourStep]);
 
@@ -40,7 +44,7 @@ export const TourSpotlightDemo = () => {
             setTourStep(-1); // 如果是最末尾，结束向导
             alert("教学圆满结束！");
         } else {
-            setTourStep(s => s + 1); // 推进到下一步
+            setTourStep((s) => s + 1); // 推进到下一步
         }
     };
 
@@ -60,18 +64,22 @@ export const TourSpotlightDemo = () => {
             <div className="flex gap-20 w-full justify-between items-center max-w-4xl px-12">
                 <Button
                     id="demo-btn-1"
-                    onClick={() => { if (tourStep === 0) handleNextStep(); }}
+                    onClick={() => {
+                        if (tourStep === 0) handleNextStep();
+                    }}
                     variant="outline"
                     size="lg"
-                    className={`h-auto px-8 py-4 shadow-xl rounded-2xl font-black tracking-widest ${tourStep === 0 ? 'ring-4 ring-primary/50 relative z-10' : ''}`}
+                    className={`h-auto px-8 py-4 shadow-xl rounded-2xl font-black tracking-widest ${tourStep === 0 ? "ring-4 ring-primary/50 relative z-10" : ""}`}
                 >
                     [向导目标 1]
                 </Button>
 
                 <div
                     id="demo-card-2"
-                    onClick={() => { if (tourStep === 1) handleNextStep(); }}
-                    className={`w-48 h-32 bg-slate-900 text-white rounded-[2rem] shadow-2xl flex items-center justify-center font-bold italic transition-all cursor-pointer ${tourStep === 1 ? 'scale-105 relative z-10' : ''}`}
+                    onClick={() => {
+                        if (tourStep === 1) handleNextStep();
+                    }}
+                    className={`w-48 h-32 bg-slate-900 text-white rounded-[2rem] shadow-2xl flex items-center justify-center font-bold italic transition-all cursor-pointer ${tourStep === 1 ? "scale-105 relative z-10" : ""}`}
                 >
                     [向导目标 2]
                 </div>
@@ -80,9 +88,11 @@ export const TourSpotlightDemo = () => {
             <div className="w-full max-w-lg mt-10">
                 <input
                     id="demo-input-3"
-                    onClick={() => { if (tourStep === 2) handleNextStep(); }}
+                    onClick={() => {
+                        if (tourStep === 2) handleNextStep();
+                    }}
                     placeholder="[向导目标 3] 输入框"
-                    className={`w-full px-6 py-4 bg-white border-2 border-primary-100 rounded-2xl shadow-inner focus:outline-none transition-all ${tourStep === 2 ? 'relative z-10 border-primary bg-primary-50' : ''}`}
+                    className={`w-full px-6 py-4 bg-white border-2 border-primary-100 rounded-2xl shadow-inner focus:outline-none transition-all ${tourStep === 2 ? "relative z-10 border-primary bg-primary-50" : ""}`}
                 />
             </div>
 

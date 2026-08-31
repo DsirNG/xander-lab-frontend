@@ -1,14 +1,12 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import ReactDOM from 'react-dom';
-import { motion, AnimatePresence } from 'framer-motion';
-import {
-    Play, RefreshCw, AlertTriangle
-} from 'lucide-react';
+import React, { useState, useEffect, useRef, useCallback } from "react";
+import ReactDOM from "react-dom";
+import { motion, AnimatePresence } from "framer-motion";
+import { Play, RefreshCw, AlertTriangle } from "lucide-react";
 
 // ─── 注入项目内部组件 ──────────────────────────────────────────────
-import CustomSelect from '@/components/common/CustomSelect';
-import Button from '@components/common/Button';
-import LucideIcons from '@/features/components/registries/sandboxIconRegistry';
+import CustomSelect from "@/components/common/CustomSelect";
+import Button from "@components/common/Button";
+import LucideIcons from "@/features/components/registries/sandboxIconRegistry";
 
 // ─── 动态加载 Babel（~2.5MB，不打入首屏 bundle）─────────────────
 let _babel = null;
@@ -16,7 +14,7 @@ let _babelLoading = null;
 const loadBabel = () => {
     if (_babel) return Promise.resolve(_babel);
     if (!_babelLoading) {
-        _babelLoading = import('@babel/standalone').then(mod => {
+        _babelLoading = import("@babel/standalone").then((mod) => {
             _babel = mod.default || mod;
             return _babel;
         });
@@ -27,29 +25,48 @@ const loadBabel = () => {
 // ─── 执行代码并提取组件 ───────────────────────────────────────────
 const createFunction = (code, scope, exportsObj, sandboxRequire) => {
     // 过滤掉 'default' 等保留字，防止作为变量名注入时报错
-    const reserved = ['default', 'import', 'export', 'const', 'let', 'var', 'function', 'class'];
-    const keys = Object.keys(scope).filter(k =>
-        k !== 'React' && k !== 'exports' && k !== 'require' && !reserved.includes(k)
+    const reserved = [
+        "default",
+        "import",
+        "export",
+        "const",
+        "let",
+        "var",
+        "function",
+        "class",
+    ];
+    const keys = Object.keys(scope).filter(
+        (k) =>
+            k !== "React" &&
+            k !== "exports" &&
+            k !== "require" &&
+            !reserved.includes(k),
     );
-    const values = keys.map(k => scope[k]);
+    const values = keys.map((k) => scope[k]);
     try {
-        const fn = new Function('React', 'exports', 'require', ...keys, code);
+        const fn = new Function("React", "exports", "require", ...keys, code);
         return fn(React, exportsObj, sandboxRequire, ...values);
     } catch (e) {
-        console.error('Function Creation Error:', e);
+        console.error("Function Creation Error:", e);
         throw e;
     }
 };
 
-async function compileAndRun(code, libraryCode = '', wrapperCode = '') {
+async function compileAndRun(code, libraryCode = "", wrapperCode = "") {
     const Babel = await loadBabel();
-    const stylesProxy = new Proxy({}, { get: (t, p) => typeof p === 'string' ? p : p });
+    const stylesProxy = new Proxy(
+        {},
+        { get: (t, p) => (typeof p === "string" ? p : p) },
+    );
 
     const baseScope = {
-        React, ...React,
-        CustomSelect, motion, AnimatePresence,
+        React,
+        ...React,
+        CustomSelect,
+        motion,
+        AnimatePresence,
         ...LucideIcons,
-        styles: stylesProxy
+        styles: stylesProxy,
     };
 
     let libExports = {};
@@ -66,43 +83,54 @@ async function compileAndRun(code, libraryCode = '', wrapperCode = '') {
 
             try {
                 const transformed = Babel.transform(content, {
-                    presets: ['react', ['env', { modules: 'commonjs' }]]
+                    presets: ["react", ["env", { modules: "commonjs" }]],
                 }).code;
 
                 const currentFileExports = {};
                 const sandboxRequire = (name) => {
                     const registry = {
-                        'react': React,
-                        'react-dom': ReactDOM,
-                        'lucide-react': LucideIcons,
-                        'framer-motion': { motion, AnimatePresence },
-                        '@/components/common/CustomSelect': CustomSelect,
+                        react: React,
+                        "react-dom": ReactDOM,
+                        "lucide-react": LucideIcons,
+                        "framer-motion": { motion, AnimatePresence },
+                        "@/components/common/CustomSelect": CustomSelect,
                     };
-                    const cleanName = name.replace(/^\.\//, '').replace(/\.jsx?$/, '');
+                    const cleanName = name
+                        .replace(/^\.\//, "")
+                        .replace(/\.jsx?$/, "");
                     if (registry[name]) return registry[name];
-                    if (moduleRegistry[cleanName]) return moduleRegistry[cleanName];
+                    if (moduleRegistry[cleanName])
+                        return moduleRegistry[cleanName];
                     return LucideIcons[name] || React[name] || libExports[name];
                 };
 
-                createFunction(transformed, baseScope, currentFileExports, sandboxRequire);
+                createFunction(
+                    transformed,
+                    baseScope,
+                    currentFileExports,
+                    sandboxRequire,
+                );
 
-                const moduleName = fileName.replace(/\.jsx?$/, '');
+                const moduleName = fileName.replace(/\.jsx?$/, "");
                 moduleRegistry[moduleName] = currentFileExports;
 
                 if (currentFileExports.default) {
                     libExports[moduleName] = currentFileExports.default;
                     // 如果有真实的函数/类名（如 TourSpotlight），也将其注入全局作用域，忽略文件名
                     if (currentFileExports.default.name) {
-                        libExports[currentFileExports.default.name] = currentFileExports.default;
+                        libExports[currentFileExports.default.name] =
+                            currentFileExports.default;
                     }
                 }
-                Object.keys(currentFileExports).forEach(key => {
-                    if (key !== 'default' && key !== '__esModule') {
+                Object.keys(currentFileExports).forEach((key) => {
+                    if (key !== "default" && key !== "__esModule") {
                         libExports[key] = currentFileExports[key];
                     }
                 });
             } catch (e) {
-                throw new Error(`底层库模块 ${fileName} 编译错误: ${e.message}`);
+                throw new Error(
+                    `底层库模块 ${fileName} 编译错误: ${e.message}`,
+                );
             }
         }
     }
@@ -113,15 +141,15 @@ async function compileAndRun(code, libraryCode = '', wrapperCode = '') {
 
     const scenarioRequire = (name) => {
         const registry = {
-            'react': React,
-            'react-dom': ReactDOM,
-            'lucide-react': LucideIcons,
-            'framer-motion': { motion, AnimatePresence },
+            react: React,
+            "react-dom": ReactDOM,
+            "lucide-react": LucideIcons,
+            "framer-motion": { motion, AnimatePresence },
         };
         if (registry[name]) return registry[name];
 
-        const cleanName = name.replace(/^\.\//, '').replace(/\.jsx?$/, '');
-        if (name.startsWith('.') && moduleRegistry[cleanName]) {
+        const cleanName = name.replace(/^\.\//, "").replace(/\.jsx?$/, "");
+        if (name.startsWith(".") && moduleRegistry[cleanName]) {
             return moduleRegistry[cleanName];
         }
 
@@ -130,54 +158,82 @@ async function compileAndRun(code, libraryCode = '', wrapperCode = '') {
     };
 
     let processedScenario = code;
-    const hasRender = code.includes('render(') || code.includes('export default');
-    const hasDemoComponent = code.includes('function Demo') || code.includes('const Demo =');
+    const hasRender =
+        code.includes("render(") || code.includes("export default");
+    const hasDemoComponent =
+        code.includes("function Demo") || code.includes("const Demo =");
 
     if (!hasRender && hasDemoComponent) {
         processedScenario = `${code}\n\nrender(<Demo />);`;
-    } else if (!hasRender && (code.trim().startsWith('<') || code.trim().startsWith('React.createElement'))) {
+    } else if (
+        !hasRender &&
+        (code.trim().startsWith("<") ||
+            code.trim().startsWith("React.createElement"))
+    ) {
         processedScenario = `render(${code});`;
     }
 
     try {
         const transformedScenario = Babel.transform(processedScenario, {
-            presets: ['react', ['env', { modules: 'commonjs' }]]
+            presets: ["react", ["env", { modules: "commonjs" }]],
         }).code;
 
         const demoScope = {
             ...fullScope,
-            render: (comp) => { scenarioExports.default = comp; }
+            render: (comp) => {
+                scenarioExports.default = comp;
+            },
         };
-        createFunction(transformedScenario, demoScope, scenarioExports, scenarioRequire);
+        createFunction(
+            transformedScenario,
+            demoScope,
+            scenarioExports,
+            scenarioRequire,
+        );
     } catch (e) {
         throw new Error(`演示代码编译错误: ${e.message}`);
     }
 
-    const MainComponent = scenarioExports.default || scenarioExports[Object.keys(scenarioExports)[0]];
+    const MainComponent =
+        scenarioExports.default ||
+        scenarioExports[Object.keys(scenarioExports)[0]];
     if (!MainComponent) return null;
 
     // ─── 3. 编译 Wrapper ───────────────────────────────────────────
-    if (wrapperCode.trim() && wrapperCode.includes('{children}')) {
+    if (wrapperCode.trim() && wrapperCode.includes("{children}")) {
         try {
             const wrappedCode = `exports.DefaultWrapper = ({ children }) => { return (${wrapperCode}); };`;
-            const transformedWrapper = Babel.transform(wrappedCode, { presets: ['react', 'env'] }).code;
+            const transformedWrapper = Babel.transform(wrappedCode, {
+                presets: ["react", "env"],
+            }).code;
             const wrapperExports = {};
-            createFunction(transformedWrapper, fullScope, wrapperExports, scenarioRequire);
+            createFunction(
+                transformedWrapper,
+                fullScope,
+                wrapperExports,
+                scenarioRequire,
+            );
             const Wrapper = wrapperExports.DefaultWrapper;
             if (Wrapper) {
                 const Final = () => (
                     <Wrapper>
-                        {React.isValidElement(MainComponent) ? MainComponent : <MainComponent />}
+                        {React.isValidElement(MainComponent) ? (
+                            MainComponent
+                        ) : (
+                            <MainComponent />
+                        )}
                     </Wrapper>
                 );
                 return Final;
             }
         } catch (e) {
-            console.error('Wrapper Execution Error:', e);
+            console.error("Wrapper Execution Error:", e);
         }
     }
 
-    return React.isValidElement(MainComponent) ? () => MainComponent : MainComponent;
+    return React.isValidElement(MainComponent)
+        ? () => MainComponent
+        : MainComponent;
 }
 
 class SandboxErrorBoundary extends React.Component {
@@ -188,22 +244,31 @@ class SandboxErrorBoundary extends React.Component {
     }
 
     handleGlobalError(event) {
-        const stack = event.error?.stack || '';
+        const stack = event.error?.stack || "";
         // 捕获只有从我们的沙盒（eval / createFunction）里抛出的全局未捕获事件异常
-        if (stack.includes('createFunction') || stack.includes('eval') || stack.includes('<anonymous>')) {
-            this.setState({ hasError: true, error: event.error || new Error(event.message) });
+        if (
+            stack.includes("createFunction") ||
+            stack.includes("eval") ||
+            stack.includes("<anonymous>")
+        ) {
+            this.setState({
+                hasError: true,
+                error: event.error || new Error(event.message),
+            });
         }
     }
 
     componentDidMount() {
-        window.addEventListener('error', this.handleGlobalError);
+        window.addEventListener("error", this.handleGlobalError);
     }
 
     componentWillUnmount() {
-        window.removeEventListener('error', this.handleGlobalError);
+        window.removeEventListener("error", this.handleGlobalError);
     }
 
-    static getDerivedStateFromError(error) { return { hasError: true, error }; }
+    static getDerivedStateFromError(error) {
+        return { hasError: true, error };
+    }
     componentDidUpdate(prevProps) {
         if (
             prevProps.code !== this.props.code ||
@@ -220,7 +285,9 @@ class SandboxErrorBoundary extends React.Component {
             return (
                 <div className="flex flex-col items-center justify-center p-6 text-center">
                     <AlertTriangle className="w-6 h-6 text-red-500 mb-4" />
-                    <div className="text-sm font-black text-slate-900 mb-2">运行时异常</div>
+                    <div className="text-sm font-black text-slate-900 mb-2">
+                        运行时异常
+                    </div>
                     <pre className="text-[10px] text-red-400 font-mono bg-red-50 p-4 rounded-xl border border-red-100 max-w-full overflow-auto text-left">
                         {this.state.error?.message}
                     </pre>
@@ -231,7 +298,12 @@ class SandboxErrorBoundary extends React.Component {
     }
 }
 
-const SandboxPreview = React.memo(function SandboxPreview({ code, libraryCode, wrapperCode, cssCode }) {
+const SandboxPreview = React.memo(function SandboxPreview({
+    code,
+    libraryCode,
+    wrapperCode,
+    cssCode,
+}) {
     const [Component, setComponent] = useState(null);
     const [error, setError] = useState(null);
 
@@ -240,7 +312,7 @@ const SandboxPreview = React.memo(function SandboxPreview({ code, libraryCode, w
         const styleId = `sandbox-styles-global`;
         let styleElement = document.getElementById(styleId);
         if (!styleElement) {
-            styleElement = document.createElement('style');
+            styleElement = document.createElement("style");
             styleElement.id = styleId;
             document.head.appendChild(styleElement);
         }
@@ -251,23 +323,27 @@ const SandboxPreview = React.memo(function SandboxPreview({ code, libraryCode, w
         let isMounted = true;
         setError(null);
         compileAndRun(code, libraryCode, wrapperCode, cssCode)
-            .then(comp => {
+            .then((comp) => {
                 if (isMounted) setComponent(() => comp);
             })
-            .catch(e => {
+            .catch((e) => {
                 if (isMounted) {
                     setError(e.message || String(e));
                     setComponent(null);
                 }
             });
-        return () => { isMounted = false; };
+        return () => {
+            isMounted = false;
+        };
     }, [code, libraryCode, wrapperCode, cssCode]);
 
     if (error) {
         return (
             <div className="flex flex-col items-center justify-center h-full p-6 text-center">
                 <AlertTriangle className="w-8 h-8 text-red-500 mb-4" />
-                <div className="text-sm font-black text-slate-900 mb-2 uppercase tracking-widest">编译阶段错误</div>
+                <div className="text-sm font-black text-slate-900 mb-2 uppercase tracking-widest">
+                    编译阶段错误
+                </div>
                 <pre className="text-xs text-red-500 bg-red-50 border border-red-100 rounded-2xl p-6 max-w-full overflow-auto whitespace-pre-wrap font-mono text-left shadow-inner">
                     {error}
                 </pre>
@@ -279,14 +355,20 @@ const SandboxPreview = React.memo(function SandboxPreview({ code, libraryCode, w
         return (
             <div className="flex flex-col items-center justify-center h-full text-slate-300 animate-pulse">
                 <RefreshCw className="w-8 h-8 animate-spin mb-4 opacity-20" />
-                <span className="text-[10px] font-black uppercase tracking-[0.4em] italic">Initializing Nano-Engine</span>
+                <span className="text-[10px] font-black uppercase tracking-[0.4em] italic">
+                    Initializing Nano-Engine
+                </span>
             </div>
         );
     }
 
     return (
-      <div className="w-full h-full flex items-center p-4">
-         <SandboxErrorBoundary code={code} libraryCode={libraryCode} wrapperCode={wrapperCode}>
+        <div className="w-full h-full flex items-center p-4">
+            <SandboxErrorBoundary
+                code={code}
+                libraryCode={libraryCode}
+                wrapperCode={wrapperCode}
+            >
                 <Component />
             </SandboxErrorBoundary>
         </div>
@@ -294,13 +376,13 @@ const SandboxPreview = React.memo(function SandboxPreview({ code, libraryCode, w
 });
 
 const LiveDemoSandbox = ({
-    initialCode = '',
-    libraryCode = '',
-    wrapperCode = '',
-    cssCode = '',
+    initialCode = "",
+    libraryCode = "",
+    wrapperCode = "",
+    cssCode = "",
     readOnly = false,
     onChange,
-    previewOnly = false
+    previewOnly = false,
 }) => {
     const [code, setCode] = useState(initialCode);
     const [runningCode, setRunningCode] = useState(initialCode);
@@ -344,7 +426,7 @@ const LiveDemoSandbox = ({
                     setRunningWrapperCode(wrapperCode);
                     setRunningCssCode(cssCode);
                 })
-                .catch(e => {
+                .catch((e) => {
                     console.error(e);
                     setLastRunSuccess(false);
                 })
@@ -353,49 +435,86 @@ const LiveDemoSandbox = ({
     }, [code, libraryCode, wrapperCode, cssCode]);
 
     const handleKeyDown = (e) => {
-        if (e.key === 'Tab') {
+        if (e.key === "Tab") {
             e.preventDefault();
             const start = e.target.selectionStart;
             const end = e.target.selectionEnd;
-            const newCode = code.substring(0, start) + '  ' + code.substring(end);
+            const newCode =
+                code.substring(0, start) + "  " + code.substring(end);
             updateCode(newCode);
             setTimeout(() => {
                 if (textareaRef.current) {
-                    textareaRef.current.selectionStart = textareaRef.current.selectionEnd = start + 2;
+                    textareaRef.current.selectionStart =
+                        textareaRef.current.selectionEnd = start + 2;
                 }
             }, 0);
         }
-        if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') handleRun();
+        if ((e.ctrlKey || e.metaKey) && e.key === "Enter") handleRun();
     };
 
-    if (previewOnly) return <SandboxPreview code={code} libraryCode={libraryCode} wrapperCode={wrapperCode} cssCode={cssCode} />;
+    if (previewOnly)
+        return (
+            <SandboxPreview
+                code={code}
+                libraryCode={libraryCode}
+                wrapperCode={wrapperCode}
+                cssCode={cssCode}
+            />
+        );
 
     return (
         <div className="w-full h-full flex flex-col bg-white min-h-0">
             <div className="flex-shrink-0 flex items-center justify-between px-4 sm:px-8 py-3 sm:py-4 border-b border-slate-100 flex-wrap gap-3">
                 <div className="flex items-center gap-3 min-w-0">
                     <div className="w-3 h-3 rounded-full bg-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.4)] flex-shrink-0" />
-                    <span className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 italic whitespace-nowrap">Live Lab Preview</span>
-                    {lastRunSuccess === false && <span className="px-3 py-1 bg-red-50 text-red-500 text-[9px] font-black rounded-full uppercase tracking-tighter whitespace-nowrap">Compile Failed</span>}
-                    {lastRunSuccess === true && <span className="px-3 py-1 bg-emerald-50 text-emerald-500 text-[9px] font-black rounded-full uppercase tracking-tighter whitespace-nowrap">Ready</span>}
+                    <span className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 italic whitespace-nowrap">
+                        Live Lab Preview
+                    </span>
+                    {lastRunSuccess === false && (
+                        <span className="px-3 py-1 bg-red-50 text-red-500 text-[9px] font-black rounded-full uppercase tracking-tighter whitespace-nowrap">
+                            Compile Failed
+                        </span>
+                    )}
+                    {lastRunSuccess === true && (
+                        <span className="px-3 py-1 bg-emerald-50 text-emerald-500 text-[9px] font-black rounded-full uppercase tracking-tighter whitespace-nowrap">
+                            Ready
+                        </span>
+                    )}
                 </div>
                 <div className="flex items-center gap-2 sm:gap-4">
-                    <Button onClick={() => setRunningCode(code)} variant="ghost" size="sm" className="px-4 py-2.5 hover:bg-slate-50 text-slate-400 text-[10px] font-black uppercase tracking-widest rounded-xl whitespace-nowrap">
+                    <Button
+                        onClick={() => setRunningCode(code)}
+                        variant="ghost"
+                        size="sm"
+                        className="px-4 py-2.5 hover:bg-slate-50 text-slate-400 text-[10px] font-black uppercase tracking-widest rounded-xl whitespace-nowrap"
+                    >
                         Sync Changes
                     </Button>
-                    <Button id="tour-run-btn" onClick={handleRun} disabled={isRunning} variant="ink" size="sm" className="flex items-center gap-2.5 px-5 sm:px-8 py-2.5 bg-slate-900 text-white rounded-2xl text-[10px] font-black shadow-xl active:scale-95 whitespace-nowrap">
-                        <Play className={`w-3.5 h-3.5 ${isRunning ? 'animate-spin' : ''}`} /> {isRunning ? 'EXECUTING...' : 'RUN ANALYTICS'}
+                    <Button
+                        id="tour-run-btn"
+                        onClick={handleRun}
+                        disabled={isRunning}
+                        variant="ink"
+                        size="sm"
+                        className="flex items-center gap-2.5 px-5 sm:px-8 py-2.5 bg-slate-900 text-white rounded-2xl text-[10px] font-black shadow-xl active:scale-95 whitespace-nowrap"
+                    >
+                        <Play
+                            className={`w-3.5 h-3.5 ${isRunning ? "animate-spin" : ""}`}
+                        />{" "}
+                        {isRunning ? "EXECUTING..." : "RUN ANALYTICS"}
                     </Button>
                 </div>
             </div>
             <div className="flex-1 flex flex-col lg:flex-row overflow-hidden min-h-0">
                 {!readOnly && (
                     <div className="flex-1 relative border-b lg:border-b-0 lg:border-r border-slate-100 bg-slate-50/20 min-h-0">
-                        <div className="absolute top-4 right-6 text-[9px] font-black text-slate-300 uppercase tracking-[0.2em] select-none">Scenario Logic</div>
+                        <div className="absolute top-4 right-6 text-[9px] font-black text-slate-300 uppercase tracking-[0.2em] select-none">
+                            Scenario Logic
+                        </div>
                         <textarea
                             ref={textareaRef}
                             value={code}
-                            onChange={e => updateCode(e.target.value)}
+                            onChange={(e) => updateCode(e.target.value)}
                             onKeyDown={handleKeyDown}
                             className="absolute inset-0 w-full h-full p-5 sm:p-10 font-mono text-body outline-none resize-none bg-transparent leading-relaxed text-slate-700"
                             spellCheck={false}
@@ -404,7 +523,12 @@ const LiveDemoSandbox = ({
                     </div>
                 )}
                 <div className="flex-1 bg-white overflow-hidden relative min-h-0">
-                    <SandboxPreview code={runningCode} libraryCode={runningLibraryCode} wrapperCode={runningWrapperCode} cssCode={runningCssCode} />
+                    <SandboxPreview
+                        code={runningCode}
+                        libraryCode={runningLibraryCode}
+                        wrapperCode={runningWrapperCode}
+                        cssCode={runningCssCode}
+                    />
                 </div>
             </div>
         </div>

@@ -1,27 +1,35 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Check, ImageIcon, Loader2, Search, Upload } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
-import { get, upload } from '@api/http';
-import Modal from '@/components/common/Modal';
-import { useToast } from '@/hooks/useToast';
+import React, { useEffect, useRef, useState } from "react";
+import { Check, ImageIcon, Loader2, Search, Upload } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import { get, upload } from "@api/http";
+import Modal from "@/components/common/Modal";
+import { useToast } from "@/hooks/useToast";
 
 const MAX_IMAGE_SIZE = 10 * 1024 * 1024;
-const SUPPORTED_IMAGE_TYPES = new Set(['image/png', 'image/jpeg', 'image/webp', 'image/gif']);
-const scopes = ['recent', 'mine', 'gif'];
+const SUPPORTED_IMAGE_TYPES = new Set([
+    "image/png",
+    "image/jpeg",
+    "image/webp",
+    "image/gif",
+]);
+const scopes = ["recent", "mine", "gif"];
 
 const formatBytes = (bytes) => {
-    if (!Number.isFinite(bytes) || bytes <= 0) return '—';
-    const units = ['B', 'KB', 'MB', 'GB'];
-    const index = Math.min(Math.floor(Math.log(bytes) / Math.log(1024)), units.length - 1);
-    return `${(bytes / (1024 ** index)).toFixed(index === 0 ? 0 : 1)} ${units[index]}`;
+    if (!Number.isFinite(bytes) || bytes <= 0) return "—";
+    const units = ["B", "KB", "MB", "GB"];
+    const index = Math.min(
+        Math.floor(Math.log(bytes) / Math.log(1024)),
+        units.length - 1,
+    );
+    return `${(bytes / 1024 ** index).toFixed(index === 0 ? 0 : 1)} ${units[index]}`;
 };
 
 const BlogImageLibraryModal = ({ isOpen, onClose, onInsert }) => {
     const { t } = useTranslation();
     const toast = useToast();
     const fileInputRef = useRef(null);
-    const [scope, setScope] = useState('recent');
-    const [keyword, setKeyword] = useState('');
+    const [scope, setScope] = useState("recent");
+    const [keyword, setKeyword] = useState("");
     const [images, setImages] = useState([]);
     const [selected, setSelected] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -30,47 +38,61 @@ const BlogImageLibraryModal = ({ isOpen, onClose, onInsert }) => {
     useEffect(() => {
         if (!isOpen) return undefined;
 
-        const timer = window.setTimeout(async () => {
-            setLoading(true);
-            try {
-                const result = await get('/api/blog/media/images', {
-                    scope,
-                    keyword: keyword.trim() || undefined,
-                }, { _silent: true });
-                setImages(result || []);
-                setSelected((current) => {
-                    if (current && result?.some((image) => image.id === current.id)) return current;
-                    return result?.[0] || null;
-                });
-            } catch {
-                setImages([]);
-                setSelected(null);
-            } finally {
-                setLoading(false);
-            }
-        }, keyword ? 250 : 0);
+        const timer = window.setTimeout(
+            async () => {
+                setLoading(true);
+                try {
+                    const result = await get(
+                        "/api/blog/media/images",
+                        {
+                            scope,
+                            keyword: keyword.trim() || undefined,
+                        },
+                        { _silent: true },
+                    );
+                    setImages(result || []);
+                    setSelected((current) => {
+                        if (
+                            current &&
+                            result?.some((image) => image.id === current.id)
+                        )
+                            return current;
+                        return result?.[0] || null;
+                    });
+                } catch {
+                    setImages([]);
+                    setSelected(null);
+                } finally {
+                    setLoading(false);
+                }
+            },
+            keyword ? 250 : 0,
+        );
 
         return () => window.clearTimeout(timer);
     }, [isOpen, keyword, scope]);
 
     const handleUpload = async (file) => {
         if (!file || !SUPPORTED_IMAGE_TYPES.has(file.type)) {
-            toast.warning(t('blog.media.invalidImage'));
+            toast.warning(t("blog.media.invalidImage"));
             return;
         }
         if (file.size > MAX_IMAGE_SIZE) {
-            toast.warning(t('blog.media.imageTooLarge'));
+            toast.warning(t("blog.media.imageTooLarge"));
             return;
         }
 
         setUploading(true);
         try {
-            const created = await upload('/api/blog/media/images', file);
-            setImages((current) => [created, ...current.filter((image) => image.id !== created.id)]);
+            const created = await upload("/api/blog/media/images", file);
+            setImages((current) => [
+                created,
+                ...current.filter((image) => image.id !== created.id),
+            ]);
             setSelected(created);
-            setScope('recent');
-            setKeyword('');
-            toast.success(t('blog.media.uploadSuccess'));
+            setScope("recent");
+            setKeyword("");
+            toast.success(t("blog.media.uploadSuccess"));
         } catch {
             // The shared HTTP client displays the server error.
         } finally {
@@ -81,7 +103,9 @@ const BlogImageLibraryModal = ({ isOpen, onClose, onInsert }) => {
     const footer = (
         <div className="flex w-full flex-wrap items-center justify-between gap-x-4 gap-y-2">
             <span className="text-sm font-medium text-ink-muted">
-                {selected ? t('blog.media.selectedCount', { count: 1 }) : t('blog.media.selectedCount', { count: 0 })}
+                {selected
+                    ? t("blog.media.selectedCount", { count: 1 })
+                    : t("blog.media.selectedCount", { count: 0 })}
             </span>
             <div className="flex items-center gap-3">
                 <button
@@ -89,7 +113,7 @@ const BlogImageLibraryModal = ({ isOpen, onClose, onInsert }) => {
                     onClick={onClose}
                     className="rounded-xl border border-border bg-canvas px-5 py-2.5 text-sm font-bold text-ink-secondary transition hover:bg-surface"
                 >
-                    {t('blog.media.cancel')}
+                    {t("blog.media.cancel")}
                 </button>
                 <button
                     type="button"
@@ -97,7 +121,7 @@ const BlogImageLibraryModal = ({ isOpen, onClose, onInsert }) => {
                     onClick={() => onInsert(selected)}
                     className="rounded-xl bg-accent px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-accent/20 transition hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-40"
                 >
-                    {t('blog.media.insertAtCursor')}
+                    {t("blog.media.insertAtCursor")}
                 </button>
             </div>
         </div>
@@ -107,7 +131,7 @@ const BlogImageLibraryModal = ({ isOpen, onClose, onInsert }) => {
         <Modal
             isOpen={isOpen}
             onClose={onClose}
-            title={t('blog.media.libraryTitle')}
+            title={t("blog.media.libraryTitle")}
             width="max-w-5xl"
             className="h-[min(720px,90vh)]"
             footer={footer}
@@ -119,7 +143,7 @@ const BlogImageLibraryModal = ({ isOpen, onClose, onInsert }) => {
                         <input
                             value={keyword}
                             onChange={(event) => setKeyword(event.target.value)}
-                            placeholder={t('blog.media.searchPlaceholder')}
+                            placeholder={t("blog.media.searchPlaceholder")}
                             className="h-11 w-full rounded-xl border border-border bg-canvas pl-10 pr-4 text-sm font-medium text-ink-secondary outline-none transition focus:border-accent focus:ring-4 focus:ring-accent/10"
                         />
                     </label>
@@ -129,8 +153,14 @@ const BlogImageLibraryModal = ({ isOpen, onClose, onInsert }) => {
                         onClick={() => fileInputRef.current?.click()}
                         className="flex h-11 items-center justify-center gap-2 rounded-xl bg-accent px-5 text-sm font-bold text-white shadow-lg shadow-accent/20 transition hover:brightness-105 disabled:opacity-60"
                     >
-                        {uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
-                        {uploading ? t('blog.media.uploadingImage') : t('blog.media.uploadImage')}
+                        {uploading ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                            <Upload className="h-4 w-4" />
+                        )}
+                        {uploading
+                            ? t("blog.media.uploadingImage")
+                            : t("blog.media.uploadImage")}
                     </button>
                     <input
                         ref={fileInputRef}
@@ -139,7 +169,7 @@ const BlogImageLibraryModal = ({ isOpen, onClose, onInsert }) => {
                         className="hidden"
                         onChange={(event) => {
                             handleUpload(event.target.files?.[0]);
-                            event.target.value = '';
+                            event.target.value = "";
                         }}
                     />
                 </div>
@@ -150,7 +180,7 @@ const BlogImageLibraryModal = ({ isOpen, onClose, onInsert }) => {
                             key={item}
                             type="button"
                             onClick={() => setScope(item)}
-                            className={`shrink-0 whitespace-nowrap border-b-2 px-4 py-2.5 text-sm font-bold transition ${scope === item ? 'border-accent text-accent' : 'border-transparent text-ink-muted hover:text-ink'}`}
+                            className={`shrink-0 whitespace-nowrap border-b-2 px-4 py-2.5 text-sm font-bold transition ${scope === item ? "border-accent text-accent" : "border-transparent text-ink-muted hover:text-ink"}`}
                         >
                             {t(`blog.media.scopes.${item}`)}
                         </button>
@@ -172,7 +202,7 @@ const BlogImageLibraryModal = ({ isOpen, onClose, onInsert }) => {
                                             key={image.id}
                                             type="button"
                                             onClick={() => setSelected(image)}
-                                            className={`group relative overflow-hidden rounded-xl border-2 bg-surface text-left transition ${active ? 'border-accent ring-4 ring-accent/10' : 'border-transparent hover:border-border-strong'}`}
+                                            className={`group relative overflow-hidden rounded-xl border-2 bg-surface text-left transition ${active ? "border-accent ring-4 ring-accent/10" : "border-transparent hover:border-border-strong"}`}
                                         >
                                             <img
                                                 src={image.url}
@@ -195,8 +225,12 @@ const BlogImageLibraryModal = ({ isOpen, onClose, onInsert }) => {
                         ) : (
                             <div className="flex h-full min-h-[280px] flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-surface text-center">
                                 <ImageIcon className="mb-3 h-10 w-10 text-ink-faint" />
-                                <div className="font-bold text-ink-secondary">{t('blog.media.emptyTitle')}</div>
-                                <div className="mt-1 text-sm text-ink-faint">{t('blog.media.emptyHint')}</div>
+                                <div className="font-bold text-ink-secondary">
+                                    {t("blog.media.emptyTitle")}
+                                </div>
+                                <div className="mt-1 text-sm text-ink-faint">
+                                    {t("blog.media.emptyHint")}
+                                </div>
                             </div>
                         )}
                     </div>
@@ -210,18 +244,24 @@ const BlogImageLibraryModal = ({ isOpen, onClose, onInsert }) => {
                                     className="aspect-[4/3] w-full rounded-xl bg-canvas object-contain"
                                 />
                                 <div>
-                                    <div className="break-all text-sm font-black text-ink">{selected.originalName}</div>
+                                    <div className="break-all text-sm font-black text-ink">
+                                        {selected.originalName}
+                                    </div>
                                     <div className="mt-2 text-xs font-medium text-ink-muted">
-                                        {selected.width && selected.height ? `${selected.width} × ${selected.height}` : '—'}
+                                        {selected.width && selected.height
+                                            ? `${selected.width} × ${selected.height}`
+                                            : "—"}
                                         <span className="px-2">·</span>
                                         {formatBytes(selected.size)}
                                     </div>
-                                    <div className="mt-1 text-xs text-ink-faint">{selected.contentType}</div>
+                                    <div className="mt-1 text-xs text-ink-faint">
+                                        {selected.contentType}
+                                    </div>
                                 </div>
                             </div>
                         ) : (
                             <div className="flex h-full min-h-[220px] items-center justify-center text-center text-sm font-medium text-ink-faint">
-                                {t('blog.media.selectHint')}
+                                {t("blog.media.selectHint")}
                             </div>
                         )}
                     </aside>

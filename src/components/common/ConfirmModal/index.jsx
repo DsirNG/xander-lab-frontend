@@ -1,7 +1,7 @@
-import React from 'react';
-import { useTranslation } from 'react-i18next';
-import Modal from '@components/common/Modal';
-import Button from '@components/common/Button';
+import React from "react";
+import { useTranslation } from "react-i18next";
+import Modal from "@components/common/Modal";
+import Button from "@components/common/Button";
 
 /**
  * 二次确认弹窗（删除、退出登录等危险操作）
@@ -20,8 +20,8 @@ const ConfirmModal = ({
     closeOnOutsideClick = true,
 }) => {
     const { t } = useTranslation();
-    const resolvedConfirm = confirmText || t('common.confirm');
-    const resolvedCancel = cancelText || t('common.cancel');
+    const resolvedConfirm = confirmText || t("common.confirm");
+    const resolvedCancel = cancelText || t("common.cancel");
 
     return (
         <Modal
@@ -33,7 +33,7 @@ const ConfirmModal = ({
             width="max-w-sm"
             closeOnOutsideClick={closeOnOutsideClick && !confirming}
             hideCloseButton={confirming}
-            footer={(
+            footer={
                 <>
                     <Button
                         onClick={onClose}
@@ -46,13 +46,13 @@ const ConfirmModal = ({
                     <Button
                         onClick={onConfirm}
                         loading={confirming}
-                        variant={danger ? 'danger' : 'ink'}
+                        variant={danger ? "danger" : "ink"}
                         size="lg"
                     >
                         {resolvedConfirm}
                     </Button>
                 </>
-            )}
+            }
         >
             {children || (
                 <div className="text-body font-medium leading-relaxed text-ink-muted">

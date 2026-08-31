@@ -1,9 +1,9 @@
-import React, { useEffect, useRef } from 'react';
-import { createPortal } from 'react-dom';
-import { motion, AnimatePresence } from 'framer-motion';
-import { X } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
-import Button from '@components/common/Button';
+import React, { useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
+import { motion, AnimatePresence } from "framer-motion";
+import { X } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import Button from "@components/common/Button";
 
 /**
  * 通用弹窗组件
@@ -14,10 +14,10 @@ const Modal = ({
     title,
     children,
     footer,
-    width = 'max-w-md',
+    width = "max-w-md",
     closeOnOutsideClick = true,
     hideCloseButton = false,
-    className = ''
+    className = "",
 }) => {
     const modalRef = useRef(null);
     const previousFocusRef = useRef(null);
@@ -26,18 +26,19 @@ const Modal = ({
     // 拦截背景滚动并防止滚动条消失引发的布局抖动
     useEffect(() => {
         if (isOpen) {
-            const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
-            document.body.style.overflow = 'hidden';
+            const scrollbarWidth =
+                window.innerWidth - document.documentElement.clientWidth;
+            document.body.style.overflow = "hidden";
             if (scrollbarWidth > 0) {
                 document.body.style.paddingRight = `${scrollbarWidth}px`;
             }
         } else {
-            document.body.style.overflow = '';
-            document.body.style.paddingRight = '';
+            document.body.style.overflow = "";
+            document.body.style.paddingRight = "";
         }
         return () => {
-            document.body.style.overflow = '';
-            document.body.style.paddingRight = '';
+            document.body.style.overflow = "";
+            document.body.style.paddingRight = "";
         };
     }, [isOpen]);
 
@@ -49,7 +50,7 @@ const Modal = ({
             requestAnimationFrame(() => {
                 if (modalRef.current) {
                     const focusable = modalRef.current.querySelector(
-                        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+                        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
                     );
                     if (focusable) focusable.focus();
                     else modalRef.current.focus();
@@ -65,14 +66,14 @@ const Modal = ({
     useEffect(() => {
         const handleKeyDown = (e) => {
             if (!isOpen) return;
-            if (e.key === 'Escape' && closeOnOutsideClick) {
+            if (e.key === "Escape" && closeOnOutsideClick) {
                 onClose();
                 return;
             }
             // 焦点陷阱：Tab 键在弹窗内循环
-            if (e.key === 'Tab' && modalRef.current) {
+            if (e.key === "Tab" && modalRef.current) {
                 const focusableElements = modalRef.current.querySelectorAll(
-                    'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+                    'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
                 );
                 if (focusableElements.length === 0) return;
                 const first = focusableElements[0];
@@ -90,13 +91,13 @@ const Modal = ({
                 }
             }
         };
-        window.addEventListener('keydown', handleKeyDown);
-        return () => window.removeEventListener('keydown', handleKeyDown);
+        window.addEventListener("keydown", handleKeyDown);
+        return () => window.removeEventListener("keydown", handleKeyDown);
     }, [isOpen, closeOnOutsideClick, onClose]);
 
-    if (typeof document === 'undefined') return null;
+    if (typeof document === "undefined") return null;
 
-    const titleId = title ? 'modal-title' : undefined;
+    const titleId = title ? "modal-title" : undefined;
 
     return createPortal(
         <AnimatePresence>
@@ -128,23 +129,26 @@ const Modal = ({
                         transition={{
                             type: "tween",
                             ease: "easeInOut",
-                            duration: 0.3
+                            duration: 0.3,
                         }}
                         // 【修复 1】增加 antialiased 和 transform-gpu 类名
                         className={`relative w-full ${width} bg-canvas rounded-3xl shadow-2xl shadow-ink/30 flex flex-col max-h-[90dvh] overflow-hidden antialiased transform-gpu outline-none ${className}`}
                         // 【修复 1 补充】强制保留硬件加速，防止动画结束时字体重新渲染
                         style={{
-                            WebkitFontSmoothing: 'antialiased',
-                            backfaceVisibility: 'hidden',
-                            transform: 'translateZ(0)'
+                            WebkitFontSmoothing: "antialiased",
+                            backfaceVisibility: "hidden",
+                            transform: "translateZ(0)",
                         }}
-                        onClick={e => e.stopPropagation()}
+                        onClick={(e) => e.stopPropagation()}
                     >
                         {/* 头部标题与关闭按钮 */}
                         {(title || !hideCloseButton) && (
                             <div className="flex-shrink-0 flex items-center justify-between px-6 py-5">
-                                {typeof title === 'string' ? (
-                                    <div id={titleId} className="text-title font-black text-ink tracking-tight">
+                                {typeof title === "string" ? (
+                                    <div
+                                        id={titleId}
+                                        className="text-title font-black text-ink tracking-tight"
+                                    >
                                         {title}
                                     </div>
                                 ) : (
@@ -154,7 +158,10 @@ const Modal = ({
                                 {!hideCloseButton && (
                                     <Button
                                         onClick={onClose}
-                                        aria-label={t('common.aria.close', 'Close')}
+                                        aria-label={t(
+                                            "common.aria.close",
+                                            "Close",
+                                        )}
                                         variant="ghost"
                                         size="xs"
                                         icon={X}
@@ -179,7 +186,7 @@ const Modal = ({
                 </motion.div>
             )}
         </AnimatePresence>,
-        document.body
+        document.body,
     );
 };
 

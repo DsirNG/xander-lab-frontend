@@ -1,9 +1,9 @@
-import { createContext } from 'react'
+import { createContext } from "react";
 
 const PureReadingContext = createContext({
-  isPureReading: false,
-  setIsPureReading: () => {},
-  togglePureReading: () => {},
-})
+    isPureReading: false,
+    setIsPureReading: () => {},
+    togglePureReading: () => {},
+});
 
-export default PureReadingContext
+export default PureReadingContext;

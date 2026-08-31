@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
-import PureReadingContext from './pureReadingContextValue';
+import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
+import PureReadingContext from "./pureReadingContextValue";
 
 export const PureReadingProvider = ({ children }) => {
     const [isPureReading, setIsPureReading] = useState(false);
@@ -14,12 +14,12 @@ export const PureReadingProvider = ({ children }) => {
     // Esc 键按键监听：按下 Esc 键时退出纯净阅读模式
     useEffect(() => {
         const handleKeyDown = (e) => {
-            if (e.key === 'Escape' && isPureReading) {
+            if (e.key === "Escape" && isPureReading) {
                 setIsPureReading(false);
             }
         };
-        window.addEventListener('keydown', handleKeyDown);
-        return () => window.removeEventListener('keydown', handleKeyDown);
+        window.addEventListener("keydown", handleKeyDown);
+        return () => window.removeEventListener("keydown", handleKeyDown);
     }, [isPureReading]);
 
     const togglePureReading = () => setIsPureReading((prev) => !prev);

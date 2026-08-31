@@ -104,18 +104,22 @@ src/
 ### 2. 模块化设计
 
 #### Features 目录组织
+
 每个 feature 模块都是独立的业务领域，包含：
+
 - `pages/`: 页面组件
 - `components/`: 功能专属组件（可选）
 - `hooks/`: 功能专属 Hooks（可选）
 - `utils/`: 功能专属工具（可选）
 
 #### Components 目录组织
+
 - `common/`: 通用基础组件（Button, Input, Modal 等）
 - `business/`: 业务组件（BrowserWindow 等）
 - `layouts/`: 布局组件（MainLayout 等）
 
 每个组件都采用文件夹组织方式：
+
 ```
 ComponentName/
 ├── ComponentName.jsx        # 组件逻辑
@@ -128,65 +132,72 @@ ComponentName/
 使用 `@` 前缀的路径别名提高代码可维护性：
 
 ```javascript
-import MainLayout from '@components/layouts/MainLayout';
-import HomePage from '@features/home/pages/HomePage';
-import { storage } from '@utils';
-import { APP_CONFIG } from '@config';
+import MainLayout from "@components/layouts/MainLayout";
+import HomePage from "@features/home/pages/HomePage";
+import { storage } from "@utils";
+import { APP_CONFIG } from "@config";
 ```
 
 配置文件：
+
 - `vite.config.js`: Vite 路径别名配置
 - `jsconfig.json`: IDE 智能提示配置
 
 ### 4. 样式管理
 
 #### CSS Modules
+
 - 局部作用域，避免样式冲突
 - 文件命名：`*.module.css`
 - 导入方式：`import styles from './Component.module.css'`
 
 #### TailwindCSS
+
 - 全局配置：`tailwind.config.js`
 - 主题变量：`src/styles/index.css` 中的 `@theme`
 - 工具类优先，模块化样式补充
 
 #### 全局样式
+
 ```css
 /* 全局盒模型配置 */
 *,
 *::before,
 *::after {
-  box-sizing: border-box;
+    box-sizing: border-box;
 }
 ```
 
 ### 5. 代码规范
 
 #### 命名约定
+
 - **组件**: PascalCase (例如: `HomePage`, `BrowserWindow`)
 - **文件**: PascalCase 或 camelCase (组件用 PascalCase，工具用 camelCase)
 - **CSS 类**: camelCase (CSS Modules)
 - **常量**: UPPER_SNAKE_CASE (例如: `API_BASE_URL`)
 
 #### 导入顺序
+
 ```javascript
 // 1. React 相关
-import React from 'react';
-import { useState, useEffect } from 'react';
+import React from "react";
+import { useState, useEffect } from "react";
 
 // 2. 第三方库
-import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 
 // 3. 内部模块（使用路径别名）
-import MainLayout from '@components/layouts/MainLayout';
-import { storage } from '@utils';
+import MainLayout from "@components/layouts/MainLayout";
+import { storage } from "@utils";
 
 // 4. 样式文件
-import styles from './Component.module.css';
+import styles from "./Component.module.css";
 ```
 
 #### 组件组织
+
 ```javascript
 // 1. Props 接口定义（TypeScript）
 // 2. 子组件定义
@@ -207,6 +218,7 @@ export default MainComponent;
 ### 6. 状态管理
 
 当前项目使用：
+
 - **本地状态**: React `useState`, `useReducer`
 - **全局状态**: React Context (未来可扩展 Redux/Zustand)
 - **服务端状态**: 自定义 API 层（未来可扩展 React Query）
@@ -214,30 +226,31 @@ export default MainComponent;
 ### 7. 国际化 (i18n)
 
 #### 配置
+
 - 配置文件: `src/locales/index.js`
 - 语言文件: `src/locales/en.js`, `src/locales/zh.js`
 
 #### 使用
+
 ```javascript
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
 
 const Component = () => {
-  const { t, i18n } = useTranslation();
-  
-  return (
-    <div>
-      <h1>{t('nav.home')}</h1>
-      <button onClick={() => i18n.changeLanguage('zh')}>
-        切换语言
-      </button>
-    </div>
-  );
+    const { t, i18n } = useTranslation();
+
+    return (
+        <div>
+            <h1>{t("nav.home")}</h1>
+            <button onClick={() => i18n.changeLanguage("zh")}>切换语言</button>
+        </div>
+    );
 };
 ```
 
 ### 8. 类型安全
 
 #### TypeScript 类型定义
+
 - 通用类型: `src/types/index.d.ts`
 - 组件 Props 使用 JSDoc 或 TypeScript 定义
 
@@ -253,21 +266,25 @@ const Component = ({ children, className }) => { ... };
 ## 最佳实践
 
 ### 1. 组件设计
+
 - **单一职责**: 每个组件只负责一个功能
 - **可复用性**: 通用组件放在 `components/common/`
 - **组合优于继承**: 使用组合模式构建复杂组件
 
 ### 2. 性能优化
+
 - 使用 `React.memo` 避免不必要的重渲染
 - 使用 `useMemo` 和 `useCallback` 优化计算和回调
 - 懒加载路由和组件 (`React.lazy`)
 
 ### 3. 代码质量
+
 - 使用 ESLint 进行代码检查
 - 遵循项目 ESLint 规则配置
 - 代码审查确保质量
 
 ### 4. 文件组织
+
 - 每个文件不超过 300 行（推荐）
 - 复杂组件拆分为多个子组件
 - 相关文件放在同一目录下
@@ -277,27 +294,28 @@ const Component = ({ children, className }) => { ... };
 ### 从旧架构迁移
 
 1. **更新导入路径**
-   ```javascript
-   // 旧
-   import MainLayout from './layouts/MainLayout';
-   
-   // 新
-   import MainLayout from '@components/layouts/MainLayout';
-   ```
+
+    ```javascript
+    // 旧
+    import MainLayout from "./layouts/MainLayout";
+
+    // 新
+    import MainLayout from "@components/layouts/MainLayout";
+    ```
 
 2. **移动文件到对应目录**
-   - 页面组件 → `features/*/pages/`
-   - 通用组件 → `components/common/`
-   - 布局组件 → `components/layouts/`
+    - 页面组件 → `features/*/pages/`
+    - 通用组件 → `components/common/`
+    - 布局组件 → `components/layouts/`
 
 3. **更新样式导入**
-   ```javascript
-   // 旧
-   import './index.css';
-   
-   // 新
-   import '@styles/index.css';
-   ```
+    ```javascript
+    // 旧
+    import "./index.css";
+
+    // 新
+    import "@styles/index.css";
+    ```
 
 ## 开发流程
 
@@ -335,12 +353,14 @@ npm run lint
 ## 环境变量
 
 创建 `.env` 文件：
+
 ```bash
 VITE_API_BASE_URL=https://api.example.com
 VITE_APP_VERSION=1.0.0
 ```
 
 使用：
+
 ```javascript
 const apiUrl = import.meta.env.VITE_API_BASE_URL;
 ```
@@ -356,4 +376,3 @@ const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
 **最后更新**: 2026-02-05
 **维护者**: DinQorAI Team
-

@@ -1,44 +1,47 @@
 // React 相关
-import React, { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
-import { useLocation } from 'react-router-dom'
+import React, { useMemo } from "react";
+import { useTranslation } from "react-i18next";
+import { useLocation } from "react-router-dom";
 
 // Layout
-import SidebarLayout from '@components/layouts/SidebarLayout'
+import SidebarLayout from "@components/layouts/SidebarLayout";
 
 // 配置
-import { getModuleConfig } from '../constants'
+import { getModuleConfig } from "../constants";
 
 const ModuleList = () => {
-    const { t } = useTranslation()
-    const location = useLocation()
+    const { t } = useTranslation();
+    const location = useLocation();
 
     // 使用共享配置，只显示已启用的模块
     const modules = useMemo(() => {
-        return getModuleConfig(t)
-    }, [t])
+        return getModuleConfig(t);
+    }, [t]);
 
-    const activeId = location.pathname.split('/')[2] || 'popover'
+    const activeId = location.pathname.split("/")[2] || "popover";
 
     // 定义底部卡片
     const bottomCard = (
         <div className="bg-gradient-to-br from-accent/10 to-accent/10 p-4 rounded-2xl border border-accent/10">
-            <div className="text-micro font-bold text-accent uppercase tracking-widest mb-1">Patterns</div>
-            <div className="text-caption text-ink-muted ">Reusable UI patterns built on top of robust infrastructure.</div>
+            <div className="text-micro font-bold text-accent uppercase tracking-widest mb-1">
+                Patterns
+            </div>
+            <div className="text-caption text-ink-muted ">
+                Reusable UI patterns built on top of robust infrastructure.
+            </div>
         </div>
-    )
+    );
 
     return (
         <SidebarLayout
-            title={t('common.exploreModules')}
-            description={t('common.selectModuleToExplore')}
+            title={t("common.exploreModules")}
+            description={t("common.selectModuleToExplore")}
             items={modules}
             activeId={activeId}
             bottomCard={bottomCard}
             subtitleKey="tag"
         />
-    )
-}
+    );
+};
 
-export default ModuleList
-
+export default ModuleList;

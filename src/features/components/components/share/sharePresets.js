@@ -1,7 +1,7 @@
 // ─── 预设数据 (完全对齐项目内 Toast 组件逻辑) ──────────────────────────────────────────
 export const INIT_FILES = [
     {
-        name: 'ToastContext.jsx',
+        name: "ToastContext.jsx",
         content: `import React, { createContext, useState, useCallback, useMemo } from 'react';
 
 export const ToastContext = createContext(null);
@@ -45,10 +45,10 @@ export const ToastProvider = ({ children }) => {
             {children}
         </ToastContext.Provider>
     );
-};`
+};`,
     },
     {
-        name: 'ToastItem.jsx',
+        name: "ToastItem.jsx",
         content: `import React, { useEffect, useState, useRef } from 'react';
 import { CheckCircle2, AlertCircle, Info, XCircle, X } from 'lucide-react';
 
@@ -138,10 +138,10 @@ const ToastItem = ({ toast, onRemove }) => {
     );
 };
 
-export default ToastItem;`
+export default ToastItem;`,
     },
     {
-        name: 'ToastContainer.jsx',
+        name: "ToastContainer.jsx",
         content: `import React, { useContext } from 'react';
 import { createPortal } from 'react-dom';
 import { ToastContext } from './ToastContext';
@@ -165,8 +165,8 @@ const ToastContainer = () => {
     );
 };
 
-export default ToastContainer;`
-    }
+export default ToastContainer;`,
+    },
 ];
 
 export const INIT_CSS = `@keyframes toast-in {
@@ -180,21 +180,23 @@ export const INIT_CSS = `@keyframes toast-in {
 .animate-toast-in { animation: toast-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 .animate-toast-out { animation: toast-out 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }`;
 
-export const INIT_WRAPPER = '<ToastProvider>\n  <ToastContainer />\n  {children}\n</ToastProvider>';
+export const INIT_WRAPPER =
+    "<ToastProvider>\n  <ToastContainer />\n  {children}\n</ToastProvider>";
 
 export const INIT_SCENARIOS = [
     {
-        id: '1',
-        titleZh: '交互测试',
-        titleEn: 'Interaction Study',
-        code: 'function Demo() {\n  const toast = useToast();\n  \n  return (\n    <div className="flex flex-col items-center gap-8 p-12">\n       <div className="flex flex-col items-center gap-2 mb-4 text-center">\n         <h3 className="text-sm font-black text-slate-400 uppercase tracking-[0.3em] italic">Toast Architecture</h3>\n         <div className="w-16 h-1 bg-primary rounded-full" />\n       </div>\n\n       <div className="flex flex-wrap justify-center gap-6">\n         <button \n           onClick={() => toast.success("验证成功 // Verification Success")}\n           className="px-12 py-5 bg-primary text-white font-black italic rounded-[2.5rem] shadow-xl shadow-primary/20 active:scale-95 transition-all text-[11px] uppercase tracking-widest hover:rotate-1 hover:scale-105"\n         >\n           Run Success\n         </button>\n\n         <button \n           onClick={() => toast.error("系统拦截 // Kernel Violation")}\n           className="px-12 py-5 bg-slate-900 text-white font-black italic rounded-[2.5rem] shadow-xl shadow-black/20 active:scale-95 transition-all text-[11px] uppercase tracking-widest hover:-rotate-1 hover:scale-105"\n         >\n           Run Error\n         </button>\n       </div>\n\n       <div className="mt-8 px-6 py-3 bg-slate-50 border border-slate-100 rounded-2xl">\n         <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest text-center">\n           点击按钮触发全局物理通知容器\n         </p>\n       </div>\n    </div>\n  );\n}'
-    }
+        id: "1",
+        titleZh: "交互测试",
+        titleEn: "Interaction Study",
+        code: 'function Demo() {\n  const toast = useToast();\n  \n  return (\n    <div className="flex flex-col items-center gap-8 p-12">\n       <div className="flex flex-col items-center gap-2 mb-4 text-center">\n         <h3 className="text-sm font-black text-slate-400 uppercase tracking-[0.3em] italic">Toast Architecture</h3>\n         <div className="w-16 h-1 bg-primary rounded-full" />\n       </div>\n\n       <div className="flex flex-wrap justify-center gap-6">\n         <button \n           onClick={() => toast.success("验证成功 // Verification Success")}\n           className="px-12 py-5 bg-primary text-white font-black italic rounded-[2.5rem] shadow-xl shadow-primary/20 active:scale-95 transition-all text-[11px] uppercase tracking-widest hover:rotate-1 hover:scale-105"\n         >\n           Run Success\n         </button>\n\n         <button \n           onClick={() => toast.error("系统拦截 // Kernel Violation")}\n           className="px-12 py-5 bg-slate-900 text-white font-black italic rounded-[2.5rem] shadow-xl shadow-black/20 active:scale-95 transition-all text-[11px] uppercase tracking-widest hover:-rotate-1 hover:scale-105"\n         >\n           Run Error\n         </button>\n       </div>\n\n       <div className="mt-8 px-6 py-3 bg-slate-50 border border-slate-100 rounded-2xl">\n         <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest text-center">\n           点击按钮触发全局物理通知容器\n         </p>\n       </div>\n    </div>\n  );\n}',
+    },
 ];
 
 export const INIT_META = {
-    titleZh: '全局物理通知系统 (Toast)',
-    titleEn: 'Global Kinetic Toast',
-    version: '1.2.0',
-    descriptionZh: '高性能、带物理挤压感和自动进度管理的全局通知组件。',
-    descriptionEn: 'High-performance notification system with kinetic interactions and progress management.'
+    titleZh: "全局物理通知系统 (Toast)",
+    titleEn: "Global Kinetic Toast",
+    version: "1.2.0",
+    descriptionZh: "高性能、带物理挤压感和自动进度管理的全局通知组件。",
+    descriptionEn:
+        "High-performance notification system with kinetic interactions and progress management.",
 };

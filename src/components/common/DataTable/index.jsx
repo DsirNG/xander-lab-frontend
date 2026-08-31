@@ -1,13 +1,13 @@
-import React from 'react';
-import { AlertCircle, Inbox } from 'lucide-react';
-import LoadingSpinner from '@components/common/LoadingSpinner';
-import Pagination from '@components/common/Pagination';
-import Button from '@components/common/Button';
+import React from "react";
+import { AlertCircle, Inbox } from "lucide-react";
+import LoadingSpinner from "@components/common/LoadingSpinner";
+import Pagination from "@components/common/Pagination";
+import Button from "@components/common/Button";
 
 const ALIGN_CLASSES = {
-    left: 'text-left',
-    center: 'text-center',
-    right: 'text-right',
+    left: "text-left",
+    center: "text-center",
+    right: "text-right",
 };
 
 /**
@@ -21,16 +21,16 @@ const DataTable = ({
     columns,
     rows = [],
     loading = false,
-    error = '',
-    errorTitle = '',
+    error = "",
+    errorTitle = "",
     onRetry,
     onRetryLabel,
     loadingText,
     emptyTitle,
     emptyHint,
     emptyIcon: EmptyIcon = Inbox,
-    minWidth = '720px',
-    className = '',
+    minWidth = "720px",
+    className = "",
     rowKey = (row) => row.id,
     page,
     pageSize,
@@ -44,7 +44,9 @@ const DataTable = ({
     const alignClass = (align) => ALIGN_CLASSES[align] || ALIGN_CLASSES.left;
 
     return (
-        <section className={`flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-xl bg-canvas ${className}`}>
+        <section
+            className={`flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-xl bg-canvas ${className}`}
+        >
             {header ? <div className="shrink-0">{header}</div> : null}
             <div className="min-h-[220px] min-w-0 flex-1 overflow-auto">
                 {loading ? (
@@ -54,9 +56,13 @@ const DataTable = ({
                 ) : error ? (
                     <div className="flex min-h-[220px] flex-col items-center justify-center px-6 text-center">
                         <AlertCircle className="mb-2 h-7 w-7 text-danger" />
-                        <div className="text-xs font-bold text-danger-fg">{errorTitle || error}</div>
+                        <div className="text-xs font-bold text-danger-fg">
+                            {errorTitle || error}
+                        </div>
                         {error && errorTitle ? (
-                            <div className="mt-1 max-w-sm text-caption font-medium text-danger">{error}</div>
+                            <div className="mt-1 max-w-sm text-caption font-medium text-danger">
+                                {error}
+                            </div>
                         ) : null}
                         {onRetry ? (
                             <Button
@@ -65,7 +71,7 @@ const DataTable = ({
                                 size="sm"
                                 className="mt-3"
                             >
-                                {onRetryLabel || ''}
+                                {onRetryLabel || ""}
                             </Button>
                         ) : null}
                     </div>
@@ -74,7 +80,9 @@ const DataTable = ({
                         <span className="mb-3 grid h-11 w-11 place-items-center rounded-xl bg-surface text-ink-faint">
                             <EmptyIcon className="h-5 w-5" />
                         </span>
-                        <div className="text-sm font-semibold text-ink-secondary">{emptyTitle}</div>
+                        <div className="text-sm font-semibold text-ink-secondary">
+                            {emptyTitle}
+                        </div>
                         {emptyHint ? (
                             <div className="mt-1 max-w-xs text-caption font-medium leading-5 text-ink-faint">
                                 {emptyHint}
@@ -82,10 +90,20 @@ const DataTable = ({
                         ) : null}
                     </div>
                 ) : (
-                    <table className="w-full table-fixed text-left" style={{ minWidth }}>
+                    <table
+                        className="w-full table-fixed text-left"
+                        style={{ minWidth }}
+                    >
                         <colgroup>
                             {columns.map((column) => (
-                                <col key={column.key} style={column.width ? { width: column.width } : undefined} />
+                                <col
+                                    key={column.key}
+                                    style={
+                                        column.width
+                                            ? { width: column.width }
+                                            : undefined
+                                    }
+                                />
                             ))}
                         </colgroup>
                         <thead className="sticky top-0 z-10 bg-surface/95 backdrop-blur-sm">
@@ -93,7 +111,7 @@ const DataTable = ({
                                 {columns.map((column) => (
                                     <th
                                         key={column.key}
-                                        className={`px-3 py-2 sm:px-4 ${alignClass(column.align)} ${column.headerClassName || ''}`}
+                                        className={`px-3 py-2 sm:px-4 ${alignClass(column.align)} ${column.headerClassName || ""}`}
                                     >
                                         {column.title}
                                     </th>
@@ -102,17 +120,21 @@ const DataTable = ({
                         </thead>
                         <tbody>
                             {rows.map((row) => (
-                                <tr 
-                                    key={rowKey(row)} 
-                                    className={`even:bg-surface-muted/30 hover:bg-surface-muted/40 ${onRowClick ? 'cursor-pointer' : ''}`}
-                                    onClick={() => onRowClick && onRowClick(row)}
+                                <tr
+                                    key={rowKey(row)}
+                                    className={`even:bg-surface-muted/30 hover:bg-surface-muted/40 ${onRowClick ? "cursor-pointer" : ""}`}
+                                    onClick={() =>
+                                        onRowClick && onRowClick(row)
+                                    }
                                 >
                                     {columns.map((column) => (
                                         <td
                                             key={column.key}
-                                            className={`px-3 py-2.5 sm:px-4 ${alignClass(column.align)} ${column.className || ''}`}
+                                            className={`px-3 py-2.5 sm:px-4 ${alignClass(column.align)} ${column.className || ""}`}
                                         >
-                                            {column.render ? column.render(row) : (row[column.key] ?? '—')}
+                                            {column.render
+                                                ? column.render(row)
+                                                : (row[column.key] ?? "—")}
                                         </td>
                                     ))}
                                 </tr>

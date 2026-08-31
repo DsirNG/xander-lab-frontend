@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
     BarChart3,
     PieChart,
@@ -6,23 +6,33 @@ import {
     Image as ImageIcon,
     GripVertical,
     X,
-    Maximize2
-} from 'lucide-react';
-import { useDragDrop } from '@hooks/useDragDrop';
-import { motion, AnimatePresence } from 'framer-motion';
+    Maximize2,
+} from "lucide-react";
+import { useDragDrop } from "@hooks/useDragDrop";
+import { motion, AnimatePresence } from "framer-motion";
 
 const TOOL_ITEMS = [
-    { id: 'tool-chart-bar', type: 'chart-bar', label: 'Bar Chart', icon: BarChart3 },
-    { id: 'tool-chart-pie', type: 'chart-pie', label: 'Pie Chart', icon: PieChart },
-    { id: 'tool-text', type: 'text', label: 'Text Block', icon: Type },
-    { id: 'tool-image', type: 'image', label: 'Image', icon: ImageIcon },
+    {
+        id: "tool-chart-bar",
+        type: "chart-bar",
+        label: "Bar Chart",
+        icon: BarChart3,
+    },
+    {
+        id: "tool-chart-pie",
+        type: "chart-pie",
+        label: "Pie Chart",
+        icon: PieChart,
+    },
+    { id: "tool-text", type: "text", label: "Text Block", icon: Type },
+    { id: "tool-image", type: "image", label: "Image", icon: ImageIcon },
 ];
 
 const LayoutBuilderDemo = () => {
     // Grid items state
     const [gridItems, setGridItems] = useState([
-        { id: 'item-1', type: 'chart-bar', w: 2, content: 'Revenue Trend' },
-        { id: 'item-2', type: 'text', w: 1, content: 'Q3 Summary' },
+        { id: "item-1", type: "chart-bar", w: 2, content: "Revenue Trend" },
+        { id: "item-2", type: "text", w: 1, content: "Q3 Summary" },
     ]);
 
     const dragDrop = useDragDrop({
@@ -31,21 +41,23 @@ const LayoutBuilderDemo = () => {
 
             // Scenario C-2: Drag from Sidebar (Tool) to Grid
             // Logic: If source is a tool (has 'tool-' prefix id) and target is main area or existing item
-            if (source.id.startsWith('tool-')) {
+            if (source.id.startsWith("tool-")) {
                 // Instantiating new item
                 const newItem = {
                     id: `item-${Date.now()}`,
                     type: source.type,
                     w: 1, // Default width
-                    content: `New ${source.label}`
+                    content: `New ${source.label}`,
                 };
 
                 // If dropped on an existing item, insert before/after it?
                 // For simplicity, we'll just append to the grid if not specifically targeting a swap position,
                 // or if target is valid item, insert at that index.
 
-                if (target && target.id && !target.id.startsWith('tool-')) {
-                    const targetIndex = gridItems.findIndex(i => i.id === target.id);
+                if (target && target.id && !target.id.startsWith("tool-")) {
+                    const targetIndex = gridItems.findIndex(
+                        (i) => i.id === target.id,
+                    );
                     const newGrid = [...gridItems];
                     newGrid.splice(targetIndex + 1, 0, newItem);
                     setGridItems(newGrid);
@@ -57,11 +69,15 @@ const LayoutBuilderDemo = () => {
             }
 
             // Scenario C-1: Reorder Grid Items
-            if (target && target.id && !target.id.startsWith('tool-')) {
-                const sourceIndex = gridItems.findIndex(i => i.id === source.id);
+            if (target && target.id && !target.id.startsWith("tool-")) {
+                const sourceIndex = gridItems.findIndex(
+                    (i) => i.id === source.id,
+                );
                 if (sourceIndex === -1) return; // Source not in grid (shouldn't happen if filtered right)
 
-                const targetIndex = gridItems.findIndex(i => i.id === target.id);
+                const targetIndex = gridItems.findIndex(
+                    (i) => i.id === target.id,
+                );
                 if (targetIndex === -1) return;
 
                 const newGrid = [...gridItems];
@@ -73,43 +89,51 @@ const LayoutBuilderDemo = () => {
             }
         },
         getDragPreview: (item) => {
-            const el = document.createElement('div');
-            el.className = 'bg-blue-600 text-white p-3 rounded-lg shadow-xl flex items-center space-x-2 font-bold text-sm';
+            const el = document.createElement("div");
+            el.className =
+                "bg-blue-600 text-white p-3 rounded-lg shadow-xl flex items-center space-x-2 font-bold text-sm";
             el.innerHTML = `
                 <span>${item.label || item.content}</span>
              `;
             return el;
-        }
+        },
     });
 
     const removeItem = (id) => {
-        setGridItems(gridItems.filter(i => i.id !== id));
+        setGridItems(gridItems.filter((i) => i.id !== id));
     };
 
     return (
         <div className="flex w-full h-[500px] max-h-[70dvh] min-h-[360px] border border-slate-200 rounded-2xl overflow-hidden bg-slate-50 /30">
             {/* Sidebar Tools */}
             <div className="w-40 sm:w-52 lg:w-64 bg-white border-r border-slate-200 p-3 sm:p-4 flex flex-col flex-shrink-0 min-w-0">
-                <div className="text-xs font-black text-slate-400 uppercase tracking-wider mb-4">Components</div>
+                <div className="text-xs font-black text-slate-400 uppercase tracking-wider mb-4">
+                    Components
+                </div>
                 <div className="space-y-3">
                     {TOOL_ITEMS.map((tool) => (
                         <div
                             key={tool.id}
-                            onPointerDown={(e) => dragDrop.handleDragStart(tool, e)}
+                            onPointerDown={(e) =>
+                                dragDrop.handleDragStart(tool, e)
+                            }
                             className="flex items-center p-2.5 sm:p-3 bg-slate-50  border border-slate-200 rounded-xl cursor-grab active:cursor-grabbing hover:border-blue-500 transition-colors group min-w-0"
-                            style={{ touchAction: 'none' }}
+                            style={{ touchAction: "none" }}
                         >
                             <div className="p-2 bg-white  rounded-lg mr-2 sm:mr-3 shadow-sm group-hover:scale-105 transition-transform flex-shrink-0">
                                 <tool.icon className="w-4 h-4 text-slate-600 " />
                             </div>
-                            <span className="font-medium text-slate-700 text-caption sm:text-body truncate">{tool.label}</span>
+                            <span className="font-medium text-slate-700 text-caption sm:text-body truncate">
+                                {tool.label}
+                            </span>
                         </div>
                     ))}
                 </div>
 
                 <div className="mt-auto p-3 sm:p-4 bg-blue-50 rounded-xl border border-blue-100">
                     <div className="text-micro sm:text-xs text-blue-600 leading-relaxed">
-                        Drag components from here to the canvas on the right to build your dashboard.
+                        Drag components from here to the canvas on the right to
+                        build your dashboard.
                     </div>
                 </div>
             </div>
@@ -126,7 +150,11 @@ const LayoutBuilderDemo = () => {
                         const item = dragDrop.draggedItem;
                         if (item) {
                             // Use 'container-end' as the special target ID for appending
-                            dragDrop.handleDrop(item, { id: 'container-end' }, e);
+                            dragDrop.handleDrop(
+                                item,
+                                { id: "container-end" },
+                                e,
+                            );
                         }
                     }
                 }}
@@ -137,7 +165,10 @@ const LayoutBuilderDemo = () => {
                      */}
                     <div className="absolute inset-0 pointer-events-none grid grid-cols-3 gap-3 sm:gap-6 opacity-10">
                         {Array.from({ length: 12 }).map((_, i) => (
-                            <div key={i} className="border-2 border-dashed border-slate-400 rounded-xl h-32" />
+                            <div
+                                key={i}
+                                className="border-2 border-dashed border-slate-400 rounded-xl h-32"
+                            />
                         ))}
                     </div>
 
@@ -146,35 +177,52 @@ const LayoutBuilderDemo = () => {
                             <motion.div
                                 layout
                                 key={item.id}
-                                onPointerDown={(e) => dragDrop.handleDragStart(item, e)}
-                                onPointerMove={(e) => dragDrop.handleDragOver(item, e)}
-                                onPointerUp={(e) => dragDrop.handleDrop(item, e)}
+                                onPointerDown={(e) =>
+                                    dragDrop.handleDragStart(item, e)
+                                }
+                                onPointerMove={(e) =>
+                                    dragDrop.handleDragOver(item, e)
+                                }
+                                onPointerUp={(e) =>
+                                    dragDrop.handleDrop(item, e)
+                                }
                                 initial={{ opacity: 0, scale: 0.8 }}
                                 animate={{ opacity: 1, scale: 1 }}
                                 exit={{ opacity: 0, scale: 0.8 }}
-                                transition={{ type: 'spring', bounce: 0.2, duration: 0.4 }}
-                                style={{ touchAction: 'none' }}
+                                transition={{
+                                    type: "spring",
+                                    bounce: 0.2,
+                                    duration: 0.4,
+                                }}
+                                style={{ touchAction: "none" }}
                                 className={`
                                     relative group bg-white  rounded-2xl shadow-lg border-2 overflow-hidden flex flex-col
-                                    ${item.w === 2 ? 'col-span-2' : 'col-span-1'}
-                                    ${item.w === 3 ? 'col-span-3' : ''}
+                                    ${item.w === 2 ? "col-span-2" : "col-span-1"}
+                                    ${item.w === 3 ? "col-span-3" : ""}
                                     min-h-[160px]
-                                    ${dragDrop.draggedItem?.id === item.id ? 'opacity-20 blur-sm' : ''}
-                                    ${dragDrop.dragOverItem?.id === item.id ? 'border-blue-500 ring-4 ring-blue-500/10 z-10' : 'border-transparent hover:border-slate-300'}
+                                    ${dragDrop.draggedItem?.id === item.id ? "opacity-20 blur-sm" : ""}
+                                    ${dragDrop.dragOverItem?.id === item.id ? "border-blue-500 ring-4 ring-blue-500/10 z-10" : "border-transparent hover:border-slate-300"}
                                 `}
                             >
                                 {/* Header */}
                                 <div className="h-10 border-b border-slate-100 bg-slate-50 /50 flex items-center justify-between px-3 cursor-move">
                                     <div className="flex items-center space-x-2 text-slate-400">
                                         <GripVertical className="w-4 h-4" />
-                                        <span className="text-xs font-bold uppercase tracking-wider">{item.type}</span>
+                                        <span className="text-xs font-bold uppercase tracking-wider">
+                                            {item.type}
+                                        </span>
                                     </div>
                                     <div className="flex items-center space-x-1 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
                                         <button
                                             onClick={() => {
                                                 const newItems = [...gridItems];
-                                                const idx = newItems.findIndex(x => x.id === item.id);
-                                                newItems[idx].w = newItems[idx].w === 2 ? 1 : 2;
+                                                const idx = newItems.findIndex(
+                                                    (x) => x.id === item.id,
+                                                );
+                                                newItems[idx].w =
+                                                    newItems[idx].w === 2
+                                                        ? 1
+                                                        : 2;
                                                 setGridItems(newItems);
                                             }}
                                             className="p-1 hover:bg-slate-200 rounded text-slate-400 hover:text-blue-500"
@@ -195,9 +243,15 @@ const LayoutBuilderDemo = () => {
                                 <div className="flex-1 p-6 flex items-center justify-center bg-white  relative overflow-hidden">
                                     <div className="absolute inset-0 bg-gradient-to-tr from-slate-50 to-white opacity-50" />
                                     <div className="relative font-bold text-slate-700  text-lg flex items-center">
-                                        {item.type === 'chart-bar' && <BarChart3 className="w-6 h-6 mr-2 text-blue-500" />}
-                                        {item.type === 'chart-pie' && <PieChart className="w-6 h-6 mr-2 text-purple-500" />}
-                                        {item.type === 'image' && <ImageIcon className="w-6 h-6 mr-2 text-emerald-500" />}
+                                        {item.type === "chart-bar" && (
+                                            <BarChart3 className="w-6 h-6 mr-2 text-blue-500" />
+                                        )}
+                                        {item.type === "chart-pie" && (
+                                            <PieChart className="w-6 h-6 mr-2 text-purple-500" />
+                                        )}
+                                        {item.type === "image" && (
+                                            <ImageIcon className="w-6 h-6 mr-2 text-emerald-500" />
+                                        )}
                                         {item.content}
                                     </div>
                                 </div>

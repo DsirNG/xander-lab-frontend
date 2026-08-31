@@ -22,7 +22,9 @@ export const ENV_CONFIG = {
     TIMEOUT: Number(env.VITE_REQUEST_TIMEOUT) || 15000,
 
     /** OSS 访问路径 */
-    OSS_DOMAIN: env.VITE_OSS_DOMAIN || 'https://food-cinder.oss-cn-beijing.aliyuncs.com',
+    OSS_DOMAIN:
+        env.VITE_OSS_DOMAIN ||
+        "https://food-cinder.oss-cn-beijing.aliyuncs.com",
 };
 
 export default ENV_CONFIG;

@@ -1,15 +1,15 @@
-import React, { useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import CustomSelect from '@/components/common/CustomSelect';
+import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
+import CustomSelect from "@/components/common/CustomSelect";
 
 export const BasicDemo = () => {
-    const [value, setValue] = useState('');
+    const [value, setValue] = useState("");
 
     const options = [
-        { value: 'react', label: 'React' },
-        { value: 'vue', label: 'Vue' },
-        { value: 'angular', label: 'Angular' },
-        { value: 'svelte', label: 'Svelte' }
+        { value: "react", label: "React" },
+        { value: "vue", label: "Vue" },
+        { value: "angular", label: "Angular" },
+        { value: "svelte", label: "Svelte" },
     ];
 
     return (
@@ -21,37 +21,43 @@ export const BasicDemo = () => {
                 placeholder="Select a framework"
             />
             <div className="mt-4 text-sm text-slate-500">
-                Selected: <span className="font-bold text-slate-900 ">{value || 'None'}</span>
+                Selected:{" "}
+                <span className="font-bold text-slate-900 ">
+                    {value || "None"}
+                </span>
             </div>
         </div>
     );
 };
 
 export const AlignmentDemo = () => {
-    const [textAlign, setTextAlign] = useState('left');
-    const [dropdownAlign, setDropdownAlign] = useState('left');
-    const [value, setValue] = useState('');
+    const [textAlign, setTextAlign] = useState("left");
+    const [dropdownAlign, setDropdownAlign] = useState("left");
+    const [value, setValue] = useState("");
 
     const options = [
-        { value: 'left', label: 'Left Align Content' },
-        { value: 'center', label: 'Center Align Content' },
-        { value: 'right', label: 'Right Align Content' }
+        { value: "left", label: "Left Align Content" },
+        { value: "center", label: "Center Align Content" },
+        { value: "right", label: "Right Align Content" },
     ];
 
     return (
         <div className="space-y-6 w-64">
             <div className="space-y-4">
                 <div>
-                    <div className="text-xs font-bold text-slate-500 mb-2 uppercase tracking-wider">Trigger Text Align</div>
+                    <div className="text-xs font-bold text-slate-500 mb-2 uppercase tracking-wider">
+                        Trigger Text Align
+                    </div>
                     <div className="flex space-x-1 bg-slate-100  p-1 rounded-lg">
-                        {['left', 'center', 'right'].map(a => (
+                        {["left", "center", "right"].map((a) => (
                             <button
                                 key={a}
                                 onClick={() => setTextAlign(a)}
-                                className={`flex-1 px-2 py-1 rounded-md text-xs font-medium transition-all ${textAlign === a
-                                    ? 'bg-white  text-blue-600 shadow-sm'
-                                    : 'text-slate-500 hover:text-slate-700 '
-                                    }`}
+                                className={`flex-1 px-2 py-1 rounded-md text-xs font-medium transition-all ${
+                                    textAlign === a
+                                        ? "bg-white  text-blue-600 shadow-sm"
+                                        : "text-slate-500 hover:text-slate-700 "
+                                }`}
                             >
                                 {a.charAt(0).toUpperCase() + a.slice(1)}
                             </button>
@@ -60,16 +66,19 @@ export const AlignmentDemo = () => {
                 </div>
 
                 <div>
-                    <div className="text-xs font-bold text-slate-500 mb-2 uppercase tracking-wider">Dropdown Align</div>
+                    <div className="text-xs font-bold text-slate-500 mb-2 uppercase tracking-wider">
+                        Dropdown Align
+                    </div>
                     <div className="flex space-x-1 bg-slate-100  p-1 rounded-lg">
-                        {['left', 'center', 'right'].map(a => (
+                        {["left", "center", "right"].map((a) => (
                             <button
                                 key={a}
                                 onClick={() => setDropdownAlign(a)}
-                                className={`flex-1 px-2 py-1 rounded-md text-xs font-medium transition-all ${dropdownAlign === a
-                                    ? 'bg-white  text-blue-600 shadow-sm'
-                                    : 'text-slate-500 hover:text-slate-700 '
-                                    }`}
+                                className={`flex-1 px-2 py-1 rounded-md text-xs font-medium transition-all ${
+                                    dropdownAlign === a
+                                        ? "bg-white  text-blue-600 shadow-sm"
+                                        : "text-slate-500 hover:text-slate-700 "
+                                }`}
                             >
                                 {a.charAt(0).toUpperCase() + a.slice(1)}
                             </button>
@@ -93,16 +102,16 @@ export const AlignmentDemo = () => {
 export const StatusDemo = () => {
     const { t } = useTranslation();
     // Case 1: Validation Triggered (Error Active)
-    const [formData1, setFormData1] = useState('');
+    const [formData1, setFormData1] = useState("");
     const [isError1, setIsError1] = useState(false);
 
     // Case 2: Validation Not Triggered (Normal)
-    const [formData2, setFormData2] = useState('');
+    const [formData2, setFormData2] = useState("");
 
     const options = [
-        { value: 'option1', label: 'Option 1' },
-        { value: 'option2', label: 'Option 2' },
-        { value: 'option3', label: 'Option 3' }
+        { value: "option1", label: "Option 1" },
+        { value: "option2", label: "Option 2" },
+        { value: "option3", label: "Option 3" },
     ];
 
     const handleSubmit1 = () => {
@@ -125,10 +134,14 @@ export const StatusDemo = () => {
             <div className="w-64">
                 <div className="mb-3">
                     <div className="text-sm font-bold text-slate-800  mb-1">
-                        {t('components.customSelect.scenarios.demo.status.required')}
+                        {t(
+                            "components.customSelect.scenarios.demo.status.required",
+                        )}
                     </div>
                     <div className="text-xs text-slate-500">
-                        {t('components.customSelect.scenarios.demo.status.requiredDesc')}
+                        {t(
+                            "components.customSelect.scenarios.demo.status.requiredDesc",
+                        )}
                     </div>
                 </div>
                 <div className="space-y-3">
@@ -137,17 +150,24 @@ export const StatusDemo = () => {
                         onChange={handleSelect1}
                         options={options}
                         error={isError1}
-                        placeholder={t('components.customSelect.scenarios.demo.status.requiredPlaceholder')}
+                        placeholder={t(
+                            "components.customSelect.scenarios.demo.status.requiredPlaceholder",
+                        )}
                     />
                     <button
                         onClick={handleSubmit1}
                         className="w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white text-sm font-bold rounded-lg transition-colors shadow-sm cursor-pointer"
                     >
-                        {t('components.customSelect.scenarios.demo.status.simulateSubmit')}
+                        {t(
+                            "components.customSelect.scenarios.demo.status.simulateSubmit",
+                        )}
                     </button>
                     {isError1 && (
                         <div className="text-xs text-red-500 font-medium flex items-center gap-1 animate-pulse">
-                            <span>⚠</span> {t('components.customSelect.scenarios.demo.status.errorMsg')}
+                            <span>⚠</span>{" "}
+                            {t(
+                                "components.customSelect.scenarios.demo.status.errorMsg",
+                            )}
                         </div>
                     )}
                 </div>
@@ -157,10 +177,14 @@ export const StatusDemo = () => {
             <div className="w-64">
                 <div className="mb-3">
                     <div className="text-sm font-bold text-slate-800  mb-1">
-                        {t('components.customSelect.scenarios.demo.status.optional')}
+                        {t(
+                            "components.customSelect.scenarios.demo.status.optional",
+                        )}
                     </div>
                     <div className="text-xs text-slate-500">
-                        {t('components.customSelect.scenarios.demo.status.optionalDesc')}
+                        {t(
+                            "components.customSelect.scenarios.demo.status.optionalDesc",
+                        )}
                     </div>
                 </div>
                 <div className="space-y-3">
@@ -168,12 +192,14 @@ export const StatusDemo = () => {
                         value={formData2}
                         onChange={setFormData2}
                         options={options}
-                        placeholder={t('components.customSelect.scenarios.demo.status.optionalPlaceholder')}
+                        placeholder={t(
+                            "components.customSelect.scenarios.demo.status.optionalPlaceholder",
+                        )}
                     />
-                    <button
-                        className="w-full px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600  text-sm font-bold rounded-lg transition-colors cursor-default border border-slate-200"
-                    >
-                        {t('components.customSelect.scenarios.demo.status.simulateSubmit')}
+                    <button className="w-full px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600  text-sm font-bold rounded-lg transition-colors cursor-default border border-slate-200">
+                        {t(
+                            "components.customSelect.scenarios.demo.status.simulateSubmit",
+                        )}
                     </button>
                     <div className="text-xs text-emerald-600 font-medium opacity-0">
                         Placeholder

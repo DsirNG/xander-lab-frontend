@@ -4,51 +4,57 @@
  * @module features/studio/components/StudioTopBar
  */
 
-import React from 'react';
-import { ArrowLeft } from 'lucide-react';
-import useBack from '@/hooks/useBack';
+import React from "react";
+import { ArrowLeft } from "lucide-react";
+import useBack from "@/hooks/useBack";
 
-const DEFAULT_BACK_LABEL = '返回 Studio';
+const DEFAULT_BACK_LABEL = "返回 Studio";
 
 export default function StudioTopBar({
-  title,
-  backLabel = DEFAULT_BACK_LABEL,
-  showBack = true,
-  fallbackTo = '/workspace/studio',
-  children,
+    title,
+    backLabel = DEFAULT_BACK_LABEL,
+    showBack = true,
+    fallbackTo = "/workspace/studio",
+    children,
 }) {
-  const handleBack = useBack(fallbackTo);
+    const handleBack = useBack(fallbackTo);
 
-  return (
-    <div className="flex shrink-0 flex-wrap items-center justify-between gap-x-3 gap-y-2 border-b border-border bg-canvas px-4 py-3 sm:px-6">
-      <div className="flex min-w-0 items-center gap-3">
-        <button
-          type="button"
-          onClick={handleBack}
-          title={backLabel}
-          aria-label={backLabel}
-          className="shrink-0 rounded-lg transition-opacity hover:opacity-80"
-        >
-          <img
-            src="/logo-512.png"
-            alt="DinQorAI"
-            className="h-8 w-8 rounded-lg object-cover"
-          />
-        </button>
-        {showBack && (
-          <button
-            type="button"
-            onClick={handleBack}
-            className="inline-flex shrink-0 items-center gap-2 text-caption font-bold text-ink-faint transition-colors hover:text-accent"
-          >
-            <ArrowLeft className="h-3.5 w-3.5" />
-            {backLabel}
-          </button>
-        )}
-        <div className="h-5 w-px shrink-0 bg-border" />
-        {title && <div className="min-w-0 flex-1 truncate">{title}</div>}
-      </div>
-      {children ? <div className="flex min-w-0 flex-wrap items-center justify-end gap-2">{children}</div> : null}
-    </div>
-  );
+    return (
+        <div className="flex shrink-0 flex-wrap items-center justify-between gap-x-3 gap-y-2 border-b border-border bg-canvas px-4 py-3 sm:px-6">
+            <div className="flex min-w-0 items-center gap-3">
+                <button
+                    type="button"
+                    onClick={handleBack}
+                    title={backLabel}
+                    aria-label={backLabel}
+                    className="shrink-0 rounded-lg transition-opacity hover:opacity-80"
+                >
+                    <img
+                        src="/logo-512.png"
+                        alt="DinQorAI"
+                        className="h-8 w-8 rounded-lg object-cover"
+                    />
+                </button>
+                {showBack && (
+                    <button
+                        type="button"
+                        onClick={handleBack}
+                        className="inline-flex shrink-0 items-center gap-2 text-caption font-bold text-ink-faint transition-colors hover:text-accent"
+                    >
+                        <ArrowLeft className="h-3.5 w-3.5" />
+                        {backLabel}
+                    </button>
+                )}
+                <div className="h-5 w-px shrink-0 bg-border" />
+                {title && (
+                    <div className="min-w-0 flex-1 truncate">{title}</div>
+                )}
+            </div>
+            {children ? (
+                <div className="flex min-w-0 flex-wrap items-center justify-end gap-2">
+                    {children}
+                </div>
+            ) : null}
+        </div>
+    );
 }

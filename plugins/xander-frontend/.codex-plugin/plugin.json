@@ -1,18 +1,18 @@
 {
-  "name": "xander-frontend",
-  "version": "0.1.0+codex.20260723054132",
-  "description": "Project workflow and guardrails for the Xander Lab frontend.",
-  "author": {
-    "name": "Local developer"
-  },
-  "skills": "./skills/",
-  "interface": {
-    "displayName": "Xander Frontend",
-    "shortDescription": "Use Xander Lab frontend workflows in Codex.",
-    "longDescription": "Routes Xander Lab frontend work through project rules, shared error handling, loading conventions, and the component catalog.",
-    "developerName": "Local developer",
-    "category": "Productivity",
-    "capabilities": [],
-    "defaultPrompt": "Use $xander-frontend to implement this Xander Lab frontend request."
-  }
+    "name": "xander-frontend",
+    "version": "0.1.0+codex.20260723054132",
+    "description": "Project workflow and guardrails for the Xander Lab frontend.",
+    "author": {
+        "name": "Local developer"
+    },
+    "skills": "./skills/",
+    "interface": {
+        "displayName": "Xander Frontend",
+        "shortDescription": "Use Xander Lab frontend workflows in Codex.",
+        "longDescription": "Routes Xander Lab frontend work through project rules, shared error handling, loading conventions, and the component catalog.",
+        "developerName": "Local developer",
+        "category": "Productivity",
+        "capabilities": [],
+        "defaultPrompt": "Use $xander-frontend to implement this Xander Lab frontend request."
+    }
 }

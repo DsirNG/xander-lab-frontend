@@ -1,7 +1,7 @@
-import React, { memo } from 'react';
-import { Clock, User } from 'lucide-react';
-import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
+import React, { memo } from "react";
+import { Clock, User } from "lucide-react";
+import PropTypes from "prop-types";
+import { Link } from "react-router-dom";
 
 /**
  * 博客卡片组件
@@ -57,11 +57,12 @@ const BlogCard = memo(({ blog }) => {
         </Link>
     );
 });
-BlogCard.displayName = 'BlogCard';
+BlogCard.displayName = "BlogCard";
 
 BlogCard.propTypes = {
     blog: PropTypes.shape({
-        id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+        id: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+            .isRequired,
         title: PropTypes.string.isRequired,
         summary: PropTypes.string.isRequired,
         tags: PropTypes.arrayOf(PropTypes.string).isRequired,

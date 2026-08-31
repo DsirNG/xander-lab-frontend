@@ -31,7 +31,8 @@ const BLOCKQUOTE_STYLE =
   'margin:0;padding:8px 12px;background:#ffffff;border-left:3px solid #1677ff;color:#555;line-height:1.7;font-size:14px;word-break:break-word;border-top:1px solid #f0f0f4;border-right:1px solid #f0f0f4;border-bottom:1px solid #f0f0f4;border-radius:0 8px 8px 0'
 const PRE_STYLE =
   'background:#fafafa;color:#333;font-size:13px;line-height:1.6;padding:12px 14px;border-radius:10px;margin:0;overflow-x:auto;white-space:pre-wrap;word-break:break-all;border:1px solid #eeeeee'
-const TABLE_STYLE = 'width:100%;border-collapse:collapse;margin:0;font-size:13px;color:#333;table-layout:fixed'
+const TABLE_STYLE =
+  'width:100%;border-collapse:collapse;margin:0;font-size:13px;color:#333;table-layout:fixed'
 const CELL_STYLE = 'border:1px solid #e0e0e8;padding:6px 10px;word-break:break-all'
 const LI_STYLE = 'line-height:1.8;font-size:15px;color:#333;margin:4px 0'
 const IMG_STYLE = 'max-width:100%;border-radius:8px;display:block;margin:0'

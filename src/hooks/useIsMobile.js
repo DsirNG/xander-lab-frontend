@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
 /**
  * 响应式移动端检测 hook
@@ -7,22 +7,22 @@ import { useState, useEffect } from 'react';
  * @returns {boolean} 是否为移动端视口
  */
 const useIsMobile = (breakpoint = 1024) => {
-  const [isMobile, setIsMobile] = useState(() => 
-    typeof window !== 'undefined' ? window.innerWidth < breakpoint : false
-  );
+    const [isMobile, setIsMobile] = useState(() =>
+        typeof window !== "undefined" ? window.innerWidth < breakpoint : false,
+    );
 
-  useEffect(() => {
-    const mql = window.matchMedia(`(max-width: ${breakpoint - 1}px)`);
-    const handler = (e) => setIsMobile(e.matches);
-    
-    // 初始同步
-    setIsMobile(mql.matches);
-    
-    mql.addEventListener('change', handler);
-    return () => mql.removeEventListener('change', handler);
-  }, [breakpoint]);
+    useEffect(() => {
+        const mql = window.matchMedia(`(max-width: ${breakpoint - 1}px)`);
+        const handler = (e) => setIsMobile(e.matches);
 
-  return isMobile;
+        // 初始同步
+        setIsMobile(mql.matches);
+
+        mql.addEventListener("change", handler);
+        return () => mql.removeEventListener("change", handler);
+    }, [breakpoint]);
+
+    return isMobile;
 };
 
 export default useIsMobile;

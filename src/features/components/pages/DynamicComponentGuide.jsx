@@ -1,16 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
-import {
-    FileCode,
-    ArrowLeft, Boxes, Layout
-} from 'lucide-react';
-import { Link } from 'react-router-dom';
-import ComponentService from '../services/componentService';
-import CodeBlock from '@/components/common/CodeBlock';
+import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
+import { FileCode, ArrowLeft, Boxes, Layout } from "lucide-react";
+import { Link } from "react-router-dom";
+import ComponentService from "../services/componentService";
+import CodeBlock from "@/components/common/CodeBlock";
 
 const FeatureCard = ({ title, desc, icon: Icon, color }) => (
     <div className="p-8 rounded-[2.5rem] bg-canvas  border border-border  shadow-sm hover:shadow-xl transition-all group hover:-translate-y-1">
-        <div className={`w-12 h-12 rounded-2xl ${color} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform`}>
+        <div
+            className={`w-12 h-12 rounded-2xl ${color} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform`}
+        >
             <Icon className="w-6 h-6 text-white" />
         </div>
         <div className="text-lg font-black text-ink  mb-2">{title}</div>
@@ -33,9 +32,11 @@ const DynamicComponentGuide = ({ componentId, initialData }) => {
 
         while ((lastMatch = fileMarkerRegex.exec(rawCode)) !== null) {
             if (files.length > 0) {
-                files[files.length - 1].content = rawCode.slice(lastIndex, lastMatch.index).trim();
+                files[files.length - 1].content = rawCode
+                    .slice(lastIndex, lastMatch.index)
+                    .trim();
             }
-            files.push({ name: lastMatch[1], content: '' });
+            files.push({ name: lastMatch[1], content: "" });
             lastIndex = fileMarkerRegex.lastIndex;
         }
 
@@ -45,7 +46,7 @@ const DynamicComponentGuide = ({ componentId, initialData }) => {
         }
 
         // 如果没有标记，返回单一文件
-        return [{ name: 'Implementation.jsx', content: rawCode }];
+        return [{ name: "Implementation.jsx", content: rawCode }];
     };
 
     useEffect(() => {
@@ -60,11 +61,12 @@ const DynamicComponentGuide = ({ componentId, initialData }) => {
                 const res = await ComponentService.getComponentDetail(
                     componentId,
                     i18n.language,
-                    { signal: controller.signal }
+                    { signal: controller.signal },
                 );
                 setData(res);
             } catch (err) {
-                if (err.name === 'CanceledError' || err.code === 'ERR_CANCELED') return;
+                if (err.name === "CanceledError" || err.code === "ERR_CANCELED")
+                    return;
                 console.error("加载组件详情失败", err);
             } finally {
                 setLoading(false);
@@ -75,8 +77,18 @@ const DynamicComponentGuide = ({ componentId, initialData }) => {
         return () => controller.abort();
     }, [componentId, i18n.language, initialData]);
 
-    if (loading) return <div className="p-20 text-center text-ink-faint animate-pulse">{t('components.guide.parsingArchitecture')}</div>;
-    if (!data) return <div className="p-20 text-center text-danger">{t('components.guide.loadFailed')}</div>;
+    if (loading)
+        return (
+            <div className="p-20 text-center text-ink-faint animate-pulse">
+                {t("components.guide.parsingArchitecture")}
+            </div>
+        );
+    if (!data)
+        return (
+            <div className="p-20 text-center text-danger">
+                {t("components.guide.loadFailed")}
+            </div>
+        );
 
     const libraryFiles = parseLibraryFiles(data.libraryCode);
 
@@ -87,11 +99,14 @@ const DynamicComponentGuide = ({ componentId, initialData }) => {
 
             <div className="max-w-6xl mx-auto pt-12 px-4 sm:px-6 relative z-10">
                 {/* Navigation */}
-                <Link to={`/components/${componentId}`} className="inline-flex items-center text-micro font-black uppercase tracking-widest text-ink-faint hover:text-accent mb-12 transition-all group">
+                <Link
+                    to={`/components/${componentId}`}
+                    className="inline-flex items-center text-micro font-black uppercase tracking-widest text-ink-faint hover:text-accent mb-12 transition-all group"
+                >
                     <div className="w-8 h-8 rounded-full border border-border flex items-center justify-center mr-3 group-hover:border-accent/30 group-hover:bg-accent/5">
                         <ArrowLeft className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-1" />
                     </div>
-                    {t('common.backToComponents', 'Back to Showcase')}
+                    {t("common.backToComponents", "Back to Showcase")}
                 </Link>
 
                 {/* Header Section */}
@@ -102,16 +117,17 @@ const DynamicComponentGuide = ({ componentId, initialData }) => {
                         </div>
                         <div className="h-px flex-1 bg-border " />
                         <div className="text-micro font-black text-ink-faint uppercase tracking-widest">
-                            v{data.version || '1.0.0'}
+                            v{data.version || "1.0.0"}
                         </div>
                     </div>
 
                     <div className="text-3xl sm:text-5xl md:text-6xl font-black text-ink  mb-8 tracking-tighter italic uppercase break-words">
-                        {data.title} <span className="text-accent">Structure</span>
+                        {data.title}{" "}
+                        <span className="text-accent">Structure</span>
                     </div>
 
                     <div className="text-lg sm:text-xl text-ink-muted  max-w-3xl leading-relaxed font-medium break-words">
-                        {data.desc || t('components.guide.defaultDesc')}
+                        {data.desc || t("components.guide.defaultDesc")}
                     </div>
                 </div>
 
@@ -124,8 +140,12 @@ const DynamicComponentGuide = ({ componentId, initialData }) => {
                                 <Boxes className="w-6 h-6" />
                             </div>
                             <div>
-                                <div className="text-xl sm:text-2xl font-black text-ink  uppercase italic tracking-tighter break-words">Implementation Layers</div>
-                                <div className="text-body text-ink-muted font-bold uppercase tracking-widest">Modular Logic Files</div>
+                                <div className="text-xl sm:text-2xl font-black text-ink  uppercase italic tracking-tighter break-words">
+                                    Implementation Layers
+                                </div>
+                                <div className="text-body text-ink-muted font-bold uppercase tracking-widest">
+                                    Modular Logic Files
+                                </div>
                             </div>
                         </div>
 
@@ -148,15 +168,16 @@ const DynamicComponentGuide = ({ componentId, initialData }) => {
                                     <Layout className="w-6 h-6" />
                                 </div>
                                 <div>
-                                    <div className="text-xl sm:text-2xl font-black text-ink  uppercase italic tracking-tighter break-words">Environment Wrapper</div>
-                                    <div className="text-body text-ink-muted font-bold uppercase tracking-widest">wrapper_code.jsx</div>
+                                    <div className="text-xl sm:text-2xl font-black text-ink  uppercase italic tracking-tighter break-words">
+                                        Environment Wrapper
+                                    </div>
+                                    <div className="text-body text-ink-muted font-bold uppercase tracking-widest">
+                                        wrapper_code.jsx
+                                    </div>
                                 </div>
                             </div>
 
-                            <CodeBlock
-                                code={data.wrapperCode}
-                                language="jsx"
-                            />
+                            <CodeBlock code={data.wrapperCode} language="jsx" />
                         </section>
                     )}
 
@@ -168,15 +189,16 @@ const DynamicComponentGuide = ({ componentId, initialData }) => {
                                     <FileCode className="w-6 h-6" />
                                 </div>
                                 <div>
-                                    <div className="text-xl sm:text-2xl font-black text-ink  uppercase italic tracking-tighter break-words">Styling Specification</div>
-                                    <div className="text-body text-ink-muted font-bold uppercase tracking-widest">custom_styles.css</div>
+                                    <div className="text-xl sm:text-2xl font-black text-ink  uppercase italic tracking-tighter break-words">
+                                        Styling Specification
+                                    </div>
+                                    <div className="text-body text-ink-muted font-bold uppercase tracking-widest">
+                                        custom_styles.css
+                                    </div>
                                 </div>
                             </div>
 
-                            <CodeBlock
-                                code={data.cssCode}
-                                language="css"
-                            />
+                            <CodeBlock code={data.cssCode} language="css" />
                         </section>
                     )}
                 </div>

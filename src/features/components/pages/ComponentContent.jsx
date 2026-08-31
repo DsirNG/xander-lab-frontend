@@ -1,9 +1,12 @@
-import React from 'react';
-import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
-import { Code, FileCode } from 'lucide-react';
-import { ContentLayout, EnhancedDemoSection } from '@components/layouts/ContentLayout';
-import { resolveDemo } from '../registries/demoRegistry';
+import React from "react";
+import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
+import { Code, FileCode } from "lucide-react";
+import {
+    ContentLayout,
+    EnhancedDemoSection,
+} from "@components/layouts/ContentLayout";
+import { resolveDemo } from "../registries/demoRegistry";
 
 const ComponentContent = ({ component }) => {
     const { t } = useTranslation();
@@ -15,9 +18,12 @@ const ComponentContent = ({ component }) => {
     // 1. 如果是分享组件且有 libraryCode，自动注入一个 "DynamicGuide" 详情页配置
     const enrichedComponent = {
         ...component,
-        detailPages: (component.detailPages && component.detailPages.length > 0)
-            ? component.detailPages
-            : (isShared ? [{ type: 'guide', componentKey: 'DynamicGuide' }] : [])
+        detailPages:
+            component.detailPages && component.detailPages.length > 0
+                ? component.detailPages
+                : isShared
+                  ? [{ type: "guide", componentKey: "DynamicGuide" }]
+                  : [],
     };
 
     const metadata = (
@@ -25,7 +31,9 @@ const ComponentContent = ({ component }) => {
             {component.author && (
                 <div className="flex items-center gap-1.5 px-2 py-1 bg-surface  rounded-lg border border-border">
                     <span className="opacity-70">by</span>
-                    <span className="text-ink-secondary  font-bold">{component.author}</span>
+                    <span className="text-ink-secondary  font-bold">
+                        {component.author}
+                    </span>
                 </div>
             )}
             {component.version && (
@@ -40,26 +48,37 @@ const ComponentContent = ({ component }) => {
         <ContentLayout
             item={enrichedComponent}
             basePath="/components"
-            detailButtonText={isShared ? t('components.content.architectureDeepDive') : t('common.viewSource')}
+            detailButtonText={
+                isShared
+                    ? t("components.content.architectureDeepDive")
+                    : t("common.viewSource")
+            }
             detailButtonIcon={Code}
             extraHeaderButtons={metadata}
             themeColor="emerald-600"
         >
             {/* 场景演示 */}
-            {component.scenarios && component.scenarios.length > 0 ? (
-                component.scenarios.map((scenario, index) => (
-                    <EnhancedDemoSection
-                        key={index}
-                        title={scenario.title}
-                        desc={scenario.desc}
-                        code={scenario.demoCode || scenario.code}
-                        useBrowserWindow={false}
-                    >
-                        {/* 优先用旧版 demo 节点；否则用 resolveDemo 解析（注册表 → demoCode沙箱 → 空白沙箱） */}
-                        {scenario.demo || resolveDemo(scenario.demoKey, scenario.demoCode, component.libraryCode, component.wrapperCode, component.cssCode)}
-                    </EnhancedDemoSection>
-                ))
-            ) : null}
+            {component.scenarios && component.scenarios.length > 0
+                ? component.scenarios.map((scenario, index) => (
+                      <EnhancedDemoSection
+                          key={index}
+                          title={scenario.title}
+                          desc={scenario.desc}
+                          code={scenario.demoCode || scenario.code}
+                          useBrowserWindow={false}
+                      >
+                          {/* 优先用旧版 demo 节点；否则用 resolveDemo 解析（注册表 → demoCode沙箱 → 空白沙箱） */}
+                          {scenario.demo ||
+                              resolveDemo(
+                                  scenario.demoKey,
+                                  scenario.demoCode,
+                                  component.libraryCode,
+                                  component.wrapperCode,
+                                  component.cssCode,
+                              )}
+                      </EnhancedDemoSection>
+                  ))
+                : null}
 
             {/* 技术实现预览（如果是分享组件且有实现代码） */}
             {isShared && (
@@ -70,9 +89,14 @@ const ComponentContent = ({ component }) => {
                         </div>
                         <div className="flex-1">
                             <div className="text-lg font-black text-ink-secondary  uppercase tracking-tight">
-                                {t('components.content.implementationOverview')} <span className="text-accent text-caption ml-2 opacity-50 font-black">Implementation Analysis</span>
+                                {t("components.content.implementationOverview")}{" "}
+                                <span className="text-accent text-caption ml-2 opacity-50 font-black">
+                                    Implementation Analysis
+                                </span>
                             </div>
-                            <div className="text-caption text-ink-muted font-bold">{t('components.content.implementationHint')}</div>
+                            <div className="text-caption text-ink-muted font-bold">
+                                {t("components.content.implementationHint")}
+                            </div>
                         </div>
                     </div>
 
@@ -80,13 +104,20 @@ const ComponentContent = ({ component }) => {
                         <div className="group relative rounded-[2rem] border border-border  bg-canvas p-5 sm:p-8 hover:shadow-2xl transition-all h-full flex flex-col min-w-0">
                             <div className="flex items-center gap-3 mb-4">
                                 <Code className="w-4 h-4 text-accent" />
-                                <span className="text-caption font-black uppercase tracking-widest text-ink-faint">{t('components.content.coreLogic')}</span>
+                                <span className="text-caption font-black uppercase tracking-widest text-ink-faint">
+                                    {t("components.content.coreLogic")}
+                                </span>
                             </div>
                             <div className="flex-1 max-h-[200px] overflow-hidden relative rounded-xl border border-border ">
                                 <EnhancedDemoSection.SyntaxHighlighter
                                     language="javascript"
                                     style={EnhancedDemoSection.vscDarkPlus}
-                                    customStyle={{ margin: 0, padding: '1rem', fontSize: '0.75rem', background: '#0f172a' }}
+                                    customStyle={{
+                                        margin: 0,
+                                        padding: "1rem",
+                                        fontSize: "0.75rem",
+                                        background: "#0f172a",
+                                    }}
                                 >
                                     {component.libraryCode}
                                 </EnhancedDemoSection.SyntaxHighlighter>
@@ -98,13 +129,20 @@ const ComponentContent = ({ component }) => {
                             <div className="group relative rounded-[2rem] border border-border  bg-canvas p-5 sm:p-8 hover:shadow-2xl transition-all h-full flex flex-col min-w-0">
                                 <div className="flex items-center gap-3 mb-4">
                                     <FileCode className="w-4 h-4 text-success" />
-                                    <span className="text-caption font-black uppercase tracking-widest text-ink-faint">{t('components.content.stylesDef')}</span>
+                                    <span className="text-caption font-black uppercase tracking-widest text-ink-faint">
+                                        {t("components.content.stylesDef")}
+                                    </span>
                                 </div>
                                 <div className="flex-1 max-h-[200px] overflow-hidden relative rounded-xl border border-border ">
                                     <EnhancedDemoSection.SyntaxHighlighter
                                         language="css"
                                         style={EnhancedDemoSection.vscDarkPlus}
-                                        customStyle={{ margin: 0, padding: '1rem', fontSize: '0.75rem', background: '#0f172a' }}
+                                        customStyle={{
+                                            margin: 0,
+                                            padding: "1rem",
+                                            fontSize: "0.75rem",
+                                            background: "#0f172a",
+                                        }}
                                     >
                                         {component.cssCode}
                                     </EnhancedDemoSection.SyntaxHighlighter>
@@ -113,21 +151,28 @@ const ComponentContent = ({ component }) => {
                             </div>
                         )}
 
-                        <div className={`bg-ink rounded-[2rem] p-5 sm:p-8 text-white flex flex-col justify-center relative overflow-hidden group ${!component.cssCode ? 'lg:col-span-2' : ''}`}>
+                        <div
+                            className={`bg-ink rounded-[2rem] p-5 sm:p-8 text-white flex flex-col justify-center relative overflow-hidden group ${!component.cssCode ? "lg:col-span-2" : ""}`}
+                        >
                             {/* 装饰背景 */}
                             <div className="absolute -right-8 -bottom-8 w-40 h-40 bg-canvas/10 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700" />
 
-                            <div className="text-xl sm:text-2xl font-black mb-4 tracking-tighter italic uppercase leading-tight break-words"
-                                dangerouslySetInnerHTML={{ __html: t('components.content.understandTitle') }}
+                            <div
+                                className="text-xl sm:text-2xl font-black mb-4 tracking-tighter italic uppercase leading-tight break-words"
+                                dangerouslySetInnerHTML={{
+                                    __html: t(
+                                        "components.content.understandTitle",
+                                    ),
+                                }}
                             />
                             <div className="text-body text-ink-faint font-medium mb-8 leading-relaxed opacity-80">
-                                {t('components.content.understandDesc')}
+                                {t("components.content.understandDesc")}
                             </div>
                             <Link
                                 to={`/components/${component.id}/guide`}
                                 className="inline-flex items-center justify-center bg-accent text-white px-6 py-3 rounded-xl font-black text-caption hover:scale-105 active:scale-95 transition-all shadow-xl shadow-black/10"
                             >
-                                {t('components.content.viewGuide')}
+                                {t("components.content.viewGuide")}
                             </Link>
                         </div>
                     </div>
@@ -141,8 +186,12 @@ const ComponentContent = ({ component }) => {
                             <Code className="w-5 h-5 text-accent" />
                         </div>
                         <div>
-                            <div className="text-xl font-black text-ink ">{t('components.content.sourceCode')}</div>
-                            <div className="text-body text-ink-muted ">{t('components.content.sourceCodeDesc')}</div>
+                            <div className="text-xl font-black text-ink ">
+                                {t("components.content.sourceCode")}
+                            </div>
+                            <div className="text-body text-ink-muted ">
+                                {t("components.content.sourceCodeDesc")}
+                            </div>
                         </div>
                     </div>
 
@@ -153,11 +202,11 @@ const ComponentContent = ({ component }) => {
                                 style={EnhancedDemoSection.vscDarkPlus}
                                 customStyle={{
                                     margin: 0,
-                                    padding: '1.5rem',
-                                    fontSize: '0.85rem',
-                                    background: '#0f172a',
-                                    lineHeight: '1.6',
-                                    width: '100%'
+                                    padding: "1.5rem",
+                                    fontSize: "0.85rem",
+                                    background: "#0f172a",
+                                    lineHeight: "1.6",
+                                    width: "100%",
                                 }}
                             >
                                 {component.sourceCode}

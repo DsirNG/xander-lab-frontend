@@ -1,6 +1,6 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { X, Hash } from 'lucide-react';
-import Button from '@components/common/Button';
+import React, { useState, useRef, useEffect } from "react";
+import { X, Hash } from "lucide-react";
+import Button from "@components/common/Button";
 
 const EMPTY_ARRAY = [];
 
@@ -19,10 +19,10 @@ const CreatableMultiSelect = ({
     value = EMPTY_ARRAY,
     onChange,
     options = EMPTY_ARRAY,
-    placeholder = '请选择或输入...',
-    className = ''
+    placeholder = "请选择或输入...",
+    className = "",
 }) => {
-    const [inputValue, setInputValue] = useState('');
+    const [inputValue, setInputValue] = useState("");
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [highlightedIndex, setHighlightedIndex] = useState(-1);
     const inputRef = useRef(null);
@@ -30,54 +30,64 @@ const CreatableMultiSelect = ({
 
     // Compute filtered options for keyboard navigation
     const filteredOptions = options.filter(
-        t => !value.includes(t) && t.toLowerCase().includes(inputValue.toLowerCase())
+        (t) =>
+            !value.includes(t) &&
+            t.toLowerCase().includes(inputValue.toLowerCase()),
     );
 
     // 点击外部时关闭下拉框
     useEffect(() => {
         const handleClickOutside = (event) => {
-            if (containerRef.current && !containerRef.current.contains(event.target)) {
+            if (
+                containerRef.current &&
+                !containerRef.current.contains(event.target)
+            ) {
                 setIsDropdownOpen(false);
                 setHighlightedIndex(-1);
             }
         };
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => document.removeEventListener('mousedown', handleClickOutside);
+        document.addEventListener("mousedown", handleClickOutside);
+        return () =>
+            document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
     const handleKeyDown = (e) => {
-        if (e.key === 'Enter') {
+        if (e.key === "Enter") {
             e.preventDefault();
             // If an option is highlighted in dropdown, select it
-            if (isDropdownOpen && highlightedIndex >= 0 && highlightedIndex < filteredOptions.length) {
+            if (
+                isDropdownOpen &&
+                highlightedIndex >= 0 &&
+                highlightedIndex < filteredOptions.length
+            ) {
                 addItem(filteredOptions[highlightedIndex]);
             } else if (inputValue.trim()) {
                 addItem(inputValue.trim());
             }
-        } else if (e.key === 'Backspace' && !inputValue && value.length > 0) {
+        } else if (e.key === "Backspace" && !inputValue && value.length > 0) {
             // 当输入框为空且按下退格键时，删除最后一个项
             removeItem(value[value.length - 1]);
-        } else if (e.key === 'ArrowDown') {
+        } else if (e.key === "ArrowDown") {
             e.preventDefault();
             if (!isDropdownOpen) {
                 setIsDropdownOpen(true);
                 setHighlightedIndex(0);
             } else if (filteredOptions.length > 0) {
-                setHighlightedIndex(prev =>
-                    prev < filteredOptions.length - 1 ? prev + 1 : 0
+                setHighlightedIndex((prev) =>
+                    prev < filteredOptions.length - 1 ? prev + 1 : 0,
                 );
             }
-        } else if (e.key === 'ArrowUp') {
+        } else if (e.key === "ArrowUp") {
             e.preventDefault();
             if (!isDropdownOpen) {
                 setIsDropdownOpen(true);
                 setHighlightedIndex(Math.max(0, filteredOptions.length - 1));
             } else if (filteredOptions.length > 0) {
-                setHighlightedIndex(prev =>
-                    prev > 0 ? prev - 1 : filteredOptions.length - 1
+                setHighlightedIndex((prev) =>
+                    prev > 0 ? prev - 1 : filteredOptions.length - 1,
                 );
             }
-        } else if (e.key === 'Escape') {
+        } else if (e.key === "Escape") {
             e.preventDefault();
             setIsDropdownOpen(false);
             setHighlightedIndex(-1);
@@ -89,14 +99,14 @@ const CreatableMultiSelect = ({
         if (trimmed && !value.includes(trimmed)) {
             onChange([...value, trimmed]);
         }
-        setInputValue('');
+        setInputValue("");
         setIsDropdownOpen(false);
         setHighlightedIndex(-1);
         inputRef.current?.focus();
     };
 
     const removeItem = (itemToRemove) => {
-        onChange(value.filter(t => t !== itemToRemove));
+        onChange(value.filter((t) => t !== itemToRemove));
     };
 
     return (
@@ -105,7 +115,7 @@ const CreatableMultiSelect = ({
             className={`relative flex flex-wrap gap-2 p-3 bg-canvas border border-border rounded-[8px] focus-within:border-accent focus-within:ring-4 focus-within:ring-accent/10 transition-all shadow-sm ${className}`}
             onClick={() => inputRef.current?.focus()}
         >
-            {value.map(item => (
+            {value.map((item) => (
                 <Button
                     key={item}
                     variant="outline"
@@ -113,7 +123,10 @@ const CreatableMultiSelect = ({
                     icon={X}
                     className="h-auto px-3 py-1.5 text-micro rounded-xl hover:bg-danger-soft hover:text-danger hover:border-danger/30"
                     aria-label={`移除 ${item}`}
-                    onClick={(e) => { e.stopPropagation(); removeItem(item); }}
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        removeItem(item);
+                    }}
                 >
                     {item}
                 </Button>
@@ -123,58 +136,65 @@ const CreatableMultiSelect = ({
                 <input
                     ref={inputRef}
                     value={inputValue}
-                    onChange={e => {
+                    onChange={(e) => {
                         setInputValue(e.target.value);
                         setIsDropdownOpen(true);
                         setHighlightedIndex(-1);
                     }}
                     onFocus={() => setIsDropdownOpen(true)}
                     onKeyDown={handleKeyDown}
-                    placeholder={value.length === 0 ? placeholder : ''}
+                    placeholder={value.length === 0 ? placeholder : ""}
                     className="w-full bg-transparent border-none outline-none text-body px-2 py-1.5 text-ink"
                 />
 
                 {/* 自定义下拉选择器 */}
                 {isDropdownOpen && (inputValue || options.length > 0) && (
-                    <div role="listbox" className="absolute top-full left-0 mt-2 w-[240px] max-w-[calc(100vw-1rem)] max-h-48 overflow-y-auto custom-scrollbar bg-canvas border border-border rounded-xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.1)] z-50 py-1">
-                        {filteredOptions
-                            .map((item, index) => (
-                                <Button
-                                    role="option"
-                                    key={item}
-                                    aria-selected={value.includes(item)}
-                                    variant="ghost"
-                                    size="sm"
-                                    icon={Hash}
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        addItem(item);
-                                    }}
-                                    onMouseEnter={() => setHighlightedIndex(index)}
-                                    className={`h-auto w-full justify-start px-4 py-2.5 text-left font-medium hover:bg-surface hover:text-accent ${index === highlightedIndex ? 'bg-accent/10' : ''}`}
-                                >
-                                    {item}
-                                </Button>
-                            ))}
-                        {/* 如果用户输入了一个不存在的新选项，给个提示 */}
-                        {inputValue.trim() && !options.includes(inputValue.trim()) && (
-                            <div
-                                className="px-4 py-2.5 text-caption font-medium text-ink-faint border-t border-border mt-1 first:border-0 first:mt-0 italic flex items-center justify-between cursor-pointer hover:bg-surface"
+                    <div
+                        role="listbox"
+                        className="absolute top-full left-0 mt-2 w-[240px] max-w-[calc(100vw-1rem)] max-h-48 overflow-y-auto custom-scrollbar bg-canvas border border-border rounded-xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.1)] z-50 py-1"
+                    >
+                        {filteredOptions.map((item, index) => (
+                            <Button
+                                role="option"
+                                key={item}
+                                aria-selected={value.includes(item)}
+                                variant="ghost"
+                                size="sm"
+                                icon={Hash}
                                 onClick={(e) => {
                                     e.stopPropagation();
-                                    addItem(inputValue.trim());
+                                    addItem(item);
                                 }}
+                                onMouseEnter={() => setHighlightedIndex(index)}
+                                className={`h-auto w-full justify-start px-4 py-2.5 text-left font-medium hover:bg-surface hover:text-accent ${index === highlightedIndex ? "bg-accent/10" : ""}`}
                             >
-                                <span>创建项 &quot;{inputValue}&quot;</span>
-                                <span className="text-micro uppercase tracking-wider bg-surface-muted px-1.5 py-0.5 rounded font-bold">Enter</span>
-                            </div>
-                        )}
+                                {item}
+                            </Button>
+                        ))}
+                        {/* 如果用户输入了一个不存在的新选项，给个提示 */}
+                        {inputValue.trim() &&
+                            !options.includes(inputValue.trim()) && (
+                                <div
+                                    className="px-4 py-2.5 text-caption font-medium text-ink-faint border-t border-border mt-1 first:border-0 first:mt-0 italic flex items-center justify-between cursor-pointer hover:bg-surface"
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        addItem(inputValue.trim());
+                                    }}
+                                >
+                                    <span>创建项 &quot;{inputValue}&quot;</span>
+                                    <span className="text-micro uppercase tracking-wider bg-surface-muted px-1.5 py-0.5 rounded font-bold">
+                                        Enter
+                                    </span>
+                                </div>
+                            )}
                         {/* 如果全部选完并且没有输入内容 */}
-                        {!inputValue && options.filter(t => !value.includes(t)).length === 0 && (
-                            <div className="px-4 py-3 text-micro text-center text-ink-faint italic">
-                                暂无推荐项，输入按回车创建
-                            </div>
-                        )}
+                        {!inputValue &&
+                            options.filter((t) => !value.includes(t)).length ===
+                                0 && (
+                                <div className="px-4 py-3 text-micro text-center text-ink-faint italic">
+                                    暂无推荐项，输入按回车创建
+                                </div>
+                            )}
                     </div>
                 )}
             </div>

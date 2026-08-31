@@ -3,6 +3,4 @@
  * 主布局组件导出文件
  */
 
-export { default } from './MainLayout';
-
-
+export { default } from "./MainLayout";

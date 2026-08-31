@@ -1,24 +1,27 @@
-import React, { useState } from 'react';
-import CreatableMultiSelect from './index';
-import { LayoutList, Check } from 'lucide-react';
-import Button from '@components/common/Button';
+import React, { useState } from "react";
+import CreatableMultiSelect from "./index";
+import { LayoutList, Check } from "lucide-react";
+import Button from "@components/common/Button";
 
 export default function CreatableMultiSelectDemo() {
-    const [selectedItems, setSelectedItems] = useState(['React', 'TailwindCSS']);
+    const [selectedItems, setSelectedItems] = useState([
+        "React",
+        "TailwindCSS",
+    ]);
     const [submittedItems, setSubmittedItems] = useState([]);
 
     // 模拟的推荐选项数据
     const availableOptions = [
-        'React',
-        'Vue',
-        'Angular',
-        'Svelte',
-        'TailwindCSS',
-        'TypeScript',
-        'Node.js',
-        'Next.js',
-        'Nuxt',
-        'GraphQL'
+        "React",
+        "Vue",
+        "Angular",
+        "Svelte",
+        "TailwindCSS",
+        "TypeScript",
+        "Node.js",
+        "Next.js",
+        "Nuxt",
+        "GraphQL",
     ];
 
     const handleSubmit = () => {
@@ -46,7 +49,9 @@ export default function CreatableMultiSelectDemo() {
                                 示例：选择技能栈
                             </span>
                         </div>
-                        <span className="text-[10px] text-slate-400 font-medium">支持按 Enter 键录入新选项</span>
+                        <span className="text-[10px] text-slate-400 font-medium">
+                            支持按 Enter 键录入新选项
+                        </span>
                     </div>
 
                     {/* 调用封装的组件 */}
@@ -71,7 +76,9 @@ export default function CreatableMultiSelectDemo() {
 
                     {submittedItems.length > 0 && (
                         <div className="w-full mt-4 p-4 bg-white  rounded-2xl border border-slate-100 ">
-                            <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">多选结果</div>
+                            <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">
+                                多选结果
+                            </div>
                             <pre className="text-xs font-mono text-emerald-600  bg-emerald-50  p-4 rounded-xl overflow-x-auto">
                                 {JSON.stringify(submittedItems, null, 2)}
                             </pre>

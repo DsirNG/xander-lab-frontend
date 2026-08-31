@@ -3,9 +3,9 @@
  * Auth Data Service
  */
 
-import { post, get, put, tokenStorage } from '@api';
+import { post, get, put, tokenStorage } from "@api";
 
-const BASE = '/api/auth';
+const BASE = "/api/auth";
 
 export const authService = {
     /**
@@ -33,10 +33,14 @@ export const authService = {
             tokenStorage.setToken(res.accessToken, { notify: false });
             tokenStorage.setRefreshToken(res.refreshToken);
             // 也可以存入用户信息到 localStorage 或状态管理中
-            localStorage.setItem('user_info', JSON.stringify(res.userInfo));
+            localStorage.setItem("user_info", JSON.stringify(res.userInfo));
             // NotificationProvider is already mounted on the login page flow;
             // notify it immediately instead of waiting for a remount or refresh.
-            window.dispatchEvent(new CustomEvent('auth:login', { detail: { user: res.userInfo } }));
+            window.dispatchEvent(
+                new CustomEvent("auth:login", {
+                    detail: { user: res.userInfo },
+                }),
+            );
         }
         return res;
     },
@@ -49,14 +53,22 @@ export const authService = {
         const refreshToken = tokenStorage.getRefreshToken();
         try {
             // 主动登出：跳过过期恢复逻辑，避免误弹「登录已过期」
-            await post(`${BASE}/logout`, { refreshToken }, {
-                _silent: true,
-                _skipAuthRecovery: true,
-            });
+            await post(
+                `${BASE}/logout`,
+                { refreshToken },
+                {
+                    _silent: true,
+                    _skipAuthRecovery: true,
+                },
+            );
         } finally {
             // tokenStorage.clear 同步清除 access/refresh/user_info
             tokenStorage.clear();
-            window.dispatchEvent(new CustomEvent('auth:logout', { detail: { reason: 'logout' } }));
+            window.dispatchEvent(
+                new CustomEvent("auth:logout", {
+                    detail: { reason: "logout" },
+                }),
+            );
         }
     },
 
@@ -85,7 +97,8 @@ export const authService = {
      * 刷新失败时也由该层统一清理当前会话并派发 auth:logout。
      */
     checkCurrentSession: async (config) => {
-        if (!tokenStorage.getToken() && !tokenStorage.getRefreshToken()) return null;
+        if (!tokenStorage.getToken() && !tokenStorage.getRefreshToken())
+            return null;
         return get(`${BASE}/me`, undefined, {
             _silent: true,
             dedupe: false,
@@ -97,14 +110,14 @@ export const authService = {
      * 获取本地存储的用户信息
      */
     getLocalUserInfo: () => {
-        const info = localStorage.getItem('user_info');
+        const info = localStorage.getItem("user_info");
         return info ? JSON.parse(info) : null;
     },
 
     /** Persist only user information that has passed the provider's session fence. */
     setLocalUserInfo: (info) => {
-        if (info) localStorage.setItem('user_info', JSON.stringify(info));
-        else localStorage.removeItem('user_info');
+        if (info) localStorage.setItem("user_info", JSON.stringify(info));
+        else localStorage.removeItem("user_info");
     },
 
     /**

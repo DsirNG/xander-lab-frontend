@@ -1,15 +1,15 @@
-import React from 'react';
-import { BasicDemo, AlignmentDemo, StatusDemo } from '../components/demo/demo';
+import React from "react";
+import { BasicDemo, AlignmentDemo, StatusDemo } from "../components/demo/demo";
 import {
     ToastBasicDemo,
     ToastHoverDemo,
     ToastManualDemo,
     ToastActionDemo,
     ToastStackDemo,
-    ToastNoHoverDemo
-} from '../components/demo/ToastDemo';
-import LiveDemoSandbox from '../components/demo/LiveDemoSandbox';
-import TagInputDemo from '@/components/common/CreatableMultiSelect/demo.jsx';
+    ToastNoHoverDemo,
+} from "../components/demo/ToastDemo";
+import LiveDemoSandbox from "../components/demo/LiveDemoSandbox";
+import TagInputDemo from "@/components/common/CreatableMultiSelect/demo.jsx";
 
 /**
  * 演示组件注册表：将数据库中的 key 映射到工厂函数。
@@ -18,20 +18,20 @@ import TagInputDemo from '@/components/common/CreatableMultiSelect/demo.jsx';
  */
 export const DEMO_REGISTRY = {
     // 自定义选择器
-    'BasicDemo': () => <BasicDemo />,
-    'AlignmentDemo': () => <AlignmentDemo />,
-    'StatusDemo': () => <StatusDemo />,
+    BasicDemo: () => <BasicDemo />,
+    AlignmentDemo: () => <AlignmentDemo />,
+    StatusDemo: () => <StatusDemo />,
 
     // Toast 通知
-    'ToastBasicDemo': () => <ToastBasicDemo />,
-    'ToastHoverDemo': () => <ToastHoverDemo />,
-    'ToastManualDemo': () => <ToastManualDemo />,
-    'ToastActionDemo': () => <ToastActionDemo />,
-    'ToastStackDemo': () => <ToastStackDemo />,
-    'ToastNoHoverDemo': () => <ToastNoHoverDemo />,
+    ToastBasicDemo: () => <ToastBasicDemo />,
+    ToastHoverDemo: () => <ToastHoverDemo />,
+    ToastManualDemo: () => <ToastManualDemo />,
+    ToastActionDemo: () => <ToastActionDemo />,
+    ToastStackDemo: () => <ToastStackDemo />,
+    ToastNoHoverDemo: () => <ToastNoHoverDemo />,
 
     // TagInput 标签选择器
-    'TagInputDemo': () => <TagInputDemo />,
+    TagInputDemo: () => <TagInputDemo />,
 };
 
 /**
@@ -43,7 +43,13 @@ export const DEMO_REGISTRY = {
  * @param {string} cssCode - 自定义 CSS 样式代码
  * @returns {React.ReactNode} 渲染的演示组件
  */
-export const resolveDemo = (demoKey, customCode, libCode = '', wrapperCode = '', cssCode = '') => {
+export const resolveDemo = (
+    demoKey,
+    customCode,
+    libCode = "",
+    wrapperCode = "",
+    cssCode = "",
+) => {
     // 1. 优先从注册表中查找静态组件（调用工厂函数生成 JSX）
     if (demoKey && DEMO_REGISTRY[demoKey]) {
         return DEMO_REGISTRY[demoKey]();
@@ -66,8 +72,8 @@ export const resolveDemo = (demoKey, customCode, libCode = '', wrapperCode = '',
     if (demoKey) {
         console.warn(
             `[DEMO_REGISTRY] 未找到 key="${demoKey}" 的演示组件，已回退到空白沙箱。` +
-            `\n请在 demoRegistry.jsx 中注册该组件，或在数据库 scenario 的 code 字段中存放 JSX 代码。`
+                `\n请在 demoRegistry.jsx 中注册该组件，或在数据库 scenario 的 code 字段中存放 JSX 代码。`,
         );
     }
     return <LiveDemoSandbox />;
-}
+};

@@ -1,13 +1,13 @@
 // React 相关
-import React from 'react'
+import React from "react";
 
 // 样式文件
-import styles from './BrowserWindow.module.css'
+import styles from "./BrowserWindow.module.css";
 
 /**
  * BrowserWindow - 浏览器窗口样式容器组件
  * 用于包裹 demo 内容，提供浏览器窗口的视觉效果
- * 
+ *
  * @param {Object} props
  * @param {React.ReactNode} props.children - 要显示的内容
  * @param {string} [props.className] - 额外的 CSS 类名
@@ -16,9 +16,9 @@ import styles from './BrowserWindow.module.css'
  */
 const BrowserWindow = ({
     children,
-    className = '',
+    className = "",
     showDots = true,
-    showCodeLines = false
+    showCodeLines = false,
 }) => {
     return (
         <div className={`${styles.browserWindow} ${className}`}>
@@ -34,18 +34,18 @@ const BrowserWindow = ({
 
             {showCodeLines && (
                 <div className={styles.codeLines}>
-                    <div className={`${styles.line} ${styles.lineThreeQuarter}`} />
+                    <div
+                        className={`${styles.line} ${styles.lineThreeQuarter}`}
+                    />
                     <div className={`${styles.line} ${styles.lineHalf}`} />
                     <div className={`${styles.line} ${styles.lineFull}`} />
                     <div className={`${styles.line} ${styles.lineTwoThird}`} />
                 </div>
             )}
 
-            <div className={styles.browserContent}>
-                {children}
-            </div>
+            <div className={styles.browserContent}>{children}</div>
         </div>
-    )
-}
+    );
+};
 
-export default BrowserWindow
+export default BrowserWindow;

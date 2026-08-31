@@ -39,12 +39,7 @@
             "purpose": "any"
         }
     ],
-    "categories": [
-        "development",
-        "education",
-        "utilities",
-        "productivity"
-    ],
+    "categories": ["development", "education", "utilities", "productivity"],
     "lang": "zh-CN",
     "dir": "ltr",
     "scope": "/",

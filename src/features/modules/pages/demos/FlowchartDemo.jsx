@@ -1,11 +1,5 @@
-import React, { useState, useRef } from 'react';
-import {
-    GitCommit,
-    Database,
-    Server,
-    Globe,
-    X
-} from 'lucide-react';
+import React, { useState, useRef } from "react";
+import { GitCommit, Database, Server, Globe, X } from "lucide-react";
 
 // Simple Bezier Curve Calculation
 const getBezierPath = (start, end) => {
@@ -21,13 +15,34 @@ const getBezierPath = (start, end) => {
 const FlowchartDemo = () => {
     // Canvas State
     const [nodes, setNodes] = useState([
-        { id: 'start', x: 50, y: 150, label: 'Start', type: 'start', icon: GitCommit },
-        { id: 'db', x: 300, y: 50, label: 'Database', type: 'db', icon: Database },
-        { id: 'server', x: 300, y: 250, label: 'Server', type: 'server', icon: Server },
-        { id: 'web', x: 550, y: 150, label: 'Web', type: 'web', icon: Globe },
+        {
+            id: "start",
+            x: 50,
+            y: 150,
+            label: "Start",
+            type: "start",
+            icon: GitCommit,
+        },
+        {
+            id: "db",
+            x: 300,
+            y: 50,
+            label: "Database",
+            type: "db",
+            icon: Database,
+        },
+        {
+            id: "server",
+            x: 300,
+            y: 250,
+            label: "Server",
+            type: "server",
+            icon: Server,
+        },
+        { id: "web", x: 550, y: 150, label: "Web", type: "web", icon: Globe },
     ]);
     const [connections, setConnections] = useState([
-        { id: 'c1', from: 'start', to: 'db' }
+        { id: "c1", from: "start", to: "db" },
     ]);
 
     // Dragging Connection State
@@ -43,14 +58,14 @@ const FlowchartDemo = () => {
     const canvasRef = useRef(null);
 
     // Helper: Get Node Anchor Point (Right side for source, Left for target simplistically)
-    const getNodeAnchor = (nodeId, side = 'right') => {
-        const node = nodes.find(n => n.id === nodeId);
+    const getNodeAnchor = (nodeId, side = "right") => {
+        const node = nodes.find((n) => n.id === nodeId);
         if (!node) return { x: 0, y: 0 };
         // Node size assumed approx 120x60 typically
         // Just hardcoding offsets based on rendered node size logic below
         // Node w=140, h=64 ideally
-        if (side === 'right') return { x: node.x + 140, y: node.y + 32 };
-        if (side === 'left') return { x: node.x, y: node.y + 32 };
+        if (side === "right") return { x: node.x + 140, y: node.y + 32 };
+        if (side === "left") return { x: node.x, y: node.y + 32 };
         return { x: node.x, y: node.y };
     };
 
@@ -63,11 +78,13 @@ const FlowchartDemo = () => {
         if (isConnecting) {
             setDragPos({ x, y });
         } else if (isMovingNode && movingNodeId) {
-            setNodes(nodes.map(n =>
-                n.id === movingNodeId
-                    ? { ...n, x: x - nodeOffset.x, y: y - nodeOffset.y }
-                    : n
-            ));
+            setNodes(
+                nodes.map((n) =>
+                    n.id === movingNodeId
+                        ? { ...n, x: x - nodeOffset.x, y: y - nodeOffset.y }
+                        : n,
+                ),
+            );
         }
     };
 
@@ -83,7 +100,8 @@ const FlowchartDemo = () => {
         e.stopPropagation(); // Prevent canvas handlers if any specific ones exist
         const el = e.currentTarget;
         setTimeout(() => {
-            if (el && el.hasPointerCapture?.(e.pointerId)) el.releasePointerCapture(e.pointerId);
+            if (el && el.hasPointerCapture?.(e.pointerId))
+                el.releasePointerCapture(e.pointerId);
         }, 0);
         const rect = canvasRef.current.getBoundingClientRect();
         const mouseX = e.clientX - rect.left;
@@ -100,7 +118,8 @@ const FlowchartDemo = () => {
         e.preventDefault();
         const el = e.currentTarget;
         setTimeout(() => {
-            if (el && el.hasPointerCapture?.(e.pointerId)) el.releasePointerCapture(e.pointerId);
+            if (el && el.hasPointerCapture?.(e.pointerId))
+                el.releasePointerCapture(e.pointerId);
         }, 0);
         const rect = canvasRef.current.getBoundingClientRect();
         setDragStartNode(nodeId);
@@ -112,12 +131,19 @@ const FlowchartDemo = () => {
         e.stopPropagation();
         if (isConnecting && dragStartNode && dragStartNode !== targetNodeId) {
             // Avoid duplicates
-            if (!connections.find(c => c.from === dragStartNode && c.to === targetNodeId)) {
-                setConnections([...connections, {
-                    id: `${dragStartNode}-${targetNodeId}`,
-                    from: dragStartNode,
-                    to: targetNodeId
-                }]);
+            if (
+                !connections.find(
+                    (c) => c.from === dragStartNode && c.to === targetNodeId,
+                )
+            ) {
+                setConnections([
+                    ...connections,
+                    {
+                        id: `${dragStartNode}-${targetNodeId}`,
+                        from: dragStartNode,
+                        to: targetNodeId,
+                    },
+                ]);
             }
         }
         handleCanvasMouseUp();
@@ -128,21 +154,25 @@ const FlowchartDemo = () => {
             ref={canvasRef}
             className="relative w-full h-[500px] max-h-[70dvh] min-h-[360px] bg-slate-50 border border-slate-200 rounded-2xl overflow-auto cursor-crosshair select-none"
             style={{
-                backgroundImage: 'radial-gradient(#94a3b8 1px, transparent 1px)',
-                backgroundSize: '20px 20px',
-                backgroundPosition: '-10px -10px',
-                minWidth: '100%'
+                backgroundImage:
+                    "radial-gradient(#94a3b8 1px, transparent 1px)",
+                backgroundSize: "20px 20px",
+                backgroundPosition: "-10px -10px",
+                minWidth: "100%",
             }}
             onPointerMove={handleCanvasMouseMove}
             onPointerUp={handleCanvasMouseUp}
             onPointerLeave={handleCanvasMouseUp}
         >
             {/* SVG Layer for Lines */}
-            <svg className="absolute inset-0 h-full pointer-events-none sticky-svg" style={{ width: '760px', maxWidth: 'none' }}>
+            <svg
+                className="absolute inset-0 h-full pointer-events-none sticky-svg"
+                style={{ width: "760px", maxWidth: "none" }}
+            >
                 {/* Existing Connections */}
-                {connections.map(conn => {
-                    const start = getNodeAnchor(conn.from, 'right');
-                    const end = getNodeAnchor(conn.to, 'left');
+                {connections.map((conn) => {
+                    const start = getNodeAnchor(conn.from, "right");
+                    const end = getNodeAnchor(conn.to, "left");
                     return (
                         <g key={conn.id}>
                             <path
@@ -150,12 +180,22 @@ const FlowchartDemo = () => {
                                 fill="none"
                                 stroke="#94a3b8"
                                 strokeWidth="3"
-
                             />
                             {/* Delete connection area */}
-                            <circle cx={(start.x + end.x) / 2} cy={(start.y + end.y) / 2} r="10" fill="transparent"
+                            <circle
+                                cx={(start.x + end.x) / 2}
+                                cy={(start.y + end.y) / 2}
+                                r="10"
+                                fill="transparent"
                                 className="cursor-pointer pointer-events-auto hover:fill-red-500/20"
-                                onClick={() => setConnections(connections.filter(c => c.id !== conn.id))} />
+                                onClick={() =>
+                                    setConnections(
+                                        connections.filter(
+                                            (c) => c.id !== conn.id,
+                                        ),
+                                    )
+                                }
+                            />
                         </g>
                     );
                 })}
@@ -163,7 +203,10 @@ const FlowchartDemo = () => {
                 {/* Active Dragging Line */}
                 {isConnecting && dragStartNode && (
                     <path
-                        d={getBezierPath(getNodeAnchor(dragStartNode, 'right'), dragPos)}
+                        d={getBezierPath(
+                            getNodeAnchor(dragStartNode, "right"),
+                            dragPos,
+                        )}
                         fill="none"
                         stroke="#3b82f6"
                         strokeWidth="3"
@@ -174,29 +217,31 @@ const FlowchartDemo = () => {
             </svg>
 
             {/* Nodes */}
-            {nodes.map(node => (
+            {nodes.map((node) => (
                 <div
                     key={node.id}
                     className="absolute w-[140px] h-[64px] bg-white  rounded-xl shadow-lg border-2 border-slate-200 flex items-center justify-between px-3 group transition-colors hover:border-blue-400 z-10"
-                    style={{ left: node.x, top: node.y, touchAction: 'none' }}
+                    style={{ left: node.x, top: node.y, touchAction: "none" }}
                     onPointerDown={(e) => startMovingNode(e, node)}
                 >
                     {/* Left Connector (Target) */}
                     <div
                         className="w-3 h-3 rounded-full bg-slate-300 -ml-4 border-2 border-white  cursor-pointer hover:scale-125 hover:bg-blue-500 transition-transform"
-                        style={{ touchAction: 'none' }}
+                        style={{ touchAction: "none" }}
                         onPointerUp={(e) => finishConnection(e, node.id)}
                     />
 
                     <div className="flex items-center space-x-3 pointer-events-none">
                         <node.icon className="w-5 h-5 text-slate-500" />
-                        <span className="font-bold text-sm text-slate-700 ">{node.label}</span>
+                        <span className="font-bold text-sm text-slate-700 ">
+                            {node.label}
+                        </span>
                     </div>
 
                     {/* Right Connector (Source) */}
                     <div
                         className="w-3 h-3 rounded-full bg-blue-500 -mr-4 border-2 border-white  cursor-pointer hover:scale-125 transition-transform"
-                        style={{ touchAction: 'none' }}
+                        style={{ touchAction: "none" }}
                         onPointerDown={(e) => startConnection(e, node.id)}
                     />
 
@@ -205,8 +250,13 @@ const FlowchartDemo = () => {
                         className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1.5 sm:p-0.5 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity shadow-sm"
                         onClick={(e) => {
                             e.stopPropagation();
-                            setNodes(nodes.filter(n => n.id !== node.id));
-                            setConnections(connections.filter(c => c.from !== node.id && c.to !== node.id));
+                            setNodes(nodes.filter((n) => n.id !== node.id));
+                            setConnections(
+                                connections.filter(
+                                    (c) =>
+                                        c.from !== node.id && c.to !== node.id,
+                                ),
+                            );
                         }}
                     >
                         <X className="w-3 h-3" />

@@ -12,24 +12,25 @@
  * @module scripts/prerender-seo
  */
 
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // ============ 配置 ============
-const SITE_URL = 'https://dinqor.cn';
+const SITE_URL = "https://dinqor.cn";
 // 构建环境可通过 SEO_API_BASE 覆盖默认公网 API。生产 Docker 构建默认由
 // docker-compose 注入 host.docker.internal:30002/api，以直连部署机 Spring Boot 服务。
-const API_BASE = process.env.SEO_API_BASE || 'https://api.dinqor.cn/api';
+const API_BASE = process.env.SEO_API_BASE || "https://api.dinqor.cn/api";
 const API_TIMEOUT_MS = 15_000;
 const API_RETRY_COUNT = 3;
-const DIST_DIR = path.join(__dirname, '..', 'dist');
-const INDEX_HTML_PATH = path.join(DIST_DIR, 'index.html');
+const DIST_DIR = path.join(__dirname, "..", "dist");
+const INDEX_HTML_PATH = path.join(DIST_DIR, "index.html");
 const OG_IMAGE = `${SITE_URL}/og-image.png`;
-const BRAND_KEYWORDS = 'DinQorAI, DinQor, AI智能体, 人工智能助手, 智能体平台, AI Agent, AI内容创作, AI写作助手, 博客智能体, AI博客写作, AI图片生成, 文档分析, 知识管理, 知识镜像, AI学习助手, 智能任务自动化, 联网搜索';
+const BRAND_KEYWORDS =
+    "DinQorAI, DinQor, AI智能体, 人工智能助手, 智能体平台, AI Agent, AI内容创作, AI写作助手, 博客智能体, AI博客写作, AI图片生成, 文档分析, 知识管理, 知识镜像, AI学习助手, 智能任务自动化, 联网搜索";
 
 // ============ 工具函数 ============
 
@@ -40,19 +41,19 @@ const BRAND_KEYWORDS = 'DinQorAI, DinQor, AI智能体, 人工智能助手, 智�
  * @returns {string} 纯文本摘要
  */
 function extractSummary(markdown, maxLen = 160) {
-  if (!markdown) return '';
-  return markdown
-    .replace(/#{1,6}\s/g, '')        // 去掉标题标记
-    .replace(/\*\*(.*?)\*\*/g, '$1')  // 粗体
-    .replace(/\*(.*?)\*/g, '$1')      // 斜体
-    .replace(/`(.*?)`/g, '$1')        // 行内代码
-    .replace(/```[\s\S]*?```/g, '')   // 代码块
-    .replace(/!\[.*?\]\(.*?\)/g, '')  // 图片
-    .replace(/\[([^\]]+)\]\(.*?\)/g, '$1') // 链接保留文字
-    .replace(/>\s*/g, '')             // 引用
-    .replace(/\n+/g, ' ')            // 换行转空格
-    .trim()
-    .slice(0, maxLen);
+    if (!markdown) return "";
+    return markdown
+        .replace(/#{1,6}\s/g, "") // 去掉标题标记
+        .replace(/\*\*(.*?)\*\*/g, "$1") // 粗体
+        .replace(/\*(.*?)\*/g, "$1") // 斜体
+        .replace(/`(.*?)`/g, "$1") // 行内代码
+        .replace(/```[\s\S]*?```/g, "") // 代码块
+        .replace(/!\[.*?\]\(.*?\)/g, "") // 图片
+        .replace(/\[([^\]]+)\]\(.*?\)/g, "$1") // 链接保留文字
+        .replace(/>\s*/g, "") // 引用
+        .replace(/\n+/g, " ") // 换行转空格
+        .trim()
+        .slice(0, maxLen);
 }
 
 /**
@@ -61,13 +62,13 @@ function extractSummary(markdown, maxLen = 160) {
  * @returns {string}
  */
 function escapeHtml(str) {
-  if (!str) return '';
-  return str
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
+    if (!str) return "";
+    return str
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
 }
 
 /**
@@ -75,56 +76,66 @@ function escapeHtml(str) {
  * @returns {Promise<Array>} 博客列表
  */
 async function fetchAllBlogs() {
-  async function requestJson(url) {
-    let lastError;
+    async function requestJson(url) {
+        let lastError;
 
-    for (let attempt = 1; attempt <= API_RETRY_COUNT; attempt++) {
-      try {
-        const response = await fetch(url, { signal: AbortSignal.timeout(API_TIMEOUT_MS) });
-        if (!response.ok) {
-          throw new Error(`API 返回 HTTP ${response.status}`);
+        for (let attempt = 1; attempt <= API_RETRY_COUNT; attempt++) {
+            try {
+                const response = await fetch(url, {
+                    signal: AbortSignal.timeout(API_TIMEOUT_MS),
+                });
+                if (!response.ok) {
+                    throw new Error(`API 返回 HTTP ${response.status}`);
+                }
+                return response.json();
+            } catch (error) {
+                lastError = error;
+                const cause = error.cause;
+                const detail = cause
+                    ? ` (${cause.code || cause.name || "network error"}: ${cause.message || cause})`
+                    : "";
+                if (attempt < API_RETRY_COUNT) {
+                    console.warn(
+                        `  博客 API 第 ${attempt} 次请求失败：${error.message}${detail}，正在重试...`,
+                    );
+                }
+            }
         }
-        return response.json();
-      } catch (error) {
-        lastError = error;
-        const cause = error.cause;
-        const detail = cause
-          ? ` (${cause.code || cause.name || 'network error'}: ${cause.message || cause})`
-          : '';
-        if (attempt < API_RETRY_COUNT) {
-          console.warn(`  博客 API 第 ${attempt} 次请求失败：${error.message}${detail}，正在重试...`);
-        }
-      }
+
+        const finalCause = lastError.cause;
+        const finalDetail = finalCause
+            ? ` (${finalCause.code || finalCause.name || "network error"}: ${finalCause.message || finalCause})`
+            : "";
+        throw new Error(
+            `博客 API 连续 ${API_RETRY_COUNT} 次请求失败：${lastError.message}${finalDetail}`,
+        );
     }
 
-    const finalCause = lastError.cause;
-    const finalDetail = finalCause
-      ? ` (${finalCause.code || finalCause.name || 'network error'}: ${finalCause.message || finalCause})`
-      : '';
-    throw new Error(`博客 API 连续 ${API_RETRY_COUNT} 次请求失败：${lastError.message}${finalDetail}`);
-  }
+    // 先获取第一页，确定总数
+    const firstJson = await requestJson(
+        `${API_BASE}/blog/posts?page=1&size=100`,
+    );
+    const data = firstJson.data || firstJson;
+    const records = data.records || [];
+    const total = data.total || records.length;
 
-  // 先获取第一页，确定总数
-  const firstJson = await requestJson(`${API_BASE}/blog/posts?page=1&size=100`);
-  const data = firstJson.data || firstJson;
-  const records = data.records || [];
-  const total = data.total || records.length;
+    // 如果第一页已经拿全了
+    if (records.length >= total) return records;
 
-  // 如果第一页已经拿全了
-  if (records.length >= total) return records;
-
-  // 否则继续翻页（理论上 100 条/页够用了）
-  const allRecords = [...records];
-  let page = 2;
-  while (allRecords.length < total) {
-    const json = await requestJson(`${API_BASE}/blog/posts?page=${page}&size=100`);
-    const pageData = json.data || json;
-    const pageRecords = pageData.records || [];
-    if (pageRecords.length === 0) break;
-    allRecords.push(...pageRecords);
-    page++;
-  }
-  return allRecords;
+    // 否则继续翻页（理论上 100 条/页够用了）
+    const allRecords = [...records];
+    let page = 2;
+    while (allRecords.length < total) {
+        const json = await requestJson(
+            `${API_BASE}/blog/posts?page=${page}&size=100`,
+        );
+        const pageData = json.data || json;
+        const pageRecords = pageData.records || [];
+        if (pageRecords.length === 0) break;
+        allRecords.push(...pageRecords);
+        page++;
+    }
+    return allRecords;
 }
 
 /**
@@ -133,16 +144,16 @@ async function fetchAllBlogs() {
  * @returns {string} HTML meta 标签字符串
  */
 function buildBlogMetaTags(blog) {
-  const title = escapeHtml(blog.title);
-  const desc = escapeHtml(blog.summary || extractSummary(blog.content));
-  const keywords = BRAND_KEYWORDS;
-  const url = `${SITE_URL}/blog/${blog.id}/`;
+    const title = escapeHtml(blog.title);
+    const desc = escapeHtml(blog.summary || extractSummary(blog.content));
+    const keywords = BRAND_KEYWORDS;
+    const url = `${SITE_URL}/blog/${blog.id}/`;
 
-  return `
+    return `
     <!-- Prerendered SEO: Blog #${blog.id} -->
     <title>${title} | DinQorAI</title>
     <meta name="description" content="${desc}" />
-    ${keywords ? `<meta name="keywords" content="${keywords}" />` : ''}
+    ${keywords ? `<meta name="keywords" content="${keywords}" />` : ""}
     <meta name="robots" content="index, follow" />
     <link rel="canonical" href="${url}" />
 
@@ -166,25 +177,25 @@ function buildBlogMetaTags(blog) {
  * @returns {string} JSON-LD script 标签
  */
 function buildBlogJsonLd(blog) {
-  const ld = {
-    '@context': 'https://schema.org',
-    '@type': 'Article',
-    headline: blog.title,
-    description: blog.summary || extractSummary(blog.content),
-    author: { '@type': 'Person', name: blog.author || 'DinQorAI' },
-    datePublished: blog.date || new Date().toISOString().split('T')[0],
-    publisher: {
-      '@type': 'Organization',
-      name: 'DinQorAI',
-      logo: { '@type': 'ImageObject', url: `${SITE_URL}/logo-512.png` }
-    },
-    mainEntityOfPage: {
-      '@type': 'WebPage',
-      '@id': `${SITE_URL}/blog/${blog.id}/`
-    },
-    keywords: (blog.tags || []).join(', ')
-  };
-  return `<script type="application/ld+json">${JSON.stringify(ld)}</script>`;
+    const ld = {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        headline: blog.title,
+        description: blog.summary || extractSummary(blog.content),
+        author: { "@type": "Person", name: blog.author || "DinQorAI" },
+        datePublished: blog.date || new Date().toISOString().split("T")[0],
+        publisher: {
+            "@type": "Organization",
+            name: "DinQorAI",
+            logo: { "@type": "ImageObject", url: `${SITE_URL}/logo-512.png` },
+        },
+        mainEntityOfPage: {
+            "@type": "WebPage",
+            "@id": `${SITE_URL}/blog/${blog.id}/`,
+        },
+        keywords: (blog.tags || []).join(", "),
+    };
+    return `<script type="application/ld+json">${JSON.stringify(ld)}</script>`;
 }
 
 /**
@@ -193,19 +204,21 @@ function buildBlogJsonLd(blog) {
  * @returns {string} HTML 内容
  */
 function buildBlogNoscriptContent(blog) {
-  const tags = (blog.tags || []).map(t => `<span>${escapeHtml(t)}</span>`).join(' ');
-  const summary = blog.summary || extractSummary(blog.content, 500);
+    const tags = (blog.tags || [])
+        .map((t) => `<span>${escapeHtml(t)}</span>`)
+        .join(" ");
+    const summary = blog.summary || extractSummary(blog.content, 500);
 
-  return `
+    return `
     <noscript>
       <article>
         <header>
-          <span>${escapeHtml(blog.categoryName || blog.category || '')}</span>
+          <span>${escapeHtml(blog.categoryName || blog.category || "")}</span>
           <h1>${escapeHtml(blog.title)}</h1>
           <p>
-            <span>${escapeHtml(blog.author || '')}</span>
-            <time datetime="${blog.date || ''}">${blog.date || ''}</time>
-            <span>${escapeHtml(blog.readTime || '')}</span>
+            <span>${escapeHtml(blog.author || "")}</span>
+            <time datetime="${blog.date || ""}">${blog.date || ""}</time>
+            <span>${escapeHtml(blog.readTime || "")}</span>
           </p>
         </header>
         <div>
@@ -229,35 +242,32 @@ function buildBlogNoscriptContent(blog) {
  * @returns {string} 完整 HTML
  */
 function generatePageHtml(baseHtml, { metaTags, jsonLd, noscriptContent }) {
-  let html = baseHtml;
+    let html = baseHtml;
 
-  // 1. 先从原始 HTML 中移除旧的 canonical（在注入新 meta 之前）
-  html = html.replace(/<link rel="canonical"[^>]*\/?>\s*\n?/i, '');
+    // 1. 先从原始 HTML 中移除旧的 canonical（在注入新 meta 之前）
+    html = html.replace(/<link rel="canonical"[^>]*\/?>\s*\n?/i, "");
 
-  // 2. 移除旧的 <title>
-  html = html.replace(/<title>[^<]*<\/title>\s*\n?/i, '');
+    // 2. 移除旧的 <title>
+    html = html.replace(/<title>[^<]*<\/title>\s*\n?/i, "");
 
-  // 3. 替换主 meta 标签区域（从 Primary Meta Tags 到 Twitter Card 结束）
-  html = html.replace(
-    /<!-- Primary Meta Tags -->[\s\S]*?<!-- Twitter Card -->[\s\S]*?(?=<!-- Additional SEO|$)/i,
-    metaTags + '\n'
-  );
-
-  // 4. 替换原有的 JSON-LD
-  html = html.replace(
-    /<!-- Structured Data \(JSON-LD\) -->[\s\S]*?<\/script>\s*/i,
-    `<!-- Structured Data (JSON-LD) -->\n    ${jsonLd}\n`
-  );
-
-  // 5. 替换 noscript 内容（如果有提供）
-  if (noscriptContent) {
+    // 3. 替换主 meta 标签区域（从 Primary Meta Tags 到 Twitter Card 结束）
     html = html.replace(
-      /<noscript>[\s\S]*?<\/noscript>/i,
-      noscriptContent
+        /<!-- Primary Meta Tags -->[\s\S]*?<!-- Twitter Card -->[\s\S]*?(?=<!-- Additional SEO|$)/i,
+        metaTags + "\n",
     );
-  }
 
-  return html;
+    // 4. 替换原有的 JSON-LD
+    html = html.replace(
+        /<!-- Structured Data \(JSON-LD\) -->[\s\S]*?<\/script>\s*/i,
+        `<!-- Structured Data (JSON-LD) -->\n    ${jsonLd}\n`,
+    );
+
+    // 5. 替换 noscript 内容（如果有提供）
+    if (noscriptContent) {
+        html = html.replace(/<noscript>[\s\S]*?<\/noscript>/i, noscriptContent);
+    }
+
+    return html;
 }
 
 /**
@@ -266,9 +276,9 @@ function generatePageHtml(baseHtml, { metaTags, jsonLd, noscriptContent }) {
  * @param {string} html - HTML 内容
  */
 function writeRouteHtml(route, html) {
-  const dir = path.join(DIST_DIR, route);
-  fs.mkdirSync(dir, { recursive: true });
-  fs.writeFileSync(path.join(dir, 'index.html'), html, 'utf8');
+    const dir = path.join(DIST_DIR, route);
+    fs.mkdirSync(dir, { recursive: true });
+    fs.writeFileSync(path.join(dir, "index.html"), html, "utf8");
 }
 
 /**
@@ -276,92 +286,104 @@ function writeRouteHtml(route, html) {
  * @param {Array} blogs - 博客列表
  */
 function generateDynamicSitemap(blogs) {
-  const today = new Date().toISOString().split('T')[0];
+    const today = new Date().toISOString().split("T")[0];
 
-  // 静态页面
-  const staticUrls = [
-    { loc: '/', priority: '1.0', changefreq: 'weekly', image: {
-      loc: OG_IMAGE,
-      title: 'DinQorAI AI Agent Platform',
-      caption: 'AI agent platform for intelligent conversations, content creation, knowledge management, and task automation',
-    } },
-    { loc: '/blog/', priority: '0.8', changefreq: 'daily' },
-    { loc: '/blog/tags/', priority: '0.6', changefreq: 'weekly' },
-    { loc: '/components', priority: '0.8', changefreq: 'weekly' },
-    { loc: '/modules/drag-drop/', priority: '0.7', changefreq: 'monthly' },
-  ];
+    // 静态页面
+    const staticUrls = [
+        {
+            loc: "/",
+            priority: "1.0",
+            changefreq: "weekly",
+            image: {
+                loc: OG_IMAGE,
+                title: "DinQorAI AI Agent Platform",
+                caption:
+                    "AI agent platform for intelligent conversations, content creation, knowledge management, and task automation",
+            },
+        },
+        { loc: "/blog/", priority: "0.8", changefreq: "daily" },
+        { loc: "/blog/tags/", priority: "0.6", changefreq: "weekly" },
+        { loc: "/components", priority: "0.8", changefreq: "weekly" },
+        { loc: "/modules/drag-drop/", priority: "0.7", changefreq: "monthly" },
+    ];
 
-  const urls = [...staticUrls];
+    const urls = [...staticUrls];
 
-  // 博客文章页
-  for (const blog of blogs) {
-    urls.push({
-      loc: `/blog/${blog.id}/`,
-      priority: '0.7',
-      changefreq: 'monthly',
-      lastmod: blog.date || today,
-    });
-  }
+    // 博客文章页
+    for (const blog of blogs) {
+        urls.push({
+            loc: `/blog/${blog.id}/`,
+            priority: "0.7",
+            changefreq: "monthly",
+            lastmod: blog.date || today,
+        });
+    }
 
-  const urlEntries = urls.map(u => {
-    const lastmod = u.lastmod || today;
-    const image = u.image
-      ? `\n    <image:image>\n      <image:loc>${escapeHtml(u.image.loc)}</image:loc>\n      <image:title>${escapeHtml(u.image.title)}</image:title>\n      <image:caption>${escapeHtml(u.image.caption)}</image:caption>\n    </image:image>`
-      : '';
-    return `  <url>
+    const urlEntries = urls
+        .map((u) => {
+            const lastmod = u.lastmod || today;
+            const image = u.image
+                ? `\n    <image:image>\n      <image:loc>${escapeHtml(u.image.loc)}</image:loc>\n      <image:title>${escapeHtml(u.image.title)}</image:title>\n      <image:caption>${escapeHtml(u.image.caption)}</image:caption>\n    </image:image>`
+                : "";
+            return `  <url>
     <loc>${SITE_URL}${u.loc}</loc>
     <lastmod>${lastmod}</lastmod>
     <changefreq>${u.changefreq}</changefreq>
     <priority>${u.priority}</priority>
     ${image}
   </url>`;
-  }).join('\n');
+        })
+        .join("\n");
 
-  const xml = `<?xml version="1.0" encoding="UTF-8"?>
+    const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
 ${urlEntries}
 </urlset>`;
 
-  fs.writeFileSync(path.join(DIST_DIR, 'sitemap.xml'), xml, 'utf8');
-  console.log(`  sitemap.xml 已更新: ${urls.length} 个 URL`);
+    fs.writeFileSync(path.join(DIST_DIR, "sitemap.xml"), xml, "utf8");
+    console.log(`  sitemap.xml 已更新: ${urls.length} 个 URL`);
 }
 
 // ============ 主流程 ============
 
 async function main() {
-  console.log('\n🔧 SEO 预渲染开始...\n');
+    console.log("\n🔧 SEO 预渲染开始...\n");
 
-  // 检查 dist/index.html 是否存在
-  if (!fs.existsSync(INDEX_HTML_PATH)) {
-    console.error('❌ dist/index.html 不存在，请先运行 vite build');
-    process.exit(1);
-  }
-
-  const baseHtml = fs.readFileSync(INDEX_HTML_PATH, 'utf8');
-  let blogCount = 0;
-
-  // ---- 1. 博客详情页预渲染 ----
-  console.log('📝 获取博客列表...');
-  const blogs = await fetchAllBlogs();
-
-  if (blogs.length > 0) {
-    console.log(`  找到 ${blogs.length} 篇博客，开始生成 HTML...`);
-
-    for (const blog of blogs) {
-      const metaTags = buildBlogMetaTags(blog);
-      const jsonLd = buildBlogJsonLd(blog);
-      const noscript = buildBlogNoscriptContent(blog);
-      const html = generatePageHtml(baseHtml, { metaTags, jsonLd, noscriptContent: noscript });
-      writeRouteHtml(`/blog/${blog.id}`, html);
-      blogCount++;
+    // 检查 dist/index.html 是否存在
+    if (!fs.existsSync(INDEX_HTML_PATH)) {
+        console.error("❌ dist/index.html 不存在，请先运行 vite build");
+        process.exit(1);
     }
-    console.log(`  ✅ ${blogCount} 篇博客 HTML 已生成`);
-  }
 
-  // ---- 2. 博客列表页预渲染 ----
-  console.log('📋 生成博客列表页...');
-  const blogListMeta = `
+    const baseHtml = fs.readFileSync(INDEX_HTML_PATH, "utf8");
+    let blogCount = 0;
+
+    // ---- 1. 博客详情页预渲染 ----
+    console.log("📝 获取博客列表...");
+    const blogs = await fetchAllBlogs();
+
+    if (blogs.length > 0) {
+        console.log(`  找到 ${blogs.length} 篇博客，开始生成 HTML...`);
+
+        for (const blog of blogs) {
+            const metaTags = buildBlogMetaTags(blog);
+            const jsonLd = buildBlogJsonLd(blog);
+            const noscript = buildBlogNoscriptContent(blog);
+            const html = generatePageHtml(baseHtml, {
+                metaTags,
+                jsonLd,
+                noscriptContent: noscript,
+            });
+            writeRouteHtml(`/blog/${blog.id}`, html);
+            blogCount++;
+        }
+        console.log(`  ✅ ${blogCount} 篇博客 HTML 已生成`);
+    }
+
+    // ---- 2. 博客列表页预渲染 ----
+    console.log("📋 生成博客列表页...");
+    const blogListMeta = `
     <title>Blog | DinQorAI</title>
     <meta name="description" content="DinQorAI 技术博客，分享 AI 智能体、AI 内容创作、知识管理、任务自动化与前端工程实践。" />
     <meta name="robots" content="index, follow" />
@@ -378,25 +400,28 @@ async function main() {
     <meta name="twitter:image" content="${OG_IMAGE}" />
   `.trim();
 
-  const blogListJsonLd = `<script type="application/ld+json">${JSON.stringify({
-    '@context': 'https://schema.org',
-    '@type': 'CollectionPage',
-    name: 'Blog | DinQorAI',
-    description: 'Articles about AI agents, AI content creation, knowledge management, task automation, and frontend engineering',
-    url: `${SITE_URL}/blog/`,
-    isPartOf: { '@id': `${SITE_URL}/#website` }
-  })}</script>`;
+    const blogListJsonLd = `<script type="application/ld+json">${JSON.stringify(
+        {
+            "@context": "https://schema.org",
+            "@type": "CollectionPage",
+            name: "Blog | DinQorAI",
+            description:
+                "Articles about AI agents, AI content creation, knowledge management, task automation, and frontend engineering",
+            url: `${SITE_URL}/blog/`,
+            isPartOf: { "@id": `${SITE_URL}/#website` },
+        },
+    )}</script>`;
 
-  const blogListHtml = generatePageHtml(baseHtml, {
-    metaTags: blogListMeta,
-    jsonLd: blogListJsonLd,
-  });
-  writeRouteHtml('/blog', blogListHtml);
-  console.log('  ✅ /blog/index.html 已生成');
+    const blogListHtml = generatePageHtml(baseHtml, {
+        metaTags: blogListMeta,
+        jsonLd: blogListJsonLd,
+    });
+    writeRouteHtml("/blog", blogListHtml);
+    console.log("  ✅ /blog/index.html 已生成");
 
-  // ---- 3. 标签页预渲染 ----
-  console.log('🏷️  生成标签页...');
-  const tagsMeta = `
+    // ---- 3. 标签页预渲染 ----
+    console.log("🏷️  生成标签页...");
+    const tagsMeta = `
     <title>Tags | DinQorAI</title>
     <meta name="description" content="DinQorAI 博客标签 — 按主题浏览前端技术文章" />
     <meta name="robots" content="index, follow" />
@@ -413,34 +438,34 @@ async function main() {
     <meta name="twitter:image" content="${OG_IMAGE}" />
   `.trim();
 
-  const tagsJsonLd = `<script type="application/ld+json">${JSON.stringify({
-    '@context': 'https://schema.org',
-    '@type': 'CollectionPage',
-    name: 'Tags | DinQorAI',
-    url: `${SITE_URL}/blog/tags/`,
-  })}</script>`;
+    const tagsJsonLd = `<script type="application/ld+json">${JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "CollectionPage",
+        name: "Tags | DinQorAI",
+        url: `${SITE_URL}/blog/tags/`,
+    })}</script>`;
 
-  const tagsHtml = generatePageHtml(baseHtml, {
-    metaTags: tagsMeta,
-    jsonLd: tagsJsonLd,
-  });
-  writeRouteHtml('/blog/tags', tagsHtml);
-  console.log('  ✅ /blog/tags/index.html 已生成');
+    const tagsHtml = generatePageHtml(baseHtml, {
+        metaTags: tagsMeta,
+        jsonLd: tagsJsonLd,
+    });
+    writeRouteHtml("/blog/tags", tagsHtml);
+    console.log("  ✅ /blog/tags/index.html 已生成");
 
-  // ---- 4. 生成动态 sitemap ----
-  console.log('🗺️  生成 sitemap.xml...');
-  generateDynamicSitemap(blogs);
+    // ---- 4. 生成动态 sitemap ----
+    console.log("🗺️  生成 sitemap.xml...");
+    generateDynamicSitemap(blogs);
 
-  // ---- 5. 汇总 ----
-  console.log(`\n✅ SEO 预渲染完成！`);
-  console.log(`   博客详情页: ${blogCount} 个`);
-  console.log(`   博客列表页: 1 个 (/blog)`);
-  console.log(`   标签页:     1 个 (/blog/tags)`);
-  console.log(`   sitemap:    ${blogCount + 5} 个 URL`);
-  console.log('');
+    // ---- 5. 汇总 ----
+    console.log(`\n✅ SEO 预渲染完成！`);
+    console.log(`   博客详情页: ${blogCount} 个`);
+    console.log(`   博客列表页: 1 个 (/blog)`);
+    console.log(`   标签页:     1 个 (/blog/tags)`);
+    console.log(`   sitemap:    ${blogCount + 5} 个 URL`);
+    console.log("");
 }
 
-main().catch(err => {
-  console.error('❌ 预渲染失败，已阻止发布以保留现有 sitemap:', err.message);
-  process.exit(1);
+main().catch((err) => {
+    console.error("❌ 预渲染失败，已阻止发布以保留现有 sitemap:", err.message);
+    process.exit(1);
 });

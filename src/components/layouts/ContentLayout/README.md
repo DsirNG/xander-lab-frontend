@@ -27,8 +27,11 @@ ContentLayout/
 适用于基础设施等简单场景展示：
 
 ```jsx
-import { ContentLayout, SimpleDemoSection } from '@components/layouts/ContentLayout';
-import { ScrollText } from 'lucide-react';
+import {
+    ContentLayout,
+    SimpleDemoSection,
+} from "@components/layouts/ContentLayout";
+import { ScrollText } from "lucide-react";
 
 const InfraContent = ({ system }) => {
     const { t } = useTranslation();
@@ -49,7 +52,7 @@ const InfraContent = ({ system }) => {
             scenarios={system.scenarios}
             renderDemoSection={renderDemoSection}
             basePath="/infra"
-            detailButtonText={t('common.viewTheory')}
+            detailButtonText={t("common.viewTheory")}
             detailButtonIcon={ScrollText}
             themeColor="primary"
         />
@@ -62,8 +65,11 @@ const InfraContent = ({ system }) => {
 适用于功能模块等需要代码展示的场景：
 
 ```jsx
-import { ContentLayout, EnhancedDemoSection } from '@components/layouts/ContentLayout';
-import { ExternalLink, Zap } from 'lucide-react';
+import {
+    ContentLayout,
+    EnhancedDemoSection,
+} from "@components/layouts/ContentLayout";
+import { ExternalLink, Zap } from "lucide-react";
 
 const ModuleContent = ({ module }) => {
     const { t } = useTranslation();
@@ -73,7 +79,7 @@ const ModuleContent = ({ module }) => {
             key={index}
             title={scenario.title}
             desc={scenario.desc}
-            code={scenario.code}  // 传入代码字符串
+            code={scenario.code} // 传入代码字符串
         >
             {scenario.demo}
         </EnhancedDemoSection>
@@ -83,7 +89,7 @@ const ModuleContent = ({ module }) => {
     const extraButtons = (
         <div className="flex items-center bg-slate-100  px-6 py-3 rounded-2xl">
             <Zap className="w-4 h-4 text-blue-600 mr-2" />
-            <span>{t('common.implementationDetails')}</span>
+            <span>{t("common.implementationDetails")}</span>
         </div>
     );
 
@@ -93,7 +99,7 @@ const ModuleContent = ({ module }) => {
             scenarios={scenarios}
             renderDemoSection={renderDemoSection}
             basePath="/modules"
-            detailButtonText={t('common.viewDeepDive')}
+            detailButtonText={t("common.viewDeepDive")}
             detailButtonIcon={ExternalLink}
             extraHeaderButtons={extraButtons}
             themeColor="blue-600"
@@ -106,42 +112,42 @@ const ModuleContent = ({ module }) => {
 
 ### ContentLayout Props
 
-| 属性 | 类型 | 必填 | 默认值 | 说明 |
-|------|------|------|--------|------|
-| `item` | Object | ✅ | - | 当前展示的项目（必须包含 id, title, desc） |
-| `scenarios` | Array | ❌ | - | 场景列表 |
-| `renderDemoSection` | Function | ✅ | - | 渲染单个演示区域的函数 |
-| `basePath` | String | ❌ | `''` | 详情链接的基础路径 |
-| `detailButtonText` | String | ❌ | `'查看详情'` | 详情按钮文本 |
-| `detailButtonIcon` | Component | ❌ | - | 详情按钮图标组件 |
-| `extraHeaderButtons` | Node | ❌ | - | 额外的头部按钮 |
-| `themeColor` | String | ❌ | `'primary'` | 主题色（Tailwind 类名） |
-| `children` | Node | ❌ | - | 自定义子内容 |
+| 属性                 | 类型      | 必填 | 默认值       | 说明                                       |
+| -------------------- | --------- | ---- | ------------ | ------------------------------------------ |
+| `item`               | Object    | ✅   | -            | 当前展示的项目（必须包含 id, title, desc） |
+| `scenarios`          | Array     | ❌   | -            | 场景列表                                   |
+| `renderDemoSection`  | Function  | ✅   | -            | 渲染单个演示区域的函数                     |
+| `basePath`           | String    | ❌   | `''`         | 详情链接的基础路径                         |
+| `detailButtonText`   | String    | ❌   | `'查看详情'` | 详情按钮文本                               |
+| `detailButtonIcon`   | Component | ❌   | -            | 详情按钮图标组件                           |
+| `extraHeaderButtons` | Node      | ❌   | -            | 额外的头部按钮                             |
+| `themeColor`         | String    | ❌   | `'primary'`  | 主题色（Tailwind 类名）                    |
+| `children`           | Node      | ❌   | -            | 自定义子内容                               |
 
 ### SimpleDemoSection Props
 
-| 属性 | 类型 | 必填 | 说明 |
-|------|------|------|------|
-| `title` | String | ✅ | 演示标题 |
-| `desc` | String | ✅ | 演示描述 |
-| `children` | Node | ❌ | 演示内容 |
+| 属性       | 类型   | 必填 | 说明     |
+| ---------- | ------ | ---- | -------- |
+| `title`    | String | ✅   | 演示标题 |
+| `desc`     | String | ✅   | 演示描述 |
+| `children` | Node   | ❌   | 演示内容 |
 
 ### EnhancedDemoSection Props
 
-| 属性 | 类型 | 必填 | 说明 |
-|------|------|------|------|
-| `title` | String | ✅ | 演示标题 |
-| `desc` | String | ✅ | 演示描述 |
-| `children` | Node | ❌ | 演示内容 |
-| `code` | String | ❌ | 代码字符串（用于展示） |
+| 属性       | 类型   | 必填 | 说明                   |
+| ---------- | ------ | ---- | ---------------------- |
+| `title`    | String | ✅   | 演示标题               |
+| `desc`     | String | ✅   | 演示描述               |
+| `children` | Node   | ❌   | 演示内容               |
+| `code`     | String | ❌   | 代码字符串（用于展示） |
 
 ## 📊 重构效果
 
 ### 代码量对比
 
-| 文件 | 重构前 | 重构后 | 减少 |
-|------|--------|--------|------|
-| `InfraContent.jsx` | 90 行 | 37 行 | ↓ 59% |
+| 文件                | 重构前 | 重构后 | 减少  |
+| ------------------- | ------ | ------ | ----- |
+| `InfraContent.jsx`  | 90 行  | 37 行  | ↓ 59% |
 | `ModuleContent.jsx` | 268 行 | 130 行 | ↓ 51% |
 
 ### 优势
@@ -174,6 +180,3 @@ const ModuleContent = ({ module }) => {
 - `desc` 或 `description` 字段二选一即可
 - `renderDemoSection` 函数接收 `(scenario, index)` 两个参数
 - 如果有 `detailPages`，会自动显示详情按钮
-
-
-

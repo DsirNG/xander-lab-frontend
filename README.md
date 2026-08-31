@@ -2,7 +2,7 @@
 
 一个现代化的 React 组件库和交互系统展示平台，采用企业级架构标准构建。
 
-##  项目简介
+## 项目简介
 
 DinQorAI 是一个知识分享与学习平台，专注于记录和分享在项目开发过程中积累的实践经验。这里包含了：
 
@@ -14,31 +14,33 @@ DinQorAI 是一个知识分享与学习平台，专注于记录和分享在项�
 
 项目采用模块化设计，所有代码都提供完整源码，可以直接在下次项目中使用，减少重复开发的工作量。同时，这也是一个知识管理平台，帮助自己复习和巩固知识，也为新手开发者提供学习资源，让他们能够找到想要学习的、能够学习的各种实践案例。
 
-##  项目价值
+## 项目价值
 
 - **减少重复开发** - 提供可直接复用的组件和 Hooks，提高开发效率
 - **知识沉淀** - 记录项目中的实践经验，形成个人知识库
 - **学习资源** - 为新手开发者提供真实项目案例和学习材料
 - **持续改进** - 通过实践不断优化和完善代码质量
 
-##  欢迎指正
+## 欢迎指正
 
 本项目旨在分享和学习，如有错误、不足或改进建议，欢迎指出！您的反馈将帮助我们共同进步。
 
 可以通过以下方式反馈：
+
 - 提交 Issue
 - 发起 Pull Request
 - 直接联系维护者
-- 
-##  特性
+-
 
--  **现代化 UI** - 基于 TailwindCSS 和 CSS Modules 的样式系统
--  **国际化支持** - 内置 i18next 多语言支持
--  **企业级架构** - 清晰的分层和模块化设计
--  **高性能** - Vite 构建，快速开发体验
--  **响应式设计** - 完美适配各种设备
--  **动画效果** - 基于 Framer Motion 的流畅动画
--  **类型安全** - TypeScript 类型定义支持
+## 特性
+
+- **现代化 UI** - 基于 TailwindCSS 和 CSS Modules 的样式系统
+- **国际化支持** - 内置 i18next 多语言支持
+- **企业级架构** - 清晰的分层和模块化设计
+- **高性能** - Vite 构建，快速开发体验
+- **响应式设计** - 完美适配各种设备
+- **动画效果** - 基于 Framer Motion 的流畅动画
+- **类型安全** - TypeScript 类型定义支持
 
 ## ️ 技术栈
 
@@ -50,7 +52,7 @@ DinQorAI 是一个知识分享与学习平台，专注于记录和分享在项�
 - **动画**: Framer Motion 12.26.2
 - **图标**: Lucide React 0.562.0
 
-##  快速开始
+## 快速开始
 
 ### 环境要求
 
@@ -108,7 +110,7 @@ npm run preview
 npm run lint
 ```
 
-##  项目结构
+## 项目结构
 
 ```
 xander-lab-frontend/
@@ -142,25 +144,26 @@ xander-lab-frontend/
 └── package.json         # 项目依赖配置
 ```
 
-##  文档
+## 文档
 
 - [项目架构文档](./PROJECT_ARCHITECTURE.md) - 详细的架构说明和设计原则
 - [编码规范](./CODING_STANDARDS.md) - 代码风格和开发规范
 - [快速开始指南](./QUICK_START.md) - 快速上手指南
 
-##  路径别名
+## 路径别名
 
 项目配置了路径别名，简化导入路径：
 
 ```javascript
-import MainLayout from '@components/layouts/MainLayout'
-import HomePage from '@features/home/pages/HomePage'
-import { storage, debounce } from '@utils'
-import { APP_CONFIG } from '@config'
-import '@styles/index.css'
+import MainLayout from "@components/layouts/MainLayout";
+import HomePage from "@features/home/pages/HomePage";
+import { storage, debounce } from "@utils";
+import { APP_CONFIG } from "@config";
+import "@styles/index.css";
 ```
 
 支持的别名：
+
 - `@` → `src/`
 - `@components` → `src/components/`
 - `@features` → `src/features/`
@@ -174,77 +177,77 @@ import '@styles/index.css'
 - `@styles` → `src/styles/`
 - `@types` → `src/types/`
 
-##  核心功能
+## 核心功能
 
 ### 基础设施模块
+
 - **Anchored Overlay** - 锚定浮层定位系统
 - **Focus Trap** - 焦点管理
 - **Scroll Management** - 滚动管理
 
 ### 功能模块
+
 - **Popover** - 气泡浮层
 - **Dropdown Menu** - 下拉菜单
 - **Tooltip** - 文字提示
 - **Drag & Drop** - 拖拽系统
 - **Context Menu** - 右键菜单
 
-##  使用示例
+## 使用示例
 
 ### 使用工具函数
 
 ```javascript
-import { debounce, throttle, storage, cn } from '@utils'
+import { debounce, throttle, storage, cn } from "@utils";
 
 // 防抖
 const debouncedFn = debounce(() => {
-  console.log('防抖执行')
-}, 300)
+    console.log("防抖执行");
+}, 300);
 
 // 节流
 const throttledFn = throttle(() => {
-  console.log('节流执行')
-}, 300)
+    console.log("节流执行");
+}, 300);
 
 // 本地存储
-storage.set('key', { data: 'value' })
-const data = storage.get('key')
+storage.set("key", { data: "value" });
+const data = storage.get("key");
 
 // 类名合并
-const className = cn('base-class', isActive && 'active-class')
+const className = cn("base-class", isActive && "active-class");
 ```
 
 ### 使用服务
 
 ```javascript
-import { themeService, languageService } from '@services'
+import { themeService, languageService } from "@services";
 
 // 主题切换
-themeService.toggleTheme()
+themeService.toggleTheme();
 
 // 语言切换
-languageService.setLanguage('zh')
+languageService.setLanguage("zh");
 ```
 
 ### 使用国际化
 
 ```javascript
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from "react-i18next";
 
 const Component = () => {
-  const { t, i18n } = useTranslation()
-  
-  return (
-    <div>
-      <h1>{t('nav.home')}</h1>
-      <button onClick={() => i18n.changeLanguage('zh')}>
-        切换语言
-      </button>
-    </div>
-  )
-}
+    const { t, i18n } = useTranslation();
+
+    return (
+        <div>
+            <h1>{t("nav.home")}</h1>
+            <button onClick={() => i18n.changeLanguage("zh")}>切换语言</button>
+        </div>
+    );
+};
 ```
 
-##  环境变量
+## 环境变量
 
 创建 `.env` 文件配置环境变量：
 
@@ -259,10 +262,10 @@ VITE_APP_VERSION=1.0.0
 在代码中使用：
 
 ```javascript
-const apiUrl = import.meta.env.VITE_API_BASE_URL
+const apiUrl = import.meta.env.VITE_API_BASE_URL;
 ```
 
-##  构建和部署
+## 构建和部署
 
 ### 开发环境
 
@@ -290,7 +293,7 @@ docker build -t xander-lab-frontend .
 docker run -p 80:80 xander-lab-frontend
 ```
 
-##  贡献指南
+## 贡献指南
 
 1. Fork 本仓库
 2. 创建特性分支 (`git checkout -b feature/AmazingFeature`)
@@ -298,25 +301,26 @@ docker run -p 80:80 xander-lab-frontend
 4. 推送到分支 (`git push origin feature/AmazingFeature`)
 5. 开启 Pull Request
 
-##  开发规范
+## 开发规范
 
 请遵循项目的编码规范，详见 [CODING_STANDARDS.md](./CODING_STANDARDS.md)
 
 主要规范包括：
+
 - 代码风格和命名约定
 - React 组件开发规范
 - CSS 样式规范
 - Git 提交规范
 
-##  许可证
+## 许可证
 
 本项目采用 MIT 许可证 - 查看 [LICENSE](LICENSE) 文件了解详情
 
-##  作者
+## 作者
 
 DinQorAI Team
 
-##  相关链接
+## 相关链接
 
 - [项目架构文档](./PROJECT_ARCHITECTURE.md)
 - [编码规范](./CODING_STANDARDS.md)

@@ -1,17 +1,22 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import http from '@/api/http';
+import React, {
+    useCallback,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+} from "react";
+import http from "@/api/http";
 
 const previewableAsFragment = (language) => {
-    const lang = String(language || '').toLowerCase();
-    return lang === 'html' || lang === 'htm' || lang === 'svg';
+    const lang = String(language || "").toLowerCase();
+    return lang === "html" || lang === "htm" || lang === "svg";
 };
 
-const isFullDocument = (raw) => (
-    /^\s*(<!doctype\s+html|<html\b)/i.test(raw)
-        || /<html[\s>]/i.test(raw)
-        || /<head[\s>]/i.test(raw)
-        || /<body[\s>]/i.test(raw)
-);
+const isFullDocument = (raw) =>
+    /^\s*(<!doctype\s+html|<html\b)/i.test(raw) ||
+    /<html[\s>]/i.test(raw) ||
+    /<head[\s>]/i.test(raw) ||
+    /<body[\s>]/i.test(raw);
 
 const hasClosingHead = (raw) => /<\/head>/i.test(raw);
 
@@ -128,16 +133,19 @@ const injectIntoFullDocument = (raw) => {
         return raw.replace(/<\/head>/i, `${FALLBACK_INJECTION}\n</head>`);
     }
     if (hasOpeningHtml(raw)) {
-        return raw.replace(/<html[^>]*>/i, `$&\n<head>${FALLBACK_INJECTION}</head>`);
+        return raw.replace(
+            /<html[^>]*>/i,
+            `$&\n<head>${FALLBACK_INJECTION}</head>`,
+        );
     }
     return `\n<head>${FALLBACK_INJECTION}</head>\n${raw}`;
 };
 
 const buildFallbackSrcDoc = (code, language) => {
-    const raw = String(code || '');
-    const lang = String(language || '').toLowerCase();
+    const raw = String(code || "");
+    const lang = String(language || "").toLowerCase();
 
-    if (lang === 'svg' && !/<svg[\s>]/i.test(raw)) {
+    if (lang === "svg" && !/<svg[\s>]/i.test(raw)) {
         return buildSvgSkeleton(raw);
     }
 
@@ -164,10 +172,10 @@ const buildFallbackSrcDoc = (code, language) => {
  */
 const HtmlSandboxPreview = ({
     code,
-    language = 'html',
+    language = "html",
     minHeight = 280,
     maxHeight = 1200,
-    title = 'HTML preview',
+    title = "HTML preview",
     className,
 }) => {
     const frameRef = useRef(null);
@@ -178,7 +186,10 @@ const HtmlSandboxPreview = ({
     const debounceRef = useRef(null);
 
     const srcDoc = useMemo(
-        () => (previewableAsFragment(language) ? buildFallbackSrcDoc(code, language) : ''),
+        () =>
+            previewableAsFragment(language)
+                ? buildFallbackSrcDoc(code, language)
+                : "",
         [code, language],
     );
 
@@ -189,10 +200,14 @@ const HtmlSandboxPreview = ({
         clearTimeout(debounceRef.current);
         debounceRef.current = setTimeout(() => {
             const payload = code;
-            http.post('/api/blog-html/previews', { code: payload }, { _silent: true })
+            http.post(
+                "/api/blog-html/previews",
+                { code: payload },
+                { _silent: true },
+            )
                 .then((data) => {
                     if (latestCodeRef.current !== payload) return;
-                    if (typeof data?.pageUrl !== 'string' || !data.pageUrl) {
+                    if (typeof data?.pageUrl !== "string" || !data.pageUrl) {
                         setUseFallback(true);
                         return;
                     }
@@ -200,7 +215,7 @@ const HtmlSandboxPreview = ({
                     setUseFallback(false);
                 })
                 .catch((error) => {
-                    if (error?.name === 'CanceledError') return;
+                    if (error?.name === "CanceledError") return;
                     if (latestCodeRef.current !== payload) return;
                     setUseFallback(true);
                 });
@@ -208,59 +223,66 @@ const HtmlSandboxPreview = ({
         return () => clearTimeout(debounceRef.current);
     }, [code, language]);
 
-    const clampHeight = useCallback((value) => (
-        Math.min(Math.max(Math.round(value), minHeight), maxHeight)
-    ), [minHeight, maxHeight]);
+    const clampHeight = useCallback(
+        (value) => Math.min(Math.max(Math.round(value), minHeight), maxHeight),
+        [minHeight, maxHeight],
+    );
 
-    const handleMessage = useCallback((event) => {
-        if (event.source !== frameRef.current?.contentWindow) return;
-        if (!useFallback && pageUrl) {
-            let expectedOrigin = null;
-            try {
-                expectedOrigin = new URL(pageUrl).origin;
-            } catch {
+    const handleMessage = useCallback(
+        (event) => {
+            if (event.source !== frameRef.current?.contentWindow) return;
+            if (!useFallback && pageUrl) {
+                let expectedOrigin = null;
+                try {
+                    expectedOrigin = new URL(pageUrl).origin;
+                } catch {
+                    return;
+                }
+                if (event.origin !== expectedOrigin) return;
+            } else if (event.origin !== "null") {
                 return;
             }
-            if (event.origin !== expectedOrigin) return;
-        } else if (event.origin !== 'null') {
-            return;
-        }
 
-        if (event.data?.type === '__sandboxDebug') {
-            const frameRect = frameRef.current?.getBoundingClientRect();
-            console.debug('[HtmlSandboxPreview]', {
-                mode: useFallback ? 'srcdoc-fallback' : 'hosted',
+            if (event.data?.type === "__sandboxDebug") {
+                const frameRect = frameRef.current?.getBoundingClientRect();
+                console.debug("[HtmlSandboxPreview]", {
+                    mode: useFallback ? "srcdoc-fallback" : "hosted",
+                    hostScrollY: window.scrollY,
+                    frameTop: frameRect?.top ?? null,
+                    frameHeight: frameRect?.height ?? null,
+                    ...event.data,
+                });
+                return;
+            }
+
+            if (event.data?.type !== "__sandboxHeight") return;
+            const height = event.data?.height;
+            if (typeof height !== "number" || !Number.isFinite(height)) return;
+            const nextHeight = clampHeight(height);
+            console.debug("[HtmlSandboxPreview] height", {
+                reportedHeight: height,
+                appliedHeight: nextHeight,
+                previousHeight: contentHeight,
                 hostScrollY: window.scrollY,
-                frameTop: frameRect?.top ?? null,
-                frameHeight: frameRect?.height ?? null,
-                ...event.data,
             });
-            return;
-        }
-
-        if (event.data?.type !== '__sandboxHeight') return;
-        const height = event.data?.height;
-        if (typeof height !== 'number' || !Number.isFinite(height)) return;
-        const nextHeight = clampHeight(height);
-        console.debug('[HtmlSandboxPreview] height', {
-            reportedHeight: height,
-            appliedHeight: nextHeight,
-            previousHeight: contentHeight,
-            hostScrollY: window.scrollY,
-        });
-        setContentHeight(nextHeight);
-    }, [useFallback, pageUrl, clampHeight, contentHeight]);
+            setContentHeight(nextHeight);
+        },
+        [useFallback, pageUrl, clampHeight, contentHeight],
+    );
 
     useEffect(() => {
-        window.addEventListener('message', handleMessage);
-        return () => window.removeEventListener('message', handleMessage);
+        window.addEventListener("message", handleMessage);
+        return () => window.removeEventListener("message", handleMessage);
     }, [handleMessage]);
 
     const iframeProps = {
         ref: frameRef,
         title,
-        className: `block w-full border-0 bg-white ${className || ''}`,
-        style: { height: contentHeight ?? minHeight, minHeight: `${minHeight}px` },
+        className: `block w-full border-0 bg-white ${className || ""}`,
+        style: {
+            height: contentHeight ?? minHeight,
+            minHeight: `${minHeight}px`,
+        },
     };
 
     if (!useFallback && pageUrl) {
@@ -272,6 +294,6 @@ const HtmlSandboxPreview = ({
     return <iframe {...iframeProps} srcDoc={srcDoc} sandbox="allow-scripts" />;
 };
 
-HtmlSandboxPreview.displayName = 'HtmlSandboxPreview';
+HtmlSandboxPreview.displayName = "HtmlSandboxPreview";
 
 export default HtmlSandboxPreview;

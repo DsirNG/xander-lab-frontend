@@ -69,7 +69,7 @@ export const KANBAN_CODE = `const KanbanDemo = () => {
             ))}
         </div>
     )
-}`
+}`;
 
 export const LAYOUT_CODE = `const LayoutBuilderDemo = () => {
     // Tools sidebar + Grid state

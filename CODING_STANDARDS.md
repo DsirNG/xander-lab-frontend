@@ -1,6 +1,7 @@
 # 编码规范
 
 ## 目录
+
 1. [代码风格](#代码风格)
 2. [命名约定](#命名约定)
 3. [文件组织](#文件组织)
@@ -23,12 +24,12 @@
 ```javascript
 // ✅ 好的
 const obj = {
-  name: 'John',
-  age: 30,
-}
+    name: "John",
+    age: 30,
+};
 
 // ❌ 不好的
-const obj = {name: "John", age: 30};
+const obj = { name: "John", age: 30 };
 ```
 
 ### 空格和换行
@@ -36,25 +37,25 @@ const obj = {name: "John", age: 30};
 ```javascript
 // ✅ 函数参数之间添加空格
 function example(param1, param2) {
-  // ...
+    // ...
 }
 
 // ✅ 运算符两侧添加空格
-const sum = a + b
+const sum = a + b;
 
 // ✅ 对象属性冒号后添加空格
-const obj = { key: 'value' }
+const obj = { key: "value" };
 
 // ✅ 逻辑块之间添加空行
 const Component = () => {
-  const [state, setState] = useState()
-  
-  useEffect(() => {
-    // ...
-  }, [])
-  
-  return <div>Content</div>
-}
+    const [state, setState] = useState();
+
+    useEffect(() => {
+        // ...
+    }, []);
+
+    return <div>Content</div>;
+};
 ```
 
 ---
@@ -85,38 +86,44 @@ BrowserWindow.module.css
 
 ```javascript
 // ✅ 变量和函数: camelCase
-const userName = 'John'
-const handleClick = () => {}
+const userName = "John";
+const handleClick = () => {};
 
 // ✅ 常量: UPPER_SNAKE_CASE
-const API_BASE_URL = 'https://api.example.com'
-const MAX_RETRY_COUNT = 3
+const API_BASE_URL = "https://api.example.com";
+const MAX_RETRY_COUNT = 3;
 
 // ✅ 组件: PascalCase
-const HomePage = () => {}
-const BrowserWindow = () => {}
+const HomePage = () => {};
+const BrowserWindow = () => {};
 
 // ✅ 私有变量/函数: 前缀下划线
-const _internalHelper = () => {}
+const _internalHelper = () => {};
 
 // ✅ 布尔值: is/has/should 前缀
-const isLoading = true
-const hasError = false
-const shouldRender = true
+const isLoading = true;
+const hasError = false;
+const shouldRender = true;
 ```
 
 ### CSS 类命名
 
 ```css
 /* ✅ CSS Modules: camelCase */
-.heroSection { }
-.navLink { }
-.btnPrimary { }
+.heroSection {
+}
+.navLink {
+}
+.btnPrimary {
+}
 
 /* ✅ BEM (如果不使用 CSS Modules): kebab-case */
-.hero-section { }
-.nav-link { }
-.btn--primary { }
+.hero-section {
+}
+.nav-link {
+}
+.btn--primary {
+}
 ```
 
 ---
@@ -181,61 +188,58 @@ import styles from './Component.module.css'
  * @param {string} props.title - 标题
  */
 const Component = ({ title, children }) => {
-  // 1. Hooks 声明
-  const [state, setState] = useState(initialState)
-  const { t } = useTranslation()
-  
-  // 2. 派生状态
-  const derivedValue = useMemo(() => {
-    return computeValue(state)
-  }, [state])
-  
-  // 3. 副作用
-  useEffect(() => {
-    // 副作用逻辑
-    return () => {
-      // 清理函数
-    }
-  }, [])
-  
-  // 4. 事件处理器
-  const handleClick = useCallback(() => {
-    // 处理逻辑
-  }, [])
-  
-  // 5. 条件渲染辅助
-  if (loading) return <Loading />
-  if (error) return <Error />
-  
-  // 6. 主渲染
-  return (
-    <div className={styles.container}>
-      <h1>{title}</h1>
-      {children}
-    </div>
-  )
-}
+    // 1. Hooks 声明
+    const [state, setState] = useState(initialState);
+    const { t } = useTranslation();
 
-export default Component
+    // 2. 派生状态
+    const derivedValue = useMemo(() => {
+        return computeValue(state);
+    }, [state]);
+
+    // 3. 副作用
+    useEffect(() => {
+        // 副作用逻辑
+        return () => {
+            // 清理函数
+        };
+    }, []);
+
+    // 4. 事件处理器
+    const handleClick = useCallback(() => {
+        // 处理逻辑
+    }, []);
+
+    // 5. 条件渲染辅助
+    if (loading) return <Loading />;
+    if (error) return <Error />;
+
+    // 6. 主渲染
+    return (
+        <div className={styles.container}>
+            <h1>{title}</h1>
+            {children}
+        </div>
+    );
+};
+
+export default Component;
 ```
 
 ### Props 规范
 
 ```javascript
 // ✅ 使用解构
-const Component = ({ title, onClick }) => { }
+const Component = ({ title, onClick }) => {};
 
 // ✅ 提供默认值
-const Component = ({ 
-  title = 'Default Title',
-  showIcon = true,
-}) => { }
+const Component = ({ title = "Default Title", showIcon = true }) => {};
 
 // ✅ 使用 PropTypes 或 TypeScript
 Component.propTypes = {
-  title: PropTypes.string.isRequired,
-  onClick: PropTypes.func,
-}
+    title: PropTypes.string.isRequired,
+    onClick: PropTypes.func,
+};
 
 // ✅ JSDoc 注释
 /**
@@ -250,53 +254,60 @@ Component.propTypes = {
 ```javascript
 // ✅ 自定义 Hook 以 use 开头
 const useUserData = (userId) => {
-  const [data, setData] = useState(null)
-  // ...
-  return { data, loading, error }
-}
+    const [data, setData] = useState(null);
+    // ...
+    return { data, loading, error };
+};
 
 // ✅ 依赖数组完整
 useEffect(() => {
-  fetchData(id)
-}, [id]) // 包含所有使用的外部变量
+    fetchData(id);
+}, [id]); // 包含所有使用的外部变量
 
 // ✅ 使用 useCallback 优化函数
-const handleSubmit = useCallback((data) => {
-  // 处理逻辑
-}, [dependency])
+const handleSubmit = useCallback(
+    (data) => {
+        // 处理逻辑
+    },
+    [dependency],
+);
 ```
 
 ### 条件渲染
 
 ```javascript
 // ✅ 简单条件使用 &&
-{isLoggedIn && <UserProfile />}
+{
+    isLoggedIn && <UserProfile />;
+}
 
 // ✅ 二选一使用三元运算符
-{isLoading ? <Spinner /> : <Content />}
+{
+    isLoading ? <Spinner /> : <Content />;
+}
 
 // ✅ 复杂条件提取为变量或函数
 const content = () => {
-  if (isLoading) return <Spinner />
-  if (error) return <Error />
-  return <Content />
-}
+    if (isLoading) return <Spinner />;
+    if (error) return <Error />;
+    return <Content />;
+};
 
-return <div>{content()}</div>
+return <div>{content()}</div>;
 ```
 
 ### 列表渲染
 
 ```javascript
 // ✅ 使用稳定的 key
-{items.map(item => (
-  <Item key={item.id} data={item} />
-))}
+{
+    items.map((item) => <Item key={item.id} data={item} />);
+}
 
 // ❌ 避免使用 index 作为 key（当列表会变化时）
-{items.map((item, index) => (
-  <Item key={index} data={item} />
-))}
+{
+    items.map((item, index) => <Item key={index} data={item} />);
+}
 ```
 
 ---
@@ -307,23 +318,26 @@ return <div>{content()}</div>
 
 ```css
 /* ✅ 使用语义化的类名 */
-.heroSection { }
-.navLink { }
-.btnPrimary { }
+.heroSection {
+}
+.navLink {
+}
+.btnPrimary {
+}
 
 /* ✅ 使用嵌套（如果使用预处理器） */
 .card {
-  padding: 1rem;
-  
-  &:hover {
-    transform: scale(1.05);
-  }
+    padding: 1rem;
+
+    &:hover {
+        transform: scale(1.05);
+    }
 }
 
 /* ✅ 使用 CSS 变量 */
 .button {
-  background-color: var(--color-primary);
-  color: var(--color-text);
+    background-color: var(--color-primary);
+    color: var(--color-text);
 }
 ```
 
@@ -454,8 +468,8 @@ refactor/api-layer
  * @throws {Error} 错误说明
  */
 const functionName = (param1, options = {}) => {
-  // 实现
-}
+    // 实现
+};
 ```
 
 ### 组件注释
@@ -464,12 +478,12 @@ const functionName = (param1, options = {}) => {
 /**
  * BrowserWindow 组件
  * 提供浏览器窗口样式的容器
- * 
+ *
  * @example
  * <BrowserWindow showDots={true}>
  *   <YourContent />
  * </BrowserWindow>
- * 
+ *
  * @param {Object} props
  * @param {React.ReactNode} props.children - 子元素
  * @param {boolean} [props.showDots=true] - 是否显示控制点
@@ -495,13 +509,13 @@ const functionName = (param1, options = {}) => {
 ```javascript
 // ✅ 明确的错误处理
 try {
-  const data = await fetchData()
-  return data
+    const data = await fetchData();
+    return data;
 } catch (error) {
-  console.error('Failed to fetch data:', error)
-  // 显示用户友好的错误信息
-  showErrorToast(t('errors.fetchFailed'))
-  return null
+    console.error("Failed to fetch data:", error);
+    // 显示用户友好的错误信息
+    showErrorToast(t("errors.fetchFailed"));
+    return null;
 }
 ```
 
@@ -510,16 +524,16 @@ try {
 ```javascript
 // ✅ 使用错误边界捕获组件错误
 class ErrorBoundary extends React.Component {
-  componentDidCatch(error, errorInfo) {
-    logError(error, errorInfo)
-  }
-  
-  render() {
-    if (this.state.hasError) {
-      return <ErrorFallback />
+    componentDidCatch(error, errorInfo) {
+        logError(error, errorInfo);
     }
-    return this.props.children
-  }
+
+    render() {
+        if (this.state.hasError) {
+            return <ErrorFallback />;
+        }
+        return this.props.children;
+    }
 }
 ```
 
@@ -532,21 +546,21 @@ class ErrorBoundary extends React.Component {
 ```javascript
 // ✅ 使用 React.memo 避免不必要的重渲染
 const ExpensiveComponent = React.memo(({ data }) => {
-  // 渲染逻辑
-})
+    // 渲染逻辑
+});
 
 // ✅ 使用 useMemo 缓存计算结果
 const expensiveValue = useMemo(() => {
-  return computeExpensiveValue(a, b)
-}, [a, b])
+    return computeExpensiveValue(a, b);
+}, [a, b]);
 
 // ✅ 使用 useCallback 缓存函数
 const handleClick = useCallback(() => {
-  doSomething(id)
-}, [id])
+    doSomething(id);
+}, [id]);
 
 // ✅ 代码分割
-const LazyComponent = React.lazy(() => import('./Component'))
+const LazyComponent = React.lazy(() => import("./Component"));
 ```
 
 ### 图片优化
@@ -593,22 +607,22 @@ const sanitizeInput = (input) => {
 
 ```javascript
 // ✅ 测试文件命名
-Component.test.jsx
-utils.test.js
+Component.test.jsx;
+utils.test.js;
 
 // ✅ 测试结构
-describe('Component', () => {
-  it('should render correctly', () => {
-    // Arrange
-    const props = { title: 'Test' }
-    
-    // Act
-    render(<Component {...props} />)
-    
-    // Assert
-    expect(screen.getByText('Test')).toBeInTheDocument()
-  })
-})
+describe("Component", () => {
+    it("should render correctly", () => {
+        // Arrange
+        const props = { title: "Test" };
+
+        // Act
+        render(<Component {...props} />);
+
+        // Assert
+        expect(screen.getByText("Test")).toBeInTheDocument();
+    });
+});
 ```
 
 ---
@@ -619,14 +633,14 @@ describe('Component', () => {
 
 ```json
 {
-  "editor.formatOnSave": true,
-  "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true
-  },
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "[javascript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  }
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": true
+    },
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "[javascript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    }
 }
 ```
 
@@ -642,4 +656,3 @@ describe('Component', () => {
 **保持代码整洁，遵循规范，提升代码质量！**
 
 **最后更新**: 2026-02-05
-

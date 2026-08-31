@@ -1,10 +1,10 @@
-import { get, post } from '@/api';
+import { get, post } from "@/api";
 
 /**
  * 组件服务
  * 负责动态组件库的数据获取
  */
-const base = '/api/components';
+const base = "/api/components";
 
 const ComponentService = {
     /**
@@ -13,7 +13,7 @@ const ComponentService = {
      * @param {Object} [config] - 额外 axios 配置（如 { signal }）
      * @returns {Promise<Array>} 包含组件的分类列表
      */
-    getMenu: (lang = 'zh', config) => {
+    getMenu: (lang = "zh", config) => {
         return get(`${base}/menu`, { lang }, config);
     },
 
@@ -24,7 +24,7 @@ const ComponentService = {
      * @param {Object} [config] - 额外 axios 配置（如 { signal }）
      * @returns {Promise<Object>} 组件详情对象
      */
-    getComponentDetail: (id, lang = 'zh', config) => {
+    getComponentDetail: (id, lang = "zh", config) => {
         return get(`${base}/${id}`, { lang }, config);
     },
 
@@ -36,7 +36,7 @@ const ComponentService = {
      */
     shareComponent: (data, config) => {
         return post(`${base}/share`, data, config);
-    }
+    },
 };
 
 export default ComponentService;

@@ -1,12 +1,12 @@
-import React, { useState, useEffect, Suspense } from 'react';
-import { useParams, Navigate } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
-import ComponentService from '../services/componentService';
-import ComponentContent from './ComponentContent';
-import { PAGE_REGISTRY } from '../registries/pageRegistry';
+import React, { useState, useEffect, Suspense } from "react";
+import { useParams, Navigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import ComponentService from "../services/componentService";
+import ComponentContent from "./ComponentContent";
+import { PAGE_REGISTRY } from "../registries/pageRegistry";
 
 const ComponentDetailWrapper = () => {
-    const { componentId, '*': subPath } = useParams();
+    const { componentId, "*": subPath } = useParams();
     const { t, i18n } = useTranslation();
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -23,11 +23,12 @@ const ComponentDetailWrapper = () => {
                 const res = await ComponentService.getComponentDetail(
                     componentId,
                     i18n.language,
-                    { signal: controller.signal }
+                    { signal: controller.signal },
                 );
                 setData(res);
             } catch (err) {
-                if (err.name === 'CanceledError' || err.code === 'ERR_CANCELED') return;
+                if (err.name === "CanceledError" || err.code === "ERR_CANCELED")
+                    return;
                 console.error(err);
                 setError(err);
             } finally {
@@ -43,11 +44,19 @@ const ComponentDetailWrapper = () => {
     }, [componentId, i18n.language]);
 
     if (loading && !data) {
-        return <div className="p-8 text-center text-slate-500">{t('components.detail.loading')}</div>;
+        return (
+            <div className="p-8 text-center text-slate-500">
+                {t("components.detail.loading")}
+            </div>
+        );
     }
 
     if (error || !data) {
-        return <div className="p-8 text-center text-red-500">{t('components.detail.error')}</div>;
+        return (
+            <div className="p-8 text-center text-red-500">
+                {t("components.detail.error")}
+            </div>
+        );
     }
 
     // 检查是否在特定的子详情页（如 /guide）
@@ -55,19 +64,26 @@ const ComponentDetailWrapper = () => {
     if (subPath) {
         const isShared = !!data.libraryCode;
         // 查找 subPath 是否匹配任何详情页类型
-        let pageConfig = data.detailPages?.find(p => p.type === subPath);
+        let pageConfig = data.detailPages?.find((p) => p.type === subPath);
 
         // 如果数据库没配，但是是分享组件且访问的是 guide，我们手动指定 DynamicGuide
-        if (!pageConfig && isShared && subPath === 'guide') {
-            pageConfig = { type: 'guide', componentKey: 'DynamicGuide' };
+        if (!pageConfig && isShared && subPath === "guide") {
+            pageConfig = { type: "guide", componentKey: "DynamicGuide" };
         }
 
         if (pageConfig) {
             const PageComponent = PAGE_REGISTRY[pageConfig.componentKey];
             if (PageComponent) {
                 return (
-                    <Suspense fallback={<div>{t('components.detail.loadingPage')}</div>}>
-                        <PageComponent componentId={componentId} initialData={data} />
+                    <Suspense
+                        fallback={
+                            <div>{t("components.detail.loadingPage")}</div>
+                        }
+                    >
+                        <PageComponent
+                            componentId={componentId}
+                            initialData={data}
+                        />
                     </Suspense>
                 );
             }

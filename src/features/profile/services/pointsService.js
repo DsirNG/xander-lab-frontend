@@ -1,6 +1,6 @@
-import { get } from '@api/http';
+import { get } from "@api/http";
 
-const BASE = '/api/points';
+const BASE = "/api/points";
 
 /**
  * 积分数值格式化：后端账本单位为毫分（1 分 = 1000 毫分），
@@ -9,9 +9,17 @@ const BASE = '/api/points';
  * @returns {string} 形如 "2000" 或 "7.84"；空值返回 "—"
  */
 export const formatPoints = (milli) => {
-    if (milli === null || milli === undefined || milli === '' || Number.isNaN(Number(milli))) return '—';
+    if (
+        milli === null ||
+        milli === undefined ||
+        milli === "" ||
+        Number.isNaN(Number(milli))
+    )
+        return "—";
     const points = Number(milli) / 1000;
-    return Number.isInteger(points) ? String(points) : points.toFixed(2).replace(/\.?0+$/, '');
+    return Number.isInteger(points)
+        ? String(points)
+        : points.toFixed(2).replace(/\.?0+$/, "");
 };
 
 /**
@@ -31,7 +39,10 @@ export const pointsService = {
      */
     ledger: ({ page = 1, size = 20 } = {}, config) => {
         const params = Object.fromEntries(
-            Object.entries({ page, size }).filter(([, value]) => value !== '' && value !== undefined && value !== null)
+            Object.entries({ page, size }).filter(
+                ([, value]) =>
+                    value !== "" && value !== undefined && value !== null,
+            ),
         );
         return get(`${BASE}/ledger`, params, config);
     },

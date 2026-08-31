@@ -1,31 +1,52 @@
-import React, { useState } from 'react';
-import { Plus, MoreHorizontal, MessageSquare, Paperclip, Calendar } from 'lucide-react';
-import { useDragDrop } from '@hooks/useDragDrop';
-import Button from '@components/common/Button';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState } from "react";
+import {
+    Plus,
+    MoreHorizontal,
+    MessageSquare,
+    Paperclip,
+    Calendar,
+} from "lucide-react";
+import { useDragDrop } from "@hooks/useDragDrop";
+import Button from "@components/common/Button";
+import { motion, AnimatePresence } from "framer-motion";
 
 const KanbanDemo = () => {
     // Initial State: Columns with items
     const [columns, setColumns] = useState({
         todo: {
-            title: 'To Do',
+            title: "To Do",
             items: [
-                { id: '1', title: 'Research Competitors', tag: 'Strategy', date: 'Oct 24' },
-                { id: '2', title: 'Draft Product Requirements', tag: 'Product', date: 'Oct 25' }
-            ]
+                {
+                    id: "1",
+                    title: "Research Competitors",
+                    tag: "Strategy",
+                    date: "Oct 24",
+                },
+                {
+                    id: "2",
+                    title: "Draft Product Requirements",
+                    tag: "Product",
+                    date: "Oct 25",
+                },
+            ],
         },
         inProgress: {
-            title: 'In Progress',
+            title: "In Progress",
             items: [
-                { id: '3', title: 'Design System Update', tag: 'Design', date: 'Oct 26' }
-            ]
+                {
+                    id: "3",
+                    title: "Design System Update",
+                    tag: "Design",
+                    date: "Oct 26",
+                },
+            ],
         },
         done: {
-            title: 'Done',
+            title: "Done",
             items: [
-                { id: '4', title: 'Setup Repo', tag: 'Dev', date: 'Oct 20' }
-            ]
-        }
+                { id: "4", title: "Setup Repo", tag: "Dev", date: "Oct 20" },
+            ],
+        },
     });
 
     const dragDrop = useDragDrop({
@@ -33,11 +54,16 @@ const KanbanDemo = () => {
             // Early exit if source or target is invalid
             if (!source || !target) return;
 
-            const sourceColId = Object.keys(columns).find(key => columns[key].items.find(i => i.id === source.id));
-            const targetColId = Object.keys(columns).find(key => columns[key].items.find(i => i.id === target.id));
+            const sourceColId = Object.keys(columns).find((key) =>
+                columns[key].items.find((i) => i.id === source.id),
+            );
+            const targetColId = Object.keys(columns).find((key) =>
+                columns[key].items.find((i) => i.id === target.id),
+            );
 
             // If dragging to a column header (target is a string representing column ID)
-            const isTargetColumn = typeof target === 'string' && columns[target];
+            const isTargetColumn =
+                typeof target === "string" && columns[target];
 
             if (isTargetColumn) {
                 const colId = target;
@@ -46,15 +72,20 @@ const KanbanDemo = () => {
                 const sourceItems = [...columns[sourceColId].items];
 
                 // Remove from source
-                const itemIndex = sourceItems.findIndex(i => i.id === source.id);
+                const itemIndex = sourceItems.findIndex(
+                    (i) => i.id === source.id,
+                );
                 if (itemIndex > -1) sourceItems.splice(itemIndex, 1);
 
                 const targetItems = [...columns[colId].items, source];
 
                 setColumns({
                     ...columns,
-                    [sourceColId]: { ...columns[sourceColId], items: sourceItems },
-                    [colId]: { ...columns[colId], items: targetItems }
+                    [sourceColId]: {
+                        ...columns[sourceColId],
+                        items: sourceItems,
+                    },
+                    [colId]: { ...columns[colId], items: targetItems },
                 });
 
                 return;
@@ -66,7 +97,9 @@ const KanbanDemo = () => {
                 const targetItems = [...columns[targetColId].items];
 
                 // Remove source
-                const sourceIndex = sourceItems.findIndex(i => i.id === source.id);
+                const sourceIndex = sourceItems.findIndex(
+                    (i) => i.id === source.id,
+                );
                 sourceItems.splice(sourceIndex, 1);
 
                 // Add to target
@@ -79,8 +112,12 @@ const KanbanDemo = () => {
                     // Re-implement for clarity:
 
                     const newItems = [...columns[sourceColId].items];
-                    const oldIdx = newItems.findIndex(i => i.id === source.id);
-                    const newIdx = newItems.findIndex(i => i.id === target.id);
+                    const oldIdx = newItems.findIndex(
+                        (i) => i.id === source.id,
+                    );
+                    const newIdx = newItems.findIndex(
+                        (i) => i.id === target.id,
+                    );
 
                     newItems.splice(oldIdx, 1);
                     // If moving down, the target index might have shifted if we don't account for removal logic.
@@ -93,18 +130,28 @@ const KanbanDemo = () => {
 
                     setColumns({
                         ...columns,
-                        [sourceColId]: { ...columns[sourceColId], items: newItems }
+                        [sourceColId]: {
+                            ...columns[sourceColId],
+                            items: newItems,
+                        },
                     });
-
                 } else {
                     // Moving between columns
-                    const targetIndex = targetItems.findIndex(i => i.id === target.id);
+                    const targetIndex = targetItems.findIndex(
+                        (i) => i.id === target.id,
+                    );
                     targetItems.splice(targetIndex, 0, source);
 
                     setColumns({
                         ...columns,
-                        [sourceColId]: { ...columns[sourceColId], items: sourceItems },
-                        [targetColId]: { ...columns[targetColId], items: targetItems }
+                        [sourceColId]: {
+                            ...columns[sourceColId],
+                            items: sourceItems,
+                        },
+                        [targetColId]: {
+                            ...columns[targetColId],
+                            items: targetItems,
+                        },
                     });
                 }
             }
@@ -118,18 +165,17 @@ const KanbanDemo = () => {
             el.style.height = `${rect.height}px`;
 
             // Remove transform/layout animations if any (framer-motion might leave inline styles)
-            el.style.transform = 'none';
+            el.style.transform = "none";
             // Ensure background and border are opaque/clean
-            el.style.opacity = '1';
+            el.style.opacity = "1";
 
             // Calculate offset to keeping position relative to cursor
             const offsetX = event.clientX - rect.left;
             const offsetY = event.clientY - rect.top;
 
             return { el, offsetX, offsetY };
-        }
+        },
     });
-
 
     return (
         <div className="flex space-x-4 sm:space-x-6 overflow-x-auto pb-4 w-full h-[400px] max-h-[70dvh] min-h-[300px]">
@@ -149,12 +195,18 @@ const KanbanDemo = () => {
                     {/* Column Header */}
                     <div className="p-4 flex items-center justify-between">
                         <div className="flex items-center space-x-2">
-                            <div className="font-bold text-slate-700 ">{col.title}</div>
+                            <div className="font-bold text-slate-700 ">
+                                {col.title}
+                            </div>
                             <span className="bg-slate-200  text-slate-500  px-2 py-0.5 rounded-full text-xs font-bold">
                                 {col.items.length}
                             </span>
                         </div>
-                        <Button variant="ghost" size="xs" className="h-auto w-auto p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-200 transition-colors">
+                        <Button
+                            variant="ghost"
+                            size="xs"
+                            className="h-auto w-auto p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-200 transition-colors"
+                        >
                             <Plus className="w-4 h-4" />
                         </Button>
                     </div>
@@ -162,7 +214,7 @@ const KanbanDemo = () => {
                     {/* Column Items */}
                     <motion.div
                         layoutScroll
-                        style={{ scrollbarGutter: 'stable' }}
+                        style={{ scrollbarGutter: "stable" }}
                         className="flex-1 overflow-y-auto overflow-x-hidden p-3 space-y-3 min-h-[100px] select-none"
                     >
                         <AnimatePresence mode="popLayout">
@@ -171,30 +223,42 @@ const KanbanDemo = () => {
                                     layout
                                     layoutId={item.id}
                                     key={item.id}
-                                    onPointerDown={(e) => dragDrop.handleDragStart(item, e)}
-                                    onPointerMove={(e) => dragDrop.handleDragOver(item, e)}
+                                    onPointerDown={(e) =>
+                                        dragDrop.handleDragStart(item, e)
+                                    }
+                                    onPointerMove={(e) =>
+                                        dragDrop.handleDragOver(item, e)
+                                    }
                                     // onDragLeave={dragDrop.handleDragLeave} // Optional, sometimes causes flicker if layouts update fast
-                                    onPointerUp={(e) => dragDrop.handleDrop(item, e)}
+                                    onPointerUp={(e) =>
+                                        dragDrop.handleDrop(item, e)
+                                    }
                                     initial={{ opacity: 0, y: 10 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     exit={{ opacity: 0, scale: 0.9 }}
-                                    style={{ touchAction: 'none' }}
+                                    style={{ touchAction: "none" }}
                                     className={`
                                         bg-white  p-4 rounded-xl shadow-sm border border-slate-200 cursor-grab active:cursor-grabbing group
-                                        ${dragDrop.draggedItem?.id === item.id ? 'opacity-50 border-dashed' : ''}
-                                        ${dragDrop.dragOverItem?.id === item.id ? 'ring-2 ring-blue-500 ring-offset-2 ring-offset-slate-100' : ''}
+                                        ${dragDrop.draggedItem?.id === item.id ? "opacity-50 border-dashed" : ""}
+                                        ${dragDrop.dragOverItem?.id === item.id ? "ring-2 ring-blue-500 ring-offset-2 ring-offset-slate-100" : ""}
                                     `}
                                 >
                                     <div className="flex justify-between items-start mb-2">
-                                        <span className={`text-[10px] font-bold px-2 py-1 rounded-md mb-2 inline-block
-                                            ${item.tag === 'Strategy' ? 'bg-purple-100 text-purple-600' : ''}
-                                            ${item.tag === 'Product' ? 'bg-orange-100 text-orange-600' : ''}
-                                            ${item.tag === 'Design' ? 'bg-pink-100 text-pink-600' : ''}
-                                            ${item.tag === 'Dev' ? 'bg-blue-100 text-blue-600' : ''}
-                                         `}>
+                                        <span
+                                            className={`text-[10px] font-bold px-2 py-1 rounded-md mb-2 inline-block
+                                            ${item.tag === "Strategy" ? "bg-purple-100 text-purple-600" : ""}
+                                            ${item.tag === "Product" ? "bg-orange-100 text-orange-600" : ""}
+                                            ${item.tag === "Design" ? "bg-pink-100 text-pink-600" : ""}
+                                            ${item.tag === "Dev" ? "bg-blue-100 text-blue-600" : ""}
+                                         `}
+                                        >
                                             {item.tag}
                                         </span>
-                                        <Button variant="ghost" size="xs" className="h-auto w-auto p-2 min-w-[44px] min-h-[44px] grid place-items-center text-slate-400 hover:text-slate-600 transition-opacity sm:opacity-0 sm:group-hover:opacity-100">
+                                        <Button
+                                            variant="ghost"
+                                            size="xs"
+                                            className="h-auto w-auto p-2 min-w-[44px] min-h-[44px] grid place-items-center text-slate-400 hover:text-slate-600 transition-opacity sm:opacity-0 sm:group-hover:opacity-100"
+                                        >
                                             <MoreHorizontal className="w-4 h-4" />
                                         </Button>
                                     </div>
@@ -235,7 +299,9 @@ const KanbanDemo = () => {
                                         e.preventDefault();
                                         // e.stopPropagation();
                                     }}
-                                    onPointerUp={(e) => dragDrop.handleDrop(colId, e)}
+                                    onPointerUp={(e) =>
+                                        dragDrop.handleDrop(colId, e)
+                                    }
                                     className="h-full border-2 border-dashed border-slate-200 rounded-xl flex items-center justify-center text-slate-400 text-sm font-medium"
                                 >
                                     Drop here
@@ -244,9 +310,8 @@ const KanbanDemo = () => {
                         </AnimatePresence>
                     </motion.div>
                 </div>
-            ))
-            }
-        </div >
+            ))}
+        </div>
     );
 };
 

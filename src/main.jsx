@@ -5,14 +5,14 @@
  * @created 2026-02-05
  */
 
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import '@styles/index.css'
-import '@locales'
-import App from './App.jsx'
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import "@styles/index.css";
+import "@locales";
+import App from "./App.jsx";
 
-createRoot(document.getElementById('root')).render(
-  <StrictMode>
-    <App />
-  </StrictMode>,
-)
+createRoot(document.getElementById("root")).render(
+    <StrictMode>
+        <App />
+    </StrictMode>,
+);

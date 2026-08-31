@@ -1,23 +1,26 @@
-import React, { useMemo } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
-import CustomSelect from '@components/common/CustomSelect';
-import Button from '@components/common/Button';
+import React, { useMemo } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import CustomSelect from "@components/common/CustomSelect";
+import Button from "@components/common/Button";
 
 const DEFAULT_PAGE_SIZE_OPTIONS = [5, 10, 15, 20];
 
 const buildPageItems = (page, totalPages) => {
-    const pages = Array.from({ length: totalPages }, (_, index) => index + 1)
-        .filter((pageNumber) => (
-            totalPages <= 5
-            || pageNumber === 1
-            || pageNumber === totalPages
-            || Math.abs(pageNumber - page) <= 1
-        ));
+    const pages = Array.from(
+        { length: totalPages },
+        (_, index) => index + 1,
+    ).filter(
+        (pageNumber) =>
+            totalPages <= 5 ||
+            pageNumber === 1 ||
+            pageNumber === totalPages ||
+            Math.abs(pageNumber - page) <= 1,
+    );
 
     return pages.reduce((acc, pageNumber, index, list) => {
         if (index > 0 && pageNumber - list[index - 1] > 1) {
-            acc.push('ellipsis');
+            acc.push("ellipsis");
         }
         acc.push(pageNumber);
         return acc;
@@ -35,7 +38,7 @@ const Pagination = ({
     onPageChange,
     onPageSizeChange,
     disabled = false,
-    className = '',
+    className = "",
     hideWhenEmpty = true,
 }) => {
     const { t } = useTranslation();
@@ -43,28 +46,37 @@ const Pagination = ({
     const totalPages = Math.max(1, Math.ceil(total / pageSize) || 1);
     const from = total === 0 ? 0 : (page - 1) * pageSize + 1;
     const to = Math.min(page * pageSize, total);
-    const pageItems = useMemo(() => buildPageItems(page, totalPages), [page, totalPages]);
+    const pageItems = useMemo(
+        () => buildPageItems(page, totalPages),
+        [page, totalPages],
+    );
 
-    const sizeOptions = useMemo(() => (
-        pageSizeOptions.map((size) => ({
-            value: String(size),
-            label: t('common.pagination.pageSizeOption', { size }),
-        }))
-    ), [pageSizeOptions, t]);
+    const sizeOptions = useMemo(
+        () =>
+            pageSizeOptions.map((size) => ({
+                value: String(size),
+                label: t("common.pagination.pageSizeOption", { size }),
+            })),
+        [pageSizeOptions, t],
+    );
 
     if (hideWhenEmpty && total <= 0) return null;
 
     const handlePageSizeChange = (value) => {
         const nextSize = Number(value);
-        const safeSize = pageSizeOptions.includes(nextSize) ? nextSize : pageSizeOptions[0];
+        const safeSize = pageSizeOptions.includes(nextSize)
+            ? nextSize
+            : pageSizeOptions[0];
         onPageSizeChange?.(safeSize);
     };
 
     return (
-        <div className={`flex shrink-0 flex-col gap-2 px-3 py-2.5 sm:flex-row sm:items-center sm:justify-between sm:px-4 ${className}`}>
+        <div
+            className={`flex shrink-0 flex-col gap-2 px-3 py-2.5 sm:flex-row sm:items-center sm:justify-between sm:px-4 ${className}`}
+        >
             <div className="flex flex-wrap items-center gap-2">
                 <div className="text-xs font-medium text-ink-faint">
-                    {t('common.pagination.pageInfo', { from, to, total })}
+                    {t("common.pagination.pageInfo", { from, to, total })}
                 </div>
                 <div className="w-[7.5rem]">
                     <CustomSelect
@@ -82,12 +94,17 @@ const Pagination = ({
                     variant="outline"
                     size="lg"
                     icon={ChevronLeft}
-                    aria-label={t('common.pagination.prevPage')}
+                    aria-label={t("common.pagination.prevPage")}
                     className="md:h-7 md:w-7"
                 />
-                {pageItems.map((item, index) => (
-                    item === 'ellipsis' ? (
-                        <span key={`ellipsis-${index}`} className="px-1 text-micro text-ink-faint">…</span>
+                {pageItems.map((item, index) =>
+                    item === "ellipsis" ? (
+                        <span
+                            key={`ellipsis-${index}`}
+                            className="px-1 text-micro text-ink-faint"
+                        >
+                            …
+                        </span>
                     ) : (
                         <Button
                             key={item}
@@ -97,21 +114,23 @@ const Pagination = ({
                             size="lg"
                             className={`md:h-7 md:w-7 ${
                                 page === item
-                                    ? 'bg-accent text-white border-accent hover:bg-accent hover:text-white hover:border-accent'
-                                    : ''
+                                    ? "bg-accent text-white border-accent hover:bg-accent hover:text-white hover:border-accent"
+                                    : ""
                             }`}
                         >
                             {item}
                         </Button>
-                    )
-                ))}
+                    ),
+                )}
                 <Button
-                    onClick={() => onPageChange?.(Math.min(totalPages, page + 1))}
+                    onClick={() =>
+                        onPageChange?.(Math.min(totalPages, page + 1))
+                    }
                     disabled={disabled || page >= totalPages}
                     variant="outline"
                     size="lg"
                     icon={ChevronRight}
-                    aria-label={t('common.pagination.nextPage')}
+                    aria-label={t("common.pagination.nextPage")}
                     className="md:h-7 md:w-7"
                 />
             </div>

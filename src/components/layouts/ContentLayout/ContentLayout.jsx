@@ -1,14 +1,14 @@
-import React from 'react';
-import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { Zap, MousePointer2 } from 'lucide-react';
-import PropTypes from 'prop-types';
+import React from "react";
+import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import { Zap, MousePointer2 } from "lucide-react";
+import PropTypes from "prop-types";
 
 const THEME_TEXT = {
-    accent: 'text-accent',
-    'blue-600': 'text-blue-600',
-    'emerald-600': 'text-emerald-600',
+    accent: "text-accent",
+    "blue-600": "text-blue-600",
+    "emerald-600": "text-emerald-600",
 };
 
 /**
@@ -17,12 +17,12 @@ const THEME_TEXT = {
  */
 const ContentLayout = ({
     item,
-    basePath = '',
+    basePath = "",
     detailButtonText,
     detailButtonIcon: DetailButtonIcon,
     extraHeaderButtons,
-    themeColor = 'accent',
-    children
+    themeColor = "accent",
+    children,
 }) => {
     const { t } = useTranslation();
 
@@ -58,9 +58,15 @@ const ContentLayout = ({
                             to={`${basePath}/${item.id}/${item.detailPages[0].type}`}
                             className="flex items-center gap-2 bg-ink text-white px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl font-bold text-caption sm:text-body hover:scale-105 transition-transform shadow-xl whitespace-nowrap"
                         >
-                            {DetailButtonIcon && <DetailButtonIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />}
-                            <span className="hidden sm:inline">{detailButtonText || t('common.viewDetails')}</span>
-                            <span className="sm:hidden">{t('common.viewDetails')}</span>
+                            {DetailButtonIcon && (
+                                <DetailButtonIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                            )}
+                            <span className="hidden sm:inline">
+                                {detailButtonText || t("common.viewDetails")}
+                            </span>
+                            <span className="sm:hidden">
+                                {t("common.viewDetails")}
+                            </span>
                         </Link>
                     )}
                 </div>
@@ -68,19 +74,23 @@ const ContentLayout = ({
 
             {/* 场景演示分隔线 */}
             <div className="space-y-4 mb-10">
-                <div className={`text-caption font-black uppercase tracking-[0.2em] ${THEME_TEXT[themeColor] || 'text-accent'} flex items-center`}>
+                <div
+                    className={`text-caption font-black uppercase tracking-[0.2em] ${THEME_TEXT[themeColor] || "text-accent"} flex items-center`}
+                >
                     <MousePointer2 className="w-3 h-3 mr-2" />
-                    {t('common.liveScenarios')}
+                    {t("common.liveScenarios")}
                 </div>
                 <div className="h-px bg-border w-full" />
             </div>
 
             {/* 场景演示区域 */}
             <div className="grid grid-cols-1">
-                {React.Children.count(children) > 0 ? children : (
+                {React.Children.count(children) > 0 ? (
+                    children
+                ) : (
                     <div className="min-h-[400px] flex flex-col items-center justify-center text-ink-faint">
                         <Zap className="w-12 h-12 mb-4 opacity-20" />
-                        <div>{t('common.comingSoon')}</div>
+                        <div>{t("common.comingSoon")}</div>
                     </div>
                 )}
             </div>
@@ -95,7 +105,7 @@ ContentLayout.propTypes = {
         title: PropTypes.string.isRequired,
         desc: PropTypes.string,
         description: PropTypes.string,
-        detailPages: PropTypes.array
+        detailPages: PropTypes.array,
     }).isRequired,
     // 基础路径（用于详情链接）
     basePath: PropTypes.string,
@@ -108,7 +118,7 @@ ContentLayout.propTypes = {
     // 主题色
     themeColor: PropTypes.string,
     // 自定义子内容（场景演示由消费方作为 children 传入）
-    children: PropTypes.node
+    children: PropTypes.node,
 };
 
 export default ContentLayout;

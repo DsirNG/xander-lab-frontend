@@ -1,10 +1,14 @@
-import React from 'react';
-import { useTranslation } from 'react-i18next';
-import { useToast } from '@/hooks/useToast';
+import React from "react";
+import { useTranslation } from "react-i18next";
+import { useToast } from "@/hooks/useToast";
 import {
-    Activity, Clock, ExternalLink, Layers,
-    XCircle, Palette
-} from 'lucide-react';
+    Activity,
+    Clock,
+    ExternalLink,
+    Layers,
+    XCircle,
+    Palette,
+} from "lucide-react";
 
 /**
  * Toast 场景演示组件集 - 实时 props 控制版
@@ -19,16 +23,17 @@ export const ToastBasicDemo = () => {
         toast[type](msg, {
             showProgress: false,
             showClose: false,
-            duration: 3000
+            duration: 3000,
         });
     };
 
     const triggerCustomClass = () => {
-        toast.info(t('components.toast.scenarios.basic.customMsg'), {
-            className: 'bg-gradient-to-r from-purple-500/10 to-blue-500/10 border-purple-500/20 text-purple-600  !shadow-purple-500/20',
+        toast.info(t("components.toast.scenarios.basic.customMsg"), {
+            className:
+                "bg-gradient-to-r from-purple-500/10 to-blue-500/10 border-purple-500/20 text-purple-600  !shadow-purple-500/20",
             icon: <Activity className="w-5 h-5 text-purple-500" />,
             showProgress: false,
-            showClose: true
+            showClose: true,
         });
     };
 
@@ -36,28 +41,60 @@ export const ToastBasicDemo = () => {
         <div className="flex flex-col gap-6">
             <div className="flex flex-wrap gap-3">
                 <button
-                    onClick={() => triggerSimple('success', t('components.toast.scenarios.basic.success'))}
+                    onClick={() =>
+                        triggerSimple(
+                            "success",
+                            t("components.toast.scenarios.basic.success"),
+                        )
+                    }
                     className="px-5 py-2.5 bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 rounded-xl text-xs font-black"
                 >
-                    {t('components.toast.scenarios.basic.success_btn', 'Success (Minimal)')}
+                    {t(
+                        "components.toast.scenarios.basic.success_btn",
+                        "Success (Minimal)",
+                    )}
                 </button>
                 <button
-                    onClick={() => triggerSimple('error', t('components.toast.scenarios.basic.error'))}
+                    onClick={() =>
+                        triggerSimple(
+                            "error",
+                            t("components.toast.scenarios.basic.error"),
+                        )
+                    }
                     className="px-5 py-2.5 bg-rose-500/10 text-rose-600 border border-rose-500/20 rounded-xl text-xs font-black"
                 >
-                    {t('components.toast.scenarios.basic.error_btn', 'Error (Minimal)')}
+                    {t(
+                        "components.toast.scenarios.basic.error_btn",
+                        "Error (Minimal)",
+                    )}
                 </button>
                 <button
-                    onClick={() => triggerSimple('info', t('components.toast.scenarios.basic.info'))}
+                    onClick={() =>
+                        triggerSimple(
+                            "info",
+                            t("components.toast.scenarios.basic.info"),
+                        )
+                    }
                     className="px-5 py-2.5 bg-blue-500/10 text-blue-600 border border-blue-500/20 rounded-xl text-xs font-black"
                 >
-                    {t('components.toast.scenarios.basic.info_btn', 'Info (Minimal)')}
+                    {t(
+                        "components.toast.scenarios.basic.info_btn",
+                        "Info (Minimal)",
+                    )}
                 </button>
                 <button
-                    onClick={() => triggerSimple('warning', t('components.toast.scenarios.basic.warning'))}
+                    onClick={() =>
+                        triggerSimple(
+                            "warning",
+                            t("components.toast.scenarios.basic.warning"),
+                        )
+                    }
                     className="px-5 py-2.5 bg-amber-500/10 text-amber-600 border border-amber-500/20 rounded-xl text-xs font-black"
                 >
-                    {t('components.toast.scenarios.basic.warning_btn', 'Warning (Minimal)')}
+                    {t(
+                        "components.toast.scenarios.basic.warning_btn",
+                        "Warning (Minimal)",
+                    )}
                 </button>
             </div>
 
@@ -67,7 +104,7 @@ export const ToastBasicDemo = () => {
                     className="flex items-center gap-2 px-5 py-2.5 bg-purple-500 text-white rounded-xl text-xs font-black shadow-lg shadow-purple-500/20"
                 >
                     <Palette className="w-4 h-4" />
-                    {t('components.toast.scenarios.basic.custom')}
+                    {t("components.toast.scenarios.basic.custom")}
                 </button>
             </div>
         </div>
@@ -82,21 +119,20 @@ export const ToastHoverDemo = () => {
     return (
         <div className="flex flex-col gap-4">
             <div className="text-xs text-slate-500 font-bold">
-                {t('components.toast.scenarios.physics.hint')}
+                {t("components.toast.scenarios.physics.hint")}
             </div>
             <button
-                onClick={() => toast.warning(
-                    t('components.toast.scenarios.physics.msg'),
-                    {
+                onClick={() =>
+                    toast.warning(t("components.toast.scenarios.physics.msg"), {
                         duration: 6000,
                         pauseOnHover: true,
-                        showProgress: true
-                    }
-                )}
+                        showProgress: true,
+                    })
+                }
                 className="w-fit px-6 py-3 bg-primary text-white rounded-2xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2"
             >
                 <Clock className="w-4 h-4" />
-                {t('components.toast.scenarios.physics.btn')}
+                {t("components.toast.scenarios.physics.btn")}
             </button>
         </div>
     );
@@ -110,21 +146,20 @@ export const ToastManualDemo = () => {
     return (
         <div className="flex flex-col gap-4">
             <div className="text-xs text-slate-500 font-bold">
-                {t('components.toast.scenarios.manual.hint')}
+                {t("components.toast.scenarios.manual.hint")}
             </div>
             <button
-                onClick={() => toast.error(
-                    t('components.toast.scenarios.manual.msg'),
-                    {
+                onClick={() =>
+                    toast.error(t("components.toast.scenarios.manual.msg"), {
                         duration: 10000,
                         showClose: true,
-                        showProgress: false
-                    }
-                )}
+                        showProgress: false,
+                    })
+                }
                 className="w-fit px-6 py-3 bg-rose-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2"
             >
                 <XCircle className="w-4 h-4" />
-                {t('components.toast.scenarios.manual.btn')}
+                {t("components.toast.scenarios.manual.btn")}
             </button>
         </div>
     );
@@ -138,25 +173,29 @@ export const ToastActionDemo = () => {
     return (
         <div className="flex flex-col gap-4">
             <div className="text-xs text-slate-500 font-bold">
-                {t('components.toast.scenarios.action.hint')}
+                {t("components.toast.scenarios.action.hint")}
             </div>
             <button
-                onClick={() => toast.success(
-                    <div className="flex items-center gap-3">
-                        <span>{t('components.toast.scenarios.action.msg')}</span>
-                        <a
-                            href="/blog"
-                            className="bg-emerald-500 text-white px-2 py-0.5 rounded text-[9px] flex items-center gap-1"
-                            onClick={(e) => e.stopPropagation()}
-                        >
-                            READ <ExternalLink className="w-2 h-2" />
-                        </a>
-                    </div>,
-                    { duration: 5000, showProgress: true }
-                )}
+                onClick={() =>
+                    toast.success(
+                        <div className="flex items-center gap-3">
+                            <span>
+                                {t("components.toast.scenarios.action.msg")}
+                            </span>
+                            <a
+                                href="/blog"
+                                className="bg-emerald-500 text-white px-2 py-0.5 rounded text-[9px] flex items-center gap-1"
+                                onClick={(e) => e.stopPropagation()}
+                            >
+                                READ <ExternalLink className="w-2 h-2" />
+                            </a>
+                        </div>,
+                        { duration: 5000, showProgress: true },
+                    )
+                }
                 className="w-fit px-6 py-3 bg-white  text-emerald-600 border border-emerald-500/30 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-emerald-50 transition-all"
             >
-                {t('components.toast.scenarios.action.btn')}
+                {t("components.toast.scenarios.action.btn")}
             </button>
         </div>
     );
@@ -170,16 +209,18 @@ export const ToastNoHoverDemo = () => {
     return (
         <div className="flex flex-col gap-4">
             <div className="text-xs text-slate-500 font-bold">
-                {t('components.toast.scenarios.comparison.hint')}
+                {t("components.toast.scenarios.comparison.hint")}
             </div>
             <button
-                onClick={() => toast.info(
-                    t('components.toast.scenarios.comparison.msg'),
-                    { pauseOnHover: false, showProgress: true }
-                )}
+                onClick={() =>
+                    toast.info(t("components.toast.scenarios.comparison.msg"), {
+                        pauseOnHover: false,
+                        showProgress: true,
+                    })
+                }
                 className="w-fit px-6 py-3 bg-slate-200  text-slate-600  rounded-2xl text-[10px] font-black uppercase tracking-widest"
             >
-                {t('components.toast.scenarios.comparison.btn')}
+                {t("components.toast.scenarios.comparison.btn")}
             </button>
         </div>
     );
@@ -190,9 +231,11 @@ export const ToastStackDemo = () => {
     const { t } = useTranslation();
 
     const handleStack = () => {
-        ['success', 'warning', 'info'].forEach((type, i) => {
+        ["success", "warning", "info"].forEach((type, i) => {
             setTimeout(() => {
-                toast[type](`${t('components.toast.tag')} #${i + 1}`, { duration: 3000 });
+                toast[type](`${t("components.toast.tag")} #${i + 1}`, {
+                    duration: 3000,
+                });
             }, i * 250);
         });
     };
@@ -202,7 +245,7 @@ export const ToastStackDemo = () => {
             className="flex items-center gap-3 px-8 py-4 bg-primary text-white rounded-[2rem] text-xs font-black shadow-xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all"
         >
             <Layers className="w-4 h-4" />
-            {t('components.toast.scenarios.stack.btn')}
+            {t("components.toast.scenarios.stack.btn")}
         </button>
     );
 };

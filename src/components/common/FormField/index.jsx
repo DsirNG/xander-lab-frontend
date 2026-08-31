@@ -1,5 +1,5 @@
-import React from 'react';
-import { formLabelCls } from '../formStyles';
+import React from "react";
+import { formLabelCls } from "../formStyles";
 
 /**
  * FormField - 表单字段（label + 控件 + 可选提示），统一表单区块样式
@@ -10,15 +10,17 @@ import { formLabelCls } from '../formStyles';
  * @param {ReactNode} children - 表单控件（input / TimeInput / CustomSelect 等）
  */
 const FormField = ({ label, htmlFor, hint, className, children }) => (
-  <div className={className}>
-    {label ? (
-      <label htmlFor={htmlFor} className={formLabelCls}>
-        {label}
-      </label>
-    ) : null}
-    {children}
-    {hint ? <div className="mt-1 text-xs text-ink-faint">{hint}</div> : null}
-  </div>
+    <div className={className}>
+        {label ? (
+            <label htmlFor={htmlFor} className={formLabelCls}>
+                {label}
+            </label>
+        ) : null}
+        {children}
+        {hint ? (
+            <div className="mt-1 text-xs text-ink-faint">{hint}</div>
+        ) : null}
+    </div>
 );
 
 export default FormField;

@@ -1,6 +1,6 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { Zap, Shield, Sparkles, Cpu } from 'lucide-react';
+import React from "react";
+import { motion } from "framer-motion";
+import { Zap, Shield, Sparkles, Cpu } from "lucide-react";
 
 const PARTICLE_ICONS = [Cpu, Zap, Shield, Sparkles];
 const PARTICLES = [
@@ -29,18 +29,18 @@ const FloatingParticles = () => {
                     initial={{
                         x: p.x + "%",
                         y: p.y + "%",
-                        opacity: 0
+                        opacity: 0,
                     }}
                     animate={{
                         y: [null, "-20%", "20%"],
                         opacity: [0, 0.15, 0],
                         rotate: [0, 360],
-                        scale: [0.8, 1, 0.8]
+                        scale: [0.8, 1, 0.8],
                     }}
                     transition={{
                         duration: p.duration,
                         repeat: Infinity,
-                        ease: "easeInOut"
+                        ease: "easeInOut",
                     }}
                     className="absolute text-accent"
                 >

@@ -1,5 +1,5 @@
-import React, { useState, useCallback, useMemo } from 'react';
-import ToastContext from './toastContextValue';
+import React, { useState, useCallback, useMemo } from "react";
+import ToastContext from "./toastContextValue";
 
 /**
  * Toast 状态提供者
@@ -18,33 +18,42 @@ export const ToastProvider = ({ children }) => {
      * @param {string} type 类型 (success, error, info, warning)
      * @param {object} options 配置对象
      */
-    const addToast = useCallback((message, type = 'info', options = {}) => {
+    const addToast = useCallback((message, type = "info", options = {}) => {
         const id = Math.random().toString(36).substring(2, 9);
 
-        setToasts((prev) => [...prev, {
-            id,
-            message,
-            type,
-            duration: 3000,
-            showProgress: true,
-            showClose: true,
-            pauseOnHover: true,
-            ...options
-        }]);
+        setToasts((prev) => [
+            ...prev,
+            {
+                id,
+                message,
+                type,
+                duration: 3000,
+                showProgress: true,
+                showClose: true,
+                pauseOnHover: true,
+                ...options,
+            },
+        ]);
     }, []);
 
-    const toastApi = useMemo(() => ({
-        success: (msg, opts) => addToast(msg, 'success', opts),
-        error: (msg, opts) => addToast(msg, 'error', opts),
-        info: (msg, opts) => addToast(msg, 'info', opts),
-        warning: (msg, opts) => addToast(msg, 'warning', opts),
-        remove: removeToast,
-    }), [addToast, removeToast]);
+    const toastApi = useMemo(
+        () => ({
+            success: (msg, opts) => addToast(msg, "success", opts),
+            error: (msg, opts) => addToast(msg, "error", opts),
+            info: (msg, opts) => addToast(msg, "info", opts),
+            warning: (msg, opts) => addToast(msg, "warning", opts),
+            remove: removeToast,
+        }),
+        [addToast, removeToast],
+    );
 
-    const contextValue = useMemo(() => ({
-        ...toastApi,
-        toasts,
-    }), [toastApi, toasts]);
+    const contextValue = useMemo(
+        () => ({
+            ...toastApi,
+            toasts,
+        }),
+        [toastApi, toasts],
+    );
 
     return (
         <div key="toast-provider-wrapper">

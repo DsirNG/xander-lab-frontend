@@ -1,36 +1,38 @@
-import React from 'react';
+import React from "react";
 
 /**
  * 品牌化加载组件
  * 用于路由级 Suspense fallback 和页面加载状态
  */
-const LoadingSpinner = ({ 
-  fullScreen = true, 
-  text = '', 
-  size = 'md' 
-}) => {
-  const sizeClasses = {
-    sm: 'w-5 h-5',
-    md: 'w-8 h-8',
-    lg: 'w-12 h-12',
-  };
+const LoadingSpinner = ({ fullScreen = true, text = "", size = "md" }) => {
+    const sizeClasses = {
+        sm: "w-5 h-5",
+        md: "w-8 h-8",
+        lg: "w-12 h-12",
+    };
 
-  const spinner = (
-    <div className="flex flex-col items-center gap-3">
-      <div className={`${sizeClasses[size]} border-2 border-border border-t-accent rounded-full animate-spin`} />
-      {text && <span className="text-body text-ink-faint font-medium">{text}</span>}
-    </div>
-  );
-
-  if (fullScreen) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-canvas">
-        {spinner}
-      </div>
+    const spinner = (
+        <div className="flex flex-col items-center gap-3">
+            <div
+                className={`${sizeClasses[size]} border-2 border-border border-t-accent rounded-full animate-spin`}
+            />
+            {text && (
+                <span className="text-body text-ink-faint font-medium">
+                    {text}
+                </span>
+            )}
+        </div>
     );
-  }
 
-  return spinner;
+    if (fullScreen) {
+        return (
+            <div className="flex items-center justify-center min-h-screen bg-canvas">
+                {spinner}
+            </div>
+        );
+    }
+
+    return spinner;
 };
 
 export default LoadingSpinner;

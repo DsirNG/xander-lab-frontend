@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { createPortal } from 'react-dom';
-import { Compass } from 'lucide-react';
-import Button from '@components/common/Button';
+import React, { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
+import { Compass } from "lucide-react";
+import Button from "@components/common/Button";
 
 /**
  * 核心聚焦向导漫游组件 (TourSpotlight)
@@ -18,7 +18,12 @@ const TourSpotlight = ({ targetConfig, onSkip }) => {
 
         const updateRect = () => {
             const r = el.getBoundingClientRect();
-            setRect({ top: r.top, left: r.left, width: r.width, height: r.height });
+            setRect({
+                top: r.top,
+                left: r.left,
+                width: r.width,
+                height: r.height,
+            });
         };
 
         updateRect();
@@ -32,7 +37,8 @@ const TourSpotlight = ({ targetConfig, onSkip }) => {
             let parent = element.parentElement;
             while (parent) {
                 const style = getComputedStyle(parent);
-                const overflow = style.overflow + style.overflowY + style.overflowX;
+                const overflow =
+                    style.overflow + style.overflowY + style.overflowX;
                 if (/(auto|scroll|overlay)/.test(overflow)) {
                     return parent;
                 }
@@ -42,13 +48,15 @@ const TourSpotlight = ({ targetConfig, onSkip }) => {
         };
 
         const scrollableAncestor = findScrollableAncestor(el);
-        scrollableAncestor.addEventListener('scroll', updateRect, { passive: true });
-        window.addEventListener('resize', updateRect, { passive: true });
+        scrollableAncestor.addEventListener("scroll", updateRect, {
+            passive: true,
+        });
+        window.addEventListener("resize", updateRect, { passive: true });
 
         return () => {
             resizeObserver.disconnect();
-            scrollableAncestor.removeEventListener('scroll', updateRect);
-            window.removeEventListener('resize', updateRect);
+            scrollableAncestor.removeEventListener("scroll", updateRect);
+            window.removeEventListener("resize", updateRect);
         };
     }, [targetConfig]);
 
@@ -63,22 +71,62 @@ const TourSpotlight = ({ targetConfig, onSkip }) => {
         rect.top > window.innerHeight / 2
             ? Math.max(10, rect.top - pad - 140)
             : Math.min(bottomTop + 10, window.innerHeight - 150);
-    const hintLeft = Math.max(12, Math.min(window.innerWidth - hintWidth - 12, rect.left + rect.width / 2 - hintWidth / 2));
+    const hintLeft = Math.max(
+        12,
+        Math.min(
+            window.innerWidth - hintWidth - 12,
+            rect.left + rect.width / 2 - hintWidth / 2,
+        ),
+    );
 
     return createPortal(
-        <div className={`fixed inset-0 pointer-events-none transition-all duration-300 ${isModalLevel ? 'z-[1200]' : 'z-[900]'}`}>
+        <div
+            className={`fixed inset-0 pointer-events-none transition-all duration-300 ${isModalLevel ? "z-[1200]" : "z-[900]"}`}
+        >
             {/* 4 方向高斯模糊物理遮罩 */}
-            <div className="absolute top-0 left-0 right-0 bg-ink/40 backdrop-blur-[2px] transition-all duration-300 pointer-events-auto" style={{ height: topHeight }} />
-            <div className="absolute left-0 right-0 bottom-0 bg-ink/40 backdrop-blur-[2px] transition-all duration-300 pointer-events-auto" style={{ top: bottomTop }} />
-            <div className="absolute left-0 bg-ink/40 backdrop-blur-[2px] transition-all duration-300 pointer-events-auto" style={{ top: topHeight, height: rect.height + pad * 2, width: Math.max(0, rect.left - pad) }} />
-            <div className="absolute right-0 bg-ink/40 backdrop-blur-[2px] transition-all duration-300 pointer-events-auto" style={{ top: topHeight, height: rect.height + pad * 2, left: rect.left + rect.width + pad }} />
+            <div
+                className="absolute top-0 left-0 right-0 bg-ink/40 backdrop-blur-[2px] transition-all duration-300 pointer-events-auto"
+                style={{ height: topHeight }}
+            />
+            <div
+                className="absolute left-0 right-0 bottom-0 bg-ink/40 backdrop-blur-[2px] transition-all duration-300 pointer-events-auto"
+                style={{ top: bottomTop }}
+            />
+            <div
+                className="absolute left-0 bg-ink/40 backdrop-blur-[2px] transition-all duration-300 pointer-events-auto"
+                style={{
+                    top: topHeight,
+                    height: rect.height + pad * 2,
+                    width: Math.max(0, rect.left - pad),
+                }}
+            />
+            <div
+                className="absolute right-0 bg-ink/40 backdrop-blur-[2px] transition-all duration-300 pointer-events-auto"
+                style={{
+                    top: topHeight,
+                    height: rect.height + pad * 2,
+                    left: rect.left + rect.width + pad,
+                }}
+            />
 
             {/* 炫酷的光晕洞口引导线 */}
-            <div className="absolute rounded-xl pointer-events-none border-2 border-accent-400 animate-ping opacity-40"
-                style={{ top: rect.top - pad, left: rect.left - pad, width: rect.width + pad * 2, height: rect.height + pad * 2 }}
+            <div
+                className="absolute rounded-xl pointer-events-none border-2 border-accent-400 animate-ping opacity-40"
+                style={{
+                    top: rect.top - pad,
+                    left: rect.left - pad,
+                    width: rect.width + pad * 2,
+                    height: rect.height + pad * 2,
+                }}
             />
-            <div className="absolute rounded-xl pointer-events-none border-2 border-canvas/60 shadow-[0_0_20px_rgba(255,255,255,0.6)] transition-all duration-300"
-                style={{ top: rect.top - pad, left: rect.left - pad, width: rect.width + pad * 2, height: rect.height + pad * 2 }}
+            <div
+                className="absolute rounded-xl pointer-events-none border-2 border-canvas/60 shadow-[0_0_20px_rgba(255,255,255,0.6)] transition-all duration-300"
+                style={{
+                    top: rect.top - pad,
+                    left: rect.left - pad,
+                    width: rect.width + pad * 2,
+                    height: rect.height + pad * 2,
+                }}
             />
 
             {/* AI 讲解提示框 */}
@@ -87,27 +135,33 @@ const TourSpotlight = ({ targetConfig, onSkip }) => {
                 style={{
                     top: hintTop,
                     left: hintLeft,
-                    width: hintWidth
+                    width: hintWidth,
                 }}
             >
                 <div className="bg-accent text-white p-5 rounded-2xl shadow-[0_30px_60px_-15px_rgba(2,132,199,0.5)] border border-accent-400/30 overflow-y-auto">
                     <div className="flex items-center justify-between mb-3">
                         <div className="flex items-center gap-2 min-w-0">
                             <Compass className="w-4 h-4 text-warning flex-shrink-0" />
-                            <div className="font-black text-body uppercase tracking-widest break-words">{targetConfig.text}</div>
+                            <div className="font-black text-body uppercase tracking-widest break-words">
+                                {targetConfig.text}
+                            </div>
                         </div>
                         <Button
                             onClick={onSkip}
                             variant="link"
                             size="md"
                             className="bg-accent-700/50 rounded-lg px-2 py-1 text-micro uppercase font-bold tracking-widest text-accent-200 hover:text-white hover:no-underline"
-                        >Skip // 退出</Button>
+                        >
+                            Skip // 退出
+                        </Button>
                     </div>
-                    <div className="text-accent-50 text-caption font-medium leading-relaxed opacity-90 break-words">{targetConfig.desc}</div>
+                    <div className="text-accent-50 text-caption font-medium leading-relaxed opacity-90 break-words">
+                        {targetConfig.desc}
+                    </div>
                 </div>
             </div>
         </div>,
-        document.body
+        document.body,
     );
 };
 

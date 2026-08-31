@@ -10,11 +10,11 @@
 
 DinQorAI 由三个服务组成：
 
-| 服务 | 技术栈 | 端口 | 路径 |
-|---|---|---|---|
-| 前端 | React 19 + Vite 7 + Tailwind CSS 4 | 5173 (dev) | 当前仓库 |
-| Java 后端 | Spring Boot 3.2.1 + MyBatis-Plus + MySQL + Redis | 30002 | xander-lab-backend |
-| Node 工作室 | Express.js + MySQL + Redis + JWT | 3010 | frontend-share-sandbox |
+| 服务        | 技术栈                                           | 端口       | 路径                   |
+| ----------- | ------------------------------------------------ | ---------- | ---------------------- |
+| 前端        | React 19 + Vite 7 + Tailwind CSS 4               | 5173 (dev) | 当前仓库               |
+| Java 后端   | Spring Boot 3.2.1 + MyBatis-Plus + MySQL + Redis | 30002      | xander-lab-backend     |
+| Node 工作室 | Express.js + MySQL + Redis + JWT                 | 3010       | frontend-share-sandbox |
 
 三个服务共享同一个 MySQL 数据库（xander_lab）和 Redis 实例。
 

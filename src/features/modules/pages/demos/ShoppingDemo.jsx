@@ -1,24 +1,48 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
     ShoppingBag,
     Tag,
     Smartphone,
     Watch,
     Headphones,
-    Camera
-} from 'lucide-react';
-import { useDragDrop } from '@hooks/useDragDrop';
-import { motion, AnimatePresence } from 'framer-motion';
+    Camera,
+} from "lucide-react";
+import { useDragDrop } from "@hooks/useDragDrop";
+import { motion, AnimatePresence } from "framer-motion";
 
 const ShoppingDemo = () => {
     // ----------------------------------------------------------------------------------
     // Scenario D-1: Add to Cart
     // ----------------------------------------------------------------------------------
     const [products] = useState([
-        { id: 'p1', name: 'Smart Phone', price: '$899', icon: Smartphone, color: 'text-blue-500' },
-        { id: 'p2', name: 'Smart Watch', price: '$299', icon: Watch, color: 'text-orange-500' },
-        { id: 'p3', name: 'Headphones', price: '$199', icon: Headphones, color: 'text-purple-500' },
-        { id: 'p4', name: 'Camera', price: '$1299', icon: Camera, color: 'text-emerald-500' },
+        {
+            id: "p1",
+            name: "Smart Phone",
+            price: "$899",
+            icon: Smartphone,
+            color: "text-blue-500",
+        },
+        {
+            id: "p2",
+            name: "Smart Watch",
+            price: "$299",
+            icon: Watch,
+            color: "text-orange-500",
+        },
+        {
+            id: "p3",
+            name: "Headphones",
+            price: "$199",
+            icon: Headphones,
+            color: "text-purple-500",
+        },
+        {
+            id: "p4",
+            name: "Camera",
+            price: "$1299",
+            icon: Camera,
+            color: "text-emerald-500",
+        },
     ]);
     const [cartItems, setCartItems] = useState([]);
     const [cartAnimating, setCartAnimating] = useState(false);
@@ -27,16 +51,16 @@ const ShoppingDemo = () => {
     // Scenario D-2: Tagging
     // ----------------------------------------------------------------------------------
     const [tags] = useState([
-        { id: 'tag-sale', label: 'Sale -20%', color: 'rose' },
-        { id: 'tag-new', label: 'New Arrival', color: 'emerald' },
-        { id: 'tag-best', label: 'Best Seller', color: 'amber' },
+        { id: "tag-sale", label: "Sale -20%", color: "rose" },
+        { id: "tag-new", label: "New Arrival", color: "emerald" },
+        { id: "tag-best", label: "Best Seller", color: "amber" },
     ]);
     // Product -> Tags map
     const [productTags, setProductTags] = useState({
-        'p1': [],
-        'p2': [],
-        'p3': [],
-        'p4': [],
+        p1: [],
+        p2: [],
+        p3: [],
+        p4: [],
     });
 
     const dragDrop = useDragDrop({
@@ -45,11 +69,11 @@ const ShoppingDemo = () => {
 
             // Case D-1: Product -> Cart
             // Cart target id is 'cart-zone'
-            if (target && target.id === 'cart-zone') {
+            if (target && target.id === "cart-zone") {
                 // Check if it's a product
-                const product = products.find(p => p.id === source.id);
+                const product = products.find((p) => p.id === source.id);
                 if (product) {
-                    setCartItems(prev => [...prev, product]);
+                    setCartItems((prev) => [...prev, product]);
                     // Trigger cart animation
                     setCartAnimating(true);
                     setTimeout(() => setCartAnimating(false), 500);
@@ -59,14 +83,16 @@ const ShoppingDemo = () => {
 
             // Case D-2: Tag -> Product
             // Source is tag check
-            if (source.id && source.id.startsWith('tag-')) {
+            if (source.id && source.id.startsWith("tag-")) {
                 // Target is product
                 if (target && productTags[target.id]) {
                     // Check duplicate
-                    if (!productTags[target.id].find(t => t.id === source.id)) {
-                        setProductTags(prev => ({
+                    if (
+                        !productTags[target.id].find((t) => t.id === source.id)
+                    ) {
+                        setProductTags((prev) => ({
                             ...prev,
-                            [target.id]: [...prev[target.id], source]
+                            [target.id]: [...prev[target.id], source],
                         }));
                     }
                 }
@@ -74,36 +100,40 @@ const ShoppingDemo = () => {
         },
         getDragPreview: (item) => {
             // Differentiate preview based on type
-            const el = document.createElement('div');
+            const el = document.createElement("div");
 
-            if (item.id.startsWith('tag-')) {
+            if (item.id.startsWith("tag-")) {
                 el.className = `px-3 py-1.5 rounded-full font-bold text-xs bg-white shadow-lg border-2 border-slate-200`;
                 el.innerHTML = item.label;
                 // Dynamic color classes is tricky with inline style vs className in simple 'createElement'
                 // Just keeping it simple white pill for now
             } else {
                 // Product preview
-                el.className = 'bg-white p-2 rounded-xl shadow-2xl border border-slate-200 w-24 h-24 flex items-center justify-center';
+                el.className =
+                    "bg-white p-2 rounded-xl shadow-2xl border border-slate-200 w-24 h-24 flex items-center justify-center";
                 // We can't render react Icon here easily without ReactDOM, so simpler placeholder or image
                 el.innerHTML = `<span class="text-3xl">📦</span>`;
             }
             return el;
-        }
+        },
     });
 
     return (
         <div className="flex flex-col space-y-12 relative min-h-[500px]">
-
             {/* Scenario D-1: Add to Cart */}
             <div className="relative">
                 <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
-                    <div className="text-sm font-black text-slate-500 uppercase tracking-wider">Drag to Cart</div>
+                    <div className="text-sm font-black text-slate-500 uppercase tracking-wider">
+                        Drag to Cart
+                    </div>
                     <div className="flex items-center space-x-2 flex-wrap">
                         {/* Tags Source */}
-                        {tags.map(tag => (
+                        {tags.map((tag) => (
                             <div
                                 key={tag.id}
-                                onPointerDown={(e) => dragDrop.handleDragStart(tag, e)}
+                                onPointerDown={(e) =>
+                                    dragDrop.handleDragStart(tag, e)
+                                }
                                 className={`
                                       px-3 py-1 rounded-full text-xs font-bold cursor-grab border transition-all hover:scale-105 active:scale-95
                                       bg-${tag.color}-100 text-${tag.color}-600 border-${tag.color}-200
@@ -111,10 +141,20 @@ const ShoppingDemo = () => {
                                   `}
                                 style={{
                                     // Fallback colors for tailwind strict scanning usually failing dynamic
-                                    backgroundColor: tag.color === 'rose' ? '#ffe4e6' : tag.color === 'emerald' ? '#d1fae5' : '#fef3c7',
-                                    color: tag.color === 'rose' ? '#e11d48' : tag.color === 'emerald' ? '#059669' : '#d97706',
-                                    borderColor: 'transparent',
-                                    touchAction: 'none'
+                                    backgroundColor:
+                                        tag.color === "rose"
+                                            ? "#ffe4e6"
+                                            : tag.color === "emerald"
+                                              ? "#d1fae5"
+                                              : "#fef3c7",
+                                    color:
+                                        tag.color === "rose"
+                                            ? "#e11d48"
+                                            : tag.color === "emerald"
+                                              ? "#059669"
+                                              : "#d97706",
+                                    borderColor: "transparent",
+                                    touchAction: "none",
                                 }}
                             >
                                 <div className="flex items-center space-x-1">
@@ -127,34 +167,54 @@ const ShoppingDemo = () => {
                 </div>
 
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-6">
-                    {products.map(product => (
+                    {products.map((product) => (
                         <motion.div
                             key={product.id}
-                            onPointerDown={(e) => dragDrop.handleDragStart(product, e)}
+                            onPointerDown={(e) =>
+                                dragDrop.handleDragStart(product, e)
+                            }
                             onPointerUp={(e) => dragDrop.handleDrop(product, e)} // Allow dropping tags
-                            onPointerMove={(e) => dragDrop.handleDragOver(product, e)}
+                            onPointerMove={(e) =>
+                                dragDrop.handleDragOver(product, e)
+                            }
                             className="bg-white rounded-2xl p-4 sm:p-6 border border-slate-200 shadow-sm hover:shadow-xl transition-all group relative cursor-move min-w-0"
-                            style={{ touchAction: 'none' }}
+                            style={{ touchAction: "none" }}
                         >
-                            <div className={`w-12 h-12 rounded-xl mb-4 flex items-center justify-center bg-slate-100  ${product.color}`}>
+                            <div
+                                className={`w-12 h-12 rounded-xl mb-4 flex items-center justify-center bg-slate-100  ${product.color}`}
+                            >
                                 <product.icon className="w-6 h-6" />
                             </div>
-                            <div className="font-bold text-slate-800  mb-1">{product.name}</div>
-                            <div className="text-slate-500  text-sm font-medium">{product.price}</div>
+                            <div className="font-bold text-slate-800  mb-1">
+                                {product.name}
+                            </div>
+                            <div className="text-slate-500  text-sm font-medium">
+                                {product.price}
+                            </div>
 
                             {/* Attached Tags Area */}
                             <div className="absolute top-2 right-2 flex flex-col items-end space-y-1">
                                 <AnimatePresence>
-                                    {productTags[product.id]?.map((tag, idx) => (
-                                        <motion.div
-                                            initial={{ opacity: 0, scale: 0, x: 10 }}
-                                            animate={{ opacity: 1, scale: 1, x: 0 }}
-                                            key={`${tag.id}-${idx}`}
-                                            className="px-2 py-0.5 bg-red-500 text-white text-[10px] font-bold rounded-full shadow-sm"
-                                        >
-                                            {tag.label}
-                                        </motion.div>
-                                    ))}
+                                    {productTags[product.id]?.map(
+                                        (tag, idx) => (
+                                            <motion.div
+                                                initial={{
+                                                    opacity: 0,
+                                                    scale: 0,
+                                                    x: 10,
+                                                }}
+                                                animate={{
+                                                    opacity: 1,
+                                                    scale: 1,
+                                                    x: 0,
+                                                }}
+                                                key={`${tag.id}-${idx}`}
+                                                className="px-2 py-0.5 bg-red-500 text-white text-[10px] font-bold rounded-full shadow-sm"
+                                            >
+                                                {tag.label}
+                                            </motion.div>
+                                        ),
+                                    )}
                                 </AnimatePresence>
                             </div>
                         </motion.div>
@@ -165,15 +225,24 @@ const ShoppingDemo = () => {
             {/* Cart Drop Zone (Floating or Fixed) */}
             <div className="absolute bottom-6 right-6 z-50 max-w-full">
                 <motion.div
-                    animate={cartAnimating ? { scale: [1, 1.2, 0.9, 1.1, 1], rotate: [0, -5, 5, -5, 0] } : {}}
+                    animate={
+                        cartAnimating
+                            ? {
+                                  scale: [1, 1.2, 0.9, 1.1, 1],
+                                  rotate: [0, -5, 5, -5, 0],
+                              }
+                            : {}
+                    }
                     onPointerMove={(e) => {
                         e.preventDefault();
                         // Highlight or something? handled by framer mostly
                     }}
-                    onPointerUp={(e) => dragDrop.handleDrop({ id: 'cart-zone' }, e)}
+                    onPointerUp={(e) =>
+                        dragDrop.handleDrop({ id: "cart-zone" }, e)
+                    }
                     className={`
                         w-20 h-20 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-2xl cursor-default
-                        border-4 ${dragDrop.dragOverItem?.id === 'cart-zone' ? 'border-white scale-110' : 'border-blue-700'}
+                        border-4 ${dragDrop.dragOverItem?.id === "cart-zone" ? "border-white scale-110" : "border-blue-700"}
                         transition-transform
                      `}
                 >
@@ -197,25 +266,38 @@ const ShoppingDemo = () => {
                         animate={{ opacity: 1, y: 0 }}
                         className="absolute bottom-24 right-0 w-64 max-w-[calc(100vw-2rem)] bg-white rounded-xl shadow-2xl border border-slate-200 p-4"
                     >
-    <div className="text-sm font-bold border-b border-slate-100 pb-2 mb-2 text-slate-800 ">Cart Summary</div>
+                        <div className="text-sm font-bold border-b border-slate-100 pb-2 mb-2 text-slate-800 ">
+                            Cart Summary
+                        </div>
                         <div className="space-y-2 max-h-40 overflow-y-auto">
                             {cartItems.map((item, i) => (
-                                <div key={i} className="flex justify-between items-center text-sm">
-                                    <span className="text-slate-600 ">{item.name}</span>
-                                    <span className="font-mono text-slate-400">{item.price}</span>
+                                <div
+                                    key={i}
+                                    className="flex justify-between items-center text-sm"
+                                >
+                                    <span className="text-slate-600 ">
+                                        {item.name}
+                                    </span>
+                                    <span className="font-mono text-slate-400">
+                                        {item.price}
+                                    </span>
                                 </div>
                             ))}
                         </div>
-<div className="mt-3 pt-2 border-t border-slate-100 flex justify-between font-bold text-blue-600">
+                        <div className="mt-3 pt-2 border-t border-slate-100 flex justify-between font-bold text-blue-600">
                             <span>Total</span>
                             <span>
-                                ${cartItems.reduce((acc, i) => acc + parseInt(i.price.slice(1)), 0)}
+                                $
+                                {cartItems.reduce(
+                                    (acc, i) =>
+                                        acc + parseInt(i.price.slice(1)),
+                                    0,
+                                )}
                             </span>
                         </div>
                     </motion.div>
                 )}
             </div>
-
         </div>
     );
 };

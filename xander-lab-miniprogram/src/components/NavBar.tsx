@@ -70,7 +70,10 @@ export function NavBar({
       {/* 占位：维持文档流，避免内容被固定在顶部的导航遮盖 */}
       <View style={{ height: navBarHeight }} />
       <View className="nav-bar" style={barStyle}>
-        <View className="nav-bar-body" style={{ height: contentHeight, paddingRight: rightSafeInset }}>
+        <View
+          className="nav-bar-body"
+          style={{ height: contentHeight, paddingRight: rightSafeInset }}
+        >
           <View className="nav-bar-side nav-bar-side-left">
             {showBack ? (
               <View

@@ -18,15 +18,11 @@
  * @module api/http
  */
 
-import axios from 'axios';
-import { ENV_CONFIG } from '@config/env';
-import i18n from '@locales/index';
-import {
-    MAX_RETRY,
-    getRetryDelay,
-    shouldRetryRequest,
-} from './httpPolicy';
-import { createSseReader } from './sseReader';
+import axios from "axios";
+import { ENV_CONFIG } from "@config/env";
+import i18n from "@locales/index";
+import { MAX_RETRY, getRetryDelay, shouldRetryRequest } from "./httpPolicy";
+import { createSseReader } from "./sseReader";
 
 // ─────────────────────────────────────────────
 // 1. 常量 & 配置
@@ -47,12 +43,12 @@ const BASE_URL = ENV_CONFIG.BASE_URL;
 const IS_DEV = ENV_CONFIG.IS_DEV;
 
 /** Token / 会话存储 key */
-const TOKEN_KEY = 'access_token';
-const REFRESH_TOKEN_KEY = 'refresh_token';
-const USER_INFO_KEY = 'user_info';
+const TOKEN_KEY = "access_token";
+const REFRESH_TOKEN_KEY = "refresh_token";
+const USER_INFO_KEY = "user_info";
 
 /** 刷新 Token 的接口路径（相对 baseURL） */
-const REFRESH_URL = '/api/auth/refresh';
+const REFRESH_URL = "/api/auth/refresh";
 
 /** 最大自动重试次数（网络错误 / 5xx） */
 
@@ -77,7 +73,9 @@ export const tokenStorage = {
     setToken: (token, { notify = true } = {}) => {
         localStorage.setItem(TOKEN_KEY, token);
         if (notify) {
-            window.dispatchEvent(new CustomEvent('auth:token-refreshed', { detail: { token } }));
+            window.dispatchEvent(
+                new CustomEvent("auth:token-refreshed", { detail: { token } }),
+            );
         }
     },
     removeToken: () => localStorage.removeItem(TOKEN_KEY),
@@ -101,8 +99,15 @@ export const tokenStorage = {
  */
 function forceLoggedOut() {
     tokenStorage.clear();
-    window.dispatchEvent(new CustomEvent('auth:logout', { detail: { reason: 'session_expired' } }));
-    showToast('warning', i18n.t('auth.sessionExpired', '登录已过期，请重新登录'));
+    window.dispatchEvent(
+        new CustomEvent("auth:logout", {
+            detail: { reason: "session_expired" },
+        }),
+    );
+    showToast(
+        "warning",
+        i18n.t("auth.sessionExpired", "登录已过期，请重新登录"),
+    );
 }
 
 // ─────────────────────────────────────────────
@@ -111,52 +116,52 @@ function forceLoggedOut() {
 
 /** HTTP 状态码 → i18n key */
 const HTTP_ERROR_KEYS = {
-    400: 'http.errors.badRequest',
-    401: 'http.errors.unauthorized',
-    403: 'http.errors.forbidden',
-    404: 'http.errors.notFound',
-    405: 'http.errors.methodNotAllowed',
-    408: 'http.errors.requestTimeout',
-    409: 'http.errors.conflict',
-    422: 'http.errors.unprocessable',
-    429: 'http.errors.tooManyRequests',
-    500: 'http.errors.internalError',
-    502: 'http.errors.badGateway',
-    503: 'http.errors.serviceUnavailable',
-    504: 'http.errors.gatewayTimeout',
+    400: "http.errors.badRequest",
+    401: "http.errors.unauthorized",
+    403: "http.errors.forbidden",
+    404: "http.errors.notFound",
+    405: "http.errors.methodNotAllowed",
+    408: "http.errors.requestTimeout",
+    409: "http.errors.conflict",
+    422: "http.errors.unprocessable",
+    429: "http.errors.tooManyRequests",
+    500: "http.errors.internalError",
+    502: "http.errors.badGateway",
+    503: "http.errors.serviceUnavailable",
+    504: "http.errors.gatewayTimeout",
 };
 
 /** 业务错误码 → i18n key */
 const BIZ_ERROR_KEYS = {
-    1001: 'http.errors.invalidCredentials',
-    1002: 'http.errors.accountDisabled',
-    1003: 'http.errors.codeExpired',
-    4001: 'http.errors.dataNotFound',
-    4003: 'http.errors.noPermission',
-    5000: 'http.errors.serverBusy',
+    1001: "http.errors.invalidCredentials",
+    1002: "http.errors.accountDisabled",
+    1003: "http.errors.codeExpired",
+    4001: "http.errors.dataNotFound",
+    4003: "http.errors.noPermission",
+    5000: "http.errors.serverBusy",
 };
 
 /** 获取 HTTP 错误提示（运行时解析翻译） */
 const getHttpErrorMessage = (status) => {
     const key = HTTP_ERROR_KEYS[status];
-    return key ? i18n.t(key) : '';
+    return key ? i18n.t(key) : "";
 };
 
 /** 获取业务错误提示（运行时解析翻译） */
 const getBizErrorMessage = (code, fallback) => {
     const key = BIZ_ERROR_KEYS[code];
-    return key ? i18n.t(key) : (fallback || i18n.t('http.errors.bizDefault'));
+    return key ? i18n.t(key) : fallback || i18n.t("http.errors.bizDefault");
 };
 
 /** 从 Blob 错误响应（下载等二进制场景）中解析服务端 message */
 async function extractBlobErrorMessage(data) {
-    if (!data || typeof data.text !== 'function') return '';
+    if (!data || typeof data.text !== "function") return "";
     try {
         const text = await data.text();
         const parsed = JSON.parse(text);
-        return typeof parsed?.message === 'string' ? parsed.message : '';
+        return typeof parsed?.message === "string" ? parsed.message : "";
     } catch {
-        return '';
+        return "";
     }
 }
 
@@ -173,7 +178,7 @@ export class HttpError extends Error {
      */
     constructor(message, status, code, data) {
         super(message);
-        this.name = 'HttpError';
+        this.name = "HttpError";
         this.status = status;
         this.code = code;
         this.data = data;
@@ -193,17 +198,21 @@ const pendingRequests = new Map();
  * @returns {string}
  */
 export function buildRequestKey(config) {
-    let { method = '', url = '', params, data } = config;
+    let { method = "", url = "", params, data } = config;
     // 转换 data 为对象以保持 key 的一致性
-    if (typeof data === 'string') {
-        try { data = JSON.parse(data); } catch { /* Preserve non-JSON request bodies. */ }
+    if (typeof data === "string") {
+        try {
+            data = JSON.parse(data);
+        } catch {
+            /* Preserve non-JSON request bodies. */
+        }
     }
     return [
         method.toLowerCase(),
         url,
         JSON.stringify(params || {}),
         JSON.stringify(data || {}),
-    ].join('|');
+    ].join("|");
 }
 
 /**
@@ -214,8 +223,12 @@ function addPendingRequest(config) {
     const key = buildRequestKey(config);
     if (pendingRequests.has(key)) {
         const controller = pendingRequests.get(key);
-        controller.abort('Dedupe: 相同的请求已存在，取消前一个');
-        if (IS_DEV) console.debug(`%c[HTTP] ⚡ 重复请求已合并: ${config.url}`, 'color: #fb923c');
+        controller.abort("Dedupe: 相同的请求已存在，取消前一个");
+        if (IS_DEV)
+            console.debug(
+                `%c[HTTP] ⚡ 重复请求已合并: ${config.url}`,
+                "color: #fb923c",
+            );
     }
     const controller = new AbortController();
 
@@ -227,9 +240,9 @@ function addPendingRequest(config) {
             controller.abort(callerSignal.reason);
         } else {
             callerSignal.addEventListener(
-                'abort',
+                "abort",
                 () => controller.abort(callerSignal.reason),
-                { once: true }
+                { once: true },
             );
         }
     }
@@ -290,22 +303,31 @@ function rejectRefreshSubscribers(error) {
 async function refreshAccessToken() {
     const refreshToken = tokenStorage.getRefreshToken();
     if (!refreshToken) {
-        throw new HttpError(i18n.t('http.errors.noRefreshToken'), 401, null, null);
+        throw new HttpError(
+            i18n.t("http.errors.noRefreshToken"),
+            401,
+            null,
+            null,
+        );
     }
     // 使用原始 axios 避免循环拦截；显式超时，避免刷新挂起时拖垮排队请求
-    const response = await axios.post(`${BASE_URL}${REFRESH_URL}`, {
-        refreshToken,
-    }, {
-        timeout: DEFAULT_TIMEOUT,
-    });
+    const response = await axios.post(
+        `${BASE_URL}${REFRESH_URL}`,
+        {
+            refreshToken,
+        },
+        {
+            timeout: DEFAULT_TIMEOUT,
+        },
+    );
     const body = response.data;
     const tokenData = body?.data;
     if ((body?.code !== 200 && body?.code !== 0) || !tokenData?.accessToken) {
         throw new HttpError(
-            body?.message || i18n.t('auth.sessionExpired'),
+            body?.message || i18n.t("auth.sessionExpired"),
             401,
             body?.code,
-            body
+            body,
         );
     }
     const { accessToken, refreshToken: newRefreshToken } = tokenData;
@@ -313,7 +335,11 @@ async function refreshAccessToken() {
     // /me validation never sees a half-updated token pair.
     tokenStorage.setToken(accessToken, { notify: false });
     if (newRefreshToken) tokenStorage.setRefreshToken(newRefreshToken);
-    window.dispatchEvent(new CustomEvent('auth:token-refreshed', { detail: { token: accessToken } }));
+    window.dispatchEvent(
+        new CustomEvent("auth:token-refreshed", {
+            detail: { token: accessToken },
+        }),
+    );
     return accessToken;
 }
 
@@ -325,8 +351,8 @@ const instance = axios.create({
     baseURL: BASE_URL,
     timeout: DEFAULT_TIMEOUT,
     headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
+        "Content-Type": "application/json",
+        Accept: "application/json",
     },
     withCredentials: false, // 跨域携带 Cookie 时改为 true
 });
@@ -349,24 +375,24 @@ instance.interceptors.request.use(
         // 8.2 自动携带 Token
         const token = tokenStorage.getToken();
         if (token && config.withToken !== false) {
-            config.headers['Authorization'] = `Bearer ${token}`;
+            config.headers["Authorization"] = `Bearer ${token}`;
         }
 
         // 8.3 开发环境请求日志
         if (IS_DEV) {
             console.groupCollapsed(
                 `%c[HTTP] ➤ ${config.method?.toUpperCase()} ${config.url}`,
-                'color: #4ade80; font-weight: bold'
+                "color: #4ade80; font-weight: bold",
             );
-            console.log('Headers:', config.headers);
-            if (config.params) console.log('Params:', config.params);
-            if (config.data) console.log('Body:', config.data);
+            console.log("Headers:", config.headers);
+            if (config.params) console.log("Params:", config.params);
+            if (config.data) console.log("Body:", config.data);
             console.groupEnd();
         }
 
         return config;
     },
-    (error) => Promise.reject(error)
+    (error) => Promise.reject(error),
 );
 
 // ─────────────────────────────────────────────
@@ -384,23 +410,22 @@ instance.interceptors.response.use(
         if (IS_DEV) {
             console.groupCollapsed(
                 `%c[HTTP] ✓ ${config.method?.toUpperCase()} ${config.url}`,
-                'color: #60a5fa; font-weight: bold'
+                "color: #60a5fa; font-weight: bold",
             );
-            console.log('Response:', body);
+            console.log("Response:", body);
             console.groupEnd();
         }
 
         // 若后端返回 { code, data, message } 结构，统一解包
-        if (body && typeof body === 'object' && 'code' in body) {
+        if (body && typeof body === "object" && "code" in body) {
             if (body.code === 200 || body.code === 0) {
                 // 若调用方设置 rawResponse: true，返回完整 body
                 return config.rawResponse ? body : body.data;
             }
             // 业务错误
-            const bizMsg =
-                getBizErrorMessage(body.code, body.message);
+            const bizMsg = getBizErrorMessage(body.code, body.message);
             if (!config._silent) {
-                showToast('error', bizMsg);
+                showToast("error", bizMsg);
             }
             throw new HttpError(bizMsg, response.status, body.code, body);
         }
@@ -420,20 +445,25 @@ instance.interceptors.response.use(
 
         if (axios.isCancel(error)) {
             // 返回带标准标识的 rejection，让组件 catch 能识别并静默跳过
-            const cancelError = new Error('Request cancelled');
-            cancelError.name = 'CanceledError';
-            cancelError.code = 'ERR_CANCELED';
+            const cancelError = new Error("Request cancelled");
+            cancelError.name = "CanceledError";
+            cancelError.code = "ERR_CANCELED";
             cancelError.isCancelled = true;
             return Promise.reject(cancelError);
         }
 
         // ── 9.2.1 Token 过期，无感刷新 / 强制未登录 ──
-        const requestUrl = config?.url || '';
-        const isLoginEndpoint = requestUrl.endsWith('/auth/login');
-        const isRefreshEndpoint = requestUrl.endsWith('/auth/refresh');
+        const requestUrl = config?.url || "";
+        const isLoginEndpoint = requestUrl.endsWith("/auth/login");
+        const isRefreshEndpoint = requestUrl.endsWith("/auth/refresh");
         const skipAuthRecovery = Boolean(config?._skipAuthRecovery);
         const sessionExpiredError = () =>
-            new HttpError(i18n.t('auth.sessionExpired', '登录已过期，请重新登录'), 401, null, null);
+            new HttpError(
+                i18n.t("auth.sessionExpired", "登录已过期，请重新登录"),
+                401,
+                null,
+                null,
+            );
 
         // 主动登出等场景：跳过无感刷新与强制未登录提示，交给调用方清理
         if (response?.status === 401 && config && skipAuthRecovery) {
@@ -455,16 +485,19 @@ instance.interceptors.response.use(
                 return new Promise((resolve, reject) => {
                     subscribeTokenRefresh(
                         (newToken) => {
-                            config.headers['Authorization'] = `Bearer ${newToken}`;
+                            config.headers["Authorization"] =
+                                `Bearer ${newToken}`;
                             config._retryRefresh = true;
                             resolve(instance(config));
                         },
                         (refreshError) => {
                             // 刷新已在主请求里 forceLoggedOut，排队请求只跟着重置
-                            reject(refreshError instanceof HttpError
-                                ? refreshError
-                                : sessionExpiredError());
-                        }
+                            reject(
+                                refreshError instanceof HttpError
+                                    ? refreshError
+                                    : sessionExpiredError(),
+                            );
+                        },
                     );
                 });
             }
@@ -476,7 +509,7 @@ instance.interceptors.response.use(
                 const newToken = await refreshAccessToken();
                 isRefreshing = false;
                 notifyRefreshSubscribers(newToken);
-                config.headers['Authorization'] = `Bearer ${newToken}`;
+                config.headers["Authorization"] = `Bearer ${newToken}`;
                 return instance(config);
             } catch {
                 isRefreshing = false;
@@ -488,8 +521,7 @@ instance.interceptors.response.use(
         }
 
         // ── 9.2.2 自动重试（网络错误 / 5xx） ──
-        const shouldRetry =
-            shouldRetryRequest(config, response);
+        const shouldRetry = shouldRetryRequest(config, response);
 
         if (shouldRetry) {
             config._retryCount = (config._retryCount ?? 0) + 1;
@@ -498,7 +530,7 @@ instance.interceptors.response.use(
             if (IS_DEV) {
                 console.warn(
                     `[HTTP] Retry ${config._retryCount}/${MAX_RETRY}, delay ${delay}ms`,
-                    config.url
+                    config.url,
                 );
             }
 
@@ -510,45 +542,53 @@ instance.interceptors.response.use(
         const status = response?.status;
         const serverMsg = response?.data?.message;
         // 二进制错误响应（如 blob 下载失败）没有 message 字段，异步解析兜底
-        const blobMsg = serverMsg ? '' : await extractBlobErrorMessage(response?.data);
+        const blobMsg = serverMsg
+            ? ""
+            : await extractBlobErrorMessage(response?.data);
         const message =
             serverMsg ||
             blobMsg ||
             getHttpErrorMessage(status) ||
             error.message ||
-            i18n.t('http.errors.networkError');
+            i18n.t("http.errors.networkError");
 
         if (IS_DEV) {
             console.groupCollapsed(
-                `%c[HTTP] ✗ ${config?.method?.toUpperCase()} ${config?.url} [${status ?? 'Network Error'}]`,
-                'color: #f87171; font-weight: bold'
+                `%c[HTTP] ✗ ${config?.method?.toUpperCase()} ${config?.url} [${status ?? "Network Error"}]`,
+                "color: #f87171; font-weight: bold",
             );
-            console.error('Error:', error);
+            console.error("Error:", error);
             console.groupEnd();
         }
 
         // 全局 Toast 提示（config._silent 可静默）
         // _skipAuthRecovery 的 401 由调用方接管提示，这里不再重复弹窗
         // 402 积分不足需要总是提示，让用户知道需要获取积分
-        const shouldShowToast = !config?._silent
-            || status === 402
-            || (status === 401 && !config?._skipAuthRecovery);
+        const shouldShowToast =
+            !config?._silent ||
+            status === 402 ||
+            (status === 401 && !config?._skipAuthRecovery);
         if (shouldShowToast) {
             if (status === 401) {
-                showToast('warning', message);
+                showToast("warning", message);
             } else if (status === 402) {
-                showToast('warning', message);
+                showToast("warning", message);
             } else if (status >= 500 || !status) {
-                showToast('error', message);
+                showToast("error", message);
             } else if (status >= 400) {
-                showToast('error', message);
+                showToast("error", message);
             }
         }
 
         return Promise.reject(
-            new HttpError(message, status, response?.data?.code, response?.data)
+            new HttpError(
+                message,
+                status,
+                response?.data?.code,
+                response?.data,
+            ),
         );
-    }
+    },
 );
 
 // ─────────────────────────────────────────────
@@ -585,23 +625,25 @@ export function post(url, data, config) {
  */
 export function postStream(url, data, { onEvent, ...config } = {}) {
     const reader = createSseReader(onEvent);
-    return instance.post(url, data, {
-        ...config,
-        dedupe: false,
-        _skipRetry: true,
-        timeout: 0,
-        responseType: 'text',
-        // Spring uses the Accept header to select a handler. Declare SSE
-        // explicitly instead of inheriting the default application/json.
-        headers: {
-            ...config.headers,
-            Accept: 'text/event-stream',
-        },
-        onDownloadProgress: reader.onDownloadProgress,
-    }).then((response) => {
-        reader.flush();
-        return response;
-    });
+    return instance
+        .post(url, data, {
+            ...config,
+            dedupe: false,
+            _skipRetry: true,
+            timeout: 0,
+            responseType: "text",
+            // Spring uses the Accept header to select a handler. Declare SSE
+            // explicitly instead of inheriting the default application/json.
+            headers: {
+                ...config.headers,
+                Accept: "text/event-stream",
+            },
+            onDownloadProgress: reader.onDownloadProgress,
+        })
+        .then((response) => {
+            reader.flush();
+            return response;
+        });
 }
 
 /** Subscribe to a resumable SSE endpoint with authorization headers. */
@@ -609,25 +651,27 @@ export function getStream(url, { onEvent, onProgress, ...config } = {}) {
     const reader = createSseReader(onEvent);
     const wrappedProgress = onProgress
         ? (progressEvent) => {
-            onProgress(progressEvent);
-            reader.onDownloadProgress(progressEvent);
-        }
+              onProgress(progressEvent);
+              reader.onDownloadProgress(progressEvent);
+          }
         : reader.onDownloadProgress;
-    return instance.get(url, {
-        ...config,
-        dedupe: false,
-        _skipRetry: true,
-        timeout: 0,
-        responseType: 'text',
-        headers: {
-            ...config.headers,
-            Accept: 'text/event-stream',
-        },
-        onDownloadProgress: wrappedProgress,
-    }).then((response) => {
-        reader.flush();
-        return response;
-    });
+    return instance
+        .get(url, {
+            ...config,
+            dedupe: false,
+            _skipRetry: true,
+            timeout: 0,
+            responseType: "text",
+            headers: {
+                ...config.headers,
+                Accept: "text/event-stream",
+            },
+            onDownloadProgress: wrappedProgress,
+        })
+        .then((response) => {
+            reader.flush();
+            return response;
+        });
 }
 
 /**
@@ -702,14 +746,21 @@ export function options(url, config) {
  * @returns {Promise<any>}
  */
 export function upload(url, fileOrFormData, options = {}) {
-    const { fieldName = 'file', extraData = {}, onProgress, config = {} } = options;
+    const {
+        fieldName = "file",
+        extraData = {},
+        onProgress,
+        config = {},
+    } = options;
 
     let formData;
     if (fileOrFormData instanceof FormData) {
         formData = fileOrFormData;
     } else {
         formData = new FormData();
-        const files = Array.isArray(fileOrFormData) ? fileOrFormData : [fileOrFormData];
+        const files = Array.isArray(fileOrFormData)
+            ? fileOrFormData
+            : [fileOrFormData];
         files.forEach((file) => formData.append(fieldName, file));
         Object.entries(extraData).forEach(([k, v]) => formData.append(k, v));
     }
@@ -719,14 +770,16 @@ export function upload(url, fileOrFormData, options = {}) {
     return instance.post(url, formData, {
         ...restConfig,
         // 合并而非覆盖：调用方传的 headers 不会破坏 multipart 的 Content-Type
-        headers: { 'Content-Type': 'multipart/form-data', ...headers },
+        headers: { "Content-Type": "multipart/form-data", ...headers },
         onUploadProgress: onProgress
             ? (progressEvent) => {
-                const percent = progressEvent.total
-                    ? Math.round((progressEvent.loaded * 100) / progressEvent.total)
-                    : 0;
-                onProgress(percent, progressEvent);
-            }
+                  const percent = progressEvent.total
+                      ? Math.round(
+                            (progressEvent.loaded * 100) / progressEvent.total,
+                        )
+                      : 0;
+                  onProgress(percent, progressEvent);
+              }
             : undefined,
         // 上传通常耗时较长，单独设置超时
         timeout: 0,
@@ -755,7 +808,7 @@ export async function download(url, options = {}) {
     const {
         filename,
         params,
-        method = 'get',
+        method = "get",
         data,
         onProgress,
         config = {},
@@ -766,16 +819,18 @@ export async function download(url, options = {}) {
         method,
         params,
         data,
-        responseType: 'blob',
+        responseType: "blob",
         timeout: DEFAULT_DOWNLOAD_TIMEOUT,
         dedupe: false,
         onDownloadProgress: onProgress
             ? (progressEvent) => {
-                const percent = progressEvent.total
-                    ? Math.round((progressEvent.loaded * 100) / progressEvent.total)
-                    : 0;
-                onProgress(percent, progressEvent);
-            }
+                  const percent = progressEvent.total
+                      ? Math.round(
+                            (progressEvent.loaded * 100) / progressEvent.total,
+                        )
+                      : 0;
+                  onProgress(percent, progressEvent);
+              }
             : undefined,
         ...config,
     });
@@ -785,16 +840,17 @@ export async function download(url, options = {}) {
         filename ||
         (() => {
             const disposition =
-                response?.headers?.['content-disposition'] ?? '';
-            const match = disposition.match(/filename\*?=(?:UTF-8'')?["']?([^"';\n]+)/i);
-            return match ? decodeURIComponent(match[1]) : 'download';
+                response?.headers?.["content-disposition"] ?? "";
+            const match = disposition.match(
+                /filename\*?=(?:UTF-8'')?["']?([^"';\n]+)/i,
+            );
+            return match ? decodeURIComponent(match[1]) : "download";
         })();
 
     // 触发浏览器下载
-    const blob =
-        response instanceof Blob ? response : new Blob([response]);
+    const blob = response instanceof Blob ? response : new Blob([response]);
     const objectUrl = URL.createObjectURL(blob);
-    const anchor = document.createElement('a');
+    const anchor = document.createElement("a");
     anchor.href = objectUrl;
     anchor.download = resolvedFilename;
     document.body.appendChild(anchor);
@@ -843,7 +899,8 @@ export function createCancelToken() {
     const controller = new AbortController();
     return {
         signal: controller.signal,
-        cancel: (reason = i18n.t('http.errors.cancelled')) => controller.abort(reason),
+        cancel: (reason = i18n.t("http.errors.cancelled")) =>
+            controller.abort(reason),
     };
 }
 
@@ -851,7 +908,9 @@ export function createCancelToken() {
  * 取消所有正在进行的请求（页面切换时调用）
  */
 export function cancelAllRequests() {
-    pendingRequests.forEach((controller) => controller.abort('页面切换，取消所有请求'));
+    pendingRequests.forEach((controller) =>
+        controller.abort("页面切换，取消所有请求"),
+    );
     pendingRequests.clear();
 }
 
