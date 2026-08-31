@@ -160,6 +160,11 @@ const Navbar = () => {
                 <div className={styles.container}>
                     <div className={styles.navContent}>
                         <Link to="/" className={styles.logoArea} onClick={() => setIsMobileMenuOpen(false)}>
+                            <img
+                                src="/assets/workspace/workspace-logo.svg"
+                                alt=""
+                                className={styles.logoImage}
+                            />
                             <span className={styles.logoText}>
                                 DinQorAI
                             </span>

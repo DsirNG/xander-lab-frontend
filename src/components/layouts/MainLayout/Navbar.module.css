@@ -19,6 +19,10 @@
     @apply flex items-center gap-2 flex-shrink-0;
 }
 
+.logoImage {
+    @apply h-8 w-8 flex-shrink-0;
+}
+
 .logoText {
     @apply text-lg sm:text-xl font-bold text-ink;
 }

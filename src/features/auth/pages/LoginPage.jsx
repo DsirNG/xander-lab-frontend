@@ -110,6 +110,11 @@ const LoginPage = () => {
                     <div className="relative">
                         <div className="absolute inset-0 bg-accent blur-md opacity-20 group-hover:opacity-40 transition-opacity" />
                         <div className="relative p-2.5 rounded-2xl bg-canvas border border-border shadow-xl group-hover:scale-110 transition-transform duration-500">
+                            <img
+                                src="/assets/workspace/workspace-logo.svg"
+                                alt=""
+                                className="h-8 w-8"
+                            />
                         </div>
                     </div>
                     <div className="flex flex-col min-w-0">
