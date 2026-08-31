@@ -145,14 +145,14 @@ const BlogHome = () => {
             {/* SEO: 博客列表页 meta */}
             <SEOHead
                 title={t('blog.latestPosts', 'Blog')}
-                description="DinQorAI 技术博客 — 前端架构、React 实践、UI 组件设计等技术文章"
+                description="DinQorAI 技术博客，分享 AI 智能体、AI 内容创作、知识管理、任务自动化与前端工程实践。"
                 canonical="/blog/"
                 ogType="website"
                 jsonLd={{
                     '@context': 'https://schema.org',
                     '@type': 'CollectionPage',
                     name: 'Blog | DinQorAI',
-                    description: 'Technical articles on frontend architecture, React patterns, and UI component design',
+                    description: 'Articles about AI agents, AI content creation, knowledge management, task automation, and frontend engineering',
                     url: 'https://dinqor.cn/blog/',
                     isPartOf: { '@id': 'https://dinqor.cn/#website' }
                 }}

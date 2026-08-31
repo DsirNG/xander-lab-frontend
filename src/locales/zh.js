@@ -1200,8 +1200,8 @@ export default {
   },
   seo: {
     home: {
-      title: 'UI 基础设施与交互组件展示',
-      description: '探索 DinQorAI 的 UI 基础设施、React 组件、拖拽系统、锚点浮层与前端架构演示。'
+      title: 'AI 智能体平台',
+      description: 'DinQorAI 智能体平台提供智能对话、内容创作、图片生成、文档分析、知识管理和任务自动化能力。'
     },
     infra: {
       title: 'UI 基础设施系统',

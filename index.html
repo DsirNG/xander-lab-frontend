@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh-CN">
 
 <head>
   <meta charset="UTF-8" />
@@ -8,11 +8,10 @@
   <meta name="msvalidate.01" content="57380F3F0631DD64FE40E5D0E74C291E" />
 
   <!-- Favicons -->
-  <link rel="icon" type="image/png" sizes="32x32" href="https://dinqor.cn/favicon.png" />
-  <link rel="icon" type="image/png" sizes="192x192" href="https://dinqor.cn/android-chrome-192x192.png" />
-  <link rel="icon" type="image/png" sizes="512x512" href="https://dinqor.cn/android-chrome-512x512.png" />
-  <link rel="apple-touch-icon" sizes="180x180" href="https://dinqor.cn/apple-touch-icon.png" />
-  <link rel="shortcut icon" href="https://dinqor.cn/favicon.png" />
+  <link rel="icon" href="/favicon.ico" sizes="any" />
+  <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png" />
+  <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
 
   <!-- Design system fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -23,9 +22,9 @@
   />
 
   <!-- Primary Meta Tags -->
-  <title>DinQorAI - UI Infrastructure & Interactive Component Showcase</title>
+  <title>DinQorAI - AI Agent Platform</title>
   <meta name="description"
-    content="Explore DinQorAI UI infrastructure, React components, drag and drop systems, anchored overlays, and frontend architecture demos." />
+    content="DinQorAI is an AI agent platform for intelligent conversations, content creation, image generation, document analysis, knowledge management, and task automation." />
   <meta name="keywords" content="DinQorAI, DinQor, AI智能体, 人工智能助手, 智能体平台, AI Agent, AI内容创作, AI写作助手, 博客智能体, AI博客写作, AI图片生成, 文档分析, 知识管理, 知识镜像, AI学习助手, 智能任务自动化, 联网搜索" />
   <meta name="author" content="DinQorAI" />
   <meta name="robots" content="index, follow" />
@@ -43,15 +42,15 @@
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://dinqor.cn/" />
-  <meta property="og:title" content="DinQorAI - UI Infrastructure & Interactive Component Showcase" />
+  <meta property="og:title" content="DinQorAI - AI Agent Platform" />
   <meta property="og:description"
-    content="Explore DinQorAI UI infrastructure, React components, drag and drop systems, anchored overlays, and frontend architecture demos." />
+    content="DinQorAI is an AI agent platform for intelligent conversations, content creation, image generation, document analysis, knowledge management, and task automation." />
   <meta property="og:image" content="https://dinqor.cn/og-image.png" />
   <meta property="og:image:secure_url" content="https://dinqor.cn/og-image.png" />
   <meta property="og:image:type" content="image/png" />
-  <meta property="og:image:width" content="1200" />
-  <meta property="og:image:height" content="630" />
-  <meta property="og:image:alt" content="DinQorAI - UI Infrastructure Platform" />
+  <meta property="og:image:width" content="1024" />
+  <meta property="og:image:height" content="1024" />
+  <meta property="og:image:alt" content="DinQorAI AI Agent Platform" />
   <meta property="og:site_name" content="DinQorAI" />
   <meta property="og:locale" content="en_US" />
   <meta property="og:locale:alternate" content="zh_CN" />
@@ -59,11 +58,11 @@
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:url" content="https://dinqor.cn/" />
-  <meta name="twitter:title" content="DinQorAI - UI Infrastructure & Interactive Component Showcase" />
+  <meta name="twitter:title" content="DinQorAI - AI Agent Platform" />
   <meta name="twitter:description"
-    content="Explore DinQorAI UI infrastructure, React components, drag and drop systems, anchored overlays, and frontend architecture demos." />
+    content="DinQorAI is an AI agent platform for intelligent conversations, content creation, image generation, document analysis, knowledge management, and task automation." />
   <meta name="twitter:image" content="https://dinqor.cn/twitter-image.png" />
-  <meta name="twitter:image:alt" content="DinQorAI - UI Infrastructure Platform" />
+  <meta name="twitter:image:alt" content="DinQorAI AI Agent Platform" />
   <meta name="twitter:creator" content="@DinQorAI" />
   <meta name="twitter:site" content="@DinQorAI" />
 
@@ -74,7 +73,6 @@
   <meta name="apple-mobile-web-app-title" content="DinQorAI" />
   <meta name="application-name" content="DinQorAI" />
   <meta name="msapplication-TileColor" content="#1a1a1a" />
-  <meta name="msapplication-config" content="/browserconfig.xml" />
 
   <!-- Structured Data (JSON-LD) -->
   <script type="application/ld+json">
@@ -86,15 +84,15 @@
           "@id": "https://dinqor.cn/#website",
           "url": "https://dinqor.cn/",
           "name": "DinQorAI",
-          "alternateName": "DinQorAI",
-          "description": "UI Infrastructure & Interactive Component Showcase featuring advanced frontend systems and demonstrations",
-          "inLanguage": ["en", "zh"]
+          "alternateName": ["DinQorAI", "DinQor"],
+          "description": "DinQorAI is an AI agent platform for intelligent conversations, content creation, image generation, document analysis, knowledge management, and task automation.",
+           "inLanguage": ["zh-CN", "en", "fr", "ja", "ru", "vi"]
         },
         {
           "@type": "Organization",
           "@id": "https://dinqor.cn/#organization",
           "name": "DinQorAI",
-          "alternateName": "DinQorAI",
+          "alternateName": ["DinQorAI", "DinQor"],
           "url": "https://dinqor.cn/",
           "logo": {
             "@type": "ImageObject",
@@ -102,22 +100,22 @@
             "width": 512,
             "height": 512
           },
-          "description": "Cutting-edge UI infrastructure and interactive component development laboratory",
+          "description": "AI agent platform for intelligent conversations, content creation, knowledge management, and task automation",
           "sameAs": []
         },
         {
           "@type": "WebPage",
           "@id": "https://dinqor.cn/#webpage",
           "url": "https://dinqor.cn/",
-          "name": "DinQorAI - UI Infrastructure & Interactive Component Showcase",
+          "name": "DinQorAI - AI Agent Platform",
           "isPartOf": {
             "@id": "https://dinqor.cn/#website"
           },
           "about": {
             "@id": "https://dinqor.cn/#organization"
           },
-          "description": "Explore DinQorAI UI infrastructure, React components, drag and drop systems, anchored overlays, and frontend architecture demos.",
-          "inLanguage": "en"
+          "description": "DinQorAI is an AI agent platform for intelligent conversations, content creation, image generation, document analysis, knowledge management, and task automation.",
+          "inLanguage": "zh-CN"
         }
       ]
     }
@@ -126,8 +124,7 @@
 
 <body>
   <noscript>
-    <p>DinQorAI - UI Infrastructure & Interactive Component Showcase. Explore cutting-edge UI infrastructure systems and interactive components at DinQorAI. Featuring drag & drop
-      systems, anchored overlay positioning, and advanced frontend architecture demonstrations.</p>
+    <p>DinQorAI 是一个智能体平台，提供智能对话、内容创作、图片生成、文档分析、知识管理和任务自动化能力。</p>
     <p>Please enable JavaScript to view this website.</p>
   </noscript>
   <div id="root"></div>

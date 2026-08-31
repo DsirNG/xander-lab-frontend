@@ -1168,8 +1168,8 @@ export default {
   },
   seo: {
     home: {
-      title: 'Hạ tầng UI & trưng bày thành phần tương tác',
-      description: 'Khám phá hạ tầng UI của DinQorAI, các thành phần React, hệ thống kéo thả, lớp phủ neo và các demo kiến trúc frontend.',
+      title: 'Nền tảng tác tử AI',
+      description: 'DinQorAI là nền tảng tác tử AI cho hội thoại thông minh, sáng tạo nội dung, tạo hình ảnh, phân tích tài liệu, quản lý kiến thức và tự động hóa tác vụ.',
     },
     infra: {
       title: 'Hệ thống hạ tầng UI',

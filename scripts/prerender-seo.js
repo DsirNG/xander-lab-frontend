@@ -280,7 +280,11 @@ function generateDynamicSitemap(blogs) {
 
   // 静态页面
   const staticUrls = [
-    { loc: '/', priority: '1.0', changefreq: 'weekly' },
+    { loc: '/', priority: '1.0', changefreq: 'weekly', image: {
+      loc: OG_IMAGE,
+      title: 'DinQorAI AI Agent Platform',
+      caption: 'AI agent platform for intelligent conversations, content creation, knowledge management, and task automation',
+    } },
     { loc: '/blog/', priority: '0.8', changefreq: 'daily' },
     { loc: '/blog/tags/', priority: '0.6', changefreq: 'weekly' },
     { loc: '/components', priority: '0.8', changefreq: 'weekly' },
@@ -301,11 +305,15 @@ function generateDynamicSitemap(blogs) {
 
   const urlEntries = urls.map(u => {
     const lastmod = u.lastmod || today;
+    const image = u.image
+      ? `\n    <image:image>\n      <image:loc>${escapeHtml(u.image.loc)}</image:loc>\n      <image:title>${escapeHtml(u.image.title)}</image:title>\n      <image:caption>${escapeHtml(u.image.caption)}</image:caption>\n    </image:image>`
+      : '';
     return `  <url>
     <loc>${SITE_URL}${u.loc}</loc>
     <lastmod>${lastmod}</lastmod>
     <changefreq>${u.changefreq}</changefreq>
     <priority>${u.priority}</priority>
+    ${image}
   </url>`;
   }).join('\n');
 
@@ -355,18 +363,18 @@ async function main() {
   console.log('📋 生成博客列表页...');
   const blogListMeta = `
     <title>Blog | DinQorAI</title>
-    <meta name="description" content="DinQorAI 技术博客 — 前端架构、React 实践、UI 组件设计等技术文章" />
+    <meta name="description" content="DinQorAI 技术博客，分享 AI 智能体、AI 内容创作、知识管理、任务自动化与前端工程实践。" />
     <meta name="robots" content="index, follow" />
     <link rel="canonical" href="${SITE_URL}/blog/" />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="${SITE_URL}/blog/" />
     <meta property="og:title" content="Blog | DinQorAI" />
-    <meta property="og:description" content="DinQorAI 技术博客 — 前端架构、React 实践、UI 组件设计等技术文章" />
+    <meta property="og:description" content="DinQorAI 技术博客，分享 AI 智能体、AI 内容创作、知识管理、任务自动化与前端工程实践。" />
     <meta property="og:image" content="${OG_IMAGE}" />
     <meta property="og:site_name" content="DinQorAI" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Blog | DinQorAI" />
-    <meta name="twitter:description" content="DinQorAI 技术博客 — 前端架构、React 实践、UI 组件设计等技术文章" />
+    <meta name="twitter:description" content="DinQorAI 技术博客，分享 AI 智能体、AI 内容创作、知识管理、任务自动化与前端工程实践。" />
     <meta name="twitter:image" content="${OG_IMAGE}" />
   `.trim();
 
@@ -374,7 +382,7 @@ async function main() {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
     name: 'Blog | DinQorAI',
-    description: 'Technical articles on frontend architecture, React patterns, and UI component design',
+    description: 'Articles about AI agents, AI content creation, knowledge management, task automation, and frontend engineering',
     url: `${SITE_URL}/blog/`,
     isPartOf: { '@id': `${SITE_URL}/#website` }
   })}</script>`;

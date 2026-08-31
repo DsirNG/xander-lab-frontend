@@ -1,7 +1,7 @@
 {
-    "name": "DinQorAI - UI Infrastructure & Interactive Components",
+    "name": "DinQorAI - AI Agent Platform",
     "short_name": "DinQorAI",
-    "description": "Explore cutting-edge UI infrastructure systems and interactive components",
+    "description": "AI agent platform for intelligent conversations, content creation, knowledge management, and task automation",
     "start_url": "/",
     "display": "standalone",
     "background_color": "#1a1a1a",
@@ -9,8 +9,14 @@
     "orientation": "portrait-primary",
     "icons": [
         {
-            "src": "/favicon.png",
-            "sizes": "32x32",
+            "src": "/favicon-48x48.png",
+            "sizes": "48x48",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "/favicon-96x96.png",
+            "sizes": "96x96",
             "type": "image/png",
             "purpose": "any"
         },
@@ -39,7 +45,7 @@
         "utilities",
         "productivity"
     ],
-    "lang": "en",
+    "lang": "zh-CN",
     "dir": "ltr",
     "scope": "/",
     "screenshots": [],

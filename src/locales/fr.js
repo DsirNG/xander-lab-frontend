@@ -1165,8 +1165,8 @@ export default {
   },
   seo: {
     home: {
-      title: 'Infrastructure UI et présentation de composants interactifs',
-      description: 'Découvrez l\'infrastructure UI de DinQorAI, les composants React, les systèmes de glisser-déposer, les overlays ancrés et les démonstrations d\'architecture frontend.',
+      title: 'Plateforme d\'agents IA',
+      description: 'DinQorAI est une plateforme d\'agents IA pour les conversations intelligentes, la création de contenu, la génération d\'images, l\'analyse de documents, la gestion des connaissances et l\'automatisation des tâches.',
     },
     infra: {
       title: 'Systèmes d\'infrastructure UI',

@@ -36,7 +36,7 @@ export default function SEOHead({
   jsonLd,
   noindex = false,
 }) {
-  const fullTitle = title ? `${title} | ${SITE_NAME}` : `${SITE_NAME} - UI Infrastructure & Interactive Component Showcase`;
+  const fullTitle = title ? `${title} | ${SITE_NAME}` : `${SITE_NAME} - AI Agent Platform`;
   const canonicalUrl = canonical ? `${SITE_URL}${canonical}` : undefined;
   const image = ogImage || DEFAULT_OG_IMAGE;
 

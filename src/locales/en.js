@@ -1180,8 +1180,8 @@ export default {
   },
   seo: {
     home: {
-      title: 'UI Infrastructure & Interactive Component Showcase',
-      description: 'Explore DinQorAI UI infrastructure, React components, drag-and-drop systems, anchored overlays, and frontend architecture demonstrations.',
+      title: 'AI Agent Platform',
+      description: 'DinQorAI is an AI agent platform for intelligent conversations, content creation, image generation, document analysis, knowledge management, and task automation.',
     },
     infra: {
       title: 'UI Infrastructure Systems',
