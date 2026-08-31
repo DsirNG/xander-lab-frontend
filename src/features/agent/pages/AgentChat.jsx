@@ -807,7 +807,8 @@ const AgentChat = () => {
     const handleQuizSubmit = useCallback(
         (payload) => {
             if (!conversationId || isActive) return;
-            sendMessage(JSON.stringify(payload));
+            // 答题卡提交是内部协议；服务端会持久化为可读的 quiz_answer，不能先把 JSON 当作用户消息显示。
+            sendMessage(JSON.stringify(payload), { displayUserMessage: false });
         },
         [conversationId, isActive, sendMessage],
     );

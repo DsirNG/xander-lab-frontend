@@ -110,4 +110,36 @@ describe("AgentMarkdown", () => {
         expect(container.querySelectorAll(".katex-display")).toHaveLength(1);
         expect(container.querySelectorAll(".katex-html")).toHaveLength(4);
     });
+
+    it("renders unambiguous plain-text fractions and radicals as KaTeX", () => {
+        const { container } = render(
+            <AgentMarkdown content="正弦值是 3/5，且 sin 60° = √3/2。" />,
+        );
+
+        expect(container.querySelectorAll(".katex")).toHaveLength(2);
+        expect(container.querySelector(".katex-error")).not.toBeInTheDocument();
+    });
+
+    it("preserves LaTeX parentheses inside display equations", () => {
+        const content = String.raw`\[
+\left(\frac35\right)^2+\cos^2\alpha=1
+\]`;
+        const { container } = render(<AgentMarkdown content={content} />);
+
+        expect(container.querySelectorAll(".katex")).toHaveLength(1);
+        expect(container.querySelector(".katex-error")).not.toBeInTheDocument();
+        expect(container).toHaveTextContent("cos");
+        expect(container.textContent).not.toContain("\\left$");
+    });
+
+    it("renders boxed answer content without a cramped formula frame", () => {
+        const content = String.raw`\[
+\boxed{\frac12，\quad \frac12，\quad 1}
+\]`;
+        const { container } = render(<AgentMarkdown content={content} />);
+
+        expect(container.querySelectorAll(".katex")).toHaveLength(1);
+        expect(container.querySelector(".fbox")).not.toBeInTheDocument();
+        expect(container.querySelector(".katex-error")).not.toBeInTheDocument();
+    });
 });

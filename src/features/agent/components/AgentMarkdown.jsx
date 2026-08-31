@@ -7,11 +7,52 @@ import "katex/dist/katex.min.css";
 import CodeBlock from "@/components/common/CodeBlock";
 import Modal from "@/components/common/Modal";
 
+/** 对话正文无需额外公式边框；展开模型常用的 \boxed{...}，避免流式渲染时出现残缺框线。 */
+const unwrapBoxedExpressions = (text) => {
+    let result = "";
+    let cursor = 0;
+
+    while (cursor < text.length) {
+        const start = text.indexOf("\\boxed{", cursor);
+        if (start < 0) return result + text.slice(cursor);
+
+        result += text.slice(cursor, start);
+        const contentStart = start + "\\boxed{".length;
+        let depth = 1;
+        let end = contentStart;
+        for (; end < text.length && depth > 0; end += 1) {
+            if (text[end] === "{") depth += 1;
+            else if (text[end] === "}") depth -= 1;
+        }
+        if (depth > 0) return result + text.slice(start);
+
+        result += text.slice(contentStart, end - 1);
+        cursor = end;
+    }
+
+    return result;
+};
+
+/**
+ * 兼容已落库的简写数学文本。模型应输出 TeX；这里只补齐无歧义的纯数字分数和根式分数，
+ * 让旧消息与偶发的不规范输出仍能按数学公式展示，而不会把日期、路径或普通斜杠误当公式。
+ */
+const normalizeSimpleMath = (text) => text
+    .replace(
+        /(?<![\w$\\])√(\d+)\s*\/\s*(\d+)(?![\w$])/g,
+        (_, radicand, denominator) => `$\\frac{\\sqrt{${radicand}}}{${denominator}}$`,
+    )
+    .replace(
+        /(?<![\w$\\])(\d+)\s*\/\s*(\d+)(?![\w$])/g,
+        (_, numerator, denominator) => `$\\frac{${numerator}}{${denominator}}$`,
+    )
+    .replace(/(?<![\w$\\])√(\d+)(?![\w$])/g, (_, radicand) => `$\\sqrt{${radicand}}$`);
+
 /** 模型常把 Markdown 反引号写成 \` 转义，并用普通括号包裹 TeX；统一为 remark-math 可识别的定界符。 */
 const normalizeAnswer = (text) => {
     if (typeof text !== "string") return text;
 
-    return text
+    return normalizeSimpleMath(unwrapBoxedExpressions(text))
         .replace(/\\`/g, "`")
         .replace(
             /\\\[([\s\S]*?)\\\]/g,
@@ -19,7 +60,7 @@ const normalizeAnswer = (text) => {
         )
         .replace(/\\\(([\s\S]*?)\\\)/g, (_, formula) => `$${formula}$`)
         .replace(
-            /\(([^()\n]*\\[a-zA-Z]+[^()\n]*)\)/g,
+            /(?<!\\left)\(([^()\n]*\\[a-zA-Z]+[^()\n]*)\)/g,
             (_, formula) => `$${formula}$`,
         )
         .replace(
@@ -166,7 +207,7 @@ const AgentMarkdown = memo(({ content, codeAppearance = "conversation" }) => {
 
     return (
         <>
-            <div className="prose prose-sm min-w-0 max-w-none break-words prose-li:my-0.5 prose-li:text-ink-secondary prose-strong:text-ink prose-pre:my-3 prose-pre:bg-transparent prose-pre:p-0 prose-table:text-sm">
+            <div className="prose prose-sm min-w-0 max-w-none break-words prose-li:my-1.5 prose-li:leading-7 prose-li:text-ink-secondary prose-strong:text-ink prose-pre:my-3 prose-pre:bg-transparent prose-pre:p-0 prose-table:text-sm [&_.katex-display]:my-4 [&_.katex-display]:overflow-x-auto [&_.katex-display]:py-1">
                 <ReactMarkdown
                     remarkPlugins={[remarkGfm, remarkMath]}
                     rehypePlugins={[rehypeKatex]}
