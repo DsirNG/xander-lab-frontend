@@ -1,6 +1,6 @@
 import React from "react";
-import { render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { fireEvent, render, screen } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
 import {
     ImageToolProgressPanel,
     ImageToolResult,
@@ -8,6 +8,8 @@ import {
     ReflectionCard,
     ThinkingIndicator,
 } from "./AgentChat";
+import QuizCardStack from "../components/QuizCardStack";
+import { parseQuizPayload } from "../components/quizPayload";
 
 describe("ThinkingIndicator", () => {
     it("announces the pending response and renders stable animated dots", () => {
@@ -105,5 +107,55 @@ describe("image generation UI", () => {
         const image = screen.getByRole("img", { name: "可爱小猫" });
         expect(image).toHaveAttribute("src", "https://cdn.example.com/cat.png");
         expect(screen.queryByRole("link")).not.toBeInTheDocument();
+    });
+});
+
+describe("QuizCardStack", () => {
+    const quiz = {
+        type: "quiz",
+        id: "quiz-1",
+        title: "JavaScript",
+        questions: [
+            {
+                id: "q1",
+                prompt: "Which value is truthy?",
+                options: ["false", "true"],
+            },
+            {
+                id: "q2",
+                prompt: "Type a value",
+                type: "text",
+            },
+        ],
+    };
+
+    it("keeps answers across cards and submits them as one payload", async () => {
+        const onSubmit = vi.fn();
+        render(<QuizCardStack payload={quiz} onSubmit={onSubmit} />);
+
+        fireEvent.click(screen.getByRole("button", { name: /true/ }));
+        fireEvent.click(screen.getByRole("button", { name: /Next|下一题/ }));
+        fireEvent.change(
+            screen.getByPlaceholderText(/Type your answer|输入你的答案/),
+            { target: { value: "42" } },
+        );
+        fireEvent.click(
+            screen.getByRole("button", {
+                name: /Submit all answers|提交全部答案/,
+            }),
+        );
+
+        expect(onSubmit).toHaveBeenCalledWith({
+            type: "submit_quiz",
+            quiz_id: "quiz-1",
+            answers: [
+                { question_id: "q1", answer: "true" },
+                { question_id: "q2", answer: "42" },
+            ],
+        });
+    });
+
+    it("parses a quiz embedded in an assistant message", () => {
+        expect(parseQuizPayload({ content: JSON.stringify(quiz) })).toEqual(quiz);
     });
 });

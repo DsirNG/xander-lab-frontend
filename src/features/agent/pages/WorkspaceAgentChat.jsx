@@ -32,7 +32,9 @@ import {
     PlanCard,
     ReflectionCard,
     ThinkingIndicator,
+    QuizMessage,
 } from "./AgentChat";
+import { parseQuizPayload } from "../components/quizPayload";
 
 const IMAGE_TOOL = "image_generate";
 
@@ -313,6 +315,14 @@ const WorkspaceAgentChat = () => {
         await submitText(input, attachments);
     };
 
+    const handleQuizSubmit = useCallback(
+        (payload) => {
+            if (!conversationId || locked) return;
+            sendMessage(JSON.stringify(payload));
+        },
+        [conversationId, locked, sendMessage],
+    );
+
     const handleFilesSelected = useCallback(
         async (files) => {
             const remaining = Math.max(0, 5 - attachments.length);
@@ -513,6 +523,15 @@ const WorkspaceAgentChat = () => {
                             ) : (
                                 <div className="mx-auto flex max-w-3xl flex-col gap-5">
                                     {messages.map((message) => {
+                                        if (message.kind === "quiz" || parseQuizPayload(message)) {
+                                            return (
+                                                <QuizMessage
+                                                    key={message.id}
+                                                    message={message}
+                                                    onSubmit={handleQuizSubmit}
+                                                />
+                                            );
+                                        }
                                         if (message.role === "user") {
                                             return (
                                                 <ConversationMessage

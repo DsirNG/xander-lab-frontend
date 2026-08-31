@@ -52,6 +52,8 @@ import AgentMarkdown from "../components/AgentMarkdown";
 import AgentImagesPage from "./AgentImagesPage";
 import ProfileModal from "@features/workspace/components/ProfileModal";
 import { useAuthSession } from "@features/auth/context/authSessionContextValue";
+import QuizCardStack from "../components/QuizCardStack";
+import { parseQuizPayload } from "../components/quizPayload";
 
 const ThoughtCard = ({ content }) => (
     <div className="flex items-start gap-2 rounded-xl border border-border bg-canvas px-3 py-2 text-xs leading-5 text-ink-muted">
@@ -341,6 +343,11 @@ export const ThinkingIndicator = ({ label }) => (
         </div>
     </div>
 );
+
+export const QuizMessage = ({ message, onSubmit }) => {
+    const payload = parseQuizPayload(message);
+    return payload ? <QuizCardStack payload={payload} onSubmit={onSubmit} /> : null;
+};
 
 const AgentChatInputBar = ({
     t,
@@ -796,6 +803,14 @@ const AgentChat = () => {
     };
 
     const handleStop = () => cancelTurn();
+
+    const handleQuizSubmit = useCallback(
+        (payload) => {
+            if (!conversationId || isActive) return;
+            sendMessage(JSON.stringify(payload));
+        },
+        [conversationId, isActive, sendMessage],
+    );
 
     // 图片等入口页面携带 ?q= 跳转而来：自动创建会话并发送首条消息。
     // ref 守卫保证同一 q 只触发一次（StrictMode 双执行与路由变化都不会重复发送）。
@@ -1361,8 +1376,17 @@ const AgentChat = () => {
                                             </div>
                                         ) : (
                                             <div className="mx-auto flex max-w-3xl flex-col gap-5">
-                                                {messages.map((message) => {
-                                                    if (
+                                                    {messages.map((message) => {
+                                                        if (message.kind === "quiz" || parseQuizPayload(message)) {
+                                                            return (
+                                                                <QuizMessage
+                                                                    key={message.id}
+                                                                    message={message}
+                                                                    onSubmit={handleQuizSubmit}
+                                                                />
+                                                            );
+                                                        }
+                                                        if (
                                                         message.role === "user"
                                                     ) {
                                                         return (
