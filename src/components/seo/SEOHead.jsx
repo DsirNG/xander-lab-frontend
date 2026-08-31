@@ -10,7 +10,7 @@ import { Helmet } from 'react-helmet-async';
 const SITE_URL = 'https://dinqor.cn';
 const SITE_NAME = 'DinQorAI';
 const DEFAULT_OG_IMAGE = `${SITE_URL}/og-image.png`;
-const BRAND_KEYWORDS = 'dinqorai, 博客, dinqor博客, dinqorai博客, dinqor';
+const BRAND_KEYWORDS = 'DinQorAI, DinQor, AI智能体, 人工智能助手, 智能体平台, AI Agent, AI内容创作, AI写作助手, 博客智能体, AI博客写作, AI图片生成, 文档分析, 知识管理, 知识镜像, AI学习助手, 智能任务自动化, 联网搜索';
 
 /**
  * SEOHead - 页面级 SEO 元信息注入
