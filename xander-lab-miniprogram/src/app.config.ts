@@ -11,6 +11,7 @@ export default defineAppConfig({
     'pages/publish/index',
     'pages/blog-manage/index',
     'pages/points/index',
+    'pages/subscription/index',
     'pages/notifications/index',
     'pages/account-settings/index',
     'pages/account-profile/index',

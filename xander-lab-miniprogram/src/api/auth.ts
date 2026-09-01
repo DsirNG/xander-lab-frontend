@@ -5,6 +5,8 @@ export type UserInfo = {
   nickname: string
   avatar: string
   role: string
+  tier: string
+  tierExpiresAt: string | null
   email: string | null
   createdAt: string
 }

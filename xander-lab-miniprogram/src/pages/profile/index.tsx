@@ -129,7 +129,7 @@ export default function Profile() {
           <View className="profile-name-line">
             <Text className="profile-name">{user ? user.nickname : t('profile.guest')}</Text>
             <Text className="profile-badge">
-              {user ? t('profile.member') : t('profile.signIn')}
+              {user ? user.tier || t('profile.member') : t('profile.signIn')}
             </Text>
           </View>
           <Text className="profile-role">
@@ -167,6 +167,11 @@ export default function Profile() {
       </View>
 
       <View className="profile-menu-group profile-menu-group--primary">
+        <ProfileMenuRow
+          icon="star"
+          label={t('profile.subscription')}
+          onClick={() => navigateForUser('/pages/subscription/index')}
+        />
         <ProfileMenuRow
           icon="star"
           label={t('profile.recitation')}

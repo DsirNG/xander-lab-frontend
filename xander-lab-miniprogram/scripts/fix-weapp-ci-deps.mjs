@@ -80,7 +80,13 @@ function fixPolyfillCorejs3() {
     fs.rmSync(hoisted, { recursive: true, force: true })
   }
   const rel = path.relative(path.dirname(hoisted), target).replace(/\\/g, '/')
-  fs.symlinkSync(rel, hoisted, 'dir')
+  try {
+    fs.symlinkSync(rel, hoisted, 'dir')
+  } catch (error) {
+    // Windows 未开启开发者模式时目录符号链接会报 EPERM；复制依赖可保持同一解析结果。
+    if (error?.code !== 'EPERM') throw error
+    fs.cpSync(target, hoisted, { recursive: true })
+  }
   log('polyfill-corejs3 ->', readJson(path.join(target, 'package.json')).version)
 }
 
