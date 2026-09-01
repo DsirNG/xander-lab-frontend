@@ -2,9 +2,9 @@ import React, { useRef } from "react";
 import { useTranslation } from "react-i18next";
 import LandingHero from "../components/LandingHero";
 import LandingAgentWindow from "../components/LandingAgentWindow";
-import LandingEngines from "../components/LandingEngines";
-import LandingEcosystem from "../components/LandingEcosystem";
+import LandingDinqorAgentSection from "../components/LandingDinqorAgentSection";
 import LandingTechFoundation from "../components/LandingTechFoundation";
+import LandingEcosystem from "../components/LandingEcosystem";
 import LandingRoadmap from "../components/LandingRoadmap";
 import LandingCtaBanner from "../components/LandingCtaBanner";
 import LandingFooter from "../components/LandingFooter";
@@ -21,7 +21,7 @@ export default function HomePage() {
     };
 
     const handleLearnMore = () => {
-        const el = document.getElementById("engines");
+        const el = document.getElementById("dinqor-agent");
         if (el) {
             el.scrollIntoView({ behavior: "smooth" });
         }
@@ -53,25 +53,25 @@ export default function HomePage() {
                     <LandingAgentWindow t={t} />
                 </div>
 
-                {/* 3. 四大核心引擎 */}
-                <div id="engines">
-                    <LandingEngines t={t} />
+                {/* 3. 统一超级智能体工作台与四核引擎全景展厅 */}
+                <div id="dinqor-agent">
+                    <LandingDinqorAgentSection t={t} />
                 </div>
 
-                {/* 4. 附属生态与创作者社区 */}
-                <LandingEcosystem t={t} />
-
-                {/* 5. 为什么选择我们 / 工业级技术底座与安全背书 */}
+                {/* 4. 工业级技术底座与安全背书 */}
                 <LandingTechFoundation t={t} />
 
-                {/* 6. Roadmap / 与技术，共同进化 */}
+                {/* 8. 附属生态与创作者社区 */}
+                <LandingEcosystem t={t} />
+
+                {/* 9. Roadmap / 与技术，共同进化 */}
                 <LandingRoadmap t={t} />
 
-                {/* 7. CTA Banner */}
+                {/* 10. CTA Banner */}
                 <LandingCtaBanner t={t} />
             </main>
 
-            {/* 8. 官方网站 Footer */}
+            {/* 11. 官方网站 Footer */}
             <LandingFooter t={t} />
         </div>
     );
