@@ -20,6 +20,48 @@ const isAbortError = (error) =>
         error?.isCancelled,
     );
 
+/** The backend stores a conversation plan as a JSON snapshot. */
+const parsePlanItems = (planJson) => {
+    if (Array.isArray(planJson)) return planJson;
+    if (typeof planJson !== "string" || !planJson.trim()) return [];
+    try {
+        const parsed = JSON.parse(planJson);
+        return Array.isArray(parsed) ? parsed : [];
+    } catch {
+        return [];
+    }
+};
+
+/**
+ * Plans created before plan messages were persisted still exist in planJson.
+ * Reinsert those legacy plans after the task-introduction thought so they remain
+ * part of the conversation timeline after a refresh.
+ */
+const restorePlanMessage = (messages, conversation) => {
+    const timeline = Array.isArray(messages) ? messages : [];
+    if (timeline.some((message) => message.kind === "plan")) return timeline;
+    const items = parsePlanItems(conversation?.planJson);
+    if (items.length === 0) return timeline;
+
+    const planMessage = {
+        id: `plan-snapshot-${conversation?.id ?? "unknown"}`,
+        role: "assistant",
+        kind: "plan",
+        content: JSON.stringify(items),
+    };
+    const thoughtIndex = timeline.findIndex(
+        (message) => message.kind === "thought",
+    );
+    const userIndex = timeline.findIndex((message) => message.role === "user");
+    const anchorIndex = thoughtIndex >= 0 ? thoughtIndex : userIndex;
+    if (anchorIndex < 0) return [...timeline, planMessage];
+    return [
+        ...timeline.slice(0, anchorIndex + 1),
+        planMessage,
+        ...timeline.slice(anchorIndex + 1),
+    ];
+};
+
 const abortableDelay = (delay, signal) =>
     new Promise((resolve, reject) => {
         const rejectAborted = () =>
@@ -290,7 +332,7 @@ export const useAgentConversation = ({ conversationId }) => {
             if (nextRunVersion !== null) runVersionRef.current = nextRunVersion;
 
             setConversation(snapshot);
-            setMessages(Array.isArray(detail.messages) ? detail.messages : []);
+            setMessages(restorePlanMessage(detail.messages, snapshot));
             const status = snapshot?.status;
             if (status === "running") {
                 updateRunning(true);

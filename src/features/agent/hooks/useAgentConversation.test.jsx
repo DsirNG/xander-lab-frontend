@@ -289,6 +289,38 @@ describe("useAgentConversation autonomy events", () => {
         });
     });
 
+    it("restores the persisted plan when an existing conversation is opened", async () => {
+        const { useAgentConversation } =
+            await import("./useAgentConversation.js");
+        agentConversationService.get.mockResolvedValue({
+            conversation: {
+                id: 42,
+                status: "ready",
+                runVersion: 3,
+                planJson: JSON.stringify([
+                    { title: "设计连接协议", status: "DONE" },
+                    { title: "编写客户端", status: "IN_PROGRESS" },
+                ]),
+            },
+            messages: [],
+        });
+
+        const { result } = renderHook(() =>
+            useAgentConversation({ conversationId: "42" }),
+        );
+
+        await waitFor(() => expect(result.current.loading).toBe(false));
+        expect(result.current.messages).toContainEqual(
+            expect.objectContaining({
+                kind: "plan",
+                content: JSON.stringify([
+                    { title: "设计连接协议", status: "DONE" },
+                    { title: "编写客户端", status: "IN_PROGRESS" },
+                ]),
+            }),
+        );
+    });
+
     it("withdraws the streamed answer draft when the self-check rejects the reply", async () => {
         const { result, emit } = await streamHarness();
 

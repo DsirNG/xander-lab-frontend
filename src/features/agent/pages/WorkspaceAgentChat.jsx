@@ -571,6 +571,16 @@ const WorkspaceAgentChat = () => {
                                                 />
                                             ) : null;
                                         }
+                                        if (message.kind === "plan") {
+                                            return (
+                                                <PlanCard
+                                                    key={message.id}
+                                                    items={parseToolPayload(
+                                                        message.content,
+                                                    )}
+                                                />
+                                            );
+                                        }
                                         if (
                                             message.kind === "answer" ||
                                             message.kind === "message"
