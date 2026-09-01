@@ -62,6 +62,28 @@ const restorePlanMessage = (messages, conversation) => {
     ];
 };
 
+/** Older turns may contain one plan message per status update; retain one card per user turn. */
+const collapsePlanUpdates = (messages) => {
+    const timeline = Array.isArray(messages) ? messages : [];
+    const collapsed = [];
+    let planIndex = -1;
+    for (const message of timeline) {
+        if (message.role === "user") planIndex = -1;
+        if (message.kind !== "plan") {
+            collapsed.push(message);
+            continue;
+        }
+        if (planIndex < 0) {
+            planIndex = collapsed.length;
+            collapsed.push(message);
+            continue;
+        }
+        // Keep the original timeline position, but render the latest status snapshot.
+        collapsed[planIndex] = { ...collapsed[planIndex], content: message.content };
+    }
+    return collapsed;
+};
+
 const abortableDelay = (delay, signal) =>
     new Promise((resolve, reject) => {
         const rejectAborted = () =>
@@ -332,7 +354,11 @@ export const useAgentConversation = ({ conversationId }) => {
             if (nextRunVersion !== null) runVersionRef.current = nextRunVersion;
 
             setConversation(snapshot);
-            setMessages(restorePlanMessage(detail.messages, snapshot));
+            setMessages(
+                collapsePlanUpdates(
+                    restorePlanMessage(detail.messages, snapshot),
+                ),
+            );
             const status = snapshot?.status;
             if (status === "running") {
                 updateRunning(true);

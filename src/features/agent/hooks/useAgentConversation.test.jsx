@@ -321,6 +321,50 @@ describe("useAgentConversation autonomy events", () => {
         );
     });
 
+    it("keeps one historical plan card per user turn and uses its latest status", async () => {
+        const { useAgentConversation } =
+            await import("./useAgentConversation.js");
+        agentConversationService.get.mockResolvedValue({
+            conversation: { id: 42, status: "ready", runVersion: 3 },
+            messages: [
+                { id: 1, role: "user", kind: "message", content: "first" },
+                { id: 2, role: "assistant", kind: "thought", content: "plan" },
+                {
+                    id: 3,
+                    role: "assistant",
+                    kind: "plan",
+                    content: '[{"title":"first","status":"IN_PROGRESS"}]',
+                },
+                {
+                    id: 4,
+                    role: "assistant",
+                    kind: "plan",
+                    content: '[{"title":"first","status":"DONE"}]',
+                },
+                { id: 5, role: "user", kind: "message", content: "second" },
+                {
+                    id: 6,
+                    role: "assistant",
+                    kind: "plan",
+                    content: '[{"title":"second","status":"IN_PROGRESS"}]',
+                },
+            ],
+        });
+
+        const { result } = renderHook(() =>
+            useAgentConversation({ conversationId: "42" }),
+        );
+        await waitFor(() => expect(result.current.loading).toBe(false));
+
+        const plans = result.current.messages.filter(
+            (message) => message.kind === "plan",
+        );
+        expect(plans).toHaveLength(2);
+        expect(plans[0].id).toBe(3);
+        expect(plans[0].content).toContain('"DONE"');
+        expect(plans[1].id).toBe(6);
+    });
+
     it("withdraws the streamed answer draft when the self-check rejects the reply", async () => {
         const { result, emit } = await streamHarness();
 
