@@ -23,12 +23,14 @@ export default {
         badge: "次世代 AI アシスタント",
         heroTitlePart1: "あなたの専属",
         heroTitlePart2: "AI スマートパートナー",
-        heroSubtitle: "Dinqor / XanderDING といつでも対話。正確な回答、リアルタイム Web 検索、画像やコンテンツの生成、カスタマイズされた演習やナレッジインポートで学習や仕事をより効率的に。",
+        heroSubtitle:
+            "Dinqor / XanderDING といつでも対話。正確な回答、リアルタイム Web 検索、画像やコンテンツの生成、カスタマイズされた演習やナレッジインポートで学習や仕事をより効率的に。",
         tryNow: "今すぐ体験",
         learnMore: "詳細を見る",
         agentWindow: {
             welcome: "おかえりなさい",
-            subtitle: "あなたの AI パートナー。専門的で信頼性の高いサポートをいつでも提供します",
+            subtitle:
+                "あなたの AI パートナー。専門的で信頼性の高いサポートをいつでも提供します",
             placeholder: "Dinqor にやりたいことを伝えてください...",
             generateImage: "画像を生成",
             searchWeb: "Web を検索",
@@ -37,7 +39,8 @@ export default {
         },
         engines: {
             title: "4大コアエンジン",
-            subtitle: "4つのエンジンが連携し、制作プロセス全体を網羅。AI の無限の生産性を解放",
+            subtitle:
+                "4つのエンジンが連携し、制作プロセス全体を網羅。AI の無限の生産性を解放",
             img2threejs: {
                 badge: "A",
                 title: "img2threejs —— コード完結型 3D アセットスタジオ",
@@ -91,7 +94,8 @@ export default {
         knowledgeMirror: {
             badge: "コアエンジン · 個人ナレッジベースAI & チューター",
             title: "Knowledge Mirror —— 個人ナレッジミラー & AI 個人指導",
-            subtitle: "受動的な暗記から脱却。ノートや資料を対話型スマートチューターへ変換：対話内での自律出題、ミリ秒単位の採点、弱点の原因追究とエビングハウス曲線に基づく復習ループを提供します。",
+            subtitle:
+                "受動的な暗記から脱却。ノートや資料を対話型スマートチューターへ変換：対話内での自律出題、ミリ秒単位の採点、弱点の原因追究とエビングハウス曲線に基づく復習ループを提供します。",
             stage1Badge: "01. マルチモーダル知識の取り込み",
             stage1Title: "知識の構造化と抽出",
             stage1Desc: "暗記・概念・数式ユニットへ自動分解",
@@ -107,11 +111,14 @@ export default {
             engineTitle: "クローズドループ型学習エージェント",
             engineTag: "Continuous Adaptive Learning Loop",
             feat1Title: "マルチモーダル知識グラフの構造化",
-            feat1Desc: "散在するドキュメントや論文から核心を抽出し、暗記・概念・演習カードへ瞬時に変換。",
+            feat1Desc:
+                "散在するドキュメントや論文から核心を抽出し、暗記・概念・演習カードへ瞬時に変換。",
             feat2Title: "ミリ秒単位の音声暗唱採点 & 音響対照",
-            feat2Desc: "音声をアップロードして音素レベルで照合。読み間違いや脱落をハイライトし高精度採点。",
+            feat2Desc:
+                "音声をアップロードして音素レベルで照合。読み間違いや脱落をハイライトし高精度採点。",
             feat3Title: "誤答分析 & エビングハウス復習フロー",
-            feat3Desc: "理解が不十分な箇所を検知し、即座に対策ドリルを生成して最適な復習日時を算出。",
+            feat3Desc:
+                "理解が不十分な箇所を検知し、即座に対策ドリルを生成して最適な復習日時を算出。",
             stat1: "平均習得度",
             stat2: "採点応答速度",
             stat3: "記憶定着率",
@@ -124,7 +131,8 @@ export default {
         dinqorAgent: {
             badge: "マルチモーダル AI ブレイン · 自律推論と制御",
             title: "DinQor Agent —— マルチモーダル AI ブレインワークスペース",
-            subtitle: "深い思考（Thought）、複数ステップ計画（Plan）、自律ツール呼び出し（Tools）、自己修正（Reflection）を備えた産業用エージェント。",
+            subtitle:
+                "深い思考（Thought）、複数ステップ計画（Plan）、自律ツール呼び出し（Tools）、自己修正（Reflection）を備えた産業用エージェント。",
             tabThought: "ReAct 思考チェーン",
             tabTools: "ツールチェーン連携",
             tabSubAgents: "SubAgent 協調ネットワーク",
@@ -134,20 +142,23 @@ export default {
         headlessAutomation: {
             badge: "完全自動 · 産業用コンテンツ生成パイプライン",
             title: "Headless Automation —— 完全自動コンテンツパイプライン",
-            subtitle: "自律的なテーマ調査・執筆から品質ゲートの厳格チェック、マルチプラットフォーム MCP 配信まで、24時間365日無人稼働。",
+            subtitle:
+                "自律的なテーマ調査・執筆から品質ゲートの厳格チェック、マルチプラットフォーム MCP 配信まで、24時間365日無人稼働。",
             matrixTitle: "MCP マルチプラットフォーム並列配信",
             ctaButton: "自動化計画の管理",
         },
         img2threejs: {
             badge: "コード完結型 3D · バイナリ不要 · 即時レンダリング",
             title: "img2threejs —— プログラマブル 3D アセットスタジオ",
-            subtitle: "重い GLTF/FBX ファイルは不要。1枚の画像やプロンプトから、シェーダーやボーンアニメーションを含む Three.js 純粋 JavaScript コードを直接生成。",
+            subtitle:
+                "重い GLTF/FBX ファイルは不要。1枚の画像やプロンプトから、シェーダーやボーンアニメーションを含む Three.js 純粋 JavaScript コードを直接生成。",
             featTitle: "Code-Only 3D の革新的メリット",
             ctaButton: "3D アセットスタジオで制作する",
         },
         ecosystem: {
             title: "エコシステム & クリエイターコミュニティ",
-            subtitle: "エコシステムをつなぎ、インスピレーションを共有し、未来を共創する",
+            subtitle:
+                "エコシステムをつなぎ、インスピレーションを共有し、未来を共創する",
             gallery: {
                 title: "3D アセット体験ショールーム",
                 desc: "オンライン閲覧、インタラクティブ体験、ワンクリック制作連携",
@@ -167,7 +178,8 @@ export default {
         techFoundation: {
             tag: "選ばれる理由",
             title: "エンタープライズ技術基盤 & セキュリティ",
-            subtitle: "安全・安定・拡張性に優れた AI 創作と 3D 生産性プラットフォームの構築",
+            subtitle:
+                "安全・安定・拡張性に優れた AI 創作と 3D 生産性プラットフォームの構築",
             sandbox: {
                 num: "01",
                 title: "ChatGPT レベルのサンドボックス分離",
@@ -204,7 +216,8 @@ export default {
         roadmap: {
             tag: "Roadmap",
             title: "技術と共に進化する",
-            subtitle: "生成からインタラクションへ、ツールから世界へ。AI と 3D の境界を拡張",
+            subtitle:
+                "生成からインタラクションへ、ツールから世界へ。AI と 3D の境界を拡張",
             phase1: {
                 phase: "フェーズ 01",
                 title: "Code-Only 3D",
@@ -232,7 +245,8 @@ export default {
         },
         ctaBanner: {
             title: "AI 創作の旅を今すぐ始めましょう",
-            subtitle: "次世代 AI クリエイターズラボに参加し、世界中のクリエイターと無限の生産性を探索。",
+            subtitle:
+                "次世代 AI クリエイターズラボに参加し、世界中のクリエイターと無限の生産性を探索。",
             createNow: "今すぐ創作を開始",
             explore3D: "3D ショーケースを見る",
         },
@@ -864,16 +878,17 @@ export default {
             writing: "執筆",
         },
         home: {
-        newHero: {
-            titlePart1: "あなたの",
-            titlePart2: "スマートワークスペース",
-            description: "DinQorAIとチャットして、コンテンツ作成、知識管理、タスクの自動化の新しい体験を今すぐ始めましょう。",
-        },
-        chatMock: {
-            placeholder: "DinQorAIに何をしたいか教えてください...",
-            send: "送信",
-            greeting: "こんにちは！DinQorAIです。準備はいいですか？",
-        },
+            newHero: {
+                titlePart1: "あなたの",
+                titlePart2: "スマートワークスペース",
+                description:
+                    "DinQorAIとチャットして、コンテンツ作成、知識管理、タスクの自動化の新しい体験を今すぐ始めましょう。",
+            },
+            chatMock: {
+                placeholder: "DinQorAIに何をしたいか教えてください...",
+                send: "送信",
+                greeting: "こんにちは！DinQorAIです。準備はいいですか？",
+            },
             greeting: {
                 morning: "おはようございます",
                 afternoon: "こんにちは",
@@ -2220,6 +2235,15 @@ export default {
                 "クリアすると新たに保存するまで微信ログインは無効になります。続行しますか？",
             configured: "設定済み",
             notConfigured: "未設定",
+            virtualPayTitle: "個人主体の仮想決済",
+            virtualPayHint:
+                "OfferID、AppKey、商品は暗号化して保存し、メッセージ Token はサーバー設定に保持します。",
+            virtualPayEnabled: "決済を有効化",
+            appKeyHint: "設定済みです。空欄なら現在の AppKey を保持します。",
+            priceCents: "価格（分）",
+            durationDays: "有効日数",
+            virtualPaySaved: "仮想決済設定を保存しました",
+            virtualPaySaveFailed: "仮想決済設定を保存できませんでした",
         },
         configs: {
             title: "機能モデル設定",

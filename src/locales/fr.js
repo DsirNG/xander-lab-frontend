@@ -23,12 +23,14 @@ export default {
         badge: "Assistant IA nouvelle génération",
         heroTitlePart1: "Votre compagnon",
         heroTitlePart2: "IA intelligent personnel",
-        heroSubtitle: "Discutez avec Dinqor / XanderDING à tout moment pour des réponses précises, des recherches web en direct, la création d'images et de contenus, des entraînements sur mesure et l'import de connaissances.",
+        heroSubtitle:
+            "Discutez avec Dinqor / XanderDING à tout moment pour des réponses précises, des recherches web en direct, la création d'images et de contenus, des entraînements sur mesure et l'import de connaissances.",
         tryNow: "Essayer maintenant",
         learnMore: "En savoir plus",
         agentWindow: {
             welcome: "Bienvenue",
-            subtitle: "Votre partenaire IA intelligent, toujours disponible pour vous assister de manière fiable",
+            subtitle:
+                "Votre partenaire IA intelligent, toujours disponible pour vous assister de manière fiable",
             placeholder: "Dites à Dinqor ce que vous souhaitez faire...",
             generateImage: "Générer une image",
             searchWeb: "Rechercher sur le web",
@@ -37,7 +39,8 @@ export default {
         },
         engines: {
             title: "Quatre moteurs fondamentaux",
-            subtitle: "Une synergie de quatre moteurs couvrant toute la chaîne de création pour libérer la productivité de l'IA",
+            subtitle:
+                "Une synergie de quatre moteurs couvrant toute la chaîne de création pour libérer la productivité de l'IA",
             img2threejs: {
                 badge: "A",
                 title: "img2threejs — Atelier d'actifs 3D 100% procédural",
@@ -91,27 +94,33 @@ export default {
         knowledgeMirror: {
             badge: "Superpouvoir Central · Agent de Base de Connaissances & Tuteur IA",
             title: "Knowledge Mirror — Miroir de Connaissances & Tuteur IA Personnel",
-            subtitle: "Dépassez l'apprentissage passif. Transformez documents et notes en tuteur interactif : quiz adaptatifs en dialogue, notation en millisecondes, analyse des erreurs et révision espacée d'Ebbinghaus.",
+            subtitle:
+                "Dépassez l'apprentissage passif. Transformez documents et notes en tuteur interactif : quiz adaptatifs en dialogue, notation en millisecondes, analyse des erreurs et révision espacée d'Ebbinghaus.",
             stage1Badge: "01. Ingestion Multimodale de Connaissances",
             stage1Title: "Ingestion & Structuration",
-            stage1Desc: "Décomposition en unités de récitation, concepts et formules",
+            stage1Desc:
+                "Décomposition en unités de récitation, concepts et formules",
             stage2Badge: "02. Quiz Adaptatif & Feuille de Réponses",
             stage2Title: "Quiz Interactif en Dialogue",
             stage2Desc: "Fiches de réponses immersives avec retour en direct",
             stage3Badge: "03. Notation Instantanée & Analyse Approfondie",
             stage3Title: "Notation Intelligente & Preuves",
-            stage3Desc: "Score instantané, analyse des erreurs et citations originales",
+            stage3Desc:
+                "Score instantané, analyse des erreurs et citations originales",
             stage4Badge: "04. Renforcement Ciblé des Lacunes",
             stage4Title: "Approfondissement & Planification",
             stage4Desc: "Exercices ciblés avec courbe d'oubli d'Ebbinghaus",
             engineTitle: "Boucle d'Apprentissage Complète par Agent",
             engineTag: "Continuous Adaptive Learning Loop",
             feat1Title: "Graphe de Connaissances Multimodal Structuré",
-            feat1Desc: "Extrayez les concepts clés de documents ou notes en cartes de récitation, concepts et mathématiques.",
+            feat1Desc:
+                "Extrayez les concepts clés de documents ou notes en cartes de récitation, concepts et mathématiques.",
             feat2Title: "Évaluation Acoustique de Récitation Vocale",
-            feat2Desc: "Téléversez vos enregistrements pour un alignement phonémique précis et une notation complète.",
+            feat2Desc:
+                "Téléversez vos enregistrements pour un alignement phonémique précis et une notation complète.",
             feat3Title: "Analyse des Causes d'Erreurs & Révision Espacée",
-            feat3Desc: "Générez des exercices de renforcement sur mesure et planifiez automatiquement vos révisions optimales.",
+            feat3Desc:
+                "Générez des exercices de renforcement sur mesure et planifiez automatiquement vos révisions optimales.",
             stat1: "Maîtrise Moyenne",
             stat2: "Temps de Notation",
             stat3: "Gain de Rétention",
@@ -124,7 +133,8 @@ export default {
         dinqorAgent: {
             badge: "Cerveau IA Multimodal · Raisonnement & Orchestration Autonome",
             title: "DinQor Agent — Espace de Travail du Cerveau Intelligent",
-            subtitle: "Architecture d'Agent autonome de niveau industriel dotée de chaînes de pensée ReAct, planification multi-étapes et auto-correction.",
+            subtitle:
+                "Architecture d'Agent autonome de niveau industriel dotée de chaînes de pensée ReAct, planification multi-étapes et auto-correction.",
             tabThought: "Chaîne de Pensée ReAct",
             tabTools: "Matrice d'Outils Autonomes",
             tabSubAgents: "Essaim de SubAgents",
@@ -134,20 +144,23 @@ export default {
         headlessAutomation: {
             badge: "Autonome · Pipeline Industriel de Génération de Contenu",
             title: "Headless Automation — Pipeline de Contenu Autonome",
-            subtitle: "De la recherche et rédaction automatique aux portes de qualité strictes et à la distribution MCP multi-plateforme 24/7.",
+            subtitle:
+                "De la recherche et rédaction automatique aux portes de qualité strictes et à la distribution MCP multi-plateforme 24/7.",
             matrixTitle: "Distribution Parallèle Multi-Canaux MCP",
             ctaButton: "Gérer l'Automatisation & Planning",
         },
         img2threejs: {
             badge: "3D Pur Code · Zéro Téléchargement Binaire · Rendu Instantané",
             title: "img2threejs — Atelier d'Actifs 3D Procéduraux Pur Code",
-            subtitle: "Finis les fichiers GLTF/FBX lourds. Générez du code source Three.js 100% programmable avec shaders, sockets et colliders directement depuis une image ou un prompt.",
+            subtitle:
+                "Finis les fichiers GLTF/FBX lourds. Générez du code source Three.js 100% programmable avec shaders, sockets et colliders directement depuis une image ou un prompt.",
             featTitle: "Avantages Révolutionnaires du 3D Pur Code",
             ctaButton: "Créer dans l'Atelier 3D",
         },
         ecosystem: {
             title: "Écosystème & Communauté de créateurs",
-            subtitle: "Relier les écosystèmes, partager les inspirations et bâtir l'avenir ensemble",
+            subtitle:
+                "Relier les écosystèmes, partager les inspirations et bâtir l'avenir ensemble",
             gallery: {
                 title: "Galerie 3D interactive",
                 desc: "Exploration en ligne, inspection 3D et intégration en un clic",
@@ -167,7 +180,8 @@ export default {
         techFoundation: {
             tag: "Pourquoi nous choisir",
             title: "Socle technologique industriel & Sécurité",
-            subtitle: "Bâtir une plateforme sûre, stable et évolutive pour la 3D et l'IA",
+            subtitle:
+                "Bâtir une plateforme sûre, stable et évolutive pour la 3D et l'IA",
             sandbox: {
                 num: "01",
                 title: "Isolation Sandbox niveau ChatGPT",
@@ -204,7 +218,8 @@ export default {
         roadmap: {
             tag: "Roadmap",
             title: "Évoluer avec la technologie",
-            subtitle: "De la génération à l'interaction, repousser les frontières de l'IA et de la 3D",
+            subtitle:
+                "De la génération à l'interaction, repousser les frontières de l'IA et de la 3D",
             phase1: {
                 phase: "Phase 01",
                 title: "3D orientée code (Code-Only 3D)",
@@ -232,7 +247,8 @@ export default {
         },
         ctaBanner: {
             title: "Prêt à commencer votre voyage créatif IA ?",
-            subtitle: "Rejoignez le lab de créateurs IA nouvelle génération et explorez la productivité multimodale.",
+            subtitle:
+                "Rejoignez le lab de créateurs IA nouvelle génération et explorez la productivité multimodale.",
             createNow: "Démarrer la création",
             explore3D: "Explorer la galerie 3D",
         },
@@ -868,16 +884,17 @@ export default {
             writing: "Écriture",
         },
         home: {
-        newHero: {
-            titlePart1: "Explorez votre",
-            titlePart2: "Espace de travail intelligent",
-            description: "Discutez avec DinQorAI et débloquez instantanément une nouvelle expérience de création de contenu, de gestion des connaissances et d'automatisation des tâches.",
-        },
-        chatMock: {
-            placeholder: "Dites à DinQorAI ce que vous voulez faire...",
-            send: "Envoyer",
-            greeting: "Bonjour ! Je suis DinQorAI. Prêt à travailler ?",
-        },
+            newHero: {
+                titlePart1: "Explorez votre",
+                titlePart2: "Espace de travail intelligent",
+                description:
+                    "Discutez avec DinQorAI et débloquez instantanément une nouvelle expérience de création de contenu, de gestion des connaissances et d'automatisation des tâches.",
+            },
+            chatMock: {
+                placeholder: "Dites à DinQorAI ce que vous voulez faire...",
+                send: "Envoyer",
+                greeting: "Bonjour ! Je suis DinQorAI. Prêt à travailler ?",
+            },
             greeting: {
                 morning: "Bonjour",
                 afternoon: "Bon après-midi",
@@ -2263,6 +2280,16 @@ export default {
                 "La connexion WeChat sera désactivée jusqu’à l’enregistrement de nouveaux identifiants. Continuer ?",
             configured: "Configuré",
             notConfigured: "Non configuré",
+            virtualPayTitle: "Paiement virtuel personnel",
+            virtualPayHint:
+                "OfferID, AppKey et les articles sont stockés de façon sécurisée ; le jeton reste côté serveur.",
+            virtualPayEnabled: "Activer les paiements",
+            appKeyHint:
+                "Configurée ; laissez vide pour conserver l’AppKey actuelle.",
+            priceCents: "Prix (centimes)",
+            durationDays: "Durée (jours)",
+            virtualPaySaved: "Configuration du paiement enregistrée",
+            virtualPaySaveFailed: "Échec de l’enregistrement du paiement",
         },
         configs: {
             title: "Configurations des modèles",

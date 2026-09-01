@@ -62,4 +62,8 @@ export const adminService = {
         put("/api/admin/wechat-credential", payload, config),
     clearWechatCredential: (config) =>
         del("/api/admin/wechat-credential", undefined, config),
+    getVirtualPaySettings: (config) =>
+        get("/api/admin/virtual-pay-settings", undefined, config),
+    saveVirtualPaySettings: (payload, config) =>
+        put("/api/admin/virtual-pay-settings", payload, config),
 };

@@ -23,7 +23,8 @@ export default {
         badge: "新一代 AI 智能助手",
         heroTitlePart1: "你的个人",
         heroTitlePart2: "AI 智能伙伴",
-        heroSubtitle: "与 Dinqor / XanderDING 随时对话，获取准确答案；智能搜索全网信息；生成图片与创意内容；定制化练习与知识导入，助你学习、工作与生活更高效。",
+        heroSubtitle:
+            "与 Dinqor / XanderDING 随时对话，获取准确答案；智能搜索全网信息；生成图片与创意内容；定制化练习与知识导入，助你学习、工作与生活更高效。",
         tryNow: "立即体验",
         learnMore: "了解更多",
         agentWindow: {
@@ -91,7 +92,8 @@ export default {
         knowledgeMirror: {
             badge: "核心灵魂 · 个人知识库智能体与 AI 私教",
             title: "Knowledge Mirror —— 个人知识镜像与 AI 私教",
-            subtitle: "告别静态死记硬背。将文档、笔记与题库一键转化为动态交互式私教：对话中主动出题、秒级对齐判分、精准溯源解析，直击薄弱点生成针对性巩固计划，完成终身学习全闭环。",
+            subtitle:
+                "告别静态死记硬背。将文档、笔记与题库一键转化为动态交互式私教：对话中主动出题、秒级对齐判分、精准溯源解析，直击薄弱点生成针对性巩固计划，完成终身学习全闭环。",
             stage1Badge: "01. 知识多态摄入与结构化",
             stage1Title: "知识摄入与结构化",
             stage1Desc: "自动解构为背诵/概念/推导知识元",
@@ -107,11 +109,14 @@ export default {
             engineTitle: "全链路智能体学习闭环",
             engineTag: "Continuous Adaptive Learning Loop",
             feat1Title: "多模态知识图谱智能结构化",
-            feat1Desc: "无论散落文档、科研论文或错题本，秒级萃取核心论点，生成 RECITATION 背诵、CONCEPT 概念与 MATH 推导知识卡。",
+            feat1Desc:
+                "无论散落文档、科研论文或错题本，秒级萃取核心论点，生成 RECITATION 背诵、CONCEPT 概念与 MATH 推导知识卡。",
             feat2Title: "毫秒级声纹背诵评测 & 声学对齐",
-            feat2Desc: "录音一键上传，AI 自动进行音素对齐比对，错读、漏字实时标红，给出综合熟练度评分与逐句发音校准。",
+            feat2Desc:
+                "录音一键上传，AI 自动进行音素对齐比对，错读、漏字实时标红，给出综合熟练度评分与逐句发音校准。",
             feat3Title: "智能错因剖析与艾宾浩斯复习流",
-            feat3Desc: "答错或背诵卡壳后，私教即刻唤起「靶向强化练习」，根据遗忘衰减曲线精准预测下一次复习时间。",
+            feat3Desc:
+                "答错或背诵卡壳后，私教即刻唤起「靶向强化练习」，根据遗忘衰减曲线精准预测下一次复习时间。",
             stat1: "掌握度平均",
             stat2: "判分响应",
             stat3: "记忆留存率",
@@ -124,7 +129,8 @@ export default {
         dinqorAgent: {
             badge: "多模态智能大脑 · 全自主推理与调度",
             title: "DinQor Agent —— 多模态智能大脑工作台",
-            subtitle: "具备全流程思考（Thought）、多步骤规划（Plan）、多工具调用（Tools）与自我反思修正（Reflection）能力的工业级自主 Agent 架构，为你的知识库与创作提供强大算力支撑。",
+            subtitle:
+                "具备全流程思考（Thought）、多步骤规划（Plan）、多工具调用（Tools）与自我反思修正（Reflection）能力的工业级自主 Agent 架构，为你的知识库与创作提供强大算力支撑。",
             tabThought: "ReAct 深度思考链",
             tabTools: "多工具链编排",
             tabSubAgents: "SubAgent 协作蜂群",
@@ -134,14 +140,16 @@ export default {
         headlessAutomation: {
             badge: "无人值守 · 工业级内容生产流水线",
             title: "Headless Automation —— 无人值守内容流水线",
-            subtitle: "从灵感捕捉、自动成文、严格质控门禁到多平台 MCP 协议分发，实现 7×24 小时不间断的自主生产力矩阵。",
+            subtitle:
+                "从灵感捕捉、自动成文、严格质控门禁到多平台 MCP 协议分发，实现 7×24 小时不间断的自主生产力矩阵。",
             matrixTitle: "MCP 协议多端并发分发矩阵",
             ctaButton: "管理定时发文与自动化计划",
         },
         img2threejs: {
             badge: "纯代码 3D · 零下载体积 · 即生即用",
             title: "img2threejs —— 纯代码程序化 3D 资产工坊",
-            subtitle: "拒绝笨重的 GLTF/FBX 二进制资产。单张图片或提示词直接生成 100% 可编程的 Three.js 纯 JavaScript 源码，自带材质着色器、骨骼插槽与动画挂接点。",
+            subtitle:
+                "拒绝笨重的 GLTF/FBX 二进制资产。单张图片或提示词直接生成 100% 可编程的 Three.js 纯 JavaScript 源码，自带材质着色器、骨骼插槽与动画挂接点。",
             featTitle: "Code-Only 3D 革命性优势",
             ctaButton: "进入 3D 资产工坊创作",
         },
@@ -232,7 +240,8 @@ export default {
         },
         ctaBanner: {
             title: "准备好，开启你的 AI 创造之旅？",
-            subtitle: "加入下一代 AI 创作者实验室，与全球创作者一起，探索多模态生产力的无限可能。",
+            subtitle:
+                "加入下一代 AI 创作者实验室，与全球创作者一起，探索多模态生产力的无限可能。",
             createNow: "立即开启创作",
             explore3D: "Explore 3D Showcase",
         },
@@ -839,16 +848,17 @@ export default {
             plans: "计划",
         },
         home: {
-        newHero: {
-            titlePart1: "探索你的",
-            titlePart2: "智能工作空间",
-            description: "与 DinQorAI 对话，即刻开启内容创作、知识管理与自动化任务的新体验。",
-        },
-        chatMock: {
-            placeholder: "告诉 DinQorAI 你想做什么...",
-            send: "发送",
-            greeting: "你好！我是 DinQorAI，准备好开始工作了吗？",
-        },
+            newHero: {
+                titlePart1: "探索你的",
+                titlePart2: "智能工作空间",
+                description:
+                    "与 DinQorAI 对话，即刻开启内容创作、知识管理与自动化任务的新体验。",
+            },
+            chatMock: {
+                placeholder: "告诉 DinQorAI 你想做什么...",
+                send: "发送",
+                greeting: "你好！我是 DinQorAI，准备好开始工作了吗？",
+            },
             greeting: {
                 morning: "上午好",
                 afternoon: "下午好",
@@ -2138,6 +2148,15 @@ export default {
                 "清除后微信登录将关闭，直至重新保存新凭据。确定继续吗？",
             configured: "已配置",
             notConfigured: "未配置",
+            virtualPayTitle: "个人主体虚拟支付",
+            virtualPayHint:
+                "OfferID、AppKey 与订阅道具加密入库；消息 Token 仍由服务器配置。",
+            virtualPayEnabled: "启用支付",
+            appKeyHint: "已配置；留空可保留原 AppKey。",
+            priceCents: "价格（分）",
+            durationDays: "有效天数",
+            virtualPaySaved: "虚拟支付配置已保存",
+            virtualPaySaveFailed: "保存虚拟支付配置失败",
         },
         configs: {
             title: "功能模型配置",

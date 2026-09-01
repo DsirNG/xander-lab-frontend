@@ -42,18 +42,29 @@ function fixCompatData() {
     log('skip compat-data: 8.0.0 digest not found')
     return
   }
+  const srcDir = findPkgDir('@babel+compat-data@7', '@babel/compat-data', () => true)
+  if (!srcDir) {
+    log('skip compat-data: no 7.x source found')
+    return
+  }
   for (const f of ['corejs2-built-ins.js', 'corejs3-shipped-proposals.js']) {
     const dest = path.join(cdDir, f)
-    if (fs.existsSync(dest)) continue
-    const srcDir = findPkgDir('@babel+compat-data@7', '@babel/compat-data', () => true)
-    if (!srcDir) {
-      log('skip compat-data: no 7.x source found')
-      return
+    if (!fs.existsSync(dest)) {
+      const src = path.join(srcDir, f)
+      if (fs.existsSync(src)) {
+        fs.copyFileSync(src, dest)
+        log('patched compat-data:', f)
+      }
     }
-    const src = path.join(srcDir, f)
+  }
+  fs.mkdirSync(path.join(cdDir, 'data'), { recursive: true })
+  for (const f of ['corejs2-built-ins.json', 'corejs3-shipped-proposals.json']) {
+    const dest = path.join(cdDir, 'data', f)
+    if (fs.existsSync(dest)) continue
+    const src = path.join(srcDir, 'data', f)
     if (!fs.existsSync(src)) continue
     fs.copyFileSync(src, dest)
-    log('patched compat-data:', f)
+    log('patched compat-data/data:', f)
   }
 }
 

@@ -23,12 +23,14 @@ export default {
         badge: "Next-Gen AI Assistant",
         heroTitlePart1: "Your Personal",
         heroTitlePart2: "AI Smart Partner",
-        heroSubtitle: "Chat with Dinqor / XanderDING anytime for accurate answers, real-time web search, creative image & text generation, customized practice, and knowledge import to boost your learning, work, and daily life.",
+        heroSubtitle:
+            "Chat with Dinqor / XanderDING anytime for accurate answers, real-time web search, creative image & text generation, customized practice, and knowledge import to boost your learning, work, and daily life.",
         tryNow: "Try Now",
         learnMore: "Learn More",
         agentWindow: {
             welcome: "Welcome Back",
-            subtitle: "Your AI intelligent partner, always here to provide professional and reliable help",
+            subtitle:
+                "Your AI intelligent partner, always here to provide professional and reliable help",
             placeholder: "Tell Dinqor what you want to do...",
             generateImage: "Generate Image",
             searchWeb: "Search Web",
@@ -37,7 +39,8 @@ export default {
         },
         engines: {
             title: "Four Core Engines",
-            subtitle: "Co-driven by four core engines, covering the full creative pipeline to unleash infinite AI productivity",
+            subtitle:
+                "Co-driven by four core engines, covering the full creative pipeline to unleash infinite AI productivity",
             img2threejs: {
                 badge: "A",
                 title: "img2threejs — Code-Only Procedural 3D Asset Studio",
@@ -91,7 +94,8 @@ export default {
         knowledgeMirror: {
             badge: "Core Superpower · Personal Knowledge Agent & AI Tutor",
             title: "Knowledge Mirror — Personal Knowledge Mirror & AI Coach",
-            subtitle: "Say goodbye to passive rote learning. Turn documents, research, and notes into an adaptive conversational tutor: interactive in-dialogue quizzes, millisecond scoring, root-cause mistake analysis, and targeted drill-downs for lifelong mastery.",
+            subtitle:
+                "Say goodbye to passive rote learning. Turn documents, research, and notes into an adaptive conversational tutor: interactive in-dialogue quizzes, millisecond scoring, root-cause mistake analysis, and targeted drill-downs for lifelong mastery.",
             stage1Badge: "01. Multimodal Knowledge Ingestion",
             stage1Title: "Ingestion & Structuring",
             stage1Desc: "Deconstruct into recitation, concept, and math units",
@@ -107,11 +111,14 @@ export default {
             engineTitle: "Closed-Loop Agent Learning Pipeline",
             engineTag: "Continuous Adaptive Learning Loop",
             feat1Title: "Structured Multimodal Knowledge Graph",
-            feat1Desc: "Extract core arguments from notes, papers, or problem sets into RECITATION, CONCEPT, and MATH knowledge cards.",
+            feat1Desc:
+                "Extract core arguments from notes, papers, or problem sets into RECITATION, CONCEPT, and MATH knowledge cards.",
             feat2Title: "Millisecond Acoustic Recitation Scoring",
-            feat2Desc: "Upload voice audio for instant phoneme alignment, pinpointing misreadings and omissions with comprehensive accuracy grading.",
+            feat2Desc:
+                "Upload voice audio for instant phoneme alignment, pinpointing misreadings and omissions with comprehensive accuracy grading.",
             feat3Title: "Smart Root-Cause Analysis & Spaced Review",
-            feat3Desc: "Instantly trigger targeted drill-down exercises on weak spots and schedule optimal review intervals based on decay curves.",
+            feat3Desc:
+                "Instantly trigger targeted drill-down exercises on weak spots and schedule optimal review intervals based on decay curves.",
             stat1: "Average Mastery",
             stat2: "Grading Latency",
             stat3: "Retention Boost",
@@ -124,7 +131,8 @@ export default {
         dinqorAgent: {
             badge: "Multimodal AI Brain · Autonomous Reasoning & Dispatch",
             title: "DinQor Agent — Multimodal Intelligent Brain Workbench",
-            subtitle: "Industrial-grade autonomous Agent architecture featuring full ReAct Thought chains, multi-step Planning, Tool calling, and self-correcting Reflection.",
+            subtitle:
+                "Industrial-grade autonomous Agent architecture featuring full ReAct Thought chains, multi-step Planning, Tool calling, and self-correcting Reflection.",
             tabThought: "ReAct Thought Chain",
             tabTools: "Toolchain Matrix",
             tabSubAgents: "SubAgent Swarm",
@@ -134,20 +142,23 @@ export default {
         headlessAutomation: {
             badge: "Unattended · Industrial Content Generation Pipeline",
             title: "Headless Automation — Unattended Content Pipeline",
-            subtitle: "From autonomous topic exploration and drafting to fail-closed quality gates and multi-platform MCP distribution, running 24/7 uninterrupted.",
+            subtitle:
+                "From autonomous topic exploration and drafting to fail-closed quality gates and multi-platform MCP distribution, running 24/7 uninterrupted.",
             matrixTitle: "Multi-Platform MCP Parallel Distribution",
             ctaButton: "Manage Automation & Scheduling",
         },
         img2threejs: {
             badge: "Code-Only 3D · Zero Binary Download · Instant Load",
             title: "img2threejs — Code-Only Procedural 3D Asset Studio",
-            subtitle: "Eliminate bloated GLTF/FBX binaries. Generate 100% programmable Three.js JavaScript source code with procedural shaders, animation sockets, and colliders from a single image or prompt.",
+            subtitle:
+                "Eliminate bloated GLTF/FBX binaries. Generate 100% programmable Three.js JavaScript source code with procedural shaders, animation sockets, and colliders from a single image or prompt.",
             featTitle: "Code-Only 3D Revolutionary Advantages",
             ctaButton: "Create in 3D Asset Studio",
         },
         ecosystem: {
             title: "Ecosystem & Creator Community",
-            subtitle: "Connecting ecosystems, showcasing inspirations, and building the future together",
+            subtitle:
+                "Connecting ecosystems, showcasing inspirations, and building the future together",
             gallery: {
                 title: "3D Asset Interactive Showcase",
                 desc: "Online browsing, interactive 3D inspection, one-click creative integration",
@@ -167,7 +178,8 @@ export default {
         techFoundation: {
             tag: "Why Choose Us",
             title: "Industrial-Grade Tech Foundation & Security",
-            subtitle: "Building a secure, stable, and scalable AI creation & 3D productivity platform",
+            subtitle:
+                "Building a secure, stable, and scalable AI creation & 3D productivity platform",
             sandbox: {
                 num: "01",
                 title: "ChatGPT-Grade Sandbox Isolation",
@@ -204,7 +216,8 @@ export default {
         roadmap: {
             tag: "Roadmap",
             title: "Evolving with Technology",
-            subtitle: "From generation to interaction, from tools to worlds, expanding the frontiers of AI & 3D",
+            subtitle:
+                "From generation to interaction, from tools to worlds, expanding the frontiers of AI & 3D",
             phase1: {
                 phase: "Phase 01",
                 title: "Code-Only 3D",
@@ -232,7 +245,8 @@ export default {
         },
         ctaBanner: {
             title: "Ready to Start Your AI Creative Journey?",
-            subtitle: "Join the next-gen AI creators lab and explore infinite multimodal productivity with creators worldwide.",
+            subtitle:
+                "Join the next-gen AI creators lab and explore infinite multimodal productivity with creators worldwide.",
             createNow: "Start Creating Now",
             explore3D: "Explore 3D Showcase",
         },
@@ -866,16 +880,17 @@ export default {
             writing: "Writing",
         },
         home: {
-        newHero: {
-            titlePart1: "Explore your",
-            titlePart2: "Smart Workspace",
-            description: "Chat with DinQorAI and instantly unlock a new experience in content creation, knowledge management, and task automation.",
-        },
-        chatMock: {
-            placeholder: "Tell DinQorAI what you want to do...",
-            send: "Send",
-            greeting: "Hello! I am DinQorAI. Ready to get to work?",
-        },
+            newHero: {
+                titlePart1: "Explore your",
+                titlePart2: "Smart Workspace",
+                description:
+                    "Chat with DinQorAI and instantly unlock a new experience in content creation, knowledge management, and task automation.",
+            },
+            chatMock: {
+                placeholder: "Tell DinQorAI what you want to do...",
+                send: "Send",
+                greeting: "Hello! I am DinQorAI. Ready to get to work?",
+            },
             greeting: {
                 morning: "Good morning",
                 afternoon: "Good afternoon",
@@ -2221,6 +2236,15 @@ export default {
                 "WeChat login will be disabled until a new credential is saved. Continue?",
             configured: "Configured",
             notConfigured: "Not configured",
+            virtualPayTitle: "Personal Virtual Payment",
+            virtualPayHint:
+                "OfferID, AppKey and subscription items are stored securely; the message token stays in server config.",
+            virtualPayEnabled: "Enable payments",
+            appKeyHint: "Configured; leave blank to keep the current AppKey.",
+            priceCents: "Price (cents)",
+            durationDays: "Duration (days)",
+            virtualPaySaved: "Virtual payment settings saved",
+            virtualPaySaveFailed: "Failed to save virtual payment settings",
         },
         configs: {
             title: "Feature Model Configs",

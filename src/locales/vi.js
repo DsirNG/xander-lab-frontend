@@ -23,12 +23,14 @@ export default {
         badge: "Trợ lý AI thế hệ mới",
         heroTitlePart1: "Người bạn đồng hành",
         heroTitlePart2: "AI thông minh của bạn",
-        heroSubtitle: "Trò chuyện với Dinqor / XanderDING mọi lúc để nhận câu trả lời chính xác, tìm kiếm mạng theo thời gian thực, tạo hình ảnh & nội dung, bài tập tùy chỉnh và nhập tri thức nâng cao hiệu quả.",
+        heroSubtitle:
+            "Trò chuyện với Dinqor / XanderDING mọi lúc để nhận câu trả lời chính xác, tìm kiếm mạng theo thời gian thực, tạo hình ảnh & nội dung, bài tập tùy chỉnh và nhập tri thức nâng cao hiệu quả.",
         tryNow: "Trải nghiệm ngay",
         learnMore: "Tìm hiểu thêm",
         agentWindow: {
             welcome: "Chào mừng trở lại",
-            subtitle: "Đối tác AI thông minh của bạn, luôn sẵn sàng hỗ trợ chuyên nghiệp và đáng tin cậy",
+            subtitle:
+                "Đối tác AI thông minh của bạn, luôn sẵn sàng hỗ trợ chuyên nghiệp và đáng tin cậy",
             placeholder: "Nói cho Dinqor biết bạn muốn làm gì...",
             generateImage: "Tạo hình ảnh",
             searchWeb: "Tìm kiếm mạng",
@@ -37,7 +39,8 @@ export default {
         },
         engines: {
             title: "Bốn động cơ cốt lõi",
-            subtitle: "Bốn động cơ phối hợp vận hành, bao phủ toàn bộ chu trình sáng tạo, giải phóng năng suất AI vô hạn",
+            subtitle:
+                "Bốn động cơ phối hợp vận hành, bao phủ toàn bộ chu trình sáng tạo, giải phóng năng suất AI vô hạn",
             img2threejs: {
                 badge: "A",
                 title: "img2threejs — Xưởng tài sản 3D thuần mã nguồn",
@@ -91,10 +94,12 @@ export default {
         knowledgeMirror: {
             badge: "Siêu năng lực cốt lõi · Tác tử cơ sở tri thức cá nhân & Gia sư AI",
             title: "Knowledge Mirror — Gương tri thức cá nhân & Gia sư AI",
-            subtitle: "Nói không với việc học vẹt thụ động. Chuyển đổi tài liệu và ghi chú thành gia sư tương tác: tự động tạo câu hỏi, chấm điểm trong mili-giây, phân tích nguyên nhân lỗi và lặp lại ngắt quãng theo đường cong Ebbinghaus.",
+            subtitle:
+                "Nói không với việc học vẹt thụ động. Chuyển đổi tài liệu và ghi chú thành gia sư tương tác: tự động tạo câu hỏi, chấm điểm trong mili-giây, phân tích nguyên nhân lỗi và lặp lại ngắt quãng theo đường cong Ebbinghaus.",
             stage1Badge: "01. Tiếp nhận tri thức đa phương thức",
             stage1Title: "Tiếp nhận & Cấu trúc hóa",
-            stage1Desc: "Tách thành các đơn vị học thuộc, khái niệm và công thức",
+            stage1Desc:
+                "Tách thành các đơn vị học thuộc, khái niệm và công thức",
             stage2Badge: "02. Trắc nghiệm tương tác & Phiếu trả lời",
             stage2Title: "Trắc nghiệm tương tác trong hội thoại",
             stage2Desc: "Thẻ trả lời trực quan với phản hồi tức thì",
@@ -107,16 +112,20 @@ export default {
             engineTitle: "Vòng lặp học tập khép kín của Tác tử",
             engineTag: "Continuous Adaptive Learning Loop",
             feat1Title: "Đồ thị tri thức đa phương thức có cấu trúc",
-            feat1Desc: "Trích xuất luận điểm cốt lõi từ ghi chú hay bài báo thành thẻ học thuộc, khái niệm và tính toán.",
+            feat1Desc:
+                "Trích xuất luận điểm cốt lõi từ ghi chú hay bài báo thành thẻ học thuộc, khái niệm và tính toán.",
             feat2Title: "Chấm điểm đọc thuộc âm thanh chuẩn xác mili-giây",
-            feat2Desc: "Tải lên bản ghi âm để đối chiếu âm vị tức thì, phát hiện lỗi đọc và chấm điểm độ thành thạo toàn diện.",
+            feat2Desc:
+                "Tải lên bản ghi âm để đối chiếu âm vị tức thì, phát hiện lỗi đọc và chấm điểm độ thành thạo toàn diện.",
             feat3Title: "Phân tích nguyên nhân lỗi & Luồng ôn tập ngắt quãng",
-            feat3Desc: "Kích hoạt ngay các bài tập củng cố nhắm vào điểm yếu và tự động lên lịch ôn tập tối ưu.",
+            feat3Desc:
+                "Kích hoạt ngay các bài tập củng cố nhắm vào điểm yếu và tự động lên lịch ôn tập tối ưu.",
             stat1: "Độ thành thạo TB",
             stat2: "Độ trễ chấm điểm",
             stat3: "Tăng khả năng nhớ",
             ctaButton: "Mở Knowledge Mirror Studio",
-            simTitle: "Thiết bị đầu cuối trắc nghiệm Gia sư AI (Mô phỏng trực tiếp)",
+            simTitle:
+                "Thiết bị đầu cuối trắc nghiệm Gia sư AI (Mô phỏng trực tiếp)",
             voiceActive: "Đang ở chế độ đọc thuộc âm thanh",
             switchVoice: "Chuyển sang đọc thuộc",
             scoreUnit: "điểm",
@@ -124,7 +133,8 @@ export default {
         dinqorAgent: {
             badge: "Bộ não AI Đa phương thức · Suy luận & Điều phối tự chủ",
             title: "DinQor Agent — Không gian làm việc Não bộ thông minh",
-            subtitle: "Kiến trúc Tác tử tự chủ cấp công nghiệp với chuỗi suy nghĩ ReAct, lập kế hoạch nhiều bước, gọi công cụ và tự phản tư sửa lỗi.",
+            subtitle:
+                "Kiến trúc Tác tử tự chủ cấp công nghiệp với chuỗi suy nghĩ ReAct, lập kế hoạch nhiều bước, gọi công cụ và tự phản tư sửa lỗi.",
             tabThought: "Chuỗi suy nghĩ ReAct",
             tabTools: "Ma trận công cụ",
             tabSubAgents: "Đàn SubAgent phối hợp",
@@ -134,20 +144,23 @@ export default {
         headlessAutomation: {
             badge: "Tự động hóa hoàn toàn · Dây chuyền sản xuất nội dung công nghiệp",
             title: "Headless Automation — Quy trình nội dung không người giám sát",
-            subtitle: "Từ tự động tìm kiếm chủ đề, viết bài đến kiểm định chất lượng nghiêm ngặt và phân phối đa nền tảng qua MCP 24/7.",
+            subtitle:
+                "Từ tự động tìm kiếm chủ đề, viết bài đến kiểm định chất lượng nghiêm ngặt và phân phối đa nền tảng qua MCP 24/7.",
             matrixTitle: "Phân phối song song đa nền tảng qua MCP",
             ctaButton: "Quản lý kế hoạch & Tự động hóa",
         },
         img2threejs: {
             badge: "3D thuần mã nguồn · Không tải tệp nhị phân · Hiển thị tức thì",
             title: "img2threejs — Xưởng tài sản 3D theo thủ tục thuần mã nguồn",
-            subtitle: "Không còn các tệp GLTF/FBX nặng nề. Tạo mã nguồn JavaScript Three.js lập trình 100% kèm shader, socket và collider trực tiếp từ hình ảnh hoặc câu lệnh.",
+            subtitle:
+                "Không còn các tệp GLTF/FBX nặng nề. Tạo mã nguồn JavaScript Three.js lập trình 100% kèm shader, socket và collider trực tiếp từ hình ảnh hoặc câu lệnh.",
             featTitle: "Ưu thế vượt trội của 3D thuần mã nguồn",
             ctaButton: "Sáng tạo trong Xưởng tài sản 3D",
         },
         ecosystem: {
             title: "Hệ sinh thái & Cộng đồng nhà sáng tạo",
-            subtitle: "Kết nối hệ sinh thái, chia sẻ cảm hứng, cùng nhau kiến tạo tương lai",
+            subtitle:
+                "Kết nối hệ sinh thái, chia sẻ cảm hứng, cùng nhau kiến tạo tương lai",
             gallery: {
                 title: "Phòng trưng bày tài sản 3D tương tác",
                 desc: "Duyệt trực tuyến, kiểm tra 3D tương tác và áp dụng vào sáng tạo với 1 cú nhấp",
@@ -167,7 +180,8 @@ export default {
         techFoundation: {
             tag: "Tại sao chọn chúng tôi",
             title: "Nền tảng công nghệ cấp công nghiệp & Cam kết bảo mật",
-            subtitle: "Xây dựng nền tảng sáng tạo AI và năng suất 3D an toàn, ổn định và có thể mở rộng",
+            subtitle:
+                "Xây dựng nền tảng sáng tạo AI và năng suất 3D an toàn, ổn định và có thể mở rộng",
             sandbox: {
                 num: "01",
                 title: "Cách ly hộp cát chuẩn cấp độ ChatGPT",
@@ -204,7 +218,8 @@ export default {
         roadmap: {
             tag: "Roadmap",
             title: "Tiến hóa cùng công nghệ",
-            subtitle: "Từ tạo lập đến tương tác, từ công cụ đến thế giới, không ngừng mở rộng ranh giới AI & 3D",
+            subtitle:
+                "Từ tạo lập đến tương tác, từ công cụ đến thế giới, không ngừng mở rộng ranh giới AI & 3D",
             phase1: {
                 phase: "Giai đoạn 01",
                 title: "3D thuần mã nguồn (Code-Only 3D)",
@@ -232,7 +247,8 @@ export default {
         },
         ctaBanner: {
             title: "Sẵn sàng bắt đầu hành trình sáng tạo AI của bạn?",
-            subtitle: "Tham gia phòng thí nghiệm sáng tạo AI thế hệ mới và khám phá năng suất đa phương thức vô tận.",
+            subtitle:
+                "Tham gia phòng thí nghiệm sáng tạo AI thế hệ mới và khám phá năng suất đa phương thức vô tận.",
             createNow: "Bắt đầu sáng tạo ngay",
             explore3D: "Khám phá phòng trưng bày 3D",
         },
@@ -856,16 +872,18 @@ export default {
             writing: "Viết bài",
         },
         home: {
-        newHero: {
-            titlePart1: "Khám phá",
-            titlePart2: "Không gian làm việc thông minh",
-            description: "Trò chuyện với DinQorAI và ngay lập tức mở ra trải nghiệm mới trong việc tạo nội dung, quản lý kiến thức và tự động hóa tác vụ.",
-        },
-        chatMock: {
-            placeholder: "Hãy cho DinQorAI biết bạn muốn làm gì...",
-            send: "Gửi",
-            greeting: "Xin chào! Tôi là DinQorAI. Bạn đã sẵn sàng làm việc chưa?",
-        },
+            newHero: {
+                titlePart1: "Khám phá",
+                titlePart2: "Không gian làm việc thông minh",
+                description:
+                    "Trò chuyện với DinQorAI và ngay lập tức mở ra trải nghiệm mới trong việc tạo nội dung, quản lý kiến thức và tự động hóa tác vụ.",
+            },
+            chatMock: {
+                placeholder: "Hãy cho DinQorAI biết bạn muốn làm gì...",
+                send: "Gửi",
+                greeting:
+                    "Xin chào! Tôi là DinQorAI. Bạn đã sẵn sàng làm việc chưa?",
+            },
             greeting: {
                 morning: "Chào buổi sáng",
                 afternoon: "Chào buổi chiều",
@@ -2213,6 +2231,15 @@ export default {
                 "Đăng nhập WeChat sẽ bị tắt cho đến khi lưu thông tin mới. Tiếp tục?",
             configured: "Đã cấu hình",
             notConfigured: "Chưa cấu hình",
+            virtualPayTitle: "Thanh toán ảo cá nhân",
+            virtualPayHint:
+                "OfferID, AppKey và sản phẩm được lưu an toàn; token thông báo vẫn ở cấu hình máy chủ.",
+            virtualPayEnabled: "Bật thanh toán",
+            appKeyHint: "Đã cấu hình; để trống để giữ AppKey hiện tại.",
+            priceCents: "Giá (xu)",
+            durationDays: "Thời hạn (ngày)",
+            virtualPaySaved: "Đã lưu cấu hình thanh toán",
+            virtualPaySaveFailed: "Không thể lưu cấu hình thanh toán",
         },
         configs: {
             title: "Cấu hình mô hình chức năng",
