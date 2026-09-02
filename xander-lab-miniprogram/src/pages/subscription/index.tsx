@@ -97,6 +97,7 @@ export default function SubscriptionPage() {
   const buy = async (product: VirtualPayProduct) => {
     if (buying || !ensureRuntime()) return
     setBuying(product.productId)
+    let loadingShown = false
     try {
       // 每次支付都使用新 code，避免旧 session_key 被 wx.login 轮换后签名失效。
       const login = await Taro.login()
@@ -104,8 +105,10 @@ export default function SubscriptionPage() {
       const payData = await virtualPayApi.createOrder(product.productId, login.code)
       await requestVirtualPayment(payData)
       Taro.showLoading({ title: t('subscription.confirming'), mask: true })
+      loadingShown = true
       const delivered = await confirmDelivered(payData.outTradeNo)
       Taro.hideLoading()
+      loadingShown = false
       if (delivered) {
         await useUserStore.getState().refresh()
         Taro.showToast({ title: t('subscription.success'), icon: 'success' })
@@ -113,12 +116,18 @@ export default function SubscriptionPage() {
         Taro.showToast({ title: t('subscription.pending'), icon: 'none', duration: 3500 })
       }
     } catch (error) {
-      Taro.hideLoading()
+      if (loadingShown) {
+        Taro.hideLoading()
+        loadingShown = false
+      }
       const paymentError = error as { errMsg?: string; errCode?: number }
       const canceled = paymentError.errCode === -2 || paymentError.errMsg?.includes('cancel')
       if (!canceled) {
         Taro.showToast({
-          title: error instanceof Error ? error.message : t('subscription.failed'),
+          title:
+            error instanceof Error
+              ? error.message
+              : paymentError.errMsg || t('subscription.failed'),
           icon: 'none',
         })
       }
