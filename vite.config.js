@@ -50,6 +50,10 @@ export default defineConfig(({ mode }) => {
             },
         },
         build: {
+            // Docker/CI only needs the emitted assets. Calculating compressed
+            // sizes walks every generated chunk after bundling and can leave a
+            // small deployment host silent long enough for SSH to time out.
+            reportCompressedSize: false,
             rollupOptions: {
                 output: {
                     manualChunks(id) {

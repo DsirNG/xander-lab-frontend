@@ -43,7 +43,10 @@ SEO_API_BASE=${SEO_API_BASE:-http://host.docker.internal:30002/api}
 
 echo -e "${YELLOW}Step 1: Building Docker image...${NC}"
 if [ "$USE_COMPOSE" = true ]; then
-    docker-compose build --no-cache --build-arg SEO_API_BASE="$SEO_API_BASE"
+    # Keep Docker layer cache between deployments. Dependencies only need to be
+    # reinstalled when package.json changes; --no-cache made every deploy redo
+    # the most expensive layers and increased the chance of an SSH timeout.
+    docker-compose build --build-arg SEO_API_BASE="$SEO_API_BASE"
 else
     docker build \
         --add-host host.docker.internal:host-gateway \
