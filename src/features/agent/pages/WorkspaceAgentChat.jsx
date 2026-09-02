@@ -30,10 +30,11 @@ import {
     ImageToolProgressPanel,
     ImageToolResult,
     PlanCard,
-    ReflectionCard,
     ThinkingIndicator,
     QuizMessage,
 } from "./AgentChat";
+import { AgentTraceCard, SelfCheckCard } from "../components/AgentTraceCard";
+import { mergeLiveTraces, mergeToolTraces } from "../components/agentTrace";
 import { parseQuizPayload } from "../components/quizPayload";
 
 const IMAGE_TOOL = "image_generate";
@@ -186,6 +187,8 @@ const WorkspaceAgentChat = () => {
         reconnecting,
         errorMessage,
         liveSteps,
+        deepThinking,
+        setDeepThinking,
         sendMessage,
         cancelTurn,
         createConversation,
@@ -196,10 +199,11 @@ const WorkspaceAgentChat = () => {
     const isActive = running || conversation?.status === "running";
     const locked = isActive || creating;
 
-    const steps = useMemo(() => {
-        if (liveSteps.length === 0) return [];
-        return liveSteps;
-    }, [liveSteps]);
+    // 同一次工具调用的 start/progress/delta/end 先合成一条轨迹，收口后仍能展开回看。
+    const steps = useMemo(() => mergeLiveTraces(liveSteps), [liveSteps]);
+
+    /** 持久化消息同样先归并 tool_call / tool_result，刷新后细节不丢。 */
+    const timeline = useMemo(() => mergeToolTraces(messages), [messages]);
 
     const streamingAnswer = useMemo(
         () =>
@@ -495,6 +499,10 @@ const WorkspaceAgentChat = () => {
                                 }
                                 onSubmit={handleSubmit}
                                 onCancel={cancelTurn}
+                                deepThinking={deepThinking}
+                                onToggleDeepThinking={() =>
+                                    setDeepThinking((current) => !current)
+                                }
                                 t={t}
                             />
                         </div>
@@ -522,7 +530,15 @@ const WorkspaceAgentChat = () => {
                                 <WorkspaceAgentSkeleton />
                             ) : (
                                 <div className="mx-auto flex max-w-3xl flex-col gap-5">
-                                    {messages.map((message) => {
+                                    {timeline.map((message) => {
+                                        if (message.kind === "trace") {
+                                            return (
+                                                <AgentTraceCard
+                                                    key={message.id}
+                                                    trace={message}
+                                                />
+                                            );
+                                        }
                                         if (message.kind === "quiz" || parseQuizPayload(message)) {
                                             return (
                                                 <QuizMessage
@@ -554,7 +570,7 @@ const WorkspaceAgentChat = () => {
                                         }
                                         if (message.kind === "reflection") {
                                             return (
-                                                <ReflectionCard
+                                                <SelfCheckCard
                                                     key={message.id}
                                                     content={message.content}
                                                 />
@@ -630,10 +646,17 @@ const WorkspaceAgentChat = () => {
                                             );
                                         if (step.type === "reflection")
                                             return (
-                                                <ReflectionCard
+                                                <SelfCheckCard
                                                     key={`live-${index}`}
                                                     content={step.content}
                                                     round={step.round}
+                                                />
+                                            );
+                                        if (step.type === "trace")
+                                            return (
+                                                <AgentTraceCard
+                                                    key={`live-${index}`}
+                                                    trace={step}
                                                 />
                                             );
                                         if (step.type === "tool") {
@@ -762,6 +785,10 @@ const WorkspaceAgentChat = () => {
                                     }
                                     onSubmit={handleSubmit}
                                     onCancel={cancelTurn}
+                                    deepThinking={deepThinking}
+                                    onToggleDeepThinking={() =>
+                                        setDeepThinking((current) => !current)
+                                    }
                                     t={t}
                                 />
                                 <div className="mt-1.5 text-center text-micro text-[#a0a5ba]">

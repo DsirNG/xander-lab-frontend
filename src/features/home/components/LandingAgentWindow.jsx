@@ -27,10 +27,10 @@ import {
     ImageToolProgressPanel,
     ImageToolResult,
     PlanCard,
-    ReflectionCard,
     ThinkingIndicator,
     QuizMessage,
 } from "@features/agent/pages/AgentChat";
+import { SelfCheckCard } from "@features/agent/components/AgentTraceCard";
 import { parseQuizPayload } from "@features/agent/components/quizPayload";
 import { GlowingRing3D } from "./LandingIllustrations";
 import { useToast } from "@/hooks/useToast";
@@ -570,7 +570,7 @@ const LandingAgentWindow = ({ t }) => {
                                             }
                                             if (message.kind === "reflection") {
                                                 return (
-                                                    <ReflectionCard
+                                                    <SelfCheckCard
                                                         key={message.id}
                                                         content={message.content}
                                                     />
@@ -637,7 +637,7 @@ const LandingAgentWindow = ({ t }) => {
                                             }
                                             if (step.type === "reflection") {
                                                 return (
-                                                    <ReflectionCard
+                                                    <SelfCheckCard
                                                         key={`live-${index}`}
                                                         content={step.content}
                                                         round={step.round}

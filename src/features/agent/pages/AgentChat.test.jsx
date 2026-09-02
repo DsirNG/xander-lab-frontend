@@ -5,9 +5,9 @@ import {
     ImageToolProgressPanel,
     ImageToolResult,
     PlanCard,
-    ReflectionCard,
     ThinkingIndicator,
 } from "./AgentChat";
+import { SelfCheckCard } from "../components/AgentTraceCard";
 import QuizCardStack from "../components/QuizCardStack";
 import { parseQuizPayload } from "../components/quizPayload";
 
@@ -66,18 +66,29 @@ describe("PlanCard", () => {
     });
 });
 
-describe("ReflectionCard", () => {
-    it("shows the critique with its round so a rejected reply is explained", () => {
-        render(<ReflectionCard content="还有 1 个步骤没有收口" round={2} />);
+describe("SelfCheckCard", () => {
+    const critique =
+        "还有 1 个步骤没有收口：用 plan_tasks 把它标成 DONE 或 DROPPED";
 
-        expect(screen.getByText("还有 1 个步骤没有收口")).toBeInTheDocument();
-        const card = screen.getByText("还有 1 个步骤没有收口").parentElement;
-        expect(card.textContent).toContain("2");
-        expect(card.textContent).not.toContain("blog.agentChat");
+    it("keeps the raw critique in the detail view instead of the timeline", () => {
+        render(<SelfCheckCard content={critique} round={2} />);
+
+        // 主时间线上只留一句人话，给模型看的工具名和状态枚举不该糊在用户脸上。
+        expect(screen.queryByText(/plan_tasks/)).not.toBeInTheDocument();
+
+        const toggle = screen.getByRole("button");
+        expect(toggle).toHaveAttribute("aria-expanded", "false");
+        expect(toggle.textContent).toContain("2");
+        expect(toggle.textContent).not.toContain("blog.agentChat");
+
+        fireEvent.click(toggle);
+
+        expect(toggle).toHaveAttribute("aria-expanded", "true");
+        expect(screen.getByText(/plan_tasks/)).toBeInTheDocument();
     });
 
     it("renders nothing without a critique", () => {
-        const { container } = render(<ReflectionCard content="" round={1} />);
+        const { container } = render(<SelfCheckCard content="" round={1} />);
 
         expect(container).toBeEmptyDOMElement();
     });

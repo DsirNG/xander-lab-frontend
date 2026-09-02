@@ -23,11 +23,16 @@ export const agentConversationService = {
     /** 消息列表 */
     getMessages: (id, config) =>
         get(`${BASE}/${id}/messages`, undefined, config),
-    /** 发送消息并消费流式事件（一轮 agent loop） */
-    sendMessageStream: (id, content, attachments, onEvent, config) =>
+    /**
+     * 发送消息并消费流式事件（一轮 agent loop）。
+     *
+     * deepThinking 打开时后端才允许为"把计划做完"多花自检轮次：更完整但更慢，
+     * 所以由用户在输入框自己选，默认关闭。
+     */
+    sendMessageStream: (id, content, attachments, onEvent, config, deepThinking = false) =>
         postStream(
             `${BASE}/${id}/messages/stream`,
-            { content, attachments },
+            { content, attachments, deepThinking },
             { onEvent, ...config },
         ),
     /** 请求停止当前正在执行的一轮 */

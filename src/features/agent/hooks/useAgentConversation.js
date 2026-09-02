@@ -9,6 +9,16 @@ const LIVE_STEP_LIMIT = 100;
 const MAX_RECONNECT_DELAY_MS = 5000;
 /** 后台会话状态只能从列表快照得知，有会话在执行时才轮询，全部收口后自动停止。 */
 const SESSIONS_POLL_INTERVAL_MS = 5000;
+/** 深度思考开关：记在本地偏好里，刷新和换会话都保持上次的选择。 */
+const DEEP_THINKING_STORAGE_KEY = "agent.deepThinking";
+
+const readDeepThinkingPreference = () => {
+    try {
+        return window.localStorage.getItem(DEEP_THINKING_STORAGE_KEY) === "1";
+    } catch {
+        return false;
+    }
+};
 
 const asId = (value) => (value == null ? null : String(value));
 const normalizeRunVersion = (value) => String(value ?? 0);
@@ -124,6 +134,8 @@ export const useAgentConversation = ({ conversationId }) => {
     const [liveSteps, setLiveSteps] = useState([]);
     const [reconnecting, setReconnecting] = useState(false);
     const [errorMessage, setErrorMessage] = useState(null);
+    // 深度思考是使用习惯而不是会话状态，所以记在本地、跨会话与刷新都保持。
+    const [deepThinking, setDeepThinkingState] = useState(readDeepThinkingPreference);
 
     const activeIdRef = useRef(routeConversationId);
     const cursorRef = useRef(0);
@@ -141,6 +153,25 @@ export const useAgentConversation = ({ conversationId }) => {
     const answerDeltaRef = useRef("");
     const toolDeltaRef = useRef(new Map());
     const streamFrameRef = useRef(null);
+    const deepThinkingRef = useRef(deepThinking);
+
+    /** 切换深度思考：写回本地偏好，让下一轮请求带上新的选择。 */
+    const setDeepThinking = useCallback((next) => {
+        const value =
+            typeof next === "function"
+                ? Boolean(next(deepThinkingRef.current))
+                : Boolean(next);
+        deepThinkingRef.current = value;
+        try {
+            window.localStorage.setItem(
+                DEEP_THINKING_STORAGE_KEY,
+                value ? "1" : "0",
+            );
+        } catch {
+            // 隐私模式下写不进去也不影响本次会话使用。
+        }
+        setDeepThinkingState(value);
+    }, []);
 
     // Update before effects run so late responses from the previous route are ignored
     // during the very first render after a conversation navigation.
@@ -232,7 +263,13 @@ export const useAgentConversation = ({ conversationId }) => {
             if (event === "thought") {
                 pushStep({ type: "thought", content: String(data ?? "") });
             } else if (event === "tool_start") {
-                pushStep({ type: "tool", tool: data?.tool, phase: "start" });
+                // 入参要留住：它是"这一步到底做了什么"唯一的证据，收口后仍要能展开回看。
+                pushStep({
+                    type: "tool",
+                    tool: data?.tool,
+                    phase: "start",
+                    args: data?.args,
+                });
             } else if (event === "tool_progress") {
                 const rawMessage = String(data?.message ?? "");
                 const separator = rawMessage.indexOf("|");
@@ -672,7 +709,11 @@ export const useAgentConversation = ({ conversationId }) => {
     const sendMessage = useCallback(
         async (
             content,
-            { displayUserMessage = true, attachments = [] } = {},
+            {
+                displayUserMessage = true,
+                attachments = [],
+                deepThinking: deepThinkingOverride,
+            } = {},
         ) => {
             const id = activeIdRef.current;
             const text = content?.trim();
@@ -705,6 +746,7 @@ export const useAgentConversation = ({ conversationId }) => {
                         attachments,
                         (payload) => applyEvent(id, streamEpoch, payload),
                         { _silent: true, signal: controller.signal },
+                        deepThinkingOverride ?? deepThinkingRef.current,
                     );
                 } finally {
                     if (streamEpochRef.current === streamEpoch)
@@ -990,6 +1032,8 @@ export const useAgentConversation = ({ conversationId }) => {
         reconnecting,
         errorMessage,
         liveSteps,
+        deepThinking,
+        setDeepThinking,
         loadSessions,
         openConversation,
         sendMessage,

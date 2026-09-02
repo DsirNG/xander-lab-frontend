@@ -1,5 +1,6 @@
 import {
     BookOpen,
+    Brain,
     FileText,
     Globe,
     Image as ImageIcon,
@@ -72,11 +73,13 @@ const AgentComposer = ({
     fileInputRef,
     textareaRef,
     showQuickActions = false,
+    deepThinking = false,
     onInputChange,
     onFilesSelected,
     onRemoveAttachment,
     onSubmit,
     onCancel,
+    onToggleDeepThinking,
     t,
 }) => (
     <>
@@ -144,6 +147,29 @@ const AgentComposer = ({
                     }}
                     className="min-h-[40px] min-w-0 flex-1 resize-none bg-transparent px-2 py-2 text-sm text-[#111426] outline-none placeholder:text-[#a0a5ba] disabled:opacity-60"
                 />
+
+                {/* 深度思考：开了才允许为"把计划做完"多花自检轮次，默认关着换回复速度。 */}
+                {onToggleDeepThinking ? (
+                    <button
+                        type="button"
+                        onClick={onToggleDeepThinking}
+                        aria-pressed={deepThinking}
+                        title={t(
+                            "blog.agentChat.deepThinkingHint",
+                            "开启后智能体会自检并补完计划里的步骤，结果更完整但更慢",
+                        )}
+                        className={`flex h-9 shrink-0 cursor-pointer items-center gap-1.5 rounded-full px-2.5 text-xs font-semibold transition-colors ${
+                            deepThinking
+                                ? "bg-[#eeedfe] text-[#5d55fa]"
+                                : "text-[#8e94aa] hover:bg-[#f5f4fb] hover:text-[#6765f6]"
+                        }`}
+                    >
+                        <Brain className="h-4 w-4" aria-hidden="true" />
+                        <span className="hidden sm:inline">
+                            {t("blog.agentChat.deepThinking", "深度思考")}
+                        </span>
+                    </button>
+                ) : null}
 
                 <button
                     type="button"

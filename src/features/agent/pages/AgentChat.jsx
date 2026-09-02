@@ -12,6 +12,7 @@ import {
     ArrowLeft,
     Ban,
     Bot,
+    Brain,
     Check,
     Circle,
     CircleDot,
@@ -49,6 +50,8 @@ import {
     parseToolPayload,
 } from "../services/agentConversationService";
 import AgentMarkdown from "../components/AgentMarkdown";
+import { AgentTraceCard, SelfCheckCard } from "../components/AgentTraceCard";
+import { mergeLiveTraces, mergeToolTraces } from "../components/agentTrace";
 import AgentImagesPage from "./AgentImagesPage";
 import ProfileModal from "@features/workspace/components/ProfileModal";
 import { useAuthSession } from "@features/auth/context/authSessionContextValue";
@@ -134,27 +137,6 @@ export const PlanCard = ({ items = [] }) => {
                     );
                 })}
             </ol>
-        </div>
-    );
-};
-
-export const ReflectionCard = ({ content, round }) => {
-    const { t } = useTranslation();
-    if (!content) return null;
-    return (
-        <div className="rounded-xl border border-orange-500/25 bg-orange-500/5 px-3 py-2 text-xs leading-5 text-ink-muted">
-            <div className="flex items-center gap-2 font-semibold text-orange-600">
-                <ShieldAlert
-                    className="h-3.5 w-3.5 shrink-0"
-                    aria-hidden="true"
-                />
-                <span>
-                    {round
-                        ? t("blog.agentChat.reflectionRound", { round })
-                        : t("blog.agentChat.reflectionTitle")}
-                </span>
-            </div>
-            <p className="mt-1 whitespace-pre-wrap">{content}</p>
         </div>
     );
 };
@@ -358,10 +340,12 @@ const AgentChatInputBar = ({
     isActive,
     creating,
     hasConversation,
+    deepThinking,
     onFilesSelected,
     onRemoveAttachment,
     onSubmit,
     onStop,
+    onToggleDeepThinking,
 }) => {
     const locked = isActive || creating;
     const [menuOpen, setMenuOpen] = useState(false);
@@ -502,6 +486,25 @@ const AgentChatInputBar = ({
                         className="min-h-9 min-w-0 flex-1 resize-none bg-transparent px-2 py-1.5 text-base leading-6 outline-none placeholder:text-ink-faint disabled:opacity-60"
                     />
                     <div className="flex shrink-0 items-center gap-1 self-end">
+                        {/* 深度思考：开了才允许自检补完计划，默认关着以免答案迟迟不来。 */}
+                        {onToggleDeepThinking ? (
+                            <button
+                                type="button"
+                                onClick={onToggleDeepThinking}
+                                aria-pressed={Boolean(deepThinking)}
+                                title={t("blog.agentChat.deepThinkingHint")}
+                                className={`flex h-8 items-center gap-1.5 rounded-full px-2.5 text-caption font-semibold transition ${
+                                    deepThinking
+                                        ? "bg-ink text-white"
+                                        : "text-ink-muted hover:bg-surface-muted hover:text-ink"
+                                }`}
+                            >
+                                <Brain className="h-4 w-4" aria-hidden="true" />
+                                <span className="hidden sm:inline">
+                                    {t("blog.agentChat.deepThinking")}
+                                </span>
+                            </button>
+                        ) : null}
                         <button
                             type="button"
                             className="flex h-8 w-8 items-center justify-center rounded-full text-ink-muted transition hover:bg-surface-muted hover:text-ink"
@@ -595,6 +598,8 @@ const AgentChat = () => {
         reconnecting,
         errorMessage,
         liveSteps,
+        deepThinking,
+        setDeepThinking,
         sendMessage,
         cancelTurn,
         createConversation,
@@ -633,10 +638,12 @@ const AgentChat = () => {
 
     const isActive = running || conversation?.status === "running";
 
-    const steps = useMemo(() => {
-        if (liveSteps.length === 0) return [];
-        return liveSteps;
-    }, [liveSteps]);
+    // 流式步骤先把同一次工具调用的 start/progress/delta/end 合成一条轨迹，
+    // 否则收口时入参和输出会各自消失，用户看不到这一步到底做了什么。
+    const steps = useMemo(() => mergeLiveTraces(liveSteps), [liveSteps]);
+
+    /** 持久化消息同样先归并：刷新后仍要能展开回看每次工具调用。 */
+    const timeline = useMemo(() => mergeToolTraces(messages), [messages]);
 
     const streamingAnswer = useMemo(
         () =>
@@ -1302,6 +1309,12 @@ const AgentChat = () => {
                                         }
                                         onSubmit={handleSubmit}
                                         onStop={handleStop}
+                                        deepThinking={deepThinking}
+                                        onToggleDeepThinking={() =>
+                                            setDeepThinking(
+                                                (current) => !current,
+                                            )
+                                        }
                                     />
 
                                     <div className="mx-auto mt-6 flex w-full max-w-3xl flex-wrap justify-center gap-2">
@@ -1377,7 +1390,15 @@ const AgentChat = () => {
                                             </div>
                                         ) : (
                                             <div className="mx-auto flex max-w-3xl flex-col gap-5">
-                                                    {messages.map((message) => {
+                                                    {timeline.map((message) => {
+                                                        if (message.kind === "trace") {
+                                                            return (
+                                                                <AgentTraceCard
+                                                                    key={message.id}
+                                                                    trace={message}
+                                                                />
+                                                            );
+                                                        }
                                                         if (message.kind === "quiz" || parseQuizPayload(message)) {
                                                             return (
                                                                 <QuizMessage
@@ -1421,7 +1442,7 @@ const AgentChat = () => {
                                                         "reflection"
                                                     ) {
                                                         return (
-                                                            <ReflectionCard
+                                                            <SelfCheckCard
                                                                 key={message.id}
                                                                 content={
                                                                     message.content
@@ -1520,7 +1541,7 @@ const AgentChat = () => {
                                                         "reflection"
                                                     )
                                                         return (
-                                                            <ReflectionCard
+                                                            <SelfCheckCard
                                                                 key={`live-${index}`}
                                                                 content={
                                                                     step.content
@@ -1530,6 +1551,14 @@ const AgentChat = () => {
                                                                 }
                                                             />
                                                         );
+                                                    if (step.type === "trace") {
+                                                        return (
+                                                            <AgentTraceCard
+                                                                key={`live-${index}`}
+                                                                trace={step}
+                                                            />
+                                                        );
+                                                    }
                                                     if (step.type === "tool") {
                                                         if (
                                                             step.tool ===
@@ -1665,6 +1694,12 @@ const AgentChat = () => {
                                             }
                                             onSubmit={handleSubmit}
                                             onStop={handleStop}
+                                            deepThinking={deepThinking}
+                                            onToggleDeepThinking={() =>
+                                                setDeepThinking(
+                                                    (current) => !current,
+                                                )
+                                            }
                                         />
                                     </div>
                                 </>

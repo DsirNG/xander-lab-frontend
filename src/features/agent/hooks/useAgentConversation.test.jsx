@@ -187,6 +187,7 @@ describe("useAgentConversation new conversation", () => {
                 [],
                 expect.any(Function),
                 expect.objectContaining({ _silent: true }),
+                false,
             ),
         );
         expect(
@@ -405,5 +406,82 @@ describe("useAgentConversation autonomy events", () => {
                 content: "实际结论是查询失败",
             }),
         );
+    });
+});
+
+describe("useAgentConversation deep thinking preference", () => {
+    const openReadyConversation = async () => {
+        const { useAgentConversation } =
+            await import("./useAgentConversation.js");
+        agentConversationService.get.mockResolvedValue({
+            conversation: { id: 42, status: "ready", runVersion: 3 },
+            messages: [],
+        });
+        agentConversationService.sendMessageStream.mockImplementation(
+            () => new Promise(() => {}),
+        );
+        const { result } = renderHook(() =>
+            useAgentConversation({ conversationId: "42" }),
+        );
+        await waitFor(() => expect(result.current.loading).toBe(false));
+        return result;
+    };
+
+    beforeEach(() => {
+        window.localStorage.removeItem("agent.deepThinking");
+    });
+
+    it("defaults to off so a normal turn is not slowed down by self-checks", async () => {
+        const result = await openReadyConversation();
+
+        expect(result.current.deepThinking).toBe(false);
+
+        await act(async () => {
+            result.current.sendMessage("帮我写点东西");
+        });
+
+        expect(
+            agentConversationService.sendMessageStream,
+        ).toHaveBeenCalledWith(
+            "42",
+            "帮我写点东西",
+            [],
+            expect.any(Function),
+            expect.objectContaining({ _silent: true }),
+            false,
+        );
+    });
+
+    it("forwards the flag and remembers the choice once the user turns it on", async () => {
+        const result = await openReadyConversation();
+
+        act(() => {
+            result.current.setDeepThinking(true);
+        });
+        expect(result.current.deepThinking).toBe(true);
+        expect(window.localStorage.getItem("agent.deepThinking")).toBe("1");
+
+        await act(async () => {
+            result.current.sendMessage("帮我把计划做完");
+        });
+
+        expect(
+            agentConversationService.sendMessageStream,
+        ).toHaveBeenCalledWith(
+            "42",
+            "帮我把计划做完",
+            [],
+            expect.any(Function),
+            expect.objectContaining({ _silent: true }),
+            true,
+        );
+    });
+
+    it("restores the stored preference on mount", async () => {
+        window.localStorage.setItem("agent.deepThinking", "1");
+
+        const result = await openReadyConversation();
+
+        expect(result.current.deepThinking).toBe(true);
     });
 });
