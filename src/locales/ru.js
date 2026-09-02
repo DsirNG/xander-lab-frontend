@@ -570,6 +570,16 @@ export default {
             quizSubmitted: "Ответы отправлены на проверку",
             quizAnswerPlaceholder: "Введите ответ…",
             quizUnanswered: "Без ответа: {{count}}",
+            artifactTitle: "Готовый код",
+            artifactFileCount: "Файлов: {{count}}",
+            artifactFiles: "Список файлов",
+            artifactEntry: "Точка входа",
+            artifactDownload: "Скачать",
+            artifactDownloadFile: "Скачать {{name}}",
+            artifactRunHint: "Как запустить",
+            artifactPreviewHint: "Есть предпросмотр",
+            artifactTruncated:
+                "Файл слишком длинный: в карточке показано только начало",
         },
         agentImages: {
             title: "Изображения",

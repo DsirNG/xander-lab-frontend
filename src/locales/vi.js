@@ -569,6 +569,16 @@ export default {
             quizSubmitted: "Đã gửi câu trả lời để chấm điểm",
             quizAnswerPlaceholder: "Nhập câu trả lời…",
             quizUnanswered: "Còn {{count}} câu chưa trả lời",
+            artifactTitle: "Mã nguồn đã giao",
+            artifactFileCount: "{{count}} tệp",
+            artifactFiles: "Danh sách tệp",
+            artifactEntry: "Tệp khởi đầu",
+            artifactDownload: "Tải xuống",
+            artifactDownloadFile: "Tải xuống {{name}}",
+            artifactRunHint: "Cách chạy",
+            artifactPreviewHint: "Xem trước được",
+            artifactTruncated:
+                "Tệp này quá dài, thẻ chỉ hiển thị phần đầu",
         },
         agentImages: {
             title: "Hình ảnh",

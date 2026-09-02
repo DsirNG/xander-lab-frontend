@@ -83,6 +83,35 @@ describe("mergeToolTraces", () => {
         expect(merged[0]).toBe(messages[1]);
     });
 
+    it("leaves a successful code deliverable to its own card", () => {
+        // 交付卡本身就是这次调用的展示物，再补一张轨迹卡等于把整份源码贴两遍。
+        const merged = mergeToolTraces([
+            call(1, "emit_artifact", {
+                files: [{ path: "server.js", content: "const ws = 1;" }],
+            }),
+            result(2, "emit_artifact", { ok: true, fileCount: 1 }),
+            { id: 3, kind: "answer", content: "怎么跑见卡片" },
+        ]);
+
+        expect(merged).toHaveLength(1);
+        expect(merged[0].kind).toBe("answer");
+    });
+
+    it("still shows a trace when the deliverable was rejected", () => {
+        // 否则交付失败就成了一次静默，用户又回到"它说做完了，我什么也没看见"。
+        const merged = mergeToolTraces([
+            call(1, "emit_artifact", {}),
+            result(2, "emit_artifact", { ok: false, error: "文件路径不合法" }),
+        ]);
+
+        expect(merged).toHaveLength(1);
+        expect(merged[0]).toMatchObject({
+            kind: "trace",
+            tool: "emit_artifact",
+            status: "error",
+        });
+    });
+
     it("pairs each result with its own tool when two calls interleave", () => {
         const merged = mergeToolTraces([
             call(1, "query_knowledge", { keyword: "a" }),
@@ -182,6 +211,41 @@ describe("mergeLiveTraces", () => {
         ];
 
         expect(mergeLiveTraces(steps)).toEqual(steps);
+    });
+
+    it("keeps a successful deliverable out of the live timeline", () => {
+        // 交付卡是以 artifact 步骤单独插进来的，轨迹卡再来一份就是并排两份源码。
+        const steps = [
+            { type: "tool", tool: "emit_artifact", phase: "start", args: {} },
+            {
+                type: "tool",
+                tool: "emit_artifact",
+                phase: "end",
+                result: { ok: true },
+            },
+            { type: "artifact", payload: { id: "artifact-7-3" } },
+        ];
+
+        expect(mergeLiveTraces(steps)).toEqual([steps[2]]);
+    });
+
+    it("surfaces a failed deliverable even without a start step", () => {
+        const merged = mergeLiveTraces([
+            {
+                type: "tool",
+                tool: "emit_artifact",
+                phase: "error",
+                error: "文件路径不合法",
+            },
+        ]);
+
+        expect(merged).toHaveLength(1);
+        expect(merged[0]).toMatchObject({
+            type: "trace",
+            tool: "emit_artifact",
+            status: "error",
+            error: "文件路径不合法",
+        });
     });
 });
 

@@ -576,6 +576,16 @@ export default {
             quizSubmitted: "Réponses envoyées pour correction",
             quizAnswerPlaceholder: "Saisissez votre réponse…",
             quizUnanswered: "{{count}} question(s) sans réponse",
+            artifactTitle: "Livrable de code",
+            artifactFileCount: "{{count}} fichier(s)",
+            artifactFiles: "Liste des fichiers",
+            artifactEntry: "Entrée",
+            artifactDownload: "Télécharger",
+            artifactDownloadFile: "Télécharger {{name}}",
+            artifactRunHint: "Comment l'exécuter",
+            artifactPreviewHint: "Aperçu possible",
+            artifactTruncated:
+                "Ce fichier est trop long ; la carte n'affiche que le début",
         },
         agentImages: {
             title: "Images",

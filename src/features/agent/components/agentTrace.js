@@ -10,6 +10,14 @@
 import { parseToolPayload } from "../services/agentConversationService";
 
 export const IMAGE_TOOL = "image_generate";
+/**
+ * 代码交付工具：它的入参就是整份源码，结果就是交付卡本身。
+ *
+ * <p>成功时不再另开一张轨迹卡（同一份代码在页面上出现两次，还得展开才看得见），
+ * 只有失败/被拒时才留下轨迹 —— 否则“交付失败”会变成一次静默，用户又回到
+ * “它说做完了，我什么也没看见”。</p>
+ */
+export const ARTIFACT_TOOL = "emit_artifact";
 
 /** 轨迹状态：running 执行中、done 成功、error 失败、cancelled 用户停止。 */
 const resultStatus = (payload) => {
@@ -56,6 +64,18 @@ export const mergeToolTraces = (messages = []) => {
         if (tool === IMAGE_TOOL) {
             // 图片调用交给页面的图片分支，入参不展示。
             if (kind === "tool_result") merged.push(message);
+            continue;
+        }
+
+        if (tool === ARTIFACT_TOOL) {
+            // 交付卡自己就是这次调用的展示物；只有失败才需要一张轨迹卡说明原因。
+            if (kind === "tool_result" && resultStatus(payload) !== "done") {
+                merged.push({
+                    ...traceEntry(message.id, tool),
+                    result: payload,
+                    status: resultStatus(payload),
+                });
+            }
             continue;
         }
 
@@ -127,6 +147,15 @@ export const mergeLiveTraces = (steps = []) => {
         const tool = step.tool || "";
         if (tool === IMAGE_TOOL) {
             merged.push(step);
+            return;
+        }
+        if (tool === ARTIFACT_TOOL) {
+            // 同上：成功交付不留轨迹卡，失败才留，且不必等 tool_call 先建卡。
+            if (step.phase === "error" || (step.phase === "end" && resultStatus(step.result) !== "done")) {
+                merged.push(
+                    applyLiveStep(traceEntry(`live-trace-${index}`, tool), step),
+                );
+            }
             return;
         }
         const slot = openByTool.get(tool);

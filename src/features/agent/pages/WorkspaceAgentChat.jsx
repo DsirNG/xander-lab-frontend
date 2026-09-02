@@ -32,6 +32,7 @@ import {
     PlanCard,
     ThinkingIndicator,
     QuizMessage,
+    ArtifactMessage,
 } from "./AgentChat";
 import { AgentTraceCard, SelfCheckCard } from "../components/AgentTraceCard";
 import { mergeLiveTraces, mergeToolTraces } from "../components/agentTrace";
@@ -548,6 +549,14 @@ const WorkspaceAgentChat = () => {
                                                 />
                                             );
                                         }
+                                        if (message.kind === "artifact") {
+                                            return (
+                                                <ArtifactMessage
+                                                    key={message.id}
+                                                    message={message}
+                                                />
+                                            );
+                                        }
                                         if (message.role === "user") {
                                             return (
                                                 <ConversationMessage
@@ -657,6 +666,13 @@ const WorkspaceAgentChat = () => {
                                                 <AgentTraceCard
                                                     key={`live-${index}`}
                                                     trace={step}
+                                                />
+                                            );
+                                        if (step.type === "artifact")
+                                            return (
+                                                <ArtifactMessage
+                                                    key={`live-${index}`}
+                                                    message={step}
                                                 />
                                             );
                                         if (step.type === "tool") {

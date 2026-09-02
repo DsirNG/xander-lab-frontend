@@ -57,6 +57,8 @@ import ProfileModal from "@features/workspace/components/ProfileModal";
 import { useAuthSession } from "@features/auth/context/authSessionContextValue";
 import QuizCardStack from "../components/QuizCardStack";
 import { parseQuizPayload } from "../components/quizPayload";
+import ArtifactCard from "../components/ArtifactCard";
+import { parseArtifactPayload } from "../components/artifactPayload";
 
 const ThoughtCard = ({ content }) => (
     <div className="flex items-start gap-2 rounded-xl border border-border bg-canvas px-3 py-2 text-xs leading-5 text-ink-muted">
@@ -329,6 +331,12 @@ export const ThinkingIndicator = ({ label }) => (
 export const QuizMessage = ({ message, onSubmit }) => {
     const payload = parseQuizPayload(message);
     return payload ? <QuizCardStack payload={payload} onSubmit={onSubmit} /> : null;
+};
+
+/** 交付卡消息：正文是 JSON，解析失败就不渲染，绝不把裸 JSON 糊在对话里。 */
+export const ArtifactMessage = ({ message }) => {
+    const payload = parseArtifactPayload(message);
+    return payload ? <ArtifactCard payload={payload} /> : null;
 };
 
 const AgentChatInputBar = ({
@@ -1408,6 +1416,14 @@ const AgentChat = () => {
                                                                 />
                                                             );
                                                         }
+                                                        if (message.kind === "artifact") {
+                                                            return (
+                                                                <ArtifactMessage
+                                                                    key={message.id}
+                                                                    message={message}
+                                                                />
+                                                            );
+                                                        }
                                                         if (
                                                         message.role === "user"
                                                     ) {
@@ -1556,6 +1572,16 @@ const AgentChat = () => {
                                                             <AgentTraceCard
                                                                 key={`live-${index}`}
                                                                 trace={step}
+                                                            />
+                                                        );
+                                                    }
+                                                    if (
+                                                        step.type === "artifact"
+                                                    ) {
+                                                        return (
+                                                            <ArtifactMessage
+                                                                key={`live-${index}`}
+                                                                message={step}
                                                             />
                                                         );
                                                     }

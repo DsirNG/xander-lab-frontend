@@ -407,6 +407,46 @@ describe("useAgentConversation autonomy events", () => {
             }),
         );
     });
+
+    it("shows the code deliverable as soon as it streams and replaces a revised one", async () => {
+        const { result, emit } = await streamHarness();
+        const first = {
+            type: "artifact",
+            id: "artifact-42-1",
+            files: [{ path: "server.js", content: "const ws = 1;" }],
+        };
+
+        await emit({ id: 1, event: "artifact", data: first });
+        await emit({ id: 2, event: "thought", data: "两个文件都写好了" });
+        await emit({
+            id: 3,
+            event: "artifact",
+            data: { ...first, files: [{ path: "server.js", content: "const ws = 2;" }] },
+        });
+
+        const artifacts = result.current.liveSteps.filter(
+            (step) => step.type === "artifact",
+        );
+        // 同一张卡改了一版就地替换，否则时间线上并排堆两份源码。
+        expect(artifacts).toHaveLength(1);
+        expect(artifacts[0].payload.files[0].content).toBe("const ws = 2;");
+        // 替换不能吃掉它之后到达的其他步骤。
+        expect(result.current.liveSteps).toContainEqual({
+            type: "thought",
+            content: "两个文件都写好了",
+        });
+
+        // 另一张卡（新的 id）是新的交付物，要另开一张。
+        await emit({
+            id: 4,
+            event: "artifact",
+            data: { ...first, id: "artifact-42-2" },
+        });
+
+        expect(
+            result.current.liveSteps.filter((step) => step.type === "artifact"),
+        ).toHaveLength(2);
+    });
 });
 
 describe("useAgentConversation deep thinking preference", () => {

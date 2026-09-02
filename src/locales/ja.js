@@ -570,6 +570,16 @@ export default {
             quizSubmitted: "回答を送信しました。採点を待っています",
             quizAnswerPlaceholder: "回答を入力…",
             quizUnanswered: "未回答の問題: {{count}}問",
+            artifactTitle: "コード成果物",
+            artifactFileCount: "{{count}} 個のファイル",
+            artifactFiles: "ファイル一覧",
+            artifactEntry: "エントリ",
+            artifactDownload: "ダウンロード",
+            artifactDownloadFile: "{{name}} をダウンロード",
+            artifactRunHint: "実行方法",
+            artifactPreviewHint: "プレビュー可能",
+            artifactTruncated:
+                "このファイルは長すぎるため、カードには先頭部分のみ表示しています",
         },
         agentImages: {
             title: "画像",

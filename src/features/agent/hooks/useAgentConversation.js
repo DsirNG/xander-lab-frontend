@@ -352,6 +352,22 @@ export const useAgentConversation = ({ conversationId }) => {
                         },
                     ].slice(-LIVE_STEP_LIMIT),
                 );
+            } else if (event === "artifact") {
+                // 代码是这一轮真正的产出：交付卡一到就插进时间线，不等收口后的快照刷新。
+                // 同一张卡改了一版就地替换，免得时间线上并排堆两份源码。
+                setLiveSteps((current) => {
+                    const step = { type: "artifact", payload: data };
+                    const index = current.findIndex(
+                        (entry) =>
+                            entry.type === "artifact" &&
+                            entry.payload?.id === data?.id,
+                    );
+                    if (index < 0)
+                        return [...current, step].slice(-LIVE_STEP_LIMIT);
+                    const next = [...current];
+                    next[index] = step;
+                    return next;
+                });
             } else if (event === "error") {
                 const message =
                     typeof data === "string"

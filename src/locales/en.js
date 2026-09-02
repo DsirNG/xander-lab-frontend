@@ -574,6 +574,16 @@ export default {
             quizSubmitted: "Answers submitted for grading",
             quizAnswerPlaceholder: "Type your answer…",
             quizUnanswered: "{{count}} questions unanswered",
+            artifactTitle: "Code deliverable",
+            artifactFileCount: "{{count}} files",
+            artifactFiles: "File list",
+            artifactEntry: "Entry",
+            artifactDownload: "Download",
+            artifactDownloadFile: "Download {{name}}",
+            artifactRunHint: "How to run",
+            artifactPreviewHint: "Previewable",
+            artifactTruncated:
+                "This file is too long; the card shows only the first part",
         },
         agentImages: {
             title: "Images",

@@ -29,6 +29,7 @@ import {
     PlanCard,
     ThinkingIndicator,
     QuizMessage,
+    ArtifactMessage,
 } from "@features/agent/pages/AgentChat";
 import { SelfCheckCard } from "@features/agent/components/AgentTraceCard";
 import { parseQuizPayload } from "@features/agent/components/quizPayload";
@@ -551,6 +552,14 @@ const LandingAgentWindow = ({ t }) => {
                                                     />
                                                 );
                                             }
+                                            if (message.kind === "artifact") {
+                                                return (
+                                                    <ArtifactMessage
+                                                        key={message.id}
+                                                        message={message}
+                                                    />
+                                                );
+                                            }
                                             if (message.role === "user") {
                                                 return (
                                                     <ConversationMessage
@@ -641,6 +650,14 @@ const LandingAgentWindow = ({ t }) => {
                                                         key={`live-${index}`}
                                                         content={step.content}
                                                         round={step.round}
+                                                    />
+                                                );
+                                            }
+                                            if (step.type === "artifact") {
+                                                return (
+                                                    <ArtifactMessage
+                                                        key={`live-${index}`}
+                                                        message={step}
                                                     />
                                                 );
                                             }
