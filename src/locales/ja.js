@@ -523,6 +523,13 @@ export default {
             toolFailed: "失敗",
             toolRunning: "実行中",
             toolCancelled: "停止しました",
+            approval: {
+                title: "承認が必要です",
+                description: "エージェントは {{tool}} を実行する準備ができています。続行を承認してください。",
+                tool: "保留中の操作: {{tool}}",
+                approve: "承認",
+                reject: "拒否",
+            },
             traceArgs: "入力",
             traceOutput: "出力",
             traceError: "エラー",

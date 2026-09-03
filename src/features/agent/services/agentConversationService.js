@@ -37,6 +37,11 @@ export const agentConversationService = {
         ),
     /** 请求停止当前正在执行的一轮 */
     cancel: (id, config) => post(`${BASE}/${id}/cancel`, undefined, config),
+    /** Reads durable approval requests so a reload can restore a paused action. */
+    listApprovals: (id, config) => get(`${BASE}/${id}/approvals`, undefined, config),
+    /** Decides one persisted action without creating a new tool invocation. */
+    decideApproval: (id, approvalId, approved, reason, config) =>
+        post(`${BASE}/${id}/approvals/${approvalId}/decision`, { approved, reason }, config),
     /** 上报已读：清掉列表上的“生成完成”提醒，不改变会话排序时间 */
     markRead: (id, config) => post(`${BASE}/${id}/read`, undefined, config),
     /** 置顶会话 */

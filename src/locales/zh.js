@@ -509,6 +509,13 @@ export default {
             toolFailed: "调用失败",
             toolRunning: "执行中",
             toolCancelled: "已停止",
+            approval: {
+                title: "需要你的确认",
+                description: "智能体准备执行 {{tool}}，请确认是否继续。",
+                tool: "待执行操作：{{tool}}",
+                approve: "批准执行",
+                reject: "拒绝",
+            },
             traceArgs: "入参",
             traceOutput: "输出",
             traceError: "错误",

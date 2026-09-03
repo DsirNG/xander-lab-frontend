@@ -527,6 +527,13 @@ export default {
             toolFailed: "Failed",
             toolRunning: "Running",
             toolCancelled: "Stopped",
+            approval: {
+                title: "Your approval is required",
+                description: "The agent is ready to run {{tool}}. Confirm whether it may continue.",
+                tool: "Pending action: {{tool}}",
+                approve: "Approve",
+                reject: "Reject",
+            },
             traceArgs: "Input",
             traceOutput: "Output",
             traceError: "Error",

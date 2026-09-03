@@ -522,6 +522,13 @@ export default {
             toolFailed: "Thất bại",
             toolRunning: "Đang chạy",
             toolCancelled: "Đã dừng",
+            approval: {
+                title: "Cần bạn phê duyệt",
+                description: "Tác tử sẵn sàng chạy {{tool}}. Hãy xác nhận để tiếp tục.",
+                tool: "Thao tác đang chờ: {{tool}}",
+                approve: "Phê duyệt",
+                reject: "Từ chối",
+            },
             traceArgs: "Tham số",
             traceOutput: "Kết quả",
             traceError: "Lỗi",

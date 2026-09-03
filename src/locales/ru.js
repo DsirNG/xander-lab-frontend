@@ -523,6 +523,13 @@ export default {
             toolFailed: "Ошибка",
             toolRunning: "Выполняется",
             toolCancelled: "Остановлено",
+            approval: {
+                title: "Требуется ваше подтверждение",
+                description: "Агент готов выполнить {{tool}}. Подтвердите продолжение.",
+                tool: "Ожидающее действие: {{tool}}",
+                approve: "Подтвердить",
+                reject: "Отклонить",
+            },
             traceArgs: "Ввод",
             traceOutput: "Вывод",
             traceError: "Ошибка",

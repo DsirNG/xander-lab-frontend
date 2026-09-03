@@ -131,6 +131,8 @@ export const useAgentConversation = ({ conversationId }) => {
     const [loading, setLoading] = useState(Boolean(routeConversationId));
     const [creating, setCreating] = useState(false);
     const [running, setRunning] = useState(false);
+    const [approvals, setApprovals] = useState([]);
+    const [decidingApprovalId, setDecidingApprovalId] = useState(null);
     const [liveSteps, setLiveSteps] = useState([]);
     const [reconnecting, setReconnecting] = useState(false);
     const [errorMessage, setErrorMessage] = useState(null);
@@ -310,6 +312,13 @@ export const useAgentConversation = ({ conversationId }) => {
                     result: data?.result,
                     error: data?.error,
                 });
+            } else if (event === "approval_required") {
+                answerDeltaRef.current = "";
+                updateRunning(false);
+                setConversation((current) =>
+                    current ? { ...current, status: "awaiting_approval" } : current,
+                );
+                pushStep({ type: "approval", approval: data });
             } else if (event === "answer_delta") {
                 answerDeltaRef.current += String(data ?? "");
                 scheduleDeltaFlush();
@@ -377,7 +386,7 @@ export const useAgentConversation = ({ conversationId }) => {
                 pushStep({ type: "error", message });
             }
         },
-        [isCurrent, pushStep, rememberEvent, scheduleDeltaFlush, t],
+        [isCurrent, pushStep, rememberEvent, scheduleDeltaFlush, t, updateRunning],
     );
 
     const beginRunGeneration = useCallback(
@@ -415,7 +424,11 @@ export const useAgentConversation = ({ conversationId }) => {
             const status = snapshot?.status;
             if (status === "running") {
                 updateRunning(true);
-            } else if (status === "ready" || status === "failed") {
+            } else if (
+                status === "ready" ||
+                status === "failed" ||
+                status === "awaiting_approval"
+            ) {
                 updateRunning(false);
             }
             if (status === "failed") {
@@ -424,6 +437,7 @@ export const useAgentConversation = ({ conversationId }) => {
                 );
             } else if (
                 status === "ready" ||
+                status === "awaiting_approval" ||
                 (status === "running" && runChanged)
             ) {
                 setErrorMessage(null);
@@ -457,6 +471,40 @@ export const useAgentConversation = ({ conversationId }) => {
         },
         [applySnapshot, isCurrent],
     );
+
+    const loadApprovals = useCallback(
+        async (id, signal) => {
+            const items = await agentConversationService.listApprovals(id, {
+                _silent: true,
+                dedupe: false,
+                signal,
+            });
+            if (isCurrent(id)) {
+                setApprovals(
+                    Array.isArray(items)
+                        ? items.filter((approval) => approval?.status === "PENDING")
+                        : [],
+                );
+            }
+            return items;
+        },
+        [isCurrent],
+    );
+
+    useEffect(() => {
+        const id = conversation?.id;
+        if (!id || conversation?.status !== "awaiting_approval") {
+            setApprovals([]);
+            return undefined;
+        }
+        const controller = new AbortController();
+        loadApprovals(id, controller.signal).catch((error) => {
+            if (!controller.signal.aborted && isCurrent(id)) {
+                setErrorMessage(error.message || t("blog.agentChat.loadFailed"));
+            }
+        });
+        return () => controller.abort();
+    }, [conversation?.id, conversation?.status, isCurrent, loadApprovals, t]);
 
     /** quiet 用于轮询刷新：不闪列表骨架，失败也保留上一次的列表。 */
     const loadSessions = useCallback(async ({ quiet = false } = {}) => {
@@ -836,6 +884,33 @@ export const useAgentConversation = ({ conversationId }) => {
         }
     }, [isCurrent, t]);
 
+    const decideApproval = useCallback(
+        async (approvalId, approved, reason = "") => {
+            const id = activeIdRef.current;
+            if (!id || !approvalId || decidingApprovalId != null) return null;
+            setDecidingApprovalId(approvalId);
+            try {
+                const decision = await agentConversationService.decideApproval(
+                    id,
+                    approvalId,
+                    approved,
+                    reason,
+                    { _silent: true, dedupe: false },
+                );
+                const detail = await agentConversationService.get(id, {
+                    _silent: true,
+                    dedupe: false,
+                });
+                applySnapshot(id, detail);
+                await loadSessions();
+                return decision;
+            } finally {
+                setDecidingApprovalId(null);
+            }
+        },
+        [applySnapshot, decidingApprovalId, loadSessions],
+    );
+
     /** 创建会话壳；首条消息在会话快照就绪后经 /messages/stream 发送，与后续轮次共用同一流式接口。 */
     const createConversation = useCallback(
         async (content, attachments = []) => {
@@ -1045,6 +1120,8 @@ export const useAgentConversation = ({ conversationId }) => {
         loading,
         creating,
         running,
+        approvals,
+        decidingApprovalId,
         reconnecting,
         errorMessage,
         liveSteps,
@@ -1054,6 +1131,7 @@ export const useAgentConversation = ({ conversationId }) => {
         openConversation,
         sendMessage,
         cancelTurn,
+        decideApproval,
         createConversation,
         setConversationPinned,
         markConversationRead,

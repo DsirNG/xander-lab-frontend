@@ -26,6 +26,7 @@ import AgentMarkdown from "../components/AgentMarkdown";
 import AgentComposer from "../components/AgentComposer";
 import WorkspaceAgentSidebar from "../components/WorkspaceAgentSidebar";
 import WorkspaceAgentSkeleton from "../components/WorkspaceAgentSkeleton";
+import AgentApprovalCard from "../components/AgentApprovalCard";
 import {
     ImageToolProgressPanel,
     ImageToolResult,
@@ -185,6 +186,8 @@ const WorkspaceAgentChat = () => {
         loading,
         creating,
         running,
+        approvals,
+        decidingApprovalId,
         reconnecting,
         errorMessage,
         liveSteps,
@@ -192,13 +195,15 @@ const WorkspaceAgentChat = () => {
         setDeepThinking,
         sendMessage,
         cancelTurn,
+        decideApproval,
         createConversation,
         setConversationPinned,
         reset,
     } = useAgentConversation({ conversationId });
 
     const isActive = running || conversation?.status === "running";
-    const locked = isActive || creating;
+    const awaitingApproval = conversation?.status === "awaiting_approval";
+    const locked = isActive || awaitingApproval || creating;
 
     // 同一次工具调用的 start/progress/delta/end 先合成一条轨迹，收口后仍能展开回看。
     const steps = useMemo(() => mergeLiveTraces(liveSteps), [liveSteps]);
@@ -264,7 +269,7 @@ const WorkspaceAgentChat = () => {
                 behavior: "auto",
                 block: "end",
             });
-    }, [messages, steps]);
+    }, [approvals, messages, steps]);
 
     useEffect(() => {
         const element = textareaRef.current;
@@ -326,6 +331,17 @@ const WorkspaceAgentChat = () => {
             sendMessage(JSON.stringify(payload));
         },
         [conversationId, locked, sendMessage],
+    );
+
+    const handleApprovalDecision = useCallback(
+        async (approvalId, approved) => {
+            try {
+                await decideApproval(approvalId, approved);
+            } catch (error) {
+                toast.error(error.message || t("blog.agentChat.sendFailed"));
+            }
+        },
+        [decideApproval, t, toast],
     );
 
     const handleFilesSelected = useCallback(
@@ -449,7 +465,7 @@ const WorkspaceAgentChat = () => {
                     </button>
                 </header>
 
-                {messages.length === 0 && steps.length === 0 && !loading ? (
+                {messages.length === 0 && steps.length === 0 && approvals.length === 0 && !loading ? (
                     /* Empty / Welcome State */
                     <div className="flex min-h-0 flex-1 flex-col items-center justify-center px-4 pb-12 pt-4 text-center">
                         {/* Workbench hero orb graphic */}
@@ -627,6 +643,14 @@ const WorkspaceAgentChat = () => {
                                         }
                                         return null;
                                     })}
+                                    {approvals.map((approval) => (
+                                        <AgentApprovalCard
+                                            key={`approval-${approval.id}`}
+                                            approval={approval}
+                                            deciding={decidingApprovalId === approval.id}
+                                            onDecision={handleApprovalDecision}
+                                        />
+                                    ))}
                                     {steps.map((step, index) => {
                                         if (step.type === "user")
                                             return (

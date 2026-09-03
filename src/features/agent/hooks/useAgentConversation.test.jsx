@@ -18,6 +18,8 @@ vi.mock("../services/agentConversationService.js", () => ({
         sendMessageStream: vi.fn(),
         subscribeEvents: vi.fn(),
         cancel: vi.fn(),
+        listApprovals: vi.fn(() => Promise.resolve([])),
+        decideApproval: vi.fn(),
         markRead: vi.fn(() => Promise.resolve(null)),
         pin: vi.fn(() => Promise.resolve(null)),
         unpin: vi.fn(() => Promise.resolve(null)),
@@ -446,6 +448,52 @@ describe("useAgentConversation autonomy events", () => {
         expect(
             result.current.liveSteps.filter((step) => step.type === "artifact"),
         ).toHaveLength(2);
+    });
+});
+
+describe("useAgentConversation approvals", () => {
+    it("loads durable pending approvals after the stream pauses", async () => {
+        const { useAgentConversation } = await import("./useAgentConversation.js");
+        const shell = {
+            conversation: { id: 42, status: "ready", runVersion: 0 },
+            messages: [],
+        };
+        let onEvent;
+        agentConversationService.create.mockResolvedValue(shell);
+        agentConversationService.get.mockResolvedValue(shell);
+        agentConversationService.sendMessageStream.mockImplementation(
+            (id, text, files, listener) => {
+                onEvent = listener;
+                return new Promise(() => {});
+            },
+        );
+        agentConversationService.listApprovals.mockResolvedValue([
+            { id: 9, status: "PENDING", toolName: "publish_post" },
+        ]);
+        const { result, rerender } = renderHook(
+            ({ conversationId }) => useAgentConversation({ conversationId }),
+            { initialProps: { conversationId: null } },
+        );
+        await act(async () => {
+            await result.current.createConversation("publish this");
+        });
+        rerender({ conversationId: "42" });
+        await waitFor(() => expect(typeof onEvent).toBe("function"));
+
+        await act(async () => {
+            onEvent({
+                id: 1,
+                event: "approval_required",
+                data: { approvalId: 9, tool: "publish_post" },
+            });
+        });
+
+        await waitFor(() =>
+            expect(result.current.approvals).toEqual([
+                { id: 9, status: "PENDING", toolName: "publish_post" },
+            ]),
+        );
+        expect(result.current.running).toBe(false);
     });
 });
 
