@@ -903,6 +903,13 @@ export default {
             systemStatus: "État du système :",
             systemSecure: "Sécurisé",
             identityGateway: "Passerelle d'identité",
+            qrAuth: "QR WeChat",
+            qrAlt: "Code de connexion DinQorAI",
+            qrHint: "Scannez avec WeChat et confirmez dans le mini-programme",
+            qrConfirmed: "Confirmé, connexion en cours...",
+            qrExpired: "Code QR expiré",
+            qrRefresh: "Actualiser le code QR",
+            qrUnavailable: "Connexion QR indisponible. Réessayez plus tard.",
         },
     },
     workspace: {

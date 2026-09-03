@@ -865,6 +865,13 @@ export default {
             systemStatus: "系统状态:",
             systemSecure: "安全",
             identityGateway: "身份网关",
+            qrAuth: "微信扫码",
+            qrAlt: "DinQorAI 登录小程序码",
+            qrHint: "使用微信扫一扫，打开小程序确认登录",
+            qrConfirmed: "已确认，正在登录…",
+            qrExpired: "二维码已过期",
+            qrRefresh: "刷新二维码",
+            qrUnavailable: "扫码登录暂不可用，请稍后重试",
         },
     },
     workspace: {

@@ -11,6 +11,8 @@ import {
     Sparkles,
     Fingerprint,
     Shield,
+    QrCode,
+    RefreshCw,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { authService } from "../services/authService";
@@ -34,6 +36,8 @@ const LoginPage = () => {
 
     const [loading, setLoading] = useState(false);
     const [loginType, setLoginType] = useState("code");
+    const [qrState, setQrState] = useState({ ticket: "", image: "", status: "" });
+    const qrTimerRef = useRef(null);
     const [formData, setFormData] = useState({
         account: "",
         password: "",
@@ -42,6 +46,48 @@ const LoginPage = () => {
     const [countdown, setCountdown] = useState(0);
     const [sendingCode, setSendingCode] = useState(false);
     const sendCodeLockRef = useRef(false);
+
+    const stopQrPolling = () => {
+        if (qrTimerRef.current) window.clearInterval(qrTimerRef.current);
+        qrTimerRef.current = null;
+    };
+
+    const startQrLogin = async () => {
+        stopQrPolling();
+        setQrState({ ticket: "", image: "", status: "loading" });
+        try {
+            const result = await authService.qrCreate();
+            setQrState({ ticket: result.ticket, image: result.qrCode, status: "waiting" });
+            qrTimerRef.current = window.setInterval(async () => {
+                try {
+                    const current = await authService.qrStatus(result.ticket);
+                    setQrState((previous) => ({ ...previous, status: current.status, exchangeCode: current.exchangeCode }));
+                    if (current.status === "EXPIRED") stopQrPolling();
+                    if (current.status === "CONFIRMED" && current.exchangeCode) {
+                        stopQrPolling();
+                        const token = await authService.qrExchange(result.ticket, current.exchangeCode);
+                        if (token?.accessToken) {
+                            toast.success(t("auth.login.authSuccess"));
+                            navigate(`${fromPath}${fromSearch}`, { replace: true });
+                        }
+                    }
+                } catch {
+                    // Keep the QR visible; transient polling failures are retried on the next tick.
+                }
+            }, 1500);
+        } catch (err) {
+            setQrState({ ticket: "", image: "", status: "error" });
+            toast.error(err.message || t("auth.login.qrUnavailable"));
+        }
+    };
+
+    useEffect(() => () => stopQrPolling(), []);
+    // QR polling is intentionally restarted only when the selected login mode changes.
+    useEffect(() => {
+        if (loginType === "qr" && !qrState.ticket && qrState.status !== "error") startQrLogin();
+        if (loginType !== "qr") stopQrPolling();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [loginType]);
 
     /** 验证码倒计时 */
     useEffect(() => {
@@ -191,7 +237,7 @@ const LoginPage = () => {
                         </div>
 
                         {/* 模式选择 Tab */}
-                        <div className="grid grid-cols-2 p-1.5 bg-surface-muted/50 rounded-2xl mb-5 border border-border/50">
+                        <div className="grid grid-cols-3 p-1.5 bg-surface-muted/50 rounded-2xl mb-5 border border-border/50">
                             {[
                                 {
                                     id: "code",
@@ -203,6 +249,7 @@ const LoginPage = () => {
                                     label: t("auth.login.passwordAuth"),
                                     icon: Fingerprint,
                                 },
+                                { id: "qr", label: t("auth.login.qrAuth"), icon: QrCode },
                             ].map((tab) => (
                                 <Button
                                     key={tab.id}
@@ -234,7 +281,15 @@ const LoginPage = () => {
                             ))}
                         </div>
 
-                        <form onSubmit={handleSubmit} className="space-y-4">
+                        {loginType === "qr" ? (
+                            <div className="flex flex-col items-center gap-4 py-4 text-center">
+                                {qrState.image ? <img src={qrState.image} alt={t("auth.login.qrAlt")} className="w-56 h-56 rounded-2xl border border-border bg-white p-2" /> : <div className="w-56 h-56 rounded-2xl bg-surface-muted animate-pulse" />}
+                                <div className="text-sm font-semibold text-ink-muted">
+                                    {qrState.status === "CONFIRMED" ? t("auth.login.qrConfirmed") : qrState.status === "EXPIRED" ? t("auth.login.qrExpired") : t("auth.login.qrHint")}
+                                </div>
+                                {(qrState.status === "EXPIRED" || qrState.status === "error") && <Button type="button" icon={RefreshCw} onClick={startQrLogin}>{t("auth.login.qrRefresh")}</Button>}
+                            </div>
+                        ) : <form onSubmit={handleSubmit} className="space-y-4">
                             <AnimatePresence mode="wait">
                                 <motion.div
                                     key={loginType}
@@ -404,7 +459,7 @@ const LoginPage = () => {
                                     </div>
                                 )}
                             </div>
-                        </form>
+                        </form>}
                     </div>
 
                     <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent/30 to-transparent" />

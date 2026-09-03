@@ -891,6 +891,13 @@ export default {
             systemStatus: "Trạng thái hệ thống:",
             systemSecure: "An toàn",
             identityGateway: "Cổng danh tính",
+            qrAuth: "WeChat QR",
+            qrAlt: "Mã đăng nhập DinQorAI",
+            qrHint: "Quét bằng WeChat và xác nhận đăng nhập trong mini program",
+            qrConfirmed: "Đã xác nhận, đang đăng nhập...",
+            qrExpired: "Mã QR đã hết hạn",
+            qrRefresh: "Làm mới mã QR",
+            qrUnavailable: "Đăng nhập QR chưa khả dụng. Vui lòng thử lại sau.",
         },
     },
     workspace: {

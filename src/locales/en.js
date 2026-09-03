@@ -899,6 +899,13 @@ export default {
             systemStatus: "System Status:",
             systemSecure: "Secure",
             identityGateway: "Identity Gateway",
+            qrAuth: "WeChat QR",
+            qrAlt: "DinQorAI login mini program code",
+            qrHint: "Scan with WeChat and confirm sign-in in the mini program",
+            qrConfirmed: "Confirmed, signing you in...",
+            qrExpired: "QR code expired",
+            qrRefresh: "Refresh QR code",
+            qrUnavailable: "QR sign-in is unavailable. Try again later.",
         },
     },
     workspace: {

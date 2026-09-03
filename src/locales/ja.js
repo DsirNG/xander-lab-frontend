@@ -897,6 +897,13 @@ export default {
             systemStatus: "システムステータス:",
             systemSecure: "安全",
             identityGateway: "アイデンティティゲートウェイ",
+            qrAuth: "WeChat QR",
+            qrAlt: "DinQorAI ログインコード",
+            qrHint: "WeChat でスキャンしてミニプログラムで確認してください",
+            qrConfirmed: "確認済み、ログイン中...",
+            qrExpired: "QR コードの期限切れ",
+            qrRefresh: "QR コードを更新",
+            qrUnavailable: "QR ログインは利用できません。後でもう一度お試しください。",
         },
     },
     workspace: {

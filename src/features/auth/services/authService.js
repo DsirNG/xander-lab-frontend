@@ -8,6 +8,11 @@ import { post, get, put, tokenStorage } from "@api";
 const BASE = "/api/auth";
 
 export const authService = {
+    qrCreate: () => post(`${BASE}/qr/create`, undefined, { _silent: true }),
+    qrStatus: (ticket) => get(`${BASE}/qr/status`, { ticket }, { _silent: true }),
+    qrExchange: (ticket, exchangeCode) => post(`${BASE}/qr/exchange`, undefined, {
+        params: { ticket, exchangeCode }, _silent: true,
+    }),
     /**
      * 发送邮箱验证码
      * GET /api/auth/code

@@ -897,6 +897,13 @@ export default {
             systemStatus: "Статус системы:",
             systemSecure: "Безопасно",
             identityGateway: "Шлюз идентификации",
+            qrAuth: "WeChat QR",
+            qrAlt: "Код входа DinQorAI",
+            qrHint: "Отсканируйте в WeChat и подтвердите вход в мини-программе",
+            qrConfirmed: "Подтверждено, выполняется вход...",
+            qrExpired: "Срок действия QR-кода истек",
+            qrRefresh: "Обновить QR-код",
+            qrUnavailable: "QR-вход недоступен. Повторите позже.",
         },
     },
     workspace: {
