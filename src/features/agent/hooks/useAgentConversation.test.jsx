@@ -495,6 +495,45 @@ describe("useAgentConversation approvals", () => {
         );
         expect(result.current.running).toBe(false);
     });
+
+    it("resubscribes when an approved action resumes the same run", async () => {
+        const { useAgentConversation } = await import("./useAgentConversation.js");
+        const paused = {
+            conversation: { id: 42, status: "awaiting_approval", runVersion: 3 },
+            messages: [],
+        };
+        const running = {
+            conversation: { id: 42, status: "running", runVersion: 3 },
+            messages: [],
+        };
+        agentConversationService.get.mockResolvedValueOnce(paused).mockResolvedValue(running);
+        agentConversationService.decideApproval.mockResolvedValue({
+            id: 9,
+            status: "APPROVED",
+        });
+        agentConversationService.list.mockResolvedValue([]);
+        agentConversationService.subscribeEvents.mockImplementation(
+            () => new Promise(() => {}),
+        );
+        const { result } = renderHook(() =>
+            useAgentConversation({ conversationId: "42" }),
+        );
+        await waitFor(() => expect(result.current.loading).toBe(false));
+
+        await act(async () => {
+            await result.current.decideApproval(9, true);
+        });
+
+        await waitFor(() =>
+            expect(agentConversationService.subscribeEvents).toHaveBeenCalledWith(
+                "42",
+                undefined,
+                expect.any(Function),
+                expect.objectContaining({ _silent: true }),
+            ),
+        );
+        expect(result.current.running).toBe(true);
+    });
 });
 
 describe("useAgentConversation deep thinking preference", () => {

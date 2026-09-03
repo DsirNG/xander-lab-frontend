@@ -903,12 +903,31 @@ export const useAgentConversation = ({ conversationId }) => {
                 });
                 applySnapshot(id, detail);
                 await loadSessions();
+                if (
+                    approved &&
+                    detail?.conversation?.status === "running" &&
+                    routeControllerRef.current &&
+                    !routeControllerRef.current.signal.aborted
+                ) {
+                    updateRunning(true);
+                    void recoverConversation(
+                        id,
+                        routeControllerRef.current.signal,
+                        detail,
+                    );
+                }
                 return decision;
             } finally {
                 setDecidingApprovalId(null);
             }
         },
-        [applySnapshot, decidingApprovalId, loadSessions],
+        [
+            applySnapshot,
+            decidingApprovalId,
+            loadSessions,
+            recoverConversation,
+            updateRunning,
+        ],
     );
 
     /** 创建会话壳；首条消息在会话快照就绪后经 /messages/stream 发送，与后续轮次共用同一流式接口。 */
