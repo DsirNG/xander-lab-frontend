@@ -10,6 +10,7 @@
 import { parseToolPayload } from "../services/agentConversationService";
 
 export const IMAGE_TOOL = "image_generate";
+export const IMAGE_RESEND_TOOL = "image_resend";
 /**
  * 代码交付工具：它的入参就是整份源码，结果就是交付卡本身。
  *
@@ -61,7 +62,7 @@ export const mergeToolTraces = (messages = []) => {
         const payload = parseToolPayload(message.content) || {};
         const tool = payload.tool || message.toolName || "";
 
-        if (tool === IMAGE_TOOL) {
+        if (tool === IMAGE_TOOL || tool === IMAGE_RESEND_TOOL) {
             // 图片调用交给页面的图片分支，入参不展示。
             if (kind === "tool_result") merged.push(message);
             continue;
@@ -145,7 +146,7 @@ export const mergeLiveTraces = (steps = []) => {
             return;
         }
         const tool = step.tool || "";
-        if (tool === IMAGE_TOOL) {
+        if (tool === IMAGE_TOOL || tool === IMAGE_RESEND_TOOL) {
             merged.push(step);
             return;
         }

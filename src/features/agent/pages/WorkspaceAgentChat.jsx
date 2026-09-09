@@ -40,12 +40,13 @@ import { mergeLiveTraces, mergeToolTraces } from "../components/agentTrace";
 import { parseQuizPayload } from "../components/quizPayload";
 
 const IMAGE_TOOL = "image_generate";
+const IMAGE_TOOL_NAMES = new Set([IMAGE_TOOL, "image_resend"]);
 
 const imageToolResult = (message) => {
     if (message?.kind !== "tool_result") return null;
     const payload = parseToolPayload(message.content);
     const tool = payload?.tool || message.toolName;
-    return tool === IMAGE_TOOL && payload?.url ? payload : null;
+    return IMAGE_TOOL_NAMES.has(tool) && payload?.url ? payload : null;
 };
 
 const containsResultUrl = (content, urls) => {
