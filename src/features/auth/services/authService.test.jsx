@@ -69,6 +69,46 @@ describe("authService.login", () => {
     });
 });
 
+describe("authService.qrExchange", () => {
+    it("扫码兑换成功后保存令牌、用户信息并分发登录事件", async () => {
+        const res = {
+            accessToken: "qr-at",
+            refreshToken: "qr-rt",
+            userInfo: { id: 3, name: "qr-user" },
+        };
+        const eventSpy = vi.spyOn(window, "dispatchEvent");
+        apiMock.post.mockResolvedValue(res);
+
+        await expect(
+            authService.qrExchange("ticket-1", "exchange-1"),
+        ).resolves.toBe(res);
+
+        expect(apiMock.post).toHaveBeenCalledWith(
+            "/api/auth/qr/exchange",
+            undefined,
+            {
+                params: { ticket: "ticket-1", exchangeCode: "exchange-1" },
+                _silent: true,
+            },
+        );
+        expect(apiMock.tokenStorage.setToken).toHaveBeenCalledWith("qr-at", {
+            notify: false,
+        });
+        expect(apiMock.tokenStorage.setRefreshToken).toHaveBeenCalledWith(
+            "qr-rt",
+        );
+        expect(localStorage.getItem("user_info")).toBe(
+            JSON.stringify(res.userInfo),
+        );
+        expect(eventSpy).toHaveBeenCalledWith(
+            expect.objectContaining({
+                type: "auth:login",
+                detail: { user: res.userInfo },
+            }),
+        );
+    });
+});
+
 describe("authService.logout", () => {
     it("携带 refresh token 静默登出并清空会话、分发登出事件", async () => {
         apiMock.tokenStorage.getRefreshToken.mockReturnValue("rt");

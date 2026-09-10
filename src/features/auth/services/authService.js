@@ -7,12 +7,29 @@ import { post, get, put, tokenStorage } from "@api";
 
 const BASE = "/api/auth";
 
+const persistTokenResponse = (res) => {
+    if (res?.accessToken) {
+        tokenStorage.setToken(res.accessToken, { notify: false });
+        tokenStorage.setRefreshToken(res.refreshToken);
+        localStorage.setItem("user_info", JSON.stringify(res.userInfo));
+        window.dispatchEvent(
+            new CustomEvent("auth:login", {
+                detail: { user: res.userInfo },
+            }),
+        );
+    }
+    return res;
+};
+
 export const authService = {
     qrCreate: () => post(`${BASE}/qr/create`, undefined, { _silent: true }),
     qrStatus: (ticket) => get(`${BASE}/qr/status`, { ticket }, { _silent: true }),
-    qrExchange: (ticket, exchangeCode) => post(`${BASE}/qr/exchange`, undefined, {
-        params: { ticket, exchangeCode }, _silent: true,
-    }),
+    qrExchange: async (ticket, exchangeCode) => {
+        const res = await post(`${BASE}/qr/exchange`, undefined, {
+            params: { ticket, exchangeCode }, _silent: true,
+        });
+        return persistTokenResponse(res);
+    },
     /**
      * 发送邮箱验证码
      * GET /api/auth/code
@@ -33,21 +50,7 @@ export const authService = {
      */
     login: async (data) => {
         const res = await post(`${BASE}/login`, data);
-        // 登录成功存入 Token
-        if (res.accessToken) {
-            tokenStorage.setToken(res.accessToken, { notify: false });
-            tokenStorage.setRefreshToken(res.refreshToken);
-            // 也可以存入用户信息到 localStorage 或状态管理中
-            localStorage.setItem("user_info", JSON.stringify(res.userInfo));
-            // NotificationProvider is already mounted on the login page flow;
-            // notify it immediately instead of waiting for a remount or refresh.
-            window.dispatchEvent(
-                new CustomEvent("auth:login", {
-                    detail: { user: res.userInfo },
-                }),
-            );
-        }
-        return res;
+        return persistTokenResponse(res);
     },
 
     /**
