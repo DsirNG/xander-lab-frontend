@@ -1,4 +1,5 @@
 import React, {
+    memo,
     useCallback,
     useEffect,
     useMemo,
@@ -59,6 +60,12 @@ import QuizCardStack from "../components/QuizCardStack";
 import { parseQuizPayload } from "../components/quizPayload";
 import ArtifactCard from "../components/ArtifactCard";
 import { parseArtifactPayload } from "../components/artifactPayload";
+
+/**
+ * 自动滚动的最小间隔（毫秒）。滚动本身会触发动画与重排，
+ * 而流式期间相关的数组每个动画帧都在变，逐帧滚动会与渲染互相拖累。
+ */
+const SCROLL_THROTTLE_INTERVAL_MS = 120;
 
 const ThoughtCard = ({ content }) => (
     <div className="flex items-start gap-2 rounded-xl border border-border bg-canvas px-3 py-2 text-xs leading-5 text-ink-muted">
@@ -256,7 +263,14 @@ const MessageAttachments = ({ attachments = [] }) =>
         </div>
     ) : null;
 
-const ConversationMessage = ({ role, content, attachments, isStreaming }) => (
+/**
+ * 单条消息的渲染单元。
+ *
+ * <p>用 memo 包住：流式回答期间父组件会按动画帧重渲染，若不 memo，
+ * 每一条历史消息都会跟着重算——包括它内部的整段 Markdown 解析。
+ * props 都是原始值或稳定引用，因此浅比较即可挡住无关重渲染。</p>
+ */
+const ConversationMessage = memo(({ role, content, attachments, isStreaming }) => (
     <div
         className={`flex w-full ${role === "user" ? "justify-end" : "justify-start"}`}
     >
@@ -278,6 +292,7 @@ const ConversationMessage = ({ role, content, attachments, isStreaming }) => (
                         <div className="min-w-0 flex-1">
                             <AgentMarkdown
                                 content={cleanImageMarkdown(content)}
+                                isStreaming
                             />
                         </div>
                         <span
@@ -305,7 +320,9 @@ const ConversationMessage = ({ role, content, attachments, isStreaming }) => (
             )}
         </div>
     </div>
-);
+));
+
+ConversationMessage.displayName = "ConversationMessage";
 
 export const ThinkingIndicator = ({ label }) => (
     <div
@@ -707,11 +724,16 @@ const AgentChat = () => {
     );
 
     useEffect(() => {
-        if (stickToBottomRef.current)
+        if (!stickToBottomRef.current) return undefined;
+        // 流式期间 steps 每个动画帧都在变，若直接在这里滚动就会每帧触发一次
+        // 带动画重排；合并到一个时间窗内只滚一次，既跟得上又不拖慢渲染。
+        const timer = setTimeout(() => {
             chatEndRef.current?.scrollIntoView({
                 behavior: "auto",
                 block: "end",
             });
+        }, SCROLL_THROTTLE_INTERVAL_MS);
+        return () => clearTimeout(timer);
     }, [messages, steps]);
 
     const handleSubmit = async () => {

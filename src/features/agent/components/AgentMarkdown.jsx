@@ -1,4 +1,4 @@
-import React, { memo, useState } from "react";
+import React, { memo, useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
@@ -194,8 +194,34 @@ const createMarkdownComponents = (codeAppearance) => ({
     },
 });
 
-const AgentMarkdown = memo(({ content, codeAppearance = "conversation" }) => {
+/**
+ * Markdown 正文渲染。
+ *
+ * <p>流式回答期间，`content` 每个动画帧都会变长。整段 `ReactMarkdown`
+ * （remark-gfm + remark-math + rehype-katex）重复解析是最贵的一次计算，
+ * 而它的成本随正文长度线性增长，于是流式过程会退化成 O(n²)。</p>
+ *
+ * <p>这里用 `isStreaming` 区分两种节奏：流式期间把待解析文本按
+ * {@link STREAMING_PARSE_INTERVAL_MS} 节流，正文越长解析越省；
+ * 停止流式后立即按最终文本解析一次，保证终态所见即最终结果。
+ * 内容未变时 `useMemo` 仍会直接复用上一份结果。</p>
+ */
+const STREAMING_PARSE_INTERVAL_MS = 180;
+
+const AgentMarkdown = memo(({ content, codeAppearance = "conversation", isStreaming = false }) => {
     const [previewSrc, setPreviewSrc] = useState(null);
+    const rawContent = content || "";
+
+    // 节流后的待解析文本：流式期间最多每 180ms 推进一次，收尾时立刻对齐真实内容。
+    const [parseContent, setParseContent] = useState(rawContent);
+    useEffect(() => {
+        if (!isStreaming) {
+            setParseContent(rawContent);
+            return undefined;
+        }
+        const timer = setTimeout(() => setParseContent(rawContent), STREAMING_PARSE_INTERVAL_MS);
+        return () => clearTimeout(timer);
+    }, [rawContent, isStreaming]);
 
     const components = React.useMemo(() => {
         const base = createMarkdownComponents(codeAppearance);
@@ -205,6 +231,11 @@ const AgentMarkdown = memo(({ content, codeAppearance = "conversation" }) => {
         };
     }, [codeAppearance]);
 
+    const rendered = React.useMemo(
+        () => normalizeAnswer(parseContent || ""),
+        [parseContent],
+    );
+
     return (
         <>
             <div className="prose prose-sm min-w-0 max-w-none break-words prose-li:my-1.5 prose-li:leading-7 prose-li:text-ink-secondary prose-strong:text-ink prose-pre:my-3 prose-pre:bg-transparent prose-pre:p-0 prose-table:text-sm [&_.katex-display]:my-4 [&_.katex-display]:overflow-x-auto [&_.katex-display]:py-1">
@@ -213,7 +244,7 @@ const AgentMarkdown = memo(({ content, codeAppearance = "conversation" }) => {
                     rehypePlugins={[rehypeKatex]}
                     components={components}
                 >
-                    {normalizeAnswer(content || "")}
+                    {rendered}
                 </ReactMarkdown>
             </div>
             <Modal
