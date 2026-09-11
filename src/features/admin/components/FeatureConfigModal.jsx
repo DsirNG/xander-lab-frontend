@@ -65,11 +65,14 @@ const FeatureConfigModal = ({
     const styleOptions = useMemo(() => {
         const isImage = config?.featureKey === "blog_agent_image";
         const isSpeech = config?.featureKey === "recitation_asr";
+        // agent / blog_agent / img2three_vision 的客户端已按 apiStyle 分流：配成
+        // CHAT_COMPLETIONS 就发 /chat/completions，否则发 /responses。所以文本功能
+        // 这里可以如实给出两个选项，选中哪个就真的走哪个。
         const options = isSpeech
             ? [API_STYLE_DASHSCOPE_ASR]
             : isImage
               ? [API_STYLE_CHAT, API_STYLE_CHAT_PROMPT, API_STYLE_IMAGES]
-              : [API_STYLE_CHAT, API_STYLE_RESPONSES];
+              : [API_STYLE_RESPONSES, API_STYLE_CHAT];
         return options.map((style) => ({
             value: style,
             label:
@@ -91,6 +94,8 @@ const FeatureConfigModal = ({
             setEnabled(config.enabled);
             setPrimaryProviderId(config.primaryProviderId || null);
             setPrimaryModel(config.primaryModel || "");
+            // 存量值原样带回：客户端现在按 apiStyle 分流，存 CHAT_COMPLETIONS 也是
+            // 合法且会被采纳的，下拉里能找到匹配项，不必再做归一。
             setPrimaryApiStyle(config.primaryApiStyle || "");
             setFallbackProviderId(config.fallbackProviderId || null);
             setFallbackModel(config.fallbackModel || "");
