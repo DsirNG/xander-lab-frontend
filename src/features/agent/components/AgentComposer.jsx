@@ -140,6 +140,10 @@ const AgentComposer = ({
                               )
                     }
                     onKeyDown={(event) => {
+                        // 中文/日文输入法里回车是"确认候选词"，不是发送：合成态必须放行，
+                        // 否则拼音打到一半就被当成发送（keyCode 229 是部分浏览器的兜底信号）。
+                        if (event.nativeEvent?.isComposing || event.keyCode === 229)
+                            return;
                         if (event.key === "Enter" && !event.shiftKey) {
                             event.preventDefault();
                             if (!locked && canSend) onSubmit();

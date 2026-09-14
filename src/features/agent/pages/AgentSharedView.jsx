@@ -10,7 +10,9 @@ import {
 } from "lucide-react";
 import { get } from "@api";
 import AgentMarkdown from "../components/AgentMarkdown";
+import ArtifactCard from "../components/ArtifactCard";
 import ImageToolResult from "../components/ImageToolResult";
+import { parseArtifactPayload } from "../components/artifactPayload";
 import {
     cleanImageMarkdown,
     containsResultUrl,
@@ -144,6 +146,19 @@ const AgentSharedView = () => {
                                     title={result.title}
                                 />
                             ) : null;
+                        }
+                        // 交付卡是只读的（文件树 + 源码 + 客户端下载），分享页可以直接复用。
+                        // 漏掉它读者会看到"怎么跑起来"却看不到任何代码：模型发卡后被要求
+                        // reply 里不要重复源码，所以正文里补不回这段内容。
+                        if (message.kind === "artifact") {
+                            const artifact = parseArtifactPayload(message);
+                            if (!artifact) return null;
+                            return (
+                                <ArtifactCard
+                                    key={message.id}
+                                    payload={artifact}
+                                />
+                            );
                         }
                         if (
                             message.kind === "answer" ||

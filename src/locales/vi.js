@@ -594,6 +594,7 @@ export default {
             generated: "Hình ảnh đã tạo",
             mine: "Hình ảnh của tôi",
             loadFailed: "Không tải được hình ảnh. Vui lòng thử lại sau.",
+            retry: "Tải lại",
             emptyTitle: "Chưa có hình ảnh nào được tạo",
             emptyHint:
                 "Mô tả một hình ảnh trong ô nhập liệu, agent sẽ tạo và lưu vào đây",

@@ -602,6 +602,7 @@ export default {
             mine: "Mes images",
             loadFailed:
                 "Impossible de charger les images. Veuillez réessayer plus tard.",
+            retry: "Recharger",
             emptyTitle: "Aucune image générée pour le moment",
             emptyHint:
                 "Décrivez une image dans le champ de saisie ; l’agent la générera et l’enregistrera ici",

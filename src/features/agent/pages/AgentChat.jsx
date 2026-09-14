@@ -51,6 +51,7 @@ import {
     parseToolPayload,
 } from "../services/agentConversationService";
 import AgentMarkdown from "../components/AgentMarkdown";
+import AgentApprovalCard from "../components/AgentApprovalCard";
 import ImageToolResult from "../components/ImageToolResult";
 import { AgentTraceCard, SelfCheckCard } from "../components/AgentTraceCard";
 import { mergeLiveTraces, mergeToolTraces } from "../components/agentTrace";
@@ -345,6 +346,7 @@ const AgentChatInputBar = ({
     attachments,
     uploading,
     isActive,
+    awaitingApproval,
     creating,
     hasConversation,
     deepThinking,
@@ -354,7 +356,7 @@ const AgentChatInputBar = ({
     onStop,
     onToggleDeepThinking,
 }) => {
-    const locked = isActive || creating;
+    const locked = isActive || awaitingApproval || creating;
     const [menuOpen, setMenuOpen] = useState(false);
     const fileInputRef = useRef(null);
     const textareaRef = useRef(null);
@@ -485,6 +487,13 @@ const AgentChatInputBar = ({
                                 : t("blog.agentChat.inputPlaceholder")
                         }
                         onKeyDown={(event) => {
+                            // 中文/日文输入法里回车是"确认候选词"，不是发送：合成态必须放行，
+                            // 否则拼音打到一半就被当成发送（keyCode 229 是部分浏览器的兜底信号）。
+                            if (
+                                event.nativeEvent?.isComposing ||
+                                event.keyCode === 229
+                            )
+                                return;
                             if (event.key === "Enter" && !event.shiftKey) {
                                 event.preventDefault();
                                 if (!locked && canSend) onSubmit();
@@ -602,6 +611,8 @@ const AgentChat = () => {
         loading,
         creating,
         running,
+        approvals,
+        decidingApprovalId,
         reconnecting,
         errorMessage,
         liveSteps,
@@ -609,6 +620,7 @@ const AgentChat = () => {
         setDeepThinking,
         sendMessage,
         cancelTurn,
+        decideApproval,
         createConversation,
         reset,
     } = useAgentConversation({ conversationId });
@@ -644,6 +656,10 @@ const AgentChat = () => {
     }, [blogTaskId, t]);
 
     const isActive = running || conversation?.status === "running";
+    // 等待审批时这一轮并没有结束，只是卡在工具授权上：输入框和答题卡都要锁住，
+    // 否则用户可以再发一轮把待审批的那一轮顶掉。
+    const awaitingApproval = conversation?.status === "awaiting_approval";
+    const locked = isActive || awaitingApproval || creating;
 
     // 流式步骤先把同一次工具调用的 start/progress/delta/end 合成一条轨迹，
     // 否则收口时入参和输出会各自消失，用户看不到这一步到底做了什么。
@@ -803,12 +819,26 @@ const AgentChat = () => {
     const handleStop = () => cancelTurn();
 
     const handleQuizSubmit = useCallback(
-        (payload) => {
-            if (!conversationId || isActive) return;
+        async (payload) => {
+            if (!conversationId || locked) return false;
             // 答题卡提交是内部协议；服务端会持久化为可读的 quiz_answer，不能先把 JSON 当作用户消息显示。
-            sendMessage(JSON.stringify(payload), { displayUserMessage: false });
+            // 把结果原样回给卡片：返回 false 时卡片要退回可编辑，不能锁死在"已提交"。
+            return sendMessage(JSON.stringify(payload), {
+                displayUserMessage: false,
+            });
         },
-        [conversationId, isActive, sendMessage],
+        [conversationId, locked, sendMessage],
+    );
+
+    const handleApprovalDecision = useCallback(
+        async (approvalId, approved) => {
+            try {
+                await decideApproval(approvalId, approved);
+            } catch (error) {
+                toast.error(error.message || t("blog.agentChat.sendFailed"));
+            }
+        },
+        [decideApproval, t, toast],
     );
 
     // 图片等入口页面携带 ?q= 跳转而来：自动创建会话并发送首条消息。
@@ -1506,6 +1536,19 @@ const AgentChat = () => {
                                                     }
                                                     return null;
                                                 })}
+                                                {approvals.map((approval) => (
+                                                    <AgentApprovalCard
+                                                        key={`approval-${approval.id}`}
+                                                        approval={approval}
+                                                        deciding={
+                                                            decidingApprovalId ===
+                                                            approval.id
+                                                        }
+                                                        onDecision={
+                                                            handleApprovalDecision
+                                                        }
+                                                    />
+                                                ))}
                                                 {steps.map((step, index) => {
                                                     if (step.type === "user")
                                                         return (
@@ -1568,6 +1611,17 @@ const AgentChat = () => {
                                                             <ArtifactMessage
                                                                 key={`live-${index}`}
                                                                 message={step}
+                                                            />
+                                                        );
+                                                    }
+                                                    if (step.type === "quiz") {
+                                                        return (
+                                                            <QuizMessage
+                                                                key={`live-${index}`}
+                                                                message={step}
+                                                                onSubmit={
+                                                                    handleQuizSubmit
+                                                                }
                                                             />
                                                         );
                                                     }
@@ -1688,6 +1742,7 @@ const AgentChat = () => {
                                             attachments={attachments}
                                             uploading={uploadingAttachments}
                                             isActive={isActive}
+                                            awaitingApproval={awaitingApproval}
                                             creating={creating}
                                             hasConversation={true}
                                             onFilesSelected={
@@ -1768,6 +1823,8 @@ const AgentChat = () => {
                                         type="button"
                                         onClick={() => {
                                             closeSearchModal();
+                                            // 从图片画廊里搜到会话时也要切回对话视图，否则会停在画廊上看旧图。
+                                            setView("chat");
                                             navigate(
                                                 `/workspace/agent/${session.id}`,
                                             );

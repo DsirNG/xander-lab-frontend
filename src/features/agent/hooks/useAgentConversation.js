@@ -377,6 +377,22 @@ export const useAgentConversation = ({ conversationId }) => {
                     next[index] = step;
                     return next;
                 });
+            } else if (event === "quiz") {
+                // 答题卡是用户接下来要动手点的界面：一到就插进时间线，不等收口后的快照刷新
+                // （与 artifact 同一套处理，否则卡片会迟到一步才出现）。
+                setLiveSteps((current) => {
+                    const step = { type: "quiz", payload: data };
+                    const index = current.findIndex(
+                        (entry) =>
+                            entry.type === "quiz" &&
+                            entry.payload?.id === data?.id,
+                    );
+                    if (index < 0)
+                        return [...current, step].slice(-LIVE_STEP_LIMIT);
+                    const next = [...current];
+                    next[index] = step;
+                    return next;
+                });
             } else if (event === "error") {
                 const message =
                     typeof data === "string"

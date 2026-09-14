@@ -290,9 +290,13 @@ const WorkspaceAgentChat = () => {
     };
 
     const handleQuizSubmit = useCallback(
-        (payload) => {
-            if (!conversationId || locked) return;
-            sendMessage(JSON.stringify(payload));
+        async (payload) => {
+            if (!conversationId || locked) return false;
+            // 答题卡提交是内部协议；服务端会持久化为可读的 quiz_answer，不能先把 JSON 当作用户消息显示。
+            // 把结果原样回给卡片：返回 false 时卡片要退回可编辑，不能锁死在"已提交"。
+            return sendMessage(JSON.stringify(payload), {
+                displayUserMessage: false,
+            });
         },
         [conversationId, locked, sendMessage],
     );
@@ -316,6 +320,8 @@ const WorkspaceAgentChat = () => {
                 return;
             }
             const selected = files.slice(0, remaining);
+            if (files.length > remaining)
+                toast.warning(t("blog.agentChat.attachmentLimit"));
             const valid = selected.filter((file) => {
                 if (file.size <= 20 * 1024 * 1024) return true;
                 toast.warning(
@@ -664,6 +670,14 @@ const WorkspaceAgentChat = () => {
                                                 <ArtifactMessage
                                                     key={`live-${index}`}
                                                     message={step}
+                                                />
+                                            );
+                                        if (step.type === "quiz")
+                                            return (
+                                                <QuizMessage
+                                                    key={`live-${index}`}
+                                                    message={step}
+                                                    onSubmit={handleQuizSubmit}
                                                 />
                                             );
                                         if (step.type === "tool") {

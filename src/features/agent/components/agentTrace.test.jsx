@@ -247,6 +247,73 @@ describe("mergeLiveTraces", () => {
             error: "文件路径不合法",
         });
     });
+
+    it("opens a second card when the same tool runs twice in one round", () => {
+        // 回归：槽位收口后不释放，第二次调用的入参和输出会被折进第一张卡，
+        // 用户只看到"一次调用"，拿到的却是两次的结果（持久化那条路由 mergeToolTraces 的
+        // "pairs each result with its own tool" 用例守着，这里是流式那条路）。
+        const merged = mergeLiveTraces([
+            {
+                type: "tool",
+                tool: "query_posts",
+                phase: "start",
+                args: { keyword: "a" },
+            },
+            {
+                type: "tool",
+                tool: "query_posts",
+                phase: "end",
+                result: { ok: true, count: 1 },
+            },
+            {
+                type: "tool",
+                tool: "query_posts",
+                phase: "start",
+                args: { keyword: "b" },
+            },
+            {
+                type: "tool",
+                tool: "query_posts",
+                phase: "end",
+                result: { ok: true, count: 2 },
+            },
+        ]);
+
+        expect(merged).toHaveLength(2);
+        expect(merged[0]).toMatchObject({
+            args: { keyword: "a" },
+            status: "done",
+        });
+        expect(merged[0].result).toMatchObject({ count: 1 });
+        expect(merged[1]).toMatchObject({
+            args: { keyword: "b" },
+            status: "done",
+        });
+        expect(merged[1].result).toMatchObject({ count: 2 });
+    });
+
+    it("releases the slot after a failure so the retry is not folded into it", () => {
+        // 失败后模型常常原样重试同一个工具：重试必须是新的一张卡，
+        // 否则第一张卡会从"失败"变成"成功"，用户看不到中间那次失败。
+        const merged = mergeLiveTraces([
+            { type: "tool", tool: "publish_post", phase: "start", args: { id: 1 } },
+            {
+                type: "tool",
+                tool: "publish_post",
+                phase: "error",
+                error: "上游超时",
+            },
+            { type: "tool", tool: "publish_post", phase: "start", args: { id: 1 } },
+            { type: "tool", tool: "publish_post", phase: "end", result: { ok: true } },
+        ]);
+
+        expect(merged).toHaveLength(2);
+        expect(merged[0]).toMatchObject({
+            status: "error",
+            error: "上游超时",
+        });
+        expect(merged[1].status).toBe("done");
+    });
 });
 
 describe("formatTracePayload", () => {

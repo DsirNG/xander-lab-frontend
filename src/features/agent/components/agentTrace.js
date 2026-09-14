@@ -163,9 +163,14 @@ export const mergeLiveTraces = (steps = []) => {
         if (slot == null) {
             openByTool.set(tool, merged.length);
             merged.push(applyLiveStep(traceEntry(`live-trace-${index}`, tool), step));
-            return;
+        } else {
+            merged[slot] = applyLiveStep(merged[slot], step);
         }
-        merged[slot] = applyLiveStep(merged[slot], step);
+        // 收口后立刻让出槽位：同一轮里同一个工具被调用两次是两件事，
+        // 槽位不释放就会把第二次的入参和输出折叠进第一张卡里（见 mergeToolTraces 的同款处理）。
+        if (step.phase === "end" || step.phase === "error") {
+            openByTool.delete(tool);
+        }
     });
 
     return merged;

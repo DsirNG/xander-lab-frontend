@@ -43,6 +43,7 @@ const AgentImagesPage = ({ onGenerate }) => {
     const [loadingMore, setLoadingMore] = useState(false);
     const [hasMore, setHasMore] = useState(false);
     const [loadError, setLoadError] = useState(null);
+    const [reloadToken, setReloadToken] = useState(0);
     const requestRef = useRef(0);
 
     useEffect(() => {
@@ -75,7 +76,9 @@ const AgentImagesPage = ({ onGenerate }) => {
                 if (requestId === requestRef.current) setLoading(false);
             });
         return () => controller.abort();
-    }, [t]);
+    }, [t, reloadToken]);
+
+    const handleReload = () => setReloadToken((value) => value + 1);
 
     const handleLoadMore = async () => {
         if (loadingMore) return;
@@ -206,6 +209,19 @@ const AgentImagesPage = ({ onGenerate }) => {
                                     className="aspect-square w-full rounded-2xl bg-surface-muted animate-pulse"
                                 />
                             ))}
+                        </div>
+                    ) : images.length === 0 && loadError ? (
+                        // 首屏拉取失败时一张图都没有，不能再走"还没有生成的图片"空态：
+                        // 用户会以为自己没图，其实是请求挂了。
+                        <div className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-border/50 bg-canvas py-16 text-center">
+                            <p className="text-sm text-danger-fg">{loadError}</p>
+                            <button
+                                type="button"
+                                onClick={handleReload}
+                                className="rounded-full border border-border bg-surface px-4 py-1.5 text-xs font-semibold text-ink transition hover:bg-surface-muted"
+                            >
+                                {t("blog.agentImages.retry")}
+                            </button>
                         </div>
                     ) : images.length === 0 ? (
                         <div className="flex flex-col items-center justify-center gap-2 rounded-2xl border border-border/50 bg-canvas py-16 text-center">

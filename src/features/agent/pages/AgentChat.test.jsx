@@ -1,5 +1,5 @@
 import React from "react";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import {
     ImageToolProgressPanel,
@@ -168,5 +168,76 @@ describe("QuizCardStack", () => {
 
     it("parses a quiz embedded in an assistant message", () => {
         expect(parseQuizPayload({ content: JSON.stringify(quiz) })).toEqual(quiz);
+    });
+
+    it("rolls the card back to editable when the submission never left", async () => {
+        // 回归：卡片先把自己锁死、发送却失败，用户看到"已提交"但答案永远到不了，
+        // 而且没有任何重试入口——提交结果必须回传，失败就得退回可编辑。
+        const onSubmit = vi.fn().mockResolvedValue(false);
+        render(
+            <QuizCardStack
+                payload={{ ...quiz, questions: [quiz.questions[0]] }}
+                onSubmit={onSubmit}
+            />,
+        );
+
+        const submitButton = screen.getByRole("button", {
+            name: /Submit all answers|提交全部答案/,
+        });
+        fireEvent.click(submitButton);
+
+        await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+        await waitFor(() => expect(submitButton).toBeEnabled());
+
+        // 还能再交一次：这就是"可重试"。
+        fireEvent.click(submitButton);
+        await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(2));
+    });
+
+    it("keeps the card locked once the submission was accepted", async () => {
+        const onSubmit = vi.fn().mockResolvedValue(true);
+        render(
+            <QuizCardStack
+                payload={{ ...quiz, questions: [quiz.questions[0]] }}
+                onSubmit={onSubmit}
+            />,
+        );
+
+        fireEvent.click(
+            screen.getByRole("button", {
+                name: /Submit all answers|提交全部答案/,
+            }),
+        );
+
+        await waitFor(() =>
+            expect(
+                screen.getByRole("button", {
+                    name: /Submit all answers|提交全部答案/,
+                }),
+            ).toBeDisabled(),
+        );
+    });
+
+    it("drops a broken question instead of crashing the whole conversation", () => {
+        // 模型给的 JSON 不完全可信：null 题目、null 选项都不能把整张卡（乃至整页）带崩。
+        const onSubmit = vi.fn();
+        render(
+            <QuizCardStack
+                payload={{
+                    type: "quiz",
+                    id: "quiz-broken",
+                    questions: [
+                        null,
+                        { id: "q1", prompt: "Still here?", options: [null, "yes"] },
+                    ],
+                }}
+                onSubmit={onSubmit}
+            />,
+        );
+
+        expect(screen.getByText("Still here?")).toBeInTheDocument();
+        expect(
+            screen.getByRole("button", { name: /yes/ }),
+        ).toBeInTheDocument();
     });
 });

@@ -9,15 +9,20 @@ const normalizeQuiz = (payload) => {
     return {
         id: payload?.id || payload?.quizId || "quiz",
         title: payload?.title || "",
-        questions: questions.map((question, index) => ({
-            id: question.id || `question-${index + 1}`,
-            prompt: question.prompt || question.question || "",
-            type: question.type || "single",
-            options: Array.isArray(question.options)
-                ? question.options.map((option, optionIndex) =>
+        // 模型给的 JSON 不完全可信：数组里可能出现 null 项、选项也可能缺字段。
+        // 全部降级成可渲染的字符串，避免整张卡因为一个坏元素直接抛错白屏。
+        questions: questions.filter(Boolean).map((question, index) => ({
+            id: question?.id || `question-${index + 1}`,
+            prompt: question?.prompt || question?.question || "",
+            type: question?.type || "single",
+            options: Array.isArray(question?.options)
+                ? question.options.filter(Boolean).map((option, optionIndex) =>
                       typeof option === "string"
                           ? { value: option, label: option }
-                          : { value: option.value ?? option.id ?? optionIndex, label: option.label ?? option.text ?? "" },
+                          : {
+                                value: option?.value ?? option?.id ?? optionIndex,
+                                label: option?.label ?? option?.text ?? "",
+                            },
                   )
                 : [],
         })),
@@ -30,10 +35,14 @@ export const QuizCardStack = ({ payload, onSubmit }) => {
     const [current, setCurrent] = useState(0);
     const [answers, setAnswers] = useState({});
     const [submitted, setSubmitted] = useState(false);
+    const [submitting, setSubmitting] = useState(false);
+    const [submitFailed, setSubmitFailed] = useState(false);
 
     if (!quiz.questions.length) return null;
 
-    const question = quiz.questions[current];
+    // payload 换新时 current 可能越界（组件按 message.id 复用），越界直接不渲染而不是崩掉整页。
+    const question = quiz.questions[Math.min(current, quiz.questions.length - 1)];
+    if (!question) return null;
     const answer = answers[question.id];
     const answeredCount = Object.keys(answers).length;
     const isLast = current === quiz.questions.length - 1;
@@ -48,17 +57,31 @@ export const QuizCardStack = ({ payload, onSubmit }) => {
         updateAnswer(values.includes(value) ? values.filter((item) => item !== value) : [...values, value]);
     };
 
-    const submit = () => {
-        if (submitted) return;
-        setSubmitted(true);
-        onSubmit?.({
-            type: "submit_quiz",
-            quiz_id: quiz.id,
-            answers: quiz.questions.map((item) => ({
-                question_id: item.id,
-                answer: answers[item.id] ?? null,
-            })),
-        });
+    const submit = async () => {
+        if (submitted || submitting) return;
+        setSubmitting(true);
+        setSubmitFailed(false);
+        try {
+            const accepted = await onSubmit?.({
+                type: "submit_quiz",
+                quiz_id: quiz.id,
+                answers: quiz.questions.map((item) => ({
+                    question_id: item.id,
+                    answer: answers[item.id] ?? null,
+                })),
+            });
+            // onSubmit 返回 false 表示这一轮压根没发出去（会话在跑 / 网络失败）。
+            // 卡片不能先把自己锁死，否则用户以为交上去了，答案却永远到不了。
+            if (accepted === false) {
+                setSubmitFailed(true);
+                return;
+            }
+            setSubmitted(true);
+        } catch {
+            setSubmitFailed(true);
+        } finally {
+            setSubmitting(false);
+        }
     };
 
     return (
@@ -124,6 +147,12 @@ export const QuizCardStack = ({ payload, onSubmit }) => {
                         {t("blog.agentChat.quizSubmitted")}
                     </div>
                 ) : null}
+                {submitFailed ? (
+                    <div className="mt-6 flex items-center gap-2 rounded-xl bg-danger-soft px-3 py-2 text-caption font-semibold text-danger-fg">
+                        <CircleAlert className="h-4 w-4" />
+                        {t("blog.agentChat.sendFailed")}
+                    </div>
+                ) : null}
             </div>
 
             <div className="mt-3 flex items-center justify-between gap-2">
@@ -131,7 +160,7 @@ export const QuizCardStack = ({ payload, onSubmit }) => {
                     <ArrowLeft className="h-4 w-4" /> {t("blog.agentChat.quizPrevious")}
                 </button>
                 {isLast ? (
-                    <button type="button" onClick={submit} disabled={submitted} className="inline-flex h-10 items-center gap-2 rounded-xl bg-ink px-4 text-body font-semibold text-white hover:bg-ink-secondary disabled:opacity-50">
+                    <button type="button" onClick={submit} disabled={submitted || submitting} className="inline-flex h-10 items-center gap-2 rounded-xl bg-ink px-4 text-body font-semibold text-white hover:bg-ink-secondary disabled:opacity-50">
                         <Send className="h-4 w-4" /> {t("blog.agentChat.quizSubmit")}
                     </button>
                 ) : (

@@ -449,6 +449,51 @@ describe("useAgentConversation autonomy events", () => {
             result.current.liveSteps.filter((step) => step.type === "artifact"),
         ).toHaveLength(2);
     });
+
+    it("shows the answer card as soon as the quiz event arrives", async () => {
+        // 回归：后端 emit_quiz 会发一个 quiz 事件（AgentConversationService 里和 artifact 成对），
+        // 但 hook 只接了 artifact、没接 quiz —— 事件被整条丢掉，答题卡只能等收口后的快照刷新
+        // 才可能出现，而那时候它又因为负载解析不到 questions 而渲染成空。
+        const { result, emit } = await streamHarness();
+        const quiz = {
+            type: "quiz",
+            id: "quiz-42-1",
+            title: "JavaScript",
+            questions: [
+                {
+                    id: "q1",
+                    prompt: "Which value is truthy?",
+                    options: ["false", "true"],
+                },
+            ],
+        };
+
+        await emit({ id: 1, event: "quiz", data: quiz });
+        await emit({ id: 2, event: "thought", data: "先让用户答一题" });
+
+        const quizzes = result.current.liveSteps.filter(
+            (step) => step.type === "quiz",
+        );
+        expect(quizzes).toHaveLength(1);
+        expect(quizzes[0].payload.questions).toHaveLength(1);
+        expect(result.current.liveSteps).toContainEqual({
+            type: "thought",
+            content: "先让用户答一题",
+        });
+
+        // 同一张卡再发一次就地替换，不并排堆两张。
+        await emit({
+            id: 3,
+            event: "quiz",
+            data: { ...quiz, title: "JavaScript 基础" },
+        });
+
+        const replaced = result.current.liveSteps.filter(
+            (step) => step.type === "quiz",
+        );
+        expect(replaced).toHaveLength(1);
+        expect(replaced[0].payload.title).toBe("JavaScript 基础");
+    });
 });
 
 describe("useAgentConversation approvals", () => {
