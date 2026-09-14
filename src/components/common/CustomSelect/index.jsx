@@ -23,6 +23,9 @@ const DownIcon = () => (
  * @param {string} placeholder - 占位符文字
  * @param {string} className - 额外的类名
  * @param {string} size - 尺寸: 'md'(默认) | 'sm'(紧凑，匹配表单 h-9) | 'xs'(更紧凑，小字号，适合多列表单)
+ * @param {string} variant - 样式变体: 'default' | 'outline' (带边框，适合工具栏/筛选器)
+ * @param {string} triggerClassName - 触发器按钮自定义类名
+ * @param {string} dropdownClassName - 下拉面板自定义类名
  * @param {string} align - [Deprecated] 统一对齐方式，建议使用 textAlign 和 dropdownAlign
  * @param {string} textAlign - 触发器文字对齐方式: 'left' | 'center' | 'right'，默认 'left'
  * @param {string} dropdownAlign - 下拉选项对齐方式: 'left' | 'center' | 'right'，默认 'left'
@@ -35,6 +38,9 @@ const CustomSelect = ({
     placeholder = "请选择",
     className = "",
     size = "md",
+    variant = "default",
+    triggerClassName = "",
+    dropdownClassName = "",
     align = "left",
     textAlign,
     dropdownAlign,
@@ -251,9 +257,11 @@ const CustomSelect = ({
             ? `option-${options[highlightedIndex].value}`
             : undefined;
 
+    const isSelectedVal = value !== undefined && value !== null && (value !== "" || selectedOption !== undefined);
+
     return (
         <div
-            className={`${styles.customSelect} ${size === "sm" ? styles.sm : ""} ${size === "xs" ? styles.xs : ""} ${className}`}
+            className={`${styles.customSelect} ${size === "sm" ? styles.sm : ""} ${size === "xs" ? styles.xs : ""} ${variant === "outline" ? styles.outline : ""} ${className}`}
             ref={selectRef}
         >
             <button
@@ -263,7 +271,7 @@ const CustomSelect = ({
                 aria-haspopup="listbox"
                 aria-label={placeholder || "选择"}
                 aria-activedescendant={activeDescendantId}
-                className={`${styles.selectTrigger} ${isOpen ? styles.active : ""} ${value ? styles.hasValue : ""} ${error ? styles.error : ""} ${textAlignClass}`}
+                className={`${styles.selectTrigger} ${isOpen ? styles.active : ""} ${isSelectedVal ? styles.hasValue : ""} ${error ? styles.error : ""} ${textAlignClass} ${triggerClassName}`}
                 onClick={() => setIsOpen(!isOpen)}
                 onKeyDown={handleKeyDown}
             >
@@ -278,7 +286,7 @@ const CustomSelect = ({
             {isOpen && (
                 <div
                     ref={dropdownRef}
-                    className={`${styles.selectDropdown} ${isUpward ? styles.upward : ""}`}
+                    className={`${styles.selectDropdown} ${isUpward ? styles.upward : ""} ${finalDropdownAlign === "right" ? styles.alignRight : ""} ${dropdownClassName}`}
                     style={{ maxHeight: dropdownMaxHeight }}
                 >
                     <div
