@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import {
@@ -10,8 +10,15 @@ import {
 } from "lucide-react";
 import { get } from "@api";
 import AgentMarkdown from "../components/AgentMarkdown";
+import ImageToolResult from "../components/ImageToolResult";
+import {
+    cleanImageMarkdown,
+    containsResultUrl,
+    imageToolResult,
+    imageUrlsFromMessages,
+} from "../components/imageResult";
 
-const ConversationMessage = ({ role, content }) => (
+const ConversationMessage = ({ role, content, imageUrls }) => (
     <div
         className={`flex w-full ${role === "user" ? "justify-end" : "justify-start"}`}
     >
@@ -25,7 +32,7 @@ const ConversationMessage = ({ role, content }) => (
             {role === "user" ? (
                 <span className="whitespace-pre-wrap">{content}</span>
             ) : (
-                <AgentMarkdown content={content} />
+                <AgentMarkdown content={cleanImageMarkdown(content, imageUrls)} />
             )}
         </div>
     </div>
@@ -38,6 +45,10 @@ const AgentSharedView = () => {
     const [error, setError] = useState(null);
     const [conversation, setConversation] = useState(null);
     const [messages, setMessages] = useState([]);
+
+    // 分享页此前完全不处理图片工具结果：图片不展示，模型写在正文里的
+    // OSS 地址反而被当成普通链接渲染出来。这里与站内对话用同一套判定与清洗。
+    const imageUrls = useMemo(() => imageUrlsFromMessages(messages), [messages]);
 
     useEffect(() => {
         if (!shareToken) return;
@@ -124,15 +135,29 @@ const AgentSharedView = () => {
                                 </div>
                             );
                         }
+                        if (message.kind === "tool_result") {
+                            const result = imageToolResult(message);
+                            return result ? (
+                                <ImageToolResult
+                                    key={message.id}
+                                    url={result.url}
+                                    title={result.title}
+                                />
+                            ) : null;
+                        }
                         if (
                             message.kind === "answer" ||
                             message.kind === "message"
                         ) {
+                            if (containsResultUrl(message.content, imageUrls)) {
+                                return null;
+                            }
                             return (
                                 <ConversationMessage
                                     key={message.id}
                                     role="assistant"
                                     content={message.content}
+                                    imageUrls={imageUrls}
                                 />
                             );
                         }

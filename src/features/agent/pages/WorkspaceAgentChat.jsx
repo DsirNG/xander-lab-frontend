@@ -37,25 +37,16 @@ import {
 } from "./AgentChat";
 import { AgentTraceCard, SelfCheckCard } from "../components/AgentTraceCard";
 import { mergeLiveTraces, mergeToolTraces } from "../components/agentTrace";
+import {
+    IMAGE_TOOL,
+    cleanImageMarkdown,
+    containsResultUrl,
+    imageToolResult,
+    imageUrlsFromMessages,
+    imageUrlsFromSteps,
+    liveImageStepResult,
+} from "../components/imageResult";
 import { parseQuizPayload } from "../components/quizPayload";
-
-const IMAGE_TOOL = "image_generate";
-const IMAGE_TOOL_NAMES = new Set([IMAGE_TOOL, "image_resend"]);
-
-const imageToolResult = (message) => {
-    if (message?.kind !== "tool_result") return null;
-    const payload = parseToolPayload(message.content);
-    const tool = payload?.tool || message.toolName;
-    return IMAGE_TOOL_NAMES.has(tool) && payload?.url ? payload : null;
-};
-
-const containsResultUrl = (content, urls) => {
-    if (!content || urls.size === 0) return false;
-    for (const url of urls) {
-        if (content.includes(url)) return true;
-    }
-    return false;
-};
 
 const ThoughtCard = ({ content }) => (
     <div className="flex items-start gap-2 rounded-xl border border-border bg-canvas px-3 py-2 text-xs leading-5 text-ink-muted">
@@ -98,14 +89,7 @@ const MessageAttachments = ({ attachments = [] }) =>
         </div>
     ) : null;
 
-const cleanImageMarkdown = (text) => {
-    if (!text) return text;
-    const imageMatch = text.match(/!\[.*?\]\([^)]+\)/);
-    if (imageMatch) return imageMatch[0];
-    return text;
-};
-
-const ConversationMessage = ({ role, content, attachments, isStreaming }) => (
+const ConversationMessage = ({ role, content, attachments, imageUrls, isStreaming }) => (
     <div
         className={`flex w-full ${role === "user" ? "justify-end" : "justify-start"}`}
     >
@@ -126,7 +110,7 @@ const ConversationMessage = ({ role, content, attachments, isStreaming }) => (
                     <div className="flex items-start gap-0.5">
                         <div className="min-w-0 flex-1">
                             <AgentMarkdown
-                                content={cleanImageMarkdown(content)}
+                                content={cleanImageMarkdown(content, imageUrls)}
                             />
                         </div>
                         <span
@@ -150,7 +134,7 @@ const ConversationMessage = ({ role, content, attachments, isStreaming }) => (
                     </span>
                 )
             ) : (
-                <AgentMarkdown content={cleanImageMarkdown(content)} />
+                <AgentMarkdown content={cleanImageMarkdown(content, imageUrls)} />
             )}
         </div>
     </div>
@@ -239,30 +223,9 @@ const WorkspaceAgentChat = () => {
         return active ? { message } : null;
     }, [steps]);
 
-    const historicalImageUrls = useMemo(() => {
-        const urls = new Set();
-        messages.forEach((message) => {
-            const result = imageToolResult(message);
-            if (result?.url) urls.add(result.url);
-        });
-        return urls;
-    }, [messages]);
+    const historicalImageUrls = useMemo(() => imageUrlsFromMessages(messages), [messages]);
 
-    const liveImageUrls = useMemo(
-        () =>
-            new Set(
-                steps
-                    .filter(
-                        (step) =>
-                            step.type === "tool" &&
-                            step.tool === IMAGE_TOOL &&
-                            step.phase === "end" &&
-                            step.result?.url,
-                    )
-                    .map((step) => step.result.url),
-            ),
-        [steps],
-    );
+    const liveImageUrls = useMemo(() => imageUrlsFromSteps(steps), [steps]);
 
     useEffect(() => {
         if (stickToBottomRef.current)
@@ -639,6 +602,9 @@ const WorkspaceAgentChat = () => {
                                                     key={message.id}
                                                     role="assistant"
                                                     content={message.content}
+                                                    imageUrls={
+                                                        historicalImageUrls
+                                                    }
                                                 />
                                             );
                                         }
@@ -701,22 +667,15 @@ const WorkspaceAgentChat = () => {
                                                 />
                                             );
                                         if (step.type === "tool") {
-                                            if (
-                                                step.tool === IMAGE_TOOL &&
-                                                step.phase === "end" &&
-                                                step.result?.url
-                                            ) {
-                                                return (
-                                                    <ImageToolResult
-                                                        key={`live-${index}`}
-                                                        url={step.result.url}
-                                                        title={
-                                                            step.result.title
-                                                        }
-                                                    />
-                                                );
-                                            }
-                                            return null;
+                                            const result =
+                                                liveImageStepResult(step);
+                                            return result ? (
+                                                <ImageToolResult
+                                                    key={`live-${index}`}
+                                                    url={result.url}
+                                                    title={result.title}
+                                                />
+                                            ) : null;
                                         }
                                         if (
                                             step.type === "answer" ||
@@ -734,6 +693,7 @@ const WorkspaceAgentChat = () => {
                                                     key={`live-${index}`}
                                                     role="assistant"
                                                     content={step.content}
+                                                    imageUrls={liveImageUrls}
                                                     isStreaming={
                                                         step.type ===
                                                         "answer_delta"

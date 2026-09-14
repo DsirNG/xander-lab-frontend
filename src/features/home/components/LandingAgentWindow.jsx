@@ -32,26 +32,18 @@ import {
     ArtifactMessage,
 } from "@features/agent/pages/AgentChat";
 import { SelfCheckCard } from "@features/agent/components/AgentTraceCard";
+import {
+    IMAGE_TOOL,
+    cleanImageMarkdown,
+    containsResultUrl,
+    imageToolResult,
+    imageUrlsFromMessages,
+    imageUrlsFromSteps,
+    liveImageStepResult,
+} from "@features/agent/components/imageResult";
 import { parseQuizPayload } from "@features/agent/components/quizPayload";
 import { GlowingRing3D } from "./LandingIllustrations";
 import { useToast } from "@/hooks/useToast";
-
-const IMAGE_TOOL = "image_generate";
-
-const imageToolResult = (message) => {
-    if (message?.kind !== "tool_result") return null;
-    const payload = parseToolPayload(message.content);
-    const tool = payload?.tool || message.toolName;
-    return tool === IMAGE_TOOL && payload?.url ? payload : null;
-};
-
-const containsResultUrl = (content, urls) => {
-    if (!content || urls.size === 0) return false;
-    for (const url of urls) {
-        if (content.includes(url)) return true;
-    }
-    return false;
-};
 
 const ThoughtCard = ({ content }) => (
     <div className="flex items-start gap-2 rounded-xl border border-border bg-canvas px-3 py-2 text-xs leading-5 text-ink-muted">
@@ -64,14 +56,7 @@ ThoughtCard.propTypes = {
     content: PropTypes.string.isRequired,
 };
 
-const cleanImageMarkdown = (text) => {
-    if (!text) return text;
-    const imageMatch = text.match(/!\[.*?\]\([^)]+\)/);
-    if (imageMatch) return imageMatch[0];
-    return text;
-};
-
-const ConversationMessage = ({ role, content, isStreaming }) => (
+const ConversationMessage = ({ role, content, imageUrls, isStreaming }) => (
     <div
         className={`flex w-full ${role === "user" ? "justify-end" : "justify-start"}`}
     >
@@ -88,7 +73,9 @@ const ConversationMessage = ({ role, content, isStreaming }) => (
                 content ? (
                     <div className="flex items-start gap-0.5">
                         <div className="min-w-0 flex-1">
-                            <AgentMarkdown content={cleanImageMarkdown(content)} />
+                            <AgentMarkdown
+                                content={cleanImageMarkdown(content, imageUrls)}
+                            />
                         </div>
                         <span
                             className="mt-1.5 inline-block h-4 w-[3px] shrink-0 animate-pulse rounded-sm bg-current align-middle"
@@ -111,7 +98,7 @@ const ConversationMessage = ({ role, content, isStreaming }) => (
                     </span>
                 )
             ) : (
-                <AgentMarkdown content={cleanImageMarkdown(content)} />
+                <AgentMarkdown content={cleanImageMarkdown(content, imageUrls)} />
             )}
         </div>
     </div>
@@ -120,6 +107,7 @@ const ConversationMessage = ({ role, content, isStreaming }) => (
 ConversationMessage.propTypes = {
     role: PropTypes.string.isRequired,
     content: PropTypes.string,
+    imageUrls: PropTypes.instanceOf(Set),
     isStreaming: PropTypes.bool,
 };
 
@@ -192,30 +180,9 @@ const LandingAgentWindow = ({ t }) => {
         return active ? { message } : null;
     }, [steps]);
 
-    const historicalImageUrls = useMemo(() => {
-        const urls = new Set();
-        messages.forEach((message) => {
-            const result = imageToolResult(message);
-            if (result?.url) urls.add(result.url);
-        });
-        return urls;
-    }, [messages]);
+    const historicalImageUrls = useMemo(() => imageUrlsFromMessages(messages), [messages]);
 
-    const liveImageUrls = useMemo(
-        () =>
-            new Set(
-                steps
-                    .filter(
-                        (step) =>
-                            step.type === "tool" &&
-                            step.tool === IMAGE_TOOL &&
-                            step.phase === "end" &&
-                            step.result?.url,
-                    )
-                    .map((step) => step.result.url),
-            ),
-        [steps],
-    );
+    const liveImageUrls = useMemo(() => imageUrlsFromSteps(steps), [steps]);
 
     useEffect(() => {
         if (stickToBottomRef.current) {
@@ -612,6 +579,7 @@ const LandingAgentWindow = ({ t }) => {
                                                         key={message.id}
                                                         role="assistant"
                                                         content={message.content}
+                                                        imageUrls={historicalImageUrls}
                                                     />
                                                 );
                                             }
@@ -662,20 +630,14 @@ const LandingAgentWindow = ({ t }) => {
                                                 );
                                             }
                                             if (step.type === "tool") {
-                                                if (
-                                                    step.tool === IMAGE_TOOL &&
-                                                    step.phase === "end" &&
-                                                    step.result?.url
-                                                ) {
-                                                    return (
-                                                        <ImageToolResult
-                                                            key={`live-${index}`}
-                                                            url={step.result.url}
-                                                            title={step.result.title}
-                                                        />
-                                                    );
-                                                }
-                                                return null;
+                                                const result = liveImageStepResult(step);
+                                                return result ? (
+                                                    <ImageToolResult
+                                                        key={`live-${index}`}
+                                                        url={result.url}
+                                                        title={result.title}
+                                                    />
+                                                ) : null;
                                             }
                                             if (
                                                 step.type === "answer" ||
@@ -689,6 +651,7 @@ const LandingAgentWindow = ({ t }) => {
                                                         key={`live-${index}`}
                                                         role="assistant"
                                                         content={step.content}
+                                                        imageUrls={liveImageUrls}
                                                         isStreaming={step.type === "answer_delta"}
                                                     />
                                                 );
