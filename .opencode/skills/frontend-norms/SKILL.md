@@ -17,6 +17,7 @@ description: DinQorAI 前端（xander-lab-frontend）编码规范。Use when wri
     - `node scripts/verify-i18n-key-parity.mjs`——以 `zh` 为基准比对 6 语言的**扁平键集合**，缺键/多键即退出码 1。这是硬规则的正式门禁。
     - `node scripts/find-missing-i18n-keys.mjs`——检查代码里 `t("...")` 用到的键是否存在于 `en.js`。
 - 常见坑：`t("key", "中文默认值")` 写了默认值**不代表键已存在**——默认值只让中文界面看着正常，其余 5 种语言会回落到中文，键集合校验照样报缺。新增卡片/组件时最容易只加 `zh` 就收工。
+- 换行风格**不统一**：`zh.js` 是 CRLF，`en/fr/ja/ru/vi` 是 LF。用脚本批量改这些文件时按各自原样保留（别统一）；读进来要先 `split(/\r?\n/)` 并记住原 EOL，否则行尾的 `\r` 会让 `^...$` 锚点匹配不上。
 
 ## 请求规范
 
