@@ -76,6 +76,12 @@ const WorkspaceHomePage = React.lazy(
 const WorkspaceAgentChat = React.lazy(
     () => import("@features/agent/pages/WorkspaceAgentChat"),
 );
+const AgentSkillsPage = React.lazy(
+    () => import("@features/agent/pages/AgentSkillsPage"),
+);
+const AgentMcpServersPage = React.lazy(
+    () => import("@features/agent/pages/AgentMcpServersPage"),
+);
 const BlogManagePage = React.lazy(
     () => import("@features/workspace/pages/BlogManagePage"),
 );
@@ -99,6 +105,9 @@ const AdminFeatureModelConfigsPage = React.lazy(
 );
 const AdminWechatCredentialPage = React.lazy(
     () => import("@features/admin/pages/AdminWechatCredentialPage"),
+);
+const AdminMcpServersPage = React.lazy(
+    () => import("@features/admin/pages/AdminMcpServersPage"),
 );
 const RequireAdmin = React.lazy(
     () => import("@features/admin/components/RequireAdmin"),
@@ -286,14 +295,29 @@ export const createRouter = () => {
                     ),
                 },
                 {
+                    path: "skills",
+                    element: (
+                        <LazyPage>
+                            <AgentSkillsPage />
+                        </LazyPage>
+                    ),
+                },
+                {
+                    path: "mcp-servers",
+                    element: (
+                        <LazyPage>
+                            <AgentMcpServersPage />
+                        </LazyPage>
+                    ),
+                },
+                {
                     path: "plans",
                     element: (
                         <LazyPage>
                             <BlogPlans />
                         </LazyPage>
                     ),
-                },
-                {
+                },                {
                     path: "plans/:id",
                     element: (
                         <LazyPage>
@@ -399,6 +423,14 @@ export const createRouter = () => {
                             element: (
                                 <LazyPage>
                                     <AdminWechatCredentialPage />
+                                </LazyPage>
+                            ),
+                        },
+                        {
+                            path: "mcp-servers",
+                            element: (
+                                <LazyPage>
+                                    <AdminMcpServersPage />
                                 </LazyPage>
                             ),
                         },

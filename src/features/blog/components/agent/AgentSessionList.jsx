@@ -22,6 +22,7 @@ import {
     Users,
     Server,
     SlidersHorizontal,
+    Plug,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -72,6 +73,11 @@ const ADMIN_ENTRIES = [
         to: "/workspace/admin/feature-model-configs",
         icon: SlidersHorizontal,
         labelKey: "admin.configs.title",
+    },
+    {
+        to: "/workspace/admin/mcp-servers",
+        icon: Plug,
+        labelKey: "admin.mcpServers.title",
     },
 ];
 

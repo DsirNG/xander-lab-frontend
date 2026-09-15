@@ -5,16 +5,18 @@ import {
     mergeToolTraces,
 } from "./agentTrace.js";
 
-const call = (id, tool, args) => ({
+const call = (id, tool, args, invocationId) => ({
     id,
     kind: "tool_call",
     content: JSON.stringify({ tool, args }),
+    ...(invocationId ? { invocationId } : {}),
 });
 
-const result = (id, tool, payload) => ({
+const result = (id, tool, payload, invocationId) => ({
     id,
     kind: "tool_result",
     content: JSON.stringify({ tool, ...payload }),
+    ...(invocationId ? { invocationId } : {}),
 });
 
 describe("mergeToolTraces", () => {
@@ -129,6 +131,67 @@ describe("mergeToolTraces", () => {
             tool: "query_posts",
             status: "done",
         });
+    });
+
+    /**
+     * 并行批次落库的顺序是"先把所有 tool_call 写完，再按序写所有 tool_result"，
+     * 所以两个调用会同时处于"已开单"状态。这条钉住没有 invocationId 时的回退路径
+     * （历史消息就是这样）：按工具名配对，结果与调用名对上。
+     */
+    it("keeps two parallel calls apart when both calls precede both results", () => {
+        const merged = mergeToolTraces([
+            call(1, "query_knowledge", { keyword: "a" }),
+            call(2, "query_posts", { keyword: "b" }),
+            result(3, "query_knowledge", { ok: true, count: 3 }),
+            result(4, "query_posts", { ok: true, count: 9 }),
+        ]);
+
+        expect(merged).toHaveLength(2);
+        expect(merged[0]).toMatchObject({ tool: "query_knowledge", args: { keyword: "a" } });
+        expect(merged[0].result).toMatchObject({ count: 3 });
+        expect(merged[1]).toMatchObject({ tool: "query_posts", args: { keyword: "b" } });
+        expect(merged[1].result).toMatchObject({ count: 9 });
+    });
+
+    /**
+     * 同一步里两个**同名**工具：这是并行批次才可能出现的情况（一次查两个主题的知识点）。
+     *
+     * <p>按工具名配对在这里必然出错——第二次的 tool_call 会覆盖掉第一张卡的槽位，
+     * 于是第一个结果挂到第二张卡上，第一张卡永远停在"执行中"。带上 invocationId 之后
+     * 配对不再依赖名字，两张卡各自收口。</p>
+     */
+    it("keeps two same-named calls apart when they carry invocation ids", () => {
+        const merged = mergeToolTraces([
+            call(1, "query_knowledge", { keyword: "a" }, "inv-1"),
+            call(2, "query_knowledge", { keyword: "b" }, "inv-2"),
+            result(3, "query_knowledge", { ok: true, count: 1 }, "inv-1"),
+            result(4, "query_knowledge", { ok: true, count: 2 }, "inv-2"),
+        ]);
+
+        expect(merged).toHaveLength(2);
+        expect(merged[0]).toMatchObject({ args: { keyword: "a" }, status: "done" });
+        expect(merged[0].result).toMatchObject({ count: 1 });
+        expect(merged[1]).toMatchObject({ args: { keyword: "b" }, status: "done" });
+        expect(merged[1].result).toMatchObject({ count: 2 });
+    });
+
+    /**
+     * 并发批次里两个工具是同时跑的，先完成的那个先落库——结果的到达顺序与调用顺序无关。
+     * 配对必须靠身份而不是位置，这条把"倒序到达"钉住。
+     */
+    it("pairs same-named calls whose results arrive out of order", () => {
+        const merged = mergeToolTraces([
+            call(1, "query_knowledge", { keyword: "a" }, "inv-1"),
+            call(2, "query_knowledge", { keyword: "b" }, "inv-2"),
+            result(3, "query_knowledge", { ok: true, count: 2 }, "inv-2"),
+            result(4, "query_knowledge", { ok: true, count: 1 }, "inv-1"),
+        ]);
+
+        expect(merged).toHaveLength(2);
+        expect(merged[0]).toMatchObject({ args: { keyword: "a" }, status: "done" });
+        expect(merged[0].result).toMatchObject({ count: 1 });
+        expect(merged[1]).toMatchObject({ args: { keyword: "b" }, status: "done" });
+        expect(merged[1].result).toMatchObject({ count: 2 });
     });
 });
 
@@ -290,6 +353,86 @@ describe("mergeLiveTraces", () => {
             status: "done",
         });
         expect(merged[1].result).toMatchObject({ count: 2 });
+    });
+
+    /**
+     * 一步里的多个调用是并发跑的，事件顺序因此是"所有 start 先到、再按序到 end"，
+     * 与"一次调用跑完再跑下一次"的旧顺序不同。这条守住那张卡不会互相折叠。
+     */
+    it("keeps two parallel calls apart when both starts precede both ends", () => {
+        const merged = mergeLiveTraces([
+            { type: "tool", tool: "query_knowledge", phase: "start", args: { keyword: "a" } },
+            { type: "tool", tool: "query_posts", phase: "start", args: { keyword: "b" } },
+            { type: "tool", tool: "query_knowledge", phase: "end", result: { ok: true, count: 3 } },
+            { type: "tool", tool: "query_posts", phase: "end", result: { ok: true, count: 9 } },
+        ]);
+
+        expect(merged).toHaveLength(2);
+        expect(merged[0]).toMatchObject({ tool: "query_knowledge", args: { keyword: "a" }, status: "done" });
+        expect(merged[0].result).toMatchObject({ count: 3 });
+        expect(merged[1]).toMatchObject({ tool: "query_posts", args: { keyword: "b" }, status: "done" });
+        expect(merged[1].result).toMatchObject({ count: 9 });
+    });
+
+    /**
+     * 同一步里两个**同名**工具的流式事件：只有带上 invocationId 才能分开。
+     *
+     * <p>按工具名归并时，第二次的 start 会覆盖掉第一张卡的槽位，于是第一个 end 落到第二张卡上、
+     * 第一张卡永远停在"执行中"——用户看到一张转不完的卡和一张结果错位的卡。这条同时钉住
+     * "两个调用各归各的"和"卡片位置按各自第一次出现算"。</p>
+     */
+    it("keeps two same-named calls apart when they carry invocation ids", () => {
+        const merged = mergeLiveTraces([
+            {
+                type: "tool",
+                tool: "query_knowledge",
+                invocationId: "inv-1",
+                phase: "start",
+                args: { keyword: "a" },
+            },
+            {
+                type: "tool",
+                tool: "query_knowledge",
+                invocationId: "inv-2",
+                phase: "start",
+                args: { keyword: "b" },
+            },
+            {
+                type: "tool_delta",
+                tool: "query_knowledge",
+                invocationId: "inv-1",
+                content: "命中 3 条",
+            },
+            {
+                type: "tool",
+                tool: "query_knowledge",
+                invocationId: "inv-1",
+                phase: "end",
+                result: { ok: true, count: 3 },
+            },
+            {
+                type: "tool",
+                tool: "query_knowledge",
+                invocationId: "inv-2",
+                phase: "end",
+                result: { ok: true, count: 9 },
+            },
+        ]);
+
+        expect(merged).toHaveLength(2);
+        expect(merged[0]).toMatchObject({
+            invocationId: "inv-1",
+            args: { keyword: "a" },
+            output: "命中 3 条",
+            status: "done",
+        });
+        expect(merged[0].result).toMatchObject({ count: 3 });
+        expect(merged[1]).toMatchObject({
+            invocationId: "inv-2",
+            args: { keyword: "b" },
+            status: "done",
+        });
+        expect(merged[1].result).toMatchObject({ count: 9 });
     });
 
     it("releases the slot after a failure so the retry is not folded into it", () => {

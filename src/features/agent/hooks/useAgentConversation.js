@@ -22,6 +22,18 @@ const readDeepThinkingPreference = () => {
 
 const asId = (value) => (value == null ? null : String(value));
 const normalizeRunVersion = (value) => String(value ?? 0);
+
+/**
+ * 一次工具调用的配对键，用来把 start/progress/delta/end 四条事件归到同一张卡上。
+ *
+ * <p>优先用后端给的 invocationId：并行批次里同一步可以出现两个**同名**工具
+ * （一次查两个主题的知识点），按工具名归并会把它们的进度和增量搅在一起。</p>
+ *
+ * <p>必须保留按工具名回退：后端在审批恢复等没有持久化身份的路径上不给这个字段。
+ * 一次调用的四条事件要么都带身份、要么都不带（身份是开单时一次性绑定的），
+ * 所以回退不会出现"半条按名字、半条按身份"的错配。</p>
+ */
+const toolTraceKey = (payload) => payload?.invocationId || payload?.tool || "tool";
 const isAbortError = (error) =>
     Boolean(
         error?.name === "AbortError" ||
@@ -206,13 +218,17 @@ export const useAgentConversation = ({ conversationId }) => {
                     content: answer,
                 });
             }
-            toolDrafts.forEach((content, tool) => {
+            toolDrafts.forEach((draft) => {
                 upsert(
-                    (step) => step.type === "tool_delta" && step.tool === tool,
+                    (step) =>
+                        step.type === "tool_delta" &&
+                        step.traceKey === draft.traceKey,
                     {
                         type: "tool_delta",
-                        tool,
-                        content,
+                        traceKey: draft.traceKey,
+                        tool: draft.tool,
+                        invocationId: draft.invocationId,
+                        content: draft.content,
                     },
                 );
             });
@@ -268,7 +284,9 @@ export const useAgentConversation = ({ conversationId }) => {
                 // 入参要留住：它是"这一步到底做了什么"唯一的证据，收口后仍要能展开回看。
                 pushStep({
                     type: "tool",
+                    traceKey: toolTraceKey(data),
                     tool: data?.tool,
+                    invocationId: data?.invocationId,
                     phase: "start",
                     args: data?.args,
                 });
@@ -277,7 +295,9 @@ export const useAgentConversation = ({ conversationId }) => {
                 const separator = rawMessage.indexOf("|");
                 pushStep({
                     type: "tool",
+                    traceKey: toolTraceKey(data),
                     tool: data?.tool,
+                    invocationId: data?.invocationId,
                     phase: "progress",
                     stage:
                         data?.stage ||
@@ -290,24 +310,33 @@ export const useAgentConversation = ({ conversationId }) => {
                             : rawMessage,
                 });
             } else if (event === "tool_delta") {
-                const tool = data?.tool || "tool";
-                toolDeltaRef.current.set(
-                    tool,
-                    `${toolDeltaRef.current.get(tool) || ""}${data?.delta || ""}`,
-                );
+                const key = toolTraceKey(data);
+                const draft = toolDeltaRef.current.get(key);
+                toolDeltaRef.current.set(key, {
+                    traceKey: key,
+                    tool: data?.tool || draft?.tool || "tool",
+                    invocationId: data?.invocationId ?? draft?.invocationId,
+                    content: `${draft?.content || ""}${data?.delta || ""}`,
+                });
                 scheduleDeltaFlush();
             } else if (event === "tool_end" || event === "tool_error") {
+                const key = toolTraceKey(data);
                 const tool = data?.tool || "tool";
-                toolDeltaRef.current.delete(tool);
+                toolDeltaRef.current.delete(key);
                 setLiveSteps((current) =>
                     current.filter(
                         (step) =>
-                            !(step.type === "tool_delta" && step.tool === tool),
+                            !(
+                                step.type === "tool_delta" &&
+                                step.traceKey === key
+                            ),
                     ),
                 );
                 pushStep({
                     type: "tool",
+                    traceKey: key,
                     tool,
+                    invocationId: data?.invocationId,
                     phase: event === "tool_end" ? "end" : "error",
                     result: data?.result,
                     error: data?.error,

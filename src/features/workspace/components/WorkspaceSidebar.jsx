@@ -18,6 +18,22 @@ const MENU = [
         labelKey: "workspace.menu.dinqorai",
     },
     {
+        // 技能库紧挨着对话入口：它改的就是智能体在这类活上的做法。
+        // 复用知识图标，不为一个新入口再加一套 svg 资源。
+        to: "/workspace/skills",
+        activeIcon: "/assets/workspace/sidebar-icons/knowledge-active.svg",
+        icon: "/assets/workspace/sidebar-icons/knowledge.svg",
+        labelKey: "workspace.menu.skills",
+    },
+    {
+        // 远端 MCP 服务器：唯一不用改代码就能给智能体加能力的地方。
+        // 同样复用知识图标，避免为入口再引入一套 svg。
+        to: "/workspace/mcp-servers",
+        activeIcon: "/assets/workspace/sidebar-icons/knowledge-active.svg",
+        icon: "/assets/workspace/sidebar-icons/knowledge.svg",
+        labelKey: "workspace.menu.mcpServers",
+    },
+    {
         to: "/workspace/knowledge",
         activeIcon: "/assets/workspace/sidebar-icons/knowledge-active.svg",
         icon: "/assets/workspace/sidebar-icons/knowledge.svg",

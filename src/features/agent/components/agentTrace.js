@@ -27,12 +27,14 @@ const resultStatus = (payload) => {
     return "done";
 };
 
-const traceEntry = (id, tool) => ({
+const traceEntry = (id, tool, invocationId = null) => ({
     id,
     kind: "trace",
     type: "trace",
     role: "tool",
     tool,
+    // 后端这次调用的持久化身份；历史数据与无身份路径为 null，此时按工具名配对。
+    invocationId,
     args: null,
     result: null,
     output: "",
@@ -43,14 +45,26 @@ const traceEntry = (id, tool) => ({
 });
 
 /**
+ * 一次工具调用的配对键。
+ *
+ * <p>优先用后端给的 invocationId：并行批次里同一步可以出现两个**同名**工具
+ * （一次查两个主题的知识点），按工具名配对会把第二个的结果挂到第一张卡上，
+ * 第一张卡则永远停在"执行中"。</p>
+ *
+ * <p>必须保留按工具名回退：历史消息没有这一列，后端在审批恢复等没有持久化身份的
+ * 路径上也不给。回退时行为与改动前逐字节一致——这正是老数据不需要迁移的原因。</p>
+ */
+const traceKey = (invocationId, tool) => invocationId || tool;
+
+/**
  * 持久化消息：把 tool_call 与其后的 tool_result 合成一条 trace。
  *
- * 只归并同名工具最近一次未收口的调用；历史数据里孤立的 tool_result 单独成卡，
+ * 只归并同一次调用最近一次未收口的记录；历史数据里孤立的 tool_result 单独成卡，
  * 不因为找不到入参就把结果丢掉。
  */
 export const mergeToolTraces = (messages = []) => {
     const merged = [];
-    const openByTool = new Map();
+    const openByKey = new Map();
 
     for (const message of messages) {
         const kind = message?.kind;
@@ -61,6 +75,7 @@ export const mergeToolTraces = (messages = []) => {
 
         const payload = parseToolPayload(message.content) || {};
         const tool = payload.tool || message.toolName || "";
+        const key = traceKey(message.invocationId, tool);
 
         if (tool === IMAGE_TOOL || tool === IMAGE_RESEND_TOOL) {
             // 图片调用交给页面的图片分支，入参不展示。
@@ -81,22 +96,27 @@ export const mergeToolTraces = (messages = []) => {
         }
 
         if (kind === "tool_call") {
-            openByTool.set(tool, merged.length);
+            openByKey.set(key, merged.length);
             merged.push({
                 ...traceEntry(message.id, tool),
+                invocationId: message.invocationId ?? null,
                 args: payload.args ?? null,
             });
             continue;
         }
 
-        const index = openByTool.get(tool);
+        const index = openByKey.get(key);
         const outcome = { result: payload, status: resultStatus(payload) };
         if (index == null || merged[index]?.kind !== "trace") {
-            merged.push({ ...traceEntry(message.id, tool), ...outcome });
+            merged.push({
+                ...traceEntry(message.id, tool),
+                invocationId: message.invocationId ?? null,
+                ...outcome,
+            });
             continue;
         }
         merged[index] = { ...merged[index], ...outcome };
-        openByTool.delete(tool);
+        openByKey.delete(key);
     }
 
     return merged;
@@ -133,12 +153,15 @@ const applyLiveStep = (base, step) => {
 };
 
 /**
- * 流式步骤：把同一个工具的 tool / tool_delta 事件合成一条 trace，
- * 位置取该工具第一次出现的位置，避免卡片在时间线上跳动。
+ * 流式步骤：把同一次调用的 tool / tool_delta 事件合成一条 trace，
+ * 位置取这次调用第一次出现的位置，避免卡片在时间线上跳动。
+ *
+ * <p>配对键与 {@link mergeToolTraces} 同一套（invocationId，缺失时回退工具名）：
+ * 并行批次里同一步的两个同名工具各有各的身份，按工具名配对会让它们的入参和输出互相串。</p>
  */
 export const mergeLiveTraces = (steps = []) => {
     const merged = [];
-    const openByTool = new Map();
+    const openByKey = new Map();
 
     steps.forEach((step, index) => {
         if (step?.type !== "tool" && step?.type !== "tool_delta") {
@@ -146,6 +169,7 @@ export const mergeLiveTraces = (steps = []) => {
             return;
         }
         const tool = step.tool || "";
+        const key = traceKey(step.invocationId, tool);
         if (tool === IMAGE_TOOL || tool === IMAGE_RESEND_TOOL) {
             merged.push(step);
             return;
@@ -154,22 +178,22 @@ export const mergeLiveTraces = (steps = []) => {
             // 同上：成功交付不留轨迹卡，失败才留，且不必等 tool_call 先建卡。
             if (step.phase === "error" || (step.phase === "end" && resultStatus(step.result) !== "done")) {
                 merged.push(
-                    applyLiveStep(traceEntry(`live-trace-${index}`, tool), step),
+                    applyLiveStep(traceEntry(`live-trace-${index}`, tool, step.invocationId), step),
                 );
             }
             return;
         }
-        const slot = openByTool.get(tool);
+        const slot = openByKey.get(key);
         if (slot == null) {
-            openByTool.set(tool, merged.length);
-            merged.push(applyLiveStep(traceEntry(`live-trace-${index}`, tool), step));
+            openByKey.set(key, merged.length);
+            merged.push(applyLiveStep(traceEntry(`live-trace-${index}`, tool, step.invocationId), step));
         } else {
             merged[slot] = applyLiveStep(merged[slot], step);
         }
-        // 收口后立刻让出槽位：同一轮里同一个工具被调用两次是两件事，
-        // 槽位不释放就会把第二次的入参和输出折叠进第一张卡里（见 mergeToolTraces 的同款处理）。
+        // 收口后立刻让出槽位：同一轮里同一次调用被收口后，后面对同名工具的调用是另一件事，
+        // 槽位不释放就会把它的入参和输出折叠进这张卡里（见 mergeToolTraces 的同款处理）。
         if (step.phase === "end" || step.phase === "error") {
-            openByTool.delete(tool);
+            openByKey.delete(key);
         }
     });
 

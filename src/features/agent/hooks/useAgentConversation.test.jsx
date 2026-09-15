@@ -2,6 +2,7 @@ import { act, renderHook, waitFor } from "@testing-library/react";
 import { StrictMode } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { toolCallSummary, compactToolResult } from "./useAgentConversation.js";
+import { mergeLiveTraces } from "../components/agentTrace.js";
 import { agentConversationService } from "../services/agentConversationService.js";
 
 const { translate } = vi.hoisted(() => ({ translate: (key) => key }));
@@ -493,6 +494,182 @@ describe("useAgentConversation autonomy events", () => {
         );
         expect(replaced).toHaveLength(1);
         expect(replaced[0].payload.title).toBe("JavaScript 基础");
+    });
+});
+
+/**
+ * 工具事件的配对键。
+ *
+ * <p>并行批次里同一步可以出现两个**同名**工具（一次查两个主题的知识点）。
+ * 早先按工具名归并，第二次的 start 会覆盖第一张卡的槽位、第一个 end 落到第二张卡上，
+ * 用户看到一张转不完的卡和一张结果错位的卡。现在键是 `invocationId ?? 工具名`。</p>
+ */
+describe("useAgentConversation tool trace pairing", () => {
+    const streamHarness = async () => {
+        const { useAgentConversation } =
+            await import("./useAgentConversation.js");
+        const shell = {
+            conversation: { id: 42, status: "ready", runVersion: 0 },
+            messages: [],
+        };
+        let onEvent;
+        agentConversationService.create.mockResolvedValue(shell);
+        agentConversationService.get.mockResolvedValue(shell);
+        agentConversationService.sendMessageStream.mockImplementation(
+            (id, text, files, listener) => {
+                onEvent = listener;
+                return new Promise(() => {});
+            },
+        );
+
+        const { result, rerender } = renderHook(
+            ({ conversationId }) => useAgentConversation({ conversationId }),
+            { initialProps: { conversationId: null } },
+        );
+        await act(async () => {
+            await result.current.createConversation("hello");
+        });
+        rerender({ conversationId: "42" });
+        await waitFor(() => expect(typeof onEvent).toBe("function"));
+
+        return {
+            result,
+            emit: async (payload) => {
+                await act(async () => {
+                    onEvent(payload);
+                });
+            },
+        };
+    };
+
+    /** 后端对一次调用发四条事件：start → progress → delta → end，全都带同一个身份。 */
+    const startOf = (id, invocationId, keyword) => ({
+        id,
+        event: "tool_start",
+        data: { tool: "query_knowledge", invocationId, args: { keyword } },
+    });
+
+    /** liveSteps 里还混着消息、思考等非工具步骤，这里只取归并出来的轨迹卡。 */
+    const tracesOf = (result) =>
+        mergeLiveTraces(result.current.liveSteps).filter(
+            (step) => step.kind === "trace",
+        );
+
+    it("keeps two same-named calls on their own cards", async () => {
+        const { result, emit } = await streamHarness();
+
+        await emit(startOf(1, "inv-1", "a"));
+        await emit(startOf(2, "inv-2", "b"));
+        await emit({
+            id: 3,
+            event: "tool_end",
+            data: { tool: "query_knowledge", invocationId: "inv-1", result: { ok: true, count: 1 } },
+        });
+        await emit({
+            id: 4,
+            event: "tool_end",
+            data: { tool: "query_knowledge", invocationId: "inv-2", result: { ok: true, count: 2 } },
+        });
+
+        const traces = tracesOf(result);
+
+        expect(traces).toHaveLength(2);
+        expect(traces[0]).toMatchObject({
+            invocationId: "inv-1",
+            args: { keyword: "a" },
+            status: "done",
+        });
+        expect(traces[0].result).toMatchObject({ count: 1 });
+        expect(traces[1]).toMatchObject({
+            invocationId: "inv-2",
+            args: { keyword: "b" },
+            status: "done",
+        });
+        expect(traces[1].result).toMatchObject({ count: 2 });
+    });
+
+    it("buffers each call's streamed draft under its own key", async () => {
+        const { result, emit } = await streamHarness();
+
+        await emit(startOf(1, "inv-1", "a"));
+        await emit(startOf(2, "inv-2", "b"));
+        await emit({
+            id: 3,
+            event: "tool_delta",
+            data: { tool: "query_knowledge", invocationId: "inv-1", delta: "甲" },
+        });
+        await emit({
+            id: 4,
+            event: "tool_delta",
+            data: { tool: "query_knowledge", invocationId: "inv-2", delta: "乙" },
+        });
+
+        // 增量是按时间窗合并推送的（requestAnimationFrame），所以等它落地再断言。
+        await waitFor(() => {
+            const drafts = result.current.liveSteps.filter(
+                (step) => step.type === "tool_delta",
+            );
+            expect(drafts).toHaveLength(2);
+        });
+
+        const traces = tracesOf(result);
+        expect(traces.map((trace) => trace.output)).toEqual(["甲", "乙"]);
+    });
+
+    it("clears only the finished call's draft, not its same-named sibling", async () => {
+        const { result, emit } = await streamHarness();
+
+        await emit(startOf(1, "inv-1", "a"));
+        await emit(startOf(2, "inv-2", "b"));
+        await emit({
+            id: 3,
+            event: "tool_delta",
+            data: { tool: "query_knowledge", invocationId: "inv-1", delta: "甲" },
+        });
+        await emit({
+            id: 4,
+            event: "tool_delta",
+            data: { tool: "query_knowledge", invocationId: "inv-2", delta: "乙" },
+        });
+        await waitFor(() => {
+            expect(
+                result.current.liveSteps.filter(
+                    (step) => step.type === "tool_delta",
+                ),
+            ).toHaveLength(2);
+        });
+
+        await emit({
+            id: 5,
+            event: "tool_end",
+            data: { tool: "query_knowledge", invocationId: "inv-1", result: { ok: true } },
+        });
+
+        // 按工具名清理会把两个同名草稿一起删掉——这正是这条用例守着的。
+        const drafts = result.current.liveSteps.filter(
+            (step) => step.type === "tool_delta",
+        );
+        expect(drafts).toHaveLength(1);
+        expect(drafts[0].invocationId).toBe("inv-2");
+        expect(drafts[0].content).toBe("乙");
+    });
+
+    /** 没有身份的路径（审批恢复等）必须回退到工具名，行为与改动前一致。 */
+    it("falls back to the tool name when the events carry no invocation id", async () => {
+        const { result, emit } = await streamHarness();
+
+        await emit({ id: 1, event: "tool_start", data: { tool: "query_posts", args: {} } });
+        await emit({
+            id: 2,
+            event: "tool_end",
+            data: { tool: "query_posts", result: { ok: true } },
+        });
+
+        const traces = tracesOf(result);
+
+        expect(traces).toHaveLength(1);
+        expect(traces[0]).toMatchObject({ tool: "query_posts", status: "done" });
+        expect(traces[0].invocationId).toBeNull();
     });
 });
 
