@@ -75,15 +75,18 @@ const Pagination = ({
             className={`flex shrink-0 flex-col gap-2 px-3 py-2.5 sm:flex-row sm:items-center sm:justify-between sm:px-4 ${className}`}
         >
             <div className="flex flex-wrap items-center gap-2">
-                <div className="text-xs font-medium text-ink-faint">
+                <div className="text-xs font-medium text-[#8e94ad]">
                     {t("common.pagination.pageInfo", { from, to, total })}
                 </div>
                 <div className="w-[7.5rem]">
                     <CustomSelect
                         size="sm"
+                        variant="outline"
                         options={sizeOptions}
                         value={String(pageSize)}
                         onChange={handlePageSizeChange}
+                        triggerClassName="!border-[#e9eaf4] !bg-white !text-[#555b7b] hover:!border-[#6765f6] hover:!bg-[#fbfbfe] rounded-xl"
+                        dropdownClassName="!border-[#eef0f6] !bg-white !shadow-xl !shadow-[#111426]/8 rounded-xl"
                     />
                 </div>
             </div>
@@ -95,13 +98,13 @@ const Pagination = ({
                     size="lg"
                     icon={ChevronLeft}
                     aria-label={t("common.pagination.prevPage")}
-                    className="md:h-7 md:w-7"
+                    className="md:h-7 md:w-7 !border-[#e9eaf4] !bg-white !text-[#555b7b] hover:!border-[#6765f6] hover:!text-[#6765f6] hover:!bg-[#fbfbfe] rounded-lg"
                 />
                 {pageItems.map((item, index) =>
                     item === "ellipsis" ? (
                         <span
                             key={`ellipsis-${index}`}
-                            className="px-1 text-micro text-ink-faint"
+                            className="px-1 text-micro text-[#8e94ad]"
                         >
                             …
                         </span>
@@ -112,10 +115,10 @@ const Pagination = ({
                             disabled={disabled}
                             variant="outline"
                             size="lg"
-                            className={`md:h-7 md:w-7 ${
+                            className={`md:h-7 md:w-7 rounded-lg transition ${
                                 page === item
-                                    ? "bg-accent text-white border-accent hover:bg-accent hover:text-white hover:border-accent"
-                                    : ""
+                                    ? "bg-accent text-white border-accent hover:bg-accent-700 hover:text-white hover:border-accent shadow-2xs"
+                                    : "!border-[#e9eaf4] !bg-white !text-[#555b7b] hover:!border-[#6765f6] hover:!text-[#6765f6] hover:!bg-[#fbfbfe]"
                             }`}
                         >
                             {item}
@@ -131,7 +134,7 @@ const Pagination = ({
                     size="lg"
                     icon={ChevronRight}
                     aria-label={t("common.pagination.nextPage")}
-                    className="md:h-7 md:w-7"
+                    className="md:h-7 md:w-7 !border-[#e9eaf4] !bg-white !text-[#555b7b] hover:!border-[#6765f6] hover:!text-[#6765f6] hover:!bg-[#fbfbfe] rounded-lg"
                 />
             </div>
         </div>

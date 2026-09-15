@@ -28,6 +28,7 @@ import FormField from "@components/common/FormField";
 import LoadingSpinner from "@components/common/LoadingSpinner";
 import Modal from "@components/common/Modal";
 import { formInputCls } from "@components/common/formStyles";
+import KnowledgeDocBaseView from "../components/KnowledgeDocBaseView";
 import { knowledgeService } from "../services/knowledgeService";
 import { buildKnowledgeQuizPath } from "../utils/knowledgeNavigation";
 
@@ -51,6 +52,7 @@ const KnowledgeMirrorPage = () => {
     const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
     const attemptId = searchParams.get("attemptId");
+    const [activeTab, setActiveTab] = useState(materialId ? "MIRROR" : "DOCS");
     const [materials, setMaterials] = useState([]);
     const [loading, setLoading] = useState(true);
     const [loadError, setLoadError] = useState(false);
@@ -161,11 +163,17 @@ const KnowledgeMirrorPage = () => {
     );
 
     useEffect(() => {
-        if (!materialId && materials.length > 0)
+        if (materialId) {
+            setActiveTab("MIRROR");
+        }
+    }, [materialId]);
+
+    useEffect(() => {
+        if (activeTab === "MIRROR" && !materialId && materials.length > 0)
             navigate(`/workspace/knowledge/${materials[0].id}`, {
                 replace: true,
             });
-    }, [materialId, materials, navigate]);
+    }, [activeTab, materialId, materials, navigate]);
 
     // 概念题和练习题的成绩单由智能体判分后落库，切换知识时读一次最近记录。
     useEffect(() => {
@@ -384,10 +392,10 @@ const KnowledgeMirrorPage = () => {
         navigate(buildKnowledgeQuizPath(t, activeMaterial));
     };
 
-    if (loading)
+    if (activeTab === "MIRROR" && loading)
         return <LoadingSpinner fullScreen text={t("knowledge.loading")} />;
 
-    if (loadError && materials.length === 0) {
+    if (activeTab === "MIRROR" && loadError && materials.length === 0) {
         return (
             <div className="grid h-full min-h-80 place-items-center bg-canvas p-6 text-center">
                 <div className="max-w-md rounded-3xl border border-border bg-surface p-8">
@@ -415,33 +423,75 @@ const KnowledgeMirrorPage = () => {
     const typeLabel = (type) => t(`knowledge.types.${type || "RECITATION"}`);
 
     return (
-        <div className="flex h-full min-h-0 flex-col overflow-y-auto bg-canvas p-4 sm:p-6 lg:p-8">
-            <div className="mx-auto flex w-full max-w-7xl flex-col gap-6">
-                {loadError ? (
-                    <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-warning/30 bg-warning-soft p-3 text-body text-warning-fg">
-                        <span>{t("knowledge.staleDataWarning")}</span>
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => loadMaterials().catch(() => {})}
-                        >
-                            {t("knowledge.retry")}
+        <div
+            className={`flex h-full min-h-0 flex-col ${
+                activeTab === "DOCS" ? "overflow-hidden" : "overflow-y-auto bg-canvas p-3 sm:p-5 lg:p-6"
+            }`}
+        >
+            <div className={`mx-auto flex h-full min-h-0 w-full ${activeTab === "DOCS" ? "flex-1" : "max-w-[1600px] gap-4"} flex-col`}>
+                {/* 仅在 MIRROR 模式下展示模式切换与新建按钮 */}
+                {activeTab === "MIRROR" ? (
+                    <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#eef0f6] pb-4">
+                        <div className="flex items-center gap-1.5 rounded-2xl bg-[#f4f5fa] p-1 shadow-2xs">
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    setActiveTab("DOCS");
+                                    if (materialId)
+                                        navigate("/workspace/knowledge", {
+                                            replace: true,
+                                        });
+                                }}
+                                className="flex items-center gap-2 rounded-xl px-4 py-2 text-caption font-semibold transition text-[#8e94ad] hover:text-[#111426] hover:bg-white/60"
+                            >
+                                <BookOpen className="h-4 w-4 text-[#6765f6]" />
+                                <span>
+                                    {t("knowledgeBase.tabDocs", "文档知识库")}
+                                </span>
+                            </button>
+                            <button
+                                type="button"
+                                className="flex items-center gap-2 rounded-xl px-4 py-2 text-caption font-bold transition bg-white text-[#6765f6] shadow-xs"
+                            >
+                                <Brain className="h-4 w-4 text-[#6765f6]" />
+                                <span>
+                                    {t("knowledgeBase.tabMirror", "知识镜像 / 复习")}
+                                </span>
+                            </button>
+                        </div>
+
+                        <Button icon={CirclePlus} onClick={openCreate}>
+                            {t("knowledge.add")}
                         </Button>
                     </div>
                 ) : null}
-                <div className="flex flex-wrap items-start justify-between gap-4">
-                    <div>
-                        <div className="text-display text-ink">
-                            {t("knowledge.title")}
+
+                {activeTab === "DOCS" ? (
+                    <KnowledgeDocBaseView onSwitchToMirror={() => setActiveTab("MIRROR")} />
+                ) : (
+                    <>
+                        {loadError ? (
+                            <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-warning/30 bg-warning-soft p-3 text-body text-warning-fg">
+                                <span>{t("knowledge.staleDataWarning")}</span>
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() =>
+                                        loadMaterials().catch(() => {})
+                                    }
+                                >
+                                    {t("knowledge.retry")}
+                                </Button>
+                            </div>
+                        ) : null}
+                        <div>
+                            <div className="text-display text-ink">
+                                {t("knowledge.title")}
+                            </div>
+                            <div className="mt-1 text-body text-ink-muted">
+                                {t("knowledge.subtitle")}
+                            </div>
                         </div>
-                        <div className="mt-1 text-body text-ink-muted">
-                            {t("knowledge.subtitle")}
-                        </div>
-                    </div>
-                    <Button icon={CirclePlus} onClick={openCreate}>
-                        {t("knowledge.add")}
-                    </Button>
-                </div>
 
                 {view === "ACTIVE" ? (
                     <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
@@ -771,6 +821,8 @@ const KnowledgeMirrorPage = () => {
                             </div>
                         )}
                     </div>
+                )}
+                    </>
                 )}
             </div>
 

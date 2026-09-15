@@ -118,6 +118,7 @@ const RowActionsMenu = ({
                     variant="ghost"
                     size={SIZE_CLASSES[size] || "sm"}
                     icon={MoreHorizontal}
+                    className="text-[#8e94ad] hover:text-[#111426] hover:bg-[#f7f6fc] rounded-lg transition dark:hover:bg-white/5"
                 />
             </div>
 
@@ -135,7 +136,7 @@ const RowActionsMenu = ({
                                     }
                                   : undefined
                           }
-                          className={`fixed z-50 max-h-[70vh] w-40 overflow-y-auto overflow-x-hidden rounded-xl bg-canvas py-1.5 shadow-lg shadow-black/10 ${position ? "" : "invisible"}`}
+                          className={`fixed z-50 max-h-[70vh] w-40 overflow-y-auto overflow-x-hidden rounded-xl border border-[#eef0f6] bg-white py-1.5 shadow-xl shadow-[#111426]/8 dark:border-white/10 dark:bg-[#1a1d2e] ${position ? "" : "invisible"}`}
                       >
                           {actions.map((item) => {
                               const Icon = item.icon;
@@ -153,10 +154,10 @@ const RowActionsMenu = ({
                                       }
                                       size="sm"
                                       onClick={() => handleItemClick(item)}
-                                      className={`h-auto w-full justify-start border-0 px-3 py-2 text-left truncate ${
+                                      className={`h-auto w-full justify-start border-0 px-3 py-2 text-left truncate transition ${
                                           item.danger
-                                              ? "text-danger hover:bg-danger-soft"
-                                              : "text-ink-secondary hover:bg-surface-muted hover:text-ink"
+                                              ? "!text-rose-600 hover:!bg-rose-50 dark:hover:!bg-rose-950/30"
+                                              : "!text-[#555b7b] hover:!bg-[#f2f1fd] hover:!text-[#6765f6] dark:!text-slate-300 dark:hover:!bg-white/5"
                                       }`}
                                   >
                                       {item.loading && item.loadingLabel
