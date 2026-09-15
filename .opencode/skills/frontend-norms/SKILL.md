@@ -13,6 +13,10 @@ description: DinQorAI 前端（xander-lab-frontend）编码规范。Use when wri
 - 带变量的文案用 i18next 插值 `{{var}}`，调用处 `t('key', { var: value })`。
 - 所有 UI 文案一律走 `t()`，禁止硬编码中文/英文（按钮、占位符、toast、空态、徽标、列表标题等全部算）。
 - 修改语言文件后先 `node --check src/locales/<文件>` 校验语法。
+- 别靠眼看，用仓库自带的两个脚本机械校验（互补，两个都要跑）：
+    - `node scripts/verify-i18n-key-parity.mjs`——以 `zh` 为基准比对 6 语言的**扁平键集合**，缺键/多键即退出码 1。这是硬规则的正式门禁。
+    - `node scripts/find-missing-i18n-keys.mjs`——检查代码里 `t("...")` 用到的键是否存在于 `en.js`。
+- 常见坑：`t("key", "中文默认值")` 写了默认值**不代表键已存在**——默认值只让中文界面看着正常，其余 5 种语言会回落到中文，键集合校验照样报缺。新增卡片/组件时最容易只加 `zh` 就收工。
 
 ## 请求规范
 
@@ -45,6 +49,10 @@ description: DinQorAI 前端（xander-lab-frontend）编码规范。Use when wri
 ```bash
 # 校验改动过的语言文件
 node --check src/locales/zh.js
+# 六语言键集合一致性（硬门禁，改过任何文案/组件必跑）
+node scripts/verify-i18n-key-parity.mjs
+# 代码里 t("...") 用到的键是否都在 en.js
+node scripts/find-missing-i18n-keys.mjs
 # 对改动的文件跑 lint
 npx eslint src/xxx.jsx src/yyy.js
 # 全量构建（最终必须通过）

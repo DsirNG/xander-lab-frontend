@@ -5,6 +5,7 @@
 
 export default {
     nav: {
+        loginRequired: "请先登录或进入工作台再使用此功能",
         infra: "基础模块",
         modules: "功能模块",
         components: "组件",
@@ -699,6 +700,17 @@ export default {
         shareFailed: "分享失败",
     },
     blogPlans: {
+        triggerTimeInfo: "每日触发时间 ⓘ",
+        tomorrow: "(明天)",
+        tags: {
+            autoGenerate: "自动生成",
+            contentGen: "内容生成",
+            manualWrite: "手动编写",
+            techPractice: "技术实践",
+        },
+        keys: {
+            design: "设计",
+        },
         title: "定时发文计划",
         subtitle: "设置主题与每日触发时间，自动生成、审核并发布文章",
         actions: "操作",
@@ -864,6 +876,11 @@ export default {
         broadcastFailed: "SSE 测试广播发送失败",
     },
     common: {
+        loading: "加载中...",
+        clear: "清空",
+        rename: "重命名",
+        copied: "已复制到剪贴板",
+        copy: "复制",
         confirm: "确认",
         cancel: "取消",
         delete: "删除",
@@ -1185,6 +1202,12 @@ export default {
             mcp: "MCP 授权",
         },
         blogManage: {
+            updatedAt: "更新时间",
+            tagFrontend: "前端",
+            preview: "文章预览",
+            platformWechat: "公众号",
+            platformJuejin: "掘金",
+            platform: "平台",
             title: "博客管理",
             description: "管理你的文章：编辑、草稿、发布与回收站",
             createNew: "写新文章",
@@ -1905,6 +1928,7 @@ export default {
         },
     },
     knowledge: {
+        deleted: "已删除",
         loadErrorTitle: "知识库加载失败",
         loadErrorHint: "暂时无法读取你的知识，请检查网络后重试。",
         retry: "重新加载",
@@ -2014,11 +2038,16 @@ export default {
         },
     },
     knowledgeBase: {
+        move: {
+            selectFolder: "选择目标文件夹",
+            targetItem: "正在移动：",
+        },
         tabDocs: "文档知识库",
         tabMirror: "知识镜像 / 复习",
         title: "文档知识库",
         subtitle: "基于智能分词与章节提取的私有知识中心与思维导图",
         folders: {
+            allDocs: "全部文档",
             title: "目录分类",
             newBtn: "新建",
             newRoot: "新建分类",
@@ -2168,6 +2197,25 @@ export default {
         back: "返回",
     },
 
+    shared: {
+        readOnly: "此链接仅供查看，无法继续对话",
+    },
+    blogManage: {
+        createNew: "新建文章",
+        performance: "发布表现",
+        recent7Days: "近7天",
+        searchPlaceholder: "搜索文章标题、内容或标签",
+        stats: {
+            all: "全部文章",
+            comparedToLastMonth: "较上月",
+            drafts: "草稿",
+            engagement: "互动率",
+            likes: "点赞数",
+            pending: "待发布/审核中",
+            published: "已发布",
+            views: "阅读量",
+        },
+    },
     home: {
         version: "v1.0.0 开发中",
         hero: {
