@@ -1995,6 +1995,7 @@ export default {
             serverBusy: "Máy chủ bận, vui lòng thử lại sau",
             networkError: "Yêu cầu mạng thất bại, kiểm tra kết nối",
             noRefreshToken: "Không có token làm mới, vui lòng đăng nhập lại",
+            refreshUnavailable: "Tạm thời không thể làm mới phiên, vui lòng thử lại sau",
             retryPrefix: "[HTTP] Thử lại",
             retrySuffix: "độ trễ",
             cancelled: "Yêu cầu đã bị hủy",

@@ -2007,6 +2007,7 @@ export default {
             serverBusy: "Сервер занят, попробуйте позже",
             networkError: "Ошибка сетевого запроса, проверьте подключение",
             noRefreshToken: "Нет токена обновления, войдите снова",
+            refreshUnavailable: "Не удалось обновить сессию, попробуйте позже",
             retryPrefix: "[HTTP] Повтор",
             retrySuffix: "задержка",
             cancelled: "Запрос отменён",

@@ -2006,6 +2006,7 @@ export default {
                 "ネットワークリクエストに失敗しました。接続を確認してください",
             noRefreshToken:
                 "リフレッシュトークンがありません。再度ログインしてください",
+            refreshUnavailable: "現在セッションを更新できません。しばらくしてからお試しください",
             retryPrefix: "[HTTP] リトライ",
             retrySuffix: "遅延",
             cancelled: "リクエストがキャンセルされました",

@@ -2000,6 +2000,7 @@ export default {
             networkError:
                 "Network request failed, please check your connection",
             noRefreshToken: "No refresh token, please log in again",
+            refreshUnavailable: "Unable to refresh the session right now, please try again later",
             retryPrefix: "[HTTP] Retry",
             retrySuffix: "delay",
             cancelled: "Request cancelled",

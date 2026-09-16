@@ -2040,6 +2040,7 @@ export default {
                 "Échec de la requête réseau, vérifiez votre connexion",
             noRefreshToken:
                 "Pas de token de rafraîchissement, veuillez vous reconnecter",
+            refreshUnavailable: "Impossible d'actualiser la session pour le moment, veuillez réessayer plus tard",
             retryPrefix: "[HTTP] Réessai",
             retrySuffix: "délai",
             cancelled: "Requête annulée",

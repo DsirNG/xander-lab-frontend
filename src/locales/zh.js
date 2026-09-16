@@ -1922,6 +1922,7 @@ export default {
             serverBusy: "服务器繁忙，请稍后重试",
             networkError: "网络请求失败，请检查网络连接",
             noRefreshToken: "无刷新令牌，请重新登录",
+            refreshUnavailable: "暂时无法刷新会话，请稍后重试",
             retryPrefix: "[HTTP] 重试",
             retrySuffix: "延迟",
             cancelled: "请求已取消",
