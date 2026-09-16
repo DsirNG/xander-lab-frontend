@@ -18,6 +18,9 @@ description: DinQorAI 前端（xander-lab-frontend）编码规范。Use when wri
     - `node scripts/find-missing-i18n-keys.mjs`——检查代码里 `t("...")` 用到的键是否存在于 `en.js`。
 - 常见坑：`t("key", "中文默认值")` 写了默认值**不代表键已存在**——默认值只让中文界面看着正常，其余 5 种语言会回落到中文，键集合校验照样报缺。新增卡片/组件时最容易只加 `zh` 就收工。
 - 换行风格**不统一**：`zh.js` 是 CRLF，`en/fr/ja/ru/vi` 是 LF。用脚本批量改这些文件时按各自原样保留（别统一）；读进来要先 `split(/\r?\n/)` 并记住原 EOL，否则行尾的 `\r` 会让 `^...$` 锚点匹配不上。
+- 校验 EOL **别用 `grep -c $'\r'`**：Git Bash 里的 MSYS grep 按文本模式读文件，六个文件会报出同一个数字，看起来「全是 CRLF」，据此写脚本就会把 CRLF 行插进 LF 文件。改用 Python 数字节，或看 `git diff --stat` 是否每个文件只 `+1`：
+  `python -c "import pathlib;b=pathlib.Path('src/locales/en.js').read_bytes();print('CR',b.count(b'\r'),'LF',b.count(b'\n'))"`
+- 改这些文件优先用字节级脚本（`read_bytes`/`write_bytes`），不要用 `read_text`/`write_text`：后者在 Windows 上会把 `\n` 翻成 `\r\n`，diff 直接变成整文件重写。
 
 ## 请求规范
 
