@@ -56,6 +56,25 @@ const USER_INFO_KEY = "user_info";
 /** 刷新 Token 的接口路径（相对 baseURL） */
 const REFRESH_URL = "/api/auth/refresh";
 
+/**
+ * Refresh 专用超时（毫秒）。
+ *
+ * ⚠️ 必须与 `DEFAULT_TIMEOUT` 解耦，不能跟着 `VITE_REQUEST_TIMEOUT` 走。
+ *
+ * 原因：`DEFAULT_TIMEOUT` 开发环境是 15000、**生产环境是 30000**
+ * （`.env.production` 把 `VITE_REQUEST_TIMEOUT` 调高了，因为普通接口里有慢请求）。
+ * 而服务端的幂等 grace 只有 25s，它是按 refresh timeout = 15s 推导出来的
+ * （V9 §35 / §36，登记在 `docs/contract-changes.yaml` 的
+ * `refresh-grace-window.frontend_refresh_timeout_ms`）。
+ *
+ * 若这里直接用 `DEFAULT_TIMEOUT`，生产环境就会变成
+ * `grace(25s) < refresh timeout(30s)`：第一次请求服务端已经轮换、但响应丢失时，
+ * 客户端要等到 30s 才超时重试，而重试落在 grace 之外 → 服务端按
+ * §39 分支 3「真正的 Reuse」处理 → **撤销整个会话族，用户被强制登出**。
+ * 这正是 grace 存在的意义所要防住的场景，所以这个值属于 Contract。
+ */
+const REFRESH_TIMEOUT = 15000;
+
 /** 最大自动重试次数（网络错误 / 5xx） */
 
 /** 重试间隔基数（ms），指数退避：delay = BASE_RETRY_DELAY * 2^attempt */
@@ -486,14 +505,15 @@ if (typeof window !== "undefined" && window.addEventListener) {
  * @returns {Promise<{accessToken: string, refreshToken?: string}>}
  */
 async function attemptRefresh(refreshToken) {
-    // 使用原始 axios 避免循环拦截；显式超时，避免刷新挂起时拖垮排队请求
+    // 使用原始 axios 避免循环拦截；显式超时，避免刷新挂起时拖垮排队请求。
+    // 用 REFRESH_TIMEOUT 而不是 DEFAULT_TIMEOUT：见该常量的注释。
     const response = await axios.post(
         `${BASE_URL}${REFRESH_URL}`,
         {
             refreshToken,
         },
         {
-            timeout: DEFAULT_TIMEOUT,
+            timeout: REFRESH_TIMEOUT,
         },
     );
     const body = response.data;

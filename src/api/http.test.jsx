@@ -45,7 +45,10 @@ vi.mock("axios", () => {
 vi.mock("@config/env", () => ({
     ENV_CONFIG: {
         BASE_URL: "/api",
-        TIMEOUT: 15000,
+        // 刻意用生产环境的值（.env.production 里 VITE_REQUEST_TIMEOUT=30000），
+        // 而不是代码默认的 15000 —— 这样"refresh 超时必须与全局超时解耦"
+        // 这条不变量才会真的被测试覆盖到。
+        TIMEOUT: 30000,
         IS_DEV: false,
         IS_PROD: true,
     },
@@ -487,6 +490,21 @@ describe("refresh failure classification (§45)", () => {
         await Promise.all(pending);
 
         expect(axiosMock.post).toHaveBeenCalledTimes(1);
+    });
+
+    it("§35 Contract：refresh 超时必须固定在 15s，不跟随全局 30s", async () => {
+        tokenStorage.setRefreshToken("old-rt");
+        axiosMock.post.mockResolvedValue(refreshOk("new-at", "new-rt"));
+        instanceMock.mockResolvedValue("ok");
+
+        await trigger401(config401());
+
+        // 全局超时是 30000（生产值），但 refresh 必须用 Contract 值 15000。
+        // 若这里跟着全局走，生产环境就会出现 grace(25s) < timeout(30s)：
+        // 响应丢失后的重试会落在 grace 之外，被服务端判成 Reuse 并撤销整个会话族。
+        const [, , options] = axiosMock.post.mock.calls[0];
+        expect(options.timeout).toBe(15000);
+        expect(options.timeout).not.toBe(30000);
     });
 });
 
