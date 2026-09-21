@@ -10,13 +10,11 @@ import KnowledgeFolderModal from "./KnowledgeFolderModal";
 import KnowledgeMoveModal from "./KnowledgeMoveModal";
 import KnowledgeUploadModal from "./KnowledgeUploadModal";
 import KnowledgeFileViewerModal from "./KnowledgeFileViewerModal";
-import Modal from "@shared/ui/overlays/Modal";
 import Button from "@shared/ui/primitives/Button";
-import FormField from "@shared/ui/forms/FormField";
-import { formInputCls } from "@shared/ui/forms/formStyles";
 import RowActionsMenu from "@shared/ui/overlays/RowActionsMenu";
 import { Plus, RefreshCw, Tag as TagIcon, Sparkles } from "lucide-react";
 import KnowledgeBaseSkeleton from "./KnowledgeBaseSkeleton";
+import KnowledgeCreateTagModal from "./KnowledgeCreateTagModal";
 import { knowledgeBaseService } from "../services/knowledgeBaseService";
 
 const KnowledgeDocBaseView = ({ onSwitchToMirror }) => {
@@ -543,46 +541,14 @@ const KnowledgeDocBaseView = ({ onSwitchToMirror }) => {
                 }}
             />
 
-            {/* 新建标签模态框 */}
-            <Modal
+            <KnowledgeCreateTagModal
                 isOpen={createTagModalOpen}
+                saving={tagSaving}
+                value={newTagName}
+                onChange={setNewTagName}
                 onClose={() => setCreateTagModalOpen(false)}
-                title="新建标签"
-                width="max-w-sm"
-                footer={
-                    <>
-                        <Button
-                            variant="ghost"
-                            onClick={() => setCreateTagModalOpen(false)}
-                            disabled={tagSaving}
-                        >
-                            取消
-                        </Button>
-                        <Button
-                            type="submit"
-                            form="create-tag-inline-form"
-                            loading={tagSaving}
-                            disabled={!newTagName.trim()}
-                        >
-                            确定
-                        </Button>
-                    </>
-                }
-            >
-                <form id="create-tag-inline-form" onSubmit={handleCreateTag} className="space-y-4">
-                    <FormField label="标签名称" required>
-                        <input
-                            type="text"
-                            className={formInputCls}
-                            placeholder="例如：AI、产品设计"
-                            value={newTagName}
-                            onChange={(e) => setNewTagName(e.target.value)}
-                            maxLength={60}
-                            autoFocus
-                        />
-                    </FormField>
-                </form>
-            </Modal>
+                onSubmit={handleCreateTag}
+            />
 
             {/* 删除确认模态框 */}
             <ConfirmModal
