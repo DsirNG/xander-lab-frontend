@@ -42,6 +42,8 @@ import {
     removePendingRequest,
 } from "./requestDedupe";
 import { createSseReader } from "./sseReader";
+import { createDownload } from "./transfer/download";
+import { createUpload } from "./transfer/upload";
 
 export { buildRequestKey };
 export { HttpError };
@@ -53,9 +55,6 @@ export { tokenStorage };
 
 /** 默认超时（毫秒） */
 const DEFAULT_TIMEOUT = ENV_CONFIG.TIMEOUT;
-
-/** Large file transfers must still terminate when the peer stalls. */
-const DEFAULT_DOWNLOAD_TIMEOUT = 10 * 60 * 1000;
 
 /** Methods that can be retried and deduplicated without replaying mutations. */
 
@@ -426,6 +425,11 @@ const instance = axios.create({
     },
     withCredentials: false, // 跨域携带 Cookie 时改为 true
 });
+
+const upload = createUpload(instance);
+const download = createDownload(instance);
+
+export { download, upload };
 
 // ─────────────────────────────────────────────
 // 8. 请求拦截器
@@ -823,135 +827,6 @@ export function head(url, config) {
  */
 export function options(url, config) {
     return instance.options(url, { ...config, rawResponse: true });
-}
-
-// ─────────────────────────────────────────────
-// 11. 文件上传
-// ─────────────────────────────────────────────
-
-/**
- * 文件上传（multipart/form-data）
- * @param {string} url
- * @param {File | File[] | FormData} fileOrFormData - 文件或已构建的 FormData
- * @param {Object} [options]
- * @param {string} [options.fieldName='file'] - 文件字段名
- * @param {Record<string, any>} [options.extraData] - 附加表单字段
- * @param {Function} [options.onProgress] - 上传进度回调 (percent: number) => void
- * @param {import('axios').AxiosRequestConfig} [options.config] - 额外 axios 配置
- * @returns {Promise<any>}
- */
-export function upload(url, fileOrFormData, options = {}) {
-    const {
-        fieldName = "file",
-        extraData = {},
-        onProgress,
-        config = {},
-    } = options;
-
-    let formData;
-    if (fileOrFormData instanceof FormData) {
-        formData = fileOrFormData;
-    } else {
-        formData = new FormData();
-        const files = Array.isArray(fileOrFormData)
-            ? fileOrFormData
-            : [fileOrFormData];
-        files.forEach((file) => formData.append(fieldName, file));
-        Object.entries(extraData).forEach(([k, v]) => formData.append(k, v));
-    }
-
-    const { headers = {}, ...restConfig } = config;
-
-    return instance.post(url, formData, {
-        ...restConfig,
-        // 合并而非覆盖：调用方传的 headers 不会破坏 multipart 的 Content-Type
-        headers: { "Content-Type": "multipart/form-data", ...headers },
-        onUploadProgress: onProgress
-            ? (progressEvent) => {
-                  const percent = progressEvent.total
-                      ? Math.round(
-                            (progressEvent.loaded * 100) / progressEvent.total,
-                        )
-                      : 0;
-                  onProgress(percent, progressEvent);
-              }
-            : undefined,
-        // 上传通常耗时较长，单独设置超时
-        timeout: 0,
-        // 上传请求不做防重复
-        dedupe: false,
-    });
-}
-
-// ─────────────────────────────────────────────
-// 12. 文件下载
-// ─────────────────────────────────────────────
-
-/**
- * 文件下载（Blob 流）
- * @param {string} url
- * @param {Object} [options]
- * @param {string} [options.filename] - 保存的文件名（不传则从响应头解析）
- * @param {Object} [options.params] - URL 查询参数
- * @param {'get'|'post'} [options.method='get'] - 请求方法
- * @param {any} [options.data] - POST 请求体
- * @param {Function} [options.onProgress] - 下载进度回调 (percent: number) => void
- * @param {import('axios').AxiosRequestConfig} [options.config]
- * @returns {Promise<void>}
- */
-export async function download(url, options = {}) {
-    const {
-        filename,
-        params,
-        method = "get",
-        data,
-        onProgress,
-        config = {},
-    } = options;
-
-    const response = await instance.request({
-        url,
-        method,
-        params,
-        data,
-        responseType: "blob",
-        timeout: DEFAULT_DOWNLOAD_TIMEOUT,
-        dedupe: false,
-        onDownloadProgress: onProgress
-            ? (progressEvent) => {
-                  const percent = progressEvent.total
-                      ? Math.round(
-                            (progressEvent.loaded * 100) / progressEvent.total,
-                        )
-                      : 0;
-                  onProgress(percent, progressEvent);
-              }
-            : undefined,
-        ...config,
-    });
-
-    // 从 Content-Disposition 解析文件名
-    const resolvedFilename =
-        filename ||
-        (() => {
-            const disposition =
-                response?.headers?.["content-disposition"] ?? "";
-            const match = disposition.match(
-                /filename\*?=(?:UTF-8'')?["']?([^"';\n]+)/i,
-            );
-            return match ? decodeURIComponent(match[1]) : "download";
-        })();
-
-    // 触发浏览器下载
-    const blob = response instanceof Blob ? response : new Blob([response]);
-    const objectUrl = URL.createObjectURL(blob);
-    const anchor = document.createElement("a");
-    anchor.href = objectUrl;
-    anchor.download = resolvedFilename;
-    document.body.appendChild(anchor);
-    anchor.click();
-    document.body.removeChild(anchor);
-    URL.revokeObjectURL(objectUrl);
 }
 
 // ─────────────────────────────────────────────
