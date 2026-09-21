@@ -96,7 +96,7 @@
 | Studio 公开源码页 | `@features/studio/pages/PublicSourcePage`                | 公开项目的匿名源码浏览与下载入口，不另建重复页面。                                                                                                         |
 | 博客卡片          | `@features/blog/components/BlogCard`                     | 博客列表、推荐区使用，输入为 `blog`。                                                                                                                      |
 | 博客侧栏          | `@features/blog/components/BlogSidebar`                  | 博客布局内导航，输入 `onNavigate`。                                                                                                                        |
-| 在线组件工作台    | `@features/components/pages/share/*`                     | 包括 `ShareHeader`、`ShareSidebar`、`ShareDrawer`、`ShareModals`；仅用于组件分享工作台。                                                                   |
+| 在线组件工作台    | `@features/components/components/share/*`                | 包括 `ShareHeader`、`ShareSidebar`、`ShareDrawer`、`ShareModals`；仅用于组件分享工作台。                                                                   |
 
 ## 基础服务与注册表
 
