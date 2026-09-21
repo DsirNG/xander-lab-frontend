@@ -15,7 +15,7 @@ vi.mock("react-i18next", () => ({
 }));
 
 // 高亮组件很重，而这里要断言的只是"哪个文件的源码在展示"，换成可读的替身。
-vi.mock("@components/common/CodeBlock", () => ({
+vi.mock("@shared/ui/data-display/CodeBlock", () => ({
     default: ({ code, language }) => (
         <div data-testid="code-block" data-language={language}>
             {code}

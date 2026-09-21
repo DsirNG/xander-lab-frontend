@@ -1,11 +1,2 @@
-import { Outlet } from "react-router-dom";
-import RouteSEO from "./RouteSEO";
-
-export default function RouteSEOLayout() {
-    return (
-        <>
-            <RouteSEO />
-            <Outlet />
-        </>
-    );
-}
+/** @deprecated Use @app/seo/RouteSEOLayout. */
+export { default } from "@app/seo/RouteSEOLayout";

@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { useTranslation } from "react-i18next";
-import Modal from "@components/common/Modal";
-import Button from "@components/common/Button";
-import FormField from "@components/common/FormField";
-import { formInputCls } from "@components/common/formStyles";
+import Modal from "@shared/ui/overlays/Modal";
+import Button from "@shared/ui/primitives/Button";
+import FormField from "@shared/ui/forms/FormField";
+import { formInputCls } from "@shared/ui/forms/formStyles";
 
 /**
  * 新建 / 重命名文件夹弹窗

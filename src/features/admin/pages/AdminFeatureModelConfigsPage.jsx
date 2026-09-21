@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Pencil, SlidersHorizontal } from "lucide-react";
-import DataTable from "@components/common/DataTable";
+import DataTable from "@shared/ui/data-display/DataTable";
 import RowActionsMenu from "@shared/ui/overlays/RowActionsMenu";
 import { useToast } from "@shared/hooks/useToast";
 import { adminService, FEATURE_KEYS } from "../services/adminService";

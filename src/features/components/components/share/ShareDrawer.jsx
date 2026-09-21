@@ -14,7 +14,7 @@ import {
     Layout,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import Button from "@components/common/Button";
+import Button from "@shared/ui/primitives/Button";
 
 const TABS = [
     { id: "logic", nameKey: "components.share.drawer.logic", icon: FileCode },

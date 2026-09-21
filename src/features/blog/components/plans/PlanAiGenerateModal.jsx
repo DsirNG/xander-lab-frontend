@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { CalendarDays, Sparkles } from "lucide-react";
-import Modal from "@components/common/Modal";
-import Button from "@components/common/Button";
-import TimezoneSelect from "@components/common/TimezoneSelect";
+import Modal from "@shared/ui/overlays/Modal";
+import Button from "@shared/ui/primitives/Button";
+import TimezoneSelect from "@shared/ui/forms/TimezoneSelect";
 import TimeInput from "@shared/ui/forms/TimeInput";
-import FormField from "@components/common/FormField";
-import { formInputCls } from "@components/common/formStyles";
+import FormField from "@shared/ui/forms/FormField";
+import { formInputCls } from "@shared/ui/forms/formStyles";
 import { blogPlanService } from "../../services/blogPlanService";
 import { useToast } from "@shared/hooks/useToast";
 

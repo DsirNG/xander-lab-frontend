@@ -10,7 +10,7 @@ import {
     Trash2,
     HelpCircle,
 } from "lucide-react";
-import Button from "@components/common/Button";
+import Button from "@shared/ui/primitives/Button";
 
 const ShareSidebar = ({
     meta,

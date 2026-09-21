@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { useTranslation } from "react-i18next";
 import { Share2, Compass } from "lucide-react";
-import Button from "@components/common/Button";
+import Button from "@shared/ui/primitives/Button";
 
 const ShareHeader = ({ onPublish, onTourStart, onNavigateBack }) => {
     const { t } = useTranslation();

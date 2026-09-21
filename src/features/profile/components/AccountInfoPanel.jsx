@@ -11,8 +11,8 @@ import {
 } from "lucide-react";
 import { updateProfile, useAuthSession } from "@features/auth";
 import { useToast } from "@shared/hooks/useToast";
-import FormField from "@components/common/FormField";
-import { formInputCls } from "@components/common/formStyles";
+import FormField from "@shared/ui/forms/FormField";
+import { formInputCls } from "@shared/ui/forms/formStyles";
 
 const DEFAULT_AVATAR_SEED = "https://api.dicebear.com/7.x/avataaars/svg?seed=";
 

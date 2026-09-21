@@ -20,9 +20,9 @@ import {
     ShieldCheck,
     Trash2,
 } from "lucide-react";
-import ConfirmModal from "@components/common/ConfirmModal";
-import CustomSelect from "@components/common/CustomSelect";
-import DataTable from "@components/common/DataTable";
+import ConfirmModal from "@shared/ui/overlays/ConfirmModal";
+import CustomSelect from "@shared/ui/forms/CustomSelect";
+import DataTable from "@shared/ui/data-display/DataTable";
 import RowActionsMenu from "@shared/ui/overlays/RowActionsMenu";
 import { useToast } from "@shared/hooks/useToast";
 import { emailReminderService } from "../services/emailReminderService";
@@ -276,21 +276,24 @@ const EmailRemindersPanel = () => {
         setStatusFilter(value);
     };
 
-    const handleStatusChange = async (reminder) => {
-        const status = normalizeStatus(reminder.status);
-        const nextStatus = status === "PAUSED" ? "PENDING" : "PAUSED";
-        const key = `status-${reminder.id}`;
-        setActionKey(key);
-        try {
-            await emailReminderService.updateStatus(reminder.id, nextStatus);
-            toast.success(t("profile.emailReminders.statusUpdated"));
-            await loadReminders({ showLoading: false });
-        } catch {
-            // Shared HTTP handling presents the server error.
-        } finally {
-            setActionKey("");
-        }
-    };
+    const handleStatusChange = useCallback(
+        async (reminder) => {
+            const status = normalizeStatus(reminder.status);
+            const nextStatus = status === "PAUSED" ? "PENDING" : "PAUSED";
+            const key = `status-${reminder.id}`;
+            setActionKey(key);
+            try {
+                await emailReminderService.updateStatus(reminder.id, nextStatus);
+                toast.success(t("profile.emailReminders.statusUpdated"));
+                await loadReminders({ showLoading: false });
+            } catch {
+                // Shared HTTP handling presents the server error.
+            } finally {
+                setActionKey("");
+            }
+        },
+        [loadReminders, t, toast],
+    );
 
     const handleDelete = async () => {
         if (!pendingDelete?.id) return;

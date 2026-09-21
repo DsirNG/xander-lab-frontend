@@ -12,7 +12,7 @@ import { createBrowserRouter, Navigate, Outlet } from "react-router-dom";
 // Layouts (始终需要，保持静态导入)
 import MainLayout from "@app/layouts/MainLayout";
 import BlogLayout from "@features/blog/layouts/BlogLayout";
-import RouteSEOLayout from "@components/seo/RouteSEOLayout";
+import RouteSEOLayout from "@app/seo/RouteSEOLayout";
 import { LazyPage, ProtectedPage } from "./RouteElements";
 import LegacyBlogToolRedirect from "./LegacyBlogToolRedirect";
 import { RouteErrorPage } from "@features/appUpdate";
@@ -125,7 +125,7 @@ import { getModuleConfig } from "@features/modules";
 
 // 通用组件
 const NotFoundPage = React.lazy(
-    () => import("@components/common/NotFoundPage"),
+    () => import("@app/errors/NotFoundPage"),
 );
 
 // 通用 Suspense 包裹器

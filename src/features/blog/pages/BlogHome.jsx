@@ -4,7 +4,7 @@ import { useSearchParams } from "react-router-dom";
 import { Grid, List, Filter, X, Loader2 } from "lucide-react";
 import { blogService } from "../services/blogService";
 import BlogCard from "../components/BlogCard";
-import SEOHead from "@components/seo/SEOHead";
+import SEOHead from "@shared/seo/SEOHead";
 
 const getHasMore = (data, loadedCount = 0) => {
     const current = Number(data?.current);

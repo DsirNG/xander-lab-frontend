@@ -20,7 +20,7 @@ import {
     Lightbulb,
     Link2,
 } from "lucide-react";
-import DataTable from "@components/common/DataTable";
+import DataTable from "@shared/ui/data-display/DataTable";
 import RowActionsMenu from "@shared/ui/overlays/RowActionsMenu";
 import { blogPlanService, PLAN_STATUS } from "../services/blogPlanService";
 import { useToast } from "@shared/hooks/useToast";

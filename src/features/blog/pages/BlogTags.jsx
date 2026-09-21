@@ -4,8 +4,8 @@ import { Link, useSearchParams } from "react-router-dom";
 import { Tag, Hash, ChevronLeft, FileText } from "lucide-react";
 import { blogService } from "../services/blogService";
 import BlogCard from "../components/BlogCard";
-import Pagination from "@components/common/Pagination";
-import SEOHead from "@components/seo/SEOHead";
+import Pagination from "@shared/ui/navigation/Pagination";
+import SEOHead from "@shared/seo/SEOHead";
 
 const PAGE_SIZE = 10;
 

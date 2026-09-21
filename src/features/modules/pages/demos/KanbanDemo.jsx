@@ -7,7 +7,7 @@ import {
     Calendar,
 } from "lucide-react";
 import { useDragDrop } from "@shared/hooks/useDragDrop";
-import Button from "@components/common/Button";
+import Button from "@shared/ui/primitives/Button";
 import { motion, AnimatePresence } from "framer-motion";
 
 const KanbanDemo = () => {

@@ -2,11 +2,11 @@ import React, { useRef, useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { useTranslation } from "react-i18next";
 import { UploadCloud, File, X, AlertCircle, CheckCircle2 } from "lucide-react";
-import Modal from "@components/common/Modal";
-import Button from "@components/common/Button";
-import FormField from "@components/common/FormField";
-import CustomSelect from "@components/common/CustomSelect";
-import { formInputCls } from "@components/common/formStyles";
+import Modal from "@shared/ui/overlays/Modal";
+import Button from "@shared/ui/primitives/Button";
+import FormField from "@shared/ui/forms/FormField";
+import CustomSelect from "@shared/ui/forms/CustomSelect";
+import { formInputCls } from "@shared/ui/forms/formStyles";
 import { formatBytes } from "../utils/fileHash";
 
 const ALLOWED_EXTENSIONS = [

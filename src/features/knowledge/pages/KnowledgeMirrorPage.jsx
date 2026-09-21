@@ -22,12 +22,12 @@ import {
     Target,
     Trash2,
 } from "lucide-react";
-import Button from "@components/common/Button";
-import CustomSelect from "@components/common/CustomSelect";
-import FormField from "@components/common/FormField";
-import LoadingSpinner from "@components/common/LoadingSpinner";
-import Modal from "@components/common/Modal";
-import { formInputCls } from "@components/common/formStyles";
+import Button from "@shared/ui/primitives/Button";
+import CustomSelect from "@shared/ui/forms/CustomSelect";
+import FormField from "@shared/ui/forms/FormField";
+import LoadingSpinner from "@shared/ui/feedback/LoadingSpinner";
+import Modal from "@shared/ui/overlays/Modal";
+import { formInputCls } from "@shared/ui/forms/formStyles";
 import KnowledgeDocBaseView from "../components/KnowledgeDocBaseView";
 import { knowledgeService } from "../services/knowledgeService";
 import { buildKnowledgeQuizPath } from "../utils/knowledgeNavigation";

@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from "react";
 import { Play } from "lucide-react";
 import TourSpotlight from "./index";
-import Button from "@components/common/Button";
+import Button from "@shared/ui/primitives/Button";
 
 /**
  * TourSpotlight 的使用演示 Demo

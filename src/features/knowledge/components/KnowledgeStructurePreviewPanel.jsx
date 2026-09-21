@@ -20,7 +20,7 @@ import {
     Tag as TagIcon,
     Folder,
 } from "lucide-react";
-import Button from "@components/common/Button";
+import Button from "@shared/ui/primitives/Button";
 import Skeleton from "@shared/ui/feedback/Skeleton";
 import RowActionsMenu from "@shared/ui/overlays/RowActionsMenu";
 import { formatBytes } from "../utils/fileHash";

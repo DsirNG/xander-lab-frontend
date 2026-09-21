@@ -1,10 +1,10 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Archive, GitBranch, Plus, Sparkles } from "lucide-react";
-import DataTable from "@components/common/DataTable";
+import DataTable from "@shared/ui/data-display/DataTable";
 import RowActionsMenu from "@shared/ui/overlays/RowActionsMenu";
-import ConfirmModal from "@components/common/ConfirmModal";
-import Button from "@components/common/Button";
+import ConfirmModal from "@shared/ui/overlays/ConfirmModal";
+import Button from "@shared/ui/primitives/Button";
 import { useToast } from "@shared/hooks/useToast";
 import { agentSkillService, parseSkillToolNames } from "../services/agentSkillService";
 import SkillFormModal from "../components/SkillFormModal";

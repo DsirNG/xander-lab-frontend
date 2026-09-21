@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useCallback, useEffect, useState, useMemo } from "react";
 import PropTypes from "prop-types";
 import { useTranslation } from "react-i18next";
 import ReactMarkdown from "react-markdown";
@@ -22,9 +22,9 @@ import {
     ChevronRight,
     ChevronDown,
 } from "lucide-react";
-import Modal from "@components/common/Modal";
-import Button from "@components/common/Button";
-import LoadingSpinner from "@components/common/LoadingSpinner";
+import Modal from "@shared/ui/overlays/Modal";
+import Button from "@shared/ui/primitives/Button";
+import LoadingSpinner from "@shared/ui/feedback/LoadingSpinner";
 import { knowledgeBaseService } from "../services/knowledgeBaseService";
 import { formatBytes } from "../utils/fileHash";
 
@@ -137,24 +137,27 @@ const KnowledgeFileViewerModal = ({
     const [newTagInput, setNewTagInput] = useState("");
 
     // 加载预览综合数据
-    const loadPreview = async (signal) => {
-        if (!fileId) return;
-        setLoading(true);
-        try {
-            const data = await knowledgeBaseService.files.preview(fileId, {
-                signal,
-                _silent: true,
-            });
-            setPreviewData(data);
-            if (data?.chapters?.length > 0 && !selectedChapterId) {
-                setSelectedChapterId(data.chapters[0].id);
+    const loadPreview = useCallback(
+        async (signal) => {
+            if (!fileId) return;
+            setLoading(true);
+            try {
+                const data = await knowledgeBaseService.files.preview(fileId, {
+                    signal,
+                    _silent: true,
+                });
+                setPreviewData(data);
+                if (data?.chapters?.length > 0) {
+                    setSelectedChapterId((current) => current || data.chapters[0].id);
+                }
+            } catch {
+                // error handled by UI
+            } finally {
+                setLoading(false);
             }
-        } catch {
-            // error handled by UI
-        } finally {
-            setLoading(false);
-        }
-    };
+        },
+        [fileId],
+    );
 
     useEffect(() => {
         if (isOpen && fileId) {
@@ -165,7 +168,7 @@ const KnowledgeFileViewerModal = ({
             loadPreview(controller.signal);
             return () => controller.abort();
         }
-    }, [isOpen, fileId]);
+    }, [isOpen, fileId, loadPreview]);
 
     // 读取完整正文
     const handleLoadFullContent = async () => {

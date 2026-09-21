@@ -18,7 +18,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { authService } from "../services/authService";
 import { useToast } from "../../../hooks/useToast";
 import FloatingParticles from "../components/FloatingParticles";
-import Button from "@components/common/Button";
+import Button from "@shared/ui/primitives/Button";
 
 /**
  * 登录/注册页面

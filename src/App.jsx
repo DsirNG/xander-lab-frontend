@@ -12,11 +12,11 @@ import { createRouter } from "./app/routing";
 import { ToastProvider } from "@app/providers/ToastProvider";
 import { ToastContainer } from "@shared/ui/feedback/Toast";
 import { useToast } from "@shared/hooks/useToast";
-import ErrorBoundary from "./components/common/ErrorBoundary";
+import ErrorBoundary from "@app/errors/ErrorBoundary";
 import { AuthSessionProvider } from "@features/auth";
 import { NotificationProvider } from "@features/blog";
 import { AppUpdateModal, useAppUpdate } from "@features/appUpdate";
-import DomainRedirectModal from "./components/common/DomainRedirectModal";
+import DomainRedirectModal from "@app/bootstrap/DomainRedirectModal";
 
 /**
  * 全局 Toast 桥接

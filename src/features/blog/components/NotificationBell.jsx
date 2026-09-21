@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Bell, CheckCheck } from "lucide-react";
 import { Link } from "react-router-dom";
-import Button from "@components/common/Button";
+import Button from "@shared/ui/primitives/Button";
 import { useNotifications } from "@features/blog/context/useNotifications";
 import { blogPlanService } from "@features/blog/services/blogPlanService";
 import { useAuthSession } from "@features/auth";

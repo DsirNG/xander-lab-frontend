@@ -10,9 +10,9 @@ import {
     Trash2,
     Zap,
 } from "lucide-react";
-import Pagination from "@components/common/Pagination";
-import LoadingSpinner from "@components/common/LoadingSpinner";
-import Button from "@components/common/Button";
+import Pagination from "@shared/ui/navigation/Pagination";
+import LoadingSpinner from "@shared/ui/feedback/LoadingSpinner";
+import Button from "@shared/ui/primitives/Button";
 import { blogPlanService, PLAN_STATUS } from "../services/blogPlanService";
 import { useToast } from "@shared/hooks/useToast";
 import { usePlanActions } from "../hooks/usePlanActions";

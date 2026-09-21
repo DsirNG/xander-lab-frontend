@@ -21,8 +21,8 @@ import {
     Link2,
     X,
 } from "lucide-react";
-import CustomSelect from "@components/common/CustomSelect";
-import Button from "@components/common/Button";
+import CustomSelect from "@shared/ui/forms/CustomSelect";
+import Button from "@shared/ui/primitives/Button";
 import useClickOutside from "@shared/hooks/useClickOutside";
 import StudioTopBar from "../components/StudioTopBar";
 import {

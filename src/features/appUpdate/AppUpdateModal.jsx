@@ -1,6 +1,6 @@
 import { RefreshCw } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import Modal from "@components/common/Modal";
+import Modal from "@shared/ui/overlays/Modal";
 import { reloadApp } from "./appUpdate";
 
 export default function AppUpdateModal({ isOpen }) {

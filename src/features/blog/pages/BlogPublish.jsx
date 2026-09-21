@@ -9,8 +9,8 @@ import usePublishForm from "../hooks/usePublishForm";
 import usePublishSubmit from "../hooks/usePublishSubmit";
 import { useToast } from "@shared/hooks/useToast";
 import useIsMobile from "@shared/hooks/useIsMobile";
-import LoadingSpinner from "@components/common/LoadingSpinner";
-import ConfirmModal from "@components/common/ConfirmModal";
+import LoadingSpinner from "@shared/ui/feedback/LoadingSpinner";
+import ConfirmModal from "@shared/ui/overlays/ConfirmModal";
 
 /**
  * 博客发布 / 编辑页面

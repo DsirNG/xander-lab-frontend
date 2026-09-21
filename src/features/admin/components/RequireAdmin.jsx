@@ -3,7 +3,7 @@
  * 非管理员一律重定向回工作台首页，避免暴露管理入口。
  */
 import { Navigate, useLocation } from "react-router-dom";
-import LoadingSpinner from "@components/common/LoadingSpinner";
+import LoadingSpinner from "@shared/ui/feedback/LoadingSpinner";
 import { useAuthSession } from "@features/auth";
 
 const RequireAdmin = ({ children }) => {

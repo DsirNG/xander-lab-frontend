@@ -13,7 +13,7 @@ import {
     Trash2,
 } from "lucide-react";
 import { TableSkeleton } from "@shared/ui/feedback/Skeleton";
-import Pagination from "@components/common/Pagination";
+import Pagination from "@shared/ui/navigation/Pagination";
 import RowActionsMenu from "@shared/ui/overlays/RowActionsMenu";
 import KnowledgeFileFilterBar from "./KnowledgeFileFilterBar";
 import { formatBytes } from "../utils/fileHash";

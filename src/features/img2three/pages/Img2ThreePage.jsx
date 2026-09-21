@@ -16,7 +16,7 @@ import {
     Sparkles,
     Upload,
 } from "lucide-react";
-import LoadingSpinner from "@components/common/LoadingSpinner";
+import LoadingSpinner from "@shared/ui/feedback/LoadingSpinner";
 import { img2threeService } from "../services/img2threeService";
 import { getLocalUserInfo } from "@features/auth";
 import { useToast } from "@shared/hooks/useToast";

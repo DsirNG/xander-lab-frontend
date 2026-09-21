@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import Modal from "@/components/common/Modal";
 import TourSpotlight from "@/components/common/TourSpotlight";
-import Button from "@components/common/Button";
+import Button from "@shared/ui/primitives/Button";
 
 const ShareModals = ({
     // Modal visibility

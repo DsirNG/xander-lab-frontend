@@ -5,7 +5,7 @@ import { Play, RefreshCw, AlertTriangle } from "lucide-react";
 
 // ─── 注入项目内部组件 ──────────────────────────────────────────────
 import CustomSelect from "@/components/common/CustomSelect";
-import Button from "@components/common/Button";
+import Button from "@shared/ui/primitives/Button";
 import LucideIcons from "@/features/components/registries/sandboxIconRegistry";
 
 // ─── 动态加载 Babel（~2.5MB，不打入首屏 bundle）─────────────────

@@ -11,7 +11,7 @@ import {
     BookOpen,
     Minimize2,
 } from "lucide-react";
-import SEOHead from "@components/seo/SEOHead";
+import SEOHead from "@shared/seo/SEOHead";
 import { blogService } from "../services/blogService";
 import BlogMarkdown from "../components/BlogMarkdown";
 import usePureReading from "../hooks/usePureReading";

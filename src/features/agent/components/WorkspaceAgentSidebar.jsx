@@ -12,7 +12,7 @@ import {
     Search,
     X,
 } from "lucide-react";
-import Modal from "@components/common/Modal";
+import Modal from "@shared/ui/overlays/Modal";
 
 /** 后端返回 'yyyy-MM-dd HH:mm:ss'，补上 T 以免部分浏览器解析失败导致排序错乱。 */
 const parseSessionTime = (value) => {

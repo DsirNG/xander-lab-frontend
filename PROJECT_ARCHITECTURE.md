@@ -34,6 +34,9 @@ src/
 │   ├── layouts/
 │   │   ├── MainLayout/          # 平台主站 Shell
 │   │   └── WorkspaceLayout.jsx  # 工作台 Shell
+│   ├── bootstrap/               # 全局启动期 UI 和域名边界
+│   ├── errors/                 # ErrorBoundary、404 和运行时兜底
+│   └── seo/                    # 路由级 SEO 组合
 │   └── routing/                 # 路由配置、懒加载和路由边界
 │
 ├── features/                    # 业务领域
@@ -62,7 +65,9 @@ src/
 │       ├── data-display/        # DataTable、PhaseCard、SyntaxHighlighter、ContentLayout
 │       ├── navigation/          # Pagination、SidebarLayout
 │       ├── feedback/            # LoadingSpinner、Skeleton、Toast
-│       └── preview/             # BrowserWindow
+│       └── preview/             # BrowserWindow、CodeBlock、HtmlSandboxPreview
+│
+├── shared/seo/                  # 与业务无关的页面级 SEO 元数据能力
 
 ├── shared/hooks/                # 无业务语义的 Hook；Toast Hook 也从这里消费
 ├── shared/lib/                  # cn、debounce、storage 等通用技术能力
@@ -71,12 +76,12 @@ src/
 ├── components/                  # 历史公共组件和兼容入口
 │   ├── common/                  # 停止新增，迁移组件保留 deprecated re-export
 │   ├── layouts/                 # MainLayout 历史兼容入口
-│   └── seo/
-├── hooks/                       # 仍在迁移中的通用 Hooks
+│   └── seo/                     # SEO 旧路径兼容入口
+├── hooks/                       # 通用 Hook 旧路径兼容入口
 ├── locales/                     # 六种语言，暂时保持根级
 ├── styles/
 ├── config/
-├── utils/
+├── utils/                       # shared/lib 旧路径兼容入口
 ├── App.jsx
 └── main.jsx
 ```

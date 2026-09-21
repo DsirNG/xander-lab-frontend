@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { KeyRound, Loader2, Trash2 } from "lucide-react";
-import FormField from "@components/common/FormField";
-import ConfirmModal from "@components/common/ConfirmModal";
-import { formInputCls } from "@components/common/formStyles";
+import FormField from "@shared/ui/forms/FormField";
+import ConfirmModal from "@shared/ui/overlays/ConfirmModal";
+import { formInputCls } from "@shared/ui/forms/formStyles";
 import { useToast } from "@shared/hooks/useToast";
 import { adminService } from "../services/adminService";
 

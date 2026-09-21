@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from "react";
 import { Download, FileCode2, Play } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import CodeBlock from "@components/common/CodeBlock";
+import CodeBlock from "@shared/ui/data-display/CodeBlock";
 
 /**
  * 代码交付卡：文件树 + 完整源码，可逐个文件复制、下载，HTML 还能直接预览。

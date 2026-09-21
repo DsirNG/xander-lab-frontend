@@ -1,8 +1,8 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { CalendarClock, LayoutTemplate, Loader2, Mail, X } from "lucide-react";
-import CustomSelect from "@components/common/CustomSelect";
-import TimezoneSelect from "@components/common/TimezoneSelect";
+import CustomSelect from "@shared/ui/forms/CustomSelect";
+import TimezoneSelect from "@shared/ui/forms/TimezoneSelect";
 import TimeInput from "@shared/ui/forms/TimeInput";
 import { useToast } from "@shared/hooks/useToast";
 import { emailReminderService } from "../services/emailReminderService";

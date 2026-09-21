@@ -3,7 +3,7 @@
  * Cached profile data is presentation data only and is never used as proof of login.
  */
 import { Navigate, useLocation } from "react-router-dom";
-import LoadingSpinner from "@components/common/LoadingSpinner";
+import LoadingSpinner from "@shared/ui/feedback/LoadingSpinner";
 import { useAuthSession } from "../context/authSessionContextValue";
 
 const ProtectedRoute = ({ children }) => {

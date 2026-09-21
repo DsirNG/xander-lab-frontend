@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Loader2 } from "lucide-react";
-import Modal from "@components/common/Modal";
-import FormField from "@components/common/FormField";
-import { formInputCls } from "@components/common/formStyles";
+import Modal from "@shared/ui/overlays/Modal";
+import FormField from "@shared/ui/forms/FormField";
+import { formInputCls } from "@shared/ui/forms/formStyles";
 import { useToast } from "@shared/hooks/useToast";
 import { adminService } from "../services/adminService";
 

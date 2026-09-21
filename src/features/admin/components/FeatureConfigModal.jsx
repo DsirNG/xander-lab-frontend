@@ -1,10 +1,10 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Loader2 } from "lucide-react";
-import Modal from "@components/common/Modal";
-import FormField from "@components/common/FormField";
-import CustomSelect from "@components/common/CustomSelect";
-import { formInputCls } from "@components/common/formStyles";
+import Modal from "@shared/ui/overlays/Modal";
+import FormField from "@shared/ui/forms/FormField";
+import CustomSelect from "@shared/ui/forms/CustomSelect";
+import { formInputCls } from "@shared/ui/forms/formStyles";
 import { useToast } from "@shared/hooks/useToast";
 import { adminService } from "../services/adminService";
 

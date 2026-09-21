@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import Modal from "@components/common/Modal";
+import Modal from "@shared/ui/overlays/Modal";
 
 const Row = ({ label, children }) => (
     <div className="flex items-start justify-between gap-6 py-2 text-sm">
