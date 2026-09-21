@@ -19,13 +19,11 @@ import KnowledgeDocBaseView from "../components/KnowledgeDocBaseView";
 import KnowledgeEditorModal from "../components/KnowledgeEditorModal";
 import KnowledgeMirrorMaterialList from "../components/KnowledgeMirrorMaterialList";
 import KnowledgeMirrorDetailPanel from "../components/KnowledgeMirrorDetailPanel";
+import useKnowledgeAttempt from "../hooks/useKnowledgeAttempt";
 import useKnowledgeRecorder from "../hooks/useKnowledgeRecorder";
 import { knowledgeService } from "../services/knowledgeService";
 import { buildKnowledgeQuizPath } from "../utils/knowledgeNavigation";
 
-const TERMINAL_ATTEMPT_STATUSES = new Set(["SUCCEEDED", "FAILED"]);
-const ATTEMPT_POLL_INTERVAL_MS = 2000;
-const ATTEMPT_POLL_RETRY_LIMIT = 3;
 const EMPTY_FORM = {
     title: "",
     content: "",
@@ -49,9 +47,6 @@ const KnowledgeMirrorPage = () => {
     const [editingId, setEditingId] = useState(null);
     const [saving, setSaving] = useState(false);
     const [form, setForm] = useState(EMPTY_FORM);
-    const [attempt, setAttempt] = useState(null);
-    const [attemptPollError, setAttemptPollError] = useState(false);
-    const [attemptRetryVersion, setAttemptRetryVersion] = useState(0);
     const [quizzes, setQuizzes] = useState([]);
 
     const loadMaterials = useCallback(
@@ -83,50 +78,12 @@ const KnowledgeMirrorPage = () => {
         return () => controller.abort();
     }, [loadMaterials]);
 
-    useEffect(() => {
-        if (!attemptId) {
-            setAttempt(null);
-            return undefined;
-        }
-        let active = true;
-        let timer;
-        let retryCount = 0;
-        setAttemptPollError(false);
-        const refresh = async () => {
-            try {
-                const next = await knowledgeService.getAttempt(attemptId, {
-                    _silent: true,
-                });
-                if (!active) return;
-                setAttempt(next);
-                setAttemptPollError(false);
-                retryCount = 0;
-                if (!TERMINAL_ATTEMPT_STATUSES.has(next.status)) {
-                    timer = window.setTimeout(
-                        refresh,
-                        ATTEMPT_POLL_INTERVAL_MS,
-                    );
-                }
-                if (next.status === "SUCCEEDED")
-                    loadMaterials().catch(() => {});
-            } catch {
-                if (!active) return;
-                setAttemptPollError(true);
-                retryCount += 1;
-                // 短暂网络抖动不能抹掉已经落库的任务；有限退避后停下，交给用户手动恢复。
-                if (retryCount <= ATTEMPT_POLL_RETRY_LIMIT) {
-                    const delay =
-                        ATTEMPT_POLL_INTERVAL_MS * 2 ** (retryCount - 1);
-                    timer = window.setTimeout(refresh, delay);
-                }
-            }
-        };
-        refresh();
-        return () => {
-            active = false;
-            window.clearTimeout(timer);
-        };
-    }, [attemptId, attemptRetryVersion, loadMaterials]);
+    const {
+        attempt,
+        attemptPollError,
+        registerAttempt,
+        retryAttempt,
+    } = useKnowledgeAttempt({ attemptId, loadMaterials });
 
     const activeMaterial = useMemo(
         () =>
@@ -274,13 +231,13 @@ const KnowledgeMirrorPage = () => {
 
     const handleAttemptCreated = useCallback(
         (created) => {
-            setAttempt(created);
+            registerAttempt(created);
             setSearchParams(
                 { attemptId: String(created.id) },
                 { replace: true },
             );
         },
-        [setSearchParams],
+        [registerAttempt, setSearchParams],
     );
 
     const {
@@ -297,11 +254,6 @@ const KnowledgeMirrorPage = () => {
         onAttemptCreated: handleAttemptCreated,
         t,
     });
-
-    const retryAttempt = () => {
-        setAttemptPollError(false);
-        setAttemptRetryVersion((current) => current + 1);
-    };
 
     // 出题和判分都发生在对话里，所以这里只是带着一句开场白跳进智能体，由它调用 quiz_knowledge。
     const startAgentQuiz = () => {
