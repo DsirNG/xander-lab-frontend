@@ -36,11 +36,13 @@ src/
 │   │   └── WorkspaceLayout.jsx  # 工作台 Shell
 │   ├── bootstrap/               # 全局启动期 UI 和域名边界
 │   ├── errors/                 # ErrorBoundary、404 和运行时兜底
+│   ├── providers/              # App 级 Provider 组合
 │   ├── update/                 # chunk 更新与运行时刷新边界
 │   ├── seo/                    # 路由级 SEO 组合
 │   └── routing/                 # 路由配置、懒加载和路由边界
 │
 ├── features/                    # 业务领域
+│   ├── appUpdate/              # 应用更新提示与版本边界
 │   ├── auth/
 │   ├── admin/
 │   ├── agent/
@@ -77,6 +79,7 @@ src/
 │   ├── auth/                    # 凭据存储与 401 恢复协调
 │   ├── errors/                 # HTTP/业务错误归一化
 │   ├── transfer/               # 上传、下载和进度处理
+│   ├── index.js                 # Transport 兼容统一出口
 │   ├── authChannel.js           # 跨标签鉴权广播
 │   ├── http.js                 # Axios 客户端、拦截器与错误边界
 │   └── httpMethods.js           # 请求方法、SSE、取消和传输门面
