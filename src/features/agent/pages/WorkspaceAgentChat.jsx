@@ -13,6 +13,7 @@ import LoadingSpinner from "@shared/ui/feedback/LoadingSpinner";
 import { useAuthSession } from "@features/auth";
 import { useAgentConversation } from "../hooks/useAgentConversation";
 import useAgentAttachments from "../hooks/useAgentAttachments";
+import useAgentQueryBootstrap from "../hooks/useAgentQueryBootstrap";
 import AgentComposer from "../components/AgentComposer";
 import AgentConversationTimeline from "../components/AgentConversationTimeline";
 import WorkspaceAgentConversationMessage, {
@@ -59,7 +60,6 @@ const WorkspaceAgentChat = () => {
     const chatEndRef = useRef(null);
     const chatScrollRef = useRef(null);
     const stickToBottomRef = useRef(true);
-    const pendingQueryRef = useRef(null);
 
     const {
         sessions,
@@ -215,36 +215,17 @@ const WorkspaceAgentChat = () => {
         [setConversationPinned, t, toast],
     );
 
-    useEffect(() => {
-        if (
-            !queryParam ||
-            conversationId ||
-            creating ||
-            pendingQueryRef.current === queryParam
-        )
-            return;
-        pendingQueryRef.current = queryParam;
-        setInput(queryParam);
-        (async () => {
-            try {
-                await submitText(queryParam);
-                const next = new URLSearchParams(searchParams);
-                next.delete("q");
-                setSearchParams(next, { replace: true });
-            } catch (error) {
-                toast.error(error.message || t("blog.agentChat.sendFailed"));
-            }
-        })();
-    }, [
-        queryParam,
+    useAgentQueryBootstrap({
         conversationId,
         creating,
-        submitText,
+        queryParam,
         searchParams,
+        setInput,
         setSearchParams,
+        submitText,
         t,
         toast,
-    ]);
+    });
 
     const canSend =
         Boolean(input.trim() || attachments.length) && !uploadingAttachments;

@@ -15,6 +15,7 @@ import useIsMobile from "@shared/hooks/useIsMobile";
 import { useAgentConversation } from "../hooks/useAgentConversation";
 import useAgentArtifact from "../hooks/useAgentArtifact";
 import useAgentAttachments from "../hooks/useAgentAttachments";
+import useAgentQueryBootstrap from "../hooks/useAgentQueryBootstrap";
 import AgentSessionSearchModal from "../components/AgentSessionSearchModal";
 import AgentArtifactPanel from "../components/AgentArtifactPanel";
 import AgentChatSidebar from "../components/AgentChatSidebar";
@@ -96,7 +97,6 @@ const AgentChat = () => {
     const chatEndRef = useRef(null);
     const chatScrollRef = useRef(null);
     const stickToBottomRef = useRef(true);
-    const pendingQueryRef = useRef(null);
 
     const {
         sessions,
@@ -266,38 +266,17 @@ const AgentChat = () => {
         [decideApproval, t, toast],
     );
 
-    // 图片等入口页面携带 ?q= 跳转而来：自动创建会话并发送首条消息。
-    // ref 守卫保证同一 q 只触发一次（StrictMode 双执行与路由变化都不会重复发送）。
-    useEffect(() => {
-        if (
-            !queryParam ||
-            conversationId ||
-            creating ||
-            pendingQueryRef.current === queryParam
-        )
-            return;
-        pendingQueryRef.current = queryParam;
-        setInput(queryParam);
-        (async () => {
-            try {
-                await submitText(queryParam);
-                const next = new URLSearchParams(searchParams);
-                next.delete("q");
-                setSearchParams(next, { replace: true });
-            } catch (error) {
-                toast.error(error.message || t("blog.agentChat.sendFailed"));
-            }
-        })();
-    }, [
-        queryParam,
+    useAgentQueryBootstrap({
         conversationId,
         creating,
-        submitText,
+        queryParam,
         searchParams,
+        setInput,
         setSearchParams,
+        submitText,
         t,
         toast,
-    ]);
+    });
 
     /** 图片画廊内发起生成：与「新聊天」等价——总是新建会话，只是首条消息固定为生成图片指令。 */
     const handleImagesGenerate = useCallback(
