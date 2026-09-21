@@ -1,5 +1,4 @@
 import React, {
-    memo,
     useCallback,
     useEffect,
     useMemo,
@@ -15,7 +14,6 @@ import {
     Loader2,
     MessageSquareText,
     ShieldAlert,
-    Sparkles,
     X,
     Globe,
     PenLine,
@@ -25,7 +23,6 @@ import {
     Link2,
     Search,
     SquarePen,
-    FileText,
 } from "lucide-react";
 import { useToast } from "@shared/hooks/useToast";
 import LoadingSpinner from "@shared/ui/feedback/LoadingSpinner";
@@ -41,10 +38,13 @@ import {
     agentConversationService,
     parseToolPayload,
 } from "../services/agentConversationService";
-import AgentMarkdown from "../components/AgentMarkdown";
 import AgentSessionList from "../components/AgentSessionList";
 import AgentApprovalCard from "../components/AgentApprovalCard";
 import AgentChatInputBar from "../components/AgentChatInputBar";
+import {
+    AgentConversationMessage,
+    AgentThoughtCard,
+} from "../components/AgentConversationMessage";
 import ImageToolResult from "../components/ImageToolResult";
 import {
     ArtifactMessage,
@@ -57,7 +57,6 @@ import { AgentTraceCard, SelfCheckCard } from "../components/AgentTraceCard";
 import { mergeLiveTraces, mergeToolTraces } from "../components/agentTrace";
 import {
     IMAGE_TOOL,
-    cleanImageMarkdown,
     containsResultUrl,
     imageToolResult,
     imageUrlsFromMessages,
@@ -75,110 +74,8 @@ import { parseQuizPayload } from "../components/quizPayload";
  */
 const SCROLL_THROTTLE_INTERVAL_MS = 120;
 
-const ThoughtCard = ({ content }) => (
-    <div className="flex items-start gap-2 rounded-xl border border-border bg-canvas px-3 py-2 text-xs leading-5 text-ink-muted">
-        <Sparkles className="mt-0.5 h-3.5 w-3.5 shrink-0 text-ink-muted" />
-        <span className="whitespace-pre-wrap">{content}</span>
-    </div>
-);
-
 // 仍然从这里导出，保持既有调用方与测试的导入路径不变。
 export { ImageToolResult };
-
-const MessageAttachments = ({ attachments = [] }) =>
-    attachments.length ? (
-        <div className="mb-2 flex max-w-full flex-wrap gap-2">
-            {attachments.map((attachment) =>
-                attachment.contentType?.startsWith("image/") ? (
-                    <a
-                        key={`${attachment.url}-${attachment.name}`}
-                        href={attachment.url}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="block"
-                    >
-                        <img
-                            src={attachment.url}
-                            alt={attachment.name}
-                            className="h-24 w-24 rounded-2xl border border-border object-cover"
-                        />
-                    </a>
-                ) : (
-                    <a
-                        key={`${attachment.url}-${attachment.name}`}
-                        href={attachment.url}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="flex max-w-64 items-center gap-2 rounded-2xl border border-border bg-surface px-3 py-2 text-caption text-ink hover:bg-surface-muted"
-                    >
-                        <FileText className="h-5 w-5 shrink-0 text-ink-muted" />
-                        <span className="truncate">{attachment.name}</span>
-                    </a>
-                ),
-            )}
-        </div>
-    ) : null;
-
-/**
- * 单条消息的渲染单元。
- *
- * <p>用 memo 包住：流式回答期间父组件会按动画帧重渲染，若不 memo，
- * 每一条历史消息都会跟着重算——包括它内部的整段 Markdown 解析。
- * props 都是原始值或稳定引用，因此浅比较即可挡住无关重渲染。</p>
- */
-const ConversationMessage = memo(({ role, content, attachments, imageUrls, isStreaming }) => (
-    <div
-        className={`flex w-full ${role === "user" ? "justify-end" : "justify-start"}`}
-    >
-        <div
-            className={
-                role === "user"
-                    ? "max-w-[85%] rounded-3xl bg-surface-muted px-4 py-2.5 text-sm leading-6 text-ink sm:max-w-[75%]"
-                    : "w-full min-w-0 py-1 text-sm leading-6 text-ink"
-            }
-        >
-            {role === "user" ? (
-                <>
-                    <MessageAttachments attachments={attachments} />
-                    <span className="whitespace-pre-wrap">{content}</span>
-                </>
-            ) : isStreaming ? (
-                content ? (
-                    <div className="flex items-start gap-0.5">
-                        <div className="min-w-0 flex-1">
-                            <AgentMarkdown
-                                content={cleanImageMarkdown(content, imageUrls)}
-                                isStreaming
-                            />
-                        </div>
-                        <span
-                            className="mt-1.5 inline-block h-4 w-[3px] shrink-0 animate-pulse rounded-sm bg-current align-middle"
-                            aria-hidden="true"
-                        />
-                    </div>
-                ) : (
-                    <span
-                        className="inline-flex items-center gap-1 px-1"
-                        role="status"
-                        aria-live="polite"
-                    >
-                        {[0, 1, 2].map((index) => (
-                            <span
-                                key={index}
-                                className="h-1.5 w-1.5 animate-bounce rounded-full bg-current opacity-70"
-                                style={{ animationDelay: `${index * 140}ms` }}
-                            />
-                        ))}
-                    </span>
-                )
-            ) : (
-                <AgentMarkdown content={cleanImageMarkdown(content, imageUrls)} />
-            )}
-        </div>
-    </div>
-));
-
-ConversationMessage.displayName = "ConversationMessage";
 
 export {
     ArtifactMessage,
@@ -1068,7 +965,7 @@ const AgentChat = () => {
                                                         message.role === "user"
                                                     ) {
                                                         return (
-                                                            <ConversationMessage
+                                                            <AgentConversationMessage
                                                                 key={message.id}
                                                                 role="user"
                                                                 content={
@@ -1085,7 +982,7 @@ const AgentChat = () => {
                                                         "thought"
                                                     ) {
                                                         return (
-                                                            <ThoughtCard
+                                                            <AgentThoughtCard
                                                                 key={message.id}
                                                                 content={
                                                                     message.content
@@ -1149,7 +1046,7 @@ const AgentChat = () => {
                                                         )
                                                             return null;
                                                         return (
-                                                            <ConversationMessage
+                                                            <AgentConversationMessage
                                                                 key={message.id}
                                                                 role="assistant"
                                                                 content={
@@ -1179,7 +1076,7 @@ const AgentChat = () => {
                                                 {steps.map((step, index) => {
                                                     if (step.type === "user")
                                                         return (
-                                                            <ConversationMessage
+                                                            <AgentConversationMessage
                                                                 key={`live-${index}`}
                                                                 role="user"
                                                                 content={
@@ -1192,7 +1089,7 @@ const AgentChat = () => {
                                                         );
                                                     if (step.type === "thought")
                                                         return (
-                                                            <ThoughtCard
+                                                            <AgentThoughtCard
                                                                 key={`live-${index}`}
                                                                 content={
                                                                     step.content
@@ -1281,7 +1178,7 @@ const AgentChat = () => {
                                                         )
                                                             return null;
                                                         return (
-                                                            <ConversationMessage
+                                                            <AgentConversationMessage
                                                                 key={`live-${index}`}
                                                                 role="assistant"
                                                                 content={
