@@ -1,37 +1,17 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import {
     Github,
     Menu,
-    Languages,
     X,
     User as UserIcon,
-    ChevronDown,
-    Check,
 } from "lucide-react";
 import styles from "./Navbar.module.css";
 import { useAuthSession } from "@features/auth";
 import { NotificationBell } from "@features/blog";
 import Button from "@shared/ui/primitives/Button";
-
-const LANGUAGES = ["zh", "en", "fr", "ja", "ru", "vi"];
-const LANG_LABELS = {
-    zh: "中文",
-    en: "EN",
-    fr: "FR",
-    ja: "日本語",
-    ru: "RU",
-    vi: "VI",
-};
-const LANG_FULL = {
-    zh: "简体中文",
-    en: "English",
-    fr: "Français",
-    ja: "日本語",
-    ru: "Русский",
-    vi: "Tiếng Việt",
-};
+import NavbarLanguageControl from "./NavbarLanguageControl";
 
 const getDisplayName = (userInfo) =>
     userInfo?.nickname || userInfo?.username || "";
@@ -41,90 +21,16 @@ const getAvatarText = (userInfo) => {
 };
 
 const Navbar = () => {
-    const { t, i18n } = useTranslation();
+    const { t } = useTranslation();
     const { userInfo } = useAuthSession();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-    const [isLangDropdownOpen, setIsLangDropdownOpen] = useState(false);
-    const [langReel, setLangReel] = useState(() => ({
-        outgoing: LANG_LABELS[i18n.language] || "EN",
-        incoming: null,
-        rolling: false,
-    }));
-    const langRollTimerRef = useRef(null);
-    const langDropdownRef = useRef(null);
     const location = useLocation();
-
-    const rollLanguageLabel = useCallback((nextLng) => {
-        const nextLabel = LANG_LABELS[nextLng] || "EN";
-        setLangReel((current) => {
-            if (current.rolling && current.incoming === nextLabel) {
-                return current;
-            }
-            return {
-                outgoing: current.incoming || current.outgoing,
-                incoming: nextLabel,
-                rolling: true,
-            };
-        });
-        if (langRollTimerRef.current) {
-            window.clearTimeout(langRollTimerRef.current);
-        }
-        langRollTimerRef.current = window.setTimeout(() => {
-            setLangReel({
-                outgoing: nextLabel,
-                incoming: null,
-                rolling: false,
-            });
-            langRollTimerRef.current = null;
-        }, 360);
-    }, []);
-
-    // 切换语言（标签下→上滚动）
-    const changeLanguage = useCallback(
-        (lng) => {
-            if (lng === i18n.language) {
-                setIsLangDropdownOpen(false);
-                return;
-            }
-            setIsLangDropdownOpen(false);
-            rollLanguageLabel(lng);
-            i18n.changeLanguage(lng);
-        },
-        [i18n, rollLanguageLabel],
-    );
-
-    // 移动端循环切换
-    const toggleLanguageMobile = () => {
-        const currentIdx = Math.max(0, LANGUAGES.indexOf(i18n.language));
-        const nextLng = LANGUAGES[(currentIdx + 1) % LANGUAGES.length];
-        rollLanguageLabel(nextLng);
-        i18n.changeLanguage(nextLng);
-    };
-
-    useEffect(
-        () => () => {
-            if (langRollTimerRef.current) {
-                window.clearTimeout(langRollTimerRef.current);
-            }
-        },
-        [],
-    );
-
-    // Keep reel label in sync when language changes elsewhere
-    useEffect(() => {
-        const label = LANG_LABELS[i18n.language] || "EN";
-        setLangReel((current) => {
-            if (current.rolling) return current;
-            if (current.outgoing === label) return current;
-            return { outgoing: label, incoming: null, rolling: false };
-        });
-    }, [i18n.language]);
 
     const displayName = getDisplayName(userInfo);
     const avatarText = getAvatarText(userInfo);
     const roleLabel = userInfo?.role || "";
 
-    // 点击外部关闭菜单和语言下拉
+    // 点击外部关闭菜单
     useEffect(() => {
         const handleClickOutside = (event) => {
             const mobileMenu = document.querySelector(`.${styles.mobileMenu}`);
@@ -154,22 +60,6 @@ const Navbar = () => {
             document.body.style.overflow = "";
         };
     }, [isMobileMenuOpen]);
-
-    // 点击外部关闭语言下拉
-    useEffect(() => {
-        if (!isLangDropdownOpen) return;
-        const handleClickOutside = (event) => {
-            if (
-                langDropdownRef.current &&
-                !langDropdownRef.current.contains(event.target)
-            ) {
-                setIsLangDropdownOpen(false);
-            }
-        };
-        document.addEventListener("mousedown", handleClickOutside);
-        return () =>
-            document.removeEventListener("mousedown", handleClickOutside);
-    }, [isLangDropdownOpen]);
 
     const navLinks = [
         { path: "/", label: t("nav.home") },
@@ -231,107 +121,7 @@ const Navbar = () => {
                         </div>
 
                         <div className={styles.actionsArea}>
-                            {/* PC端语言下拉选择器 */}
-                            <div
-                                className="hidden sm:flex items-center relative"
-                                ref={langDropdownRef}
-                            >
-                                <Button
-                                    onClick={() =>
-                                        setIsLangDropdownOpen(
-                                            !isLangDropdownOpen,
-                                        )
-                                    }
-                                    variant="ghost"
-                                    size="sm"
-                                    className={`${styles.iconButton} flex items-center gap-1 px-2 sm:px-3`}
-                                    title="Language"
-                                    aria-expanded={isLangDropdownOpen}
-                                    aria-haspopup="listbox"
-                                >
-                                    <Languages
-                                        aria-hidden="true"
-                                        className="w-4 h-4"
-                                    />
-                                    <span
-                                        className={`${styles.langReel} ${styles.langReelSm}`}
-                                        aria-live="polite"
-                                    >
-                                        <span
-                                            className={`${styles.langReelItem} ${
-                                                langReel.rolling
-                                                    ? styles.langReelOut
-                                                    : ""
-                                            }`}
-                                        >
-                                            {langReel.outgoing}
-                                        </span>
-                                        {langReel.rolling &&
-                                        langReel.incoming ? (
-                                            <span
-                                                className={`${styles.langReelItem} ${styles.langReelIn}`}
-                                            >
-                                                {langReel.incoming}
-                                            </span>
-                                        ) : null}
-                                    </span>
-                                    <ChevronDown
-                                        aria-hidden="true"
-                                        className={`w-3 h-3 transition-transform duration-200 ${isLangDropdownOpen ? "rotate-180" : ""}`}
-                                    />
-                                </Button>
-
-                                {/* 下拉菜单 */}
-                                <div
-                                    className={`absolute top-full right-0 mt-2 ${styles.langDropdown} ${isLangDropdownOpen ? styles.langDropdownOpen : ""}`}
-                                >
-                                    <div
-                                        className="py-1.5"
-                                        role="listbox"
-                                        aria-label="Select language"
-                                    >
-                                        {LANGUAGES.map((lng, idx) => {
-                                            const isActive =
-                                                i18n.language === lng;
-                                            return (
-                                                <Button
-                                                    key={lng}
-                                                    role="option"
-                                                    aria-selected={isActive}
-                                                    onClick={() =>
-                                                        changeLanguage(lng)
-                                                    }
-                                                    variant="ghost"
-                                                    size="sm"
-                                                    className={`${styles.langOption} ${isActive ? styles.langOptionActive : ""}`}
-                                                    style={{
-                                                        animationDelay:
-                                                            isLangDropdownOpen
-                                                                ? `${idx * 40}ms`
-                                                                : "0ms",
-                                                    }}
-                                                >
-                                                    <span className="flex items-center gap-2.5">
-                                                        <span
-                                                            className={`text-xs font-bold w-7 text-center ${isActive ? "text-accent" : "text-ink-muted"}`}
-                                                        >
-                                                            {LANG_LABELS[lng]}
-                                                        </span>
-                                                        <span
-                                                            className={`text-xs ${isActive ? "text-accent font-semibold" : "text-ink-secondary"}`}
-                                                        >
-                                                            {LANG_FULL[lng]}
-                                                        </span>
-                                                    </span>
-                                                    {isActive && (
-                                                        <Check className="w-3.5 h-3.5 text-accent" />
-                                                    )}
-                                                </Button>
-                                            );
-                                        })}
-                                    </div>
-                                </div>
-                            </div>
+                            <NavbarLanguageControl />
                             <a
                                 href="https://github.com/DsirNG/xander-lab-frontend"
                                 target="_blank"
@@ -443,35 +233,7 @@ const Navbar = () => {
                     </div>
 
                     <div className={styles.mobileMenuActions}>
-                        <Button
-                            onClick={toggleLanguageMobile}
-                            variant="ghost"
-                            size="md"
-                            className={`${styles.mobileActionButton} flex items-center space-x-2`}
-                        >
-                            <Languages aria-hidden="true" className="w-4 h-4" />
-                            <span
-                                className={`${styles.langReel} ${styles.langReelMd}`}
-                                aria-live="polite"
-                            >
-                                <span
-                                    className={`${styles.langReelItem} ${
-                                        langReel.rolling
-                                            ? styles.langReelOut
-                                            : ""
-                                    }`}
-                                >
-                                    {langReel.outgoing}
-                                </span>
-                                {langReel.rolling && langReel.incoming ? (
-                                    <span
-                                        className={`${styles.langReelItem} ${styles.langReelIn}`}
-                                    >
-                                        {langReel.incoming}
-                                    </span>
-                                ) : null}
-                            </span>
-                        </Button>
+                        <NavbarLanguageControl mobile />
                         <a
                             href="https://github.com/DsirNG/xander-lab-frontend"
                             target="_blank"
