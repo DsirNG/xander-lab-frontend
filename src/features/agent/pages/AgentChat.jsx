@@ -8,7 +8,6 @@ import React, {
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import {
-    AlertCircle,
     ArrowLeft,
     Bot,
     Loader2,
@@ -25,9 +24,7 @@ import {
     SquarePen,
 } from "lucide-react";
 import { useToast } from "@shared/hooks/useToast";
-import LoadingSpinner from "@shared/ui/feedback/LoadingSpinner";
 import {
-    AgentPreviewPanel,
     getBlogAgentTask,
     publishBlogAgentTask,
 } from "@features/blog";
@@ -39,6 +36,7 @@ import {
 } from "../services/agentConversationService";
 import AgentSessionList from "../components/AgentSessionList";
 import AgentSessionSearchModal from "../components/AgentSessionSearchModal";
+import AgentArtifactPanel from "../components/AgentArtifactPanel";
 import AgentChatInputBar from "../components/AgentChatInputBar";
 import AgentConversationTimeline from "../components/AgentConversationTimeline";
 import ImageToolResult from "../components/ImageToolResult";
@@ -498,47 +496,20 @@ const AgentChat = () => {
     }, [reconnecting, isActive, conversation, t]);
 
     const showArtifact = Boolean(blogTaskId);
-    const artifactTask = artifactData?.task;
-    const artifactStatusText =
-        artifactTask?.status === "failed"
-            ? artifactTask.errorMessage || t("blog.agent.failed")
-            : artifactTask?.status === "ready"
-              ? t("blog.agent.ready")
-              : t("blog.agent.running");
-    const artifactPanel = artifactLoading ? (
-        <div className="flex h-full min-h-48 items-center justify-center bg-canvas">
-            <LoadingSpinner
-                fullScreen={false}
-                text={t("blog.agent.restoring")}
-            />
-        </div>
-    ) : artifactError ? (
-        <div className="flex h-full flex-col items-center justify-center gap-4 bg-canvas px-6 text-center">
-            <AlertCircle className="h-8 w-8 text-danger" />
-            <div className="text-sm font-semibold text-danger">
-                {artifactError}
-            </div>
-            <button
-                type="button"
-                onClick={handleCloseArtifact}
-                className="rounded-xl border border-border px-4 py-2 text-sm font-bold text-ink-secondary"
-            >
-                {t("common.close")}
-            </button>
-        </div>
-    ) : (
-        <AgentPreviewPanel
+    const artifactPanel = (
+        <AgentArtifactPanel
+            loading={artifactLoading}
+            error={artifactError}
             taskData={artifactData}
             selectedVersionId={selectedVersionId}
-            statusText={artifactStatusText}
             isPublishing={isPublishing}
             isSavingDraft={isSavingDraft}
             onPublish={handlePublishArtifact}
             onCreateDraft={handleCreateArtifactDraft}
-            onViewPublished={() =>
-                artifactTask?.publishedPostId &&
-                navigate(`/blog/${artifactTask.publishedPostId}`)
-            }
+            onViewPublished={() => {
+                const publishedPostId = artifactData?.task?.publishedPostId;
+                if (publishedPostId) navigate(`/blog/${publishedPostId}`);
+            }}
             onSelectVersion={setSelectedVersionId}
             onClose={handleCloseArtifact}
         />
