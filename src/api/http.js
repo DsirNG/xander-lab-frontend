@@ -23,12 +23,10 @@ import { ENV_CONFIG } from "@config/env";
 import i18n from "@locales/index";
 import { MAX_RETRY, getRetryDelay, shouldRetryRequest } from "./httpPolicy";
 import { createHttpMethods } from "./httpMethods";
-import { AUTH_EVENTS, authChannel, refreshMutex } from "./authChannel";
 import {
-    getRefreshRetryDelay,
-    isUnrecoverableRefreshFailure,
-    shouldRetryRefresh,
-} from "./refreshFailurePolicy";
+    AUTH_RECOVERY_NOT_HANDLED,
+    createAuthRecovery,
+} from "./auth/refreshCoordinator";
 import { tokenStorage } from "./auth/tokenStorage";
 import {
     extractBlobErrorMessage,
@@ -65,32 +63,6 @@ const BASE_URL = ENV_CONFIG.BASE_URL;
 /** 是否开发环境 */
 const IS_DEV = ENV_CONFIG.IS_DEV;
 
-/** 刷新 Token 的接口路径（相对 baseURL） */
-const REFRESH_URL = "/api/auth/refresh";
-
-/**
- * Refresh 专用超时（毫秒）。
- *
- * ⚠️ 必须与 `DEFAULT_TIMEOUT` 解耦，不能跟着 `VITE_REQUEST_TIMEOUT` 走。
- *
- * 原因：`DEFAULT_TIMEOUT` 开发环境是 15000、**生产环境是 30000**
- * （`.env.production` 把 `VITE_REQUEST_TIMEOUT` 调高了，因为普通接口里有慢请求）。
- * 而服务端的幂等 grace 只有 25s，它是按 refresh timeout = 15s 推导出来的
- * （V9 §35 / §36，登记在 `docs/contract-changes.yaml` 的
- * `refresh-grace-window.frontend_refresh_timeout_ms`）。
- *
- * 若这里直接用 `DEFAULT_TIMEOUT`，生产环境就会变成
- * `grace(25s) < refresh timeout(30s)`：第一次请求服务端已经轮换、但响应丢失时，
- * 客户端要等到 30s 才超时重试，而重试落在 grace 之外 → 服务端按
- * §39 分支 3「真正的 Reuse」处理 → **撤销整个会话族，用户被强制登出**。
- * 这正是 grace 存在的意义所要防住的场景，所以这个值属于 Contract。
- */
-const REFRESH_TIMEOUT = 15000;
-
-/** 最大自动重试次数（网络错误 / 5xx） */
-
-/** 重试间隔基数（ms），指数退避：delay = BASE_RETRY_DELAY * 2^attempt */
-
 /**
  * 全局 Toast 提示（由 App.jsx 的 ToastBridge 注册 window.__toast）
  * 在 axios 拦截器中直接调用，实现请求级别的错误/警告提示
@@ -99,318 +71,6 @@ const REFRESH_TIMEOUT = 15000;
  */
 function showToast(type, message) {
     window.__toast?.(type, message);
-}
-
-/**
- * 将会话降为真正未登录：清本地凭证、通知 UI。
- * 用于 access/refresh 失效等「登录已过期」场景，不用于登录接口账号密码错误。
- * 过期提示始终弹出（与请求的 _silent 无关）：静默只抑制该请求自身的业务错误 toast。
- */
-function forceLoggedOut() {
-    tokenStorage.clear();
-    window.dispatchEvent(
-        new CustomEvent("auth:logout", {
-            detail: { reason: "session_expired" },
-        }),
-    );
-    showToast(
-        "warning",
-        i18n.t("auth.sessionExpired", "登录已过期，请重新登录"),
-    );
-}
-
-// ─────────────────────────────────────────────
-// 6. Token 无感刷新（跨 Tab 协调见 V9 §44，失败分类见 §45，重试见 §46）
-// ─────────────────────────────────────────────
-
-/**
- * 本 Tab 是否正在刷新 Token。
- *
- * 只作为 **Tab 内锁**：它无法阻止另一个 Tab 同时刷新（§44）。
- * 跨 Tab 的互斥由 `refreshMutex` + 广播通道负责。
- */
-let isRefreshing = false;
-
-/** 本 Tab 发起的刷新结束后需要唤醒的挂起请求 */
-let refreshSubscribers = [];
-
-/** 由广播得知「别的 Tab 正在刷新」：本 Tab 不再自己发起 */
-let remoteRefreshInFlight = false;
-
-/** 等待别的 Tab 刷新结果的安全兜底定时器（防止对方崩溃导致永久挂起） */
-let remoteRefreshTimer = null;
-
-/**
- * 正在因为「收到别的 Tab 的登出」而做本地清理。
- *
- * 本地清理会派发 `auth:logout`，而本模块又把 `auth:logout` 转发到跨 Tab
- * 通道；如果不加这个开关，两个 Tab 会互相把登出事件弹回去，形成死循环。
- */
-let suppressLogoutBroadcast = false;
-
-/**
- * 等待别的 Tab 刷新结果的上限。
- * 超过这个时间还没收到结果，就当作暂时性失败放行，绝不无限等待。
- */
-const REMOTE_REFRESH_TIMEOUT_MS = 15_000;
-
-const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-
-/**
- * 「登录已过期」错误：只在会话**确实**不可恢复时使用。
- * @returns {HttpError}
- */
-function sessionExpiredError() {
-    return new HttpError(
-        i18n.t("auth.sessionExpired", "登录已过期，请重新登录"),
-        401,
-        null,
-        null,
-    );
-}
-
-/**
- * 「暂时无法刷新会话」错误。
- *
- * §45 明确要求：后端暂时不可用时**不得**把它伪装成「登录过期」。
- * 所以这里用一个独立文案 + 非 401 状态，让调用方和用户都能区分
- * 「你的凭据还有效，只是服务端暂时不可用」与「你真的需要重新登录」。
- *
- * @param {any} [cause] 原始失败原因，便于排查
- * @returns {HttpError}
- */
-function refreshUnavailableError(cause) {
-    return new HttpError(
-        i18n.t(
-            "http.errors.refreshUnavailable",
-            "暂时无法刷新会话，请稍后重试",
-        ),
-        503,
-        null,
-        cause ?? null,
-    );
-}
-
-/**
- * 将失败请求加入刷新队列
- * @param {Function} callback - Token 刷新成功后的回调
- */
-function subscribeTokenRefresh(onSuccess, onFailure) {
-    refreshSubscribers.push({ onSuccess, onFailure });
-}
-
-/**
- * 通知所有等待刷新的请求
- * @param {string} newToken
- */
-function notifyRefreshSubscribers(newToken) {
-    refreshSubscribers.forEach(({ onSuccess }) => onSuccess(newToken));
-    refreshSubscribers = [];
-}
-
-function rejectRefreshSubscribers(error) {
-    refreshSubscribers.forEach(({ onFailure }) => onFailure(error));
-    refreshSubscribers = [];
-}
-
-/**
- * 把一个 401 请求挂到刷新队列上，等拿到新 token 后重放。
- * @param {import('axios').InternalAxiosRequestConfig} config
- * @returns {Promise<any>}
- */
-function queueForRefresh(config) {
-    return new Promise((resolve, reject) => {
-        subscribeTokenRefresh(
-            (newToken) => {
-                config.headers["Authorization"] = `Bearer ${newToken}`;
-                config._retryRefresh = true;
-                resolve(instance(config));
-            },
-            (refreshError) => {
-                // 刷新发起方已经做过 forceLoggedOut，这里只跟着重置
-                reject(
-                    refreshError instanceof HttpError
-                        ? refreshError
-                        : sessionExpiredError(),
-                );
-            },
-        );
-    });
-}
-
-/** 开始等待别的 Tab 的刷新结果，并启动兜底定时器 */
-function beginRemoteRefreshWait() {
-    remoteRefreshInFlight = true;
-    if (remoteRefreshTimer) clearTimeout(remoteRefreshTimer);
-    remoteRefreshTimer = setTimeout(() => {
-        remoteRefreshTimer = null;
-        if (!remoteRefreshInFlight) return;
-        // 对方一直没有回报：不能把用户永久挂在这里
-        remoteRefreshInFlight = false;
-        rejectRefreshSubscribers(refreshUnavailableError());
-    }, REMOTE_REFRESH_TIMEOUT_MS);
-}
-
-/** 结束等待别的 Tab 的刷新结果 */
-function endRemoteRefreshWait() {
-    remoteRefreshInFlight = false;
-    if (remoteRefreshTimer) {
-        clearTimeout(remoteRefreshTimer);
-        remoteRefreshTimer = null;
-    }
-}
-
-/**
- * 响应来自其它 Tab 的会话事件（§44）。
- *
- * 注意：`BroadcastChannel` 与 `storage` 事件都不会回调到发布者自身，
- * 所以这里处理的一定是「别的 Tab」发生的事。
- */
-authChannel.subscribe((event, payload) => {
-    switch (event) {
-        case AUTH_EVENTS.REFRESH_START:
-            // 别的 Tab 已在刷新：本 Tab 不再发起，避免触发服务端的
-            // Reuse 检测把整个会话族撤销
-            if (!isRefreshing) beginRemoteRefreshWait();
-            break;
-
-        case AUTH_EVENTS.REFRESH_SUCCESS: {
-            // 新 token 就写在共享的 localStorage 里，直接重读即可
-            const token = tokenStorage.getToken();
-            endRemoteRefreshWait();
-            if (token) notifyRefreshSubscribers(token);
-            break;
-        }
-
-        case AUTH_EVENTS.REFRESH_FAILED:
-            endRemoteRefreshWait();
-            if (payload?.unrecoverable) {
-                forceLoggedOut();
-                rejectRefreshSubscribers(sessionExpiredError());
-            } else {
-                // 暂时性失败：保留凭据，不跳登录页
-                rejectRefreshSubscribers(refreshUnavailableError(payload?.cause));
-            }
-            break;
-
-        case AUTH_EVENTS.LOGOUT:
-            // 别的 Tab 登出 / 被强制登出：本 Tab 跟着降到未登录。
-            // 期间屏蔽反向广播，否则两个 Tab 会把登出事件互相弹来弹去。
-            endRemoteRefreshWait();
-            suppressLogoutBroadcast = true;
-            try {
-                forceLoggedOut();
-            } finally {
-                suppressLogoutBroadcast = false;
-            }
-            rejectRefreshSubscribers(sessionExpiredError());
-            break;
-
-        default:
-            break;
-    }
-});
-
-/**
- * 本 Tab 的登出同样要通知其它 Tab。
- *
- * 之所以在这里监听 `auth:logout`（而不是去改 `authService.logout`）：
- * 登出有多个入口（用户点登出、刷新失败被强制登出、其它模块清理会话），
- * 它们最终都会派发这个事件。挂在这一个点上，既能覆盖所有入口，
- * 也让「跨 Tab 广播」只有 http.js 一个所有者。
- */
-if (typeof window !== "undefined" && window.addEventListener) {
-    window.addEventListener("auth:logout", (event) => {
-        if (suppressLogoutBroadcast) return;
-        authChannel.publish(AUTH_EVENTS.LOGOUT, {
-            reason: event?.detail?.reason ?? "logout",
-        });
-    });
-}
-
-/**
- * 单次刷新尝试：发请求并把新凭据落盘。
- *
- * @param {string} refreshToken 本次刷新使用的 refresh token
- * @returns {Promise<{accessToken: string, refreshToken?: string}>}
- */
-async function attemptRefresh(refreshToken) {
-    // 使用原始 axios 避免循环拦截；显式超时，避免刷新挂起时拖垮排队请求。
-    // 用 REFRESH_TIMEOUT 而不是 DEFAULT_TIMEOUT：见该常量的注释。
-    const response = await axios.post(
-        `${BASE_URL}${REFRESH_URL}`,
-        {
-            refreshToken,
-        },
-        {
-            timeout: REFRESH_TIMEOUT,
-        },
-    );
-    const body = response.data;
-    const tokenData = body?.data;
-    if ((body?.code !== 200 && body?.code !== 0) || !tokenData?.accessToken) {
-        // 服务端 envelope 里的 code 就是它声明的状态码。用它构造错误，
-        // 让失败分类看到真实语义，而不是被硬编码的 401 带偏成
-        // 「会话不可恢复」——那会在后端 503 时把用户误踢下线。
-        const declared = typeof body?.code === "number" ? body.code : 401;
-        throw new HttpError(
-            body?.message || i18n.t("auth.sessionExpired"),
-            declared,
-            body?.code,
-            body,
-        );
-    }
-    return tokenData;
-}
-
-/**
- * 执行 Token 刷新。
- *
- * 采用 §46 的**方案 A**：在函数内部显式重试一次，而不是给 refresh 请求
- * 打上 `_retryIdempotent` 去复用通用 `httpPolicy`。原因是通用策略的
- * 重试条件（网络错误 / 5xx）与 §45 的失败分类并不等价，硬塞进去会让
- * 两套语义互相污染。
- *
- * 重试时**复用同一个 refresh token**：服务端提供幂等 grace（§45），
- * 第一次尝试若已成功但响应丢失，grace 窗口内重放会拿到同一个 successor，
- * 不会被判成 Reuse。这正是这次重试安全的前提。
- *
- * @returns {Promise<string>} 新的 access token
- * @throws {HttpError} 会话不可恢复，或重试后仍然失败
- */
-async function refreshAccessToken() {
-    const refreshToken = tokenStorage.getRefreshToken();
-    if (!refreshToken) {
-        // 本地连 refresh token 都没有：会话确实没了
-        throw new HttpError(
-            i18n.t("http.errors.noRefreshToken"),
-            401,
-            null,
-            null,
-        );
-    }
-
-    let retriesDone = 0;
-    for (;;) {
-        try {
-            const tokenData = await attemptRefresh(refreshToken);
-            const { accessToken, refreshToken: newRefreshToken } = tokenData;
-            // Rotate both credentials before notifying session observers so a
-            // queued /me validation never sees a half-updated token pair.
-            tokenStorage.setToken(accessToken, { notify: false });
-            if (newRefreshToken) tokenStorage.setRefreshToken(newRefreshToken);
-            window.dispatchEvent(
-                new CustomEvent("auth:token-refreshed", {
-                    detail: { token: accessToken },
-                }),
-            );
-            return accessToken;
-        } catch (error) {
-            if (!shouldRetryRefresh(error, retriesDone)) throw error;
-            retriesDone += 1;
-            await sleep(getRefreshRetryDelay(retriesDone));
-        }
-    }
 }
 
 // ─────────────────────────────────────────────
@@ -425,6 +85,15 @@ const instance = axios.create({
         Accept: "application/json",
     },
     withCredentials: false, // 跨域携带 Cookie 时改为 true
+});
+
+const authRecovery = createAuthRecovery({
+    axios,
+    instance,
+    baseURL: BASE_URL,
+    refreshURL: "/api/auth/refresh",
+    refreshTimeout: 15000,
+    showToast,
 });
 
 const upload = createUpload(instance);
@@ -528,98 +197,13 @@ instance.interceptors.response.use(
         }
 
         // ── 9.2.1 Token 过期，无感刷新 / 强制未登录 ──
-        const requestUrl = config?.url || "";
-        const isLoginEndpoint = requestUrl.endsWith("/auth/login");
-        const isRefreshEndpoint = requestUrl.endsWith("/auth/refresh");
-        const skipAuthRecovery = Boolean(config?._skipAuthRecovery);
-        // 主动登出等场景：跳过无感刷新与强制未登录提示，交给调用方清理
-        if (response?.status === 401 && config && skipAuthRecovery) {
-            // fall through to 9.2.3
-        } else if (response?.status === 401 && config && isRefreshEndpoint) {
-            // refresh 接口自身 401：refresh token 已失效 → 直接变为未登录
-            forceLoggedOut();
-            return Promise.reject(sessionExpiredError());
-        } else if (response?.status === 401 && config && !isLoginEndpoint) {
-            // 业务接口 401：先尝试无感刷新；已重试仍 401 或刷新失败 → 真正未登录
-            // 登录接口 401 视为账号/验证码错误，不清理会话
-            if (config._retryRefresh) {
-                forceLoggedOut();
-                return Promise.reject(sessionExpiredError());
-            }
-
-            // 本 Tab 正在刷新，或已从广播得知别的 Tab 在刷新 → 排队等结果
-            if (isRefreshing || remoteRefreshInFlight) {
-                return queueForRefresh(config);
-            }
-
-            // 先占本 Tab 的锁，再去做可能 await 的跨 Tab 互斥申请。
-            // 顺序不能反：否则同一 tick 内的第二个 401 会在 await 期间
-            // 看到 isRefreshing 仍为 false，于是两个请求都去刷新。
-            isRefreshing = true;
-            config._retryRefresh = true;
-
-            let acquired = false;
-            try {
-                acquired = await refreshMutex.tryAcquire();
-            } catch {
-                // 互斥量本身出错不该阻断刷新，退回「自己刷新」
-                acquired = false;
-            }
-
-            if (!acquired) {
-                // 别的 Tab 正在刷新：本 Tab 不跟刷，否则会触发服务端
-                // 的 Reuse 检测把整个会话族撤销（§44）
-                isRefreshing = false;
-                config._retryRefresh = false;
-                beginRemoteRefreshWait();
-                return queueForRefresh(config);
-            }
-
-            authChannel.publish(AUTH_EVENTS.REFRESH_START);
-
-            let newToken = null;
-            let refreshError = null;
-            try {
-                newToken = await refreshAccessToken();
-            } catch (error) {
-                refreshError = error;
-            } finally {
-                // 刷新已结束就立刻放开互斥，不要把它一直持有到
-                // 重放的原请求返回为止，否则其它 Tab 会白等到超时
-                isRefreshing = false;
-                refreshMutex.release();
-            }
-
-            if (refreshError) {
-                const unrecoverable =
-                    isUnrecoverableRefreshFailure(refreshError);
-                authChannel.publish(AUTH_EVENTS.REFRESH_FAILED, {
-                    unrecoverable,
-                });
-
-                if (unrecoverable) {
-                    forceLoggedOut();
-                    const expired = sessionExpiredError();
-                    rejectRefreshSubscribers(expired);
-                    return Promise.reject(expired);
-                }
-
-                // §45 暂时性失败：保留本地凭据、不跳登录页，
-                // 也**不**伪装成「登录过期」，而是给出独立文案
-                const unavailable = refreshUnavailableError(refreshError);
-                rejectRefreshSubscribers(unavailable);
-                if (!config._silent) {
-                    showToast("warning", unavailable.message);
-                }
-                return Promise.reject(unavailable);
-            }
-
-            authChannel.publish(AUTH_EVENTS.REFRESH_SUCCESS);
-            notifyRefreshSubscribers(newToken);
-            config.headers["Authorization"] = `Bearer ${newToken}`;
-            return instance(config);
+        const authRecoveryResult = await authRecovery.recoverUnauthorized(
+            config,
+            response?.status,
+        );
+        if (authRecoveryResult !== AUTH_RECOVERY_NOT_HANDLED) {
+            return authRecoveryResult;
         }
-
         // ── 9.2.2 自动重试（网络错误 / 5xx） ──
         const shouldRetry = shouldRetryRequest(config, response);
 
