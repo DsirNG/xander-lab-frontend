@@ -24,7 +24,14 @@ import WorkspaceAgentSidebar from "../components/WorkspaceAgentSidebar";
 import WorkspaceAgentSkeleton from "../components/WorkspaceAgentSkeleton";
 import WorkspaceAgentWelcome from "../components/WorkspaceAgentWelcome";
 import { mergeLiveTraces, mergeToolTraces } from "../components/agentTrace";
-import { IMAGE_TOOL, imageUrlsFromMessages, imageUrlsFromSteps } from "../components/imageResult";
+import {
+    imageUrlsFromMessages,
+    imageUrlsFromSteps,
+} from "../components/imageResult";
+import {
+    getActiveImageGeneration,
+    hasStreamingAnswer,
+} from "../components/conversationState";
 
 const WorkspaceAgentChat = () => {
     const { t } = useTranslation();
@@ -82,32 +89,11 @@ const WorkspaceAgentChat = () => {
     /** 持久化消息同样先归并 tool_call / tool_result，刷新后细节不丢。 */
     const timeline = useMemo(() => mergeToolTraces(messages), [messages]);
 
-    const streamingAnswer = useMemo(
-        () =>
-            steps.some(
-                (step) =>
-                    step.type === "answer" || step.type === "answer_delta",
-            ),
+    const streamingAnswer = useMemo(() => hasStreamingAnswer(steps), [steps]);
+    const activeImageGeneration = useMemo(
+        () => getActiveImageGeneration(steps),
         [steps],
     );
-
-    const activeImageGeneration = useMemo(() => {
-        let active = false;
-        let message = "";
-        steps.forEach((step) => {
-            if (step.type !== "tool" || step.tool !== IMAGE_TOOL) return;
-            if (step.phase === "start") {
-                active = true;
-                message = "";
-            } else if (step.phase === "progress") {
-                active = true;
-                message = step.message || message;
-            } else if (step.phase === "end" || step.phase === "error") {
-                active = false;
-            }
-        });
-        return active ? { message } : null;
-    }, [steps]);
 
     const historicalImageUrls = useMemo(() => imageUrlsFromMessages(messages), [messages]);
 

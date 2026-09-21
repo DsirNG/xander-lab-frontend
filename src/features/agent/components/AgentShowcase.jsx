@@ -15,10 +15,13 @@ import {
 } from "lucide-react";
 import { useAuthSession } from "@features/auth";
 import {
-    IMAGE_TOOL,
     imageUrlsFromMessages,
     imageUrlsFromSteps,
 } from "./imageResult";
+import {
+    getActiveImageGeneration,
+    hasStreamingAnswer,
+} from "./conversationState";
 import AgentComposer from "./AgentComposer";
 import AgentShowcaseConversation from "./AgentShowcaseConversation";
 import { uploadAgentAttachment } from "../capabilities";
@@ -66,32 +69,11 @@ const AgentShowcase = ({ t, welcomeVisual: WelcomeVisual }) => {
         return liveSteps;
     }, [liveSteps]);
 
-    const streamingAnswer = useMemo(
-        () =>
-            steps.some(
-                (step) =>
-                    step.type === "answer" || step.type === "answer_delta",
-            ),
+    const streamingAnswer = useMemo(() => hasStreamingAnswer(steps), [steps]);
+    const activeImageGeneration = useMemo(
+        () => getActiveImageGeneration(steps),
         [steps],
     );
-
-    const activeImageGeneration = useMemo(() => {
-        let active = false;
-        let message = "";
-        steps.forEach((step) => {
-            if (step.type !== "tool" || step.tool !== IMAGE_TOOL) return;
-            if (step.phase === "start") {
-                active = true;
-                message = "";
-            } else if (step.phase === "progress") {
-                active = true;
-                message = step.message || message;
-            } else if (step.phase === "end" || step.phase === "error") {
-                active = false;
-            }
-        });
-        return active ? { message } : null;
-    }, [steps]);
 
     const historicalImageUrls = useMemo(() => imageUrlsFromMessages(messages), [messages]);
 

@@ -37,10 +37,13 @@ import {
 } from "../components/AgentMessageParts";
 import { mergeLiveTraces, mergeToolTraces } from "../components/agentTrace";
 import {
-    IMAGE_TOOL,
     imageUrlsFromMessages,
     imageUrlsFromSteps,
 } from "../components/imageResult";
+import {
+    getActiveImageGeneration,
+    hasStreamingAnswer,
+} from "../components/conversationState";
 import AgentImagesPage from "./AgentImagesPage";
 import { ProfileModal } from "@features/profile";
 import { useAuthSession } from "@features/auth";
@@ -166,32 +169,11 @@ const AgentChat = () => {
     /** 持久化消息同样先归并：刷新后仍要能展开回看每次工具调用。 */
     const timeline = useMemo(() => mergeToolTraces(messages), [messages]);
 
-    const streamingAnswer = useMemo(
-        () =>
-            steps.some(
-                (step) =>
-                    step.type === "answer" || step.type === "answer_delta",
-            ),
+    const streamingAnswer = useMemo(() => hasStreamingAnswer(steps), [steps]);
+    const activeImageGeneration = useMemo(
+        () => getActiveImageGeneration(steps),
         [steps],
     );
-
-    const activeImageGeneration = useMemo(() => {
-        let active = false;
-        let message = "";
-        steps.forEach((step) => {
-            if (step.type !== "tool" || step.tool !== IMAGE_TOOL) return;
-            if (step.phase === "start") {
-                active = true;
-                message = "";
-            } else if (step.phase === "progress") {
-                active = true;
-                message = step.message || message;
-            } else if (step.phase === "end" || step.phase === "error") {
-                active = false;
-            }
-        });
-        return active ? { message } : null;
-    }, [steps]);
 
     const historicalImageUrls = useMemo(() => imageUrlsFromMessages(messages), [messages]);
 
