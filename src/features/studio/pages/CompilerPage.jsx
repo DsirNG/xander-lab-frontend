@@ -8,22 +8,19 @@ import React, {
 import { useParams } from "react-router-dom";
 import {
     Check,
-    ChevronRight,
     Copy,
     Download,
-    ExternalLink,
     File,
-    Folder,
-    FolderOpen,
     Loader2,
     Play,
     RefreshCw,
     Link2,
-    X,
 } from "lucide-react";
 import CustomSelect from "@shared/ui/forms/CustomSelect";
 import Button from "@shared/ui/primitives/Button";
 import useClickOutside from "@shared/hooks/useClickOutside";
+import CompilerFileExplorer from "../components/CompilerFileExplorer";
+import CompilerPreviewModal from "../components/CompilerPreviewModal";
 import StudioTopBar from "../components/StudioTopBar";
 import {
     convertPreviewUrl,
@@ -37,87 +34,10 @@ import {
     updateProjectVisibility,
 } from "../services/studioService";
 
-/**
- * 文件树节点递归组件，支持目录折叠/展开
- */
-export function FileTreeNodes({ nodes, depth, activePath, onOpenFile }) {
-    return (
-        <>
-            {nodes.map((node) => {
-                const isActive = node.path === activePath;
-
-                return (
-                    <FileTreeNode
-                        key={node.path}
-                        node={node}
-                        depth={depth}
-                        isActive={isActive}
-                        onOpenFile={onOpenFile}
-                    />
-                );
-            })}
-        </>
-    );
-}
-
 const VISIBILITY_OPTIONS = [
     { value: "private", label: "私有" },
     { value: "public", label: "公开（可查看并下载源码）" },
 ];
-
-/**
- * 单个文件树节点，目录支持折叠/展开
- */
-function FileTreeNode({ node, depth, isActive, onOpenFile }) {
-    const isDir = node.type === "dir";
-    const isFile = node.type === "file";
-    const isReadable = node.readable !== false;
-    const [expanded, setExpanded] = useState(true);
-
-    const handleClick = () => {
-        if (isDir) {
-            setExpanded((prev) => !prev);
-        } else if (isFile && isReadable) {
-            onOpenFile(node.path);
-        }
-    };
-
-    const Icon = isDir ? (expanded ? FolderOpen : Folder) : File;
-
-    return (
-        <>
-            <button
-                type="button"
-                onClick={handleClick}
-                className={`flex w-full items-center gap-1.5 rounded-lg px-2 py-1.5 text-left text-body transition-colors ${
-                    isActive && isFile
-                        ? "bg-accent/10 font-bold text-accent"
-                        : "text-ink-muted hover:bg-surface-muted"
-                } ${!isFile || !isReadable ? "cursor-default" : "cursor-pointer"}`}
-                style={{ paddingLeft: `${8 + depth * 16}px` }}
-            >
-                {isDir && (
-                    <ChevronRight
-                        className={`h-3 w-3 shrink-0 text-ink-faint transition-transform duration-150 ${
-                            expanded ? "rotate-90" : ""
-                        }`}
-                    />
-                )}
-                <Icon className="h-4 w-4 shrink-0 text-ink-faint" />
-                <span className="truncate">{node.name}</span>
-            </button>
-
-            {isDir && expanded && node.children?.length > 0 && (
-                <FileTreeNodes
-                    nodes={node.children}
-                    depth={depth + 1}
-                    activePath={isActive ? "" : ""}
-                    onOpenFile={onOpenFile}
-                />
-            )}
-        </>
-    );
-}
 
 export default function CompilerPage() {
     const { projectId } = useParams();
@@ -383,31 +303,12 @@ export default function CompilerPage() {
 
             {/* 主内容区 - flex:1 占满剩余空间 */}
             <div className="flex min-h-0 flex-1 flex-col gap-0 lg:flex-row">
-                {/* 文件树 - 固定宽度，独立滚动 */}
-                <aside className="flex max-h-[40vh] w-full shrink-0 flex-col border-b border-border bg-canvas lg:max-h-none lg:w-72 lg:border-b-0 lg:border-r">
-                    <div className="shrink-0 border-b border-border px-4 py-2.5">
-                        <div className="text-micro font-bold uppercase tracking-widest text-ink-faint">
-                            File Tree
-                        </div>
-                        <div className="text-body font-bold text-ink">
-                            文件目录
-                        </div>
-                    </div>
-                    <div className="min-h-0 flex-1 overflow-auto p-2">
-                        {treeNodes.length > 0 ? (
-                            <FileTreeNodes
-                                nodes={treeNodes}
-                                depth={0}
-                                activePath={activeFilePath}
-                                onOpenFile={handleOpenFile}
-                            />
-                        ) : (
-                            <div className="flex h-full items-center justify-center px-4 text-center text-body text-ink-faint">
-                                {isReady ? "暂无文件目录" : "构建完成后显示"}
-                            </div>
-                        )}
-                    </div>
-                </aside>
+                <CompilerFileExplorer
+                    nodes={treeNodes}
+                    activePath={activeFilePath}
+                    isReady={isReady}
+                    onOpenFile={handleOpenFile}
+                />
 
                 {/* 代码查看区 - flex:1 占满剩余空间，独立滚动 */}
                 <section className="flex min-w-0 flex-1 flex-col bg-canvas">
@@ -447,58 +348,12 @@ export default function CompilerPage() {
                 {isReady ? "预览" : "等待构建"}
             </button>
 
-            {/* 预览弹窗 */}
-            {isPreviewOpen && (
-                <div className="fixed inset-0 z-50 bg-ink/60 p-2 backdrop-blur-sm sm:p-4">
-                    <div className="mx-auto flex h-full w-full max-w-[1400px] flex-col overflow-hidden rounded-lg bg-canvas shadow-2xl">
-                        <div className="flex items-center justify-between gap-3 border-b border-border px-4 py-3">
-                            <div className="min-w-0">
-                                <div className="text-caption font-bold uppercase tracking-widest text-ink-faint">
-                                    Preview
-                                </div>
-                                <div className="truncate text-body font-black text-ink">
-                                    {project?.name}
-                                </div>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <a
-                                    href={previewUrl}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="inline-flex items-center gap-2 rounded-lg border border-border px-3 py-2 text-caption font-bold text-ink-muted transition-colors hover:text-accent"
-                                >
-                                    <ExternalLink className="h-3.5 w-3.5" />
-                                    新窗口
-                                </a>
-                                <button
-                                    type="button"
-                                    onClick={() => setIsPreviewOpen(false)}
-                                    className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border text-ink-muted transition-colors hover:bg-surface hover:text-ink"
-                                    aria-label="关闭预览"
-                                >
-                                    <X className="h-4 w-4" />
-                                </button>
-                            </div>
-                        </div>
-                        <div className="relative flex-1">
-                            {previewUrl ? (
-                                <iframe
-                                    src={previewUrl}
-                                    title="项目预览"
-                                    className="absolute inset-0 h-full w-full border-0 bg-canvas"
-                                />
-                            ) : (
-                                <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-surface">
-                                    <Loader2 className="h-10 w-10 animate-spin text-accent" />
-                                    <div className="text-body font-medium text-ink-muted">
-                                        正在加载预览...
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                </div>
-            )}
+            <CompilerPreviewModal
+                open={isPreviewOpen}
+                projectName={project?.name}
+                previewUrl={previewUrl}
+                onClose={() => setIsPreviewOpen(false)}
+            />
         </div>
     );
 }

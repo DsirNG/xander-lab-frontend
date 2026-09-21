@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Download, File, Loader2 } from "lucide-react";
 import { useParams } from "react-router-dom";
-import { FileTreeNodes } from "./CompilerPage";
 import Button from "@shared/ui/primitives/Button";
+import { FileTreeNodes } from "../components/CompilerFileExplorer";
 import StudioTopBar from "../components/StudioTopBar";
 import {
     downloadPublicProjectSource,
