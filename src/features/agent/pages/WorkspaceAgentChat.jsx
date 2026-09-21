@@ -12,9 +12,7 @@ import { useToast } from "@shared/hooks/useToast";
 import LoadingSpinner from "@shared/ui/feedback/LoadingSpinner";
 import { useAuthSession } from "@features/auth";
 import { useAgentConversation } from "../hooks/useAgentConversation";
-import {
-    agentConversationService,
-} from "../services/agentConversationService";
+import useAgentAttachments from "../hooks/useAgentAttachments";
 import AgentComposer from "../components/AgentComposer";
 import AgentConversationTimeline from "../components/AgentConversationTimeline";
 import WorkspaceAgentConversationMessage, {
@@ -46,9 +44,15 @@ const WorkspaceAgentChat = () => {
         userInfo?.nickname || userInfo?.username || "XanderDING";
 
     const [input, setInput] = useState("");
-    const [attachments, setAttachments] = useState([]);
-    const [uploadingAttachments, setUploadingAttachments] = useState(false);
     const [drawerOpen, setDrawerOpen] = useState(false);
+
+    const {
+        attachments,
+        uploadingAttachments,
+        handleFilesSelected,
+        handleRemoveAttachment,
+        clearAttachments,
+    } = useAgentAttachments({ t, toast });
 
     const fileInputRef = useRef(null);
     const textareaRef = useRef(null);
@@ -138,7 +142,7 @@ const WorkspaceAgentChat = () => {
                         replace: true,
                     });
                     setInput("");
-                    setAttachments([]);
+                    clearAttachments();
                 } catch (error) {
                     toast.error(
                         error.message || t("blog.agentChat.sendFailed"),
@@ -147,10 +151,18 @@ const WorkspaceAgentChat = () => {
                 return;
             }
             setInput("");
-            setAttachments([]);
+            clearAttachments();
             await sendMessage(trimmed, { attachments: selectedAttachments });
         },
-        [conversationId, createConversation, navigate, sendMessage, t, toast],
+        [
+            clearAttachments,
+            conversationId,
+            createConversation,
+            navigate,
+            sendMessage,
+            t,
+            toast,
+        ],
     );
 
     const handleSubmit = async () => {
@@ -184,52 +196,10 @@ const WorkspaceAgentChat = () => {
         [decideApproval, t, toast],
     );
 
-    const handleFilesSelected = useCallback(
-        async (files) => {
-            const remaining = Math.max(0, 5 - attachments.length);
-            if (!remaining) {
-                toast.warning(t("blog.agentChat.attachmentLimit"));
-                return;
-            }
-            const selected = files.slice(0, remaining);
-            if (files.length > remaining)
-                toast.warning(t("blog.agentChat.attachmentLimit"));
-            const valid = selected.filter((file) => {
-                if (file.size <= 20 * 1024 * 1024) return true;
-                toast.warning(
-                    t("blog.agentChat.attachmentTooLarge", { name: file.name }),
-                );
-                return false;
-            });
-            if (!valid.length) return;
-            setUploadingAttachments(true);
-            try {
-                const settled = await Promise.allSettled(
-                    valid.map((file) =>
-                        agentConversationService.uploadAttachment(file),
-                    ),
-                );
-                const uploaded = settled
-                    .filter((item) => item.status === "fulfilled")
-                    .map((item) => item.value);
-                if (uploaded.length)
-                    setAttachments((current) =>
-                        [...current, ...uploaded].slice(0, 5),
-                    );
-                if (settled.some((item) => item.status === "rejected")) {
-                    toast.error(t("blog.agentChat.attachmentUploadFailed"));
-                }
-            } finally {
-                setUploadingAttachments(false);
-            }
-        },
-        [attachments.length, t, toast],
-    );
-
     const handleNewConversation = () => {
         reset();
         setInput("");
-        setAttachments([]);
+        clearAttachments();
         navigate("/workspace/ai", { replace: true });
     };
 
@@ -320,13 +290,7 @@ const WorkspaceAgentChat = () => {
                         textareaRef={textareaRef}
                         onInputChange={setInput}
                         onFilesSelected={handleFilesSelected}
-                        onRemoveAttachment={(url) =>
-                            setAttachments((current) =>
-                                current.filter(
-                                    (attachment) => attachment.url !== url,
-                                ),
-                            )
-                        }
+                        onRemoveAttachment={handleRemoveAttachment}
                         onSubmit={handleSubmit}
                         onCancel={cancelTurn}
                         deepThinking={deepThinking}
@@ -380,14 +344,7 @@ const WorkspaceAgentChat = () => {
                                     textareaRef={textareaRef}
                                     onInputChange={setInput}
                                     onFilesSelected={handleFilesSelected}
-                                    onRemoveAttachment={(url) =>
-                                        setAttachments((current) =>
-                                            current.filter(
-                                                (attachment) =>
-                                                    attachment.url !== url,
-                                            ),
-                                        )
-                                    }
+                                    onRemoveAttachment={handleRemoveAttachment}
                                     onSubmit={handleSubmit}
                                     onCancel={cancelTurn}
                                     deepThinking={deepThinking}

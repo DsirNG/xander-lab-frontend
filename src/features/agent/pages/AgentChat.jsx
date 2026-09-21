@@ -14,9 +14,7 @@ import { useToast } from "@shared/hooks/useToast";
 import useIsMobile from "@shared/hooks/useIsMobile";
 import { useAgentConversation } from "../hooks/useAgentConversation";
 import useAgentArtifact from "../hooks/useAgentArtifact";
-import {
-    agentConversationService,
-} from "../services/agentConversationService";
+import useAgentAttachments from "../hooks/useAgentAttachments";
 import AgentSessionSearchModal from "../components/AgentSessionSearchModal";
 import AgentArtifactPanel from "../components/AgentArtifactPanel";
 import AgentChatSidebar from "../components/AgentChatSidebar";
@@ -78,8 +76,6 @@ const AgentChat = () => {
     const avatar = userInfo?.avatar;
 
     const [input, setInput] = useState("");
-    const [attachments, setAttachments] = useState([]);
-    const [uploadingAttachments, setUploadingAttachments] = useState(false);
     const [view, setView] = useState("chat"); // 'chat' | 'images'：图片画廊是智能体对话内的视图
     const [mobileSessionsOpen, setMobileSessionsOpen] = useState(false);
     const [isShareOpen, setIsShareOpen] = useState(false);
@@ -88,6 +84,15 @@ const AgentChat = () => {
     const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
     const [searchOpen, setSearchOpen] = useState(false);
     const [settingsOpen, setSettingsOpen] = useState(false);
+
+    const {
+        attachments,
+        uploadingAttachments,
+        handleFilesSelected,
+        handleRemoveAttachment,
+        clearAttachments,
+    } = useAgentAttachments({ t, toast });
+
     const chatEndRef = useRef(null);
     const chatScrollRef = useRef(null);
     const stickToBottomRef = useRef(true);
@@ -180,54 +185,6 @@ const AgentChat = () => {
         await submitText(input, attachments);
     };
 
-    const handleFilesSelected = useCallback(
-        async (files) => {
-            const remaining = Math.max(0, 5 - attachments.length);
-            if (!remaining) {
-                toast.warning(t("blog.agentChat.attachmentLimit"));
-                return;
-            }
-            const selected = files.slice(0, remaining);
-            if (files.length > remaining)
-                toast.warning(t("blog.agentChat.attachmentLimit"));
-            const valid = selected.filter((file) => {
-                if (file.size <= 20 * 1024 * 1024) return true;
-                toast.warning(
-                    t("blog.agentChat.attachmentTooLarge", { name: file.name }),
-                );
-                return false;
-            });
-            if (!valid.length) return;
-            setUploadingAttachments(true);
-            try {
-                const settled = await Promise.allSettled(
-                    valid.map((file) =>
-                        agentConversationService.uploadAttachment(file),
-                    ),
-                );
-                const uploaded = settled
-                    .filter((item) => item.status === "fulfilled")
-                    .map((item) => item.value);
-                if (uploaded.length)
-                    setAttachments((current) =>
-                        [...current, ...uploaded].slice(0, 5),
-                    );
-                if (settled.some((item) => item.status === "rejected")) {
-                    toast.error(t("blog.agentChat.attachmentUploadFailed"));
-                }
-            } finally {
-                setUploadingAttachments(false);
-            }
-        },
-        [attachments.length, t, toast],
-    );
-
-    const handleRemoveAttachment = useCallback((url) => {
-        setAttachments((current) =>
-            current.filter((attachment) => attachment.url !== url),
-        );
-    }, []);
-
     /** 发送一段文本：无会话时先建会话壳再经流式接口发首条消息，否则直接发到当前会话。 */
     const submitText = useCallback(
         async (text, selectedAttachments = []) => {
@@ -253,7 +210,7 @@ const AgentChat = () => {
                         replace: true,
                     });
                     setInput("");
-                    setAttachments([]);
+                    clearAttachments();
                 } catch (error) {
                     toast.error(
                         error.message || t("blog.agentChat.sendFailed"),
@@ -262,16 +219,24 @@ const AgentChat = () => {
                 return;
             }
             setInput("");
-            setAttachments([]);
+            clearAttachments();
             await sendMessage(trimmed, { attachments: selectedAttachments });
         },
-        [conversationId, createConversation, navigate, sendMessage, t, toast],
+        [
+            clearAttachments,
+            conversationId,
+            createConversation,
+            navigate,
+            sendMessage,
+            t,
+            toast,
+        ],
     );
 
     const handleNewConversation = () => {
         reset();
         setInput("");
-        setAttachments([]);
+        clearAttachments();
         setView("chat");
         navigate("/workspace/agent", { replace: true });
     };
