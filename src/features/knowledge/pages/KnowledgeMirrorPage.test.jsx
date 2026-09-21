@@ -3,10 +3,9 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import i18n from "@locales/index";
-import KnowledgeMirrorPage, {
-    AgentQuizPanel,
-    KnowledgeActions,
-} from "./KnowledgeMirrorPage";
+import KnowledgeMirrorPage from "./KnowledgeMirrorPage";
+import AgentQuizPanel from "../components/AgentQuizPanel";
+import KnowledgeActions from "../components/KnowledgeActions";
 import { buildKnowledgeQuizPath } from "../utils/knowledgeNavigation";
 import { knowledgeService } from "../services/knowledgeService";
 

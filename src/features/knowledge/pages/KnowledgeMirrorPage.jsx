@@ -8,19 +8,14 @@ import React, {
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import {
-    Archive,
-    ArchiveRestore,
     BookOpen,
     Brain,
     CheckCircle2,
     CirclePlus,
     Clock3,
     Mic,
-    Pencil,
-    Sparkles,
     Square,
     Target,
-    Trash2,
 } from "lucide-react";
 import Button from "@shared/ui/primitives/Button";
 import CustomSelect from "@shared/ui/forms/CustomSelect";
@@ -29,6 +24,8 @@ import LoadingSpinner from "@shared/ui/feedback/LoadingSpinner";
 import Modal from "@shared/ui/overlays/Modal";
 import { formInputCls } from "@shared/ui/forms/formStyles";
 import KnowledgeDocBaseView from "../components/KnowledgeDocBaseView";
+import KnowledgeActions from "../components/KnowledgeActions";
+import AgentQuizPanel, { ResultStat } from "../components/AgentQuizPanel";
 import { knowledgeService } from "../services/knowledgeService";
 import { buildKnowledgeQuizPath } from "../utils/knowledgeNavigation";
 
@@ -953,201 +950,6 @@ const KnowledgeMirrorPage = () => {
                     {t("knowledge.permissionPrivacy")}
                 </div>
             </Modal>
-        </div>
-    );
-};
-
-const ResultStat = ({ label, value }) => (
-    <div className="rounded-xl bg-surface-muted p-3">
-        <div className="text-micro text-ink-muted">{label}</div>
-        <div className="mt-1 text-title text-ink">{value}</div>
-    </div>
-);
-
-/**
- * 一条知识的编辑、归档与删除入口。
- *
- * 删除的二次确认放在这个组件里而不是调用方：删除会连带清掉录音记录和测验留档且不可恢复，
- * 这个保证不能取决于每个调用方是否记得自己加一层确认。归档是可逆的，所以直接执行。
- */
-export const KnowledgeActions = ({ material, onEdit, onArchive, onDelete }) => {
-    const { t } = useTranslation();
-    const [confirmOpen, setConfirmOpen] = useState(false);
-    const [busy, setBusy] = useState("");
-    const archived = Boolean(material?.archivedAt);
-    const run = async (kind, action) => {
-        setBusy(kind);
-        try {
-            await action();
-        } finally {
-            setBusy("");
-        }
-    };
-    return (
-        <>
-            <div className="flex flex-wrap items-center gap-2">
-                <Button
-                    variant="ghost"
-                    icon={Pencil}
-                    onClick={() => onEdit(material)}
-                >
-                    {t("knowledge.edit")}
-                </Button>
-                <Button
-                    variant="ghost"
-                    icon={archived ? ArchiveRestore : Archive}
-                    loading={busy === "archive"}
-                    onClick={() =>
-                        run("archive", () => onArchive(material, !archived))
-                    }
-                >
-                    {t(archived ? "knowledge.restore" : "knowledge.archive")}
-                </Button>
-                <Button
-                    variant="danger"
-                    icon={Trash2}
-                    onClick={() => setConfirmOpen(true)}
-                >
-                    {t("knowledge.delete")}
-                </Button>
-            </div>
-            <Modal
-                isOpen={confirmOpen}
-                onClose={() => setConfirmOpen(false)}
-                title={t("knowledge.deleteTitle")}
-                width="max-w-md"
-                footer={
-                    <>
-                        <Button
-                            variant="ghost"
-                            onClick={() => setConfirmOpen(false)}
-                        >
-                            {t("common.cancel")}
-                        </Button>
-                        <Button
-                            variant="danger"
-                            icon={Trash2}
-                            loading={busy === "delete"}
-                            onClick={() =>
-                                run("delete", async () => {
-                                    await onDelete(material);
-                                    setConfirmOpen(false);
-                                })
-                            }
-                        >
-                            {t("knowledge.deleteConfirm")}
-                        </Button>
-                    </>
-                }
-            >
-                <div className="text-body text-ink-secondary">
-                    {t("knowledge.deleteWarning", { title: material?.title })}
-                </div>
-                <div className="mt-3 text-caption text-ink-muted">
-                    {t("knowledge.deleteArchiveHint")}
-                </div>
-            </Modal>
-        </>
-    );
-};
-
-/**
- * 概念题与练习题的测验面板：一个进对话的入口，加上最近一次的逐题判分。
- *
- * 分数与逐题证据都来自服务端（智能体调用 grade_answer 时落库），这里只负责显示，
- * 不在前端重算总分——否则页面和掌握度统计就可能各说一套。
- */
-export const AgentQuizPanel = ({ quiz = null, onStart }) => {
-    const { t } = useTranslation();
-    const items = Array.isArray(quiz?.items) ? quiz.items : [];
-    const creditLabel = (credit) => {
-        const value = Number(credit ?? 0);
-        if (value >= 1) return t("knowledge.creditFull");
-        return value > 0
-            ? t("knowledge.creditPartial")
-            : t("knowledge.creditNone");
-    };
-    return (
-        <div className="mt-5 rounded-2xl border border-border p-4">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-                <div>
-                    <div className="text-title text-ink">
-                        {t("knowledge.agentTest")}
-                    </div>
-                    <div className="mt-1 text-caption text-ink-muted">
-                        {t("knowledge.agentTestHint")}
-                    </div>
-                </div>
-                <Button icon={Sparkles} onClick={onStart}>
-                    {t("knowledge.askAgentToQuiz")}
-                </Button>
-            </div>
-            {quiz ? (
-                <div className="mt-4 border-t border-border pt-4">
-                    <div className="flex flex-wrap items-center justify-between gap-2">
-                        <div className="text-caption font-semibold text-ink-secondary">
-                            {t("knowledge.latestResult")}
-                        </div>
-                        {quiz.createdAt ? (
-                            <span className="text-caption text-ink-muted">
-                                {t("knowledge.quizAt")}：
-                                {new Date(quiz.createdAt).toLocaleString()}
-                            </span>
-                        ) : null}
-                    </div>
-                    <div className="mt-3 grid gap-3 sm:grid-cols-2">
-                        <ResultStat
-                            label={t("knowledge.score")}
-                            value={`${Math.round(Number(quiz.score ?? 0))}%`}
-                        />
-                        <ResultStat
-                            label={t("knowledge.correct")}
-                            value={`${quiz.correctCount ?? 0}/${quiz.questionCount ?? 0}`}
-                        />
-                    </div>
-                    {quiz.verdict ? (
-                        <div className="mt-3 whitespace-pre-wrap text-body text-ink-muted">
-                            {quiz.verdict}
-                        </div>
-                    ) : null}
-                    {items.length > 0 ? (
-                        <ol className="mt-3 space-y-2">
-                            {items.map((item, index) => (
-                                <li
-                                    key={index}
-                                    className="rounded-xl bg-surface-muted p-3"
-                                >
-                                    <div className="flex items-start justify-between gap-2">
-                                        <span className="text-body text-ink">
-                                            {item?.question}
-                                        </span>
-                                        <span className="shrink-0 rounded-full bg-canvas px-2 py-1 text-micro text-ink-muted">
-                                            {creditLabel(item?.credit)}
-                                        </span>
-                                    </div>
-                                    {item?.userAnswer ? (
-                                        <div className="mt-2 text-caption text-ink-muted">
-                                            <span className="font-semibold text-ink-secondary">
-                                                {t("knowledge.yourAnswer")}：
-                                            </span>
-                                            {item.userAnswer}
-                                        </div>
-                                    ) : null}
-                                    {item?.comment ? (
-                                        <div className="mt-1 text-caption text-ink-muted">
-                                            {item.comment}
-                                        </div>
-                                    ) : null}
-                                </li>
-                            ))}
-                        </ol>
-                    ) : null}
-                </div>
-            ) : (
-                <div className="mt-4 border-t border-border pt-4 text-body text-ink-muted">
-                    {t("knowledge.noQuizYet")}
-                </div>
-            )}
         </div>
     );
 };
