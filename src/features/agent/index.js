@@ -6,6 +6,7 @@ export {
     uploadAgentAttachment,
 } from "./capabilities";
 export { default as AgentComposer } from "./components/AgentComposer";
+export { default as AgentShowcase } from "./components/AgentShowcase";
 export { default as AgentMarkdown } from "./components/AgentMarkdown";
 export { SelfCheckCard } from "./components/AgentTraceCard";
 export {
