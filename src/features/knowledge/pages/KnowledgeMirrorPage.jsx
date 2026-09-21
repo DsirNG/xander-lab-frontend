@@ -2,7 +2,6 @@ import React, {
     useCallback,
     useEffect,
     useMemo,
-    useRef,
     useState,
 } from "react";
 import { useTranslation } from "react-i18next";
@@ -20,6 +19,7 @@ import KnowledgeDocBaseView from "../components/KnowledgeDocBaseView";
 import KnowledgeEditorModal from "../components/KnowledgeEditorModal";
 import KnowledgeMirrorMaterialList from "../components/KnowledgeMirrorMaterialList";
 import KnowledgeMirrorDetailPanel from "../components/KnowledgeMirrorDetailPanel";
+import useKnowledgeRecorder from "../hooks/useKnowledgeRecorder";
 import { knowledgeService } from "../services/knowledgeService";
 import { buildKnowledgeQuizPath } from "../utils/knowledgeNavigation";
 
@@ -32,10 +32,6 @@ const EMPTY_FORM = {
     knowledgeType: "RECITATION",
     testMode: "AUDIO_RECITATION",
 };
-
-const newClientRequestId = () =>
-    globalThis.crypto?.randomUUID?.() ??
-    `recitation-${Date.now()}-${Math.random().toString(36).slice(2)}`;
 
 const KnowledgeMirrorPage = () => {
     const { t } = useTranslation();
@@ -57,13 +53,6 @@ const KnowledgeMirrorPage = () => {
     const [attemptPollError, setAttemptPollError] = useState(false);
     const [attemptRetryVersion, setAttemptRetryVersion] = useState(0);
     const [quizzes, setQuizzes] = useState([]);
-    const [recording, setRecording] = useState(false);
-    const [uploading, setUploading] = useState(false);
-    const [permissionOpen, setPermissionOpen] = useState(false);
-    const [permissionBlocked, setPermissionBlocked] = useState(false);
-    const recorderRef = useRef(null);
-    const streamRef = useRef(null);
-    const chunksRef = useRef([]);
 
     const loadMaterials = useCallback(
         async (signal) => {
@@ -138,12 +127,6 @@ const KnowledgeMirrorPage = () => {
             window.clearTimeout(timer);
         };
     }, [attemptId, attemptRetryVersion, loadMaterials]);
-
-    useEffect(
-        () => () =>
-            streamRef.current?.getTracks().forEach((track) => track.stop()),
-        [],
-    );
 
     const activeMaterial = useMemo(
         () =>
@@ -289,91 +272,31 @@ const KnowledgeMirrorPage = () => {
         await reloadAndFocusFirst();
     };
 
-    const submitRecording = useCallback(
-        async (blob) => {
-            if (!activeMaterial) return;
-            setUploading(true);
-            try {
-                const extension = blob.type.includes("ogg") ? "ogg" : "webm";
-                const file = new File(
-                    [blob],
-                    `recitation-${Date.now()}.${extension}`,
-                    { type: blob.type || "audio/webm" },
-                );
-                const created = await knowledgeService.uploadRecording(
-                    activeMaterial.id,
-                    file,
-                    newClientRequestId(),
-                );
-                setAttempt(created);
-                setSearchParams(
-                    { attemptId: String(created.id) },
-                    { replace: true },
-                );
-            } finally {
-                setUploading(false);
-            }
+    const handleAttemptCreated = useCallback(
+        (created) => {
+            setAttempt(created);
+            setSearchParams(
+                { attemptId: String(created.id) },
+                { replace: true },
+            );
         },
-        [activeMaterial, setSearchParams],
+        [setSearchParams],
     );
 
-    const requestMicrophone = async () => {
-        if (!navigator.mediaDevices?.getUserMedia || !window.MediaRecorder) {
-            window.__toast?.("error", t("knowledge.microphoneUnavailable"));
-            return;
-        }
-        let stream;
-        try {
-            stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        } catch {
-            setPermissionBlocked(true);
-            setPermissionOpen(true);
-            return;
-        }
-        setPermissionOpen(false);
-        streamRef.current = stream;
-        chunksRef.current = [];
-        const recorder = new MediaRecorder(stream);
-        recorderRef.current = recorder;
-        recorder.ondataavailable = (event) => {
-            if (event.data.size > 0) chunksRef.current.push(event.data);
-        };
-        recorder.onstop = () => {
-            const blob = new Blob(chunksRef.current, {
-                type: recorder.mimeType || "audio/webm",
-            });
-            stream.getTracks().forEach((track) => track.stop());
-            streamRef.current = null;
-            submitRecording(blob);
-        };
-        recorder.start();
-        setRecording(true);
-    };
-
-    const startRecording = async () => {
-        if (!navigator.mediaDevices?.getUserMedia || !window.MediaRecorder) {
-            window.__toast?.("error", t("knowledge.microphoneUnavailable"));
-            return;
-        }
-        try {
-            const permission = await navigator.permissions?.query?.({
-                name: "microphone",
-            });
-            if (permission?.state === "granted") {
-                await requestMicrophone();
-                return;
-            }
-            setPermissionBlocked(permission?.state === "denied");
-        } catch {
-            setPermissionBlocked(false);
-        }
-        setPermissionOpen(true);
-    };
-
-    const stopRecording = () => {
-        recorderRef.current?.stop();
-        setRecording(false);
-    };
+    const {
+        recording,
+        uploading,
+        permissionOpen,
+        permissionBlocked,
+        requestMicrophone,
+        startRecording,
+        stopRecording,
+        setPermissionOpen,
+    } = useKnowledgeRecorder({
+        materialId: activeMaterial?.id,
+        onAttemptCreated: handleAttemptCreated,
+        t,
+    });
 
     const retryAttempt = () => {
         setAttemptPollError(false);
