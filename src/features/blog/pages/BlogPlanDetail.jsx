@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
 import {
@@ -13,14 +13,13 @@ import {
 import Pagination from "@shared/ui/navigation/Pagination";
 import LoadingSpinner from "@shared/ui/feedback/LoadingSpinner";
 import Button from "@shared/ui/primitives/Button";
-import { blogPlanService, PLAN_STATUS } from "../services/blogPlanService";
+import { PLAN_STATUS } from "../services/blogPlanService";
 import { useToast } from "@shared/hooks/useToast";
+import useBlogPlanDetail from "../hooks/useBlogPlanDetail";
 import { usePlanActions } from "../hooks/usePlanActions";
 import PlanStatusBadge from "../components/plans/PlanStatusBadge";
 import PlanFormModal from "../components/plans/PlanFormModal";
 import RunDetailModal from "../components/plans/RunDetailModal";
-
-const RUN_PAGE_SIZE = 10;
 
 /**
  * 定时发文计划详情页：计划信息 + 操作 + 执行记录（分页）
@@ -31,62 +30,22 @@ const BlogPlanDetail = () => {
     const { id } = useParams();
     const toast = useToast();
 
-    const [plan, setPlan] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [notFound, setNotFound] = useState(false);
     const [formOpen, setFormOpen] = useState(false);
-
-    const [runs, setRuns] = useState([]);
-    const [runsTotal, setRunsTotal] = useState(0);
-    const [runsPage, setRunsPage] = useState(1);
-    const [runsLoading, setRunsLoading] = useState(true);
     const [detailRun, setDetailRun] = useState(null);
 
-    const loadPlan = useCallback(async () => {
-        setLoading(true);
-        setNotFound(false);
-        try {
-            const data = await blogPlanService.getPlan(id);
-            setPlan(data);
-            setLoading(false);
-        } catch (error) {
-            if (error?.isCancelled) return;
-            setNotFound(true);
-            setLoading(false);
-        }
-    }, [id]);
-
-    const loadRuns = useCallback(
-        async (page) => {
-            setRunsLoading(true);
-            try {
-                const data = await blogPlanService.listRuns(id, {
-                    page,
-                    size: RUN_PAGE_SIZE,
-                });
-                setRuns(data?.records || []);
-                setRunsTotal(Number(data?.total) || 0);
-                setRunsLoading(false);
-            } catch (error) {
-                if (error?.isCancelled) return;
-                toast.error(t("blogPlans.loadFailed"));
-                setRunsLoading(false);
-            }
-        },
-        [id, t, toast],
-    );
-
-    useEffect(() => {
-        loadPlan();
-    }, [loadPlan]);
-
-    useEffect(() => {
-        setRunsPage(1);
-    }, [plan?.id]);
-
-    useEffect(() => {
-        if (plan) loadRuns(runsPage);
-    }, [plan, runsPage, loadRuns]);
+    const {
+        plan,
+        loading,
+        notFound,
+        runs,
+        runsTotal,
+        runsPage,
+        runsLoading,
+        setRunsPage,
+        loadPlan,
+        loadRuns,
+        runPageSize,
+    } = useBlogPlanDetail({ id, t, toast });
 
     const actions = usePlanActions({ onChanged: loadPlan, t });
 
@@ -429,7 +388,7 @@ const BlogPlanDetail = () => {
                             </div>
                             <Pagination
                                 page={runsPage}
-                                pageSize={RUN_PAGE_SIZE}
+                                pageSize={runPageSize}
                                 total={runsTotal}
                                 onPageChange={setRunsPage}
                                 className="!border-x-0 !border-b-0"
