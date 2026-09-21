@@ -42,7 +42,6 @@ src/
 │   └── routing/                 # 路由配置、懒加载和路由边界
 │
 ├── features/                    # 业务领域
-│   ├── appUpdate/              # 应用更新提示与版本边界
 │   ├── auth/
 │   ├── admin/
 │   ├── agent/
