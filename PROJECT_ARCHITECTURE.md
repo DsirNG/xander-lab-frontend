@@ -37,7 +37,7 @@ src/
 │   ├── bootstrap/               # 全局启动期 UI 和域名边界
 │   ├── errors/                 # ErrorBoundary、404 和运行时兜底
 │   ├── update/                 # chunk 更新与运行时刷新边界
-│   └── seo/                    # 路由级 SEO 组合
+│   ├── seo/                    # 路由级 SEO 组合
 │   └── routing/                 # 路由配置、懒加载和路由边界
 │
 ├── features/                    # 业务领域
@@ -74,10 +74,12 @@ src/
 ├── shared/lib/                  # cn、debounce、storage 等通用技术能力
 │
 ├── api/                         # Transport Infrastructure
-│   ├── auth/                    # 凭据存储与会话传输基础能力
+│   ├── auth/                    # 凭据存储与 401 恢复协调
 │   ├── errors/                 # HTTP/业务错误归一化
 │   ├── transfer/               # 上传、下载和进度处理
-│   └── http.js                 # Axios 客户端与兼容方法门面
+│   ├── authChannel.js           # 跨标签鉴权广播
+│   ├── http.js                 # Axios 客户端、拦截器与错误边界
+│   └── httpMethods.js           # 请求方法、SSE、取消和传输门面
 ├── components/                  # 仅保留 Demo 沙箱用户代码的历史 CustomSelect 字符串别名
 │   └── common/                  # 停止新增，业务代码不得导入
 ├── locales/                     # 六种语言，暂时保持根级
@@ -129,6 +131,21 @@ features/htmlPreview/components/HtmlSandboxPreview.jsx
 `HtmlSandboxPreview` 虽然表现为 UI，但它调用预览业务接口，因此归 `features/htmlPreview`；Shared 的 `CodeBlock` 只接受可选 `previewComponent`，通过能力注入保持依赖方向。
 
 当前项目所有网络请求仍必须复用 `src/api/http.js` 导出的封装，禁止新增 Axios 实例或原生 `fetch` API 请求。
+
+Transport 的职责按以下边界拆分：
+
+```text
+http.js
+  Axios 实例、拦截器、错误提示与鉴权恢复接入
+httpMethods.js
+  get/post/put/patch/delete、SSE、取消、并发和上传下载方法门面
+auth/refreshCoordinator.js
+  401 队列、跨标签刷新协调、重试与登出广播
+authChannel.js
+  跨标签鉴权消息传输
+```
+
+这些文件仍然属于同一个根级 Transport 层；业务 Endpoint 不得回迁到 `src/api`。
 
 ## Feature Public API
 

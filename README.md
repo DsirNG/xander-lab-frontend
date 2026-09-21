@@ -122,7 +122,7 @@ pnpm check:architecture
 xander-lab-frontend/
 ├── src/
 │   ├── app/               # 应用组装、路由、Provider、布局和运行时边界
-│   ├── api/               # HTTP / SSE / 上传下载等 Transport Infrastructure
+│   ├── api/               # HTTP / 鉴权恢复 / SSE / 上传下载等 Transport Infrastructure
 │   ├── assets/          # 静态资源
 │   ├── components/      # 仅保留 Demo 沙箱用户代码的 CustomSelect 历史字符串别名
 │   ├── config/          # 配置文件
