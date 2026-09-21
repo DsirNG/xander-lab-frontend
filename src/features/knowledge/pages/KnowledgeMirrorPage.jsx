@@ -20,16 +20,10 @@ import KnowledgeEditorModal from "../components/KnowledgeEditorModal";
 import KnowledgeMirrorMaterialList from "../components/KnowledgeMirrorMaterialList";
 import KnowledgeMirrorDetailPanel from "../components/KnowledgeMirrorDetailPanel";
 import useKnowledgeAttempt from "../hooks/useKnowledgeAttempt";
+import useKnowledgeEditor from "../hooks/useKnowledgeEditor";
 import useKnowledgeRecorder from "../hooks/useKnowledgeRecorder";
 import { knowledgeService } from "../services/knowledgeService";
 import { buildKnowledgeQuizPath } from "../utils/knowledgeNavigation";
-
-const EMPTY_FORM = {
-    title: "",
-    content: "",
-    knowledgeType: "RECITATION",
-    testMode: "AUDIO_RECITATION",
-};
 
 const KnowledgeMirrorPage = () => {
     const { t } = useTranslation();
@@ -43,10 +37,6 @@ const KnowledgeMirrorPage = () => {
     const [loadError, setLoadError] = useState(false);
     // 归档视图是归档这个动作的另一半：没有它，归档就成了单向出口，用户再也拿不回内容。
     const [view, setView] = useState("ACTIVE");
-    const [editorOpen, setEditorOpen] = useState(false);
-    const [editingId, setEditingId] = useState(null);
-    const [saving, setSaving] = useState(false);
-    const [form, setForm] = useState(EMPTY_FORM);
     const [quizzes, setQuizzes] = useState([]);
 
     const loadMaterials = useCallback(
@@ -84,6 +74,18 @@ const KnowledgeMirrorPage = () => {
         registerAttempt,
         retryAttempt,
     } = useKnowledgeAttempt({ attemptId, loadMaterials });
+
+    const {
+        editorOpen,
+        editingId,
+        saving,
+        form,
+        openCreate,
+        openEdit,
+        closeEditor,
+        updateForm,
+        submitEditor,
+    } = useKnowledgeEditor({ navigate, setMaterials, t });
 
     const activeMaterial = useMemo(
         () =>
@@ -154,54 +156,6 @@ const KnowledgeMirrorPage = () => {
             average,
         };
     }, [materials]);
-
-    const openCreate = () => {
-        setEditingId(null);
-        setForm(EMPTY_FORM);
-        setEditorOpen(true);
-    };
-
-    const openEdit = (material) => {
-        setEditingId(material.id);
-        setForm({
-            title: material.title ?? "",
-            content: material.content ?? "",
-            knowledgeType: material.knowledgeType ?? "RECITATION",
-            testMode: material.testMode ?? "AUDIO_RECITATION",
-        });
-        setEditorOpen(true);
-    };
-
-    const submitEditor = async (event) => {
-        event.preventDefault();
-        if (!form.title.trim() || !form.content.trim()) return;
-        setSaving(true);
-        try {
-            if (editingId == null) {
-                const created = await knowledgeService.create(form);
-                setMaterials((current) => [created, ...current]);
-                navigate(`/workspace/knowledge/${created.id}`);
-                window.__toast?.("success", t("knowledge.created"));
-            } else {
-                // 服务端只写真正变了的字段，所以整份表单回传是安全的：没改的字段不会刷新 updated_at。
-                const updated = await knowledgeService.update(editingId, form);
-                setMaterials((current) =>
-                    current.map((item) =>
-                        item.id === updated.id ? updated : item,
-                    ),
-                );
-                window.__toast?.("success", t("knowledge.updated"));
-            }
-            setEditorOpen(false);
-            setEditingId(null);
-            setForm(EMPTY_FORM);
-        } finally {
-            setSaving(false);
-        }
-    };
-
-    const updateForm = (patch) =>
-        setForm((current) => ({ ...current, ...patch }));
 
     // 归档、恢复和删除都会让这条知识离开当前视图，所以统一重新拉一次并把焦点交给第一条。
     const reloadAndFocusFirst = async () => {
@@ -462,7 +416,7 @@ const KnowledgeMirrorPage = () => {
 
             <KnowledgeEditorModal
                 isOpen={editorOpen}
-                onClose={() => setEditorOpen(false)}
+                onClose={closeEditor}
                 editingId={editingId}
                 form={form}
                 onFormChange={updateForm}
