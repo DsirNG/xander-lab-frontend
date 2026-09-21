@@ -2,11 +2,9 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
 import {
-    AlertCircle,
     BookOpen,
     Globe,
     Image as ImageIcon,
-    Loader2,
     MessageSquare,
     PanelLeft,
     PenLine,
@@ -17,96 +15,15 @@ import {
 } from "lucide-react";
 import { useAuthSession } from "@features/auth";
 import {
-    ImageToolProgressPanel,
-    ImageToolResult,
-    PlanCard,
-    ThinkingIndicator,
-    QuizMessage,
-    ArtifactMessage,
-} from "./AgentMessageParts";
-import {
     IMAGE_TOOL,
-    cleanImageMarkdown,
-    containsResultUrl,
-    imageToolResult,
     imageUrlsFromMessages,
     imageUrlsFromSteps,
-    liveImageStepResult,
 } from "./imageResult";
 import AgentComposer from "./AgentComposer";
-import AgentMarkdown from "./AgentMarkdown";
-import { SelfCheckCard } from "./AgentTraceCard";
-import { parseQuizPayload } from "./quizPayload";
-import { parseToolPayload } from "../services/agentConversationService";
+import AgentShowcaseConversation from "./AgentShowcaseConversation";
 import { uploadAgentAttachment } from "../capabilities";
 import { useAgentConversation } from "../hooks/useAgentConversation";
 import { useToast } from "@shared/hooks/useToast";
-
-const ThoughtCard = ({ content }) => (
-    <div className="flex items-start gap-2 rounded-xl border border-border bg-canvas px-3 py-2 text-xs leading-5 text-ink-muted">
-        <Sparkles className="mt-0.5 h-3.5 w-3.5 shrink-0 text-ink-muted" />
-        <span className="whitespace-pre-wrap">{content}</span>
-    </div>
-);
-
-ThoughtCard.propTypes = {
-    content: PropTypes.string.isRequired,
-};
-
-const ConversationMessage = ({ role, content, imageUrls, isStreaming }) => (
-    <div
-        className={`flex w-full ${role === "user" ? "justify-end" : "justify-start"}`}
-    >
-        <div
-            className={
-                role === "user"
-                    ? "max-w-[85%] rounded-3xl bg-[#f2f1fd] px-4 py-2.5 text-xs sm:text-sm leading-6 text-black sm:max-w-[75%]"
-                    : "w-full min-w-0 py-1 text-xs sm:text-sm leading-6 text-[#242741]"
-            }
-        >
-            {role === "user" ? (
-                <span className="whitespace-pre-wrap">{content}</span>
-            ) : isStreaming ? (
-                content ? (
-                    <div className="flex items-start gap-0.5">
-                        <div className="min-w-0 flex-1">
-                            <AgentMarkdown
-                                content={cleanImageMarkdown(content, imageUrls)}
-                            />
-                        </div>
-                        <span
-                            className="mt-1.5 inline-block h-4 w-[3px] shrink-0 animate-pulse rounded-sm bg-current align-middle"
-                            aria-hidden="true"
-                        />
-                    </div>
-                ) : (
-                    <span
-                        className="inline-flex items-center gap-1 px-1"
-                        role="status"
-                        aria-live="polite"
-                    >
-                        {[0, 1, 2].map((index) => (
-                            <span
-                                key={index}
-                                className="h-1.5 w-1.5 animate-bounce rounded-full bg-current opacity-70"
-                                style={{ animationDelay: `${index * 140}ms` }}
-                            />
-                        ))}
-                    </span>
-                )
-            ) : (
-                <AgentMarkdown content={cleanImageMarkdown(content, imageUrls)} />
-            )}
-        </div>
-    </div>
-);
-
-ConversationMessage.propTypes = {
-    role: PropTypes.string.isRequired,
-    content: PropTypes.string,
-    imageUrls: PropTypes.instanceOf(Set),
-    isStreaming: PropTypes.bool,
-};
 
 const AgentShowcase = ({ t, welcomeVisual: WelcomeVisual }) => {
     const navigate = useNavigate();
@@ -124,7 +41,6 @@ const AgentShowcase = ({ t, welcomeVisual: WelcomeVisual }) => {
     const fileInputRef = useRef(null);
     const textareaRef = useRef(null);
     const chatEndRef = useRef(null);
-    const chatScrollRef = useRef(null);
     const stickToBottomRef = useRef(true);
 
     const {
@@ -180,15 +96,6 @@ const AgentShowcase = ({ t, welcomeVisual: WelcomeVisual }) => {
     const historicalImageUrls = useMemo(() => imageUrlsFromMessages(messages), [messages]);
 
     const liveImageUrls = useMemo(() => imageUrlsFromSteps(steps), [steps]);
-
-    useEffect(() => {
-        if (stickToBottomRef.current) {
-            chatEndRef.current?.scrollIntoView({
-                behavior: "auto",
-                block: "end",
-            });
-        }
-    }, [messages, steps]);
 
     useEffect(() => {
         const element = textareaRef.current;
@@ -496,212 +403,23 @@ const AgentShowcase = ({ t, welcomeVisual: WelcomeVisual }) => {
                         ) : (
                             /* Live Chat Active State */
                             <>
-                                <div
-                                    ref={chatScrollRef}
-                                    onScroll={(event) => {
-                                        const el = event.currentTarget;
-                                        stickToBottomRef.current =
-                                            el.scrollHeight - el.scrollTop - el.clientHeight < 96;
-                                    }}
-                                    className="min-h-0 min-w-0 flex-1 overflow-y-auto px-4 pb-4 pt-3 sm:px-6"
-                                >
-                                    <div className="mx-auto flex max-w-2xl flex-col gap-4">
-                                        {messages.map((message) => {
-                                            if (message.kind === "quiz" || parseQuizPayload(message)) {
-                                                return (
-                                                    <QuizMessage
-                                                        key={message.id}
-                                                        message={message}
-                                                        onSubmit={handleQuizSubmit}
-                                                    />
-                                                );
-                                            }
-                                            if (message.kind === "artifact") {
-                                                return (
-                                                    <ArtifactMessage
-                                                        key={message.id}
-                                                        message={message}
-                                                    />
-                                                );
-                                            }
-                                            if (message.role === "user") {
-                                                return (
-                                                    <ConversationMessage
-                                                        key={message.id}
-                                                        role="user"
-                                                        content={message.content}
-                                                    />
-                                                );
-                                            }
-                                            if (message.kind === "thought") {
-                                                return (
-                                                    <ThoughtCard
-                                                        key={message.id}
-                                                        content={message.content}
-                                                    />
-                                                );
-                                            }
-                                            if (message.kind === "reflection") {
-                                                return (
-                                                    <SelfCheckCard
-                                                        key={message.id}
-                                                        content={message.content}
-                                                    />
-                                                );
-                                            }
-                                            if (message.kind === "tool_result") {
-                                                const result = imageToolResult(message);
-                                                return result ? (
-                                                    <ImageToolResult
-                                                        key={message.id}
-                                                        url={result.url}
-                                                        title={result.title}
-                                                    />
-                                                ) : null;
-                                            }
-                                            if (message.kind === "plan") {
-                                                return (
-                                                    <PlanCard
-                                                        key={message.id}
-                                                        items={parseToolPayload(message.content)}
-                                                    />
-                                                );
-                                            }
-                                            if (message.kind === "answer" || message.kind === "message") {
-                                                if (containsResultUrl(message.content, historicalImageUrls)) {
-                                                    return null;
-                                                }
-                                                return (
-                                                    <ConversationMessage
-                                                        key={message.id}
-                                                        role="assistant"
-                                                        content={message.content}
-                                                        imageUrls={historicalImageUrls}
-                                                    />
-                                                );
-                                            }
-                                            return null;
-                                        })}
-
-                                        {steps.map((step, index) => {
-                                            if (step.type === "user") {
-                                                return (
-                                                    <ConversationMessage
-                                                        key={`live-${index}`}
-                                                        role="user"
-                                                        content={step.content}
-                                                    />
-                                                );
-                                            }
-                                            if (step.type === "thought") {
-                                                return (
-                                                    <ThoughtCard
-                                                        key={`live-${index}`}
-                                                        content={step.content}
-                                                    />
-                                                );
-                                            }
-                                            if (step.type === "plan") {
-                                                return (
-                                                    <PlanCard
-                                                        key={`live-${index}`}
-                                                        items={step.items}
-                                                    />
-                                                );
-                                            }
-                                            if (step.type === "reflection") {
-                                                return (
-                                                    <SelfCheckCard
-                                                        key={`live-${index}`}
-                                                        content={step.content}
-                                                        round={step.round}
-                                                    />
-                                                );
-                                            }
-                                            if (step.type === "artifact") {
-                                                return (
-                                                    <ArtifactMessage
-                                                        key={`live-${index}`}
-                                                        message={step}
-                                                    />
-                                                );
-                                            }
-                                            if (step.type === "tool") {
-                                                const result = liveImageStepResult(step);
-                                                return result ? (
-                                                    <ImageToolResult
-                                                        key={`live-${index}`}
-                                                        url={result.url}
-                                                        title={result.title}
-                                                    />
-                                                ) : null;
-                                            }
-                                            if (
-                                                step.type === "answer" ||
-                                                step.type === "answer_delta"
-                                            ) {
-                                                if (containsResultUrl(step.content, liveImageUrls)) {
-                                                    return null;
-                                                }
-                                                return (
-                                                    <ConversationMessage
-                                                        key={`live-${index}`}
-                                                        role="assistant"
-                                                        content={step.content}
-                                                        imageUrls={liveImageUrls}
-                                                        isStreaming={step.type === "answer_delta"}
-                                                    />
-                                                );
-                                            }
-                                            if (step.type === "error") {
-                                                return (
-                                                    <div
-                                                        key={`live-${index}`}
-                                                        className="flex items-center gap-2 rounded-xl border border-danger/30 bg-danger/5 px-3 py-2 text-xs font-semibold text-danger"
-                                                    >
-                                                        <AlertCircle className="h-3.5 w-3.5 shrink-0" />
-                                                        <span className="truncate">{step.message}</span>
-                                                    </div>
-                                                );
-                                            }
-                                            return null;
-                                        })}
-
-                                        {activeImageGeneration ? (
-                                            <ImageToolProgressPanel
-                                                message={activeImageGeneration.message}
-                                            />
-                                        ) : null}
-
-                                        {(isActive || creating || (loading && steps.length > 0)) &&
-                                            !streamingAnswer &&
-                                            !activeImageGeneration && (
-                                                <ThinkingIndicator
-                                                    label={t("blog.agentChat.thinking")}
-                                                />
-                                            )}
-
-                                        {(reconnecting || errorMessage) && (
-                                            <div
-                                                className={`flex items-center gap-2 rounded-xl border px-3 py-2 text-xs font-semibold ${
-                                                    errorMessage
-                                                        ? "border-danger/20 bg-danger/5 text-danger"
-                                                        : "border-border bg-surface-muted text-ink-secondary"
-                                                }`}
-                                            >
-                                                {errorMessage ? (
-                                                    <AlertCircle className="h-3.5 w-3.5 shrink-0" />
-                                                ) : (
-                                                    <Loader2 className="h-3.5 w-3.5 shrink-0 animate-spin" />
-                                                )}
-                                                <span className="truncate">
-                                                    {errorMessage || (reconnecting ? t("blog.agentChat.reconnecting") : "")}
-                                                </span>
-                                            </div>
-                                        )}
-                                        <div ref={chatEndRef} className="h-2" />
-                                    </div>
-                                </div>
+                                <AgentShowcaseConversation
+                                    messages={messages}
+                                    steps={steps}
+                                    historicalImageUrls={historicalImageUrls}
+                                    liveImageUrls={liveImageUrls}
+                                    activeImageGeneration={activeImageGeneration}
+                                    isActive={isActive}
+                                    creating={creating}
+                                    loading={loading}
+                                    reconnecting={reconnecting}
+                                    errorMessage={errorMessage}
+                                    streamingAnswer={streamingAnswer}
+                                    onQuizSubmit={handleQuizSubmit}
+                                    chatEndRef={chatEndRef}
+                                    stickToBottomRef={stickToBottomRef}
+                                    t={t}
+                                />
 
                                 {/* Bottom Input Bar for Active Chat */}
                                 <div className="shrink-0 border-t border-[#f0f1f8] bg-white/90 p-3">
