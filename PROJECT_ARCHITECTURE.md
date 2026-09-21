@@ -74,6 +74,10 @@ src/
 ├── shared/lib/                  # cn、debounce、storage 等通用技术能力
 │
 ├── api/                         # Transport Infrastructure
+│   ├── auth/                    # 凭据存储与会话传输基础能力
+│   ├── errors/                 # HTTP/业务错误归一化
+│   ├── transfer/               # 上传、下载和进度处理
+│   └── http.js                 # Axios 客户端与兼容方法门面
 ├── components/                  # 历史公共组件和兼容入口
 │   ├── common/                  # 停止新增，迁移组件保留 deprecated re-export
 │   ├── layouts/                 # MainLayout 历史兼容入口
