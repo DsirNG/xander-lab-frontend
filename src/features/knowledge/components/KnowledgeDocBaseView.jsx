@@ -10,11 +10,9 @@ import KnowledgeFolderModal from "./KnowledgeFolderModal";
 import KnowledgeMoveModal from "./KnowledgeMoveModal";
 import KnowledgeUploadModal from "./KnowledgeUploadModal";
 import KnowledgeFileViewerModal from "./KnowledgeFileViewerModal";
-import Button from "@shared/ui/primitives/Button";
-import RowActionsMenu from "@shared/ui/overlays/RowActionsMenu";
-import { Plus, RefreshCw, Tag as TagIcon, Sparkles } from "lucide-react";
 import KnowledgeBaseSkeleton from "./KnowledgeBaseSkeleton";
 import KnowledgeCreateTagModal from "./KnowledgeCreateTagModal";
+import KnowledgeDocHeader from "./KnowledgeDocHeader";
 import { knowledgeBaseService } from "../services/knowledgeBaseService";
 
 const KnowledgeDocBaseView = ({ onSwitchToMirror }) => {
@@ -319,67 +317,18 @@ const KnowledgeDocBaseView = ({ onSwitchToMirror }) => {
 
     return (
         <div className="flex h-full min-h-0 flex-1 flex-col space-y-4 overflow-hidden p-5 text-body text-[#555b7b]">
-            {/* 顶部标题与全局操作栏 (1:1 统一工作台设计规范) */}
-            <div className="flex shrink-0 items-start justify-between gap-4">
-                <div>
-                    <h1 className="text-2xl font-bold tracking-tight text-[#111426] dark:text-white">
-                        {t("knowledgeBase.title", "知识库")}
-                    </h1>
-                    <p className="mt-1 text-caption text-[#8b91a9]">
-                        {t("knowledgeBase.subtitle", "沉淀有价值的知识，让 AI 理解你的专业")}
-                    </p>
-                </div>
-
-                <div className="flex items-center gap-2.5">
-                    <Button
-                        variant="primary"
-                        icon={Plus}
-                        onClick={() => setUploadModalOpen(true)}
-                        className="bg-[#7771ed] hover:bg-[#6862e3] text-white rounded-xl shadow-xs"
-                    >
-                        上传文件
-                    </Button>
-                    <Button
-                        variant="outline"
-                        icon={Plus}
-                        onClick={() => handleOpenCreateFolder(activeFolderId || 0)}
-                        className="border-[#e9eaf4] bg-white/70 text-[#59617e] hover:bg-white hover:text-[#111426] rounded-xl shadow-2xs"
-                    >
-                        新建文件夹
-                    </Button>
-                    <RowActionsMenu
-                        size="md"
-                        align="right"
-                        actions={[
-                            {
-                                key: "refresh",
-                                label: "刷新知识库",
-                                icon: RefreshCw,
-                                onClick: () => {
-                                    loadFoldersAndTags();
-                                    loadFiles();
-                                },
-                            },
-                            {
-                                key: "createTag",
-                                label: "新建标签",
-                                icon: TagIcon,
-                                onClick: () => setCreateTagModalOpen(true),
-                            },
-                            ...(onSwitchToMirror
-                                ? [
-                                      {
-                                          key: "mirror",
-                                          label: "知识镜像 / 复习",
-                                          icon: Sparkles,
-                                          onClick: onSwitchToMirror,
-                                      },
-                                  ]
-                                : []),
-                        ]}
-                    />
-                </div>
-            </div>
+            <KnowledgeDocHeader
+                onUpload={() => setUploadModalOpen(true)}
+                onCreateFolder={() =>
+                    handleOpenCreateFolder(activeFolderId || 0)
+                }
+                onRefresh={() => {
+                    loadFoldersAndTags();
+                    loadFiles();
+                }}
+                onCreateTag={() => setCreateTagModalOpen(true)}
+                onSwitchToMirror={onSwitchToMirror}
+            />
 
             {/* 下方三栏主区域 */}
             <div className="flex min-h-0 flex-1 gap-4">
