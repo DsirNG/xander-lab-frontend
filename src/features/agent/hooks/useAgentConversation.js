@@ -4,132 +4,22 @@ import {
     agentConversationService,
     parseToolPayload,
 } from "../services/agentConversationService";
+import {
+    abortableDelay,
+    asId,
+    collapsePlanUpdates,
+    isAbortError,
+    normalizeRunVersion,
+    readDeepThinkingPreference,
+    restorePlanMessage,
+    saveDeepThinkingPreference,
+    toolTraceKey,
+} from "../utils/conversationState";
 
 const LIVE_STEP_LIMIT = 100;
 const MAX_RECONNECT_DELAY_MS = 5000;
 /** 后台会话状态只能从列表快照得知，有会话在执行时才轮询，全部收口后自动停止。 */
 const SESSIONS_POLL_INTERVAL_MS = 5000;
-/** 深度思考开关：记在本地偏好里，刷新和换会话都保持上次的选择。 */
-const DEEP_THINKING_STORAGE_KEY = "agent.deepThinking";
-
-const readDeepThinkingPreference = () => {
-    try {
-        return window.localStorage.getItem(DEEP_THINKING_STORAGE_KEY) === "1";
-    } catch {
-        return false;
-    }
-};
-
-const asId = (value) => (value == null ? null : String(value));
-const normalizeRunVersion = (value) => String(value ?? 0);
-
-/**
- * 一次工具调用的配对键，用来把 start/progress/delta/end 四条事件归到同一张卡上。
- *
- * <p>优先用后端给的 invocationId：并行批次里同一步可以出现两个**同名**工具
- * （一次查两个主题的知识点），按工具名归并会把它们的进度和增量搅在一起。</p>
- *
- * <p>必须保留按工具名回退：后端在审批恢复等没有持久化身份的路径上不给这个字段。
- * 一次调用的四条事件要么都带身份、要么都不带（身份是开单时一次性绑定的），
- * 所以回退不会出现"半条按名字、半条按身份"的错配。</p>
- */
-const toolTraceKey = (payload) => payload?.invocationId || payload?.tool || "tool";
-const isAbortError = (error) =>
-    Boolean(
-        error?.name === "AbortError" ||
-        error?.name === "CanceledError" ||
-        error?.code === "ERR_CANCELED" ||
-        error?.isCancelled,
-    );
-
-/** The backend stores a conversation plan as a JSON snapshot. */
-const parsePlanItems = (planJson) => {
-    if (Array.isArray(planJson)) return planJson;
-    if (typeof planJson !== "string" || !planJson.trim()) return [];
-    try {
-        const parsed = JSON.parse(planJson);
-        return Array.isArray(parsed) ? parsed : [];
-    } catch {
-        return [];
-    }
-};
-
-/**
- * Plans created before plan messages were persisted still exist in planJson.
- * Reinsert those legacy plans after the task-introduction thought so they remain
- * part of the conversation timeline after a refresh.
- */
-const restorePlanMessage = (messages, conversation) => {
-    const timeline = Array.isArray(messages) ? messages : [];
-    if (timeline.some((message) => message.kind === "plan")) return timeline;
-    const items = parsePlanItems(conversation?.planJson);
-    if (items.length === 0) return timeline;
-
-    const planMessage = {
-        id: `plan-snapshot-${conversation?.id ?? "unknown"}`,
-        role: "assistant",
-        kind: "plan",
-        content: JSON.stringify(items),
-    };
-    const thoughtIndex = timeline.findIndex(
-        (message) => message.kind === "thought",
-    );
-    const userIndex = timeline.findIndex((message) => message.role === "user");
-    const anchorIndex = thoughtIndex >= 0 ? thoughtIndex : userIndex;
-    if (anchorIndex < 0) return [...timeline, planMessage];
-    return [
-        ...timeline.slice(0, anchorIndex + 1),
-        planMessage,
-        ...timeline.slice(anchorIndex + 1),
-    ];
-};
-
-/** Older turns may contain one plan message per status update; retain one card per user turn. */
-const collapsePlanUpdates = (messages) => {
-    const timeline = Array.isArray(messages) ? messages : [];
-    const collapsed = [];
-    let planIndex = -1;
-    for (const message of timeline) {
-        if (message.role === "user") planIndex = -1;
-        if (message.kind !== "plan") {
-            collapsed.push(message);
-            continue;
-        }
-        if (planIndex < 0) {
-            planIndex = collapsed.length;
-            collapsed.push(message);
-            continue;
-        }
-        // Keep the original timeline position, but render the latest status snapshot.
-        collapsed[planIndex] = { ...collapsed[planIndex], content: message.content };
-    }
-    return collapsed;
-};
-
-const abortableDelay = (delay, signal) =>
-    new Promise((resolve, reject) => {
-        const rejectAborted = () =>
-            reject(new DOMException("Aborted", "AbortError"));
-        if (signal?.aborted) {
-            rejectAborted();
-            return;
-        }
-
-        let timer;
-        const cleanup = () => signal?.removeEventListener("abort", handleAbort);
-        const handleResolve = () => {
-            cleanup();
-            resolve();
-        };
-        const handleAbort = () => {
-            window.clearTimeout(timer);
-            cleanup();
-            rejectAborted();
-        };
-        timer = window.setTimeout(handleResolve, delay);
-        signal?.addEventListener("abort", handleAbort, { once: true });
-    });
-
 /**
  * Dindor 对话状态：服务端快照是事实来源，SSE 仅负责增量反馈与断线续传。
  */
@@ -176,14 +66,7 @@ export const useAgentConversation = ({ conversationId }) => {
                 ? Boolean(next(deepThinkingRef.current))
                 : Boolean(next);
         deepThinkingRef.current = value;
-        try {
-            window.localStorage.setItem(
-                DEEP_THINKING_STORAGE_KEY,
-                value ? "1" : "0",
-            );
-        } catch {
-            // 隐私模式下写不进去也不影响本次会话使用。
-        }
+        saveDeepThinkingPreference(value);
         setDeepThinkingState(value);
     }, []);
 
