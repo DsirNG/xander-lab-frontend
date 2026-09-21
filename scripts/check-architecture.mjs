@@ -33,6 +33,25 @@ const addEdge = (from, to) => {
     featureGraph.get(from).add(to);
 };
 
+const appSpecifier = (specifier) =>
+    specifier === "@app" ||
+    specifier.startsWith("@app/") ||
+    specifier === "@/app" ||
+    specifier.startsWith("@/app/");
+
+const featureSpecifier = (specifier) => {
+    if (specifier === "@features" || specifier.startsWith("@features/")) {
+        return specifier.slice("@features/".length);
+    }
+    if (
+        specifier === "@/features" ||
+        specifier.startsWith("@/features/")
+    ) {
+        return specifier.slice("@/features/".length);
+    }
+    return null;
+};
+
 for (const file of sourceFiles) {
     const relative = path.relative(root, file);
     const content = fs.readFileSync(file, "utf8");
@@ -48,27 +67,25 @@ for (const file of sourceFiles) {
         if (specifier.includes("?raw")) continue;
 
         if (relative.startsWith(`src${path.sep}shared${path.sep}`)) {
-            if (specifier === "@app" || specifier.startsWith("@app/")) {
+            if (appSpecifier(specifier)) {
                 errors.push(`${relative}: shared -> app (${specifier})`);
             }
-            if (
-                specifier === "@features" ||
-                specifier.startsWith("@features/")
-            ) {
+            if (featureSpecifier(specifier) !== null) {
                 errors.push(`${relative}: shared -> feature (${specifier})`);
             }
         }
 
         if (!sourceFeature || isTest) continue;
-        if (specifier === "@app" || specifier.startsWith("@app/")) {
+        if (appSpecifier(specifier)) {
             if (!compatibility) {
                 errors.push(`${relative}: feature -> app (${specifier})`);
             }
             continue;
         }
 
-        if (!specifier.startsWith("@features/")) continue;
-        const target = specifier.slice("@features/".length).split("/");
+        const featurePath = featureSpecifier(specifier);
+        if (featurePath === null) continue;
+        const target = featurePath.split("/");
         const targetFeature = target[0];
         if (!targetFeature || targetFeature === sourceFeature) continue;
 

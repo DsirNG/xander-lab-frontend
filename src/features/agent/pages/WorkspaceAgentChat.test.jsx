@@ -42,13 +42,7 @@ vi.mock("../services/agentConversationService", async (importOriginal) => {
 });
 
 // ./AgentChat 被整页导入（借它的 QuizMessage / PlanCard 等），顺带拖进这些依赖。
-vi.mock("@/features/blog/services/blogAgentService", () => ({
-    blogAgentService: { getTask: vi.fn().mockResolvedValue(null) },
-}));
 vi.mock("@/features/agent/components/AgentSessionList", () => ({
-    default: () => null,
-}));
-vi.mock("@/features/blog/components/agent/AgentPreviewPanel", () => ({
     default: () => null,
 }));
 vi.mock("@features/profile", () => ({

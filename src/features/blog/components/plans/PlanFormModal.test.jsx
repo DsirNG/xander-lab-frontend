@@ -13,8 +13,8 @@ vi.mock("../../services/blogPlanService", () => ({
     blogPlanService: planServiceMock,
 }));
 vi.mock("@shared/hooks/useToast", () => ({ useToast: () => toastMock }));
-vi.mock("@/features/knowledge/services/knowledgeService", () => ({
-    knowledgeService: { list: vi.fn().mockResolvedValue([]) },
+vi.mock("@features/knowledge", () => ({
+    listKnowledgeMaterials: vi.fn().mockResolvedValue([]),
 }));
 vi.mock("react-i18next", () => ({
     useTranslation: () => ({

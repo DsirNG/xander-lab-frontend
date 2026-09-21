@@ -8,4 +8,9 @@ export { PureReadingProvider } from "./context/PureReadingContext";
 export { default as usePureReading } from "./hooks/usePureReading";
 export { default as BlogManagePage } from "./pages/BlogManagePage";
 export { default as BlogManagePanel } from "./components/BlogManagePanel";
-export { listBlogPlans, listMyBlogs } from "./capabilities";
+export {
+    getBlogAgentTask,
+    listBlogPlans,
+    listMyBlogs,
+    publishBlogAgentTask,
+} from "./capabilities";

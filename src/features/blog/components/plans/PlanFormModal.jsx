@@ -10,7 +10,7 @@ import CustomSelect from "@shared/ui/forms/CustomSelect";
 import { formInputCls } from "@shared/ui/forms/formStyles";
 import { blogPlanService } from "../../services/blogPlanService";
 import { useToast } from "@shared/hooks/useToast";
-import { knowledgeService } from "@/features/knowledge/services/knowledgeService";
+import { listKnowledgeMaterials } from "@features/knowledge";
 
 const TIME_RE = /^([01]\d|2[0-3]):[0-5]\d$/;
 
@@ -123,8 +123,7 @@ const PlanFormModal = ({ isOpen, plan, onClose, onSaved }) => {
                 : initialForm(),
         );
         setError("");
-        knowledgeService
-            .list({ archive: "ACTIVE" }, { _silent: true })
+        listKnowledgeMaterials({ archive: "ACTIVE" }, { _silent: true })
             .then((items) =>
                 setKnowledgeMaterials(Array.isArray(items) ? items : []),
             )

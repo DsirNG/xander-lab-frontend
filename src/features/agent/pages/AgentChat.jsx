@@ -40,8 +40,11 @@ import {
 } from "lucide-react";
 import { useToast } from "@shared/hooks/useToast";
 import LoadingSpinner from "@shared/ui/feedback/LoadingSpinner";
-import { AgentPreviewPanel } from "@features/blog";
-import { blogAgentService } from "@/features/blog/services/blogAgentService";
+import {
+    AgentPreviewPanel,
+    getBlogAgentTask,
+    publishBlogAgentTask,
+} from "@features/blog";
 import useIsMobile from "@shared/hooks/useIsMobile";
 import useClickOutside from "@shared/hooks/useClickOutside";
 import { useAgentConversation } from "../hooks/useAgentConversation";
@@ -637,8 +640,10 @@ const AgentChat = () => {
         setArtifactLoading(true);
         setArtifactError(null);
         setArtifactData(null);
-        blogAgentService
-            .getTask(blogTaskId, { _silent: true, signal: controller.signal })
+        getBlogAgentTask(blogTaskId, {
+            _silent: true,
+            signal: controller.signal,
+        })
             .then((data) => {
                 if (controller.signal.aborted) return;
                 setArtifactData(data);
@@ -935,7 +940,7 @@ const AgentChat = () => {
         try {
             // The task endpoint reconciles uncertain/repeated publish attempts by
             // returning the post already attached to this generated artifact.
-            const post = await blogAgentService.publishTask(blogTaskId, {
+            const post = await publishBlogAgentTask(blogTaskId, {
                 dedupe: false,
             });
             setArtifactData(

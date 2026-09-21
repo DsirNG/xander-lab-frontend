@@ -21,15 +21,13 @@ vi.mock("@features/auth", () => ({
     useAuthSession: () => ({ userInfo: { nickname: "tester" }, sessionStatus: "authenticated" }),
 }));
 
-vi.mock("@/features/blog/services/blogAgentService", () => ({
-    blogAgentService: { getTask: vi.fn().mockResolvedValue(null) },
-}));
-
 vi.mock("@/features/agent/components/AgentSessionList", () => ({
     default: () => null,
 }));
-vi.mock("@/features/blog/components/agent/AgentPreviewPanel", () => ({
-    default: () => null,
+vi.mock("@features/blog", () => ({
+    AgentPreviewPanel: () => null,
+    getBlogAgentTask: vi.fn().mockResolvedValue(null),
+    publishBlogAgentTask: vi.fn(),
 }));
 vi.mock("@features/profile", () => ({
     ProfileModal: () => null,
