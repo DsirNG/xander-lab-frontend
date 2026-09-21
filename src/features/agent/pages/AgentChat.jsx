@@ -10,7 +10,6 @@ import { useTranslation } from "react-i18next";
 import {
     ArrowLeft,
     Bot,
-    Loader2,
     MessageSquareText,
     ShieldAlert,
     X,
@@ -19,7 +18,6 @@ import {
     Image as ImageIcon,
     Menu,
     PanelLeftOpen,
-    Link2,
     Search,
     SquarePen,
 } from "lucide-react";
@@ -29,7 +27,6 @@ import {
     publishBlogAgentTask,
 } from "@features/blog";
 import useIsMobile from "@shared/hooks/useIsMobile";
-import useClickOutside from "@shared/hooks/useClickOutside";
 import { useAgentConversation } from "../hooks/useAgentConversation";
 import {
     agentConversationService,
@@ -37,6 +34,7 @@ import {
 import AgentSessionList from "../components/AgentSessionList";
 import AgentSessionSearchModal from "../components/AgentSessionSearchModal";
 import AgentArtifactPanel from "../components/AgentArtifactPanel";
+import AgentConversationShareMenu from "../components/AgentConversationShareMenu";
 import AgentChatInputBar from "../components/AgentChatInputBar";
 import AgentConversationTimeline from "../components/AgentConversationTimeline";
 import ImageToolResult from "../components/ImageToolResult";
@@ -106,7 +104,6 @@ const AgentChat = () => {
     const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
     const [searchOpen, setSearchOpen] = useState(false);
     const [settingsOpen, setSettingsOpen] = useState(false);
-    const shareMenuRef = useRef(null);
     const chatEndRef = useRef(null);
     const chatScrollRef = useRef(null);
     const stickToBottomRef = useRef(true);
@@ -411,9 +408,6 @@ const AgentChat = () => {
         setSearchParams(next, { replace: true });
     };
 
-    const closeShareMenu = () => setIsShareOpen(false);
-    useClickOutside(shareMenuRef, closeShareMenu, isShareOpen);
-
     const handleCopyShareLink = async () => {
         if (!conversationId) return;
         setShareLoading(true);
@@ -707,66 +701,17 @@ const AgentChat = () => {
                                         </>
                                     )}
                                     {!sidebarCollapsed && (
-                                        <div
-                                            ref={shareMenuRef}
-                                            className="relative"
-                                        >
-                                            <button
-                                                type="button"
-                                                onClick={() =>
-                                                    setIsShareOpen(
-                                                        (open) => !open,
-                                                    )
-                                                }
-                                                aria-expanded={isShareOpen}
-                                                aria-haspopup="dialog"
-                                                className="inline-flex items-center gap-2 rounded-lg border border-border bg-canvas px-3 py-1.5 text-sm font-bold text-ink-muted transition-colors hover:text-accent"
-                                            >
-                                                <Link2 className="h-4 w-4" />{" "}
-                                                分享
-                                            </button>
-                                            {isShareOpen ? (
-                                                <div
-                                                    role="dialog"
-                                                    aria-label="分享对话"
-                                                    className="absolute right-0 top-full z-40 mt-2 w-80 max-w-[calc(100vw-2.5rem)] rounded-xl border border-border bg-canvas p-3 shadow-xl"
-                                                >
-                                                    <div className="mb-2 text-sm font-bold text-ink-secondary">
-                                                        分享对话链接
-                                                    </div>
-                                                    <p className="mb-2 text-xs text-ink-muted">
-                                                        复制链接后，对方无需登录即可查看此对话
-                                                    </p>
-                                                    <div className="flex items-center gap-2">
-                                                        <button
-                                                            type="button"
-                                                            onClick={
-                                                                handleCopyShareLink
-                                                            }
-                                                            disabled={
-                                                                shareLoading ||
-                                                                !conversationId
-                                                            }
-                                                            className="w-full inline-flex items-center justify-center gap-1.5 rounded-lg bg-accent px-3 py-2 text-sm font-bold text-white transition hover:bg-accent/90 disabled:opacity-50"
-                                                        >
-                                                            {shareLoading ? (
-                                                                <>
-                                                                    <Loader2 className="h-4 w-4 animate-spin" />{" "}
-                                                                    生成中...
-                                                                </>
-                                                            ) : isShareCopied ? (
-                                                                "已复制"
-                                                            ) : (
-                                                                <>
-                                                                    <Link2 className="h-4 w-4" />{" "}
-                                                                    复制分享链接
-                                                                </>
-                                                            )}
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            ) : null}
-                                        </div>
+                                        <AgentConversationShareMenu
+                                            open={isShareOpen}
+                                            conversationId={conversationId}
+                                            loading={shareLoading}
+                                            copied={isShareCopied}
+                                            onToggle={() =>
+                                                setIsShareOpen((open) => !open)
+                                            }
+                                            onClose={() => setIsShareOpen(false)}
+                                            onCopy={handleCopyShareLink}
+                                        />
                                     )}
                                 </div>
                             </header>
