@@ -6,7 +6,7 @@ import { GLTFExporter } from "three/examples/jsm/exporters/GLTFExporter.js";
 import {
     buildGroupFromSceneSpec,
     readCameraFromSceneSpec,
-} from "./SceneSpecBuilder";
+} from "../utils/sceneSpecBuilder";
 
 const TEXTURE_KEYS = [
     "map",
