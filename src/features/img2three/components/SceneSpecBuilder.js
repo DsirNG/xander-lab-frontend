@@ -1,15 +1,22 @@
 import * as THREE from "three";
+import { buildLegacyGroup } from "./legacySceneBuilder";
+import {
+    addFallbackMesh,
+    abortError,
+    asPositiveVec3,
+    asVec2,
+    asVec3,
+    clamp,
+    isRecord,
+    parseColor,
+    readLayerNumber,
+    readNumber,
+    safeName,
+    throwIfAborted,
+    wouldCreateCycle,
+} from "./sceneSpecUtils";
 
 const RELIEF_SCHEMA_VERSION = "xander-image-relief/1";
-const LEGACY_TYPES = new Set([
-    "box",
-    "sphere",
-    "cylinder",
-    "cone",
-    "torus",
-    "plane",
-    "group",
-]);
 const SCULPT_TYPES = new Set([
     "box",
     "sphere",
@@ -102,77 +109,6 @@ const DEFAULT_CURVE_SWEEP = {
     closed: false,
 };
 
-const isRecord = (value) =>
-    value !== null && typeof value === "object" && !Array.isArray(value);
-
-const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
-
-const readNumber = (value, fallback, min = -1_000, max = 1_000) => {
-    const number = Number(value);
-    return Number.isFinite(number) ? clamp(number, min, max) : fallback;
-};
-
-const readLayerNumber = (value, keys, fallback, min = 0, max = 1) => {
-    if (typeof value === "number") return clamp(value, min, max);
-    if (isRecord(value)) {
-        for (const key of keys) {
-            if (typeof value[key] === "number")
-                return clamp(value[key], min, max);
-        }
-    }
-    return fallback;
-};
-
-const asVec2 = (value, fallback = [0, 0]) => {
-    if (!Array.isArray(value) || value.length < 2) return fallback.slice();
-    return [
-        readNumber(value[0], fallback[0]),
-        readNumber(value[1], fallback[1]),
-    ];
-};
-
-const asVec3 = (value, fallback = [0, 0, 0]) => {
-    if (!Array.isArray(value) || value.length < 3) return fallback.slice();
-    return [
-        readNumber(value[0], fallback[0]),
-        readNumber(value[1], fallback[1]),
-        readNumber(value[2], fallback[2]),
-    ];
-};
-
-const asPositiveVec3 = (value, fallback = [1, 1, 1]) => {
-    const vector = asVec3(value, fallback);
-    return vector.map((item) => clamp(Math.abs(item), 0.001, 1_000));
-};
-
-const safeName = (value, fallback) => {
-    const text = typeof value === "string" ? value.trim() : "";
-    return (text || fallback).slice(0, 160);
-};
-
-const parseColor = (value, fallback = 0x888888) => {
-    if (typeof value === "number" && Number.isFinite(value))
-        return new THREE.Color(value);
-    if (typeof value === "string" && value.trim()) {
-        try {
-            return new THREE.Color(value.trim());
-        } catch {
-            return new THREE.Color(fallback);
-        }
-    }
-    return new THREE.Color(fallback);
-};
-
-const abortError = () => {
-    const error = new Error("Scene construction was cancelled");
-    error.name = "AbortError";
-    return error;
-};
-
-const throwIfAborted = (signal) => {
-    if (signal?.aborted) throw abortError();
-};
-
 const sanitizeVec2List = (value, fallback, minimum = 3) => {
     const source = Array.isArray(value) ? value : fallback;
     const result = source
@@ -193,129 +129,6 @@ const sanitizeVec3List = (value, fallback, minimum = 2) => {
     return result.length >= minimum
         ? result
         : fallback.map((point) => point.slice());
-};
-
-const createLegacyGeometry = (node) => {
-    const type = String(node.type || "box").toLowerCase();
-    const size = asPositiveVec3(node.size, [1, 1, 1]);
-    const radius = readNumber(node.radius, 0.4, 0.01, 100);
-    const height = readNumber(node.height, 1, 0.01, 100);
-    const tube = readNumber(node.tube, 0.12, 0.005, 100);
-
-    switch (type) {
-        case "sphere":
-            return new THREE.SphereGeometry(radius, 32, 24);
-        case "cylinder":
-            return new THREE.CylinderGeometry(radius, radius, height, 24);
-        case "cone":
-            return new THREE.ConeGeometry(radius, height, 24);
-        case "torus":
-            return new THREE.TorusGeometry(
-                radius,
-                Math.min(tube, radius * 0.95),
-                16,
-                48,
-            );
-        case "plane":
-            return new THREE.PlaneGeometry(size[0], size[1]);
-        case "box":
-        default:
-            return new THREE.BoxGeometry(size[0], size[1], size[2]);
-    }
-};
-
-const createLegacyMaterial = (node) =>
-    new THREE.MeshStandardMaterial({
-        color: parseColor(node.color),
-        metalness: readNumber(node.metalness, 0.25, 0, 1),
-        roughness: readNumber(node.roughness, 0.55, 0, 1),
-    });
-
-const wouldCreateCycle = (id, parentId, parentById) => {
-    let cursor = parentId;
-    const visited = new Set([id]);
-    while (cursor) {
-        if (visited.has(cursor)) return true;
-        visited.add(cursor);
-        cursor = parentById.get(cursor);
-    }
-    return false;
-};
-
-const addFallbackMesh = (root) => {
-    const fallback = new THREE.Mesh(
-        new THREE.BoxGeometry(1, 1, 1),
-        new THREE.MeshStandardMaterial({
-            color: 0x888888,
-            metalness: 0.2,
-            roughness: 0.6,
-        }),
-    );
-    fallback.name = "fallback-model";
-    fallback.castShadow = true;
-    fallback.receiveShadow = true;
-    root.add(fallback);
-};
-
-const buildLegacyGroup = (sceneSpec) => {
-    const root = new THREE.Group();
-    root.name = safeName(sceneSpec?.title, "scene-root");
-    root.userData.sceneSpecKind = "legacy-nodes";
-
-    const rawNodes = Array.isArray(sceneSpec?.nodes)
-        ? sceneSpec.nodes.slice(0, LIMITS.legacyNodes)
-        : [];
-    const objects = new Map();
-    const parentById = new Map();
-
-    rawNodes.forEach((raw, index) => {
-        if (!isRecord(raw)) return;
-        const type = String(raw.type || "box").toLowerCase();
-        if (!LEGACY_TYPES.has(type)) return;
-
-        const id = safeName(raw.id, `node-${index}`);
-        if (objects.has(id)) return;
-        const object3d =
-            type === "group"
-                ? new THREE.Group()
-                : new THREE.Mesh(
-                      createLegacyGeometry(raw),
-                      createLegacyMaterial(raw),
-                  );
-        object3d.name = id;
-        if (object3d.isMesh) {
-            object3d.castShadow = true;
-            object3d.receiveShadow = true;
-        }
-        const position = asVec3(raw.position);
-        const rotation = asVec3(raw.rotation);
-        const scale = asPositiveVec3(raw.scale, [1, 1, 1]);
-        object3d.position.set(...position);
-        object3d.rotation.set(...rotation);
-        object3d.scale.set(...scale);
-        objects.set(id, object3d);
-        const parentId =
-            raw.parent == null || raw.parent === ""
-                ? null
-                : safeName(raw.parent, "");
-        parentById.set(id, parentId);
-    });
-
-    objects.forEach((object3d, id) => {
-        const parentId = parentById.get(id);
-        if (
-            parentId &&
-            objects.has(parentId) &&
-            !wouldCreateCycle(id, parentId, parentById)
-        ) {
-            objects.get(parentId).add(object3d);
-        } else {
-            root.add(object3d);
-        }
-    });
-
-    if (objects.size === 0) addFallbackMesh(root);
-    return root;
 };
 
 const createSculptMaterial = (materialSpec = {}) => {
@@ -1575,7 +1388,7 @@ export async function buildGroupFromSceneSpec(sceneSpec, { signal } = {}) {
     if (Array.isArray(sceneSpec.componentTree)) {
         return buildSculptGroup(sceneSpec);
     }
-    return buildLegacyGroup(sceneSpec);
+    return buildLegacyGroup(sceneSpec, LIMITS.legacyNodes);
 }
 
 export function readCameraFromSceneSpec(sceneSpec) {
