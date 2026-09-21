@@ -8,9 +8,10 @@ const apiMock = vi.hoisted(() => ({
 
 vi.mock("@api", () => apiMock);
 
-const { csdnService, mcpOAuthService } = await import("./mcpService.js");
-const { default: ComponentService } =
-    await import("@/features/components/services/componentService.js");
+const { mcpOAuthService } = await import("./mcpOAuthService.js");
+const { csdnService } = await import(
+    "@features/platformIntegrations/services/publishingService.js",
+);
 
 afterEach(() => {
     vi.clearAllMocks();
@@ -78,44 +79,6 @@ describe("mcpOAuthService", () => {
         mcpOAuthService.revokeClient("client/1");
         expect(apiMock["delete"]).toHaveBeenCalledWith(
             "/api/mcp/oauth/clients/client%2F1",
-        );
-    });
-});
-
-describe("ComponentService", () => {
-    it("getMenu 默认 zh 并可传语言", () => {
-        ComponentService.getMenu();
-        expect(apiMock.get).toHaveBeenCalledWith(
-            "/api/components/menu",
-            { lang: "zh" },
-            undefined,
-        );
-        ComponentService.getMenu("en", { signal: 1 });
-        expect(apiMock.get).toHaveBeenCalledWith(
-            "/api/components/menu",
-            { lang: "en" },
-            { signal: 1 },
-        );
-    });
-
-    it("getComponentDetail 与 shareComponent 端点映射", () => {
-        ComponentService.getComponentDetail("comp-1");
-        expect(apiMock.get).toHaveBeenCalledWith(
-            "/api/components/comp-1",
-            { lang: "zh" },
-            undefined,
-        );
-        ComponentService.getComponentDetail("comp-1", "en");
-        expect(apiMock.get).toHaveBeenCalledWith(
-            "/api/components/comp-1",
-            { lang: "en" },
-            undefined,
-        );
-        ComponentService.shareComponent({ titleZh: "t" });
-        expect(apiMock.post).toHaveBeenCalledWith(
-            "/api/components/share",
-            { titleZh: "t" },
-            undefined,
         );
     });
 });
