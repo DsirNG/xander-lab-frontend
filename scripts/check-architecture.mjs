@@ -66,6 +66,19 @@ const featureSpecifier = (specifier) => {
     return null;
 };
 
+const relativeFeatureSpecifier = (file, specifier) => {
+    if (!specifier.startsWith(".")) return null;
+    const resolved = path.normalize(path.resolve(path.dirname(file), specifier));
+    const relative = path.relative(path.join(srcRoot, "features"), resolved);
+    if (
+        relative === "" ||
+        relative === ".." ||
+        relative.startsWith(`..${path.sep}`)
+    )
+        return null;
+    return relative.split(path.sep)[0] || null;
+};
+
 const removedSourceRootFromImport = (file, specifier) => {
     if (!specifier.startsWith(".")) {
         return removedRootAliases.find((alias) => alias.test(specifier))
@@ -119,15 +132,20 @@ for (const file of sourceFiles) {
         }
 
         const featurePath = featureSpecifier(specifier);
-        if (featurePath === null) continue;
-        const target = featurePath.split("/");
-        const targetFeature = target[0];
+        const relativeTargetFeature = relativeFeatureSpecifier(file, specifier);
+        if (featurePath === null && relativeTargetFeature === null) continue;
+
+        const target = featurePath?.split("/") || [];
+        const targetFeature = target[0] || relativeTargetFeature;
         if (!targetFeature || targetFeature === sourceFeature) continue;
 
         addEdge(sourceFeature, targetFeature);
-        if (target.length > 1 && !compatibility) {
+        if (
+            (!featurePath || target.length > 1) &&
+            !compatibility
+        ) {
             errors.push(
-                `${relative}: feature deep import ${specifier}; use @features/${targetFeature}`,
+                `${relative}: cross-feature deep import ${specifier}; use @features/${targetFeature}`,
             );
         }
     }
