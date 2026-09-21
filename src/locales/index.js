@@ -7,24 +7,58 @@ import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 
-// 导入语言资源
-import en from "./en";
+// 默认语言保留在入口，避免应用启动时出现无资源状态。
 import zh from "./zh";
-import fr from "./fr";
-import ja from "./ja";
-import ru from "./ru";
-import vi from "./vi";
 
 const resources = {
-    en: { translation: en },
     zh: { translation: zh },
-    fr: { translation: fr },
-    ja: { translation: ja },
-    ru: { translation: ru },
-    vi: { translation: vi },
 };
 
-i18n.use(LanguageDetector)
+const localeLoaders = {
+    en: () => import("./en"),
+    fr: () => import("./fr"),
+    ja: () => import("./ja"),
+    ru: () => import("./ru"),
+    vi: () => import("./vi"),
+};
+
+const localePromises = new Map();
+
+const normalizeLanguage = (language) =>
+    String(language || "zh")
+        .split("-")[0]
+        .toLowerCase();
+
+/**
+ * 加载并注册指定语言资源。
+ * 同一语言只会发起一次动态导入，避免切换语言时重复下载。
+ */
+export function loadLocale(language) {
+    const locale = normalizeLanguage(language);
+    const loader = localeLoaders[locale];
+
+    if (!loader) return Promise.resolve();
+
+    if (!localePromises.has(locale)) {
+        localePromises.set(
+            locale,
+            loader().then(({ default: translation }) => {
+                i18n.addResourceBundle(
+                    locale,
+                    "translation",
+                    translation,
+                    true,
+                    true,
+                );
+            }),
+        );
+    }
+
+    return localePromises.get(locale);
+}
+
+const i18nInitPromise = i18n
+    .use(LanguageDetector)
     .use(initReactI18next)
     .init({
         resources,
@@ -48,5 +82,10 @@ i18n.use(LanguageDetector)
             escapeValue: false, // react already safes from xss
         },
     });
+
+// 先完成语言检测，再加载当前语言，避免首屏短暂回退到中文。
+export const i18nReady = i18nInitPromise
+    .then(() => loadLocale(i18n.language))
+    .catch(() => i18n.changeLanguage("zh"));
 
 export default i18n;

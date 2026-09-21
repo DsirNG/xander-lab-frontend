@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import PropTypes from "prop-types";
 import { useTranslation } from "react-i18next";
 import { Check, ChevronDown, Languages } from "lucide-react";
+import { loadLocale } from "@locales";
 import Button from "@shared/ui/primitives/Button";
 import styles from "./Navbar.module.css";
 
@@ -89,13 +90,14 @@ export default function NavbarLanguageControl({ mobile = false }) {
     }, []);
 
     const changeLanguage = useCallback(
-        (lng) => {
+        async (lng) => {
             if (lng === i18n.language) {
                 setIsOpen(false);
                 return;
             }
             setIsOpen(false);
             rollLanguageLabel(lng);
+            await loadLocale(lng);
             i18n.changeLanguage(lng);
         },
         [i18n, rollLanguageLabel],
@@ -105,7 +107,7 @@ export default function NavbarLanguageControl({ mobile = false }) {
         const currentIdx = Math.max(0, LANGUAGES.indexOf(i18n.language));
         const nextLng = LANGUAGES[(currentIdx + 1) % LANGUAGES.length];
         rollLanguageLabel(nextLng);
-        i18n.changeLanguage(nextLng);
+        void loadLocale(nextLng).then(() => i18n.changeLanguage(nextLng));
     };
 
     useEffect(
