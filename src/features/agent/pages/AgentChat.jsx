@@ -8,18 +8,12 @@ import React, {
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import {
-    ArrowLeft,
-    Bot,
-    MessageSquareText,
     ShieldAlert,
-    X,
     Globe,
     PenLine,
     Image as ImageIcon,
-    Menu,
     PanelLeftOpen,
     Search,
-    SquarePen,
 } from "lucide-react";
 import { useToast } from "@shared/hooks/useToast";
 import {
@@ -31,10 +25,10 @@ import { useAgentConversation } from "../hooks/useAgentConversation";
 import {
     agentConversationService,
 } from "../services/agentConversationService";
-import AgentSessionList from "../components/AgentSessionList";
 import AgentSessionSearchModal from "../components/AgentSessionSearchModal";
 import AgentArtifactPanel from "../components/AgentArtifactPanel";
 import AgentConversationShareMenu from "../components/AgentConversationShareMenu";
+import AgentChatSidebar from "../components/AgentChatSidebar";
 import AgentChatInputBar from "../components/AgentChatInputBar";
 import AgentConversationTimeline from "../components/AgentConversationTimeline";
 import ImageToolResult from "../components/ImageToolResult";
@@ -512,123 +506,30 @@ const AgentChat = () => {
     return (
         <div className="flex h-dvh flex-col bg-[#fcfcfc] font-chat text-ink">
             <div className="relative flex min-h-0 flex-1 overflow-hidden">
-                {!sidebarCollapsed && (
-                    <AgentSessionList
-                        sessions={sessions.map((session) => ({
-                            ...session,
-                            input: session.title,
-                        }))}
-                        activeId={conversationId}
-                        loading={sessionsLoading}
-                        disableNew={navigationLocked}
-                        imagesActive={view === "images"}
-                        newChatActive={view === "chat" && !conversationId}
-                        onSelect={(id) => {
-                            if (!navigationLocked) {
-                                setView("chat");
-                                navigate(`/workspace/agent/${id}`);
-                            }
-                        }}
-                        onNew={handleNewConversation}
-                        onCollapse={() => setSidebarCollapsed(true)}
-                        onSearch={() => setSearchOpen(true)}
-                        onImages={() => setView("images")}
-                        onOpenSettings={() => setSettingsOpen(true)}
-                    />
-                )}
-                {sidebarCollapsed && (
-                    <div className="hidden lg:flex w-16 shrink-0 flex-col items-center border-r border-border bg-[#fcfcfc] py-4">
-                        <div className="flex flex-col gap-3">
-                            <button
-                                onClick={() => setSidebarCollapsed(false)}
-                                className="grid h-10 w-10 place-items-center rounded-xl text-ink hover:bg-surface-muted transition"
-                                title="展开"
-                            >
-                                <Bot className="h-6 w-6" />
-                            </button>
-                            <button
-                                onClick={handleNewConversation}
-                                className="mt-2 grid h-10 w-10 place-items-center rounded-xl text-ink-muted hover:bg-surface-muted hover:text-ink transition"
-                                title="新建会话"
-                            >
-                                <SquarePen className="h-5 w-5" />
-                            </button>
-                            <button
-                                onClick={() => setSearchOpen(true)}
-                                className="grid h-10 w-10 place-items-center rounded-xl text-ink-muted hover:bg-surface-muted hover:text-ink transition"
-                                title="搜索"
-                            >
-                                <Search className="h-5 w-5" />
-                            </button>
-                            <button
-                                onClick={() => setSidebarCollapsed(false)}
-                                className="grid h-10 w-10 place-items-center rounded-xl text-ink-muted hover:bg-surface-muted hover:text-ink transition"
-                                title="展开会话列表"
-                            >
-                                <MessageSquareText className="h-5 w-5" />
-                            </button>
-                        </div>
-                        <div className="mt-auto">
-                            <div
-                                className="relative grid h-8 w-8 cursor-pointer place-items-center rounded-full bg-accent text-white font-bold text-xs uppercase hover:opacity-80 transition"
-                                title="用户"
-                            >
-                                {avatarText}
-                                {avatar ? (
-                                    <img
-                                        src={avatar}
-                                        alt={displayName}
-                                        className="absolute inset-0 h-full w-full rounded-full object-cover"
-                                        onError={(event) => {
-                                            event.currentTarget.style.display =
-                                                "none";
-                                        }}
-                                    />
-                                ) : null}
-                            </div>
-                        </div>
-                    </div>
-                )}
-                {mobileSessionsOpen && (
-                    <div className="absolute inset-0 z-40 flex bg-ink/40 lg:hidden">
-                        <AgentSessionList
-                            mobile
-                            sessions={sessions.map((session) => ({
-                                ...session,
-                                input: session.title,
-                            }))}
-                            activeId={conversationId}
-                            loading={sessionsLoading}
-                            disableNew={navigationLocked}
-                            imagesActive={view === "images"}
-                            newChatActive={view === "chat" && !conversationId}
-                            onSelect={(id) => {
-                                if (navigationLocked) return;
-                                setMobileSessionsOpen(false);
-                                setView("chat");
-                                navigate(`/workspace/agent/${id}`);
-                            }}
-                            onNew={() => {
-                                setMobileSessionsOpen(false);
-                                handleNewConversation();
-                            }}
-                            onSearch={() => setSearchOpen(true)}
-                            onImages={() => {
-                                setMobileSessionsOpen(false);
-                                setView("images");
-                            }}
-                            onOpenSettings={() => setSettingsOpen(true)}
-                        />
-                        <button
-                            type="button"
-                            onClick={() => setMobileSessionsOpen(false)}
-                            className="absolute right-3 top-3 z-10 grid h-10 w-10 place-items-center rounded-full bg-canvas text-ink-secondary shadow-lg"
-                            aria-label={t("common.close")}
-                        >
-                            <X className="h-5 w-5" />
-                        </button>
-                    </div>
-                )}
+                <AgentChatSidebar
+                    collapsed={sidebarCollapsed}
+                    mobileOpen={mobileSessionsOpen}
+                    sessions={sessions}
+                    activeId={conversationId}
+                    loading={sessionsLoading}
+                    disableNew={navigationLocked}
+                    imagesActive={view === "images"}
+                    newChatActive={view === "chat" && !conversationId}
+                    displayName={displayName}
+                    avatarText={avatarText}
+                    avatar={avatar}
+                    onSelect={(id) => {
+                        setView("chat");
+                        navigate(`/workspace/agent/${id}`);
+                    }}
+                    onNew={handleNewConversation}
+                    onCollapse={() => setSidebarCollapsed(true)}
+                    onExpand={() => setSidebarCollapsed(false)}
+                    onSearch={() => setSearchOpen(true)}
+                    onImages={() => setView("images")}
+                    onOpenSettings={() => setSettingsOpen(true)}
+                    onMobileClose={() => setMobileSessionsOpen(false)}
+                />
 
                 <section
                     className={`relative flex min-h-0 min-w-0 flex-1 flex-col bg-canvas ${showArtifact && !isMobile ? "lg:max-w-[48%]" : ""}`}
