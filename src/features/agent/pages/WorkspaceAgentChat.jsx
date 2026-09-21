@@ -34,7 +34,7 @@ import {
     ThinkingIndicator,
     QuizMessage,
     ArtifactMessage,
-} from "./AgentChat";
+} from "../components/AgentMessageParts";
 import { AgentTraceCard, SelfCheckCard } from "../components/AgentTraceCard";
 import { mergeLiveTraces, mergeToolTraces } from "../components/agentTrace";
 import {

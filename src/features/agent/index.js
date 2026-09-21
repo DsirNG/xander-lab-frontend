@@ -21,9 +21,9 @@ export { parseQuizPayload } from "./components/quizPayload";
 export { useAgentConversation } from "./hooks/useAgentConversation";
 export {
     ArtifactMessage,
-    ImageToolProgressPanel,
     ImageToolResult,
+    ImageToolProgressPanel,
     PlanCard,
     QuizMessage,
     ThinkingIndicator,
-} from "./pages/AgentChat";
+} from "./components/AgentMessageParts";
