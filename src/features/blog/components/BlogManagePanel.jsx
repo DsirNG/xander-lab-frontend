@@ -1,33 +1,11 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import {
-    CheckCircle2,
-    CloudUpload,
-    Eye,
-    FilePenLine,
-    FileText,
     Plus,
-    RotateCcw,
     Search,
-    Send,
-    Trash2,
-    Undo,
-    Globe,
-    LayoutTemplate,
-    Code,
-    Calendar,
-    Star,
-    Lightbulb,
-    Link2,
-    ChevronDown,
-    CheckSquare,
-    Layers,
-    ArrowUpDown,
 } from "lucide-react";
 import ConfirmModal from "@shared/ui/overlays/ConfirmModal";
-import DataTable from "@shared/ui/data-display/DataTable";
-import RowActionsMenu from "@shared/ui/overlays/RowActionsMenu";
 import { useToast } from "@shared/hooks/useToast";
 import { blogService, BLOG_STATUS } from "../services/blogService";
 import {
@@ -37,6 +15,7 @@ import {
 import ArticleOverviewCard from "./manage/ArticleOverviewCard";
 import ArticlePerformanceCard from "./manage/ArticlePerformanceCard";
 import BlogPreviewModal from "./manage/BlogPreviewModal";
+import BlogManageTable from "./BlogManageTable";
 
 const DEFAULT_PAGE_SIZE = 10;
 const SEARCH_DEBOUNCE_MS = 300;
@@ -46,40 +25,6 @@ const FILTERS = [
     { id: "published", status: BLOG_STATUS.PUBLISHED, label: "已发布" },
     { id: "draft", status: BLOG_STATUS.DRAFT, label: "草稿" },
 ];
-
-const getTopicStyle = (topic = "") => {
-    if (topic.includes("设计") || topic.includes("API"))
-        return { icon: FileText, color: "text-blue-500", bg: "bg-blue-50" };
-    if (
-        topic.includes("Websocket") ||
-        topic.includes("网络") ||
-        topic.includes("区别")
-    )
-        return { icon: Globe, color: "text-blue-500", bg: "bg-blue-50" };
-    if (
-        topic.includes("CSS") ||
-        topic.includes("样式") ||
-        topic.includes("盒模型")
-    )
-        return {
-            icon: LayoutTemplate,
-            color: "text-green-500",
-            bg: "bg-green-50",
-        };
-    if (topic.includes("中级") || topic.includes("开发"))
-        return { icon: Code, color: "text-orange-500", bg: "bg-orange-50" };
-    if (
-        topic.includes("闭包") ||
-        topic.includes("JS") ||
-        topic.includes("JavaScript")
-    )
-        return { icon: Calendar, color: "text-purple-500", bg: "bg-purple-50" };
-    if (topic.includes("资讯") || topic.includes("精选"))
-        return { icon: Star, color: "text-blue-500", bg: "bg-blue-50" };
-    if (topic.includes("面试") || topic.includes("解析"))
-        return { icon: Lightbulb, color: "text-red-500", bg: "bg-red-50" };
-    return { icon: Link2, color: "text-accent", bg: "bg-accent-soft" };
-};
 
 const getList = (result) => {
     if (Array.isArray(result)) return result;
@@ -244,297 +189,12 @@ const BlogManagePanel = () => {
                 <div className="flex flex-1 min-w-0 flex-col bg-white rounded-[24px] shadow-[0_2px_15px_rgba(0,0,0,0.02)] border border-border/20 overflow-hidden">
                     {/* Table */}
                     <div className="flex-1 min-h-0 p-5">
-                        <DataTable
-                            onRowClick={(post) => setPreviewPostId(post.id)}
-                            columns={[
-                                {
-                                    key: "article",
-                                    title: t(
-                                        "profile.blogManage.articleColumn",
-                                        "文章信息",
-                                    ),
-                                    width: "30%",
-                                    render: (post) => {
-                                        const style = getTopicStyle(
-                                            post.title || post.categoryName,
-                                        );
-                                        const Icon = style.icon;
-                                        return (
-                                            <div className="flex items-start gap-3 min-w-0 py-1">
-                                                <div
-                                                    className={`mt-0.5 shrink-0 w-8 h-8 rounded-lg flex items-center justify-center ${style.bg}`}
-                                                >
-                                                    <Icon
-                                                        className={`w-4 h-4 ${style.color}`}
-                                                    />
-                                                </div>
-                                                <div className="min-w-0 flex-1">
-                                                    <div className="truncate text-sm font-bold text-ink">
-                                                        {post.title ||
-                                                            t(
-                                                                "profile.blogManage.untitled",
-                                                                "未命名",
-                                                            )}
-                                                    </div>
-                                                    <div className="mt-1 line-clamp-1 text-[11px] text-ink-faint">
-                                                        {post.summary ||
-                                                            post.categoryName ||
-                                                            "—"}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        );
-                                    },
-                                },
-                                {
-                                    key: "tags",
-                                    title: t(
-                                        "profile.blogManage.category",
-                                        "标签",
-                                    ),
-                                    width: "15%",
-                                    render: (post) => (
-                                        <div className="flex flex-wrap gap-1.5">
-                                            {(post.categoryName
-                                                ? [post.categoryName]
-                                                : [
-                                                      t(
-                                                          "profile.blogManage.tagFrontend",
-                                                          "前端",
-                                                      ),
-                                                  ]
-                                            ).map((tag, i) => (
-                                                <span
-                                                    key={i}
-                                                    className="px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-600 text-[11px] font-medium border border-indigo-100"
-                                                >
-                                                    {tag}
-                                                </span>
-                                            ))}
-                                        </div>
-                                    ),
-                                },
-                                {
-                                    key: "status",
-                                    title: t(
-                                        "profile.blogManage.statusLabel",
-                                        "状态",
-                                    ),
-                                    width: "10%",
-                                    render: (post) => {
-                                        const status = Number(post.status);
-                                        if (status === BLOG_STATUS.PUBLISHED) {
-                                            return (
-                                                <span className="inline-flex rounded bg-green-50 px-1.5 py-0.5 text-[11px] font-medium text-green-600 border border-green-100">
-                                                    {t(
-                                                        "profile.blogManage.status.published",
-                                                        "已发布",
-                                                    )}
-                                                </span>
-                                            );
-                                        }
-                                        return (
-                                            <span className="inline-flex rounded bg-orange-50 px-1.5 py-0.5 text-[11px] font-medium text-orange-600 border border-orange-100">
-                                                {t(
-                                                    "profile.blogManage.status.draft",
-                                                    "待发布",
-                                                )}
-                                            </span>
-                                        );
-                                    },
-                                },
-                                {
-                                    key: "platform",
-                                    title: t(
-                                        "profile.blogManage.platform",
-                                        "平台",
-                                    ),
-                                    width: "15%",
-                                    render: (post) => (
-                                        <div className="flex flex-wrap gap-1.5">
-                                            {post.csdnSynced && (
-                                                <span className="px-1.5 py-0.5 rounded text-[11px] font-medium text-ink-muted border border-border">
-                                                    CSDN
-                                                </span>
-                                            )}
-                                            {post.juejinSynced && (
-                                                <span className="px-1.5 py-0.5 rounded text-[11px] font-medium text-ink-muted border border-border">
-                                                    {t(
-                                                        "profile.blogManage.platformJuejin",
-                                                        "掘金",
-                                                    )}
-                                                </span>
-                                            )}
-                                            {!post.csdnSynced &&
-                                                !post.juejinSynced && (
-                                                    <span className="px-1.5 py-0.5 rounded text-[11px] font-medium text-ink-muted border border-border">
-                                                        {t(
-                                                            "profile.blogManage.platformWechat",
-                                                            "公众号",
-                                                        )}
-                                                    </span>
-                                                )}
-                                        </div>
-                                    ),
-                                },
-                                {
-                                    key: "time",
-                                    title: t(
-                                        "profile.blogManage.updatedAt",
-                                        "更新时间",
-                                    ),
-                                    width: "15%",
-                                    render: (post) => (
-                                        <span className="text-[12px] text-ink-muted font-medium">
-                                            {new Date(
-                                                post.updatedAt ||
-                                                    post.createdAt ||
-                                                    Date.now(),
-                                            ).toLocaleString("zh-CN", {
-                                                hour12: false,
-                                                year: "numeric",
-                                                month: "numeric",
-                                                day: "numeric",
-                                                hour: "2-digit",
-                                                minute: "2-digit",
-                                            })}
-                                        </span>
-                                    ),
-                                },
-                                {
-                                    key: "actions",
-                                    title: t(
-                                        "profile.blogManage.actionsColumn",
-                                        "操作",
-                                    ),
-                                    width: "10%",
-                                    render: (post) => {
-                                        const status = Number(post.status);
-                                        const menuItems = [];
-
-                                        menuItems.push({
-                                            key: "view",
-                                            label: t(
-                                                "profile.blogManage.actions.view",
-                                                "查看",
-                                            ),
-                                            icon: Eye,
-                                            onClick: (e) => {
-                                                e.stopPropagation();
-                                                setPreviewPostId(post.id);
-                                            },
-                                        });
-
-                                        menuItems.push({
-                                            key: "edit",
-                                            label: t(
-                                                "profile.blogManage.actions.edit",
-                                                "编辑",
-                                            ),
-                                            icon: FilePenLine,
-                                            onClick: (e) => {
-                                                e.stopPropagation();
-                                                navigate(
-                                                    `/workspace/publish?id=${post.id}`,
-                                                );
-                                            },
-                                        });
-
-                                        if (status === BLOG_STATUS.DRAFT) {
-                                            menuItems.push({
-                                                key: "publish",
-                                                label: t(
-                                                    "profile.blogManage.actions.publish",
-                                                    "发布",
-                                                ),
-                                                icon: Send,
-                                                onClick: (e) => {
-                                                    e.stopPropagation();
-                                                    handleStatus(
-                                                        post,
-                                                        BLOG_STATUS.PUBLISHED,
-                                                        "profile.blogManage.published",
-                                                    );
-                                                },
-                                            });
-                                        }
-
-                                        if (status === BLOG_STATUS.PUBLISHED) {
-                                            menuItems.push({
-                                                key: "unpublish",
-                                                label: t(
-                                                    "profile.blogManage.actions.unpublish",
-                                                    "取消发布",
-                                                ),
-                                                icon: Undo,
-                                                onClick: (e) => {
-                                                    e.stopPropagation();
-                                                    handleStatus(
-                                                        post,
-                                                        BLOG_STATUS.DRAFT,
-                                                        "profile.blogManage.unpublished",
-                                                    );
-                                                },
-                                            });
-                                        }
-
-                                        menuItems.push({
-                                            key: "syncCsdn",
-                                            label: t(
-                                                "profile.blogManage.actions.syncCsdn",
-                                                "同步到 CSDN",
-                                            ),
-                                            icon: CloudUpload,
-                                            onClick: (e) => {
-                                                e.stopPropagation();
-                                                setCsdnPost(post);
-                                            },
-                                        });
-
-                                        menuItems.push({
-                                            key: "trash",
-                                            label: t(
-                                                "profile.blogManage.actions.trash",
-                                                "删除",
-                                            ),
-                                            icon: Trash2,
-                                            danger: true,
-                                            onClick: (e) => {
-                                                e.stopPropagation();
-                                                setConfirmAction({
-                                                    type: "trash",
-                                                    post,
-                                                });
-                                            },
-                                        });
-
-                                        return (
-                                            <div
-                                                className="flex items-center justify-start ml-2"
-                                                onClick={(e) =>
-                                                    e.stopPropagation()
-                                                }
-                                            >
-                                                <RowActionsMenu
-                                                    actions={menuItems}
-                                                    size="sm"
-                                                />
-                                            </div>
-                                        );
-                                    },
-                                },
-                            ]}
-                            rows={posts}
+                        <BlogManageTable
+                            t={t}
+                            posts={posts}
                             loading={loading}
-                            loadingText={t("profile.blogManage.loading")}
-                            error={
-                                loadError
-                                    ? t("profile.blogManage.loadError")
-                                    : ""
-                            }
-                            onRetry={loadPosts}
-                            onRetryLabel={t("profile.blogManage.retry")}
-                            minWidth="940px"
+                            loadError={loadError}
+                            loadPosts={loadPosts}
                             page={page}
                             pageSize={pageSize}
                             total={total}
@@ -543,8 +203,15 @@ const BlogManagePanel = () => {
                                 setPageSize(size);
                                 setPage(1);
                             }}
-                            paginationDisabled={loading}
-                            className="!bg-transparent [&_th]:!bg-transparent [&_th]:!border-b [&_th]:!border-border/40 [&_td]:!border-b [&_td]:!border-border/20 [&_tr:last-child_td]:!border-b-0 [&_tr]:!bg-transparent hover:[&_tr]:!bg-surface-muted/20"
+                            onPreview={(post) => setPreviewPostId(post.id)}
+                            onEdit={(post) =>
+                                navigate(`/workspace/publish?id=${post.id}`)
+                            }
+                            onStatusChange={handleStatus}
+                            onSyncCsdn={(post) => setCsdnPost(post)}
+                            onDelete={(post) =>
+                                setConfirmAction({ type: "trash", post })
+                            }
                         />
                     </div>
                 </div>
