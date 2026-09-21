@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 import { useTranslation } from "react-i18next";
 import LoadingSpinner from "@shared/ui/feedback/LoadingSpinner";
@@ -13,303 +13,74 @@ import KnowledgeFileViewerModal from "./KnowledgeFileViewerModal";
 import KnowledgeBaseSkeleton from "./KnowledgeBaseSkeleton";
 import KnowledgeCreateTagModal from "./KnowledgeCreateTagModal";
 import KnowledgeDocHeader from "./KnowledgeDocHeader";
-import { knowledgeBaseService } from "../services/knowledgeBaseService";
+import useKnowledgeLibrary from "../hooks/useKnowledgeLibrary";
 
 const KnowledgeDocBaseView = ({ onSwitchToMirror }) => {
     const { t } = useTranslation();
 
-    // 状态
-    const [folders, setFolders] = useState([]);
-    const [tags, setTags] = useState([]);
-    const [files, setFiles] = useState([]);
-    const [totalFiles, setTotalFiles] = useState(0);
-    const [page, setPage] = useState(1);
-    const [pageSize, setPageSize] = useState(10);
-
-    const [activeFolderId, setActiveFolderId] = useState(null); // null: 全部文件
-    const [selectedTagIds, setSelectedTagIds] = useState([]);
-    const [keyword, setKeyword] = useState("");
-    const [extensionFilter, setExtensionFilter] = useState("");
-    const [statusFilter, setStatusFilter] = useState("");
-    const [sortFilter, setSortFilter] = useState("recent");
-
-    // 当前选中的文档（点击后在右侧展示知识结构预览）
-    const [selectedFile, setSelectedFile] = useState(null);
-
-    const [loading, setLoading] = useState(true);
-    const [filesLoading, setFilesLoading] = useState(false);
-
-    // 弹窗状态
-    const [folderModalOpen, setFolderModalOpen] = useState(false);
-    const [folderModalParentId, setFolderModalParentId] = useState(0);
-    const [editingFolder, setEditingFolder] = useState(null);
-    const [folderSaving, setFolderSaving] = useState(false);
-
-    const [moveModalOpen, setMoveModalOpen] = useState(false);
-    const [moveTargetItem, setMoveTargetItem] = useState(null);
-    const [moveSaving, setMoveSaving] = useState(false);
-
-    const [uploadModalOpen, setUploadModalOpen] = useState(false);
-
-    const [viewerOpen, setViewerOpen] = useState(false);
-    const [viewingFileId, setViewingFileId] = useState(null);
-
-    // 新建标签弹窗
-    const [createTagModalOpen, setCreateTagModalOpen] = useState(false);
-    const [newTagName, setNewTagName] = useState("");
-    const [tagSaving, setTagSaving] = useState(false);
-
-    const [confirmDeleteState, setConfirmDeleteState] = useState({
-        open: false,
-        type: null, // 'folder' | 'file'
-        item: null,
-    });
-
-    // 1. 加载文件夹树与全局标签词表
-    const loadFoldersAndTags = useCallback(async (signal) => {
-        try {
-            const [folderList, tagList] = await Promise.all([
-                knowledgeBaseService.folders.list({ signal, _silent: true }),
-                knowledgeBaseService.tags.list({ signal, _silent: true }),
-            ]);
-            setFolders(Array.isArray(folderList) ? folderList : []);
-            setTags(Array.isArray(tagList) ? tagList : []);
-        } catch {
-            // silent catch
-        }
-    }, []);
-
-    // 2. 加载文档列表（后端分页结构为 records / total / page / size）
-    const loadFiles = useCallback(
-        async (signal) => {
-            setFilesLoading(true);
-            try {
-                const query = {
-                    folderId: activeFolderId || undefined,
-                    recursive: false,
-                    keyword: keyword.trim() || undefined,
-                    extension: extensionFilter || undefined,
-                    tagIds: selectedTagIds.length > 0 ? selectedTagIds : undefined,
-                    status: statusFilter || undefined,
-                    page,
-                    size: pageSize,
-                };
-                const result = await knowledgeBaseService.files.search(query, {
-                    signal,
-                    _silent: true,
-                });
-                if (result) {
-                    let list =
-                        result.records ||
-                        result.items ||
-                        (Array.isArray(result) ? result : []);
-
-                    // 客户端友好排序
-                    if (sortFilter === "recent") {
-                        list = [...list].sort(
-                            (a, b) =>
-                                new Date(b.updatedAt || b.createdAt || 0) -
-                                new Date(a.updatedAt || a.createdAt || 0),
-                        );
-                    } else if (sortFilter === "oldest") {
-                        list = [...list].sort(
-                            (a, b) =>
-                                new Date(a.updatedAt || a.createdAt || 0) -
-                                new Date(b.updatedAt || b.createdAt || 0),
-                        );
-                    } else if (sortFilter === "name") {
-                        list = [...list].sort((a, b) =>
-                            (a.displayName || "").localeCompare(b.displayName || ""),
-                        );
-                    } else if (sortFilter === "size") {
-                        list = [...list].sort((a, b) => (b.fileSize || 0) - (a.fileSize || 0));
-                    }
-
-                    setFiles(list);
-                    setTotalFiles(result.total ?? list.length);
-
-                    // 如果当前选中的文件已不在列表中且不是全景查看中，保持或更新选定
-                    setSelectedFile((prev) => {
-                        if (!prev) return null;
-                        const refreshed = list.find((f) => f.id === prev.id);
-                        return refreshed || prev;
-                    });
-                }
-            } catch {
-                setFiles([]);
-                setTotalFiles(0);
-            } finally {
-                setFilesLoading(false);
-            }
-        },
-        [activeFolderId, keyword, extensionFilter, statusFilter, sortFilter, selectedTagIds, page, pageSize],
-    );
-
-    // 面包屑路径
-    const breadcrumbs = useMemo(() => {
-        if (!activeFolderId) {
-            return [{ id: null, name: t("knowledgeBase.folders.allDocs", "全部文档") }];
-        }
-        const crumbs = [];
-        let curr = folders.find((f) => f.id === activeFolderId);
-        while (curr) {
-            crumbs.unshift({ id: curr.id, name: curr.name });
-            curr = curr.parentId && curr.parentId > 0
-                ? folders.find((f) => f.id === curr.parentId)
-                : null;
-        }
-        crumbs.unshift({ id: null, name: t("knowledgeBase.folders.allDocs", "全部文档") });
-        return crumbs;
-    }, [activeFolderId, folders, t]);
-
-    // 当前选定层级下的子文件夹列表（方案一：全部文档模式下不混入文件夹，专注文档；具体文件夹下严格展示直属子目录）
-    const currentSubfolders = useMemo(() => {
-        if (activeFolderId === null) {
-            return [];
-        }
-        return folders.filter((f) => (f.parentId || 0) === activeFolderId);
-    }, [activeFolderId, folders]);
-
-    // 初始化加载分类与标签
-    useEffect(() => {
-        const controller = new AbortController();
-        setLoading(true);
-        loadFoldersAndTags(controller.signal).finally(() => {
-            setLoading(false);
-        });
-        return () => controller.abort();
-    }, [loadFoldersAndTags]);
-
-    // 加载文档列表（受目录、搜索、筛选及分页驱动）
-    useEffect(() => {
-        const controller = new AbortController();
-        loadFiles(controller.signal);
-        return () => controller.abort();
-    }, [loadFiles]);
-
-    // 文件夹操作
-    const handleOpenCreateFolder = (parentId = 0) => {
-        setEditingFolder(null);
-        setFolderModalParentId(parentId);
-        setFolderModalOpen(true);
-    };
-
-    const handleOpenRenameFolder = (folder) => {
-        setEditingFolder(folder);
-        setFolderModalParentId(folder.parentId || 0);
-        setFolderModalOpen(true);
-    };
-
-    const handleSubmitFolder = async ({ id, parentId, name }) => {
-        setFolderSaving(true);
-        try {
-            if (id) {
-                await knowledgeBaseService.folders.rename(id, name);
-                window.__toast?.("success", t("knowledgeBase.folders.renamed", "文件夹重命名成功"));
-            } else {
-                await knowledgeBaseService.folders.create({ parentId, name });
-                window.__toast?.("success", t("knowledgeBase.folders.created", "文件夹新建成功"));
-            }
-            setFolderModalOpen(false);
-            await loadFoldersAndTags();
-        } finally {
-            setFolderSaving(false);
-        }
-    };
-
-    const handleOpenMoveFolder = (folder) => {
-        setMoveTargetItem({ ...folder, type: "folder" });
-        setMoveModalOpen(true);
-    };
-
-    const handleOpenMoveFile = (file) => {
-        setMoveTargetItem({ ...file, type: "file" });
-        setMoveModalOpen(true);
-    };
-
-    const handleSubmitMove = async (targetItem, targetFolderId) => {
-        setMoveSaving(true);
-        try {
-            if (targetItem.type === "folder") {
-                await knowledgeBaseService.folders.move(targetItem.id, targetFolderId);
-                window.__toast?.("success", t("knowledgeBase.folders.moved", "文件夹移动成功"));
-                await loadFoldersAndTags();
-            } else {
-                await knowledgeBaseService.files.move(targetItem.id, targetFolderId);
-                window.__toast?.("success", t("knowledgeBase.files.moved", "文件移动成功"));
-                await Promise.all([loadFoldersAndTags(), loadFiles()]);
-            }
-            setMoveModalOpen(false);
-        } finally {
-            setMoveSaving(false);
-        }
-    };
-
-    const handleConfirmDelete = async () => {
-        const { type, item } = confirmDeleteState;
-        if (!item) return;
-
-        try {
-            if (type === "folder") {
-                await knowledgeBaseService.folders.delete(item.id, true);
-                window.__toast?.("success", t("knowledgeBase.folders.deleted", "文件夹已删除"));
-                if (activeFolderId === item.id) {
-                    setActiveFolderId(null);
-                }
-            } else if (type === "file") {
-                await knowledgeBaseService.files.delete(item.id);
-                window.__toast?.("success", t("knowledgeBase.files.deleted", "文件已删除"));
-                if (selectedFile?.id === item.id) {
-                    setSelectedFile(null);
-                }
-            }
-            setConfirmDeleteState({ open: false, type: null, item: null });
-            await Promise.all([loadFoldersAndTags(), loadFiles()]);
-        } catch {
-            // handled
-        }
-    };
-
-    // 智能上传
-    const handleUploadFile = async ({ file, folderId, tagNames, onProgress, signal }) => {
-        const created = await knowledgeBaseService.uploadSmart({
-            file,
-            folderId,
-            tagNames,
-            onProgress,
-            signal,
-        });
-        window.__toast?.("success", t("knowledgeBase.upload.success", "文件上传与入库成功"));
-        await Promise.all([loadFoldersAndTags(), loadFiles()]);
-        // 自动选中新上传的文件并在右侧预览
-        if (created) {
-            setSelectedFile(created);
-        }
-    };
-
-    // 标签过滤与创建
-    const handleToggleTag = (tagId) => {
-        setSelectedTagIds((prev) =>
-            prev.includes(tagId) ? prev.filter((id) => id !== tagId) : [...prev, tagId],
-        );
-        setPage(1);
-    };
-
-    const handleCreateTag = async (e) => {
-        e.preventDefault();
-        const trimmed = newTagName.trim();
-        if (!trimmed) return;
-        setTagSaving(true);
-        try {
-            await knowledgeBaseService.tags.create({ name: trimmed });
-            window.__toast?.("success", t("knowledgeBase.tags.created", "标签创建成功"));
-            setCreateTagModalOpen(false);
-            setNewTagName("");
-            await loadFoldersAndTags();
-        } finally {
-            setTagSaving(false);
-        }
-    };
+    const {
+        folders,
+        tags,
+        files,
+        totalFiles,
+        page,
+        pageSize,
+        activeFolderId,
+        selectedTagIds,
+        keyword,
+        extensionFilter,
+        statusFilter,
+        sortFilter,
+        selectedFile,
+        loading,
+        filesLoading,
+        folderModalOpen,
+        folderModalParentId,
+        editingFolder,
+        folderSaving,
+        moveModalOpen,
+        moveTargetItem,
+        moveSaving,
+        uploadModalOpen,
+        viewerOpen,
+        viewingFileId,
+        createTagModalOpen,
+        newTagName,
+        tagSaving,
+        confirmDeleteState,
+        breadcrumbs,
+        currentSubfolders,
+        loadFoldersAndTags,
+        loadFiles,
+        handleOpenCreateFolder,
+        handleOpenRenameFolder,
+        handleSubmitFolder,
+        handleOpenMoveFolder,
+        handleOpenMoveFile,
+        handleSubmitMove,
+        handleConfirmDelete,
+        handleUploadFile,
+        handleToggleTag,
+        handleCreateTag,
+        handleRenameFile,
+        handleReidentifyFile,
+        setPage,
+        setPageSize,
+        setActiveFolderId,
+        setSelectedFile,
+        setKeyword,
+        setExtensionFilter,
+        setStatusFilter,
+        setSortFilter,
+        setFolderModalOpen,
+        setMoveModalOpen,
+        setUploadModalOpen,
+        setViewerOpen,
+        setViewingFileId,
+        setCreateTagModalOpen,
+        setNewTagName,
+        setConfirmDeleteState,
+    } = useKnowledgeLibrary({ t });
 
     if (loading) {
         return <KnowledgeBaseSkeleton />;
@@ -412,24 +183,14 @@ const KnowledgeDocBaseView = ({ onSwitchToMirror }) => {
                         onRenameFile={(file) => {
                             const newName = window.prompt("请输入新的文件名：", file.displayName);
                             if (newName && newName.trim() && newName.trim() !== file.displayName) {
-                                knowledgeBaseService.files
-                                    .rename(file.id, newName.trim())
-                                    .then(() => {
-                                        window.__toast?.("success", "重命名成功");
-                                        loadFiles();
-                                    });
+                                handleRenameFile(file.id, newName.trim());
                             }
                         }}
                         onMoveFile={handleOpenMoveFile}
                         onDeleteFile={(file) =>
                             setConfirmDeleteState({ open: true, type: "file", item: file })
                         }
-                        onReidentifyFile={(fileId) => {
-                            knowledgeBaseService.files.reidentify(fileId).then(() => {
-                                window.__toast?.("success", "重新识别任务已完成");
-                                loadFiles();
-                            });
-                        }}
+                        onReidentifyFile={handleReidentifyFile}
                         onOpenUpload={() => setUploadModalOpen(true)}
                     />
                 </div>
