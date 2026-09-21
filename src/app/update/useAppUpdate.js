@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { get } from "@api/http";
 import { APP_UPDATE_EVENT, requireAppUpdate } from "./appUpdate";
 
 const CHECK_INTERVAL_MS = 2 * 60 * 1000;
@@ -8,12 +9,21 @@ export default function useAppUpdate() {
 
     const checkVersion = useCallback(async () => {
         try {
-            const response = await fetch(`/version.json?t=${Date.now()}`, {
-                cache: "no-store",
-            });
-            if (!response.ok) return;
-
-            const manifest = await response.json();
+            const manifest = await get(
+                "/version.json",
+                { t: Date.now() },
+                {
+                    baseURL: "",
+                    _silent: true,
+                    _skipRetry: true,
+                    dedupe: false,
+                    withToken: false,
+                    headers: {
+                        Accept: "application/json",
+                        "Cache-Control": "no-cache",
+                    },
+                },
+            );
             if (
                 manifest.version &&
                 manifest.version !== import.meta.env.VITE_APP_VERSION
