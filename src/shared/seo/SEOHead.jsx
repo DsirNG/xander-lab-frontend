@@ -2,7 +2,7 @@
  * SEO Head 组件 - 基于 react-helmet-async
  * 为每个页面注入独立的 title、description、OG tags 和 JSON-LD 结构化数据
  *
- * @module components/seo/SEOHead
+ * @module shared/seo/SEOHead
  */
 
 import { Helmet } from "react-helmet-async";

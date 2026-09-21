@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from "vitest";
 import { renderHook, act } from "@testing-library/react";
 import { ToastProvider } from "@app/providers/ToastProvider";
 import { ToastContext } from "@shared/ui/feedback/Toast";
-import { useToast } from "./useToast.js";
+import { useToast } from "@shared/hooks/useToast";
 
 const renderWithProvider = () =>
     renderHook(() => useToast(), { wrapper: ToastProvider });

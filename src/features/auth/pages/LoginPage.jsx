@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { authService } from "../services/authService";
-import { useToast } from "../../../hooks/useToast";
+import { useToast } from "@shared/hooks/useToast";
 import FloatingParticles from "../components/FloatingParticles";
 import Button from "@shared/ui/primitives/Button";
 

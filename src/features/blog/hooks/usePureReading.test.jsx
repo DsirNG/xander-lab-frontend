@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import { renderHook, act } from "@testing-library/react";
-import PureReadingContext from "@/context/pureReadingContextValue";
+import PureReadingContext from "../context/pureReadingContextValue";
 import usePureReading from "./usePureReading.js";
 
 const wrapper = ({ isPureReading = false } = {}) => {

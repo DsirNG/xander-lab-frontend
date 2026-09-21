@@ -78,15 +78,11 @@ src/
 │   ├── errors/                 # HTTP/业务错误归一化
 │   ├── transfer/               # 上传、下载和进度处理
 │   └── http.js                 # Axios 客户端与兼容方法门面
-├── components/                  # 历史兼容入口；common 仅保留 Demo 沙箱字符串别名对应的 CustomSelect
-│   ├── common/                  # 停止新增，业务代码不得导入
-│   ├── layouts/                 # MainLayout 历史兼容入口
-│   └── seo/                     # SEO 旧路径兼容入口
-├── hooks/                       # 通用 Hook 旧路径兼容入口
+├── components/                  # 仅保留 Demo 沙箱用户代码的历史 CustomSelect 字符串别名
+│   └── common/                  # 停止新增，业务代码不得导入
 ├── locales/                     # 六种语言，暂时保持根级
 ├── styles/
 ├── config/
-├── utils/                       # shared/lib 旧路径兼容入口
 ├── App.jsx
 └── main.jsx
 ```
