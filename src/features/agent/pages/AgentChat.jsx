@@ -11,12 +11,9 @@ import {
     ShieldAlert,
 } from "lucide-react";
 import { useToast } from "@shared/hooks/useToast";
-import {
-    getBlogAgentTask,
-    publishBlogAgentTask,
-} from "@features/blog";
 import useIsMobile from "@shared/hooks/useIsMobile";
 import { useAgentConversation } from "../hooks/useAgentConversation";
+import useAgentArtifact from "../hooks/useAgentArtifact";
 import {
     agentConversationService,
 } from "../services/agentConversationService";
@@ -85,12 +82,6 @@ const AgentChat = () => {
     const [uploadingAttachments, setUploadingAttachments] = useState(false);
     const [view, setView] = useState("chat"); // 'chat' | 'images'：图片画廊是智能体对话内的视图
     const [mobileSessionsOpen, setMobileSessionsOpen] = useState(false);
-    const [artifactData, setArtifactData] = useState(null);
-    const [artifactLoading, setArtifactLoading] = useState(false);
-    const [artifactError, setArtifactError] = useState(null);
-    const [selectedVersionId, setSelectedVersionId] = useState(null);
-    const [isPublishing, setIsPublishing] = useState(false);
-    const [isSavingDraft, setIsSavingDraft] = useState(false);
     const [isShareOpen, setIsShareOpen] = useState(false);
     const [isShareCopied, setIsShareCopied] = useState(false);
     const [shareLoading, setShareLoading] = useState(false);
@@ -124,37 +115,26 @@ const AgentChat = () => {
         reset,
     } = useAgentConversation({ conversationId });
 
-    useEffect(() => {
-        if (!blogTaskId) {
-            setArtifactData(null);
-            setArtifactError(null);
-            setArtifactLoading(false);
-            setSelectedVersionId(null);
-            return undefined;
-        }
-        const controller = new AbortController();
-        setArtifactLoading(true);
-        setArtifactError(null);
-        setArtifactData(null);
-        getBlogAgentTask(blogTaskId, {
-            _silent: true,
-            signal: controller.signal,
-        })
-            .then((data) => {
-                if (controller.signal.aborted) return;
-                setArtifactData(data);
-                setSelectedVersionId(data?.versions?.[0]?.id ?? null);
-            })
-            .catch((error) => {
-                if (controller.signal.aborted || error?.code === "ERR_CANCELED")
-                    return;
-                setArtifactError(error.message || t("blog.agent.failed"));
-            })
-            .finally(() => {
-                if (!controller.signal.aborted) setArtifactLoading(false);
-            });
-        return () => controller.abort();
-    }, [blogTaskId, t]);
+    const {
+        artifactData,
+        artifactLoading,
+        artifactError,
+        selectedVersionId,
+        isPublishing,
+        isSavingDraft,
+        setSelectedVersionId,
+        handleCloseArtifact,
+        handlePublishArtifact,
+        handleCreateArtifactDraft,
+        handleViewPublished,
+    } = useAgentArtifact({
+        blogTaskId,
+        navigate,
+        searchParams,
+        setSearchParams,
+        t,
+        toast,
+    });
 
     const isActive = running || conversation?.status === "running";
     // 等待审批时这一轮并没有结束，只是卡在工具授权上：输入框和答题卡都要锁住，
@@ -374,12 +354,6 @@ const AgentChat = () => {
         [createConversation, navigate, t, toast],
     );
 
-    const handleCloseArtifact = () => {
-        const next = new URLSearchParams(searchParams);
-        next.delete("blogTaskId");
-        setSearchParams(next, { replace: true });
-    };
-
     const handleCopyShareLink = async () => {
         if (!conversationId) return;
         setShareLoading(true);
@@ -397,57 +371,6 @@ const AgentChat = () => {
             toast.error(error.message || t("blog.shareFailed", "分享失败"));
         } finally {
             setShareLoading(false);
-        }
-    };
-
-    const handlePublishArtifact = async () => {
-        if (!blogTaskId) return;
-        setIsPublishing(true);
-        try {
-            // The task endpoint reconciles uncertain/repeated publish attempts by
-            // returning the post already attached to this generated artifact.
-            const post = await publishBlogAgentTask(blogTaskId, {
-                dedupe: false,
-            });
-            setArtifactData(
-                (current) =>
-                    current && {
-                        ...current,
-                        task: { ...current.task, publishedPostId: post.id },
-                    },
-            );
-            toast.success(t("blog.publishSuccess"));
-        } catch (error) {
-            toast.error(error.message || t("blog.publishError"));
-        } finally {
-            setIsPublishing(false);
-        }
-    };
-
-    const handleCreateArtifactDraft = () => {
-        const task = artifactData?.task;
-        if (!task) return;
-        const version = artifactData?.versions?.find(
-            (item) => String(item.id) === String(selectedVersionId),
-        );
-        setIsSavingDraft(true);
-        try {
-            localStorage.setItem(
-                "xander-lab:blog-publish-draft",
-                JSON.stringify({
-                    title: task.title,
-                    summary: version?.summary || task.summary,
-                    content: version?.content || task.content,
-                    categoryId: task.categoryId,
-                    tags: artifactData.tags || [],
-                }),
-            );
-            toast.success(t("blog.agent.draftCreated"));
-            navigate("/workspace/publish");
-        } catch (error) {
-            toast.error(error.message || t("blog.agent.failed"));
-        } finally {
-            setIsSavingDraft(false);
         }
     };
 
@@ -472,10 +395,7 @@ const AgentChat = () => {
             isSavingDraft={isSavingDraft}
             onPublish={handlePublishArtifact}
             onCreateDraft={handleCreateArtifactDraft}
-            onViewPublished={() => {
-                const publishedPostId = artifactData?.task?.publishedPostId;
-                if (publishedPostId) navigate(`/blog/${publishedPostId}`);
-            }}
+            onViewPublished={handleViewPublished}
             onSelectVersion={setSelectedVersionId}
             onClose={handleCloseArtifact}
         />
