@@ -36,15 +36,10 @@ import useClickOutside from "@shared/hooks/useClickOutside";
 import { useAgentConversation } from "../hooks/useAgentConversation";
 import {
     agentConversationService,
-    parseToolPayload,
 } from "../services/agentConversationService";
 import AgentSessionList from "../components/AgentSessionList";
-import AgentApprovalCard from "../components/AgentApprovalCard";
 import AgentChatInputBar from "../components/AgentChatInputBar";
-import {
-    AgentConversationMessage,
-    AgentThoughtCard,
-} from "../components/AgentConversationMessage";
+import AgentConversationTimeline from "../components/AgentConversationTimeline";
 import ImageToolResult from "../components/ImageToolResult";
 import {
     ArtifactMessage,
@@ -53,20 +48,15 @@ import {
     QuizMessage,
     ThinkingIndicator,
 } from "../components/AgentMessageParts";
-import { AgentTraceCard, SelfCheckCard } from "../components/AgentTraceCard";
 import { mergeLiveTraces, mergeToolTraces } from "../components/agentTrace";
 import {
     IMAGE_TOOL,
-    containsResultUrl,
-    imageToolResult,
     imageUrlsFromMessages,
     imageUrlsFromSteps,
-    liveImageStepResult,
 } from "../components/imageResult";
 import AgentImagesPage from "./AgentImagesPage";
 import { ProfileModal } from "@features/profile";
 import { useAuthSession } from "@features/auth";
-import { parseQuizPayload } from "../components/quizPayload";
 
 /**
  * 自动滚动的最小间隔（毫秒）。滚动本身会触发动画与重排，
@@ -908,355 +898,30 @@ const AgentChat = () => {
                                 </div>
                             ) : (
                                 <>
-                                    <div
-                                        ref={chatScrollRef}
-                                        onScroll={(event) => {
-                                            const element = event.currentTarget;
-                                            stickToBottomRef.current =
-                                                element.scrollHeight -
-                                                    element.scrollTop -
-                                                    element.clientHeight <
-                                                96;
-                                        }}
-                                        className="min-h-0 min-w-0 flex-1 overflow-y-auto overscroll-contain px-4 pb-4 pt-20 sm:px-6"
-                                    >
-                                        {loading &&
-                                        !creating &&
-                                        !running &&
-                                        steps.length === 0 &&
-                                        messages.length === 0 ? (
-                                            <div className="flex h-full min-h-48 items-center justify-center">
-                                                <LoadingSpinner
-                                                    fullScreen={false}
-                                                    text={t(
-                                                        "blog.agentChat.restoring",
-                                                    )}
-                                                />
-                                            </div>
-                                        ) : (
-                                            <div className="mx-auto flex max-w-3xl flex-col gap-5">
-                                                    {timeline.map((message) => {
-                                                        if (message.kind === "trace") {
-                                                            return (
-                                                                <AgentTraceCard
-                                                                    key={message.id}
-                                                                    trace={message}
-                                                                />
-                                                            );
-                                                        }
-                                                        if (message.kind === "quiz" || parseQuizPayload(message)) {
-                                                            return (
-                                                                <QuizMessage
-                                                                    key={message.id}
-                                                                    message={message}
-                                                                    onSubmit={handleQuizSubmit}
-                                                                />
-                                                            );
-                                                        }
-                                                        if (message.kind === "artifact") {
-                                                            return (
-                                                                <ArtifactMessage
-                                                                    key={message.id}
-                                                                    message={message}
-                                                                />
-                                                            );
-                                                        }
-                                                        if (
-                                                        message.role === "user"
-                                                    ) {
-                                                        return (
-                                                            <AgentConversationMessage
-                                                                key={message.id}
-                                                                role="user"
-                                                                content={
-                                                                    message.content
-                                                                }
-                                                                attachments={
-                                                                    message.attachments
-                                                                }
-                                                            />
-                                                        );
-                                                    }
-                                                    if (
-                                                        message.kind ===
-                                                        "thought"
-                                                    ) {
-                                                        return (
-                                                            <AgentThoughtCard
-                                                                key={message.id}
-                                                                content={
-                                                                    message.content
-                                                                }
-                                                            />
-                                                        );
-                                                    }
-                                                    if (
-                                                        message.kind ===
-                                                        "reflection"
-                                                    ) {
-                                                        return (
-                                                            <SelfCheckCard
-                                                                key={message.id}
-                                                                content={
-                                                                    message.content
-                                                                }
-                                                            />
-                                                        );
-                                                    }
-                                                    if (
-                                                        message.kind ===
-                                                        "tool_result"
-                                                    ) {
-                                                        const result =
-                                                            imageToolResult(
-                                                                message,
-                                                            );
-                                                        return result ? (
-                                                            <ImageToolResult
-                                                                key={message.id}
-                                                                url={result.url}
-                                                                title={
-                                                                    result.title
-                                                                }
-                                                            />
-                                                        ) : null;
-                                                    }
-                                                    if (message.kind === "plan")
-                                                        return (
-                                                            <PlanCard
-                                                                key={message.id}
-                                                                items={
-                                                                    parseToolPayload(
-                                                                        message.content,
-                                                                    )
-                                                                }
-                                                            />
-                                                        );
-                                                    if (
-                                                        message.kind ===
-                                                            "answer" ||
-                                                        message.kind ===
-                                                            "message"
-                                                    ) {
-                                                        if (
-                                                            containsResultUrl(
-                                                                message.content,
-                                                                historicalImageUrls,
-                                                            )
-                                                        )
-                                                            return null;
-                                                        return (
-                                                            <AgentConversationMessage
-                                                                key={message.id}
-                                                                role="assistant"
-                                                                content={
-                                                                    message.content
-                                                                }
-                                                                imageUrls={
-                                                                    historicalImageUrls
-                                                                }
-                                                            />
-                                                        );
-                                                    }
-                                                    return null;
-                                                })}
-                                                {approvals.map((approval) => (
-                                                    <AgentApprovalCard
-                                                        key={`approval-${approval.id}`}
-                                                        approval={approval}
-                                                        deciding={
-                                                            decidingApprovalId ===
-                                                            approval.id
-                                                        }
-                                                        onDecision={
-                                                            handleApprovalDecision
-                                                        }
-                                                    />
-                                                ))}
-                                                {steps.map((step, index) => {
-                                                    if (step.type === "user")
-                                                        return (
-                                                            <AgentConversationMessage
-                                                                key={`live-${index}`}
-                                                                role="user"
-                                                                content={
-                                                                    step.content
-                                                                }
-                                                                attachments={
-                                                                    step.attachments
-                                                                }
-                                                            />
-                                                        );
-                                                    if (step.type === "thought")
-                                                        return (
-                                                            <AgentThoughtCard
-                                                                key={`live-${index}`}
-                                                                content={
-                                                                    step.content
-                                                                }
-                                                            />
-                                                        );
-                                                    if (step.type === "plan")
-                                                        return (
-                                                            <PlanCard
-                                                                key={`live-${index}`}
-                                                                items={
-                                                                    step.items
-                                                                }
-                                                            />
-                                                        );
-                                                    if (
-                                                        step.type ===
-                                                        "reflection"
-                                                    )
-                                                        return (
-                                                            <SelfCheckCard
-                                                                key={`live-${index}`}
-                                                                content={
-                                                                    step.content
-                                                                }
-                                                                round={
-                                                                    step.round
-                                                                }
-                                                            />
-                                                        );
-                                                    if (step.type === "trace") {
-                                                        return (
-                                                            <AgentTraceCard
-                                                                key={`live-${index}`}
-                                                                trace={step}
-                                                            />
-                                                        );
-                                                    }
-                                                    if (
-                                                        step.type === "artifact"
-                                                    ) {
-                                                        return (
-                                                            <ArtifactMessage
-                                                                key={`live-${index}`}
-                                                                message={step}
-                                                            />
-                                                        );
-                                                    }
-                                                    if (step.type === "quiz") {
-                                                        return (
-                                                            <QuizMessage
-                                                                key={`live-${index}`}
-                                                                message={step}
-                                                                onSubmit={
-                                                                    handleQuizSubmit
-                                                                }
-                                                            />
-                                                        );
-                                                    }
-                                                    if (step.type === "tool") {
-                                                        const result =
-                                                            liveImageStepResult(
-                                                                step,
-                                                            );
-                                                        return result ? (
-                                                            <ImageToolResult
-                                                                key={`live-${index}`}
-                                                                url={result.url}
-                                                                title={
-                                                                    result.title
-                                                                }
-                                                            />
-                                                        ) : null;
-                                                    }
-                                                    if (
-                                                        step.type ===
-                                                            "answer" ||
-                                                        step.type ===
-                                                            "answer_delta"
-                                                    ) {
-                                                        if (
-                                                            containsResultUrl(
-                                                                step.content,
-                                                                liveImageUrls,
-                                                            )
-                                                        )
-                                                            return null;
-                                                        return (
-                                                            <AgentConversationMessage
-                                                                key={`live-${index}`}
-                                                                role="assistant"
-                                                                content={
-                                                                    step.content
-                                                                }
-                                                                imageUrls={
-                                                                    liveImageUrls
-                                                                }
-                                                                isStreaming={
-                                                                    step.type ===
-                                                                    "answer_delta"
-                                                                }
-                                                            />
-                                                        );
-                                                    }
-                                                    if (step.type === "error") {
-                                                        return (
-                                                            <div
-                                                                key={`live-${index}`}
-                                                                className="flex items-center gap-2 rounded-xl border border-danger/30 bg-danger/5 px-3 py-2 text-xs font-semibold text-danger"
-                                                            >
-                                                                <AlertCircle className="h-3.5 w-3.5 shrink-0" />
-                                                                <span className="truncate">
-                                                                    {
-                                                                        step.message
-                                                                    }
-                                                                </span>
-                                                            </div>
-                                                        );
-                                                    }
-                                                    return null;
-                                                })}
-                                                {activeImageGeneration ? (
-                                                    <ImageToolProgressPanel
-                                                        message={
-                                                            activeImageGeneration.message
-                                                        }
-                                                    />
-                                                ) : null}
-                                                {(isActive ||
-                                                    creating ||
-                                                    (loading &&
-                                                        steps.length > 0)) &&
-                                                    !streamingAnswer &&
-                                                    !activeImageGeneration && (
-                                                        <ThinkingIndicator
-                                                            label={t(
-                                                                "blog.agentChat.thinking",
-                                                            )}
-                                                        />
-                                                    )}
-                                                {(reconnecting ||
-                                                    errorMessage) && (
-                                                    <div
-                                                        className={`flex items-center gap-2 rounded-xl border px-3 py-2 text-xs font-semibold ${
-                                                            errorMessage
-                                                                ? "border-danger/20 bg-danger/5 text-danger"
-                                                                : "border-border bg-surface-muted text-ink-secondary"
-                                                        }`}
-                                                    >
-                                                        {errorMessage ? (
-                                                            <AlertCircle className="h-3.5 w-3.5 shrink-0" />
-                                                        ) : (
-                                                            <Loader2 className="h-3.5 w-3.5 shrink-0 animate-spin" />
-                                                        )}
-                                                        <span className="truncate">
-                                                            {errorMessage ||
-                                                                statusLine}
-                                                        </span>
-                                                    </div>
-                                                )}
-                                                <div
-                                                    ref={chatEndRef}
-                                                    className="h-2"
-                                                />
-                                            </div>
-                                        )}
-                                    </div>
+                                    <AgentConversationTimeline
+                                        chatScrollRef={chatScrollRef}
+                                        stickToBottomRef={stickToBottomRef}
+                                        chatEndRef={chatEndRef}
+                                        loading={loading}
+                                        creating={creating}
+                                        running={running}
+                                        steps={steps}
+                                        messages={messages}
+                                        timeline={timeline}
+                                        approvals={approvals}
+                                        decidingApprovalId={decidingApprovalId}
+                                        handleApprovalDecision={handleApprovalDecision}
+                                        handleQuizSubmit={handleQuizSubmit}
+                                        historicalImageUrls={historicalImageUrls}
+                                        liveImageUrls={liveImageUrls}
+                                        activeImageGeneration={activeImageGeneration}
+                                        isActive={isActive}
+                                        streamingAnswer={streamingAnswer}
+                                        reconnecting={reconnecting}
+                                        errorMessage={errorMessage}
+                                        statusLine={statusLine}
+                                        t={t}
+                                    />
 
                                     <div className="shrink-0 bg-gradient-to-t from-canvas via-canvas/80 to-transparent pt-4">
                                         <AgentChatInputBar
