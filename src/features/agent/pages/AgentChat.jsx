@@ -40,8 +40,7 @@ import {
 } from "lucide-react";
 import { useToast } from "@shared/hooks/useToast";
 import LoadingSpinner from "@shared/ui/feedback/LoadingSpinner";
-import AgentSessionList from "@/features/blog/components/agent/AgentSessionList";
-import AgentPreviewPanel from "@/features/blog/components/agent/AgentPreviewPanel";
+import { AgentPreviewPanel } from "@features/blog";
 import { blogAgentService } from "@/features/blog/services/blogAgentService";
 import useIsMobile from "@shared/hooks/useIsMobile";
 import useClickOutside from "@shared/hooks/useClickOutside";
@@ -51,6 +50,7 @@ import {
     parseToolPayload,
 } from "../services/agentConversationService";
 import AgentMarkdown from "../components/AgentMarkdown";
+import AgentSessionList from "../components/AgentSessionList";
 import AgentApprovalCard from "../components/AgentApprovalCard";
 import ImageToolResult from "../components/ImageToolResult";
 import { AgentTraceCard, SelfCheckCard } from "../components/AgentTraceCard";

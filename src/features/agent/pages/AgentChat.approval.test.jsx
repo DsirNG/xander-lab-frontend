@@ -28,7 +28,7 @@ vi.mock("@/features/blog/services/blogAgentService", () => ({
     blogAgentService: { getTask: vi.fn().mockResolvedValue(null) },
 }));
 
-vi.mock("@/features/blog/components/agent/AgentSessionList", () => ({
+vi.mock("@/features/agent/components/AgentSessionList", () => ({
     default: () => null,
 }));
 vi.mock("@/features/blog/components/agent/AgentPreviewPanel", () => ({
