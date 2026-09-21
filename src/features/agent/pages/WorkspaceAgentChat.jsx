@@ -22,6 +22,7 @@ import WorkspaceAgentConversationMessage, {
 } from "../components/WorkspaceAgentConversationMessage";
 import WorkspaceAgentSidebar from "../components/WorkspaceAgentSidebar";
 import WorkspaceAgentSkeleton from "../components/WorkspaceAgentSkeleton";
+import WorkspaceAgentWelcome from "../components/WorkspaceAgentWelcome";
 import { mergeLiveTraces, mergeToolTraces } from "../components/agentTrace";
 import { IMAGE_TOOL, imageUrlsFromMessages, imageUrlsFromSteps } from "../components/imageResult";
 
@@ -321,64 +322,32 @@ const WorkspaceAgentChat = () => {
                 </header>
 
                 {messages.length === 0 && steps.length === 0 && approvals.length === 0 && !loading ? (
-                    /* Empty / Welcome State */
-                    <div className="flex min-h-0 flex-1 flex-col items-center justify-center px-4 pb-12 pt-4 text-center">
-                        {/* Workbench hero orb graphic */}
-                        <div className="relative mb-4 flex items-center justify-center">
-                            <img
-                                src="/assets/workspace/home/hero-orb.svg"
-                                alt=""
-                                className="h-28 w-28 object-contain transition-transform duration-700"
-                            />
-                        </div>
-
-                        {/* Greeting */}
-                        <h1 className="text-2xl font-bold text-[#111426] sm:text-3xl">
-                            {t("workspace.home.welcome", "欢迎回来，")}{" "}
-                            <span className="text-[#6765f6]">
-                                {displayName}
-                            </span>
-                        </h1>
-
-                        <p className="mt-2 text-sm text-[#8b91a9]">
-                            {t(
-                                "workspace.agent.subtitle",
-                                "你的 AI 智能体伙伴，随时为你提供专业、可靠的帮助",
-                            )}
-                        </p>
-
-                        {/* Workbench Input Container */}
-                        <div className="mt-8 w-full max-w-2xl px-2">
-                            <AgentComposer
-                                input={input}
-                                attachments={attachments}
-                                locked={locked}
-                                uploadingAttachments={uploadingAttachments}
-                                canSend={canSend}
-                                isActive={isActive}
-                                fileInputRef={fileInputRef}
-                                textareaRef={textareaRef}
-                                showQuickActions
-                                onInputChange={setInput}
-                                onFilesSelected={handleFilesSelected}
-                                onRemoveAttachment={(url) =>
-                                    setAttachments((current) =>
-                                        current.filter(
-                                            (attachment) =>
-                                                attachment.url !== url,
-                                        ),
-                                    )
-                                }
-                                onSubmit={handleSubmit}
-                                onCancel={cancelTurn}
-                                deepThinking={deepThinking}
-                                onToggleDeepThinking={() =>
-                                    setDeepThinking((current) => !current)
-                                }
-                                t={t}
-                            />
-                        </div>
-                    </div>
+                    <WorkspaceAgentWelcome
+                        displayName={displayName}
+                        input={input}
+                        attachments={attachments}
+                        locked={locked}
+                        uploadingAttachments={uploadingAttachments}
+                        canSend={canSend}
+                        isActive={isActive}
+                        fileInputRef={fileInputRef}
+                        textareaRef={textareaRef}
+                        onInputChange={setInput}
+                        onFilesSelected={handleFilesSelected}
+                        onRemoveAttachment={(url) =>
+                            setAttachments((current) =>
+                                current.filter(
+                                    (attachment) => attachment.url !== url,
+                                ),
+                            )
+                        }
+                        onSubmit={handleSubmit}
+                        onCancel={cancelTurn}
+                        deepThinking={deepThinking}
+                        onToggleDeepThinking={() =>
+                            setDeepThinking((current) => !current)
+                        }
+                    />
                 ) : (
                     /* Active Chat Stream State */
                     <>
