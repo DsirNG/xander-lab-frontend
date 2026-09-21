@@ -15,19 +15,25 @@ import {
     saveDeepThinkingPreference,
     toolTraceKey,
 } from "../utils/conversationState";
+import { useAgentSessions } from "./useAgentSessions";
 
 const LIVE_STEP_LIMIT = 100;
 const MAX_RECONNECT_DELAY_MS = 5000;
-/** 后台会话状态只能从列表快照得知，有会话在执行时才轮询，全部收口后自动停止。 */
-const SESSIONS_POLL_INTERVAL_MS = 5000;
 /**
  * Dindor 对话状态：服务端快照是事实来源，SSE 仅负责增量反馈与断线续传。
  */
 export const useAgentConversation = ({ conversationId }) => {
     const { t } = useTranslation();
     const routeConversationId = asId(conversationId);
-    const [sessions, setSessions] = useState([]);
-    const [sessionsLoading, setSessionsLoading] = useState(true);
+    const {
+        sessions,
+        sessionsLoading,
+        loadSessions,
+        prependSession,
+        markConversationRead,
+        setConversationPinned,
+        markSessionRunning,
+    } = useAgentSessions();
     const [conversation, setConversation] = useState(null);
     const [messages, setMessages] = useState([]);
     const [loading, setLoading] = useState(Boolean(routeConversationId));
@@ -48,8 +54,6 @@ export const useAgentConversation = ({ conversationId }) => {
     const routeControllerRef = useRef(null);
     const turnControllerRef = useRef(null);
     const createControllerRef = useRef(null);
-    const sessionsControllerRef = useRef(null);
-    const sessionsRequestRef = useRef(0);
     const creatingRef = useRef(false);
     const runningRef = useRef(false);
     const pendingFirstMessageRef = useRef(null);
@@ -434,110 +438,6 @@ export const useAgentConversation = ({ conversationId }) => {
         return () => controller.abort();
     }, [conversation?.id, conversation?.status, isCurrent, loadApprovals, t]);
 
-    /** quiet 用于轮询刷新：不闪列表骨架，失败也保留上一次的列表。 */
-    const loadSessions = useCallback(async ({ quiet = false } = {}) => {
-        const requestId = ++sessionsRequestRef.current;
-        sessionsControllerRef.current?.abort();
-        const controller = new AbortController();
-        sessionsControllerRef.current = controller;
-        if (!quiet) setSessionsLoading(true);
-        try {
-            const list = await agentConversationService.list({
-                _silent: true,
-                dedupe: false,
-                signal: controller.signal,
-            });
-            if (requestId === sessionsRequestRef.current)
-                setSessions(Array.isArray(list) ? list : []);
-        } catch (error) {
-            if (
-                !quiet &&
-                !isAbortError(error) &&
-                requestId === sessionsRequestRef.current
-            )
-                setSessions([]);
-        } finally {
-            if (requestId === sessionsRequestRef.current)
-                setSessionsLoading(false);
-        }
-    }, []);
-
-    /** 上报已读：把列表上的“生成完成”蓝点去掉，失败不打断对话，下次打开会重试。 */
-    const markConversationRead = useCallback(async (id) => {
-        const key = String(id);
-        setSessions((current) =>
-            current.map((session) =>
-                String(session.id) === key
-                    ? { ...session, unread: false }
-                    : session,
-            ),
-        );
-        try {
-            await agentConversationService.markRead(key, {
-                _silent: true,
-                dedupe: false,
-            });
-            return true;
-        } catch {
-            return false;
-        }
-    }, []);
-
-    /** 置顶/取消置顶：先乐观更新列表分组，失败回滚并把错误交给调用方提示。 */
-    const setConversationPinned = useCallback(async (id, pinned) => {
-        const key = String(id);
-        const apply = (value) =>
-            setSessions((current) =>
-                current.map((session) =>
-                    String(session.id) === key
-                        ? { ...session, isPinned: value }
-                        : session,
-                ),
-            );
-        apply(pinned ? 1 : 0);
-        try {
-            const updated = pinned
-                ? await agentConversationService.pin(key, {
-                      _silent: true,
-                      dedupe: false,
-                  })
-                : await agentConversationService.unpin(key, {
-                      _silent: true,
-                      dedupe: false,
-                  });
-            if (updated?.id != null) {
-                setSessions((current) =>
-                    current.map((session) =>
-                        String(session.id) === key
-                            ? { ...session, ...updated }
-                            : session,
-                    ),
-                );
-            }
-            return true;
-        } catch (error) {
-            apply(pinned ? 0 : 1);
-            throw error;
-        }
-    }, []);
-
-    /** 一轮开始时先本地置为 running：即使离开该会话，列表也会转圈并触发轮询。 */
-    const markSessionRunning = useCallback((id) => {
-        const key = String(id);
-        setSessions((current) =>
-            current.map((session) =>
-                String(session.id) === key
-                    ? {
-                          ...session,
-                          status: "running",
-                          unread: false,
-                          updatedAt: new Date().toISOString(),
-                      }
-                    : session,
-            ),
-        );
-    }, []);
-
     const refreshMessages = useCallback(
         async (id, config = {}) => {
             const detail = await agentConversationService.get(id, {
@@ -885,12 +785,7 @@ export const useAgentConversation = ({ conversationId }) => {
                         content: text,
                         ...(attachments.length > 0 ? { attachments } : {}),
                     });
-                    setSessions((current) => [
-                        detail.conversation,
-                        ...current.filter(
-                            (session) => String(session.id) !== String(id),
-                        ),
-                    ]);
+                    prependSession(detail.conversation);
                     pendingFirstMessageRef.current = {
                         id: String(id),
                         text,
@@ -921,7 +816,7 @@ export const useAgentConversation = ({ conversationId }) => {
                 }
             }
         },
-        [clearLiveState, pushStep, t],
+        [clearLiveState, prependSession, pushStep, t],
     );
 
     const reset = useCallback(() => {
@@ -937,11 +832,6 @@ export const useAgentConversation = ({ conversationId }) => {
         setReconnecting(false);
         setErrorMessage(null);
     }, [beginRunGeneration, updateRunning]);
-
-    useEffect(() => {
-        loadSessions();
-        return () => sessionsControllerRef.current?.abort();
-    }, [loadSessions]);
 
     useEffect(() => {
         const id = asId(conversationId);
@@ -1028,31 +918,12 @@ export const useAgentConversation = ({ conversationId }) => {
         });
     }, [conversation, markConversationRead]);
 
-    // 有会话在执行时轮询列表：离开该会话后仍能看到转圈变蓝点；全部收口后自动停。
-    const hasRunningSession = sessions.some(
-        (session) => session.status === "running",
-    );
-    useEffect(() => {
-        if (!hasRunningSession) return undefined;
-        const refresh = () => {
-            if (document.visibilityState !== "hidden")
-                loadSessions({ quiet: true });
-        };
-        const timer = window.setInterval(refresh, SESSIONS_POLL_INTERVAL_MS);
-        document.addEventListener("visibilitychange", refresh);
-        return () => {
-            window.clearInterval(timer);
-            document.removeEventListener("visibilitychange", refresh);
-        };
-    }, [hasRunningSession, loadSessions]);
-
     useEffect(
         () => () => {
             streamEpochRef.current += 1;
             routeControllerRef.current?.abort();
             turnControllerRef.current?.abort();
             createControllerRef.current?.abort();
-            sessionsControllerRef.current?.abort();
             if (streamFrameRef.current != null)
                 window.cancelAnimationFrame(streamFrameRef.current);
         },
