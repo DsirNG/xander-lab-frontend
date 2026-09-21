@@ -28,6 +28,7 @@ import {
     isUnrecoverableRefreshFailure,
     shouldRetryRefresh,
 } from "./refreshFailurePolicy";
+import { tokenStorage } from "./auth/tokenStorage";
 import {
     extractBlobErrorMessage,
     getBizErrorMessage,
@@ -44,6 +45,7 @@ import { createSseReader } from "./sseReader";
 
 export { buildRequestKey };
 export { HttpError };
+export { tokenStorage };
 
 // ─────────────────────────────────────────────
 // 1. 常量 & 配置
@@ -62,11 +64,6 @@ const BASE_URL = ENV_CONFIG.BASE_URL;
 
 /** 是否开发环境 */
 const IS_DEV = ENV_CONFIG.IS_DEV;
-
-/** Token / 会话存储 key */
-const TOKEN_KEY = "access_token";
-const REFRESH_TOKEN_KEY = "refresh_token";
-const USER_INFO_KEY = "user_info";
 
 /** 刷新 Token 的接口路径（相对 baseURL） */
 const REFRESH_URL = "/api/auth/refresh";
@@ -103,34 +100,6 @@ const REFRESH_TIMEOUT = 15000;
 function showToast(type, message) {
     window.__toast?.(type, message);
 }
-
-// ─────────────────────────────────────────────
-// 2. Token 工具
-// ─────────────────────────────────────────────
-
-export const tokenStorage = {
-    getToken: () => localStorage.getItem(TOKEN_KEY),
-    setToken: (token, { notify = true } = {}) => {
-        localStorage.setItem(TOKEN_KEY, token);
-        if (notify) {
-            window.dispatchEvent(
-                new CustomEvent("auth:token-refreshed", { detail: { token } }),
-            );
-        }
-    },
-    removeToken: () => localStorage.removeItem(TOKEN_KEY),
-
-    getRefreshToken: () => localStorage.getItem(REFRESH_TOKEN_KEY),
-    setRefreshToken: (token) => localStorage.setItem(REFRESH_TOKEN_KEY, token),
-    removeRefreshToken: () => localStorage.removeItem(REFRESH_TOKEN_KEY),
-
-    /** 清除全部登录态（token + 本地用户信息），与未登录一致 */
-    clear: () => {
-        localStorage.removeItem(TOKEN_KEY);
-        localStorage.removeItem(REFRESH_TOKEN_KEY);
-        localStorage.removeItem(USER_INFO_KEY);
-    },
-};
 
 /**
  * 将会话降为真正未登录：清本地凭证、通知 UI。
