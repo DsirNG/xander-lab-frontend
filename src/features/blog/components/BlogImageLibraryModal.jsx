@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Check, ImageIcon, Loader2, Search, Upload } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { get, upload } from "@api";
-import Modal from "@/components/common/Modal";
+import Modal from "@shared/ui/overlays/Modal";
 import { useToast } from "@shared/hooks/useToast";
 
 const MAX_IMAGE_SIZE = 10 * 1024 * 1024;

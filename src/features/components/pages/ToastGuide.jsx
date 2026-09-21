@@ -2,7 +2,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { Layers, ArrowLeft, Cpu, Zap, Activity } from "lucide-react";
 import { Link } from "react-router-dom";
-import CodeBlock from "@/components/common/CodeBlock";
+import CodeBlock from "@shared/ui/data-display/CodeBlock";
 
 // Import raw code using Vite's ?raw suffix for source display
 import ToastItemCode from "@shared/ui/feedback/Toast/ToastItem.jsx?raw";

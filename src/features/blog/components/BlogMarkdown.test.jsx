@@ -3,7 +3,7 @@ import { render } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import BlogMarkdown from "./BlogMarkdown";
 
-vi.mock("@/components/common/CodeBlock", () => ({
+vi.mock("@shared/ui/data-display/CodeBlock", () => ({
     default: () => <div />,
 }));
 

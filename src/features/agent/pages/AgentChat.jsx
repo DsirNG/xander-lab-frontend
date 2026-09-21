@@ -39,7 +39,7 @@ import {
     FileText,
 } from "lucide-react";
 import { useToast } from "@shared/hooks/useToast";
-import LoadingSpinner from "@/components/common/LoadingSpinner";
+import LoadingSpinner from "@shared/ui/feedback/LoadingSpinner";
 import AgentSessionList from "@/features/blog/components/agent/AgentSessionList";
 import AgentPreviewPanel from "@/features/blog/components/agent/AgentPreviewPanel";
 import { blogAgentService } from "@/features/blog/services/blogAgentService";

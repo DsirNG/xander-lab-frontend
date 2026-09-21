@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Play, RefreshCw, AlertTriangle } from "lucide-react";
 
 // ─── 注入项目内部组件 ──────────────────────────────────────────────
-import CustomSelect from "@/components/common/CustomSelect";
+import CustomSelect from "@shared/ui/forms/CustomSelect";
 import Button from "@shared/ui/primitives/Button";
 import LucideIcons from "@/features/components/registries/sandboxIconRegistry";
 
@@ -93,6 +93,7 @@ async function compileAndRun(code, libraryCode = "", wrapperCode = "") {
                         "react-dom": ReactDOM,
                         "lucide-react": LucideIcons,
                         "framer-motion": { motion, AnimatePresence },
+                        "@shared/ui/forms/CustomSelect": CustomSelect,
                         "@/components/common/CustomSelect": CustomSelect,
                     };
                     const cleanName = name

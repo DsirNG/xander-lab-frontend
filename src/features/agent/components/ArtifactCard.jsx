@@ -2,6 +2,7 @@ import React, { useMemo, useState } from "react";
 import { Download, FileCode2, Play } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import CodeBlock from "@shared/ui/data-display/CodeBlock";
+import { HtmlSandboxPreview } from "@features/htmlPreview";
 
 /**
  * 代码交付卡：文件树 + 完整源码，可逐个文件复制、下载，HTML 还能直接预览。
@@ -139,6 +140,7 @@ export const ArtifactCard = ({ payload }) => {
                     code={active.content}
                     language={language}
                     appearance="conversation"
+                    previewComponent={HtmlSandboxPreview}
                 />
             </div>
 

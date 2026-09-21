@@ -3,7 +3,7 @@ import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import AgentMarkdown from "./AgentMarkdown";
 
-vi.mock("@/components/common/CodeBlock", () => ({
+vi.mock("@shared/ui/data-display/CodeBlock", () => ({
     default: ({ code, language, appearance }) => (
         <div
             data-testid="code-block"

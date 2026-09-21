@@ -4,7 +4,8 @@ import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 import "katex/dist/katex.min.css";
-import CodeBlock from "@/components/common/CodeBlock";
+import CodeBlock from "@shared/ui/data-display/CodeBlock";
+import { HtmlSandboxPreview } from "@features/htmlPreview";
 
 const normalizeMath = (text) => {
     if (typeof text !== "string") return text;
@@ -95,6 +96,7 @@ const markdownComponents = {
                 <CodeBlock
                     code={String(children).replace(/\n$/, "")}
                     language={match[1]}
+                    previewComponent={HtmlSandboxPreview}
                 />
             );
         }

@@ -2,7 +2,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { ArrowLeft, Box } from "lucide-react";
 import { Link } from "react-router-dom";
-import PhaseCard from "@/components/common/PhaseCard";
+import PhaseCard from "@shared/ui/data-display/PhaseCard";
 
 const DragDropSystem = () => {
     const { t } = useTranslation();

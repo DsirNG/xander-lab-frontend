@@ -1,7 +1,7 @@
 import React from "react";
 import { Layout, Tag as TagIcon, AlignLeft } from "lucide-react";
-import CustomSelect from "@/components/common/CustomSelect";
-import CreatableMultiSelect from "@/components/common/CreatableMultiSelect";
+import CustomSelect from "@shared/ui/forms/CustomSelect";
+import CreatableMultiSelect from "@shared/ui/forms/CreatableMultiSelect";
 
 /**
  * 博客发布页右侧设置面板：分类、标签、摘要

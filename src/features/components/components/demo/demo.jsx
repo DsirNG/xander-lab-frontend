@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import CustomSelect from "@/components/common/CustomSelect";
+import CustomSelect from "@shared/ui/forms/CustomSelect";
 
 export const BasicDemo = () => {
     const [value, setValue] = useState("");

@@ -46,6 +46,7 @@ src/
 │   ├── account/               # 账户积分等账户能力
 │   ├── appUpdate/
 │   ├── blog/
+│   ├── htmlPreview/            # HTML/SVG 隔离预览能力及其业务接口
 │   ├── components/              # 组件展示业务
 │   ├── emailReminders/          # 已从 profile 独立迁移
 │   ├── home/
@@ -65,7 +66,8 @@ src/
 │       ├── data-display/        # DataTable、PhaseCard、SyntaxHighlighter、ContentLayout
 │       ├── navigation/          # Pagination、SidebarLayout
 │       ├── feedback/            # LoadingSpinner、Skeleton、Toast
-│       └── preview/             # BrowserWindow、CodeBlock、HtmlSandboxPreview
+│       ├── preview/             # BrowserWindow 等纯展示外壳
+│       └── ...
 │
 ├── shared/seo/                  # 与业务无关的页面级 SEO 元数据能力
 
@@ -122,7 +124,10 @@ HTTP error normalization
 features/knowledge/api/knowledgeApi.js
 features/agent/api/agentApi.js
 features/blog/api/blogApi.js
+features/htmlPreview/components/HtmlSandboxPreview.jsx
 ```
+
+`HtmlSandboxPreview` 虽然表现为 UI，但它调用预览业务接口，因此归 `features/htmlPreview`；Shared 的 `CodeBlock` 只接受可选 `previewComponent`，通过能力注入保持依赖方向。
 
 当前项目所有网络请求仍必须复用 `src/api/http.js` 导出的封装，禁止新增 Axios 实例或原生 `fetch` API 请求。
 

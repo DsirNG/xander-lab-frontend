@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { FileCode, ArrowLeft, Boxes, Layout } from "lucide-react";
 import { Link } from "react-router-dom";
 import ComponentService from "../services/componentService";
-import CodeBlock from "@/components/common/CodeBlock";
+import CodeBlock from "@shared/ui/data-display/CodeBlock";
 
 const FeatureCard = ({ title, desc, icon: Icon, color }) => (
     <div className="p-8 rounded-[2.5rem] bg-canvas  border border-border  shadow-sm hover:shadow-xl transition-all group hover:-translate-y-1">

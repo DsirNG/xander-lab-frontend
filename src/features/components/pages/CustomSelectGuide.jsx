@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { FileCode, Layers } from "lucide-react";
 import { Link } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
-import CodeBlock from "@/components/common/CodeBlock";
+import CodeBlock from "@shared/ui/data-display/CodeBlock";
 
 // Import raw code
 import ComponentCode from "@shared/ui/forms/CustomSelect/index.jsx?raw";

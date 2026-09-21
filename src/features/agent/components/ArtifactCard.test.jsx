@@ -23,6 +23,10 @@ vi.mock("@shared/ui/data-display/CodeBlock", () => ({
     ),
 }));
 
+vi.mock("@features/htmlPreview", () => ({
+    HtmlSandboxPreview: () => null,
+}));
+
 const payload = {
     type: "artifact",
     id: "artifact-7-3",

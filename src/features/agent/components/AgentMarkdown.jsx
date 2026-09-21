@@ -4,8 +4,9 @@ import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 import "katex/dist/katex.min.css";
-import CodeBlock from "@/components/common/CodeBlock";
-import Modal from "@/components/common/Modal";
+import CodeBlock from "@shared/ui/data-display/CodeBlock";
+import Modal from "@shared/ui/overlays/Modal";
+import { HtmlSandboxPreview } from "@features/htmlPreview";
 
 /** 对话正文无需额外公式边框；展开模型常用的 \boxed{...}，避免流式渲染时出现残缺框线。 */
 const unwrapBoxedExpressions = (text) => {
@@ -137,6 +138,7 @@ const createMarkdownComponents = (codeAppearance) => ({
                     code={String(children).replace(/\n$/, "")}
                     language={match[1]}
                     appearance={codeAppearance}
+                    previewComponent={HtmlSandboxPreview}
                 />
             );
         }

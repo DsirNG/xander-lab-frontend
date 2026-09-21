@@ -15,7 +15,7 @@ import {
     Sparkles,
 } from "lucide-react";
 import { useToast } from "@shared/hooks/useToast";
-import LoadingSpinner from "@/components/common/LoadingSpinner";
+import LoadingSpinner from "@shared/ui/feedback/LoadingSpinner";
 import { useAuthSession } from "@features/auth";
 import { useAgentConversation } from "../hooks/useAgentConversation";
 import {

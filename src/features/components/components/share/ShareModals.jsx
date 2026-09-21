@@ -9,8 +9,8 @@ import {
     HelpCircle,
     Compass,
 } from "lucide-react";
-import Modal from "@/components/common/Modal";
-import TourSpotlight from "@/components/common/TourSpotlight";
+import Modal from "@shared/ui/overlays/Modal";
+import TourSpotlight from "@shared/ui/overlays/TourSpotlight";
 import Button from "@shared/ui/primitives/Button";
 
 const ShareModals = ({

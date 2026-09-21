@@ -1,7 +1,6 @@
 import React, { useState, memo } from "react";
 import { useTranslation } from "react-i18next";
 import SyntaxHighlighter from "@shared/ui/data-display/SyntaxHighlighter";
-import HtmlSandboxPreview from "@shared/ui/preview/HtmlSandboxPreview";
 import {
     oneLight,
     vscDarkPlus,
@@ -23,6 +22,7 @@ const CodeBlock = memo(
         className,
         defaultMode = "code",
         appearance = "default",
+        previewComponent: PreviewComponent,
     }) => {
         const { t } = useTranslation();
         const [copied, setCopied] = useState(false);
@@ -33,7 +33,9 @@ const CodeBlock = memo(
         const resolvedCode =
             code != null ? code : String(children ?? "").replace(/\n$/, "");
         const normalizedLanguage = String(language || "text").toLowerCase();
-        const canPreview = PREVIEWABLE_LANGUAGES.has(normalizedLanguage);
+        const canPreview =
+            Boolean(PreviewComponent) &&
+            PREVIEWABLE_LANGUAGES.has(normalizedLanguage);
         const activeMode = canPreview ? mode : "code";
         const languageLabel = normalizedLanguage.toUpperCase();
         const isConversation = appearance === "conversation";
@@ -121,9 +123,9 @@ const CodeBlock = memo(
                     </div>
                 </div>
 
-                {activeMode === "preview" ? (
+                {activeMode === "preview" && PreviewComponent ? (
                     <div className="bg-canvas">
-                        <HtmlSandboxPreview
+                        <PreviewComponent
                             code={resolvedCode}
                             language={normalizedLanguage}
                             minHeight={isConversation ? 480 : 280}
