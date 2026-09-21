@@ -78,8 +78,8 @@ src/
 │   ├── errors/                 # HTTP/业务错误归一化
 │   ├── transfer/               # 上传、下载和进度处理
 │   └── http.js                 # Axios 客户端与兼容方法门面
-├── components/                  # 历史公共组件和兼容入口
-│   ├── common/                  # 停止新增，迁移组件保留 deprecated re-export
+├── components/                  # 历史兼容入口；common 仅保留 Demo 沙箱字符串别名对应的 CustomSelect
+│   ├── common/                  # 停止新增，业务代码不得导入
 │   ├── layouts/                 # MainLayout 历史兼容入口
 │   └── seo/                     # SEO 旧路径兼容入口
 ├── hooks/                       # 通用 Hook 旧路径兼容入口
@@ -147,10 +147,10 @@ Store、Repository、Service 实现、内部 Hook 和内部组件默认不公开
 
 ## 迁移规则
 
-1. `src/components/common` 停止新增。
+1. `src/components/common` 停止新增；仓库内旧公共组件出口已清理，仅保留 Demo 沙箱对用户代码的字符串兼容别名。
 2. 迁移组件的新路径必须在 `COMPONENTS.md` 登记。
-3. 旧路径通过 deprecated re-export 兼容，保持现有公开 API，例如 `Modal isOpen`。
-4. 只有没有活动引用、测试和文档引用后，才能删除旧入口。
+3. 迁移期间旧路径可通过 deprecated re-export 兼容；当活动引用、测试和文档引用均为零时删除旧入口。
+4. 当前已删除 `src/components/common` 中无活动引用的兼容出口，保留 `CustomSelect` 仅用于 Demo 沙箱解析用户代码中的历史导入字符串。
 5. 不因代码行数机械拆分；按职责、生命周期、复用和变化原因拆分。
 6. 新 Feature 只创建当前真实需要的目录，不创建空的架构模板目录。
 

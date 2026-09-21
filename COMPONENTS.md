@@ -4,7 +4,7 @@
 
 ## 迁移说明
 
-共享 UI 新代码统一进入 `src/shared/ui`，按 `primitives`、`overlays`、`forms`、`data-display`、`navigation`、`feedback`、`preview` 分类。`src/components/common` 停止新增；其中已迁移组件的旧路径仅保留兼容导出。应用级布局归 `src/app`，业务组件归对应 `src/features`。
+共享 UI 新代码统一进入 `src/shared/ui`，按 `primitives`、`overlays`、`forms`、`data-display`、`navigation`、`feedback`、`preview` 分类。`src/components/common` 已完成仓库内迁移并停止新增；当前仅为 LiveDemoSandbox 的用户代码注册表保留 `@/components/common/CustomSelect` 字符串别名，业务源码不得继续使用旧路径。应用级布局归 `src/app`，业务组件归对应 `src/features`。
 
 ## 颜色与字体（Design Tokens）
 

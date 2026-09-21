@@ -124,7 +124,7 @@ xander-lab-frontend/
 │   ├── app/               # 应用组装、路由、Provider、布局和运行时边界
 │   ├── api/               # HTTP / SSE / 上传下载等 Transport Infrastructure
 │   ├── assets/          # 静态资源
-│   ├── components/      # 历史兼容入口，停止新增通用组件
+│   ├── components/      # 历史兼容入口；common 仅保留 Demo 沙箱字符串兼容别名
 │   ├── config/          # 配置文件
 │   ├── features/        # 功能模块（按业务领域划分）
 │   │   ├── auth/        # 鉴权与会话

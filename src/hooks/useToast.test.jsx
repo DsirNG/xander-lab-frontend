@@ -1,7 +1,8 @@
 import { useContext } from "react";
 import { describe, expect, it, vi } from "vitest";
 import { renderHook, act } from "@testing-library/react";
-import { ToastProvider, ToastContext } from "@components/common/Toast";
+import { ToastProvider } from "@app/providers/ToastProvider";
+import { ToastContext } from "@shared/ui/feedback/Toast";
 import { useToast } from "./useToast.js";
 
 const renderWithProvider = () =>
