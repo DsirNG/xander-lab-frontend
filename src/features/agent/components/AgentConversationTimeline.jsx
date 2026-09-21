@@ -47,6 +47,10 @@ const AgentConversationTimeline = memo(
         errorMessage,
         statusLine,
         t,
+        messageComponent: MessageComponent = AgentConversationMessage,
+        thoughtComponent: ThoughtComponent = AgentThoughtCard,
+        loadingContent = null,
+        scrollClassName = "min-h-0 min-w-0 flex-1 overflow-y-auto overscroll-contain px-4 pb-4 pt-20 sm:px-6",
     }) => (
                                     <div
                                         ref={chatScrollRef}
@@ -58,21 +62,23 @@ const AgentConversationTimeline = memo(
                                                     element.clientHeight <
                                                 96;
                                         }}
-                                        className="min-h-0 min-w-0 flex-1 overflow-y-auto overscroll-contain px-4 pb-4 pt-20 sm:px-6"
+                                        className={scrollClassName}
                                     >
                                         {loading &&
                                         !creating &&
                                         !running &&
                                         steps.length === 0 &&
                                         messages.length === 0 ? (
-                                            <div className="flex h-full min-h-48 items-center justify-center">
-                                                <LoadingSpinner
-                                                    fullScreen={false}
-                                                    text={t(
-                                                        "blog.agentChat.restoring",
-                                                    )}
-                                                />
-                                            </div>
+                                            loadingContent || (
+                                                <div className="flex h-full min-h-48 items-center justify-center">
+                                                    <LoadingSpinner
+                                                        fullScreen={false}
+                                                        text={t(
+                                                            "blog.agentChat.restoring",
+                                                        )}
+                                                    />
+                                                </div>
+                                            )
                                         ) : (
                                             <div className="mx-auto flex max-w-3xl flex-col gap-5">
                                                     {timeline.map((message) => {
@@ -105,7 +111,7 @@ const AgentConversationTimeline = memo(
                                                         message.role === "user"
                                                     ) {
                                                         return (
-                                                            <AgentConversationMessage
+                                                            <MessageComponent
                                                                 key={message.id}
                                                                 role="user"
                                                                 content={
@@ -122,7 +128,7 @@ const AgentConversationTimeline = memo(
                                                         "thought"
                                                     ) {
                                                         return (
-                                                            <AgentThoughtCard
+                                                            <ThoughtComponent
                                                                 key={message.id}
                                                                 content={
                                                                     message.content
@@ -186,7 +192,7 @@ const AgentConversationTimeline = memo(
                                                         )
                                                             return null;
                                                         return (
-                                                            <AgentConversationMessage
+                                                            <MessageComponent
                                                                 key={message.id}
                                                                 role="assistant"
                                                                 content={
@@ -216,7 +222,7 @@ const AgentConversationTimeline = memo(
                                                 {steps.map((step, index) => {
                                                     if (step.type === "user")
                                                         return (
-                                                            <AgentConversationMessage
+                                                            <MessageComponent
                                                                 key={`live-${index}`}
                                                                 role="user"
                                                                 content={
@@ -229,7 +235,7 @@ const AgentConversationTimeline = memo(
                                                         );
                                                     if (step.type === "thought")
                                                         return (
-                                                            <AgentThoughtCard
+                                                            <ThoughtComponent
                                                                 key={`live-${index}`}
                                                                 content={
                                                                     step.content
@@ -318,7 +324,7 @@ const AgentConversationTimeline = memo(
                                                         )
                                                             return null;
                                                         return (
-                                                            <AgentConversationMessage
+                                                            <MessageComponent
                                                                 key={`live-${index}`}
                                                                 role="assistant"
                                                                 content={
@@ -404,4 +410,3 @@ const AgentConversationTimeline = memo(
 AgentConversationTimeline.displayName = "AgentConversationTimeline";
 
 export default AgentConversationTimeline;
-

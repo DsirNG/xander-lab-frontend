@@ -20,33 +20,19 @@ import { useAuthSession } from "@features/auth";
 import { useAgentConversation } from "../hooks/useAgentConversation";
 import {
     agentConversationService,
-    parseToolPayload,
 } from "../services/agentConversationService";
 import AgentMarkdown from "../components/AgentMarkdown";
 import AgentComposer from "../components/AgentComposer";
+import AgentConversationTimeline from "../components/AgentConversationTimeline";
 import WorkspaceAgentSidebar from "../components/WorkspaceAgentSidebar";
 import WorkspaceAgentSkeleton from "../components/WorkspaceAgentSkeleton";
-import AgentApprovalCard from "../components/AgentApprovalCard";
-import {
-    ImageToolProgressPanel,
-    ImageToolResult,
-    PlanCard,
-    ThinkingIndicator,
-    QuizMessage,
-    ArtifactMessage,
-} from "../components/AgentMessageParts";
-import { AgentTraceCard, SelfCheckCard } from "../components/AgentTraceCard";
 import { mergeLiveTraces, mergeToolTraces } from "../components/agentTrace";
 import {
     IMAGE_TOOL,
     cleanImageMarkdown,
-    containsResultUrl,
-    imageToolResult,
     imageUrlsFromMessages,
     imageUrlsFromSteps,
-    liveImageStepResult,
 } from "../components/imageResult";
-import { parseQuizPayload } from "../components/quizPayload";
 
 const ThoughtCard = ({ content }) => (
     <div className="flex items-start gap-2 rounded-xl border border-border bg-canvas px-3 py-2 text-xs leading-5 text-ink-muted">
@@ -497,284 +483,34 @@ const WorkspaceAgentChat = () => {
                 ) : (
                     /* Active Chat Stream State */
                     <>
-                        <div
-                            ref={chatScrollRef}
-                            onScroll={(event) => {
-                                const element = event.currentTarget;
-                                stickToBottomRef.current =
-                                    element.scrollHeight -
-                                        element.scrollTop -
-                                        element.clientHeight <
-                                    96;
-                            }}
-                            className="min-h-0 min-w-0 flex-1 overflow-y-auto overscroll-contain px-4 pb-6 pt-4 sm:px-8"
-                        >
-                            {loading &&
-                            !creating &&
-                            !running &&
-                            steps.length === 0 &&
-                            messages.length === 0 ? (
-                                <WorkspaceAgentSkeleton />
-                            ) : (
-                                <div className="mx-auto flex max-w-3xl flex-col gap-5">
-                                    {timeline.map((message) => {
-                                        if (message.kind === "trace") {
-                                            return (
-                                                <AgentTraceCard
-                                                    key={message.id}
-                                                    trace={message}
-                                                />
-                                            );
-                                        }
-                                        if (message.kind === "quiz" || parseQuizPayload(message)) {
-                                            return (
-                                                <QuizMessage
-                                                    key={message.id}
-                                                    message={message}
-                                                    onSubmit={handleQuizSubmit}
-                                                />
-                                            );
-                                        }
-                                        if (message.kind === "artifact") {
-                                            return (
-                                                <ArtifactMessage
-                                                    key={message.id}
-                                                    message={message}
-                                                />
-                                            );
-                                        }
-                                        if (message.role === "user") {
-                                            return (
-                                                <ConversationMessage
-                                                    key={message.id}
-                                                    role="user"
-                                                    content={message.content}
-                                                    attachments={
-                                                        message.attachments
-                                                    }
-                                                />
-                                            );
-                                        }
-                                        if (message.kind === "thought") {
-                                            return (
-                                                <ThoughtCard
-                                                    key={message.id}
-                                                    content={message.content}
-                                                />
-                                            );
-                                        }
-                                        if (message.kind === "reflection") {
-                                            return (
-                                                <SelfCheckCard
-                                                    key={message.id}
-                                                    content={message.content}
-                                                />
-                                            );
-                                        }
-                                        if (message.kind === "tool_result") {
-                                            const result =
-                                                imageToolResult(message);
-                                            return result ? (
-                                                <ImageToolResult
-                                                    key={message.id}
-                                                    url={result.url}
-                                                    title={result.title}
-                                                />
-                                            ) : null;
-                                        }
-                                        if (message.kind === "plan") {
-                                            return (
-                                                <PlanCard
-                                                    key={message.id}
-                                                    items={parseToolPayload(
-                                                        message.content,
-                                                    )}
-                                                />
-                                            );
-                                        }
-                                        if (
-                                            message.kind === "answer" ||
-                                            message.kind === "message"
-                                        ) {
-                                            if (
-                                                containsResultUrl(
-                                                    message.content,
-                                                    historicalImageUrls,
-                                                )
-                                            )
-                                                return null;
-                                            return (
-                                                <ConversationMessage
-                                                    key={message.id}
-                                                    role="assistant"
-                                                    content={message.content}
-                                                    imageUrls={
-                                                        historicalImageUrls
-                                                    }
-                                                />
-                                            );
-                                        }
-                                        return null;
-                                    })}
-                                    {approvals.map((approval) => (
-                                        <AgentApprovalCard
-                                            key={`approval-${approval.id}`}
-                                            approval={approval}
-                                            deciding={decidingApprovalId === approval.id}
-                                            onDecision={handleApprovalDecision}
-                                        />
-                                    ))}
-                                    {steps.map((step, index) => {
-                                        if (step.type === "user")
-                                            return (
-                                                <ConversationMessage
-                                                    key={`live-${index}`}
-                                                    role="user"
-                                                    content={step.content}
-                                                    attachments={
-                                                        step.attachments
-                                                    }
-                                                />
-                                            );
-                                        if (step.type === "thought")
-                                            return (
-                                                <ThoughtCard
-                                                    key={`live-${index}`}
-                                                    content={step.content}
-                                                />
-                                            );
-                                        if (step.type === "plan")
-                                            return (
-                                                <PlanCard
-                                                    key={`live-${index}`}
-                                                    items={step.items}
-                                                />
-                                            );
-                                        if (step.type === "reflection")
-                                            return (
-                                                <SelfCheckCard
-                                                    key={`live-${index}`}
-                                                    content={step.content}
-                                                    round={step.round}
-                                                />
-                                            );
-                                        if (step.type === "trace")
-                                            return (
-                                                <AgentTraceCard
-                                                    key={`live-${index}`}
-                                                    trace={step}
-                                                />
-                                            );
-                                        if (step.type === "artifact")
-                                            return (
-                                                <ArtifactMessage
-                                                    key={`live-${index}`}
-                                                    message={step}
-                                                />
-                                            );
-                                        if (step.type === "quiz")
-                                            return (
-                                                <QuizMessage
-                                                    key={`live-${index}`}
-                                                    message={step}
-                                                    onSubmit={handleQuizSubmit}
-                                                />
-                                            );
-                                        if (step.type === "tool") {
-                                            const result =
-                                                liveImageStepResult(step);
-                                            return result ? (
-                                                <ImageToolResult
-                                                    key={`live-${index}`}
-                                                    url={result.url}
-                                                    title={result.title}
-                                                />
-                                            ) : null;
-                                        }
-                                        if (
-                                            step.type === "answer" ||
-                                            step.type === "answer_delta"
-                                        ) {
-                                            if (
-                                                containsResultUrl(
-                                                    step.content,
-                                                    liveImageUrls,
-                                                )
-                                            )
-                                                return null;
-                                            return (
-                                                <ConversationMessage
-                                                    key={`live-${index}`}
-                                                    role="assistant"
-                                                    content={step.content}
-                                                    imageUrls={liveImageUrls}
-                                                    isStreaming={
-                                                        step.type ===
-                                                        "answer_delta"
-                                                    }
-                                                />
-                                            );
-                                        }
-                                        if (step.type === "error") {
-                                            return (
-                                                <div
-                                                    key={`live-${index}`}
-                                                    className="flex items-center gap-2 rounded-xl border border-danger/30 bg-danger/5 px-3 py-2 text-xs font-semibold text-danger"
-                                                >
-                                                    <AlertCircle className="h-3.5 w-3.5 shrink-0" />
-                                                    <span className="truncate">
-                                                        {step.message}
-                                                    </span>
-                                                </div>
-                                            );
-                                        }
-                                        return null;
-                                    })}
-                                    {activeImageGeneration ? (
-                                        <ImageToolProgressPanel
-                                            message={
-                                                activeImageGeneration.message
-                                            }
-                                        />
-                                    ) : null}
-                                    {(isActive ||
-                                        creating ||
-                                        (loading && steps.length > 0)) &&
-                                        !streamingAnswer &&
-                                        !activeImageGeneration && (
-                                            <ThinkingIndicator
-                                                label={t(
-                                                    "blog.agentChat.thinking",
-                                                )}
-                                            />
-                                        )}
-                                    {(reconnecting || errorMessage) && (
-                                        <div
-                                            className={`flex items-center gap-2 rounded-xl border px-3 py-2 text-xs font-semibold ${
-                                                errorMessage
-                                                    ? "border-danger/20 bg-danger/5 text-danger"
-                                                    : "border-border bg-surface-muted text-ink-secondary"
-                                            }`}
-                                        >
-                                            {errorMessage ? (
-                                                <AlertCircle className="h-3.5 w-3.5 shrink-0" />
-                                            ) : (
-                                                <Loader2 className="h-3.5 w-3.5 shrink-0 animate-spin" />
-                                            )}
-                                            <span className="truncate">
-                                                {errorMessage ||
-                                                    (reconnecting
-                                                        ? t(
-                                                              "blog.agentChat.reconnecting",
-                                                          )
-                                                        : "")}
-                                            </span>
-                                        </div>
-                                    )}
-                                    <div ref={chatEndRef} className="h-2" />
-                                </div>
-                            )}
-                        </div>
+                        <AgentConversationTimeline
+                            chatScrollRef={chatScrollRef}
+                            stickToBottomRef={stickToBottomRef}
+                            chatEndRef={chatEndRef}
+                            loading={loading}
+                            creating={creating}
+                            running={running}
+                            steps={steps}
+                            messages={messages}
+                            timeline={timeline}
+                            approvals={approvals}
+                            decidingApprovalId={decidingApprovalId}
+                            handleApprovalDecision={handleApprovalDecision}
+                            handleQuizSubmit={handleQuizSubmit}
+                            historicalImageUrls={historicalImageUrls}
+                            liveImageUrls={liveImageUrls}
+                            activeImageGeneration={activeImageGeneration}
+                            isActive={isActive}
+                            streamingAnswer={streamingAnswer}
+                            reconnecting={reconnecting}
+                            errorMessage={errorMessage}
+                            statusLine={t("blog.agentChat.reconnecting")}
+                            t={t}
+                            messageComponent={ConversationMessage}
+                            thoughtComponent={ThoughtCard}
+                            loadingContent={<WorkspaceAgentSkeleton />}
+                            scrollClassName="min-h-0 min-w-0 flex-1 overflow-y-auto overscroll-contain px-4 pb-6 pt-4 sm:px-8"
+                        />
 
                         {/* Bottom Input Bar for Active Chat */}
                         <div className="shrink-0 bg-gradient-to-t from-[#fdfdfe] via-[#fdfdfe]/90 to-transparent p-4">
