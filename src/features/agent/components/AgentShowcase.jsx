@@ -21,7 +21,7 @@ import {
 import {
     getActiveImageGeneration,
     hasStreamingAnswer,
-} from "./conversationState";
+} from "../utils/conversationState";
 import AgentComposer from "./AgentComposer";
 import AgentShowcaseConversation from "./AgentShowcaseConversation";
 import { uploadAgentAttachment } from "../capabilities";

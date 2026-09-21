@@ -43,7 +43,7 @@ import {
 import {
     getActiveImageGeneration,
     hasStreamingAnswer,
-} from "../components/conversationState";
+} from "../utils/conversationState";
 import AgentImagesPage from "./AgentImagesPage";
 import { ProfileModal } from "@features/profile";
 import { useAuthSession } from "@features/auth";

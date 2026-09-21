@@ -1,4 +1,5 @@
 const DEEP_THINKING_STORAGE_KEY = "agent.deepThinking";
+const IMAGE_TOOL = "image_generate";
 
 export const readDeepThinkingPreference = () => {
     try {
@@ -101,6 +102,31 @@ export const collapsePlanUpdates = (messages) => {
         collapsed[planIndex] = { ...collapsed[planIndex], content: message.content };
     }
     return collapsed;
+};
+
+export const hasStreamingAnswer = (steps = []) =>
+    steps.some(
+        (step) => step.type === "answer" || step.type === "answer_delta",
+    );
+
+export const getActiveImageGeneration = (steps = []) => {
+    let active = false;
+    let message = "";
+
+    steps.forEach((step) => {
+        if (step.type !== "tool" || step.tool !== IMAGE_TOOL) return;
+        if (step.phase === "start") {
+            active = true;
+            message = "";
+        } else if (step.phase === "progress") {
+            active = true;
+            message = step.message || message;
+        } else if (step.phase === "end" || step.phase === "error") {
+            active = false;
+        }
+    });
+
+    return active ? { message } : null;
 };
 
 export const abortableDelay = (delay, signal) =>

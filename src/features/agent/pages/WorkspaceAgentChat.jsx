@@ -31,7 +31,7 @@ import {
 import {
     getActiveImageGeneration,
     hasStreamingAnswer,
-} from "../components/conversationState";
+} from "../utils/conversationState";
 
 const WorkspaceAgentChat = () => {
     const { t } = useTranslation();
