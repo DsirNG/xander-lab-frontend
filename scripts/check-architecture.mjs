@@ -66,17 +66,25 @@ const featureSpecifier = (specifier) => {
     return null;
 };
 
-const relativeFeatureSpecifier = (file, specifier) => {
+const relativeSourcePath = (file, specifier) => {
     if (!specifier.startsWith(".")) return null;
     const resolved = path.normalize(path.resolve(path.dirname(file), specifier));
-    const relative = path.relative(path.join(srcRoot, "features"), resolved);
+    return path
+        .relative(srcRoot, resolved)
+        .replaceAll(path.sep, "/");
+};
+
+const relativeFeatureSpecifier = (file, specifier) => {
+    const relativeSource = relativeSourcePath(file, specifier);
+    if (!relativeSource?.startsWith("features/")) return null;
+    const relative = relativeSource.slice("features/".length);
     if (
         relative === "" ||
         relative === ".." ||
         relative.startsWith(`..${path.sep}`)
     )
         return null;
-    return relative.split(path.sep)[0] || null;
+    return relative.split("/")[0] || null;
 };
 
 const removedSourceRootFromImport = (file, specifier) => {
@@ -114,17 +122,22 @@ for (const file of sourceFiles) {
             );
         }
 
+        const relativeSource = relativeSourcePath(file, specifier);
+        const relativeApp =
+            relativeSource === "app" || relativeSource?.startsWith("app/");
+        const relativeFeature = relativeSource?.startsWith("features/");
+
         if (relative.startsWith(`src${path.sep}shared${path.sep}`)) {
-            if (appSpecifier(specifier)) {
+            if (appSpecifier(specifier) || relativeApp) {
                 errors.push(`${relative}: shared -> app (${specifier})`);
             }
-            if (featureSpecifier(specifier) !== null) {
+            if (featureSpecifier(specifier) !== null || relativeFeature) {
                 errors.push(`${relative}: shared -> feature (${specifier})`);
             }
         }
 
         if (!sourceFeature || isTest) continue;
-        if (appSpecifier(specifier)) {
+        if (appSpecifier(specifier) || relativeApp) {
             if (!compatibility) {
                 errors.push(`${relative}: feature -> app (${specifier})`);
             }
