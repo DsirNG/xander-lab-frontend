@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import {
@@ -22,8 +22,9 @@ import {
 } from "lucide-react";
 import DataTable from "@shared/ui/data-display/DataTable";
 import RowActionsMenu from "@shared/ui/overlays/RowActionsMenu";
-import { blogPlanService, PLAN_STATUS } from "../services/blogPlanService";
+import { PLAN_STATUS } from "../services/blogPlanService";
 import { useToast } from "@shared/hooks/useToast";
+import useBlogPlans from "../hooks/useBlogPlans";
 import { usePlanActions } from "../hooks/usePlanActions";
 import PlanStatusBadge from "../components/plans/PlanStatusBadge";
 import PlanFormModal from "../components/plans/PlanFormModal";
@@ -83,51 +84,22 @@ const BlogPlans = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
     const toast = useToast();
-    const [plans, setPlans] = useState([]);
-    const [summaryPlans, setSummaryPlans] = useState([]);
-    const [publishRhythm, setPublishRhythm] = useState(null);
-    const [total, setTotal] = useState(0);
-    const [loading, setLoading] = useState(true);
     const [formOpen, setFormOpen] = useState(false);
     const [aiOpen, setAiOpen] = useState(false);
     const [editingPlan, setEditingPlan] = useState(null);
-    const [page, setPage] = useState(1);
-    const [pageSize, setPageSize] = useState(10);
 
-    const loadPlans = useCallback(async () => {
-        try {
-            setLoading(true);
-            const [data, summary, rhythm] = await Promise.all([
-                blogPlanService.listPlans({ page, size: pageSize }),
-                blogPlanService.listPlans(
-                    { page: 1, size: 50 },
-                    { _silent: true },
-                ),
-                blogPlanService
-                    .getPublishRhythm({ _silent: true })
-                    .catch((error) => {
-                        console.error("loadPublishRhythm error:", error);
-                        return null;
-                    }),
-            ]);
-            setPlans(data?.records || []);
-            setSummaryPlans(summary?.records || []);
-            setPublishRhythm(rhythm || null);
-            setTotal(Number(data?.total) || 0);
-            setLoading(false);
-        } catch (error) {
-            if (error?.isCancelled) {
-                return;
-            }
-            console.error("loadPlans error:", error);
-            toast.error(t("blogPlans.loadFailed"));
-            setLoading(false);
-        }
-    }, [toast, t, page, pageSize]);
-
-    useEffect(() => {
-        loadPlans();
-    }, [loadPlans]);
+    const {
+        plans,
+        summaryPlans,
+        publishRhythm,
+        total,
+        loading,
+        page,
+        pageSize,
+        setPage,
+        setPageSize,
+        loadPlans,
+    } = useBlogPlans({ t, toast });
 
     const actions = usePlanActions({ onChanged: loadPlans, t });
 
