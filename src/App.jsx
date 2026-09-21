@@ -15,7 +15,7 @@ import { useToast } from "@shared/hooks/useToast";
 import ErrorBoundary from "@app/errors/ErrorBoundary";
 import { AuthSessionProvider } from "@features/auth";
 import { NotificationProvider } from "@features/blog";
-import { AppUpdateModal, useAppUpdate } from "@features/appUpdate";
+import { AppUpdateModal, useAppUpdate } from "@app/update";
 import DomainRedirectModal from "@app/bootstrap/DomainRedirectModal";
 
 /**

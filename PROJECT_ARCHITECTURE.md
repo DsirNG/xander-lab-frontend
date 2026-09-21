@@ -36,6 +36,7 @@ src/
 │   │   └── WorkspaceLayout.jsx  # 工作台 Shell
 │   ├── bootstrap/               # 全局启动期 UI 和域名边界
 │   ├── errors/                 # ErrorBoundary、404 和运行时兜底
+│   ├── update/                 # chunk 更新与运行时刷新边界
 │   └── seo/                    # 路由级 SEO 组合
 │   └── routing/                 # 路由配置、懒加载和路由边界
 │
@@ -44,7 +45,6 @@ src/
 │   ├── admin/
 │   ├── agent/
 │   ├── account/               # 账户积分等账户能力
-│   ├── appUpdate/
 │   ├── blog/
 │   ├── htmlPreview/            # HTML/SVG 隔离预览能力及其业务接口
 │   ├── components/              # 组件展示业务
@@ -70,7 +70,6 @@ src/
 │       └── ...
 │
 ├── shared/seo/                  # 与业务无关的页面级 SEO 元数据能力
-
 ├── shared/hooks/                # 无业务语义的 Hook；Toast Hook 也从这里消费
 ├── shared/lib/                  # cn、debounce、storage 等通用技术能力
 │

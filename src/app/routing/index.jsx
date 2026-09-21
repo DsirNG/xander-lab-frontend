@@ -15,7 +15,7 @@ import BlogLayout from "@features/blog/layouts/BlogLayout";
 import RouteSEOLayout from "@app/seo/RouteSEOLayout";
 import { LazyPage, ProtectedPage } from "./RouteElements";
 import LegacyBlogToolRedirect from "./LegacyBlogToolRedirect";
-import { RouteErrorPage } from "@features/appUpdate";
+import { RouteErrorPage } from "@app/update";
 
 // Features (路由级懒加载)
 const HomePage = React.lazy(() => import("@features/home/pages/HomePage"));
