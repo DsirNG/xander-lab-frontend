@@ -38,6 +38,7 @@ import {
     agentConversationService,
 } from "../services/agentConversationService";
 import AgentSessionList from "../components/AgentSessionList";
+import AgentSessionSearchModal from "../components/AgentSessionSearchModal";
 import AgentChatInputBar from "../components/AgentChatInputBar";
 import AgentConversationTimeline from "../components/AgentConversationTimeline";
 import ImageToolResult from "../components/ImageToolResult";
@@ -106,10 +107,8 @@ const AgentChat = () => {
     const [shareLoading, setShareLoading] = useState(false);
     const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
     const [searchOpen, setSearchOpen] = useState(false);
-    const [searchQuery, setSearchQuery] = useState("");
     const [settingsOpen, setSettingsOpen] = useState(false);
     const shareMenuRef = useRef(null);
-    const searchModalRef = useRef(null);
     const chatEndRef = useRef(null);
     const chatScrollRef = useRef(null);
     const stickToBottomRef = useRef(true);
@@ -417,12 +416,6 @@ const AgentChat = () => {
     const closeShareMenu = () => setIsShareOpen(false);
     useClickOutside(shareMenuRef, closeShareMenu, isShareOpen);
 
-    const closeSearchModal = () => {
-        setSearchOpen(false);
-        setSearchQuery("");
-    };
-    useClickOutside(searchModalRef, closeSearchModal, searchOpen);
-
     const handleCopyShareLink = async () => {
         if (!conversationId) return;
         setShareLoading(true);
@@ -493,14 +486,6 @@ const AgentChat = () => {
             setIsSavingDraft(false);
         }
     };
-
-    const filteredSessions = useMemo(() => {
-        if (!searchQuery.trim()) return sessions;
-        const query = searchQuery.toLowerCase();
-        return sessions.filter((session) =>
-            (session.title || "").toLowerCase().includes(query),
-        );
-    }, [sessions, searchQuery]);
 
     const navigationLocked = loading || creating;
 
@@ -974,70 +959,16 @@ const AgentChat = () => {
                 onClose={() => setSettingsOpen(false)}
             />
 
-            {/* Search Modal */}
-            {searchOpen && (
-                <div className="absolute inset-0 z-50 flex items-start justify-center bg-ink/40 pt-[15vh]">
-                    <div
-                        ref={searchModalRef}
-                        className="w-full max-w-lg rounded-2xl border border-border bg-canvas shadow-2xl"
-                    >
-                        <div className="flex items-center gap-3 border-b border-border px-4 py-3">
-                            <Search className="h-5 w-5 shrink-0 text-ink-muted" />
-                            <input
-                                type="text"
-                                value={searchQuery}
-                                onChange={(event) =>
-                                    setSearchQuery(event.target.value)
-                                }
-                                placeholder="搜索会话..."
-                                autoFocus
-                                className="min-h-[40px] min-w-0 flex-1 bg-transparent text-base outline-none placeholder:text-ink-faint"
-                            />
-                            <button
-                                type="button"
-                                onClick={closeSearchModal}
-                                className="rounded-lg p-1.5 text-ink-muted hover:bg-surface-muted transition"
-                            >
-                                <X className="h-5 w-5" />
-                            </button>
-                        </div>
-                        <div className="max-h-[50vh] overflow-y-auto p-2">
-                            <div className="px-2 py-1.5 text-xs font-semibold text-ink-muted">
-                                最近聊天
-                            </div>
-                            {filteredSessions.length > 0 ? (
-                                filteredSessions.map((session) => (
-                                    <button
-                                        key={session.id}
-                                        type="button"
-                                        onClick={() => {
-                                            closeSearchModal();
-                                            // 从图片画廊里搜到会话时也要切回对话视图，否则会停在画廊上看旧图。
-                                            setView("chat");
-                                            navigate(
-                                                `/workspace/agent/${session.id}`,
-                                            );
-                                        }}
-                                        className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm transition hover:bg-surface-muted"
-                                    >
-                                        <MessageSquareText className="h-4 w-4 shrink-0 text-ink-muted" />
-                                        <span className="truncate">
-                                            {session.title ||
-                                                t("blog.agent.untitled")}
-                                        </span>
-                                    </button>
-                                ))
-                            ) : (
-                                <div className="py-8 text-center text-sm text-ink-muted">
-                                    {searchQuery
-                                        ? "没有找到匹配的会话"
-                                        : "暂无会话记录"}
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                </div>
-            )}
+            <AgentSessionSearchModal
+                open={searchOpen}
+                sessions={sessions}
+                onClose={() => setSearchOpen(false)}
+                onSelect={(id) => {
+                    // 从图片画廊里搜到会话时也要切回对话视图，否则会停在画廊上看旧图。
+                    setView("chat");
+                    navigate(`/workspace/agent/${id}`);
+                }}
+            />
         </div>
     );
 };
