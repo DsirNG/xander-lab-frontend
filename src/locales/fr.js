@@ -5,7 +5,8 @@
 
 export default {
     nav: {
-        loginRequired: "Connectez-vous ou ouvrez l'espace de travail pour utiliser cette fonction",
+        loginRequired:
+            "Connectez-vous ou ouvrez l'espace de travail pour utiliser cette fonction",
         infra: "Infrastructure",
         modules: "Modules",
         components: "Composants",
@@ -532,7 +533,8 @@ export default {
             toolCancelled: "Arrêté",
             approval: {
                 title: "Votre approbation est requise",
-                description: "L'agent est prêt à exécuter {{tool}}. Confirmez s'il peut continuer.",
+                description:
+                    "L'agent est prêt à exécuter {{tool}}. Confirmez s'il peut continuer.",
                 tool: "Action en attente : {{tool}}",
                 approve: "Approuver",
                 reject: "Refuser",
@@ -613,11 +615,11 @@ export default {
         agentMcp: {
             title: {
                 user: "Mes serveurs MCP",
-                admin: "Serveurs MCP de la plateforme"
+                admin: "Serveurs MCP de la plateforme",
             },
             subtitle: {
                 user: "Connectez un serveur MCP tiers pour intégrer ses outils à votre agent ; chaque appel requiert votre approbation",
-                admin: "Configurez des serveurs MCP à l'échelle de la plateforme, accessibles à tous ; chaque appel reste approuvé par l'utilisateur qui le fait"
+                admin: "Configurez des serveurs MCP à l'échelle de la plateforme, accessibles à tous ; chaque appel reste approuvé par l'utilisateur qui le fait",
             },
             create: "Ajouter un serveur",
             createTitle: "Ajouter un serveur MCP",
@@ -641,36 +643,49 @@ export default {
             edit: "Modifier",
             delete: "Supprimer",
             deleteTitle: "Supprimer le serveur MCP",
-            deleteConfirm: "Supprimer « {{name}} » ? Ses outils seront retirés immédiatement de l'agent.",
+            deleteConfirm:
+                "Supprimer « {{name}} » ? Ses outils seront retirés immédiatement de l'agent.",
             deleted: "Supprimé",
             deleteFailed: "Échec de la suppression",
             emptyTitle: "Aucun serveur MCP configuré",
-            emptyHint: "Ajoutez un serveur MCP distant et testez la connexion ; ses outils apparaîtront alors dans l'agent",
+            emptyHint:
+                "Ajoutez un serveur MCP distant et testez la connexion ; ses outils apparaîtront alors dans l'agent",
             loadFailed: "Échec du chargement des serveurs MCP",
             actionsFor: "Actions pour {{name}}",
             created: "Ajouté",
             updated: "Enregistré",
             saveFailed: "Échec de l'enregistrement",
-            executableHint: "Attention : il s'agit d'une capacité exécutable. Une fois activé et testé, les outils distants entrent réellement dans l'agent et les appels quittent la plateforme avec votre autorisation.",
+            executableHint:
+                "Attention : il s'agit d'une capacité exécutable. Une fois activé et testé, les outils distants entrent réellement dans l'agent et les appels quittent la plateforme avec votre autorisation.",
             fieldKey: "Identifiant du serveur",
-            fieldKeyHint: "2 à 20 lettres minuscules, chiffres ou tirets ; entre dans le préfixe du nom d'outil et n'est plus modifiable",
+            fieldKeyHint:
+                "2 à 20 lettres minuscules, chiffres ou tirets ; entre dans le préfixe du nom d'outil et n'est plus modifiable",
             fieldName: "Nom affiché",
             fieldNamePlaceholder: "ex. GitHub",
             fieldEndpoint: "URL du point de terminaison",
-            fieldEndpointHint: "Doit être une URL HTTPS sans identifiants intégrés, résolue vers une adresse publique",
+            fieldEndpointHint:
+                "Doit être une URL HTTPS sans identifiants intégrés, résolue vers une adresse publique",
             fieldHeaders: "En-têtes supplémentaires",
-            fieldHeadersHint: "Un par ligne, au format « Nom : valeur », pour les identifiants exigés par le serveur (Authorization, etc.) ; laisser vide sinon",
-            formClearHeaders: "Effacer les identifiants enregistrés (laisser vide pour les conserver)",
+            fieldHeadersHint:
+                "Un par ligne, au format « Nom : valeur », pour les identifiants exigés par le serveur (Authorization, etc.) ; laisser vide sinon",
+            formClearHeaders:
+                "Effacer les identifiants enregistrés (laisser vide pour les conserver)",
             formEnabled: "Activé",
-            formEnabledHint: "Les outils détectés n'entrent dans l'agent que si le serveur est activé ; sinon ils n'apparaissent jamais",
-            formKeyInvalid: "L'identifiant doit comporter 2 à 20 lettres minuscules, chiffres ou tirets, et commencer par une lettre",
+            formEnabledHint:
+                "Les outils détectés n'entrent dans l'agent que si le serveur est activé ; sinon ils n'apparaissent jamais",
+            formKeyInvalid:
+                "L'identifiant doit comporter 2 à 20 lettres minuscules, chiffres ou tirets, et commencer par une lettre",
             formNameRequired: "Le nom affiché est obligatoire",
-            formNameTooLong: "Le nom affiché ne peut pas dépasser {{max}} caractères",
-            formEndpointRequired: "L'URL du point de terminaison est obligatoire",
-            formEndpointTooLong: "L'URL ne peut pas dépasser {{max}} caractères",
+            formNameTooLong:
+                "Le nom affiché ne peut pas dépasser {{max}} caractères",
+            formEndpointRequired:
+                "L'URL du point de terminaison est obligatoire",
+            formEndpointTooLong:
+                "L'URL ne peut pas dépasser {{max}} caractères",
             formEndpointNotHttps: "L'URL doit utiliser HTTPS",
-            formHeadersInvalid: "L'en-tête de la ligne {{lines}} est mal formé ; utilisez « Nom : valeur »",
-            formHeadersTooMany: "Au maximum {{max}} en-têtes"
+            formHeadersInvalid:
+                "L'en-tête de la ligne {{lines}} est mal formé ; utilisez « Nom : valeur »",
+            formHeadersTooMany: "Au maximum {{max}} en-têtes",
         },
         agentSkills: {
             title: "Compétences",
@@ -680,7 +695,8 @@ export default {
             emptyTitle: "Aucune compétence",
             emptyHint:
                 "Écrivez la méthode que vous répétez sans cesse et l'agent l'appliquera désormais",
-            loadFailed: "Échec du chargement des compétences, veuillez réessayer",
+            loadFailed:
+                "Échec du chargement des compétences, veuillez réessayer",
             columnSkill: "Compétence",
             columnDescription: "Description",
             columnTools: "Outils",
@@ -719,7 +735,8 @@ export default {
                 "L'identifiant doit commencer par une minuscule et ne contenir que minuscules, chiffres et tirets",
             formNameRequired: "Veuillez saisir un nom",
             formNameTooLong: "Le nom ne doit pas dépasser {{max}} caractères",
-            formDescriptionRequired: "Veuillez décrire le contexte d'utilisation",
+            formDescriptionRequired:
+                "Veuillez décrire le contexte d'utilisation",
             formDescriptionTooLong:
                 "La description ne doit pas dépasser {{max}} caractères",
             formInstructionsRequired: "Veuillez saisir les consignes",
@@ -2040,7 +2057,8 @@ export default {
                 "Échec de la requête réseau, vérifiez votre connexion",
             noRefreshToken:
                 "Pas de token de rafraîchissement, veuillez vous reconnecter",
-            refreshUnavailable: "Impossible d'actualiser la session pour le moment, veuillez réessayer plus tard",
+            refreshUnavailable:
+                "Impossible d'actualiser la session pour le moment, veuillez réessayer plus tard",
             retryPrefix: "[HTTP] Réessai",
             retrySuffix: "délai",
             cancelled: "Requête annulée",
@@ -2176,7 +2194,8 @@ export default {
         tabDocs: "Base de connaissances documentaire",
         tabMirror: "Miroir de connaissances / révision",
         title: "Base de connaissances documentaire",
-        subtitle: "Un centre de connaissances privé et des cartes mentales, fondés sur la segmentation intelligente et l'extraction des chapitres",
+        subtitle:
+            "Un centre de connaissances privé et des cartes mentales, fondés sur la segmentation intelligente et l'extraction des chapitres",
         folders: {
             allDocs: "Tous les documents",
             title: "Dossiers",
@@ -2194,7 +2213,8 @@ export default {
             subfolders: "Sous-dossiers",
             newSubfolder: "Nouveau sous-dossier",
             confirmDeleteTitle: "Supprimer le dossier",
-            confirmDeleteMsg: "Supprimer le dossier « {{name}} » ? Tous ses sous-dossiers et documents seront définitivement supprimés.",
+            confirmDeleteMsg:
+                "Supprimer le dossier « {{name}} » ? Tous ses sous-dossiers et documents seront définitivement supprimés.",
             created: "Dossier créé",
             renamed: "Dossier renommé",
             moved: "Dossier déplacé",
@@ -2210,7 +2230,8 @@ export default {
             viewList: "Vue liste",
             emptyTitle: "Aucun document dans cette catégorie",
             emptyFolderOnly: "Aucun fichier directement dans ce dossier",
-            emptyHint: "Utilisez le bouton d'envoi en haut à droite : les chapitres sont découpés et la carte mentale est construite automatiquement.",
+            emptyHint:
+                "Utilisez le bouton d'envoi en haut à droite : les chapitres sont découpés et la carte mentale est construite automatiquement.",
             uploadNow: "Envoyer un document",
             name: "Nom",
             status: "État de la structure de connaissances",
@@ -2223,7 +2244,8 @@ export default {
             chapterCount: "Chapitres détectés",
             manageTags: "Étiquettes associées",
             confirmDeleteTitle: "Supprimer le fichier",
-            confirmDeleteMsg: "Supprimer définitivement le fichier « {{name}} » ? L'objet stocké et la carte mentale générée seront également supprimés.",
+            confirmDeleteMsg:
+                "Supprimer définitivement le fichier « {{name}} » ? L'objet stocké et la carte mentale générée seront également supprimés.",
             moved: "Fichier déplacé",
             deleted: "Fichier supprimé",
             reidentify: "Réanalyser",
@@ -2233,13 +2255,17 @@ export default {
             btn: "Envoyer un document",
             title: "Envoyer un document vers la base de connaissances",
             targetFolder: "Dossier de destination",
-            needFolderFirst: "Créez d'abord au moins un dossier à gauche : les fichiers ne peuvent pas être placés directement à la racine.",
+            needFolderFirst:
+                "Créez d'abord au moins un dossier à gauche : les fichiers ne peuvent pas être placés directement à la racine.",
             selectFileLabel: "Choisir un fichier",
             dragHint: "Glissez un fichier ici, ou cliquez pour parcourir",
-            supportHint: "Prend en charge Markdown, PDF, Word, TXT, JSON, HTML, etc. (50 Mo maximum par fichier)",
+            supportHint:
+                "Prend en charge Markdown, PDF, Word, TXT, JSON, HTML, etc. (50 Mo maximum par fichier)",
             tagsLabel: "Étiquettes (facultatif)",
-            tagsPlaceholder: "Saisissez un nom d'étiquette puis appuyez sur Entrée",
-            progressDesc: "Une fois stocké, le texte est extrait et les chapitres ainsi que les nœuds du graphe de connaissances sont détectés...",
+            tagsPlaceholder:
+                "Saisissez un nom d'étiquette puis appuyez sur Entrée",
+            progressDesc:
+                "Une fois stocké, le texte est extrait et les chapitres ainsi que les nœuds du graphe de connaissances sont détectés...",
             submitBtn: "Lancer l'envoi",
             uploadingBtn: "Envoi en cours...",
             preparing: "Préparation de l'envoi...",
@@ -2262,7 +2288,8 @@ export default {
             rawFile: "Fichier source",
             loadFailed: "Échec du chargement de l'aperçu",
             noStructureTitle: "Aucune carte pour l'instant",
-            noStructureDesc: "Pour les documents volumineux, ouvrez « Plan des chapitres » afin de générer à la demande la carte mentale d'un chapitre donné.",
+            noStructureDesc:
+                "Pour les documents volumineux, ouvrez « Plan des chapitres » afin de générer à la demande la carte mentale d'un chapitre donné.",
             generateNow: "Générer la carte maintenant",
             outline: "Liste des chapitres",
             noChapters: "Aucun chapitre détecté",
@@ -2270,7 +2297,8 @@ export default {
             excerptTitle: "Extrait du texte",
             loadFull: "Charger le texte intégral",
             noContent: "Aucun contenu textuel",
-            truncatedNotice: "(Seuls les 2 000 premiers caractères sont affichés ; cliquez sur « Charger le texte intégral » en haut à droite pour lire le document entier)",
+            truncatedNotice:
+                "(Seuls les 2 000 premiers caractères sont affichés ; cliquez sur « Charger le texte intégral » en haut à droite pour lire le document entier)",
         },
         tags: {
             title: "Étiquettes",
@@ -2281,7 +2309,8 @@ export default {
             namePlaceholder: "ex. Architecture technique, Conception produit",
             colorLabel: "Couleur de l'étiquette",
             descLabel: "Description (facultatif)",
-            descPlaceholder: "Une note pour vous rappeler l'usage de cette étiquette",
+            descPlaceholder:
+                "Une note pour vous rappeler l'usage de cette étiquette",
             typeAndEnter: "Saisissez une étiquette puis Entrée",
             attached: "Étiquette ajoutée",
             detached: "Étiquette retirée",
@@ -2331,7 +2360,8 @@ export default {
     },
 
     shared: {
-        readOnly: "Ce lien est en lecture seule ; la conversation ne peut pas être poursuivie",
+        readOnly:
+            "Ce lien est en lecture seule ; la conversation ne peut pas être poursuivie",
     },
     blogManage: {
         createNew: "Nouvel article",

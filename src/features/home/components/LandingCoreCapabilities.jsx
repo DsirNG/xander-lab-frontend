@@ -40,7 +40,10 @@ const CAPABILITIES = [
 
 const LandingCoreCapabilities = ({ t }) => {
     return (
-        <section id="capabilities" className="mx-auto mt-16 w-full max-w-5xl px-3 sm:px-0">
+        <section
+            id="capabilities"
+            className="mx-auto mt-16 w-full max-w-5xl px-3 sm:px-0"
+        >
             {/* Section Header */}
             <div className="text-center">
                 <h2 className="text-2xl font-extrabold text-[#111426] sm:text-3xl">

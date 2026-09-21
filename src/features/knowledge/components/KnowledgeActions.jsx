@@ -1,11 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import {
-    Archive,
-    ArchiveRestore,
-    Pencil,
-    Trash2,
-} from "lucide-react";
+import { Archive, ArchiveRestore, Pencil, Trash2 } from "lucide-react";
 import Button from "@shared/ui/primitives/Button";
 import Modal from "@shared/ui/overlays/Modal";
 

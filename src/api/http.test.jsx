@@ -368,7 +368,9 @@ describe("refresh failure classification (§45)", () => {
         expect(tokenStorage.getRefreshToken()).toBe("old-rt");
         expect(toast).toHaveBeenCalledWith("warning", expect.any(String));
         // 文案不能是「登录已过期」
-        expect(toast.mock.calls[0][1]).not.toMatch(/登录已过期|Session expired/);
+        expect(toast.mock.calls[0][1]).not.toMatch(
+            /登录已过期|Session expired/,
+        );
     });
 
     it("§46 暂时性失败只重试一次，重试仍失败就停止", async () => {
@@ -463,10 +465,9 @@ describe("refresh failure classification (§45)", () => {
 
         await expect(trigger401(config401())).rejects.toBeDefined();
 
-        expect(authChannelMock.publish).toHaveBeenCalledWith(
-            "refresh-failed",
-            { unrecoverable: false },
-        );
+        expect(authChannelMock.publish).toHaveBeenCalledWith("refresh-failed", {
+            unrecoverable: false,
+        });
     });
 
     it("无论成功失败都释放跨 Tab 互斥量", async () => {

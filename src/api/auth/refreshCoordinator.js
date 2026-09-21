@@ -170,7 +170,10 @@ export function createAuthRecovery({
         );
         const body = response.data;
         const tokenData = body?.data;
-        if ((body?.code !== 200 && body?.code !== 0) || !tokenData?.accessToken) {
+        if (
+            (body?.code !== 200 && body?.code !== 0) ||
+            !tokenData?.accessToken
+        ) {
             const declared = typeof body?.code === "number" ? body.code : 401;
             throw new HttpError(
                 body?.message || i18n.t("auth.sessionExpired"),
@@ -197,7 +200,8 @@ export function createAuthRecovery({
         for (;;) {
             try {
                 const tokenData = await attemptRefresh(refreshToken);
-                const { accessToken, refreshToken: newRefreshToken } = tokenData;
+                const { accessToken, refreshToken: newRefreshToken } =
+                    tokenData;
                 tokenStorage.setToken(accessToken, { notify: false });
                 if (newRefreshToken) {
                     tokenStorage.setRefreshToken(newRefreshToken);

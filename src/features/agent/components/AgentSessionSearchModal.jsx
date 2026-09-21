@@ -3,12 +3,7 @@ import { useTranslation } from "react-i18next";
 import { MessageSquareText, Search, X } from "lucide-react";
 import useClickOutside from "@shared/hooks/useClickOutside";
 
-const AgentSessionSearchModal = ({
-    open,
-    sessions,
-    onClose,
-    onSelect,
-}) => {
+const AgentSessionSearchModal = ({ open, sessions, onClose, onSelect }) => {
     const { t } = useTranslation();
     const [query, setQuery] = useState("");
     const modalRef = useRef(null);

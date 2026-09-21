@@ -3,11 +3,7 @@ import PropTypes from "prop-types";
 import { ArrowRight, Play, Sparkles } from "lucide-react";
 import { GlowingRing3D } from "./LandingIllustrations";
 
-const LandingHero = ({
-    t,
-    onTryNow,
-    onLearnMore,
-}) => {
+const LandingHero = ({ t, onTryNow, onLearnMore }) => {
     return (
         <section className="relative flex flex-col items-center pt-8 pb-4 text-center select-none overflow-hidden">
             {/* Background 3D Floating Elements */}

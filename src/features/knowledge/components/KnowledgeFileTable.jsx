@@ -94,11 +94,21 @@ export default function KnowledgeFileTable({
                                     className="h-3.5 w-3.5 rounded border-[#d1d5db] text-[#7771ed] focus:ring-[#7771ed] dark:border-white/20"
                                 />
                             </th>
-                            <th className="pb-3 px-2 font-medium text-[#8e94ad]">文件名</th>
-                            <th className="pb-3 px-3 font-medium text-[#8e94ad]">类型</th>
-                            <th className="pb-3 px-3 font-medium text-[#8e94ad]">大小</th>
-                            <th className="pb-3 px-3 font-medium text-[#8e94ad]">更新时间</th>
-                            <th className="pb-3 px-3 font-medium text-[#8e94ad]">状态</th>
+                            <th className="pb-3 px-2 font-medium text-[#8e94ad]">
+                                文件名
+                            </th>
+                            <th className="pb-3 px-3 font-medium text-[#8e94ad]">
+                                类型
+                            </th>
+                            <th className="pb-3 px-3 font-medium text-[#8e94ad]">
+                                大小
+                            </th>
+                            <th className="pb-3 px-3 font-medium text-[#8e94ad]">
+                                更新时间
+                            </th>
+                            <th className="pb-3 px-3 font-medium text-[#8e94ad]">
+                                状态
+                            </th>
                             <th className="pb-3 pr-3 text-right"></th>
                         </tr>
                     </thead>
@@ -117,7 +127,9 @@ export default function KnowledgeFileTable({
                                         <input
                                             type="checkbox"
                                             checked={isChecked}
-                                            onClick={(event) => event.stopPropagation()}
+                                            onClick={(event) =>
+                                                event.stopPropagation()
+                                            }
                                             onChange={() => onToggleItem(key)}
                                             className="h-3.5 w-3.5 rounded border-[#d1d5db] text-[#7771ed] focus:ring-[#7771ed] dark:border-white/20"
                                         />
@@ -132,13 +144,27 @@ export default function KnowledgeFileTable({
                                             </span>
                                         </div>
                                     </td>
-                                    <td className="py-3 px-3 text-[#8e94ad] text-caption">文件夹</td>
-                                    <td className="py-3 px-3 text-[#8e94ad] text-caption">-</td>
                                     <td className="py-3 px-3 text-[#8e94ad] text-caption">
-                                        {formatKnowledgeDateTime(folder.updatedAt || folder.createdAt)}
+                                        文件夹
                                     </td>
-                                    <td className="py-3 px-3 text-[#8e94ad] text-caption">-</td>
-                                    <td className="py-3 pr-3 text-right" onClick={(event) => event.stopPropagation()}>
+                                    <td className="py-3 px-3 text-[#8e94ad] text-caption">
+                                        -
+                                    </td>
+                                    <td className="py-3 px-3 text-[#8e94ad] text-caption">
+                                        {formatKnowledgeDateTime(
+                                            folder.updatedAt ||
+                                                folder.createdAt,
+                                        )}
+                                    </td>
+                                    <td className="py-3 px-3 text-[#8e94ad] text-caption">
+                                        -
+                                    </td>
+                                    <td
+                                        className="py-3 pr-3 text-right"
+                                        onClick={(event) =>
+                                            event.stopPropagation()
+                                        }
+                                    >
                                         <div className="flex items-center justify-end">
                                             <RowActionsMenu
                                                 size="sm"
@@ -146,22 +172,40 @@ export default function KnowledgeFileTable({
                                                 actions={[
                                                     {
                                                         key: "rename",
-                                                        label: t("common.rename", "重命名"),
+                                                        label: t(
+                                                            "common.rename",
+                                                            "重命名",
+                                                        ),
                                                         icon: Pencil,
-                                                        onClick: () => onRenameFolder(folder),
+                                                        onClick: () =>
+                                                            onRenameFolder(
+                                                                folder,
+                                                            ),
                                                     },
                                                     {
                                                         key: "move",
-                                                        label: t("knowledgeBase.folders.moveAction", "移动位置"),
+                                                        label: t(
+                                                            "knowledgeBase.folders.moveAction",
+                                                            "移动位置",
+                                                        ),
                                                         icon: Move,
-                                                        onClick: () => onMoveFolder(folder),
+                                                        onClick: () =>
+                                                            onMoveFolder(
+                                                                folder,
+                                                            ),
                                                     },
                                                     {
                                                         key: "delete",
-                                                        label: t("common.delete", "删除"),
+                                                        label: t(
+                                                            "common.delete",
+                                                            "删除",
+                                                        ),
                                                         icon: Trash2,
                                                         danger: true,
-                                                        onClick: () => onDeleteFolder(folder),
+                                                        onClick: () =>
+                                                            onDeleteFolder(
+                                                                folder,
+                                                            ),
                                                     },
                                                 ]}
                                             />
@@ -195,14 +239,18 @@ export default function KnowledgeFileTable({
                                         <input
                                             type="checkbox"
                                             checked={isChecked}
-                                            onClick={(event) => event.stopPropagation()}
+                                            onClick={(event) =>
+                                                event.stopPropagation()
+                                            }
                                             onChange={() => onToggleItem(key)}
                                             className="h-3.5 w-3.5 rounded border-[#d1d5db] text-[#7771ed] focus:ring-[#7771ed] dark:border-white/20"
                                         />
                                     </td>
                                     <td className="py-3 px-2">
                                         <div className="flex items-center gap-2.5 min-w-0">
-                                            <div className={`flex h-6 w-8 shrink-0 items-center justify-center rounded-md font-bold text-[10px] tracking-tight shadow-2xs ${badge.bg}`}>
+                                            <div
+                                                className={`flex h-6 w-8 shrink-0 items-center justify-center rounded-md font-bold text-[10px] tracking-tight shadow-2xs ${badge.bg}`}
+                                            >
                                                 {badge.label}
                                             </div>
                                             <div className="min-w-0 flex-1">
@@ -215,17 +263,32 @@ export default function KnowledgeFileTable({
                                             </div>
                                         </div>
                                     </td>
-                                    <td className="py-3 px-3 uppercase text-[#8e94ad] text-caption">{ext}</td>
-                                    <td className="py-3 px-3 text-[#8e94ad] text-caption">
-                                        {formatBytes(file.fileSize || file.sizeBytes || 0)}
+                                    <td className="py-3 px-3 uppercase text-[#8e94ad] text-caption">
+                                        {ext}
                                     </td>
                                     <td className="py-3 px-3 text-[#8e94ad] text-caption">
-                                        {formatKnowledgeDateTime(file.updatedAt || file.createdAt)}
+                                        {formatBytes(
+                                            file.fileSize ||
+                                                file.sizeBytes ||
+                                                0,
+                                        )}
+                                    </td>
+                                    <td className="py-3 px-3 text-[#8e94ad] text-caption">
+                                        {formatKnowledgeDateTime(
+                                            file.updatedAt || file.createdAt,
+                                        )}
                                     </td>
                                     <td className="py-3 px-3">
-                                        {renderStatusBadge(file.knowledgeState || file.status)}
+                                        {renderStatusBadge(
+                                            file.knowledgeState || file.status,
+                                        )}
                                     </td>
-                                    <td className="py-3 pr-3 text-right" onClick={(event) => event.stopPropagation()}>
+                                    <td
+                                        className="py-3 pr-3 text-right"
+                                        onClick={(event) =>
+                                            event.stopPropagation()
+                                        }
+                                    >
                                         <div className="flex items-center justify-end">
                                             <RowActionsMenu
                                                 size="sm"
@@ -235,32 +298,47 @@ export default function KnowledgeFileTable({
                                                         key: "preview",
                                                         label: "全屏预览",
                                                         icon: Eye,
-                                                        onClick: () => onPreviewFile(file.id),
+                                                        onClick: () =>
+                                                            onPreviewFile(
+                                                                file.id,
+                                                            ),
                                                     },
                                                     {
                                                         key: "rename",
-                                                        label: t("common.rename", "重命名"),
+                                                        label: t(
+                                                            "common.rename",
+                                                            "重命名",
+                                                        ),
                                                         icon: Pencil,
-                                                        onClick: () => onRenameFile(file),
+                                                        onClick: () =>
+                                                            onRenameFile(file),
                                                     },
                                                     {
                                                         key: "move",
                                                         label: "移动",
                                                         icon: Move,
-                                                        onClick: () => onMoveFile(file),
+                                                        onClick: () =>
+                                                            onMoveFile(file),
                                                     },
                                                     {
                                                         key: "reidentify",
                                                         label: "重新识别",
                                                         icon: RefreshCw,
-                                                        onClick: () => onReidentifyFile(file.id),
+                                                        onClick: () =>
+                                                            onReidentifyFile(
+                                                                file.id,
+                                                            ),
                                                     },
                                                     {
                                                         key: "delete",
-                                                        label: t("common.delete", "删除"),
+                                                        label: t(
+                                                            "common.delete",
+                                                            "删除",
+                                                        ),
                                                         icon: Trash2,
                                                         danger: true,
-                                                        onClick: () => onDeleteFile(file),
+                                                        onClick: () =>
+                                                            onDeleteFile(file),
                                                     },
                                                 ]}
                                             />
@@ -277,7 +355,9 @@ export default function KnowledgeFileTable({
                 <div className="py-16 text-center text-caption text-[#8e94ad]">
                     <FileText className="mx-auto h-10 w-10 text-[#8e94ad]/60" />
                     <div className="mt-3 text-body font-medium text-[#111426] dark:text-white">
-                        {activeFolderId === null ? "暂无文档" : "当前文件夹为空"}
+                        {activeFolderId === null
+                            ? "暂无文档"
+                            : "当前文件夹为空"}
                     </div>
                     <div className="mt-1 text-caption text-[#8e94ad]">
                         {activeFolderId === null

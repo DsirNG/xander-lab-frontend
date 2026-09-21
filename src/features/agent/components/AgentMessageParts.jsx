@@ -163,7 +163,9 @@ export const ThinkingIndicator = ({ label }) => (
 
 export const QuizMessage = ({ message, onSubmit }) => {
     const payload = parseQuizPayload(message);
-    return payload ? <QuizCardStack payload={payload} onSubmit={onSubmit} /> : null;
+    return payload ? (
+        <QuizCardStack payload={payload} onSubmit={onSubmit} />
+    ) : null;
 };
 
 /** 交付卡消息：正文是 JSON，解析失败就不渲染，绝不把裸 JSON 糊在对话里。 */

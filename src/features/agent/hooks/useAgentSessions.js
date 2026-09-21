@@ -47,9 +47,7 @@ export const useAgentSessions = () => {
         if (!session?.id) return;
         setSessions((current) => [
             session,
-            ...current.filter(
-                (item) => String(item.id) !== String(session.id),
-            ),
+            ...current.filter((item) => String(item.id) !== String(session.id)),
         ]);
     }, []);
 

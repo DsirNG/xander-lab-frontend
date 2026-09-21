@@ -104,8 +104,7 @@ const baseState = {
 const makeFiles = (count) =>
     Array.from(
         { length: count },
-        (_, index) =>
-            new File(["x"], `f${index}.txt`, { type: "text/plain" }),
+        (_, index) => new File(["x"], `f${index}.txt`, { type: "text/plain" }),
     );
 
 describe("WorkspaceAgentChat 答题卡提交", () => {
@@ -175,9 +174,9 @@ describe("WorkspaceAgentChat 附件数量", () => {
         });
 
         await waitFor(() =>
-            expect(container.querySelectorAll("img, div").length).toBeGreaterThan(
-                0,
-            ),
+            expect(
+                container.querySelectorAll("img, div").length,
+            ).toBeGreaterThan(0),
         );
         expect(toastMock.warning).not.toHaveBeenCalled();
     });

@@ -29,6 +29,6 @@ Ask: “Who is most likely to request the next change?” If the answer is Knowl
 For a review or migration, record:
 
 | File | Owner | Evidence | Target | Action |
-|---|---|---|---|---|
+| ---- | ----- | -------- | ------ | ------ |
 
 Use only `KEEP`, `MOVE NOW`, `MOVE WHEN TOUCHED`, `SPLIT`, `MERGE`, `DEPRECATE`, or `DELETE` for the action.

@@ -21,7 +21,14 @@ const EngineLogosGraphic = () => (
         {/* Unreal Engine Logo */}
         <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#000000] text-white shadow-sm transition-transform hover:scale-110">
             <svg viewBox="0 0 24 24" fill="currentColor" className="h-6 w-6">
-                <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1.5" fill="none" />
+                <circle
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    fill="none"
+                />
                 <path d="M12 6C8.7 6 6 8.7 6 12C6 15.3 8.7 18 12 18C15.3 18 18 15.3 18 12C18 8.7 15.3 6 12 6ZM12 8C14.2 8 16 9.8 16 12C16 14.2 14.2 16 12 16C9.8 16 8 14.2 8 12C8 9.8 9.8 8 12 8Z" />
             </svg>
         </div>

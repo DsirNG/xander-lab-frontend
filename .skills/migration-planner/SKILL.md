@@ -12,7 +12,7 @@ Do not begin a broad move immediately. First inspect owners, consumers, imports,
 Produce:
 
 | Current File | Owner | Target | Action | Compatibility | Boundary Problem |
-|---|---|---|---|---|---|
+| ------------ | ----- | ------ | ------ | ------------- | ---------------- |
 
 Allowed actions: `KEEP`, `MOVE NOW`, `MOVE WHEN TOUCHED`, `SPLIT`, `MERGE`, `DEPRECATE`, `DELETE`.
 

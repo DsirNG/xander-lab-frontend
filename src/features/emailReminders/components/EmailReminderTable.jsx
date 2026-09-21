@@ -1,16 +1,13 @@
 import { useMemo } from "react";
-import {
-    CalendarClock,
-    Mail,
-    Pause,
-    Play,
-    Search,
-    Trash2,
-} from "lucide-react";
+import { CalendarClock, Mail, Pause, Play, Search, Trash2 } from "lucide-react";
 import CustomSelect from "@shared/ui/forms/CustomSelect";
 import DataTable from "@shared/ui/data-display/DataTable";
 import RowActionsMenu from "@shared/ui/overlays/RowActionsMenu";
-import { normalizeFrequency, normalizeStatus, STATUS_STYLES } from "../utils/emailReminderStatus";
+import {
+    normalizeFrequency,
+    normalizeStatus,
+    STATUS_STYLES,
+} from "../utils/emailReminderStatus";
 
 const EmailReminderTable = ({
     reminders,

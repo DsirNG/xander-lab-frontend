@@ -1,9 +1,4 @@
-import React, {
-    useCallback,
-    useEffect,
-    useMemo,
-    useState,
-} from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import {
@@ -68,12 +63,8 @@ const KnowledgeMirrorPage = () => {
         return () => controller.abort();
     }, [loadMaterials]);
 
-    const {
-        attempt,
-        attemptPollError,
-        registerAttempt,
-        retryAttempt,
-    } = useKnowledgeAttempt({ attemptId, loadMaterials });
+    const { attempt, attemptPollError, registerAttempt, retryAttempt } =
+        useKnowledgeAttempt({ attemptId, loadMaterials });
 
     const {
         editorOpen,
@@ -248,10 +239,14 @@ const KnowledgeMirrorPage = () => {
     return (
         <div
             className={`flex h-full min-h-0 flex-col ${
-                activeTab === "DOCS" ? "overflow-hidden" : "overflow-y-auto bg-canvas p-3 sm:p-5 lg:p-6"
+                activeTab === "DOCS"
+                    ? "overflow-hidden"
+                    : "overflow-y-auto bg-canvas p-3 sm:p-5 lg:p-6"
             }`}
         >
-            <div className={`mx-auto flex h-full min-h-0 w-full ${activeTab === "DOCS" ? "flex-1" : "max-w-[1600px] gap-4"} flex-col`}>
+            <div
+                className={`mx-auto flex h-full min-h-0 w-full ${activeTab === "DOCS" ? "flex-1" : "max-w-[1600px] gap-4"} flex-col`}
+            >
                 {/* 仅在 MIRROR 模式下展示模式切换与新建按钮 */}
                 {activeTab === "MIRROR" ? (
                     <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#eef0f6] pb-4">
@@ -278,7 +273,10 @@ const KnowledgeMirrorPage = () => {
                             >
                                 <Brain className="h-4 w-4 text-[#6765f6]" />
                                 <span>
-                                    {t("knowledgeBase.tabMirror", "知识镜像 / 复习")}
+                                    {t(
+                                        "knowledgeBase.tabMirror",
+                                        "知识镜像 / 复习",
+                                    )}
                                 </span>
                             </button>
                         </div>
@@ -290,7 +288,9 @@ const KnowledgeMirrorPage = () => {
                 ) : null}
 
                 {activeTab === "DOCS" ? (
-                    <KnowledgeDocBaseView onSwitchToMirror={() => setActiveTab("MIRROR")} />
+                    <KnowledgeDocBaseView
+                        onSwitchToMirror={() => setActiveTab("MIRROR")}
+                    />
                 ) : (
                     <>
                         {loadError ? (
@@ -316,100 +316,100 @@ const KnowledgeMirrorPage = () => {
                             </div>
                         </div>
 
-                {view === "ACTIVE" ? (
-                    <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-                        {[
-                            [
-                                BookOpen,
-                                t("knowledge.stats.total"),
-                                materials.length,
-                            ],
-                            [
-                                Target,
-                                t("knowledge.stats.learning"),
-                                stats.learning,
-                            ],
-                            [
-                                CheckCircle2,
-                                t("knowledge.stats.mastered"),
-                                stats.mastered,
-                            ],
-                            [
-                                Brain,
-                                t("knowledge.stats.average"),
-                                `${stats.average}%`,
-                            ],
-                        ].map(([Icon, label, value]) => (
-                            <div
-                                key={label}
-                                className="rounded-2xl border border-border bg-surface p-4"
-                            >
-                                <div className="flex items-center justify-between text-ink-muted">
-                                    <span className="text-caption">
-                                        {label}
-                                    </span>
-                                    <Icon className="h-4 w-4" />
-                                </div>
-                                <div className="mt-3 text-display text-ink">
-                                    {value}
-                                </div>
+                        {view === "ACTIVE" ? (
+                            <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+                                {[
+                                    [
+                                        BookOpen,
+                                        t("knowledge.stats.total"),
+                                        materials.length,
+                                    ],
+                                    [
+                                        Target,
+                                        t("knowledge.stats.learning"),
+                                        stats.learning,
+                                    ],
+                                    [
+                                        CheckCircle2,
+                                        t("knowledge.stats.mastered"),
+                                        stats.mastered,
+                                    ],
+                                    [
+                                        Brain,
+                                        t("knowledge.stats.average"),
+                                        `${stats.average}%`,
+                                    ],
+                                ].map(([Icon, label, value]) => (
+                                    <div
+                                        key={label}
+                                        className="rounded-2xl border border-border bg-surface p-4"
+                                    >
+                                        <div className="flex items-center justify-between text-ink-muted">
+                                            <span className="text-caption">
+                                                {label}
+                                            </span>
+                                            <Icon className="h-4 w-4" />
+                                        </div>
+                                        <div className="mt-3 text-display text-ink">
+                                            {value}
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
-                        ))}
-                    </div>
-                ) : null}
+                        ) : null}
 
-                {view === "ACTIVE" && materials.length === 0 ? (
-                    <div className="grid min-h-80 place-items-center rounded-3xl border border-dashed border-border bg-surface p-8 text-center">
-                        <div>
-                            <Brain className="mx-auto h-10 w-10 text-accent" />
-                            <div className="mt-4 text-title text-ink">
-                                {t("knowledge.empty")}
+                        {view === "ACTIVE" && materials.length === 0 ? (
+                            <div className="grid min-h-80 place-items-center rounded-3xl border border-dashed border-border bg-surface p-8 text-center">
+                                <div>
+                                    <Brain className="mx-auto h-10 w-10 text-accent" />
+                                    <div className="mt-4 text-title text-ink">
+                                        {t("knowledge.empty")}
+                                    </div>
+                                    <div className="mt-2 text-body text-ink-muted">
+                                        {t("knowledge.emptyHint")}
+                                    </div>
+                                </div>
                             </div>
-                            <div className="mt-2 text-body text-ink-muted">
-                                {t("knowledge.emptyHint")}
-                            </div>
-                        </div>
-                    </div>
-                ) : (
-                    <div className="grid min-h-[520px] gap-4 lg:grid-cols-[320px_minmax(0,1fr)]">
-                        <KnowledgeMirrorMaterialList
-                            view={view}
-                            materials={materials}
-                            activeMaterial={activeMaterial}
-                            onViewChange={setView}
-                            onSelect={(id) =>
-                                navigate(`/workspace/knowledge/${id}`)
-                            }
-                            typeLabel={typeLabel}
-                            levelLabel={levelLabel}
-                        />
+                        ) : (
+                            <div className="grid min-h-[520px] gap-4 lg:grid-cols-[320px_minmax(0,1fr)]">
+                                <KnowledgeMirrorMaterialList
+                                    view={view}
+                                    materials={materials}
+                                    activeMaterial={activeMaterial}
+                                    onViewChange={setView}
+                                    onSelect={(id) =>
+                                        navigate(`/workspace/knowledge/${id}`)
+                                    }
+                                    typeLabel={typeLabel}
+                                    levelLabel={levelLabel}
+                                />
 
-                        <KnowledgeMirrorDetailPanel
-                            activeMaterial={activeMaterial}
-                            t={t}
-                            typeLabel={typeLabel}
-                            levelLabel={levelLabel}
-                            onEdit={openEdit}
-                            onArchive={archiveMaterial}
-                            onDelete={deleteMaterial}
-                            recording={recording}
-                            uploading={uploading}
-                            permissionOpen={permissionOpen}
-                            permissionBlocked={permissionBlocked}
-                            onStartRecording={startRecording}
-                            onStopRecording={stopRecording}
-                            onClosePermission={() =>
-                                setPermissionOpen(false)
-                            }
-                            onRequestMicrophone={requestMicrophone}
-                            quiz={quizzes[0] ?? null}
-                            onStartQuiz={startAgentQuiz}
-                            attempt={attempt}
-                            attemptPollError={attemptPollError}
-                            onRetryAttempt={retryAttempt}
-                        />
-                    </div>
-                )}
+                                <KnowledgeMirrorDetailPanel
+                                    activeMaterial={activeMaterial}
+                                    t={t}
+                                    typeLabel={typeLabel}
+                                    levelLabel={levelLabel}
+                                    onEdit={openEdit}
+                                    onArchive={archiveMaterial}
+                                    onDelete={deleteMaterial}
+                                    recording={recording}
+                                    uploading={uploading}
+                                    permissionOpen={permissionOpen}
+                                    permissionBlocked={permissionBlocked}
+                                    onStartRecording={startRecording}
+                                    onStopRecording={stopRecording}
+                                    onClosePermission={() =>
+                                        setPermissionOpen(false)
+                                    }
+                                    onRequestMicrophone={requestMicrophone}
+                                    quiz={quizzes[0] ?? null}
+                                    onStartQuiz={startAgentQuiz}
+                                    attempt={attempt}
+                                    attemptPollError={attemptPollError}
+                                    onRetryAttempt={retryAttempt}
+                                />
+                            </div>
+                        )}
                     </>
                 )}
             </div>

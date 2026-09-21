@@ -1,15 +1,7 @@
-import {
-    useCallback,
-    useEffect,
-    useRef,
-    useState,
-} from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import {
-    ArrowLeft,
-    History,
-} from "lucide-react";
+import { ArrowLeft, History } from "lucide-react";
 import LoadingSpinner from "@shared/ui/feedback/LoadingSpinner";
 import { img2threeService } from "../services/img2threeService";
 import { getLocalUserInfo } from "@features/auth";
@@ -95,7 +87,6 @@ const Img2ThreePage = () => {
         },
         [t],
     );
-
 
     useEffect(() => {
         if (!getLocalUserInfo()) {

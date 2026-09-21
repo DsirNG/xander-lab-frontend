@@ -70,23 +70,33 @@ const LandingTechFoundation = ({ t }) => {
 
                                 {/* Title & Description */}
                                 <h3 className="mt-1 text-sm font-bold text-[#111426]">
-                                    {t(`landing.techFoundation.${card.key}.title`)}
+                                    {t(
+                                        `landing.techFoundation.${card.key}.title`,
+                                    )}
                                 </h3>
                                 <p className="mt-1.5 text-xs leading-relaxed text-[#747b9a]">
-                                    {t(`landing.techFoundation.${card.key}.desc`)}
+                                    {t(
+                                        `landing.techFoundation.${card.key}.desc`,
+                                    )}
                                 </p>
                             </div>
 
                             {/* 3 Pills at bottom */}
                             <div className="mt-4 flex flex-wrap gap-1.5 pt-3 border-t border-[#f1f3f9]">
                                 <span className="rounded-md bg-[#f1f5f9] px-2 py-0.5 text-[10px] font-medium text-[#475569]">
-                                    {t(`landing.techFoundation.${card.key}.pill1`)}
+                                    {t(
+                                        `landing.techFoundation.${card.key}.pill1`,
+                                    )}
                                 </span>
                                 <span className="rounded-md bg-[#f1f5f9] px-2 py-0.5 text-[10px] font-medium text-[#475569]">
-                                    {t(`landing.techFoundation.${card.key}.pill2`)}
+                                    {t(
+                                        `landing.techFoundation.${card.key}.pill2`,
+                                    )}
                                 </span>
                                 <span className="rounded-md bg-[#f1f5f9] px-2 py-0.5 text-[10px] font-medium text-[#475569]">
-                                    {t(`landing.techFoundation.${card.key}.pill3`)}
+                                    {t(
+                                        `landing.techFoundation.${card.key}.pill3`,
+                                    )}
                                 </span>
                             </div>
                         </div>

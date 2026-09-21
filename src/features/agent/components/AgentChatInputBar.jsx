@@ -41,7 +41,8 @@ const AgentChatInputBar = ({
         if (!element) return;
         element.style.height = "auto";
         element.style.height = `${Math.min(element.scrollHeight, 144)}px`;
-        element.style.overflowY = element.scrollHeight > 144 ? "auto" : "hidden";
+        element.style.overflowY =
+            element.scrollHeight > 144 ? "auto" : "hidden";
     }, [input]);
 
     const canSend = Boolean(input.trim() || attachments.length) && !uploading;
@@ -53,7 +54,10 @@ const AgentChatInputBar = ({
                 {attachments.length ? (
                     <div className="flex flex-wrap gap-2 px-1 pb-2">
                         {attachments.map((attachment) => (
-                            <div key={attachment.url} className="group relative">
+                            <div
+                                key={attachment.url}
+                                className="group relative"
+                            >
                                 {attachment.contentType.startsWith("image/") ? (
                                     <img
                                         src={attachment.url}
@@ -75,8 +79,12 @@ const AgentChatInputBar = ({
                                 )}
                                 <button
                                     type="button"
-                                    onClick={() => onRemoveAttachment(attachment.url)}
-                                    aria-label={t("blog.agentChat.removeAttachment")}
+                                    onClick={() =>
+                                        onRemoveAttachment(attachment.url)
+                                    }
+                                    aria-label={t(
+                                        "blog.agentChat.removeAttachment",
+                                    )}
                                     className="absolute right-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-ink/75 text-white"
                                 >
                                     <X className="h-3.5 w-3.5" />
@@ -113,10 +121,14 @@ const AgentChatInputBar = ({
                                     <Paperclip className="h-5 w-5 text-ink-muted" />
                                     <span>
                                         <span className="block text-body text-ink">
-                                            {t("blog.agentChat.uploadImagesFiles")}
+                                            {t(
+                                                "blog.agentChat.uploadImagesFiles",
+                                            )}
                                         </span>
                                         <span className="block text-caption text-ink-muted">
-                                            {t("blog.agentChat.uploadFromDevice")}
+                                            {t(
+                                                "blog.agentChat.uploadFromDevice",
+                                            )}
                                         </span>
                                     </span>
                                 </button>
@@ -129,7 +141,9 @@ const AgentChatInputBar = ({
                             className="hidden"
                             accept="image/png,image/jpeg,image/webp,image/gif,.pdf,.txt,.md,.json,.html,.xml,.doc,.docx,.rtf,.odt,.ppt,.pptx,.csv,.xls,.xlsx,.tsv,.java,.js,.jsx,.ts,.tsx,.py,.css"
                             onChange={(event) => {
-                                onFilesSelected(Array.from(event.target.files || []));
+                                onFilesSelected(
+                                    Array.from(event.target.files || []),
+                                );
                                 event.target.value = "";
                             }}
                         />

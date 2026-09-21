@@ -424,7 +424,10 @@ describe("useAgentConversation autonomy events", () => {
         await emit({
             id: 3,
             event: "artifact",
-            data: { ...first, files: [{ path: "server.js", content: "const ws = 2;" }] },
+            data: {
+                ...first,
+                files: [{ path: "server.js", content: "const ws = 2;" }],
+            },
         });
 
         const artifacts = result.current.liveSteps.filter(
@@ -563,12 +566,20 @@ describe("useAgentConversation tool trace pairing", () => {
         await emit({
             id: 3,
             event: "tool_end",
-            data: { tool: "query_knowledge", invocationId: "inv-1", result: { ok: true, count: 1 } },
+            data: {
+                tool: "query_knowledge",
+                invocationId: "inv-1",
+                result: { ok: true, count: 1 },
+            },
         });
         await emit({
             id: 4,
             event: "tool_end",
-            data: { tool: "query_knowledge", invocationId: "inv-2", result: { ok: true, count: 2 } },
+            data: {
+                tool: "query_knowledge",
+                invocationId: "inv-2",
+                result: { ok: true, count: 2 },
+            },
         });
 
         const traces = tracesOf(result);
@@ -596,12 +607,20 @@ describe("useAgentConversation tool trace pairing", () => {
         await emit({
             id: 3,
             event: "tool_delta",
-            data: { tool: "query_knowledge", invocationId: "inv-1", delta: "甲" },
+            data: {
+                tool: "query_knowledge",
+                invocationId: "inv-1",
+                delta: "甲",
+            },
         });
         await emit({
             id: 4,
             event: "tool_delta",
-            data: { tool: "query_knowledge", invocationId: "inv-2", delta: "乙" },
+            data: {
+                tool: "query_knowledge",
+                invocationId: "inv-2",
+                delta: "乙",
+            },
         });
 
         // 增量是按时间窗合并推送的（requestAnimationFrame），所以等它落地再断言。
@@ -624,12 +643,20 @@ describe("useAgentConversation tool trace pairing", () => {
         await emit({
             id: 3,
             event: "tool_delta",
-            data: { tool: "query_knowledge", invocationId: "inv-1", delta: "甲" },
+            data: {
+                tool: "query_knowledge",
+                invocationId: "inv-1",
+                delta: "甲",
+            },
         });
         await emit({
             id: 4,
             event: "tool_delta",
-            data: { tool: "query_knowledge", invocationId: "inv-2", delta: "乙" },
+            data: {
+                tool: "query_knowledge",
+                invocationId: "inv-2",
+                delta: "乙",
+            },
         });
         await waitFor(() => {
             expect(
@@ -642,7 +669,11 @@ describe("useAgentConversation tool trace pairing", () => {
         await emit({
             id: 5,
             event: "tool_end",
-            data: { tool: "query_knowledge", invocationId: "inv-1", result: { ok: true } },
+            data: {
+                tool: "query_knowledge",
+                invocationId: "inv-1",
+                result: { ok: true },
+            },
         });
 
         // 按工具名清理会把两个同名草稿一起删掉——这正是这条用例守着的。
@@ -658,7 +689,11 @@ describe("useAgentConversation tool trace pairing", () => {
     it("falls back to the tool name when the events carry no invocation id", async () => {
         const { result, emit } = await streamHarness();
 
-        await emit({ id: 1, event: "tool_start", data: { tool: "query_posts", args: {} } });
+        await emit({
+            id: 1,
+            event: "tool_start",
+            data: { tool: "query_posts", args: {} },
+        });
         await emit({
             id: 2,
             event: "tool_end",
@@ -668,14 +703,18 @@ describe("useAgentConversation tool trace pairing", () => {
         const traces = tracesOf(result);
 
         expect(traces).toHaveLength(1);
-        expect(traces[0]).toMatchObject({ tool: "query_posts", status: "done" });
+        expect(traces[0]).toMatchObject({
+            tool: "query_posts",
+            status: "done",
+        });
         expect(traces[0].invocationId).toBeNull();
     });
 });
 
 describe("useAgentConversation approvals", () => {
     it("loads durable pending approvals after the stream pauses", async () => {
-        const { useAgentConversation } = await import("./useAgentConversation.js");
+        const { useAgentConversation } =
+            await import("./useAgentConversation.js");
         const shell = {
             conversation: { id: 42, status: "ready", runVersion: 0 },
             messages: [],
@@ -719,16 +758,23 @@ describe("useAgentConversation approvals", () => {
     });
 
     it("resubscribes when an approved action resumes the same run", async () => {
-        const { useAgentConversation } = await import("./useAgentConversation.js");
+        const { useAgentConversation } =
+            await import("./useAgentConversation.js");
         const paused = {
-            conversation: { id: 42, status: "awaiting_approval", runVersion: 3 },
+            conversation: {
+                id: 42,
+                status: "awaiting_approval",
+                runVersion: 3,
+            },
             messages: [],
         };
         const running = {
             conversation: { id: 42, status: "running", runVersion: 3 },
             messages: [],
         };
-        agentConversationService.get.mockResolvedValueOnce(paused).mockResolvedValue(running);
+        agentConversationService.get
+            .mockResolvedValueOnce(paused)
+            .mockResolvedValue(running);
         agentConversationService.decideApproval.mockResolvedValue({
             id: 9,
             status: "APPROVED",
@@ -747,7 +793,9 @@ describe("useAgentConversation approvals", () => {
         });
 
         await waitFor(() =>
-            expect(agentConversationService.subscribeEvents).toHaveBeenCalledWith(
+            expect(
+                agentConversationService.subscribeEvents,
+            ).toHaveBeenCalledWith(
                 "42",
                 undefined,
                 expect.any(Function),
@@ -789,9 +837,7 @@ describe("useAgentConversation deep thinking preference", () => {
             result.current.sendMessage("帮我写点东西");
         });
 
-        expect(
-            agentConversationService.sendMessageStream,
-        ).toHaveBeenCalledWith(
+        expect(agentConversationService.sendMessageStream).toHaveBeenCalledWith(
             "42",
             "帮我写点东西",
             [],
@@ -814,9 +860,7 @@ describe("useAgentConversation deep thinking preference", () => {
             result.current.sendMessage("帮我把计划做完");
         });
 
-        expect(
-            agentConversationService.sendMessageStream,
-        ).toHaveBeenCalledWith(
+        expect(agentConversationService.sendMessageStream).toHaveBeenCalledWith(
             "42",
             "帮我把计划做完",
             [],

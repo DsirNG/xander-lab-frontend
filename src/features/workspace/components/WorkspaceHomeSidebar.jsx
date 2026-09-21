@@ -59,7 +59,9 @@ const WorkspaceHomeSidebar = () => {
                             </span>
                             <span className="min-w-0 flex-1">
                                 <span className="block truncate text-caption text-[#626881]">
-                                    {t(`workspace.home.todos.items.${item.key}`)}
+                                    {t(
+                                        `workspace.home.todos.items.${item.key}`,
+                                    )}
                                 </span>
                                 <span className="mt-1 block text-micro text-[#a1a6b9]">
                                     {resolveMeta(item.meta, t)}
@@ -79,10 +81,7 @@ const WorkspaceHomeSidebar = () => {
                         type="button"
                         className="flex shrink-0 items-center gap-1 text-caption font-medium text-[#7771ed]"
                     >
-                        <RefreshCw
-                            className="h-3.5 w-3.5"
-                            aria-hidden="true"
-                        />
+                        <RefreshCw className="h-3.5 w-3.5" aria-hidden="true" />
                         {t("workspace.home.suggestions.refresh")}
                     </button>
                 </div>

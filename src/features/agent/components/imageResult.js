@@ -13,7 +13,8 @@ export const IMAGE_TOOL = "image_generate";
 export const IMAGE_RESEND_TOOL = "image_resend";
 export const IMAGE_TOOL_NAMES = new Set([IMAGE_TOOL, IMAGE_RESEND_TOOL]);
 
-export const isImageTool = (tool) => Boolean(tool) && IMAGE_TOOL_NAMES.has(tool);
+export const isImageTool = (tool) =>
+    Boolean(tool) && IMAGE_TOOL_NAMES.has(tool);
 
 /** 流式半截地址至少要这么多字符才认定，避免把普通正文误当成地址前缀。 */
 const MIN_PARTIAL_URL_PREFIX = 4;
@@ -70,7 +71,11 @@ export const containsResultUrl = (content, urls) => {
         if (!url) continue;
         if (content.includes(url)) return true;
         const longest = Math.min(url.length, content.length);
-        for (let length = longest; length >= MIN_PARTIAL_URL_PREFIX; length -= 1) {
+        for (
+            let length = longest;
+            length >= MIN_PARTIAL_URL_PREFIX;
+            length -= 1
+        ) {
             if (content.endsWith(url.slice(0, length))) return true;
         }
     }
@@ -101,8 +106,14 @@ export const cleanImageMarkdown = (text, urls) => {
         if (!url) continue;
         const target = escapeRegExp(url);
         next = next
-            .replace(new RegExp(`!\\[[^\\]]*\\]\\(\\s*${target}[^)]*\\)`, "g"), "")
-            .replace(new RegExp(`\\[[^\\]]*\\]\\(\\s*${target}[^)]*\\)`, "g"), "")
+            .replace(
+                new RegExp(`!\\[[^\\]]*\\]\\(\\s*${target}[^)]*\\)`, "g"),
+                "",
+            )
+            .replace(
+                new RegExp(`\\[[^\\]]*\\]\\(\\s*${target}[^)]*\\)`, "g"),
+                "",
+            )
             .replace(new RegExp(`<?${target}>?`, "g"), "");
     }
     // 只清掉被删地址留下的行尾空白，不合并空行——否则会把正文的段落结构压平。

@@ -38,16 +38,22 @@ const unwrapBoxedExpressions = (text) => {
  * 兼容已落库的简写数学文本。模型应输出 TeX；这里只补齐无歧义的纯数字分数和根式分数，
  * 让旧消息与偶发的不规范输出仍能按数学公式展示，而不会把日期、路径或普通斜杠误当公式。
  */
-const normalizeSimpleMath = (text) => text
-    .replace(
-        /(?<![\w$\\])√(\d+)\s*\/\s*(\d+)(?![\w$])/g,
-        (_, radicand, denominator) => `$\\frac{\\sqrt{${radicand}}}{${denominator}}$`,
-    )
-    .replace(
-        /(?<![\w$\\])(\d+)\s*\/\s*(\d+)(?![\w$])/g,
-        (_, numerator, denominator) => `$\\frac{${numerator}}{${denominator}}$`,
-    )
-    .replace(/(?<![\w$\\])√(\d+)(?![\w$])/g, (_, radicand) => `$\\sqrt{${radicand}}$`);
+const normalizeSimpleMath = (text) =>
+    text
+        .replace(
+            /(?<![\w$\\])√(\d+)\s*\/\s*(\d+)(?![\w$])/g,
+            (_, radicand, denominator) =>
+                `$\\frac{\\sqrt{${radicand}}}{${denominator}}$`,
+        )
+        .replace(
+            /(?<![\w$\\])(\d+)\s*\/\s*(\d+)(?![\w$])/g,
+            (_, numerator, denominator) =>
+                `$\\frac{${numerator}}{${denominator}}$`,
+        )
+        .replace(
+            /(?<![\w$\\])√(\d+)(?![\w$])/g,
+            (_, radicand) => `$\\sqrt{${radicand}}$`,
+        );
 
 /** 模型常把 Markdown 反引号写成 \` 转义，并用普通括号包裹 TeX；统一为 remark-math 可识别的定界符。 */
 const normalizeAnswer = (text) => {
@@ -210,66 +216,72 @@ const createMarkdownComponents = (codeAppearance) => ({
  */
 const STREAMING_PARSE_INTERVAL_MS = 180;
 
-const AgentMarkdown = memo(({ content, codeAppearance = "conversation", isStreaming = false }) => {
-    const [previewSrc, setPreviewSrc] = useState(null);
-    const rawContent = content || "";
+const AgentMarkdown = memo(
+    ({ content, codeAppearance = "conversation", isStreaming = false }) => {
+        const [previewSrc, setPreviewSrc] = useState(null);
+        const rawContent = content || "";
 
-    // 节流后的待解析文本：流式期间最多每 180ms 推进一次，收尾时立刻对齐真实内容。
-    const [parseContent, setParseContent] = useState(rawContent);
-    useEffect(() => {
-        if (!isStreaming) {
-            setParseContent(rawContent);
-            return undefined;
-        }
-        const timer = setTimeout(() => setParseContent(rawContent), STREAMING_PARSE_INTERVAL_MS);
-        return () => clearTimeout(timer);
-    }, [rawContent, isStreaming]);
+        // 节流后的待解析文本：流式期间最多每 180ms 推进一次，收尾时立刻对齐真实内容。
+        const [parseContent, setParseContent] = useState(rawContent);
+        useEffect(() => {
+            if (!isStreaming) {
+                setParseContent(rawContent);
+                return undefined;
+            }
+            const timer = setTimeout(
+                () => setParseContent(rawContent),
+                STREAMING_PARSE_INTERVAL_MS,
+            );
+            return () => clearTimeout(timer);
+        }, [rawContent, isStreaming]);
 
-    const components = React.useMemo(() => {
-        const base = createMarkdownComponents(codeAppearance);
-        return {
-            ...base,
-            img: (props) => base.img({ ...props, onImageClick: setPreviewSrc }),
-        };
-    }, [codeAppearance]);
+        const components = React.useMemo(() => {
+            const base = createMarkdownComponents(codeAppearance);
+            return {
+                ...base,
+                img: (props) =>
+                    base.img({ ...props, onImageClick: setPreviewSrc }),
+            };
+        }, [codeAppearance]);
 
-    const rendered = React.useMemo(
-        () => normalizeAnswer(parseContent || ""),
-        [parseContent],
-    );
+        const rendered = React.useMemo(
+            () => normalizeAnswer(parseContent || ""),
+            [parseContent],
+        );
 
-    return (
-        <>
-            <div className="prose prose-sm min-w-0 max-w-none break-words prose-li:my-1.5 prose-li:leading-7 prose-li:text-ink-secondary prose-strong:text-ink prose-pre:my-3 prose-pre:bg-transparent prose-pre:p-0 prose-table:text-sm [&_.katex-display]:my-4 [&_.katex-display]:overflow-x-auto [&_.katex-display]:py-1">
-                <ReactMarkdown
-                    remarkPlugins={[remarkGfm, remarkMath]}
-                    rehypePlugins={[rehypeKatex]}
-                    components={components}
-                >
-                    {rendered}
-                </ReactMarkdown>
-            </div>
-            <Modal
-                isOpen={!!previewSrc}
-                onClose={() => setPreviewSrc(null)}
-                width="max-w-4xl"
-                className="!bg-transparent !shadow-none"
-                hideCloseButton
-            >
-                <div
-                    className="flex items-center justify-center"
-                    onClick={() => setPreviewSrc(null)}
-                >
-                    <img
-                        src={previewSrc}
-                        alt="Preview"
-                        className="max-h-[85vh] max-w-full rounded-lg object-contain"
-                    />
+        return (
+            <>
+                <div className="prose prose-sm min-w-0 max-w-none break-words prose-li:my-1.5 prose-li:leading-7 prose-li:text-ink-secondary prose-strong:text-ink prose-pre:my-3 prose-pre:bg-transparent prose-pre:p-0 prose-table:text-sm [&_.katex-display]:my-4 [&_.katex-display]:overflow-x-auto [&_.katex-display]:py-1">
+                    <ReactMarkdown
+                        remarkPlugins={[remarkGfm, remarkMath]}
+                        rehypePlugins={[rehypeKatex]}
+                        components={components}
+                    >
+                        {rendered}
+                    </ReactMarkdown>
                 </div>
-            </Modal>
-        </>
-    );
-});
+                <Modal
+                    isOpen={!!previewSrc}
+                    onClose={() => setPreviewSrc(null)}
+                    width="max-w-4xl"
+                    className="!bg-transparent !shadow-none"
+                    hideCloseButton
+                >
+                    <div
+                        className="flex items-center justify-center"
+                        onClick={() => setPreviewSrc(null)}
+                    >
+                        <img
+                            src={previewSrc}
+                            alt="Preview"
+                            className="max-h-[85vh] max-w-full rounded-lg object-contain"
+                        />
+                    </div>
+                </Modal>
+            </>
+        );
+    },
+);
 
 AgentMarkdown.displayName = "AgentMarkdown";
 

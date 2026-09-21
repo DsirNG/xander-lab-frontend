@@ -59,7 +59,8 @@ export default function useKnowledgeLibrary({ t }) {
                     recursive: false,
                     keyword: keyword.trim() || undefined,
                     extension: extensionFilter || undefined,
-                    tagIds: selectedTagIds.length > 0 ? selectedTagIds : undefined,
+                    tagIds:
+                        selectedTagIds.length > 0 ? selectedTagIds : undefined,
                     status: statusFilter || undefined,
                     page,
                     size: pageSize,
@@ -88,7 +89,9 @@ export default function useKnowledgeLibrary({ t }) {
                     );
                 } else if (sortFilter === "name") {
                     list = [...list].sort((a, b) =>
-                        (a.displayName || "").localeCompare(b.displayName || ""),
+                        (a.displayName || "").localeCompare(
+                            b.displayName || "",
+                        ),
                     );
                 } else if (sortFilter === "size") {
                     list = [...list].sort(
@@ -100,7 +103,9 @@ export default function useKnowledgeLibrary({ t }) {
                 setTotalFiles(result.total ?? list.length);
                 setSelectedFile((previous) => {
                     if (!previous) return null;
-                    return list.find((file) => file.id === previous.id) || previous;
+                    return (
+                        list.find((file) => file.id === previous.id) || previous
+                    );
                 });
             } catch {
                 setFiles([]);
@@ -123,23 +128,34 @@ export default function useKnowledgeLibrary({ t }) {
 
     const breadcrumbs = useMemo(() => {
         if (!activeFolderId) {
-            return [{ id: null, name: t("knowledgeBase.folders.allDocs", "全部文档") }];
+            return [
+                {
+                    id: null,
+                    name: t("knowledgeBase.folders.allDocs", "全部文档"),
+                },
+            ];
         }
         const crumbs = [];
         let current = folders.find((folder) => folder.id === activeFolderId);
         while (current) {
             crumbs.unshift({ id: current.id, name: current.name });
-            current = current.parentId && current.parentId > 0
-                ? folders.find((folder) => folder.id === current.parentId)
-                : null;
+            current =
+                current.parentId && current.parentId > 0
+                    ? folders.find((folder) => folder.id === current.parentId)
+                    : null;
         }
-        crumbs.unshift({ id: null, name: t("knowledgeBase.folders.allDocs", "全部文档") });
+        crumbs.unshift({
+            id: null,
+            name: t("knowledgeBase.folders.allDocs", "全部文档"),
+        });
         return crumbs;
     }, [activeFolderId, folders, t]);
 
     const currentSubfolders = useMemo(() => {
         if (activeFolderId === null) return [];
-        return folders.filter((folder) => (folder.parentId || 0) === activeFolderId);
+        return folders.filter(
+            (folder) => (folder.parentId || 0) === activeFolderId,
+        );
     }, [activeFolderId, folders]);
 
     useEffect(() => {
@@ -172,10 +188,16 @@ export default function useKnowledgeLibrary({ t }) {
         try {
             if (id) {
                 await knowledgeBaseService.folders.rename(id, name);
-                window.__toast?.("success", t("knowledgeBase.folders.renamed", "文件夹重命名成功"));
+                window.__toast?.(
+                    "success",
+                    t("knowledgeBase.folders.renamed", "文件夹重命名成功"),
+                );
             } else {
                 await knowledgeBaseService.folders.create({ parentId, name });
-                window.__toast?.("success", t("knowledgeBase.folders.created", "文件夹新建成功"));
+                window.__toast?.(
+                    "success",
+                    t("knowledgeBase.folders.created", "文件夹新建成功"),
+                );
             }
             setFolderModalOpen(false);
             await loadFoldersAndTags();
@@ -198,12 +220,24 @@ export default function useKnowledgeLibrary({ t }) {
         setMoveSaving(true);
         try {
             if (targetItem.type === "folder") {
-                await knowledgeBaseService.folders.move(targetItem.id, targetFolderId);
-                window.__toast?.("success", t("knowledgeBase.folders.moved", "文件夹移动成功"));
+                await knowledgeBaseService.folders.move(
+                    targetItem.id,
+                    targetFolderId,
+                );
+                window.__toast?.(
+                    "success",
+                    t("knowledgeBase.folders.moved", "文件夹移动成功"),
+                );
                 await loadFoldersAndTags();
             } else {
-                await knowledgeBaseService.files.move(targetItem.id, targetFolderId);
-                window.__toast?.("success", t("knowledgeBase.files.moved", "文件移动成功"));
+                await knowledgeBaseService.files.move(
+                    targetItem.id,
+                    targetFolderId,
+                );
+                window.__toast?.(
+                    "success",
+                    t("knowledgeBase.files.moved", "文件移动成功"),
+                );
                 await Promise.all([loadFoldersAndTags(), loadFiles()]);
             }
             setMoveModalOpen(false);
@@ -219,11 +253,17 @@ export default function useKnowledgeLibrary({ t }) {
         try {
             if (type === "folder") {
                 await knowledgeBaseService.folders.delete(item.id, true);
-                window.__toast?.("success", t("knowledgeBase.folders.deleted", "文件夹已删除"));
+                window.__toast?.(
+                    "success",
+                    t("knowledgeBase.folders.deleted", "文件夹已删除"),
+                );
                 if (activeFolderId === item.id) setActiveFolderId(null);
             } else if (type === "file") {
                 await knowledgeBaseService.files.delete(item.id);
-                window.__toast?.("success", t("knowledgeBase.files.deleted", "文件已删除"));
+                window.__toast?.(
+                    "success",
+                    t("knowledgeBase.files.deleted", "文件已删除"),
+                );
                 if (selectedFile?.id === item.id) setSelectedFile(null);
             }
             setConfirmDeleteState({ open: false, type: null, item: null });
@@ -233,7 +273,13 @@ export default function useKnowledgeLibrary({ t }) {
         }
     };
 
-    const handleUploadFile = async ({ file, folderId, tagNames, onProgress, signal }) => {
+    const handleUploadFile = async ({
+        file,
+        folderId,
+        tagNames,
+        onProgress,
+        signal,
+    }) => {
         const created = await knowledgeBaseService.uploadSmart({
             file,
             folderId,
@@ -241,7 +287,10 @@ export default function useKnowledgeLibrary({ t }) {
             onProgress,
             signal,
         });
-        window.__toast?.("success", t("knowledgeBase.upload.success", "文件上传与入库成功"));
+        window.__toast?.(
+            "success",
+            t("knowledgeBase.upload.success", "文件上传与入库成功"),
+        );
         await Promise.all([loadFoldersAndTags(), loadFiles()]);
         if (created) setSelectedFile(created);
     };
@@ -262,7 +311,10 @@ export default function useKnowledgeLibrary({ t }) {
         setTagSaving(true);
         try {
             await knowledgeBaseService.tags.create({ name: trimmed });
-            window.__toast?.("success", t("knowledgeBase.tags.created", "标签创建成功"));
+            window.__toast?.(
+                "success",
+                t("knowledgeBase.tags.created", "标签创建成功"),
+            );
             setCreateTagModalOpen(false);
             setNewTagName("");
             await loadFoldersAndTags();

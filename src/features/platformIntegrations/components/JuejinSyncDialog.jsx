@@ -2,10 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { CheckCircle2, LoaderCircle, QrCode } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import Modal from "@shared/ui/overlays/Modal";
-import {
-    juejinService,
-    syncBlogToJuejin,
-} from "../services/publishingService";
+import { juejinService, syncBlogToJuejin } from "../services/publishingService";
 
 /** Authorizes Juejin when needed, then resumes synchronization of the selected post. */
 const JuejinSyncDialog = ({ post, isOpen = true, onClose, onSuccess }) => {

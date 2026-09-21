@@ -589,11 +589,11 @@ export default {
         agentMcp: {
             title: {
                 user: "我的 MCP 服务器",
-                admin: "平台 MCP 服务器"
+                admin: "平台 MCP 服务器",
             },
             subtitle: {
                 user: "连上第三方 MCP 服务器，把它的工具接进你的智能体；每次调用都需要你审批",
-                admin: "配置平台级 MCP 服务器，全部用户可用；每次调用仍由发起的用户自己审批"
+                admin: "配置平台级 MCP 服务器，全部用户可用；每次调用仍由发起的用户自己审批",
             },
             create: "新增服务器",
             createTitle: "新增 MCP 服务器",
@@ -617,40 +617,50 @@ export default {
             edit: "编辑",
             delete: "删除",
             deleteTitle: "删除 MCP 服务器",
-            deleteConfirm: "确定删除「{{name}}」？它的工具会立即从智能体工具面移除。",
+            deleteConfirm:
+                "确定删除「{{name}}」？它的工具会立即从智能体工具面移除。",
             deleted: "已删除",
             deleteFailed: "删除失败",
             emptyTitle: "还没有配置 MCP 服务器",
-            emptyHint: "新增一台远端 MCP 服务器并测试连接，它的工具就会出现在智能体的工具表里",
+            emptyHint:
+                "新增一台远端 MCP 服务器并测试连接，它的工具就会出现在智能体的工具表里",
             loadFailed: "加载 MCP 服务器失败",
             actionsFor: "{{name}} 的操作",
             created: "已新增",
             updated: "已保存",
             saveFailed: "保存失败",
-            executableHint: "注意：这里配的是可执行能力。启用并探测成功后，远端工具会真的进入智能体工具面，调用时会带着你的授权离开本平台。",
+            executableHint:
+                "注意：这里配的是可执行能力。启用并探测成功后，远端工具会真的进入智能体工具面，调用时会带着你的授权离开本平台。",
             fieldKey: "服务器标识",
-            fieldKeyHint: "2-20 位小写字母、数字或短横线，会拼进工具名前缀，创建后不可修改",
+            fieldKeyHint:
+                "2-20 位小写字母、数字或短横线，会拼进工具名前缀，创建后不可修改",
             fieldName: "展示名",
             fieldNamePlaceholder: "例如 GitHub",
             fieldEndpoint: "端点地址",
-            fieldEndpointHint: "必须是无内嵌凭据的 HTTPS 地址，且解析到公网地址",
+            fieldEndpointHint:
+                "必须是无内嵌凭据的 HTTPS 地址，且解析到公网地址",
             fieldHeaders: "附加请求头",
-            fieldHeadersHint: "每行一个，格式「名称: 值」，用于填写远端要求的 Authorization 等凭据；留空表示不需要",
+            fieldHeadersHint:
+                "每行一个，格式「名称: 值」，用于填写远端要求的 Authorization 等凭据；留空表示不需要",
             formClearHeaders: "清除已保存的凭据（留空即保留）",
             formEnabled: "启用",
-            formEnabledHint: "启用后，探测到的工具才会进入智能体工具面；未启用则完全不出现",
-            formKeyInvalid: "服务器标识需为 2-20 位小写字母、数字或短横线，且以字母开头",
+            formEnabledHint:
+                "启用后，探测到的工具才会进入智能体工具面；未启用则完全不出现",
+            formKeyInvalid:
+                "服务器标识需为 2-20 位小写字母、数字或短横线，且以字母开头",
             formNameRequired: "请填写展示名",
             formNameTooLong: "展示名不能超过 {{max}} 个字符",
             formEndpointRequired: "请填写端点地址",
             formEndpointTooLong: "端点地址不能超过 {{max}} 个字符",
             formEndpointNotHttps: "端点地址必须是 HTTPS",
-            formHeadersInvalid: "第 {{lines}} 行的请求头格式不对，应为「名称: 值」",
-            formHeadersTooMany: "请求头最多 {{max}} 个"
+            formHeadersInvalid:
+                "第 {{lines}} 行的请求头格式不对，应为「名称: 值」",
+            formHeadersTooMany: "请求头最多 {{max}} 个",
         },
         agentSkills: {
             title: "技能",
-            subtitle: "写给智能体的做法说明：不新增能力，只改变它在这类活上的做法",
+            subtitle:
+                "写给智能体的做法说明：不新增能力，只改变它在这类活上的做法",
             create: "新建技能",
             emptyTitle: "还没有技能",
             emptyHint: "把你反复交代的做法写成技能，智能体之后会自动按它执行",
@@ -678,14 +688,17 @@ export default {
             fieldName: "名称",
             fieldNamePlaceholder: "例如：发版说明",
             fieldDescription: "什么时候该读它",
-            fieldDescriptionHint: "一句话说明适用场景，模型据此判断要不要读这份技能",
+            fieldDescriptionHint:
+                "一句话说明适用场景，模型据此判断要不要读这份技能",
             fieldInstructions: "做法说明",
             fieldInstructionsHint: "写给模型看的步骤与边界，最长 12000 字",
             fieldTools: "常用工具",
-            fieldToolsHint: "可选，只是提示这类活通常用哪些工具，不限制实际调用",
+            fieldToolsHint:
+                "可选，只是提示这类活通常用哪些工具，不限制实际调用",
             fieldToolsEmpty: "没有可选的工具",
             fieldToolsSelected: "已选 {{count}} 个",
-            formKeyInvalid: "技能标识需以小写字母开头，只含小写字母、数字和连字符",
+            formKeyInvalid:
+                "技能标识需以小写字母开头，只含小写字母、数字和连字符",
             formNameRequired: "请填写名称",
             formNameTooLong: "名称最多 {{max}} 个字符",
             formDescriptionRequired: "请填写适用场景",
@@ -2064,7 +2077,8 @@ export default {
             subfolders: "子目录",
             newSubfolder: "新建子目录",
             confirmDeleteTitle: "删除文件夹",
-            confirmDeleteMsg: "确定删除文件夹「{{name}}」吗？其中的所有子文件夹和文档都将被彻底删除。",
+            confirmDeleteMsg:
+                "确定删除文件夹「{{name}}」吗？其中的所有子文件夹和文档都将被彻底删除。",
             created: "文件夹新建成功",
             renamed: "文件夹重命名成功",
             moved: "文件夹移动成功",
@@ -2093,7 +2107,8 @@ export default {
             chapterCount: "识别章节数",
             manageTags: "文件关联标签",
             confirmDeleteTitle: "删除文件",
-            confirmDeleteMsg: "确定彻底删除文件「{{name}}」吗？对象存储与生成的结构导图将一并清除。",
+            confirmDeleteMsg:
+                "确定彻底删除文件「{{name}}」吗？对象存储与生成的结构导图将一并清除。",
             moved: "文件移动成功",
             deleted: "文件已删除",
             reidentify: "重新识别",
@@ -2103,10 +2118,12 @@ export default {
             btn: "上传文档",
             title: "上传文档到知识库",
             targetFolder: "存储目标文件夹",
-            needFolderFirst: "请先在左侧新建至少一个分类文件夹，根目录不可直接放置文件。",
+            needFolderFirst:
+                "请先在左侧新建至少一个分类文件夹，根目录不可直接放置文件。",
             selectFileLabel: "选择文件",
             dragHint: "拖拽文件到这里，或点击浏览",
-            supportHint: "支持 Markdown、PDF、Word、TXT、JSON、HTML 等格式（单文件最大 50MB）",
+            supportHint:
+                "支持 Markdown、PDF、Word、TXT、JSON、HTML 等格式（单文件最大 50MB）",
             tagsLabel: "附加标签（可选）",
             tagsPlaceholder: "输入标签名后按回车添加",
             progressDesc: "文件入库后将自动抽取正文并识别章节与知识图谱节点...",
@@ -2132,7 +2149,8 @@ export default {
             rawFile: "源文件",
             loadFailed: "加载预览失败",
             noStructureTitle: "暂无结构图",
-            noStructureDesc: "大部头文件可进入「章节大纲」按需生成对应章节的脑图。",
+            noStructureDesc:
+                "大部头文件可进入「章节大纲」按需生成对应章节的脑图。",
             generateNow: "立即生成结构图",
             outline: "章节目录",
             noChapters: "未识别出章节",
@@ -2140,7 +2158,8 @@ export default {
             excerptTitle: "正文节选",
             loadFull: "加载全文",
             noContent: "暂无文本内容",
-            truncatedNotice: "（首屏仅展示前 2000 字片段，点击右上角「加载全文」阅读完整正文）",
+            truncatedNotice:
+                "（首屏仅展示前 2000 字片段，点击右上角「加载全文」阅读完整正文）",
         },
         tags: {
             title: "标签",

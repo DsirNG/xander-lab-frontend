@@ -10,7 +10,17 @@ import { formInputCls } from "@shared/ui/forms/formStyles";
 import { formatBytes } from "../utils/fileHash";
 
 const ALLOWED_EXTENSIONS = [
-    "txt", "md", "markdown", "html", "htm", "csv", "json", "log", "pdf", "doc", "docx"
+    "txt",
+    "md",
+    "markdown",
+    "html",
+    "htm",
+    "csv",
+    "json",
+    "log",
+    "pdf",
+    "doc",
+    "docx",
 ];
 
 const MAX_BYTES = 50 * 1024 * 1024; // 50MB
@@ -133,9 +143,13 @@ const KnowledgeUploadModal = ({
             onClose();
         } catch (err) {
             if (controller.signal.aborted) {
-                setErrorMessage(t("knowledgeBase.upload.cancelled", "已取消上传"));
+                setErrorMessage(
+                    t("knowledgeBase.upload.cancelled", "已取消上传"),
+                );
             } else {
-                setErrorMessage(err.message || t("knowledgeBase.upload.failed", "上传失败"));
+                setErrorMessage(
+                    err.message || t("knowledgeBase.upload.failed", "上传失败"),
+                );
             }
         } finally {
             setUploading(false);
@@ -158,23 +172,38 @@ const KnowledgeUploadModal = ({
             width="max-w-lg"
             footer={
                 <>
-                    <Button variant="ghost" onClick={handleCancel} disabled={uploading}>
+                    <Button
+                        variant="ghost"
+                        onClick={handleCancel}
+                        disabled={uploading}
+                    >
                         {t("common.cancel", "取消")}
                     </Button>
                     <Button
                         type="submit"
                         form="upload-form"
                         loading={uploading}
-                        disabled={!selectedFile || !targetFolderId || folders.length === 0}
+                        disabled={
+                            !selectedFile ||
+                            !targetFolderId ||
+                            folders.length === 0
+                        }
                     >
                         {uploading
-                            ? t("knowledgeBase.upload.uploadingBtn", "正在上传...")
+                            ? t(
+                                  "knowledgeBase.upload.uploadingBtn",
+                                  "正在上传...",
+                              )
                             : t("knowledgeBase.upload.submitBtn", "开始上传")}
                     </Button>
                 </>
             }
         >
-            <form id="upload-form" onSubmit={handleSubmit} className="space-y-4">
+            <form
+                id="upload-form"
+                onSubmit={handleSubmit}
+                className="space-y-4"
+            >
                 {errorMessage ? (
                     <div className="flex items-center gap-2 rounded-xl bg-danger-soft p-3 text-caption text-danger">
                         <AlertCircle className="h-4 w-4 shrink-0" />
@@ -184,7 +213,10 @@ const KnowledgeUploadModal = ({
 
                 {/* 目标文件夹选择 */}
                 <FormField
-                    label={t("knowledgeBase.upload.targetFolder", "存储目标文件夹")}
+                    label={t(
+                        "knowledgeBase.upload.targetFolder",
+                        "存储目标文件夹",
+                    )}
                     required
                 >
                     {folders.length === 0 ? (
@@ -203,7 +235,9 @@ const KnowledgeUploadModal = ({
                                 label: `${"— ".repeat(Math.max(0, (f.depth || 1) - 1))}${f.name}`,
                             }))}
                             value={String(targetFolderId)}
-                            onChange={(val) => setTargetFolderId(Number(val) || val)}
+                            onChange={(val) =>
+                                setTargetFolderId(Number(val) || val)
+                            }
                             disabled={uploading}
                             triggerClassName="!border-[#e9eaf4] !bg-white !text-[#555b7b] hover:!border-[#6765f6] hover:!bg-[#fbfbfe] rounded-xl"
                             dropdownClassName="!border-[#eef0f6] !bg-white !shadow-xl !shadow-[#111426]/8 rounded-xl"
@@ -213,7 +247,10 @@ const KnowledgeUploadModal = ({
 
                 {/* 拖拽放置区 / 文件选择 */}
                 <FormField
-                    label={t("knowledgeBase.upload.selectFileLabel", "选择文件")}
+                    label={t(
+                        "knowledgeBase.upload.selectFileLabel",
+                        "选择文件",
+                    )}
                     required
                 >
                     <div
@@ -223,7 +260,9 @@ const KnowledgeUploadModal = ({
                         }}
                         onDragLeave={() => setIsDragOver(false)}
                         onDrop={handleDrop}
-                        onClick={() => !uploading && fileInputRef.current?.click()}
+                        onClick={() =>
+                            !uploading && fileInputRef.current?.click()
+                        }
                         className={`group relative flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed p-6 text-center transition ${
                             isDragOver
                                 ? "border-[#6765f6] bg-[#f2f1fd]/50"
@@ -234,7 +273,9 @@ const KnowledgeUploadModal = ({
                             ref={fileInputRef}
                             type="file"
                             className="hidden"
-                            onChange={(e) => handleFileChange(e.target.files?.[0])}
+                            onChange={(e) =>
+                                handleFileChange(e.target.files?.[0])
+                            }
                             accept=".txt,.md,.markdown,.html,.htm,.csv,.json,.log,.pdf,.doc,.docx"
                         />
 
@@ -266,7 +307,10 @@ const KnowledgeUploadModal = ({
                             <>
                                 <UploadCloud className="h-10 w-10 text-[#6765f6]/80 transition group-hover:scale-110" />
                                 <div className="mt-2 text-body font-medium text-[#111426]">
-                                    {t("knowledgeBase.upload.dragHint", "拖拽文件到这里，或点击浏览")}
+                                    {t(
+                                        "knowledgeBase.upload.dragHint",
+                                        "拖拽文件到这里，或点击浏览",
+                                    )}
                                 </div>
                                 <div className="mt-1 text-caption text-[#8e94ad]">
                                     {t(
@@ -281,7 +325,10 @@ const KnowledgeUploadModal = ({
 
                 {/* 附加手动标签 */}
                 <FormField
-                    label={t("knowledgeBase.upload.tagsLabel", "附加标签（可选）")}
+                    label={t(
+                        "knowledgeBase.upload.tagsLabel",
+                        "附加标签（可选）",
+                    )}
                 >
                     <div className="space-y-2">
                         <input

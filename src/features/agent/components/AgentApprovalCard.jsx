@@ -14,7 +14,8 @@ const parseSummary = (approval) => {
 const AgentApprovalCard = ({ approval, deciding, onDecision }) => {
     const { t } = useTranslation();
     const summary = parseSummary(approval);
-    const tool = summary.tool || approval?.toolName || t("blog.agentChat.unknownTool");
+    const tool =
+        summary.tool || approval?.toolName || t("blog.agentChat.unknownTool");
     const reason = summary.reason;
     const busy = Boolean(deciding);
 
@@ -26,11 +27,17 @@ const AgentApprovalCard = ({ approval, deciding, onDecision }) => {
             aria-live="polite"
         >
             <div className="flex items-start gap-3">
-                <ShieldAlert className="mt-0.5 h-5 w-5 shrink-0 text-warning" aria-hidden="true" />
+                <ShieldAlert
+                    className="mt-0.5 h-5 w-5 shrink-0 text-warning"
+                    aria-hidden="true"
+                />
                 <div className="min-w-0 flex-1">
-                    <div className="text-title">{t("blog.agentChat.approval.title")}</div>
+                    <div className="text-title">
+                        {t("blog.agentChat.approval.title")}
+                    </div>
                     <div className="mt-1 text-caption text-ink-secondary">
-                        {reason || t("blog.agentChat.approval.description", { tool })}
+                        {reason ||
+                            t("blog.agentChat.approval.description", { tool })}
                     </div>
                     <div className="mt-1 text-micro text-ink-muted">
                         {t("blog.agentChat.approval.tool", { tool })}
@@ -42,7 +49,14 @@ const AgentApprovalCard = ({ approval, deciding, onDecision }) => {
                             disabled={busy}
                             className="inline-flex h-9 items-center gap-2 rounded-md bg-success px-3 text-caption font-semibold text-white transition-colors hover:bg-success/90 disabled:cursor-not-allowed disabled:opacity-60"
                         >
-                            {busy ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> : <Check className="h-4 w-4" aria-hidden="true" />}
+                            {busy ? (
+                                <Loader2
+                                    className="h-4 w-4 animate-spin"
+                                    aria-hidden="true"
+                                />
+                            ) : (
+                                <Check className="h-4 w-4" aria-hidden="true" />
+                            )}
                             {t("blog.agentChat.approval.approve")}
                         </button>
                         <button

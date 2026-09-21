@@ -1,12 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import {
-    Github,
-    Menu,
-    X,
-    User as UserIcon,
-} from "lucide-react";
+import { Github, Menu, X, User as UserIcon } from "lucide-react";
 import styles from "./Navbar.module.css";
 import { useAuthSession } from "@features/auth";
 import { NotificationBell } from "@features/blog";

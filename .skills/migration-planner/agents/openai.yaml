@@ -1,3 +1,3 @@
 interface:
-  display_name: "Migration Planner"
-  short_description: "Plan incremental moves and minimal feature scaffolds"
+    display_name: "Migration Planner"
+    short_description: "Plan incremental moves and minimal feature scaffolds"

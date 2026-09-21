@@ -35,9 +35,7 @@ function LanguageReel({ langReel, size }) {
                 {langReel.outgoing}
             </span>
             {langReel.rolling && langReel.incoming ? (
-                <span
-                    className={`${styles.langReelItem} ${styles.langReelIn}`}
-                >
+                <span className={`${styles.langReelItem} ${styles.langReelIn}`}>
                     {langReel.incoming}
                 </span>
             ) : null}
@@ -130,12 +128,16 @@ export default function NavbarLanguageControl({ mobile = false }) {
     useEffect(() => {
         if (mobile || !isOpen) return undefined;
         const handleClickOutside = (event) => {
-            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+            if (
+                dropdownRef.current &&
+                !dropdownRef.current.contains(event.target)
+            ) {
                 setIsOpen(false);
             }
         };
         document.addEventListener("mousedown", handleClickOutside);
-        return () => document.removeEventListener("mousedown", handleClickOutside);
+        return () =>
+            document.removeEventListener("mousedown", handleClickOutside);
     }, [isOpen, mobile]);
 
     if (mobile) {
@@ -174,7 +176,11 @@ export default function NavbarLanguageControl({ mobile = false }) {
             <div
                 className={`absolute right-0 top-full mt-2 ${styles.langDropdown} ${isOpen ? styles.langDropdownOpen : ""}`}
             >
-                <div className="py-1.5" role="listbox" aria-label="Select language">
+                <div
+                    className="py-1.5"
+                    role="listbox"
+                    aria-label="Select language"
+                >
                     {LANGUAGES.map((lng, index) => {
                         const isActive = i18n.language === lng;
                         return (
@@ -187,7 +193,9 @@ export default function NavbarLanguageControl({ mobile = false }) {
                                 size="sm"
                                 className={`${styles.langOption} ${isActive ? styles.langOptionActive : ""}`}
                                 style={{
-                                    animationDelay: isOpen ? `${index * 40}ms` : "0ms",
+                                    animationDelay: isOpen
+                                        ? `${index * 40}ms`
+                                        : "0ms",
                                 }}
                             >
                                 <span className="flex items-center gap-2.5">
@@ -202,7 +210,9 @@ export default function NavbarLanguageControl({ mobile = false }) {
                                         {LANG_FULL[lng]}
                                     </span>
                                 </span>
-                                {isActive ? <Check className="h-3.5 w-3.5 text-accent" /> : null}
+                                {isActive ? (
+                                    <Check className="h-3.5 w-3.5 text-accent" />
+                                ) : null}
                             </Button>
                         );
                     })}

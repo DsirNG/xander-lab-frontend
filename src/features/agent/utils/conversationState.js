@@ -35,9 +35,9 @@ export const toolTraceKey = (payload) =>
 export const isAbortError = (error) =>
     Boolean(
         error?.name === "AbortError" ||
-            error?.name === "CanceledError" ||
-            error?.code === "ERR_CANCELED" ||
-            error?.isCancelled,
+        error?.name === "CanceledError" ||
+        error?.code === "ERR_CANCELED" ||
+        error?.isCancelled,
     );
 
 /** The backend stores a conversation plan as a JSON snapshot. */
@@ -99,7 +99,10 @@ export const collapsePlanUpdates = (messages) => {
             continue;
         }
         // Keep the original timeline position, but render the latest status snapshot.
-        collapsed[planIndex] = { ...collapsed[planIndex], content: message.content };
+        collapsed[planIndex] = {
+            ...collapsed[planIndex],
+            content: message.content,
+        };
     }
     return collapsed;
 };

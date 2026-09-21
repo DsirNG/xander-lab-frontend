@@ -94,7 +94,9 @@ const WorkspaceAgentConversationMessage = ({
                     </span>
                 )
             ) : (
-                <AgentMarkdown content={cleanImageMarkdown(content, imageUrls)} />
+                <AgentMarkdown
+                    content={cleanImageMarkdown(content, imageUrls)}
+                />
             )}
         </div>
     </div>

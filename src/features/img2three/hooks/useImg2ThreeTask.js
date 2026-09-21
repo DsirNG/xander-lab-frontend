@@ -169,8 +169,7 @@ const useImg2ThreeTask = ({ taskId, t, navigate, toast }) => {
     }, [taskId, runStream, t, toast]);
 
     useEffect(() => {
-        if (!taskId || task?.status !== "running" || running)
-            return undefined;
+        if (!taskId || task?.status !== "running" || running) return undefined;
 
         let active = true;
         let timerId;

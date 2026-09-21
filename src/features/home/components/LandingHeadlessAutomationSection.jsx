@@ -109,10 +109,18 @@ const LandingHeadlessAutomationSection = ({ t }) => {
             <div className="text-center">
                 <div className="inline-flex items-center gap-2 rounded-full border border-orange-200/80 bg-orange-50/80 px-4 py-1.5 text-xs font-semibold text-orange-700 shadow-xs backdrop-blur-md">
                     <Radio className="h-3.5 w-3.5 text-orange-600" />
-                    <span>{t("landing.headlessAutomation.badge", "无人值守 · 工业级内容自动化生产流水线")}</span>
+                    <span>
+                        {t(
+                            "landing.headlessAutomation.badge",
+                            "无人值守 · 工业级内容自动化生产流水线",
+                        )}
+                    </span>
                 </div>
                 <h2 className="mt-4 text-2xl font-black tracking-tight text-[#111426] sm:text-4xl">
-                    {t("landing.headlessAutomation.title", "Headless Automation —— 无人值守内容流水线")}
+                    {t(
+                        "landing.headlessAutomation.title",
+                        "Headless Automation —— 无人值守内容流水线",
+                    )}
                 </h2>
                 <p className="mx-auto mt-3 max-w-3xl text-xs sm:text-sm leading-relaxed text-[#606782]">
                     {t(
@@ -171,7 +179,9 @@ const LandingHeadlessAutomationSection = ({ t }) => {
                                 {/* Search Input Mock */}
                                 <div className="mt-3 flex items-center gap-2 rounded-xl border border-[#e2e8f0] bg-white px-2.5 py-1.5 text-xs text-[#8e94aa]">
                                     <Search className="h-3.5 w-3.5" />
-                                    <span className="text-[11px]">搜索计划与任务...</span>
+                                    <span className="text-[11px]">
+                                        搜索计划与任务...
+                                    </span>
                                 </div>
 
                                 {/* Plans List */}
@@ -180,12 +190,15 @@ const LandingHeadlessAutomationSection = ({ t }) => {
                                         自动化定时计划
                                     </div>
                                     {PLANS.map((plan) => {
-                                        const isSelected = selectedPlanId === plan.id;
+                                        const isSelected =
+                                            selectedPlanId === plan.id;
                                         return (
                                             <button
                                                 key={plan.id}
                                                 type="button"
-                                                onClick={() => setSelectedPlanId(plan.id)}
+                                                onClick={() =>
+                                                    setSelectedPlanId(plan.id)
+                                                }
                                                 className={`group flex w-full cursor-pointer items-center justify-between rounded-xl px-2.5 py-2 text-left transition-colors ${
                                                     isSelected
                                                         ? "bg-orange-50 text-orange-950 font-semibold"
@@ -195,12 +208,18 @@ const LandingHeadlessAutomationSection = ({ t }) => {
                                                 <div className="flex min-w-0 items-center gap-2">
                                                     <Workflow
                                                         className={`h-3.5 w-3.5 shrink-0 ${
-                                                            isSelected ? "text-orange-600" : "text-[#9ea3b9]"
+                                                            isSelected
+                                                                ? "text-orange-600"
+                                                                : "text-[#9ea3b9]"
                                                         }`}
                                                     />
                                                     <div className="min-w-0">
-                                                        <div className="truncate text-xs">{plan.title}</div>
-                                                        <div className="text-[10px] text-[#9ea3b9]">{plan.cron}</div>
+                                                        <div className="truncate text-xs">
+                                                            {plan.title}
+                                                        </div>
+                                                        <div className="text-[10px] text-[#9ea3b9]">
+                                                            {plan.cron}
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <span className="shrink-0 rounded bg-emerald-50 px-1.5 py-0.5 text-[9px] font-bold text-emerald-600">
@@ -214,8 +233,12 @@ const LandingHeadlessAutomationSection = ({ t }) => {
 
                             {/* Sidebar Footer Stats */}
                             <div className="rounded-xl border border-[#edf0f8] bg-white p-2.5 text-center">
-                                <div className="text-[10px] text-[#8e94aa]">Cron 守护进程</div>
-                                <div className="mt-0.5 text-xs font-bold text-emerald-600">● 7x24h 自动轮询就绪</div>
+                                <div className="text-[10px] text-[#8e94aa]">
+                                    Cron 守护进程
+                                </div>
+                                <div className="mt-0.5 text-xs font-bold text-emerald-600">
+                                    ● 7x24h 自动轮询就绪
+                                </div>
                             </div>
                         </div>
 
@@ -228,7 +251,8 @@ const LandingHeadlessAutomationSection = ({ t }) => {
                                         {currentPlan.title}
                                     </h3>
                                     <div className="text-[10px] text-[#8e94aa]">
-                                        调度周期：{currentPlan.cron} · 分发目标：{currentPlan.platforms}
+                                        调度周期：{currentPlan.cron} ·
+                                        分发目标：{currentPlan.platforms}
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-2">
@@ -239,7 +263,11 @@ const LandingHeadlessAutomationSection = ({ t }) => {
                                         className="flex items-center gap-1.5 rounded-lg border border-orange-200 bg-orange-50 px-2.5 py-1 text-xs font-semibold text-orange-700 transition-colors hover:bg-orange-100 disabled:opacity-50"
                                     >
                                         <Zap className="h-3.5 w-3.5" />
-                                        <span>{runningTrigger ? "流水线执行中..." : "立即单次触发"}</span>
+                                        <span>
+                                            {runningTrigger
+                                                ? "流水线执行中..."
+                                                : "立即单次触发"}
+                                        </span>
                                     </button>
                                 </div>
                             </div>
@@ -288,7 +316,9 @@ const LandingHeadlessAutomationSection = ({ t }) => {
                                     <div className="flex items-center justify-between border-b border-border pb-2">
                                         <div className="flex items-center gap-2 text-xs font-bold text-ink">
                                             <Globe className="h-4 w-4 text-blue-600" />
-                                            <span>MCP 多端并发分发成功回执</span>
+                                            <span>
+                                                MCP 多端并发分发成功回执
+                                            </span>
                                         </div>
                                         <span className="text-micro font-mono font-bold text-emerald-600">
                                             ALL_CHANNELS_SYNCED
@@ -296,20 +326,36 @@ const LandingHeadlessAutomationSection = ({ t }) => {
                                     </div>
                                     <div className="mt-3 grid grid-cols-1 sm:grid-cols-4 gap-2 text-xs">
                                         <div className="rounded-xl border border-border bg-canvas p-2.5 text-center">
-                                            <div className="text-micro text-ink-muted">本站官方社区</div>
-                                            <div className="mt-0.5 font-bold text-emerald-600">✓ 已发布上线</div>
+                                            <div className="text-micro text-ink-muted">
+                                                本站官方社区
+                                            </div>
+                                            <div className="mt-0.5 font-bold text-emerald-600">
+                                                ✓ 已发布上线
+                                            </div>
                                         </div>
                                         <div className="rounded-xl border border-border bg-canvas p-2.5 text-center">
-                                            <div className="text-micro text-ink-muted">CSDN (MCP)</div>
-                                            <div className="mt-0.5 font-bold text-emerald-600">✓ 同步 (ID: 139281)</div>
+                                            <div className="text-micro text-ink-muted">
+                                                CSDN (MCP)
+                                            </div>
+                                            <div className="mt-0.5 font-bold text-emerald-600">
+                                                ✓ 同步 (ID: 139281)
+                                            </div>
                                         </div>
                                         <div className="rounded-xl border border-border bg-canvas p-2.5 text-center">
-                                            <div className="text-micro text-ink-muted">掘金社区 (MCP)</div>
-                                            <div className="mt-0.5 font-bold text-emerald-600">✓ 同步 (ID: 742189)</div>
+                                            <div className="text-micro text-ink-muted">
+                                                掘金社区 (MCP)
+                                            </div>
+                                            <div className="mt-0.5 font-bold text-emerald-600">
+                                                ✓ 同步 (ID: 742189)
+                                            </div>
                                         </div>
                                         <div className="rounded-xl border border-border bg-canvas p-2.5 text-center">
-                                            <div className="text-micro text-ink-muted">VIP 邮件订阅</div>
-                                            <div className="mt-0.5 font-bold text-emerald-600">✓ 发送 (1,280封)</div>
+                                            <div className="text-micro text-ink-muted">
+                                                VIP 邮件订阅
+                                            </div>
+                                            <div className="mt-0.5 font-bold text-emerald-600">
+                                                ✓ 发送 (1,280封)
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -321,13 +367,50 @@ const LandingHeadlessAutomationSection = ({ t }) => {
                                             <Terminal className="h-3.5 w-3.5" />
                                             <span>headless_worker.log</span>
                                         </span>
-                                        <span className="text-emerald-400">STREAMING ACTIVE</span>
+                                        <span className="text-emerald-400">
+                                            STREAMING ACTIVE
+                                        </span>
                                     </div>
                                     <div className="mt-2 space-y-1 text-slate-300">
-                                        <div><span className="text-slate-500">[08:00:01]</span> <span className="text-amber-400">CRON:</span> Trigger fired for planId=daily_ai</div>
-                                        <div><span className="text-slate-500">[08:00:04]</span> <span className="text-blue-400">AGENT:</span> gpt-5.6-terra generated article draft (3,240 words)</div>
-                                        <div><span className="text-slate-500">[08:00:08]</span> <span className="text-emerald-400">GATE:</span> Fail-Closed lint passed (0 syntax/sensitive issues)</div>
-                                        <div><span className="text-slate-500">[08:00:12]</span> <span className="text-purple-400">MCP:</span> Broadcasted to 4 channels simultaneously in 380ms</div>
+                                        <div>
+                                            <span className="text-slate-500">
+                                                [08:00:01]
+                                            </span>{" "}
+                                            <span className="text-amber-400">
+                                                CRON:
+                                            </span>{" "}
+                                            Trigger fired for planId=daily_ai
+                                        </div>
+                                        <div>
+                                            <span className="text-slate-500">
+                                                [08:00:04]
+                                            </span>{" "}
+                                            <span className="text-blue-400">
+                                                AGENT:
+                                            </span>{" "}
+                                            gpt-5.6-terra generated article
+                                            draft (3,240 words)
+                                        </div>
+                                        <div>
+                                            <span className="text-slate-500">
+                                                [08:00:08]
+                                            </span>{" "}
+                                            <span className="text-emerald-400">
+                                                GATE:
+                                            </span>{" "}
+                                            Fail-Closed lint passed (0
+                                            syntax/sensitive issues)
+                                        </div>
+                                        <div>
+                                            <span className="text-slate-500">
+                                                [08:00:12]
+                                            </span>{" "}
+                                            <span className="text-purple-400">
+                                                MCP:
+                                            </span>{" "}
+                                            Broadcasted to 4 channels
+                                            simultaneously in 380ms
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -371,7 +454,8 @@ const LandingHeadlessAutomationSection = ({ t }) => {
                         <span>Cron 7x24h 自动化调度</span>
                     </div>
                     <p className="mt-1.5 text-[11px] leading-relaxed text-[#64748b]">
-                        按分钟/按天/按周自由配置调度排程，支持 Webhook 事件驱动与即时热点唤醒。
+                        按分钟/按天/按周自由配置调度排程，支持 Webhook
+                        事件驱动与即时热点唤醒。
                     </p>
                 </div>
                 <div className="rounded-2xl border border-[#ebeef7] bg-white p-4 shadow-2xs">
@@ -389,7 +473,8 @@ const LandingHeadlessAutomationSection = ({ t }) => {
                         <span>MCP 协议多端并发分发</span>
                     </div>
                     <p className="mt-1.5 text-[11px] leading-relaxed text-[#64748b]">
-                        一键直连 CSDN、掘金、微信公众平台与邮件系统，毫秒级完成全渠道同步广播。
+                        一键直连
+                        CSDN、掘金、微信公众平台与邮件系统，毫秒级完成全渠道同步广播。
                     </p>
                 </div>
             </div>

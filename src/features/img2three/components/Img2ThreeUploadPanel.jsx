@@ -51,10 +51,7 @@ const Img2ThreeUploadPanel = ({
                     />
                 ) : (
                     <div className="mb-4 grid h-16 w-16 place-items-center rounded-2xl bg-accent-soft text-accent">
-                        <ImagePlus
-                            className="h-8 w-8"
-                            aria-hidden="true"
-                        />
+                        <ImagePlus className="h-8 w-8" aria-hidden="true" />
                     </div>
                 )}
                 <div className="text-body font-semibold text-ink">
@@ -95,10 +92,7 @@ const Img2ThreeUploadPanel = ({
                             aria-hidden="true"
                         />
                     ) : (
-                        <Sparkles
-                            className="h-4 w-4"
-                            aria-hidden="true"
-                        />
+                        <Sparkles className="h-4 w-4" aria-hidden="true" />
                     )}
                     {isBusy
                         ? t("img2three.generating")

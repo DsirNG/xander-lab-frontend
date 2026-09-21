@@ -60,14 +60,19 @@ const KNOWLEDGE_BASES = [
 const MOCK_QUESTIONS = {
     transformer: {
         category: "Transformer 架构",
-        question: "在 Transformer 架构中，为什么自注意力矩阵计算要除以 √d_k 缩放因子？",
+        question:
+            "在 Transformer 架构中，为什么自注意力矩阵计算要除以 √d_k 缩放因子？",
         options: [
             { key: "A", text: "为了将矩阵乘法的时间复杂度降至 O(1)" },
-            { key: "B", text: "防止点积结果过大导致 Softmax 梯度进入极小饱和区" },
+            {
+                key: "B",
+                text: "防止点积结果过大导致 Softmax 梯度进入极小饱和区",
+            },
             { key: "C", text: "消除残差连接中的梯度爆炸隐患" },
         ],
         correct: "B",
-        analysis: "当 d_k 维度很大时，点积幅值增长导致 Softmax 梯度极度微弱。除以 √d_k 能够使点积保持均值为 0、方差为 1 的平稳分布。",
+        analysis:
+            "当 d_k 维度很大时，点积幅值增长导致 Softmax 梯度极度微弱。除以 √d_k 能够使点积保持均值为 0、方差为 1 的平稳分布。",
         evidence: "论文《Attention Is All You Need》Section 3.2.1",
         weakPoint: "Scaled Dot-Product Attention 缩放数学推导",
     },
@@ -80,26 +85,32 @@ const MOCK_QUESTIONS = {
             { key: "C", text: "言语粗鲁、行为放荡" },
         ],
         correct: "B",
-        analysis: "古今异义词。“卑”指地位卑微，“鄙”指见识浅陋。诸葛亮以此自谦出身平民，感激刘备三顾茅庐之恩。",
+        analysis:
+            "古今异义词。“卑”指地位卑微，“鄙”指见识浅陋。诸葛亮以此自谦出身平民，感激刘备三顾茅庐之恩。",
         evidence: "《出师表》前段：“臣本布衣，躬耕于南阳...先帝不以臣卑鄙”",
         weakPoint: "古汉语通假与古今异义词频表",
     },
     distributed: {
         category: "Raft 选举机制",
-        question: "在 Raft 协议中，Candidate 节点在什么条件下会赢得 Leader 选举？",
+        question:
+            "在 Raft 协议中，Candidate 节点在什么条件下会赢得 Leader 选举？",
         options: [
             { key: "A", text: "获得集群中绝对多数（Quorum）节点的投票支持" },
             { key: "B", text: "拥有全局最新物理时间戳 (NTP)" },
             { key: "C", text: "优先向全部 Follower 发送 Heartbeat 广播" },
         ],
         correct: "A",
-        analysis: "Raft 保证安全性核心：Candidate 在同一任期 (Term) 内必须获得超过半数 (n/2 + 1) 节点的赞成票才能晋升为 Leader。",
+        analysis:
+            "Raft 保证安全性核心：Candidate 在同一任期 (Term) 内必须获得超过半数 (n/2 + 1) 节点的赞成票才能晋升为 Leader。",
         evidence: "Raft 论文 Section 5.2: Leader Election",
         weakPoint: "Quorum 多数派与脑裂防御机制",
     },
 };
 
-const WAVE_BARS = [12, 28, 45, 18, 36, 52, 22, 40, 60, 32, 18, 48, 56, 26, 38, 20, 44, 50, 16, 30];
+const WAVE_BARS = [
+    12, 28, 45, 18, 36, 52, 22, 40, 60, 32, 18, 48, 56, 26, 38, 20, 44, 50, 16,
+    30,
+];
 
 const LandingKnowledgeMirrorSection = ({ t }) => {
     const [selectedKbId, setSelectedKbId] = useState("transformer");
@@ -108,7 +119,9 @@ const LandingKnowledgeMirrorSection = ({ t }) => {
     const [submitted, setSubmitted] = useState(true);
     const [drillDownSuccess, setDrillDownSuccess] = useState(false);
 
-    const currentKb = KNOWLEDGE_BASES.find((kb) => kb.id === selectedKbId) || KNOWLEDGE_BASES[0];
+    const currentKb =
+        KNOWLEDGE_BASES.find((kb) => kb.id === selectedKbId) ||
+        KNOWLEDGE_BASES[0];
     const currentQ = MOCK_QUESTIONS[selectedKbId] || MOCK_QUESTIONS.transformer;
     const isCorrect = userSelected === currentQ.correct;
 
@@ -138,10 +151,18 @@ const LandingKnowledgeMirrorSection = ({ t }) => {
             <div className="text-center">
                 <div className="inline-flex items-center gap-2 rounded-full border border-emerald-200/80 bg-emerald-50/80 px-4 py-1.5 text-xs font-semibold text-emerald-700 shadow-xs backdrop-blur-md">
                     <Brain className="h-3.5 w-3.5 text-emerald-600" />
-                    <span>{t("landing.knowledgeMirror.badge", "核心引擎 · 个人知识库智能体与 AI 私教")}</span>
+                    <span>
+                        {t(
+                            "landing.knowledgeMirror.badge",
+                            "核心引擎 · 个人知识库智能体与 AI 私教",
+                        )}
+                    </span>
                 </div>
                 <h2 className="mt-4 text-2xl font-black tracking-tight text-[#111426] sm:text-4xl">
-                    {t("landing.knowledgeMirror.title", "Knowledge Mirror —— 个人知识镜像与 AI 私教")}
+                    {t(
+                        "landing.knowledgeMirror.title",
+                        "Knowledge Mirror —— 个人知识镜像与 AI 私教",
+                    )}
                 </h2>
                 <p className="mx-auto mt-3 max-w-3xl text-xs sm:text-sm leading-relaxed text-[#606782]">
                     {t(
@@ -200,7 +221,9 @@ const LandingKnowledgeMirrorSection = ({ t }) => {
                                 {/* Search Input Mock */}
                                 <div className="mt-3 flex items-center gap-2 rounded-xl border border-[#e2e8f0] bg-white px-2.5 py-1.5 text-xs text-[#8e94aa]">
                                     <Search className="h-3.5 w-3.5" />
-                                    <span className="text-[11px]">检索知识点与考题...</span>
+                                    <span className="text-[11px]">
+                                        检索知识点与考题...
+                                    </span>
                                 </div>
 
                                 {/* Knowledge Bases List */}
@@ -209,7 +232,8 @@ const LandingKnowledgeMirrorSection = ({ t }) => {
                                         挂载中的个人知识镜像
                                     </div>
                                     {KNOWLEDGE_BASES.map((kb) => {
-                                        const isSelected = selectedKbId === kb.id;
+                                        const isSelected =
+                                            selectedKbId === kb.id;
                                         return (
                                             <button
                                                 key={kb.id}
@@ -228,12 +252,18 @@ const LandingKnowledgeMirrorSection = ({ t }) => {
                                                 <div className="flex min-w-0 items-center gap-2">
                                                     <BookOpen
                                                         className={`h-3.5 w-3.5 shrink-0 ${
-                                                            isSelected ? "text-emerald-600" : "text-[#9ea3b9]"
+                                                            isSelected
+                                                                ? "text-emerald-600"
+                                                                : "text-[#9ea3b9]"
                                                         }`}
                                                     />
                                                     <div className="min-w-0">
-                                                        <div className="truncate text-xs">{kb.title}</div>
-                                                        <div className="text-[10px] text-[#9ea3b9]">{kb.unitCount}</div>
+                                                        <div className="truncate text-xs">
+                                                            {kb.title}
+                                                        </div>
+                                                        <div className="text-[10px] text-[#9ea3b9]">
+                                                            {kb.unitCount}
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <span className="shrink-0 font-mono text-[10px] font-bold text-emerald-600">
@@ -247,8 +277,12 @@ const LandingKnowledgeMirrorSection = ({ t }) => {
 
                             {/* Sidebar Footer Stats */}
                             <div className="rounded-xl border border-[#edf0f8] bg-white p-2.5 text-center">
-                                <div className="text-[10px] text-[#8e94aa]">艾宾浩斯复习排程</div>
-                                <div className="mt-0.5 text-xs font-bold text-emerald-600">✓ 今日待巩固 3 个核心考点</div>
+                                <div className="text-[10px] text-[#8e94aa]">
+                                    艾宾浩斯复习排程
+                                </div>
+                                <div className="mt-0.5 text-xs font-bold text-emerald-600">
+                                    ✓ 今日待巩固 3 个核心考点
+                                </div>
                             </div>
                         </div>
 
@@ -261,13 +295,20 @@ const LandingKnowledgeMirrorSection = ({ t }) => {
                                         {currentKb.title}
                                     </h3>
                                     <div className="text-[10px] text-[#8e94aa]">
-                                        模块标签：{currentKb.category} · 智能体自适应考点抽取中
+                                        模块标签：{currentKb.category} ·
+                                        智能体自适应考点抽取中
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-2">
                                     <button
                                         type="button"
-                                        onClick={() => setMode(mode === "quiz" ? "voice" : "quiz")}
+                                        onClick={() =>
+                                            setMode(
+                                                mode === "quiz"
+                                                    ? "voice"
+                                                    : "quiz",
+                                            )
+                                        }
                                         className="flex items-center gap-1.5 rounded-lg border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700 transition-colors hover:bg-emerald-100"
                                     >
                                         {mode === "quiz" ? (
@@ -300,18 +341,26 @@ const LandingKnowledgeMirrorSection = ({ t }) => {
                                                         语音声学特征与音素精准对齐
                                                     </span>
                                                     <span className="block text-[10px] text-[#808b9f]">
-                                                        当前评测：{currentKb.title} · 实时音频流捕获
+                                                        当前评测：
+                                                        {currentKb.title} ·
+                                                        实时音频流捕获
                                                     </span>
                                                 </div>
                                             </div>
                                             <div className="flex items-baseline gap-1">
-                                                <span className="text-3xl font-black text-emerald-600">96</span>
-                                                <span className="text-xs font-bold text-emerald-600">分 · 熟练掌握</span>
+                                                <span className="text-3xl font-black text-emerald-600">
+                                                    96
+                                                </span>
+                                                <span className="text-xs font-bold text-emerald-600">
+                                                    分 · 熟练掌握
+                                                </span>
                                             </div>
                                         </div>
 
                                         <div className="mt-4 rounded-xl border border-emerald-100 bg-white p-3.5">
-                                            <div className="text-micro font-semibold text-[#8a92aa]">原文智能标记比对：</div>
+                                            <div className="text-micro font-semibold text-[#8a92aa]">
+                                                原文智能标记比对：
+                                            </div>
                                             <p className="mt-1.5 text-xs sm:text-sm leading-relaxed text-[#242741]">
                                                 “臣本布衣，躬耕于南阳，苟全性命于乱世，不求闻达于诸侯。
                                                 <span className="rounded bg-emerald-100 px-1 font-semibold text-emerald-800">
@@ -329,11 +378,15 @@ const LandingKnowledgeMirrorSection = ({ t }) => {
                                                     <span
                                                         key={idx}
                                                         className="w-1 rounded-full bg-emerald-500 transition-all duration-300"
-                                                        style={{ height: `${h}px` }}
+                                                        style={{
+                                                            height: `${h}px`,
+                                                        }}
                                                     />
                                                 ))}
                                             </div>
-                                            <span className="text-[11px] font-mono text-emerald-700">00:28 / 00:45</span>
+                                            <span className="text-[11px] font-mono text-emerald-700">
+                                                00:28 / 00:45
+                                            </span>
                                         </div>
                                     </div>
                                 ) : (
@@ -348,7 +401,8 @@ const LandingKnowledgeMirrorSection = ({ t }) => {
                                                     {currentQ.category}
                                                 </span>
                                                 <span className="text-caption font-semibold text-ink-muted">
-                                                    第 1 题 / 共 1 题 · 自适应出题
+                                                    第 1 题 / 共 1 题 ·
+                                                    自适应出题
                                                 </span>
                                             </div>
                                             <div className="flex items-center gap-1 text-micro text-ink-muted">
@@ -370,21 +424,30 @@ const LandingKnowledgeMirrorSection = ({ t }) => {
                                         {/* Options List */}
                                         <div className="mt-5 grid gap-2.5">
                                             {currentQ.options.map((opt) => {
-                                                const isSelected = userSelected === opt.key;
-                                                let btnCls = "border-border bg-canvas text-ink-secondary hover:border-border-strong hover:bg-surface-muted";
-                                                let badgeCls = "border-border-strong bg-surface text-ink-muted";
+                                                const isSelected =
+                                                    userSelected === opt.key;
+                                                let btnCls =
+                                                    "border-border bg-canvas text-ink-secondary hover:border-border-strong hover:bg-surface-muted";
+                                                let badgeCls =
+                                                    "border-border-strong bg-surface text-ink-muted";
                                                 if (isSelected) {
                                                     if (submitted) {
                                                         if (isCorrect) {
-                                                            btnCls = "border-emerald-500 bg-emerald-50 text-emerald-950 font-semibold";
-                                                            badgeCls = "border-emerald-600 bg-emerald-600 text-white";
+                                                            btnCls =
+                                                                "border-emerald-500 bg-emerald-50 text-emerald-950 font-semibold";
+                                                            badgeCls =
+                                                                "border-emerald-600 bg-emerald-600 text-white";
                                                         } else {
-                                                            btnCls = "border-rose-500 bg-rose-50 text-rose-950 font-semibold";
-                                                            badgeCls = "border-rose-600 bg-rose-600 text-white";
+                                                            btnCls =
+                                                                "border-rose-500 bg-rose-50 text-rose-950 font-semibold";
+                                                            badgeCls =
+                                                                "border-rose-600 bg-rose-600 text-white";
                                                         }
                                                     } else {
-                                                        btnCls = "border-emerald-500 bg-emerald-50 text-emerald-950 font-semibold";
-                                                        badgeCls = "border-emerald-600 bg-emerald-600 text-white";
+                                                        btnCls =
+                                                            "border-emerald-500 bg-emerald-50 text-emerald-950 font-semibold";
+                                                        badgeCls =
+                                                            "border-emerald-600 bg-emerald-600 text-white";
                                                     }
                                                 }
 
@@ -392,17 +455,30 @@ const LandingKnowledgeMirrorSection = ({ t }) => {
                                                     <button
                                                         key={opt.key}
                                                         type="button"
-                                                        onClick={() => handleSelectOption(opt.key)}
+                                                        onClick={() =>
+                                                            handleSelectOption(
+                                                                opt.key,
+                                                            )
+                                                        }
                                                         className={`flex min-h-12 items-center gap-3 rounded-xl border px-3 text-left text-body transition ${btnCls}`}
                                                     >
-                                                        <span className={`grid h-7 w-7 shrink-0 place-items-center rounded-lg border text-caption font-semibold ${badgeCls}`}>
-                                                            {isSelected && submitted ? (
-                                                                isCorrect ? <Check className="h-4 w-4" /> : <X className="h-4 w-4" />
+                                                        <span
+                                                            className={`grid h-7 w-7 shrink-0 place-items-center rounded-lg border text-caption font-semibold ${badgeCls}`}
+                                                        >
+                                                            {isSelected &&
+                                                            submitted ? (
+                                                                isCorrect ? (
+                                                                    <Check className="h-4 w-4" />
+                                                                ) : (
+                                                                    <X className="h-4 w-4" />
+                                                                )
                                                             ) : (
                                                                 opt.key
                                                             )}
                                                         </span>
-                                                        <span className="min-w-0 flex-1 text-xs sm:text-sm">{opt.text}</span>
+                                                        <span className="min-w-0 flex-1 text-xs sm:text-sm">
+                                                            {opt.text}
+                                                        </span>
                                                     </button>
                                                 );
                                             })}
@@ -414,32 +490,46 @@ const LandingKnowledgeMirrorSection = ({ t }) => {
                                                 <div className="flex items-center justify-between font-bold text-emerald-900">
                                                     <div className="flex items-center gap-1.5">
                                                         <CheckCircle2 className="h-4 w-4 text-emerald-600" />
-                                                        <span>智能判分：回答正确 (+100分)</span>
+                                                        <span>
+                                                            智能判分：回答正确
+                                                            (+100分)
+                                                        </span>
                                                     </div>
-                                                    <span className="text-micro font-medium text-emerald-700">秒级证据链溯源</span>
+                                                    <span className="text-micro font-medium text-emerald-700">
+                                                        秒级证据链溯源
+                                                    </span>
                                                 </div>
                                                 <p className="mt-1.5 text-[11px] leading-relaxed text-[#2d3748]">
-                                                    <span className="font-semibold text-emerald-950">💡 深度解析：</span>
+                                                    <span className="font-semibold text-emerald-950">
+                                                        💡 深度解析：
+                                                    </span>
                                                     {currentQ.analysis}
                                                 </p>
                                                 <div className="mt-1 text-micro text-[#64748b]">
-                                                    <span className="font-semibold text-[#475569]">📖 原文证据链：</span>
+                                                    <span className="font-semibold text-[#475569]">
+                                                        📖 原文证据链：
+                                                    </span>
                                                     {currentQ.evidence}
                                                 </div>
 
                                                 {/* Drill-down consolidation action button */}
                                                 <div className="mt-2.5 flex flex-wrap items-center justify-between gap-2 border-t border-emerald-200/60 pt-2.5">
                                                     <span className="text-micro text-emerald-800">
-                                                        薄弱关联考点：{currentQ.weakPoint}
+                                                        薄弱关联考点：
+                                                        {currentQ.weakPoint}
                                                     </span>
                                                     <button
                                                         type="button"
-                                                        onClick={handleTriggerDrillDown}
+                                                        onClick={
+                                                            handleTriggerDrillDown
+                                                        }
                                                         className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white shadow-xs transition-colors hover:bg-emerald-700"
                                                     >
                                                         <Sparkles className="h-3 w-3" />
                                                         <span>
-                                                            {drillDownSuccess ? "✓ 已加入强化计划" : "针对该点生成强化练习"}
+                                                            {drillDownSuccess
+                                                                ? "✓ 已加入强化计划"
+                                                                : "针对该点生成强化练习"}
                                                         </span>
                                                     </button>
                                                 </div>

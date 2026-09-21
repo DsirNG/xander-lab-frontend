@@ -49,7 +49,9 @@ describe("AgentImagesPage 首屏加载", () => {
         });
         retry.click();
 
-        await waitFor(() => expect(screen.getByText(EMPTY_TITLE)).toBeInTheDocument());
+        await waitFor(() =>
+            expect(screen.getByText(EMPTY_TITLE)).toBeInTheDocument(),
+        );
         expect(getMock).toHaveBeenCalledTimes(2);
     });
 

@@ -75,10 +75,9 @@ describe("AgentSharedView 图片结果", () => {
         render(<AgentSharedView />);
 
         await waitFor(() => expect(getMock).toHaveBeenCalled());
-        expect(await screen.findByRole("img", { name: "可爱小猫" })).toHaveAttribute(
-            "src",
-            IMAGE_URL,
-        );
+        expect(
+            await screen.findByRole("img", { name: "可爱小猫" }),
+        ).toHaveAttribute("src", IMAGE_URL);
         expect(screen.queryByText(IMAGE_URL)).not.toBeInTheDocument();
     });
 });

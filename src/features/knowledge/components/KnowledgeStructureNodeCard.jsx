@@ -5,23 +5,24 @@ import { ChevronDown, ChevronRight } from "lucide-react";
 /**
  * 递归渲染知识导图节点
  */
-const KnowledgeStructureNodeCard = ({
-    node,
-    depth = 0,
-    onChapterClick,
-}) => {
+const KnowledgeStructureNodeCard = ({ node, depth = 0, onChapterClick }) => {
     const [expanded, setExpanded] = useState(true);
     const hasChildren = node.children && node.children.length > 0;
 
-    const badgeColor = {
-        ROOT: "bg-[#7771ed] text-white shadow-xs",
-        CHAPTER: "bg-[#f2f1fd] text-[#6765f6] border border-[#e2e0fb]",
-        SECTION: "bg-[#fbfbfe] text-[#555b7b] border border-[#eef0f6]",
-        POINT: "bg-emerald-50 text-emerald-700 border border-emerald-200",
-    }[node.nodeType] || "bg-[#fbfbfe] text-[#555b7b] border border-[#eef0f6]";
+    const badgeColor =
+        {
+            ROOT: "bg-[#7771ed] text-white shadow-xs",
+            CHAPTER: "bg-[#f2f1fd] text-[#6765f6] border border-[#e2e0fb]",
+            SECTION: "bg-[#fbfbfe] text-[#555b7b] border border-[#eef0f6]",
+            POINT: "bg-emerald-50 text-emerald-700 border border-emerald-200",
+        }[node.nodeType] ||
+        "bg-[#fbfbfe] text-[#555b7b] border border-[#eef0f6]";
 
     return (
-        <div className="relative my-1.5" style={{ paddingLeft: depth > 0 ? "20px" : "0px" }}>
+        <div
+            className="relative my-1.5"
+            style={{ paddingLeft: depth > 0 ? "20px" : "0px" }}
+        >
             {depth > 0 ? (
                 <div className="absolute -left-1 top-4 h-full w-px bg-[#eef0f6]" />
             ) : null}
@@ -45,7 +46,9 @@ const KnowledgeStructureNodeCard = ({
                             <span className="w-4" />
                         )}
 
-                        <span className={`rounded-md px-1.5 py-0.5 text-micro font-medium ${badgeColor}`}>
+                        <span
+                            className={`rounded-md px-1.5 py-0.5 text-micro font-medium ${badgeColor}`}
+                        >
                             {node.nodeType}
                         </span>
 

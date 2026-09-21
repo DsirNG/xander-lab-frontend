@@ -19,7 +19,10 @@ const KnowledgeDocHeader = ({
                     {t("knowledgeBase.title", "知识库")}
                 </h1>
                 <p className="mt-1 text-caption text-[#8b91a9]">
-                    {t("knowledgeBase.subtitle", "沉淀有价值的知识，让 AI 理解你的专业")}
+                    {t(
+                        "knowledgeBase.subtitle",
+                        "沉淀有价值的知识，让 AI 理解你的专业",
+                    )}
                 </p>
             </div>
 

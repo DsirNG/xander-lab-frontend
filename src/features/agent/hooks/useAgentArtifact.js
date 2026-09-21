@@ -1,8 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import {
-    getBlogAgentTask,
-    publishBlogAgentTask,
-} from "@features/blog";
+import { getBlogAgentTask, publishBlogAgentTask } from "@features/blog";
 
 /**
  * Owns the optional blog artifact side panel attached to an agent conversation.

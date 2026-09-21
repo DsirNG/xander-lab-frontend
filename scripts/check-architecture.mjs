@@ -6,13 +6,11 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const srcRoot = path.join(root, "src");
 
 const walk = (directory) =>
-    fs
-        .readdirSync(directory, { withFileTypes: true })
-        .flatMap((entry) => {
-            const target = path.join(directory, entry.name);
-            if (entry.isDirectory()) return walk(target);
-            return /\.(jsx?|tsx?)$/.test(entry.name) ? [target] : [];
-        });
+    fs.readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
+        const target = path.join(directory, entry.name);
+        if (entry.isDirectory()) return walk(target);
+        return /\.(jsx?|tsx?)$/.test(entry.name) ? [target] : [];
+    });
 
 const sourceFiles = walk(srcRoot);
 const importPattern = /(?:from\s+|import\s*\()\s*["']([^"']+)["']/g;
@@ -33,8 +31,7 @@ const removedRootAliases = [
     /^@router(?:\/|$)/,
 ];
 
-const isCompatibilityFile = (content) =>
-    /@deprecated\s+Use\s+/.test(content);
+const isCompatibilityFile = (content) => /@deprecated\s+Use\s+/.test(content);
 
 const featureNameFromFile = (file) => {
     const relative = path.relative(path.join(srcRoot, "features"), file);
@@ -57,10 +54,7 @@ const featureSpecifier = (specifier) => {
     if (specifier === "@features" || specifier.startsWith("@features/")) {
         return specifier.slice("@features/".length);
     }
-    if (
-        specifier === "@/features" ||
-        specifier.startsWith("@/features/")
-    ) {
+    if (specifier === "@/features" || specifier.startsWith("@/features/")) {
         return specifier.slice("@/features/".length);
     }
     return null;
@@ -68,10 +62,10 @@ const featureSpecifier = (specifier) => {
 
 const relativeSourcePath = (file, specifier) => {
     if (!specifier.startsWith(".")) return null;
-    const resolved = path.normalize(path.resolve(path.dirname(file), specifier));
-    return path
-        .relative(srcRoot, resolved)
-        .replaceAll(path.sep, "/");
+    const resolved = path.normalize(
+        path.resolve(path.dirname(file), specifier),
+    );
+    return path.relative(srcRoot, resolved).replaceAll(path.sep, "/");
 };
 
 const relativeFeatureSpecifier = (file, specifier) => {
@@ -93,8 +87,12 @@ const removedSourceRootFromImport = (file, specifier) => {
             ? specifier
             : null;
     }
-    const resolved = path.normalize(path.resolve(path.dirname(file), specifier));
-    const relativeToSrc = path.relative(srcRoot, resolved).replaceAll(path.sep, "/");
+    const resolved = path.normalize(
+        path.resolve(path.dirname(file), specifier),
+    );
+    const relativeToSrc = path
+        .relative(srcRoot, resolved)
+        .replaceAll(path.sep, "/");
     return removedSourceRoots.find(
         (root) =>
             relativeToSrc === root || relativeToSrc.startsWith(`${root}/`),
@@ -153,10 +151,7 @@ for (const file of sourceFiles) {
         if (!targetFeature || targetFeature === sourceFeature) continue;
 
         addEdge(sourceFeature, targetFeature);
-        if (
-            (!featurePath || target.length > 1) &&
-            !compatibility
-        ) {
+        if ((!featurePath || target.length > 1) && !compatibility) {
             errors.push(
                 `${relative}: cross-feature deep import ${specifier}; use @features/${targetFeature}`,
             );

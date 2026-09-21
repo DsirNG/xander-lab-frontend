@@ -7,7 +7,10 @@ vi.mock("@shared/hooks/useToast", () => ({
     useToast: () => ({ success: vi.fn(), error: vi.fn() }),
 }));
 vi.mock("react-i18next", () => ({
-    useTranslation: () => ({ t: (key) => key, i18n: { resolvedLanguage: "zh" } }),
+    useTranslation: () => ({
+        t: (key) => key,
+        i18n: { resolvedLanguage: "zh" },
+    }),
 }));
 vi.mock("../services/adminService", () => ({
     adminService: { updateFeatureConfig: vi.fn() },
@@ -95,7 +98,9 @@ describe("FeatureConfigModal 接口风格可选项", () => {
             primaryApiStyle: "CHAT_COMPLETIONS",
         });
 
-        const triggers = screen.getAllByLabelText("admin.configs.selectProvider");
+        const triggers = screen.getAllByLabelText(
+            "admin.configs.selectProvider",
+        );
         expect(triggers[1].textContent).toContain("admin.configs.apiStyleChat");
     });
 });

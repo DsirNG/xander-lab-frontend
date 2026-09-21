@@ -59,19 +59,27 @@ const LandingEngines = ({ t }) => {
                         <ul className="mt-4 space-y-2 text-xs text-[#626884]">
                             <li className="flex items-center gap-2">
                                 <span className="h-1.5 w-1.5 rounded-full bg-[#7c3aed]" />
-                                <span>{t("landing.engines.img2threejs.point1")}</span>
+                                <span>
+                                    {t("landing.engines.img2threejs.point1")}
+                                </span>
                             </li>
                             <li className="flex items-center gap-2">
                                 <span className="h-1.5 w-1.5 rounded-full bg-[#7c3aed]" />
-                                <span>{t("landing.engines.img2threejs.point2")}</span>
+                                <span>
+                                    {t("landing.engines.img2threejs.point2")}
+                                </span>
                             </li>
                             <li className="flex items-center gap-2">
                                 <span className="h-1.5 w-1.5 rounded-full bg-[#7c3aed]" />
-                                <span>{t("landing.engines.img2threejs.point3")}</span>
+                                <span>
+                                    {t("landing.engines.img2threejs.point3")}
+                                </span>
                             </li>
                             <li className="flex items-center gap-2">
                                 <span className="h-1.5 w-1.5 rounded-full bg-[#7c3aed]" />
-                                <span>{t("landing.engines.img2threejs.point4")}</span>
+                                <span>
+                                    {t("landing.engines.img2threejs.point4")}
+                                </span>
                             </li>
                         </ul>
                     </div>
@@ -80,7 +88,8 @@ const LandingEngines = ({ t }) => {
                     <div className="my-3 flex flex-col items-center">
                         <Dagger3DShowcase className="h-44 w-full" />
                         <span className="mt-1 text-micro font-medium text-[#6366f1]">
-                            {t("landing.engines.img2threejs.rotatePreview")} &gt;
+                            {t("landing.engines.img2threejs.rotatePreview")}{" "}
+                            &gt;
                         </span>
                     </div>
 
@@ -93,7 +102,9 @@ const LandingEngines = ({ t }) => {
                                 onClick={() => setSelectedThumb(item.id)}
                                 className={`flex h-12 flex-1 items-center justify-center rounded-xl border transition-all ${selectedThumb === item.id ? "border-[#7c3aed] bg-white shadow-xs" : "border-transparent bg-white/50 hover:bg-white"}`}
                             >
-                                <Flame className={`h-4 w-4 ${selectedThumb === item.id ? "text-[#7c3aed]" : "text-[#94a3b8]"}`} />
+                                <Flame
+                                    className={`h-4 w-4 ${selectedThumb === item.id ? "text-[#7c3aed]" : "text-[#94a3b8]"}`}
+                                />
                             </button>
                         ))}
                         <button
@@ -123,19 +134,27 @@ const LandingEngines = ({ t }) => {
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 flex-1 w-full">
                                 <div className="flex items-center gap-2 rounded-xl border border-[#f0f1f8] bg-white/90 px-3 py-2 text-micro font-semibold text-[#404461] shadow-2xs">
                                     <Sparkles className="h-3.5 w-3.5 text-[#3b82f6]" />
-                                    <span className="truncate">{t("landing.engines.agent.pill1")}</span>
+                                    <span className="truncate">
+                                        {t("landing.engines.agent.pill1")}
+                                    </span>
                                 </div>
                                 <div className="flex items-center gap-2 rounded-xl border border-[#f0f1f8] bg-white/90 px-3 py-2 text-micro font-semibold text-[#404461] shadow-2xs">
                                     <Layers className="h-3.5 w-3.5 text-[#3b82f6]" />
-                                    <span className="truncate">{t("landing.engines.agent.pill2")}</span>
+                                    <span className="truncate">
+                                        {t("landing.engines.agent.pill2")}
+                                    </span>
                                 </div>
                                 <div className="flex items-center gap-2 rounded-xl border border-[#f0f1f8] bg-white/90 px-3 py-2 text-micro font-semibold text-[#404461] shadow-2xs">
                                     <Bot className="h-3.5 w-3.5 text-[#3b82f6]" />
-                                    <span className="truncate">{t("landing.engines.agent.pill3")}</span>
+                                    <span className="truncate">
+                                        {t("landing.engines.agent.pill3")}
+                                    </span>
                                 </div>
                                 <div className="flex items-center gap-2 rounded-xl border border-[#f0f1f8] bg-white/90 px-3 py-2 text-micro font-semibold text-[#404461] shadow-2xs">
                                     <Volume2 className="h-3.5 w-3.5 text-[#3b82f6]" />
-                                    <span className="truncate">{t("landing.engines.agent.pill4")}</span>
+                                    <span className="truncate">
+                                        {t("landing.engines.agent.pill4")}
+                                    </span>
                                 </div>
                             </div>
 
@@ -162,47 +181,72 @@ const LandingEngines = ({ t }) => {
                             <ul className="space-y-2 text-xs text-[#626884] flex-1">
                                 <li className="flex items-center gap-2">
                                     <span className="h-1.5 w-1.5 rounded-full bg-[#10b981]" />
-                                    <span>{t("landing.engines.knowledge.point1")}</span>
+                                    <span>
+                                        {t("landing.engines.knowledge.point1")}
+                                    </span>
                                 </li>
                                 <li className="flex items-center gap-2">
                                     <span className="h-1.5 w-1.5 rounded-full bg-[#10b981]" />
-                                    <span>{t("landing.engines.knowledge.point2")}</span>
+                                    <span>
+                                        {t("landing.engines.knowledge.point2")}
+                                    </span>
                                 </li>
                                 <li className="flex items-center gap-2">
                                     <span className="h-1.5 w-1.5 rounded-full bg-[#10b981]" />
-                                    <span>{t("landing.engines.knowledge.point3")}</span>
+                                    <span>
+                                        {t("landing.engines.knowledge.point3")}
+                                    </span>
                                 </li>
                                 <li className="flex items-center gap-2">
                                     <span className="h-1.5 w-1.5 rounded-full bg-[#10b981]" />
-                                    <span>{t("landing.engines.knowledge.point4")}</span>
+                                    <span>
+                                        {t("landing.engines.knowledge.point4")}
+                                    </span>
                                 </li>
                             </ul>
 
                             {/* Right Audio Score Widget */}
                             <div className="w-full sm:w-56 rounded-2xl border border-[#e6f4ea] bg-[#f9fdfa] p-3.5 shadow-xs">
                                 <div className="flex items-center justify-between text-micro text-[#808b9f]">
-                                    <span>{t("landing.engines.knowledge.reciteScoreTitle")}</span>
+                                    <span>
+                                        {t(
+                                            "landing.engines.knowledge.reciteScoreTitle",
+                                        )}
+                                    </span>
                                     <span className="text-[#10b981] cursor-pointer hover:underline">
-                                        {t("landing.engines.knowledge.viewDetails")}
+                                        {t(
+                                            "landing.engines.knowledge.viewDetails",
+                                        )}
                                     </span>
                                 </div>
                                 <p className="mt-1 line-clamp-1 text-micro text-[#4a5168]">
                                     {t("landing.engines.knowledge.quote")}
                                 </p>
                                 <div className="mt-2 flex items-baseline gap-1">
-                                    <span className="text-2xl font-extrabold text-[#10b981]">96</span>
-                                    <span className="text-xs text-[#10b981]">{t("landing.engines.knowledge.scoreUnit")}</span>
+                                    <span className="text-2xl font-extrabold text-[#10b981]">
+                                        96
+                                    </span>
+                                    <span className="text-xs text-[#10b981]">
+                                        {t(
+                                            "landing.engines.knowledge.scoreUnit",
+                                        )}
+                                    </span>
                                 </div>
                                 {/* Waveform graphic */}
                                 <div className="mt-2 flex items-center gap-1">
-                                    {[12, 24, 16, 32, 20, 28, 14, 26, 18, 30, 22, 16, 28, 14, 20].map((h, i) => (
+                                    {[
+                                        12, 24, 16, 32, 20, 28, 14, 26, 18, 30,
+                                        22, 16, 28, 14, 20,
+                                    ].map((h, i) => (
                                         <span
                                             key={i}
                                             className="w-1 rounded-full bg-[#34d399]"
                                             style={{ height: `${h * 0.6}px` }}
                                         />
                                     ))}
-                                    <span className="ml-auto text-[10px] text-[#9ca3af]">00:24 / 00:48</span>
+                                    <span className="ml-auto text-[10px] text-[#9ca3af]">
+                                        00:24 / 00:48
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -225,19 +269,27 @@ const LandingEngines = ({ t }) => {
                         <ul className="space-y-2 text-xs text-[#626884] shrink-0 w-full lg:w-48">
                             <li className="flex items-center gap-2">
                                 <span className="h-1.5 w-1.5 rounded-full bg-[#f97316]" />
-                                <span>{t("landing.engines.automation.point1")}</span>
+                                <span>
+                                    {t("landing.engines.automation.point1")}
+                                </span>
                             </li>
                             <li className="flex items-center gap-2">
                                 <span className="h-1.5 w-1.5 rounded-full bg-[#f97316]" />
-                                <span>{t("landing.engines.automation.point2")}</span>
+                                <span>
+                                    {t("landing.engines.automation.point2")}
+                                </span>
                             </li>
                             <li className="flex items-center gap-2">
                                 <span className="h-1.5 w-1.5 rounded-full bg-[#f97316]" />
-                                <span>{t("landing.engines.automation.point3")}</span>
+                                <span>
+                                    {t("landing.engines.automation.point3")}
+                                </span>
                             </li>
                             <li className="flex items-center gap-2">
                                 <span className="h-1.5 w-1.5 rounded-full bg-[#f97316]" />
-                                <span>{t("landing.engines.automation.point4")}</span>
+                                <span>
+                                    {t("landing.engines.automation.point4")}
+                                </span>
                             </li>
                         </ul>
 
@@ -247,32 +299,56 @@ const LandingEngines = ({ t }) => {
                             <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 w-full">
                                 {/* Step 1 */}
                                 <div className="flex flex-col items-center justify-center rounded-xl border border-[#ebeef7] bg-white px-3 py-2 shadow-2xs min-w-[5rem]">
-                                    <span className="text-xs font-bold text-[#111426]">{t("landing.engines.automation.step1")}</span>
-                                    <span className="text-[10px] text-[#8e94aa]">{t("landing.engines.automation.step1Sub")}</span>
+                                    <span className="text-xs font-bold text-[#111426]">
+                                        {t("landing.engines.automation.step1")}
+                                    </span>
+                                    <span className="text-[10px] text-[#8e94aa]">
+                                        {t(
+                                            "landing.engines.automation.step1Sub",
+                                        )}
+                                    </span>
                                     <Clock className="mt-1 h-3.5 w-3.5 text-[#f97316]" />
                                 </div>
                                 <ArrowRight className="h-4 w-4 text-[#cbd5e1]" />
 
                                 {/* Step 2 */}
                                 <div className="flex flex-col items-center justify-center rounded-xl border border-[#ebeef7] bg-white px-3 py-2 shadow-2xs min-w-[5rem]">
-                                    <span className="text-xs font-bold text-[#111426]">{t("landing.engines.automation.step2")}</span>
-                                    <span className="text-[10px] text-[#8e94aa]">{t("landing.engines.automation.step2Sub")}</span>
+                                    <span className="text-xs font-bold text-[#111426]">
+                                        {t("landing.engines.automation.step2")}
+                                    </span>
+                                    <span className="text-[10px] text-[#8e94aa]">
+                                        {t(
+                                            "landing.engines.automation.step2Sub",
+                                        )}
+                                    </span>
                                     <Bot className="mt-1 h-3.5 w-3.5 text-[#3b82f6]" />
                                 </div>
                                 <ArrowRight className="h-4 w-4 text-[#cbd5e1]" />
 
                                 {/* Step 3 */}
                                 <div className="flex flex-col items-center justify-center rounded-xl border border-[#ebeef7] bg-white px-3 py-2 shadow-2xs min-w-[5rem]">
-                                    <span className="text-xs font-bold text-[#111426]">{t("landing.engines.automation.step3")}</span>
-                                    <span className="text-[10px] text-[#8e94aa]">{t("landing.engines.automation.step3Sub")}</span>
+                                    <span className="text-xs font-bold text-[#111426]">
+                                        {t("landing.engines.automation.step3")}
+                                    </span>
+                                    <span className="text-[10px] text-[#8e94aa]">
+                                        {t(
+                                            "landing.engines.automation.step3Sub",
+                                        )}
+                                    </span>
                                     <Shield className="mt-1 h-3.5 w-3.5 text-[#10b981]" />
                                 </div>
                                 <ArrowRight className="h-4 w-4 text-[#cbd5e1]" />
 
                                 {/* Step 4 */}
                                 <div className="flex flex-col items-center justify-center rounded-xl border border-[#ebeef7] bg-white px-3 py-2 shadow-2xs min-w-[5rem]">
-                                    <span className="text-xs font-bold text-[#111426]">{t("landing.engines.automation.step4")}</span>
-                                    <span className="text-[10px] text-[#8e94aa]">{t("landing.engines.automation.step4Sub")}</span>
+                                    <span className="text-xs font-bold text-[#111426]">
+                                        {t("landing.engines.automation.step4")}
+                                    </span>
+                                    <span className="text-[10px] text-[#8e94aa]">
+                                        {t(
+                                            "landing.engines.automation.step4Sub",
+                                        )}
+                                    </span>
                                     <Send className="mt-1 h-3.5 w-3.5 text-[#8b5cf6]" />
                                 </div>
                             </div>
@@ -281,19 +357,35 @@ const LandingEngines = ({ t }) => {
                             <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-2 w-full max-w-xl">
                                 <div className="flex items-center justify-center gap-1.5 rounded-lg border border-[#f0f1f8] bg-[#fbfbfe] px-2 py-1.5 text-[11px] font-medium text-[#4b5563]">
                                     <span className="h-2 w-2 rounded-full bg-amber-500" />
-                                    <span>{t("landing.engines.automation.platformCommunity")}</span>
+                                    <span>
+                                        {t(
+                                            "landing.engines.automation.platformCommunity",
+                                        )}
+                                    </span>
                                 </div>
                                 <div className="flex items-center justify-center gap-1.5 rounded-lg border border-[#f0f1f8] bg-[#fbfbfe] px-2 py-1.5 text-[11px] font-medium text-[#4b5563]">
                                     <span className="h-2 w-2 rounded-full bg-red-500" />
-                                    <span>{t("landing.engines.automation.platformCsdn")}</span>
+                                    <span>
+                                        {t(
+                                            "landing.engines.automation.platformCsdn",
+                                        )}
+                                    </span>
                                 </div>
                                 <div className="flex items-center justify-center gap-1.5 rounded-lg border border-[#f0f1f8] bg-[#fbfbfe] px-2 py-1.5 text-[11px] font-medium text-[#4b5563]">
                                     <span className="h-2 w-2 rounded-full bg-blue-500" />
-                                    <span>{t("landing.engines.automation.platformJuejin")}</span>
+                                    <span>
+                                        {t(
+                                            "landing.engines.automation.platformJuejin",
+                                        )}
+                                    </span>
                                 </div>
                                 <div className="flex items-center justify-center gap-1.5 rounded-lg border border-[#f0f1f8] bg-[#fbfbfe] px-2 py-1.5 text-[11px] font-medium text-[#4b5563]">
                                     <span className="h-2 w-2 rounded-full bg-indigo-500" />
-                                    <span>{t("landing.engines.automation.platformMulti")}</span>
+                                    <span>
+                                        {t(
+                                            "landing.engines.automation.platformMulti",
+                                        )}
+                                    </span>
                                 </div>
                             </div>
                         </div>

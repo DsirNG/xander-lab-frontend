@@ -33,17 +33,26 @@ const LandingFooter = ({ t }) => {
                         </h4>
                         <ul className="mt-3 space-y-2 text-xs text-[#747b9a]">
                             <li>
-                                <Link to="/workspace/img2three" className="hover:text-[#6366f1] transition-colors">
+                                <Link
+                                    to="/workspace/img2three"
+                                    className="hover:text-[#6366f1] transition-colors"
+                                >
                                     {t("landing.footer.prod3d")}
                                 </Link>
                             </li>
                             <li>
-                                <Link to="/workspace/ai" className="hover:text-[#6366f1] transition-colors">
+                                <Link
+                                    to="/workspace/ai"
+                                    className="hover:text-[#6366f1] transition-colors"
+                                >
                                     {t("landing.footer.prodAgent")}
                                 </Link>
                             </li>
                             <li>
-                                <Link to="/workspace/plans" className="hover:text-[#6366f1] transition-colors">
+                                <Link
+                                    to="/workspace/plans"
+                                    className="hover:text-[#6366f1] transition-colors"
+                                >
                                     {t("landing.footer.prodAuto")}
                                 </Link>
                             </li>
@@ -57,17 +66,26 @@ const LandingFooter = ({ t }) => {
                         </h4>
                         <ul className="mt-3 space-y-2 text-xs text-[#747b9a]">
                             <li>
-                                <Link to="/blog" className="hover:text-[#6366f1] transition-colors">
+                                <Link
+                                    to="/blog"
+                                    className="hover:text-[#6366f1] transition-colors"
+                                >
                                     {t("landing.footer.resDocs")}
                                 </Link>
                             </li>
                             <li>
-                                <Link to="/components" className="hover:text-[#6366f1] transition-colors">
+                                <Link
+                                    to="/components"
+                                    className="hover:text-[#6366f1] transition-colors"
+                                >
                                     {t("landing.footer.resApi")}
                                 </Link>
                             </li>
                             <li>
-                                <Link to="/workspace/studio" className="hover:text-[#6366f1] transition-colors">
+                                <Link
+                                    to="/workspace/studio"
+                                    className="hover:text-[#6366f1] transition-colors"
+                                >
                                     {t("landing.footer.resMcp")}
                                 </Link>
                             </li>
@@ -81,17 +99,28 @@ const LandingFooter = ({ t }) => {
                         </h4>
                         <ul className="mt-3 space-y-2 text-xs text-[#747b9a]">
                             <li>
-                                <Link to="/blog" className="hover:text-[#6366f1] transition-colors">
+                                <Link
+                                    to="/blog"
+                                    className="hover:text-[#6366f1] transition-colors"
+                                >
                                     {t("landing.footer.commHall")}
                                 </Link>
                             </li>
                             <li>
-                                <a href="https://github.com/DsirNG/xander-lab-frontend" target="_blank" rel="noreferrer" className="hover:text-[#6366f1] transition-colors">
+                                <a
+                                    href="https://github.com/DsirNG/xander-lab-frontend"
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="hover:text-[#6366f1] transition-colors"
+                                >
                                     {t("landing.footer.commDiscord")}
                                 </a>
                             </li>
                             <li>
-                                <Link to="/components" className="hover:text-[#6366f1] transition-colors">
+                                <Link
+                                    to="/components"
+                                    className="hover:text-[#6366f1] transition-colors"
+                                >
                                     {t("landing.footer.commInspiration")}
                                 </Link>
                             </li>
@@ -126,13 +155,21 @@ const LandingFooter = ({ t }) => {
                 <div className="mt-12 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-[#f0f1f8] pt-6 text-micro text-[#8e94aa]">
                     <div>{t("landing.footer.copyright")}</div>
                     <div className="flex flex-wrap items-center gap-4">
-                        <span className="hover:text-[#6366f1] cursor-pointer">{t("landing.footer.terms")}</span>
+                        <span className="hover:text-[#6366f1] cursor-pointer">
+                            {t("landing.footer.terms")}
+                        </span>
                         <span>•</span>
-                        <span className="hover:text-[#6366f1] cursor-pointer">{t("landing.footer.privacy")}</span>
+                        <span className="hover:text-[#6366f1] cursor-pointer">
+                            {t("landing.footer.privacy")}
+                        </span>
                         <span>•</span>
-                        <span className="hover:text-[#6366f1] cursor-pointer">{t("landing.footer.security")}</span>
+                        <span className="hover:text-[#6366f1] cursor-pointer">
+                            {t("landing.footer.security")}
+                        </span>
                         <span>•</span>
-                        <span className="hover:text-[#6366f1] cursor-pointer">{t("landing.footer.compliance")}</span>
+                        <span className="hover:text-[#6366f1] cursor-pointer">
+                            {t("landing.footer.compliance")}
+                        </span>
                         <span className="hidden sm:inline">|</span>
                         <span>{t("landing.footer.icp")}</span>
                     </div>

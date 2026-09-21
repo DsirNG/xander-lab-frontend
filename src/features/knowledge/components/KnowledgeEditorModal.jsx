@@ -24,9 +24,7 @@ const KnowledgeEditorModal = ({
             isOpen={isOpen}
             onClose={onClose}
             title={t(
-                isCreating
-                    ? "knowledge.createTitle"
-                    : "knowledge.editTitle",
+                isCreating ? "knowledge.createTitle" : "knowledge.editTitle",
             )}
             width="max-w-2xl"
             footer={

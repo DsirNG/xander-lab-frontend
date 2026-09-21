@@ -5,7 +5,8 @@
 
 export default {
     nav: {
-        loginRequired: "Vui lòng đăng nhập hoặc mở không gian làm việc để dùng tính năng này",
+        loginRequired:
+            "Vui lòng đăng nhập hoặc mở không gian làm việc để dùng tính năng này",
         infra: "Hạ tầng",
         modules: "Mô-đun",
         components: "Thành phần",
@@ -525,7 +526,8 @@ export default {
             toolCancelled: "Đã dừng",
             approval: {
                 title: "Cần bạn phê duyệt",
-                description: "Tác tử sẵn sàng chạy {{tool}}. Hãy xác nhận để tiếp tục.",
+                description:
+                    "Tác tử sẵn sàng chạy {{tool}}. Hãy xác nhận để tiếp tục.",
                 tool: "Thao tác đang chờ: {{tool}}",
                 approve: "Phê duyệt",
                 reject: "Từ chối",
@@ -585,8 +587,7 @@ export default {
             artifactDownloadFile: "Tải xuống {{name}}",
             artifactRunHint: "Cách chạy",
             artifactPreviewHint: "Xem trước được",
-            artifactTruncated:
-                "Tệp này quá dài, thẻ chỉ hiển thị phần đầu",
+            artifactTruncated: "Tệp này quá dài, thẻ chỉ hiển thị phần đầu",
         },
         agentImages: {
             title: "Hình ảnh",
@@ -605,11 +606,11 @@ export default {
         agentMcp: {
             title: {
                 user: "Máy chủ MCP của tôi",
-                admin: "Máy chủ MCP của nền tảng"
+                admin: "Máy chủ MCP của nền tảng",
             },
             subtitle: {
                 user: "Kết nối một máy chủ MCP bên thứ ba để đưa công cụ của nó vào trợ lý; mỗi lần gọi đều cần bạn phê duyệt",
-                admin: "Cấu hình máy chủ MCP cấp nền tảng, mọi người dùng đều dùng được; mỗi lần gọi vẫn do người dùng tự phê duyệt"
+                admin: "Cấu hình máy chủ MCP cấp nền tảng, mọi người dùng đều dùng được; mỗi lần gọi vẫn do người dùng tự phê duyệt",
             },
             create: "Thêm máy chủ",
             createTitle: "Thêm máy chủ MCP",
@@ -633,36 +634,46 @@ export default {
             edit: "Sửa",
             delete: "Xóa",
             deleteTitle: "Xóa máy chủ MCP",
-            deleteConfirm: "Xóa \"{{name}}\"? Công cụ của nó sẽ bị gỡ khỏi trợ lý ngay lập tức.",
+            deleteConfirm:
+                'Xóa "{{name}}"? Công cụ của nó sẽ bị gỡ khỏi trợ lý ngay lập tức.',
             deleted: "Đã xóa",
             deleteFailed: "Xóa thất bại",
             emptyTitle: "Chưa cấu hình máy chủ MCP nào",
-            emptyHint: "Thêm một máy chủ MCP từ xa và kiểm tra kết nối, công cụ của nó sẽ xuất hiện trong trợ lý",
+            emptyHint:
+                "Thêm một máy chủ MCP từ xa và kiểm tra kết nối, công cụ của nó sẽ xuất hiện trong trợ lý",
             loadFailed: "Không tải được danh sách máy chủ MCP",
             actionsFor: "Thao tác cho {{name}}",
             created: "Đã thêm",
             updated: "Đã lưu",
             saveFailed: "Lưu thất bại",
-            executableHint: "Lưu ý: đây là năng lực có thể thực thi. Sau khi bật và dò thành công, công cụ từ xa sẽ thực sự vào trợ lý, và lời gọi sẽ rời khỏi nền tảng này kèm theo quyền của bạn.",
+            executableHint:
+                "Lưu ý: đây là năng lực có thể thực thi. Sau khi bật và dò thành công, công cụ từ xa sẽ thực sự vào trợ lý, và lời gọi sẽ rời khỏi nền tảng này kèm theo quyền của bạn.",
             fieldKey: "Mã máy chủ",
-            fieldKeyHint: "2-20 chữ thường, chữ số hoặc dấu gạch ngang; nằm trong tiền tố tên công cụ và không sửa được sau khi tạo",
+            fieldKeyHint:
+                "2-20 chữ thường, chữ số hoặc dấu gạch ngang; nằm trong tiền tố tên công cụ và không sửa được sau khi tạo",
             fieldName: "Tên hiển thị",
             fieldNamePlaceholder: "ví dụ GitHub",
             fieldEndpoint: "URL điểm cuối",
-            fieldEndpointHint: "Phải là HTTPS không nhúng thông tin xác thực và phân giải tới địa chỉ công cộng",
+            fieldEndpointHint:
+                "Phải là HTTPS không nhúng thông tin xác thực và phân giải tới địa chỉ công cộng",
             fieldHeaders: "Tiêu đề yêu cầu bổ sung",
-            fieldHeadersHint: "Mỗi dòng một mục dạng \"Tên: giá trị\", dùng cho Authorization và các thông tin máy chủ yêu cầu; để trống nếu không cần",
-            formClearHeaders: "Xóa thông tin xác thực đã lưu (để trống để giữ lại)",
+            fieldHeadersHint:
+                'Mỗi dòng một mục dạng "Tên: giá trị", dùng cho Authorization và các thông tin máy chủ yêu cầu; để trống nếu không cần',
+            formClearHeaders:
+                "Xóa thông tin xác thực đã lưu (để trống để giữ lại)",
             formEnabled: "Bật",
-            formEnabledHint: "Chỉ khi bật, các công cụ đã dò mới vào trợ lý; nếu không chúng sẽ không xuất hiện",
-            formKeyInvalid: "Mã máy chủ phải là 2-20 chữ thường, chữ số hoặc dấu gạch ngang, bắt đầu bằng chữ cái",
+            formEnabledHint:
+                "Chỉ khi bật, các công cụ đã dò mới vào trợ lý; nếu không chúng sẽ không xuất hiện",
+            formKeyInvalid:
+                "Mã máy chủ phải là 2-20 chữ thường, chữ số hoặc dấu gạch ngang, bắt đầu bằng chữ cái",
             formNameRequired: "Vui lòng nhập tên hiển thị",
             formNameTooLong: "Tên hiển thị tối đa {{max}} ký tự",
             formEndpointRequired: "Vui lòng nhập URL điểm cuối",
             formEndpointTooLong: "URL điểm cuối tối đa {{max}} ký tự",
             formEndpointNotHttps: "URL điểm cuối phải dùng HTTPS",
-            formHeadersInvalid: "Tiêu đề ở dòng {{lines}} sai định dạng; cần dạng \"Tên: giá trị\"",
-            formHeadersTooMany: "Tối đa {{max}} tiêu đề"
+            formHeadersInvalid:
+                'Tiêu đề ở dòng {{lines}} sai định dạng; cần dạng "Tên: giá trị"',
+            formHeadersTooMany: "Tối đa {{max}} tiêu đề",
         },
         agentSkills: {
             title: "Kỹ năng",
@@ -684,8 +695,7 @@ export default {
             newVersion: "Phiên bản mới",
             archive: "Lưu trữ",
             archiveTitle: "Lưu trữ kỹ năng",
-            archiveConfirm:
-                "Lưu trữ \"{{name}}\"? Agent sẽ không đọc nó nữa.",
+            archiveConfirm: 'Lưu trữ "{{name}}"? Agent sẽ không đọc nó nữa.',
             archiveFailed: "Lưu trữ thất bại, vui lòng thử lại sau",
             archived: "Đã lưu trữ",
             createTitle: "Tạo kỹ năng",
@@ -1995,7 +2005,8 @@ export default {
             serverBusy: "Máy chủ bận, vui lòng thử lại sau",
             networkError: "Yêu cầu mạng thất bại, kiểm tra kết nối",
             noRefreshToken: "Không có token làm mới, vui lòng đăng nhập lại",
-            refreshUnavailable: "Tạm thời không thể làm mới phiên, vui lòng thử lại sau",
+            refreshUnavailable:
+                "Tạm thời không thể làm mới phiên, vui lòng thử lại sau",
             retryPrefix: "[HTTP] Thử lại",
             retrySuffix: "độ trễ",
             cancelled: "Yêu cầu đã bị hủy",
@@ -2130,7 +2141,8 @@ export default {
         tabDocs: "Kho tri thức tài liệu",
         tabMirror: "Gương tri thức / ôn tập",
         title: "Kho tri thức tài liệu",
-        subtitle: "Trung tâm tri thức riêng tư và sơ đồ tư duy, dựa trên tách từ thông minh và trích xuất chương",
+        subtitle:
+            "Trung tâm tri thức riêng tư và sơ đồ tư duy, dựa trên tách từ thông minh và trích xuất chương",
         folders: {
             allDocs: "Tất cả tài liệu",
             title: "Thư mục",
@@ -2148,7 +2160,8 @@ export default {
             subfolders: "Thư mục con",
             newSubfolder: "Tạo thư mục con",
             confirmDeleteTitle: "Xoá thư mục",
-            confirmDeleteMsg: "Xoá thư mục “{{name}}”? Toàn bộ thư mục con và tài liệu bên trong sẽ bị xoá vĩnh viễn.",
+            confirmDeleteMsg:
+                "Xoá thư mục “{{name}}”? Toàn bộ thư mục con và tài liệu bên trong sẽ bị xoá vĩnh viễn.",
             created: "Đã tạo thư mục",
             renamed: "Đã đổi tên thư mục",
             moved: "Đã di chuyển thư mục",
@@ -2164,7 +2177,8 @@ export default {
             viewList: "Dạng danh sách",
             emptyTitle: "Chưa có tài liệu trong mục này",
             emptyFolderOnly: "Thư mục này chưa có tệp trực tiếp",
-            emptyHint: "Nhấn nút tải lên ở góc trên bên phải — hệ thống sẽ tự tách chương và dựng sơ đồ tư duy.",
+            emptyHint:
+                "Nhấn nút tải lên ở góc trên bên phải — hệ thống sẽ tự tách chương và dựng sơ đồ tư duy.",
             uploadNow: "Tải tài liệu lên",
             name: "Tên",
             status: "Trạng thái cấu trúc tri thức",
@@ -2177,7 +2191,8 @@ export default {
             chapterCount: "Số chương nhận diện được",
             manageTags: "Thẻ gắn với tệp",
             confirmDeleteTitle: "Xoá tệp",
-            confirmDeleteMsg: "Xoá vĩnh viễn tệp “{{name}}”? Đối tượng lưu trữ và sơ đồ cấu trúc đã tạo cũng sẽ bị xoá theo.",
+            confirmDeleteMsg:
+                "Xoá vĩnh viễn tệp “{{name}}”? Đối tượng lưu trữ và sơ đồ cấu trúc đã tạo cũng sẽ bị xoá theo.",
             moved: "Đã di chuyển tệp",
             deleted: "Đã xoá tệp",
             reidentify: "Nhận diện lại",
@@ -2187,13 +2202,16 @@ export default {
             btn: "Tải tài liệu lên",
             title: "Tải tài liệu lên kho tri thức",
             targetFolder: "Thư mục lưu",
-            needFolderFirst: "Trước tiên hãy tạo ít nhất một thư mục ở bên trái — không thể đặt tệp trực tiếp ở thư mục gốc.",
+            needFolderFirst:
+                "Trước tiên hãy tạo ít nhất một thư mục ở bên trái — không thể đặt tệp trực tiếp ở thư mục gốc.",
             selectFileLabel: "Chọn tệp",
             dragHint: "Kéo tệp vào đây, hoặc nhấn để duyệt",
-            supportHint: "Hỗ trợ Markdown, PDF, Word, TXT, JSON, HTML và hơn thế (tối đa 50MB mỗi tệp)",
+            supportHint:
+                "Hỗ trợ Markdown, PDF, Word, TXT, JSON, HTML và hơn thế (tối đa 50MB mỗi tệp)",
             tagsLabel: "Thẻ kèm theo (tuỳ chọn)",
             tagsPlaceholder: "Nhập tên thẻ rồi nhấn Enter để thêm",
-            progressDesc: "Sau khi lưu, hệ thống sẽ tự trích xuất nội dung và nhận diện chương cùng các nút đồ thị tri thức...",
+            progressDesc:
+                "Sau khi lưu, hệ thống sẽ tự trích xuất nội dung và nhận diện chương cùng các nút đồ thị tri thức...",
             submitBtn: "Bắt đầu tải lên",
             uploadingBtn: "Đang tải lên...",
             preparing: "Đang chuẩn bị tải lên...",
@@ -2216,7 +2234,8 @@ export default {
             rawFile: "Tệp nguồn",
             loadFailed: "Không tải được bản xem trước",
             noStructureTitle: "Chưa có sơ đồ",
-            noStructureDesc: "Với tài liệu dài, hãy mở “Dàn ý chương” để tạo sơ đồ tư duy cho từng chương theo nhu cầu.",
+            noStructureDesc:
+                "Với tài liệu dài, hãy mở “Dàn ý chương” để tạo sơ đồ tư duy cho từng chương theo nhu cầu.",
             generateNow: "Tạo sơ đồ ngay",
             outline: "Danh sách chương",
             noChapters: "Không nhận diện được chương nào",
@@ -2224,7 +2243,8 @@ export default {
             excerptTitle: "Trích đoạn nội dung",
             loadFull: "Tải toàn văn",
             noContent: "Chưa có nội dung văn bản",
-            truncatedNotice: "(Màn hình đầu chỉ hiển thị 2.000 ký tự đầu; nhấn “Tải toàn văn” ở góc trên bên phải để đọc trọn tài liệu)",
+            truncatedNotice:
+                "(Màn hình đầu chỉ hiển thị 2.000 ký tự đầu; nhấn “Tải toàn văn” ở góc trên bên phải để đọc trọn tài liệu)",
         },
         tags: {
             title: "Thẻ",

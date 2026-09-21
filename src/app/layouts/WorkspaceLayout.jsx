@@ -2,10 +2,7 @@ import { useState } from "react";
 import { Outlet } from "react-router-dom";
 import { ProtectedRoute, useAuthSession } from "@features/auth";
 import { ProfileModal } from "@features/profile";
-import {
-    WorkspaceShell,
-    WorkspaceSidebar,
-} from "@features/workspace";
+import { WorkspaceShell, WorkspaceSidebar } from "@features/workspace";
 
 const WorkspaceLayoutInner = () => {
     const { userInfo } = useAuthSession();

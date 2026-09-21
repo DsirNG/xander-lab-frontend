@@ -9,17 +9,35 @@ import { ArrowRight, Box, Layers, MessageSquare } from "lucide-react";
 const IsometricGalleryGraphic = () => (
     <svg viewBox="0 0 160 120" fill="none" className="h-28 w-full">
         <defs>
-            <linearGradient id="baseIsland" x1="20" y1="60" x2="140" y2="110" gradientUnits="userSpaceOnUse">
+            <linearGradient
+                id="baseIsland"
+                x1="20"
+                y1="60"
+                x2="140"
+                y2="110"
+                gradientUnits="userSpaceOnUse"
+            >
                 <stop offset="0%" stopColor="#818cf8" />
                 <stop offset="100%" stopColor="#4338ca" />
             </linearGradient>
         </defs>
-        <path d="M80 30 L136 60 L80 90 L24 60 Z" fill="#e0e7ff" stroke="#c7d2fe" />
+        <path
+            d="M80 30 L136 60 L80 90 L24 60 Z"
+            fill="#e0e7ff"
+            stroke="#c7d2fe"
+        />
         <path d="M24 60 L80 90 L80 110 L24 80 Z" fill="#6366f1" />
         <path d="M136 60 L80 90 L80 110 L136 80 Z" fill="#4338ca" />
         {/* Isometric mini building on top */}
         <path d="M70 42 L90 32 L110 42 L90 52 Z" fill="#fbbf24" />
-        <rect x="74" y="46" width="32" height="24" fill="#ffffff" stroke="#cbd5e1" />
+        <rect
+            x="74"
+            y="46"
+            width="32"
+            height="24"
+            fill="#ffffff"
+            stroke="#cbd5e1"
+        />
         <circle cx="90" cy="58" r="4" fill="#3b82f6" />
     </svg>
 );
@@ -30,15 +48,52 @@ const IsometricGalleryGraphic = () => (
 const FlowCraftGraphGraphic = () => (
     <svg viewBox="0 0 160 120" fill="none" className="h-28 w-full">
         {/* Connection curves */}
-        <path d="M40 40 C70 40 70 80 100 80" stroke="#818cf8" strokeWidth="2.5" strokeDasharray="4 3" />
-        <path d="M40 80 C70 80 70 40 100 40" stroke="#c084fc" strokeWidth="2.5" />
+        <path
+            d="M40 40 C70 40 70 80 100 80"
+            stroke="#818cf8"
+            strokeWidth="2.5"
+            strokeDasharray="4 3"
+        />
+        <path
+            d="M40 80 C70 80 70 40 100 40"
+            stroke="#c084fc"
+            strokeWidth="2.5"
+        />
         <path d="M100 60 L136 60" stroke="#38bdf8" strokeWidth="2.5" />
 
         {/* Nodes */}
-        <circle cx="40" cy="40" r="12" fill="#ffffff" stroke="#818cf8" strokeWidth="2.5" />
-        <circle cx="40" cy="80" r="12" fill="#ffffff" stroke="#c084fc" strokeWidth="2.5" />
-        <circle cx="100" cy="40" r="12" fill="#ffffff" stroke="#60a5fa" strokeWidth="2.5" />
-        <circle cx="100" cy="80" r="12" fill="#ffffff" stroke="#34d399" strokeWidth="2.5" />
+        <circle
+            cx="40"
+            cy="40"
+            r="12"
+            fill="#ffffff"
+            stroke="#818cf8"
+            strokeWidth="2.5"
+        />
+        <circle
+            cx="40"
+            cy="80"
+            r="12"
+            fill="#ffffff"
+            stroke="#c084fc"
+            strokeWidth="2.5"
+        />
+        <circle
+            cx="100"
+            cy="40"
+            r="12"
+            fill="#ffffff"
+            stroke="#60a5fa"
+            strokeWidth="2.5"
+        />
+        <circle
+            cx="100"
+            cy="80"
+            r="12"
+            fill="#ffffff"
+            stroke="#34d399"
+            strokeWidth="2.5"
+        />
         <circle cx="136" cy="60" r="10" fill="#6366f1" />
     </svg>
 );

@@ -94,7 +94,10 @@ describe("parseArtifactPayload", () => {
         // 页面拿它当判断条件：返回空壳会让消息既不是卡片也不是正文，直接从时间线上消失。
         expect(parseArtifactPayload(null)).toBe(null);
         expect(
-            parseArtifactPayload({ kind: "answer", content: "已完成 WebSocket 示例" }),
+            parseArtifactPayload({
+                kind: "answer",
+                content: "已完成 WebSocket 示例",
+            }),
         ).toBe(null);
         expect(parseArtifactPayload({ kind: "artifact", content: "{" })).toBe(
             null,
@@ -222,7 +225,9 @@ describe("ArtifactCard", () => {
             render(<ArtifactCard payload={{ type: "artifact", files: [] }} />)
                 .container,
         ).toBeEmptyDOMElement();
-        expect(render(<ArtifactCard payload={null} />).container).toBeEmptyDOMElement();
+        expect(
+            render(<ArtifactCard payload={null} />).container,
+        ).toBeEmptyDOMElement();
     });
 
     it("falls back to a generic title and to the extension as the language", () => {
@@ -236,7 +241,9 @@ describe("ArtifactCard", () => {
         );
 
         expect(
-            screen.getByRole("region", { name: "blog.agentChat.artifactTitle" }),
+            screen.getByRole("region", {
+                name: "blog.agentChat.artifactTitle",
+            }),
         ).toBeInTheDocument();
         expect(screen.getByTestId("code-block")).toHaveAttribute(
             "data-language",

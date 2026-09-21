@@ -120,7 +120,9 @@ const KnowledgeStructurePreviewPanel = ({
         if (!file?.id) return;
         setGenLoading(true);
         try {
-            const updated = await knowledgeBaseService.structure.regenerate(file.id);
+            const updated = await knowledgeBaseService.structure.regenerate(
+                file.id,
+            );
             setStructureData((prev) => ({
                 ...prev,
                 structure: updated,
@@ -138,7 +140,10 @@ const KnowledgeStructurePreviewPanel = ({
     };
 
     const rootNode = structureData?.structure?.root;
-    const chapters = useMemo(() => structureData?.chapters || [], [structureData]);
+    const chapters = useMemo(
+        () => structureData?.chapters || [],
+        [structureData],
+    );
 
     // 当前选中的章节
     const activeChapter = useMemo(() => {
@@ -154,7 +159,9 @@ const KnowledgeStructurePreviewPanel = ({
         });
     }, [fullContent, structureData, activeChapter]);
 
-    const isExcerptTruncated = Boolean(structureData?.excerptTruncated && !fullContent && !activeChapter);
+    const isExcerptTruncated = Boolean(
+        structureData?.excerptTruncated && !fullContent && !activeChapter,
+    );
 
     if (!file) return null;
 
@@ -163,7 +170,9 @@ const KnowledgeStructurePreviewPanel = ({
         file.description ||
         structureData?.summary ||
         structureData?.structure?.root?.summary ||
-        (displayText ? displayText.slice(0, 240).replace(/#+\s/g, "").trim() + "..." : "文档已完成智能解析与入库，点击开始阅读可查阅完整章节与原文档细节。");
+        (displayText
+            ? displayText.slice(0, 240).replace(/#+\s/g, "").trim() + "..."
+            : "文档已完成智能解析与入库，点击开始阅读可查阅完整章节与原文档细节。");
 
     return (
         <div className="flex h-full min-h-0 w-[420px] shrink-0 flex-col justify-between rounded-2xl border border-[#e9eaf3] bg-white/85 backdrop-blur-xs p-4 shadow-xs dark:border-white/5 dark:bg-surface overflow-hidden transition-all lg:w-[460px] xl:w-[480px]">
@@ -184,7 +193,13 @@ const KnowledgeStructurePreviewPanel = ({
                                 {file.displayName}
                             </h3>
                             <div className="mt-0.5 text-[11px] text-[#8e94ad] dark:text-slate-500">
-                                {formatBytes(file.fileSize || file.sizeBytes || 0)} · {formatKnowledgeDateTime(file.updatedAt || file.createdAt)}
+                                {formatBytes(
+                                    file.fileSize || file.sizeBytes || 0,
+                                )}{" "}
+                                ·{" "}
+                                {formatKnowledgeDateTime(
+                                    file.updatedAt || file.createdAt,
+                                )}
                             </div>
                         </div>
                     </div>
@@ -294,7 +309,9 @@ const KnowledgeStructurePreviewPanel = ({
                                     }`}
                                 >
                                     <div className="flex items-center justify-between font-medium">
-                                        <span className="truncate">第 {idx + 1} 章: {ch.title}</span>
+                                        <span className="truncate">
+                                            第 {idx + 1} 章: {ch.title}
+                                        </span>
                                         <span className="text-[11px] text-[#8e94ad] shrink-0">
                                             {ch.charCount ?? 0} 字 →
                                         </span>
@@ -320,22 +337,28 @@ const KnowledgeStructurePreviewPanel = ({
                                         {chNode.title}
                                     </div>
                                     <div className="mt-2 space-y-1.5">
-                                        {(chNode.children || []).map((point, pIdx) => (
-                                            <div
-                                                key={point.id || pIdx}
-                                                className="flex items-center gap-1.5 text-[11px] text-[#555b7b] dark:text-slate-400"
-                                            >
-                                                <CircleDot className="h-2.5 w-2.5 text-[#6765f6] shrink-0" />
-                                                <span className="truncate">{point.title}</span>
-                                            </div>
-                                        ))}
+                                        {(chNode.children || []).map(
+                                            (point, pIdx) => (
+                                                <div
+                                                    key={point.id || pIdx}
+                                                    className="flex items-center gap-1.5 text-[11px] text-[#555b7b] dark:text-slate-400"
+                                                >
+                                                    <CircleDot className="h-2.5 w-2.5 text-[#6765f6] shrink-0" />
+                                                    <span className="truncate">
+                                                        {point.title}
+                                                    </span>
+                                                </div>
+                                            ),
+                                        )}
                                     </div>
                                 </div>
                             ))
                         ) : (
                             <div className="rounded-2xl border border-dashed border-[#e9eaf4] p-8 text-center text-xs text-[#8e94ad] dark:border-white/10">
                                 <Network className="mx-auto h-8 w-8 text-[#8e94ad]/60 dark:text-slate-600" />
-                                <div className="mt-2.5 font-medium text-[#111426] dark:text-slate-300">尚未生成结构导图</div>
+                                <div className="mt-2.5 font-medium text-[#111426] dark:text-slate-300">
+                                    尚未生成结构导图
+                                </div>
                                 <button
                                     type="button"
                                     onClick={handleRegenerate}
@@ -343,7 +366,11 @@ const KnowledgeStructurePreviewPanel = ({
                                     className="mt-3.5 inline-flex items-center gap-1.5 rounded-xl bg-[#7771ed] hover:bg-[#6862e3] px-3.5 py-1.5 text-xs font-medium text-white shadow-xs transition disabled:opacity-50"
                                 >
                                     <Sparkles className="h-3.5 w-3.5" />
-                                    <span>{genLoading ? "生成中..." : "立即生成结构图"}</span>
+                                    <span>
+                                        {genLoading
+                                            ? "生成中..."
+                                            : "立即生成结构图"}
+                                    </span>
                                 </button>
                             </div>
                         )}
@@ -354,23 +381,38 @@ const KnowledgeStructurePreviewPanel = ({
                         <div className="rounded-xl border border-[#eef0f6] bg-[#fbfbfe] p-3.5 space-y-2.5 dark:border-white/5 dark:bg-white/[0.02]">
                             <div className="flex items-center justify-between">
                                 <span className="text-[#8e94ad]">文件格式</span>
-                                <span className="font-semibold uppercase text-[#111426] dark:text-slate-200">{ext}</span>
+                                <span className="font-semibold uppercase text-[#111426] dark:text-slate-200">
+                                    {ext}
+                                </span>
                             </div>
                             <div className="flex items-center justify-between">
                                 <span className="text-[#8e94ad]">存储大小</span>
-                                <span className="font-medium text-[#111426] dark:text-slate-200">{formatBytes(file.fileSize || file.sizeBytes || 0)}</span>
+                                <span className="font-medium text-[#111426] dark:text-slate-200">
+                                    {formatBytes(
+                                        file.fileSize || file.sizeBytes || 0,
+                                    )}
+                                </span>
                             </div>
                             <div className="flex items-center justify-between">
                                 <span className="text-[#8e94ad]">字符总数</span>
-                                <span className="font-medium text-[#111426] dark:text-slate-200">{file.charCount ?? displayText?.length ?? "-"} 字</span>
+                                <span className="font-medium text-[#111426] dark:text-slate-200">
+                                    {file.charCount ??
+                                        displayText?.length ??
+                                        "-"}{" "}
+                                    字
+                                </span>
                             </div>
                             <div className="flex items-center justify-between">
                                 <span className="text-[#8e94ad]">入库时间</span>
-                                <span className="font-medium text-[#111426] dark:text-slate-200">{formatKnowledgeDateTime(file.createdAt)}</span>
+                                <span className="font-medium text-[#111426] dark:text-slate-200">
+                                    {formatKnowledgeDateTime(file.createdAt)}
+                                </span>
                             </div>
                             {file.fileSha256 ? (
                                 <div className="pt-2 border-t border-[#eef0f6] dark:border-white/5">
-                                    <div className="text-[#8e94ad] mb-0.5">SHA-256 校验和</div>
+                                    <div className="text-[#8e94ad] mb-0.5">
+                                        SHA-256 校验和
+                                    </div>
                                     <div className="font-mono text-[10px] text-[#555b7b] break-all dark:text-slate-400">
                                         {file.fileSha256}
                                     </div>
@@ -418,13 +460,19 @@ const KnowledgeStructurePreviewPanel = ({
                                             >
                                                 <span
                                                     className="h-1.5 w-1.5 rounded-full"
-                                                    style={{ backgroundColor: tag.colorHex || "#7771ed" }}
+                                                    style={{
+                                                        backgroundColor:
+                                                            tag.colorHex ||
+                                                            "#7771ed",
+                                                    }}
                                                 />
                                                 <span>{tag.name}</span>
                                             </span>
                                         ))
                                     ) : (
-                                        <span className="text-[#8e94ad] text-[11px]">暂无关联标签</span>
+                                        <span className="text-[#8e94ad] text-[11px]">
+                                            暂无关联标签
+                                        </span>
                                     )}
                                 </div>
                             </div>

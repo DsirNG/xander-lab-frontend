@@ -111,10 +111,19 @@ export default function useEmailReminderForm({ onClose, onCreated, t }) {
     );
 
     const scheduleLabel = useMemo(() => {
-        const { frequency, scheduledLocal, sendTime, recurrenceDay, intervalDays } = form;
-        if (frequency === "ONCE") return scheduledLocal?.replace("T", " ") || "—";
+        const {
+            frequency,
+            scheduledLocal,
+            sendTime,
+            recurrenceDay,
+            intervalDays,
+        } = form;
+        if (frequency === "ONCE")
+            return scheduledLocal?.replace("T", " ") || "—";
         if (frequency === "DAILY") {
-            return t("profile.emailReminders.scheduleDaily", { time: sendTime });
+            return t("profile.emailReminders.scheduleDaily", {
+                time: sendTime,
+            });
         }
         if (frequency === "WEEKLY") {
             return t("profile.emailReminders.scheduleWeekly", {
@@ -137,13 +146,22 @@ export default function useEmailReminderForm({ onClose, onCreated, t }) {
     const previewHtml = useMemo(
         () =>
             buildReminderPreviewHtml({
-                subject: form.subject || t("profile.emailReminders.previewSubject"),
-                message: form.message || t("profile.emailReminders.previewMessage"),
+                subject:
+                    form.subject || t("profile.emailReminders.previewSubject"),
+                message:
+                    form.message || t("profile.emailReminders.previewMessage"),
                 templateId: form.templateId,
                 scheduledLabel: scheduleLabel,
                 timezone: form.timezone,
             }),
-        [form.message, form.subject, form.templateId, form.timezone, scheduleLabel, t],
+        [
+            form.message,
+            form.subject,
+            form.templateId,
+            form.timezone,
+            scheduleLabel,
+            t,
+        ],
     );
 
     const templateCards = useMemo(
@@ -151,7 +169,9 @@ export default function useEmailReminderForm({ onClose, onCreated, t }) {
             TEMPLATE_IDS.map((templateId) => ({
                 id: templateId,
                 previewHtml: buildReminderPreviewHtml({
-                    subject: form.subject || t("profile.emailReminders.previewSubject"),
+                    subject:
+                        form.subject ||
+                        t("profile.emailReminders.previewSubject"),
                     message: HTML_STARTERS[templateId],
                     templateId,
                     scheduledLabel: scheduleLabel,
@@ -242,7 +262,9 @@ export default function useEmailReminderForm({ onClose, onCreated, t }) {
             if (frequency === "CUSTOM") {
                 const days = Number(form.intervalDays);
                 if (!Number.isInteger(days) || days < 1 || days > 365) {
-                    toast.warning(t("profile.emailReminders.intervalDaysInvalid"));
+                    toast.warning(
+                        t("profile.emailReminders.intervalDaysInvalid"),
+                    );
                     return;
                 }
                 payload.intervalDays = days;

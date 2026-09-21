@@ -5,7 +5,9 @@ import { useTranslation } from "react-i18next";
 const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 const normalizeQuiz = (payload) => {
-    const questions = Array.isArray(payload?.questions) ? payload.questions : [];
+    const questions = Array.isArray(payload?.questions)
+        ? payload.questions
+        : [];
     return {
         id: payload?.id || payload?.quizId || "quiz",
         title: payload?.title || "",
@@ -20,7 +22,8 @@ const normalizeQuiz = (payload) => {
                       typeof option === "string"
                           ? { value: option, label: option }
                           : {
-                                value: option?.value ?? option?.id ?? optionIndex,
+                                value:
+                                    option?.value ?? option?.id ?? optionIndex,
                                 label: option?.label ?? option?.text ?? "",
                             },
                   )
@@ -41,7 +44,8 @@ export const QuizCardStack = ({ payload, onSubmit }) => {
     if (!quiz.questions.length) return null;
 
     // payload 换新时 current 可能越界（组件按 message.id 复用），越界直接不渲染而不是崩掉整页。
-    const question = quiz.questions[Math.min(current, quiz.questions.length - 1)];
+    const question =
+        quiz.questions[Math.min(current, quiz.questions.length - 1)];
     if (!question) return null;
     const answer = answers[question.id];
     const answeredCount = Object.keys(answers).length;
@@ -54,7 +58,11 @@ export const QuizCardStack = ({ payload, onSubmit }) => {
 
     const toggleMultiple = (value) => {
         const values = Array.isArray(answer) ? answer : [];
-        updateAnswer(values.includes(value) ? values.filter((item) => item !== value) : [...values, value]);
+        updateAnswer(
+            values.includes(value)
+                ? values.filter((item) => item !== value)
+                : [...values, value],
+        );
     };
 
     const submit = async () => {
@@ -85,16 +93,27 @@ export const QuizCardStack = ({ payload, onSubmit }) => {
     };
 
     return (
-        <section className="my-2 w-full max-w-2xl" aria-label={quiz.title || t("blog.agentChat.quizTitle")}>
+        <section
+            className="my-2 w-full max-w-2xl"
+            aria-label={quiz.title || t("blog.agentChat.quizTitle")}
+        >
             <div className="mb-3 flex items-center justify-between gap-3 px-1">
                 <div className="min-w-0">
-                    <div className="text-title text-ink">{quiz.title || t("blog.agentChat.quizTitle")}</div>
+                    <div className="text-title text-ink">
+                        {quiz.title || t("blog.agentChat.quizTitle")}
+                    </div>
                     <div className="mt-1 text-caption text-ink-muted">
-                        {t("blog.agentChat.quizProgress", { current: current + 1, total: quiz.questions.length })}
+                        {t("blog.agentChat.quizProgress", {
+                            current: current + 1,
+                            total: quiz.questions.length,
+                        })}
                     </div>
                 </div>
                 <div className="shrink-0 text-caption text-ink-muted">
-                    {t("blog.agentChat.quizAnswered", { count: answeredCount, total: quiz.questions.length })}
+                    {t("blog.agentChat.quizAnswered", {
+                        count: answeredCount,
+                        total: quiz.questions.length,
+                    })}
                 </div>
             </div>
 
@@ -120,13 +139,25 @@ export const QuizCardStack = ({ payload, onSubmit }) => {
                                     key={`${question.id}-${option.value}`}
                                     type="button"
                                     disabled={submitted}
-                                    onClick={() => question.type === "multiple" ? toggleMultiple(option.value) : updateAnswer(option.value)}
+                                    onClick={() =>
+                                        question.type === "multiple"
+                                            ? toggleMultiple(option.value)
+                                            : updateAnswer(option.value)
+                                    }
                                     className={`flex min-h-12 items-center gap-3 rounded-xl border px-3 text-left text-body transition ${selected ? "border-accent bg-accent-soft text-accent-fg" : "border-border bg-canvas text-ink-secondary hover:border-border-strong hover:bg-surface-muted"} disabled:cursor-default`}
                                 >
-                                    <span className={`grid h-7 w-7 shrink-0 place-items-center rounded-lg border text-caption font-semibold ${selected ? "border-accent bg-accent text-white" : "border-border-strong bg-surface text-ink-muted"}`}>
-                                        {selected ? <Check className="h-4 w-4" /> : LETTERS[index] || index + 1}
+                                    <span
+                                        className={`grid h-7 w-7 shrink-0 place-items-center rounded-lg border text-caption font-semibold ${selected ? "border-accent bg-accent text-white" : "border-border-strong bg-surface text-ink-muted"}`}
+                                    >
+                                        {selected ? (
+                                            <Check className="h-4 w-4" />
+                                        ) : (
+                                            LETTERS[index] || index + 1
+                                        )}
                                     </span>
-                                    <span className="min-w-0 flex-1">{option.label}</span>
+                                    <span className="min-w-0 flex-1">
+                                        {option.label}
+                                    </span>
                                 </button>
                             );
                         })}
@@ -156,22 +187,49 @@ export const QuizCardStack = ({ payload, onSubmit }) => {
             </div>
 
             <div className="mt-3 flex items-center justify-between gap-2">
-                <button type="button" onClick={() => setCurrent((value) => Math.max(0, value - 1))} disabled={current === 0} className="inline-flex h-9 items-center gap-1.5 rounded-lg px-2 text-caption font-semibold text-ink-muted hover:bg-surface-muted disabled:opacity-40" aria-label={t("blog.agentChat.quizPrevious")}>
-                    <ArrowLeft className="h-4 w-4" /> {t("blog.agentChat.quizPrevious")}
+                <button
+                    type="button"
+                    onClick={() =>
+                        setCurrent((value) => Math.max(0, value - 1))
+                    }
+                    disabled={current === 0}
+                    className="inline-flex h-9 items-center gap-1.5 rounded-lg px-2 text-caption font-semibold text-ink-muted hover:bg-surface-muted disabled:opacity-40"
+                    aria-label={t("blog.agentChat.quizPrevious")}
+                >
+                    <ArrowLeft className="h-4 w-4" />{" "}
+                    {t("blog.agentChat.quizPrevious")}
                 </button>
                 {isLast ? (
-                    <button type="button" onClick={submit} disabled={submitted || submitting} className="inline-flex h-10 items-center gap-2 rounded-xl bg-ink px-4 text-body font-semibold text-white hover:bg-ink-secondary disabled:opacity-50">
-                        <Send className="h-4 w-4" /> {t("blog.agentChat.quizSubmit")}
+                    <button
+                        type="button"
+                        onClick={submit}
+                        disabled={submitted || submitting}
+                        className="inline-flex h-10 items-center gap-2 rounded-xl bg-ink px-4 text-body font-semibold text-white hover:bg-ink-secondary disabled:opacity-50"
+                    >
+                        <Send className="h-4 w-4" />{" "}
+                        {t("blog.agentChat.quizSubmit")}
                     </button>
                 ) : (
-                    <button type="button" onClick={() => setCurrent((value) => Math.min(quiz.questions.length - 1, value + 1))} className="inline-flex h-9 items-center gap-1.5 rounded-lg px-2 text-caption font-semibold text-ink hover:bg-surface-muted">
-                        {t("blog.agentChat.quizNext")} <ArrowRight className="h-4 w-4" />
+                    <button
+                        type="button"
+                        onClick={() =>
+                            setCurrent((value) =>
+                                Math.min(quiz.questions.length - 1, value + 1),
+                            )
+                        }
+                        className="inline-flex h-9 items-center gap-1.5 rounded-lg px-2 text-caption font-semibold text-ink hover:bg-surface-muted"
+                    >
+                        {t("blog.agentChat.quizNext")}{" "}
+                        <ArrowRight className="h-4 w-4" />
                     </button>
                 )}
             </div>
             {answeredCount < quiz.questions.length && !submitted ? (
                 <div className="mt-2 flex items-center justify-end gap-1 text-micro text-ink-muted">
-                    <CircleAlert className="h-3.5 w-3.5" /> {t("blog.agentChat.quizUnanswered", { count: quiz.questions.length - answeredCount })}
+                    <CircleAlert className="h-3.5 w-3.5" />{" "}
+                    {t("blog.agentChat.quizUnanswered", {
+                        count: quiz.questions.length - answeredCount,
+                    })}
                 </div>
             ) : null}
         </section>

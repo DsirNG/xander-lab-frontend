@@ -10,7 +10,11 @@
  * 既不显示成卡片、也不显示成正文，直接从时间线上消失。</p>
  */
 const asQuiz = (value) => {
-    if (!value || !Array.isArray(value.questions) || value.questions.length === 0) {
+    if (
+        !value ||
+        !Array.isArray(value.questions) ||
+        value.questions.length === 0
+    ) {
         return null;
     }
     return value;
@@ -19,9 +23,7 @@ const asQuiz = (value) => {
 export const parseQuizPayload = (message) => {
     if (!message) return null;
     const direct =
-        asQuiz(message.quiz) ||
-        asQuiz(message.payload) ||
-        asQuiz(message);
+        asQuiz(message.quiz) || asQuiz(message.payload) || asQuiz(message);
     if (direct) return direct;
     if (typeof message.content !== "string" || !message.content.trim())
         return null;

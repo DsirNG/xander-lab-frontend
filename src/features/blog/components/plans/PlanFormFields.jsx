@@ -69,7 +69,9 @@ export default function PlanFormFields({
                             <button
                                 key={value}
                                 type="button"
-                                onClick={() => updateForm("scheduleType", value)}
+                                onClick={() =>
+                                    updateForm("scheduleType", value)
+                                }
                                 className={`relative rounded-xl border px-4 py-3 text-left transition-colors ${selected ? "border-accent bg-accent-soft shadow-sm" : "border-border bg-canvas hover:border-border-strong"}`}
                             >
                                 {selected && (
@@ -100,10 +102,7 @@ export default function PlanFormFields({
                             min={tomorrow()}
                             value={form.scheduledDate}
                             onChange={(event) =>
-                                updateForm(
-                                    "scheduledDate",
-                                    event.target.value,
-                                )
+                                updateForm("scheduledDate", event.target.value)
                             }
                             aria-label={t(
                                 form.scheduleType === "ONCE"
@@ -191,10 +190,15 @@ export default function PlanFormFields({
                     className={`flex flex-wrap gap-2 ${form.autoPublish ? "" : "opacity-50"}`}
                 >
                     <div className="flex items-center gap-2 rounded-xl border border-accent bg-accent-soft px-3 py-2 text-caption text-accent">
-                        <Check className="h-4 w-4" /> {t("blogPlans.localPlatform")}
+                        <Check className="h-4 w-4" />{" "}
+                        {t("blogPlans.localPlatform")}
                     </div>
                     {[
-                        ["syncJuejin", form.syncJuejin, t("blogPlans.syncJuejin")],
+                        [
+                            "syncJuejin",
+                            form.syncJuejin,
+                            t("blogPlans.syncJuejin"),
+                        ],
                         ["syncCsdn", form.syncCsdn, t("blogPlans.syncCsdn")],
                     ].map(([field, checked, label]) => (
                         <label

@@ -148,7 +148,9 @@ describe("SkillFormModal", () => {
         expect(screen.getByLabelText("blog.agentSkills.fieldKey")).toHaveValue(
             "release-notes",
         );
-        expect(screen.getByLabelText("blog.agentSkills.fieldKey")).toBeDisabled();
+        expect(
+            screen.getByLabelText("blog.agentSkills.fieldKey"),
+        ).toBeDisabled();
         expect(screen.getByLabelText("blog.agentSkills.fieldName")).toHaveValue(
             "发版说明",
         );

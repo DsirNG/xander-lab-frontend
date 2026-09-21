@@ -105,7 +105,9 @@ const FolderNode = ({
                         ? "bg-[#f2f1fd] text-[#6765f6] font-semibold dark:bg-blue-950/30 dark:text-blue-400"
                         : "text-[#555b7b] hover:bg-[#f7f6fc] dark:text-slate-300 dark:hover:bg-white/5"
                 }`}
-                style={{ paddingLeft: `${Math.max(0, (node.depth || 1) - 1) * 14 + 10}px` }}
+                style={{
+                    paddingLeft: `${Math.max(0, (node.depth || 1) - 1) * 14 + 10}px`,
+                }}
             >
                 <div
                     className="flex min-w-0 flex-1 cursor-pointer items-center gap-2"
@@ -136,7 +138,9 @@ const FolderNode = ({
                         <Folder className="h-4 w-4 shrink-0 text-amber-500 fill-amber-400/40" />
                     )}
 
-                    <span className="truncate text-caption font-medium">{node.name}</span>
+                    <span className="truncate text-caption font-medium">
+                        {node.name}
+                    </span>
                     <span className="text-micro text-[#8e94ad] font-normal shrink-0">
                         ({node.fileCount ?? 0})
                     </span>
@@ -148,8 +152,15 @@ const FolderNode = ({
                     </span>
 
                     {/* 操作菜单浮层（使用项目 RowActionsMenu 组件） */}
-                    <div onClick={(e) => e.stopPropagation()} className="opacity-0 group-hover:opacity-100 transition-opacity">
-                        <RowActionsMenu actions={folderActions} align="right" size="sm" />
+                    <div
+                        onClick={(e) => e.stopPropagation()}
+                        className="opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                        <RowActionsMenu
+                            actions={folderActions}
+                            align="right"
+                            size="sm"
+                        />
                     </div>
                 </div>
             </div>
@@ -216,7 +227,10 @@ const KnowledgeFolderTree = ({
         );
     }, [folders, folderSearch]);
 
-    const tree = useMemo(() => buildFolderTree(filteredFolders), [filteredFolders]);
+    const tree = useMemo(
+        () => buildFolderTree(filteredFolders),
+        [filteredFolders],
+    );
 
     const totalFiles = useMemo(
         () => folders.reduce((sum, f) => sum + (f.fileCount || 0), 0),
@@ -283,7 +297,10 @@ const KnowledgeFolderTree = ({
                             type="button"
                             onClick={() => onCreateFolder(0)}
                             className="rounded-lg p-1 text-[#8e94ad] transition hover:bg-[#f7f6fc] hover:text-[#6765f6] dark:hover:bg-white/5"
-                            title={t("knowledgeBase.folders.newRoot", "新建文件夹")}
+                            title={t(
+                                "knowledgeBase.folders.newRoot",
+                                "新建文件夹",
+                            )}
                         >
                             <Plus className="h-4 w-4" />
                         </button>
@@ -307,7 +324,10 @@ const KnowledgeFolderTree = ({
                     {loading ? (
                         <div className="space-y-1 py-1">
                             {Array.from({ length: 4 }).map((_, idx) => (
-                                <div key={idx} className="flex items-center gap-2 rounded-xl px-2.5 py-2">
+                                <div
+                                    key={idx}
+                                    className="flex items-center gap-2 rounded-xl px-2.5 py-2"
+                                >
                                     <Skeleton className="h-4 w-4 shrink-0 rounded" />
                                     <Skeleton className="h-4 flex-1 rounded" />
                                 </div>
@@ -372,7 +392,8 @@ const KnowledgeFolderTree = ({
                     ) : (
                         visibleTags.map((tag, idx) => {
                             const isSelected = selectedTagIds.includes(tag.id);
-                            const dotColor = TAG_DOT_COLORS[idx % TAG_DOT_COLORS.length];
+                            const dotColor =
+                                TAG_DOT_COLORS[idx % TAG_DOT_COLORS.length];
 
                             return (
                                 <button
@@ -386,8 +407,12 @@ const KnowledgeFolderTree = ({
                                     }`}
                                 >
                                     <div className="flex items-center gap-2 min-w-0">
-                                        <span className={`h-2 w-2 shrink-0 rounded-full ${dotColor}`} />
-                                        <span className="truncate text-caption">{tag.name}</span>
+                                        <span
+                                            className={`h-2 w-2 shrink-0 rounded-full ${dotColor}`}
+                                        />
+                                        <span className="truncate text-caption">
+                                            {tag.name}
+                                        </span>
                                     </div>
                                     <span className="text-micro text-[#8e94ad] shrink-0">
                                         ({tag.usageCount ?? 0})
@@ -422,7 +447,9 @@ const KnowledgeFolderTree = ({
 
             {/* 底部部分：存储容量 */}
             <div className="shrink-0 border-t border-[#eef0f6] pt-3 dark:border-white/5">
-                <div className="text-caption font-semibold text-[#111426] dark:text-white">存储容量</div>
+                <div className="text-caption font-semibold text-[#111426] dark:text-white">
+                    存储容量
+                </div>
                 <div className="mt-1 text-micro text-[#8e94ad]">
                     12.6 GB / 50 GB
                 </div>

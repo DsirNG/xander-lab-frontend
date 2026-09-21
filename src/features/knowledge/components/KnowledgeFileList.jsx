@@ -81,7 +81,9 @@ const KnowledgeFileList = ({
                 {activeFolderId === null ? (
                     <div className="flex items-center gap-2">
                         <Layers className="h-4 w-4 text-[#6765f6] shrink-0" />
-                        <span className="font-semibold text-[#111426]">全部文档工作台</span>
+                        <span className="font-semibold text-[#111426]">
+                            全部文档工作台
+                        </span>
                         <span className="text-micro text-[#8e94ad] font-normal">
                             （跨目录汇总 · 共 {total} 篇文档）
                         </span>

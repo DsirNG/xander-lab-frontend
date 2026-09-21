@@ -13,7 +13,12 @@ import {
 import { formatTracePayload } from "./agentTrace";
 
 const STATUS_META = {
-    running: { Icon: Loader2, tone: "text-ink-faint", spin: true, label: "toolRunning" },
+    running: {
+        Icon: Loader2,
+        tone: "text-ink-faint",
+        spin: true,
+        label: "toolRunning",
+    },
     done: { Icon: Check, tone: "text-emerald-600", label: "toolSucceeded" },
     error: { Icon: AlertCircle, tone: "text-danger", label: "toolFailed" },
     cancelled: { Icon: Ban, tone: "text-ink-faint", label: "toolCancelled" },
@@ -29,24 +34,41 @@ const DetailSection = ({ title, body }) =>
         </div>
     ) : null;
 
-const CollapsibleCard = ({ HeaderIcon, headerTone, summary, badge, children, tone = "" }) => {
+const CollapsibleCard = ({
+    HeaderIcon,
+    headerTone,
+    summary,
+    badge,
+    children,
+    tone = "",
+}) => {
     const { t } = useTranslation();
     const [open, setOpen] = useState(false);
     const Chevron = open ? ChevronDown : ChevronRight;
     return (
-        <div className={`rounded-xl border bg-canvas px-3 py-2 text-xs leading-5 ${tone || "border-border"}`}>
+        <div
+            className={`rounded-xl border bg-canvas px-3 py-2 text-xs leading-5 ${tone || "border-border"}`}
+        >
             <button
                 type="button"
                 onClick={() => setOpen((current) => !current)}
                 aria-expanded={open}
                 className="flex w-full items-center gap-2 text-left text-ink-muted transition-colors hover:text-ink-secondary"
             >
-                <HeaderIcon className={`h-3.5 w-3.5 shrink-0 ${headerTone}`} aria-hidden="true" />
+                <HeaderIcon
+                    className={`h-3.5 w-3.5 shrink-0 ${headerTone}`}
+                    aria-hidden="true"
+                />
                 <span className="min-w-0 flex-1 truncate">{summary}</span>
                 {badge}
-                <Chevron className="h-3.5 w-3.5 shrink-0 text-ink-faint" aria-hidden="true" />
+                <Chevron
+                    className="h-3.5 w-3.5 shrink-0 text-ink-faint"
+                    aria-hidden="true"
+                />
                 <span className="sr-only">
-                    {open ? t("blog.agentChat.traceHide") : t("blog.agentChat.traceShow")}
+                    {open
+                        ? t("blog.agentChat.traceHide")
+                        : t("blog.agentChat.traceShow")}
                 </span>
             </button>
             {open ? <div className="mt-1">{children}</div> : null}
@@ -65,7 +87,8 @@ export const AgentTraceCard = ({ trace }) => {
     if (!trace) return null;
     const status = STATUS_META[trace.status] || STATUS_META.running;
     const { Icon } = status;
-    const progress = trace.status === "running" ? trace.message || trace.stage : "";
+    const progress =
+        trace.status === "running" ? trace.message || trace.stage : "";
 
     return (
         <CollapsibleCard
@@ -83,12 +106,16 @@ export const AgentTraceCard = ({ trace }) => {
                 </>
             }
             badge={
-                <span className={`flex shrink-0 items-center gap-1 ${status.tone}`}>
+                <span
+                    className={`flex shrink-0 items-center gap-1 ${status.tone}`}
+                >
                     <Icon
                         className={`h-3.5 w-3.5 ${status.spin ? "animate-spin" : ""}`}
                         aria-hidden="true"
                     />
-                    <span className="hidden sm:inline">{t(`blog.agentChat.${status.label}`)}</span>
+                    <span className="hidden sm:inline">
+                        {t(`blog.agentChat.${status.label}`)}
+                    </span>
                 </span>
             }
         >
@@ -131,7 +158,10 @@ export const SelfCheckCard = ({ content, round }) => {
                 </>
             }
         >
-            <DetailSection title={t("blog.agentChat.traceDetail")} body={content} />
+            <DetailSection
+                title={t("blog.agentChat.traceDetail")}
+                body={content}
+            />
         </CollapsibleCard>
     );
 };

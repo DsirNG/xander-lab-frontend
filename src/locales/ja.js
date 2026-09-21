@@ -5,7 +5,8 @@
 
 export default {
     nav: {
-        loginRequired: "この機能を使うにはログインするかワークスペースを開いてください",
+        loginRequired:
+            "この機能を使うにはログインするかワークスペースを開いてください",
         infra: "インフラ",
         modules: "モジュール",
         components: "コンポーネント",
@@ -526,7 +527,8 @@ export default {
             toolCancelled: "停止しました",
             approval: {
                 title: "承認が必要です",
-                description: "エージェントは {{tool}} を実行する準備ができています。続行を承認してください。",
+                description:
+                    "エージェントは {{tool}} を実行する準備ができています。続行を承認してください。",
                 tool: "保留中の操作: {{tool}}",
                 approve: "承認",
                 reject: "拒否",
@@ -607,11 +609,11 @@ export default {
         agentMcp: {
             title: {
                 user: "マイ MCP サーバー",
-                admin: "プラットフォーム MCP サーバー"
+                admin: "プラットフォーム MCP サーバー",
             },
             subtitle: {
                 user: "サードパーティの MCP サーバーを接続すると、そのツールがエージェントで使えます。呼び出しごとに承認が必要です",
-                admin: "プラットフォーム全体で使える MCP サーバーを設定します。呼び出しは実行するユーザーが承認します"
+                admin: "プラットフォーム全体で使える MCP サーバーを設定します。呼び出しは実行するユーザーが承認します",
             },
             create: "サーバーを追加",
             createTitle: "MCP サーバーを追加",
@@ -635,36 +637,46 @@ export default {
             edit: "編集",
             delete: "削除",
             deleteTitle: "MCP サーバーを削除",
-            deleteConfirm: "「{{name}}」を削除しますか？そのツールは即座にエージェントから外れます。",
+            deleteConfirm:
+                "「{{name}}」を削除しますか？そのツールは即座にエージェントから外れます。",
             deleted: "削除しました",
             deleteFailed: "削除に失敗しました",
             emptyTitle: "MCP サーバーがまだありません",
-            emptyHint: "リモート MCP サーバーを追加して接続テストすると、そのツールがエージェントに表示されます",
+            emptyHint:
+                "リモート MCP サーバーを追加して接続テストすると、そのツールがエージェントに表示されます",
             loadFailed: "MCP サーバーの読み込みに失敗しました",
             actionsFor: "{{name}} の操作",
             created: "追加しました",
             updated: "保存しました",
             saveFailed: "保存に失敗しました",
-            executableHint: "注意：ここで設定するのは実行可能な能力です。有効化して接続テストに成功すると、リモートのツールが実際にエージェントへ入り、呼び出しはあなたの承認を得て本プラットフォームの外へ出ます。",
+            executableHint:
+                "注意：ここで設定するのは実行可能な能力です。有効化して接続テストに成功すると、リモートのツールが実際にエージェントへ入り、呼び出しはあなたの承認を得て本プラットフォームの外へ出ます。",
             fieldKey: "サーバー識別子",
-            fieldKeyHint: "2〜20 文字の小文字英数字またはハイフン。ツール名の接頭辞に入り、作成後は変更できません",
+            fieldKeyHint:
+                "2〜20 文字の小文字英数字またはハイフン。ツール名の接頭辞に入り、作成後は変更できません",
             fieldName: "表示名",
             fieldNamePlaceholder: "例：GitHub",
             fieldEndpoint: "エンドポイント URL",
-            fieldEndpointHint: "認証情報を埋め込まない HTTPS で、公網アドレスに解決される必要があります",
+            fieldEndpointHint:
+                "認証情報を埋め込まない HTTPS で、公網アドレスに解決される必要があります",
             fieldHeaders: "追加リクエストヘッダー",
-            fieldHeadersHint: "1 行に 1 つ「名前: 値」の形式。Authorization などリモートが要求する認証情報に使います。不要なら空欄",
+            fieldHeadersHint:
+                "1 行に 1 つ「名前: 値」の形式。Authorization などリモートが要求する認証情報に使います。不要なら空欄",
             formClearHeaders: "保存済みの認証情報を消去（空欄なら保持）",
             formEnabled: "有効",
-            formEnabledHint: "有効にすると検出済みのツールがエージェントに入ります。無効なら一切表示されません",
-            formKeyInvalid: "識別子は 2〜20 文字の小文字英数字またはハイフンで、英字で始めてください",
+            formEnabledHint:
+                "有効にすると検出済みのツールがエージェントに入ります。無効なら一切表示されません",
+            formKeyInvalid:
+                "識別子は 2〜20 文字の小文字英数字またはハイフンで、英字で始めてください",
             formNameRequired: "表示名を入力してください",
             formNameTooLong: "表示名は {{max}} 文字以内です",
             formEndpointRequired: "エンドポイント URL を入力してください",
             formEndpointTooLong: "エンドポイント URL は {{max}} 文字以内です",
-            formEndpointNotHttps: "エンドポイント URL は HTTPS である必要があります",
-            formHeadersInvalid: "{{lines}} 行目のヘッダー形式が不正です。「名前: 値」にしてください",
-            formHeadersTooMany: "ヘッダーは最大 {{max}} 件です"
+            formEndpointNotHttps:
+                "エンドポイント URL は HTTPS である必要があります",
+            formHeadersInvalid:
+                "{{lines}} 行目のヘッダー形式が不正です。「名前: 値」にしてください",
+            formHeadersTooMany: "ヘッダーは最大 {{max}} 件です",
         },
         agentSkills: {
             title: "スキル",
@@ -1040,7 +1052,8 @@ export default {
             qrConfirmed: "確認済み、ログイン中...",
             qrExpired: "QR コードの期限切れ",
             qrRefresh: "QR コードを更新",
-            qrUnavailable: "QR ログインは利用できません。後でもう一度お試しください。",
+            qrUnavailable:
+                "QR ログインは利用できません。後でもう一度お試しください。",
         },
     },
     workspace: {
@@ -2006,7 +2019,8 @@ export default {
                 "ネットワークリクエストに失敗しました。接続を確認してください",
             noRefreshToken:
                 "リフレッシュトークンがありません。再度ログインしてください",
-            refreshUnavailable: "現在セッションを更新できません。しばらくしてからお試しください",
+            refreshUnavailable:
+                "現在セッションを更新できません。しばらくしてからお試しください",
             retryPrefix: "[HTTP] リトライ",
             retrySuffix: "遅延",
             cancelled: "リクエストがキャンセルされました",
@@ -2135,7 +2149,8 @@ export default {
         tabDocs: "ドキュメントナレッジベース",
         tabMirror: "ナレッジミラー / 復習",
         title: "ドキュメントナレッジベース",
-        subtitle: "スマートな分かち書きと章抽出による、プライベートなナレッジハブとマインドマップ",
+        subtitle:
+            "スマートな分かち書きと章抽出による、プライベートなナレッジハブとマインドマップ",
         folders: {
             allDocs: "すべてのドキュメント",
             title: "フォルダ分類",
@@ -2153,7 +2168,8 @@ export default {
             subfolders: "サブフォルダ",
             newSubfolder: "サブフォルダを新規作成",
             confirmDeleteTitle: "フォルダを削除",
-            confirmDeleteMsg: "フォルダ「{{name}}」を削除しますか？配下のサブフォルダとドキュメントもすべて完全に削除されます。",
+            confirmDeleteMsg:
+                "フォルダ「{{name}}」を削除しますか？配下のサブフォルダとドキュメントもすべて完全に削除されます。",
             created: "フォルダを作成しました",
             renamed: "フォルダ名を変更しました",
             moved: "フォルダを移動しました",
@@ -2169,7 +2185,8 @@ export default {
             viewList: "リスト表示",
             emptyTitle: "この分類にドキュメントはありません",
             emptyFolderOnly: "このフォルダ直下にファイルはありません",
-            emptyHint: "右上のアップロードからドキュメントを追加すると、章の分割とマインドマップの構築が自動で行われます。",
+            emptyHint:
+                "右上のアップロードからドキュメントを追加すると、章の分割とマインドマップの構築が自動で行われます。",
             uploadNow: "ドキュメントをアップロード",
             name: "名前",
             status: "ナレッジ構造の状態",
@@ -2182,7 +2199,8 @@ export default {
             chapterCount: "認識した章数",
             manageTags: "ファイルの関連タグ",
             confirmDeleteTitle: "ファイルを削除",
-            confirmDeleteMsg: "ファイル「{{name}}」を完全に削除しますか？オブジェクトストレージと生成済みの構造マップもあわせて削除されます。",
+            confirmDeleteMsg:
+                "ファイル「{{name}}」を完全に削除しますか？オブジェクトストレージと生成済みの構造マップもあわせて削除されます。",
             moved: "ファイルを移動しました",
             deleted: "ファイルを削除しました",
             reidentify: "再認識",
@@ -2192,13 +2210,16 @@ export default {
             btn: "ドキュメントをアップロード",
             title: "ナレッジベースへドキュメントをアップロード",
             targetFolder: "保存先フォルダ",
-            needFolderFirst: "先に左側で分類フォルダを1つ以上作成してください。ルート直下にファイルは置けません。",
+            needFolderFirst:
+                "先に左側で分類フォルダを1つ以上作成してください。ルート直下にファイルは置けません。",
             selectFileLabel: "ファイルを選択",
             dragHint: "ここにファイルをドラッグ、またはクリックして参照",
-            supportHint: "Markdown、PDF、Word、TXT、JSON、HTML などに対応（1ファイル最大 50MB）",
+            supportHint:
+                "Markdown、PDF、Word、TXT、JSON、HTML などに対応（1ファイル最大 50MB）",
             tagsLabel: "タグを追加（任意）",
             tagsPlaceholder: "タグ名を入力して Enter で追加",
-            progressDesc: "取り込み後に本文を自動抽出し、章とナレッジグラフのノードを認識します...",
+            progressDesc:
+                "取り込み後に本文を自動抽出し、章とナレッジグラフのノードを認識します...",
             submitBtn: "アップロードを開始",
             uploadingBtn: "アップロード中...",
             preparing: "アップロードを準備中...",
@@ -2221,7 +2242,8 @@ export default {
             rawFile: "ソースファイル",
             loadFailed: "プレビューの読み込みに失敗しました",
             noStructureTitle: "構造マップはまだありません",
-            noStructureDesc: "大部のドキュメントは「章のアウトライン」から、必要な章のマインドマップを生成できます。",
+            noStructureDesc:
+                "大部のドキュメントは「章のアウトライン」から、必要な章のマインドマップを生成できます。",
             generateNow: "構造マップを今すぐ生成",
             outline: "章の一覧",
             noChapters: "章を認識できませんでした",
@@ -2229,7 +2251,8 @@ export default {
             excerptTitle: "本文の抜粋",
             loadFull: "全文を読み込む",
             noContent: "テキスト内容がありません",
-            truncatedNotice: "（初回表示は先頭 2,000 文字のみです。右上の「全文を読み込む」で全文をお読みいただけます）",
+            truncatedNotice:
+                "（初回表示は先頭 2,000 文字のみです。右上の「全文を読み込む」で全文をお読みいただけます）",
         },
         tags: {
             title: "タグ",

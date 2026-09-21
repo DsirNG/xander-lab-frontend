@@ -176,9 +176,19 @@ export const mergeLiveTraces = (steps = []) => {
         }
         if (tool === ARTIFACT_TOOL) {
             // 同上：成功交付不留轨迹卡，失败才留，且不必等 tool_call 先建卡。
-            if (step.phase === "error" || (step.phase === "end" && resultStatus(step.result) !== "done")) {
+            if (
+                step.phase === "error" ||
+                (step.phase === "end" && resultStatus(step.result) !== "done")
+            ) {
                 merged.push(
-                    applyLiveStep(traceEntry(`live-trace-${index}`, tool, step.invocationId), step),
+                    applyLiveStep(
+                        traceEntry(
+                            `live-trace-${index}`,
+                            tool,
+                            step.invocationId,
+                        ),
+                        step,
+                    ),
                 );
             }
             return;
@@ -186,7 +196,12 @@ export const mergeLiveTraces = (steps = []) => {
         const slot = openByKey.get(key);
         if (slot == null) {
             openByKey.set(key, merged.length);
-            merged.push(applyLiveStep(traceEntry(`live-trace-${index}`, tool, step.invocationId), step));
+            merged.push(
+                applyLiveStep(
+                    traceEntry(`live-trace-${index}`, tool, step.invocationId),
+                    step,
+                ),
+            );
         } else {
             merged[slot] = applyLiveStep(merged[slot], step);
         }

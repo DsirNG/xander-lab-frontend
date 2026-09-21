@@ -1,9 +1,4 @@
-import {
-    delete as del,
-    get,
-    post,
-    put,
-} from "@api";
+import { delete as del, get, post, put } from "@api";
 import { computeFileSha256 } from "../utils/fileHash";
 
 const BASE = "/api/knowledge-base";
@@ -167,7 +162,8 @@ export const knowledgeBaseService = {
     // ─────────────────────────────────────────────
     uploads: {
         /** 初始化会话（支持秒传判别与断点续传查验） */
-        init: (payload, config) => post(`${BASE}/uploads/init`, payload, config),
+        init: (payload, config) =>
+            post(`${BASE}/uploads/init`, payload, config),
 
         /** 查询上传进度与缺失分片 */
         status: (uploadId, config) =>

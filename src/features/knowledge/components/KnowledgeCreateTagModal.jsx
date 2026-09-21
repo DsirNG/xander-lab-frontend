@@ -32,7 +32,11 @@ const KnowledgeCreateTagModal = ({
             </>
         }
     >
-        <form id="create-tag-inline-form" onSubmit={onSubmit} className="space-y-4">
+        <form
+            id="create-tag-inline-form"
+            onSubmit={onSubmit}
+            className="space-y-4"
+        >
             <FormField label="标签名称" required>
                 <input
                     type="text"

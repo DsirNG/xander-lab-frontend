@@ -1,10 +1,5 @@
 import React, { useState } from "react";
-import {
-    ChevronRight,
-    File,
-    Folder,
-    FolderOpen,
-} from "lucide-react";
+import { ChevronRight, File, Folder, FolderOpen } from "lucide-react";
 
 /**
  * 文件树节点递归组件，支持目录折叠/展开。

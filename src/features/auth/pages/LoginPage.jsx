@@ -36,7 +36,11 @@ const LoginPage = () => {
 
     const [loading, setLoading] = useState(false);
     const [loginType, setLoginType] = useState("code");
-    const [qrState, setQrState] = useState({ ticket: "", image: "", status: "" });
+    const [qrState, setQrState] = useState({
+        ticket: "",
+        image: "",
+        status: "",
+    });
     const qrTimerRef = useRef(null);
     const [formData, setFormData] = useState({
         account: "",
@@ -57,18 +61,34 @@ const LoginPage = () => {
         setQrState({ ticket: "", image: "", status: "loading" });
         try {
             const result = await authService.qrCreate();
-            setQrState({ ticket: result.ticket, image: result.qrCode, status: "waiting" });
+            setQrState({
+                ticket: result.ticket,
+                image: result.qrCode,
+                status: "waiting",
+            });
             qrTimerRef.current = window.setInterval(async () => {
                 try {
                     const current = await authService.qrStatus(result.ticket);
-                    setQrState((previous) => ({ ...previous, status: current.status, exchangeCode: current.exchangeCode }));
+                    setQrState((previous) => ({
+                        ...previous,
+                        status: current.status,
+                        exchangeCode: current.exchangeCode,
+                    }));
                     if (current.status === "EXPIRED") stopQrPolling();
-                    if (current.status === "CONFIRMED" && current.exchangeCode) {
+                    if (
+                        current.status === "CONFIRMED" &&
+                        current.exchangeCode
+                    ) {
                         stopQrPolling();
-                        const token = await authService.qrExchange(result.ticket, current.exchangeCode);
+                        const token = await authService.qrExchange(
+                            result.ticket,
+                            current.exchangeCode,
+                        );
                         if (token?.accessToken) {
                             toast.success(t("auth.login.authSuccess"));
-                            navigate(`${fromPath}${fromSearch}`, { replace: true });
+                            navigate(`${fromPath}${fromSearch}`, {
+                                replace: true,
+                            });
                         }
                     }
                 } catch {
@@ -84,9 +104,10 @@ const LoginPage = () => {
     useEffect(() => () => stopQrPolling(), []);
     // QR polling is intentionally restarted only when the selected login mode changes.
     useEffect(() => {
-        if (loginType === "qr" && !qrState.ticket && qrState.status !== "error") startQrLogin();
+        if (loginType === "qr" && !qrState.ticket && qrState.status !== "error")
+            startQrLogin();
         if (loginType !== "qr") stopQrPolling();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [loginType]);
 
     /** 验证码倒计时 */
@@ -249,7 +270,11 @@ const LoginPage = () => {
                                     label: t("auth.login.passwordAuth"),
                                     icon: Fingerprint,
                                 },
-                                { id: "qr", label: t("auth.login.qrAuth"), icon: QrCode },
+                                {
+                                    id: "qr",
+                                    label: t("auth.login.qrAuth"),
+                                    icon: QrCode,
+                                },
                             ].map((tab) => (
                                 <Button
                                     key={tab.id}
@@ -283,183 +308,215 @@ const LoginPage = () => {
 
                         {loginType === "qr" ? (
                             <div className="flex flex-col items-center gap-4 py-4 text-center">
-                                {qrState.image ? <img src={qrState.image} alt={t("auth.login.qrAlt")} className="w-56 h-56 rounded-2xl border border-border bg-white p-2" /> : <div className="w-56 h-56 rounded-2xl bg-surface-muted animate-pulse" />}
+                                {qrState.image ? (
+                                    <img
+                                        src={qrState.image}
+                                        alt={t("auth.login.qrAlt")}
+                                        className="w-56 h-56 rounded-2xl border border-border bg-white p-2"
+                                    />
+                                ) : (
+                                    <div className="w-56 h-56 rounded-2xl bg-surface-muted animate-pulse" />
+                                )}
                                 <div className="text-sm font-semibold text-ink-muted">
-                                    {qrState.status === "CONFIRMED" ? t("auth.login.qrConfirmed") : qrState.status === "EXPIRED" ? t("auth.login.qrExpired") : t("auth.login.qrHint")}
+                                    {qrState.status === "CONFIRMED"
+                                        ? t("auth.login.qrConfirmed")
+                                        : qrState.status === "EXPIRED"
+                                          ? t("auth.login.qrExpired")
+                                          : t("auth.login.qrHint")}
                                 </div>
-                                {(qrState.status === "EXPIRED" || qrState.status === "error") && <Button type="button" icon={RefreshCw} onClick={startQrLogin}>{t("auth.login.qrRefresh")}</Button>}
+                                {(qrState.status === "EXPIRED" ||
+                                    qrState.status === "error") && (
+                                    <Button
+                                        type="button"
+                                        icon={RefreshCw}
+                                        onClick={startQrLogin}
+                                    >
+                                        {t("auth.login.qrRefresh")}
+                                    </Button>
+                                )}
                             </div>
-                        ) : <form onSubmit={handleSubmit} className="space-y-4">
-                            <AnimatePresence mode="wait">
-                                <motion.div
-                                    key={loginType}
-                                    initial={{ opacity: 0, x: 10 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    exit={{ opacity: 0, x: -10 }}
-                                    transition={{ duration: 0.3 }}
-                                    className="space-y-4"
-                                >
-                                    <div className="space-y-4">
-                                        {/* 账号/邮箱输入 */}
-                                        <div className="group">
-                                            <label
-                                                htmlFor="account"
-                                                className="text-caption font-black text-ink-faint uppercase tracking-widest mb-2 px-1 block"
-                                            >
-                                                {loginType === "password"
-                                                    ? t(
-                                                          "auth.login.accountLabel",
-                                                      )
-                                                    : t(
-                                                          "auth.login.emailLabel",
-                                                      )}
-                                            </label>
-                                            <div className="relative">
-                                                <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
-                                                    <Mail className="w-4 h-4 text-ink-faint group-focus-within:text-accent transition-colors" />
-                                                </div>
-                                                <input
-                                                    type={
-                                                        loginType === "code"
-                                                            ? "email"
-                                                            : "text"
-                                                    }
-                                                    id="account"
-                                                    name="account"
-                                                    required
-                                                    value={formData.account}
-                                                    onChange={handleChange}
-                                                    className="block w-full pl-12 pr-6 py-4.5 bg-canvas/50 border border-border rounded-3xl text-body font-bold text-ink placeholder:text-ink-faint focus:outline-none focus:ring-4 focus:ring-accent/10 focus:border-accent transition-all shadow-inner"
-                                                    placeholder={
-                                                        loginType === "password"
-                                                            ? t(
-                                                                  "auth.login.accountPlaceholder",
-                                                              )
-                                                            : t(
-                                                                  "auth.login.emailPlaceholder",
-                                                              )
-                                                    }
-                                                />
-                                            </div>
-                                        </div>
-
-                                        {/* 密码输入（仅密码模式） */}
-                                        {loginType === "password" && (
+                        ) : (
+                            <form onSubmit={handleSubmit} className="space-y-4">
+                                <AnimatePresence mode="wait">
+                                    <motion.div
+                                        key={loginType}
+                                        initial={{ opacity: 0, x: 10 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        exit={{ opacity: 0, x: -10 }}
+                                        transition={{ duration: 0.3 }}
+                                        className="space-y-4"
+                                    >
+                                        <div className="space-y-4">
+                                            {/* 账号/邮箱输入 */}
                                             <div className="group">
                                                 <label
-                                                    htmlFor="password"
+                                                    htmlFor="account"
                                                     className="text-caption font-black text-ink-faint uppercase tracking-widest mb-2 px-1 block"
                                                 >
-                                                    {t(
-                                                        "auth.login.passwordLabel",
-                                                    )}
+                                                    {loginType === "password"
+                                                        ? t(
+                                                              "auth.login.accountLabel",
+                                                          )
+                                                        : t(
+                                                              "auth.login.emailLabel",
+                                                          )}
                                                 </label>
                                                 <div className="relative">
                                                     <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
-                                                        <Lock className="w-4 h-4 text-ink-faint group-focus-within:text-accent transition-colors" />
+                                                        <Mail className="w-4 h-4 text-ink-faint group-focus-within:text-accent transition-colors" />
                                                     </div>
                                                     <input
-                                                        type="password"
-                                                        id="password"
-                                                        name="password"
-                                                        required
-                                                        value={
-                                                            formData.password
+                                                        type={
+                                                            loginType === "code"
+                                                                ? "email"
+                                                                : "text"
                                                         }
+                                                        id="account"
+                                                        name="account"
+                                                        required
+                                                        value={formData.account}
                                                         onChange={handleChange}
                                                         className="block w-full pl-12 pr-6 py-4.5 bg-canvas/50 border border-border rounded-3xl text-body font-bold text-ink placeholder:text-ink-faint focus:outline-none focus:ring-4 focus:ring-accent/10 focus:border-accent transition-all shadow-inner"
-                                                        placeholder={t(
-                                                            "auth.login.passwordPlaceholder",
-                                                        )}
+                                                        placeholder={
+                                                            loginType ===
+                                                            "password"
+                                                                ? t(
+                                                                      "auth.login.accountPlaceholder",
+                                                                  )
+                                                                : t(
+                                                                      "auth.login.emailPlaceholder",
+                                                                  )
+                                                        }
                                                     />
                                                 </div>
                                             </div>
-                                        )}
 
-                                        {/* 验证码输入（仅验证码模式） */}
-                                        {loginType === "code" && (
-                                            <div className="group">
-                                                <label
-                                                    htmlFor="code"
-                                                    className="text-caption font-black text-ink-faint uppercase tracking-widest mb-2 px-1 block"
-                                                >
-                                                    {t("auth.login.codeLabel")}
-                                                </label>
-                                                <div className="flex gap-2">
-                                                    <div className="relative flex-1">
+                                            {/* 密码输入（仅密码模式） */}
+                                            {loginType === "password" && (
+                                                <div className="group">
+                                                    <label
+                                                        htmlFor="password"
+                                                        className="text-caption font-black text-ink-faint uppercase tracking-widest mb-2 px-1 block"
+                                                    >
+                                                        {t(
+                                                            "auth.login.passwordLabel",
+                                                        )}
+                                                    </label>
+                                                    <div className="relative">
                                                         <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
-                                                            <ShieldCheck className="w-4 h-4 text-ink-faint group-focus-within:text-accent transition-colors" />
+                                                            <Lock className="w-4 h-4 text-ink-faint group-focus-within:text-accent transition-colors" />
                                                         </div>
                                                         <input
-                                                            type="text"
-                                                            id="code"
-                                                            name="code"
+                                                            type="password"
+                                                            id="password"
+                                                            name="password"
                                                             required
-                                                            maxLength={6}
                                                             value={
-                                                                formData.code
+                                                                formData.password
                                                             }
                                                             onChange={
                                                                 handleChange
                                                             }
                                                             className="block w-full pl-12 pr-6 py-4.5 bg-canvas/50 border border-border rounded-3xl text-body font-bold text-ink placeholder:text-ink-faint focus:outline-none focus:ring-4 focus:ring-accent/10 focus:border-accent transition-all shadow-inner"
                                                             placeholder={t(
-                                                                "auth.login.codePlaceholder",
+                                                                "auth.login.passwordPlaceholder",
                                                             )}
                                                         />
                                                     </div>
-                                                    <Button
-                                                        type="button"
-                                                        disabled={
-                                                            countdown > 0 ||
-                                                            sendingCode
-                                                        }
-                                                        loading={sendingCode}
-                                                        onClick={handleSendCode}
-                                                        variant="ink"
-                                                        size="lg"
-                                                        className="rounded-3xl h-auto px-6 py-4 whitespace-nowrap hover:scale-105 shadow-xl shadow-ink/10"
-                                                    >
-                                                        {countdown > 0
-                                                            ? `${countdown}s`
-                                                            : t(
-                                                                  "auth.login.sendCode",
-                                                              )}
-                                                    </Button>
                                                 </div>
-                                            </div>
-                                        )}
-                                    </div>
-                                </motion.div>
-                            </AnimatePresence>
+                                            )}
 
-                            {/* 登录按钮 */}
-                            <div className="relative pb-6">
-                                <Button
-                                    type="submit"
-                                    loading={loading}
-                                    variant="primary"
-                                    size="lg"
-                                    block
-                                    icon={ArrowRight}
-                                    iconPosition="right"
-                                    className="group relative h-auto py-4.5 rounded-[1.75rem] font-black text-sm shadow-accent/30 hover:scale-[1.02] overflow-hidden scale-fix"
-                                >
-                                    <span className="relative z-10">
-                                        {loginType === "code"
-                                            ? t("auth.login.submit")
-                                            : t("auth.login.login")}
-                                    </span>
-                                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:animate-[shimmer_2s_infinite]" />
-                                </Button>
-                                {/* 验证码模式的自动注册提示 - 绝对定位不占空间 */}
-                                {loginType === "code" && (
-                                    <div className="absolute top-full left-0 right-0 mt-2 text-caption text-ink-faint text-center font-medium px-2">
-                                        {t("auth.login.autoRegisterHint")}
-                                    </div>
-                                )}
-                            </div>
-                        </form>}
+                                            {/* 验证码输入（仅验证码模式） */}
+                                            {loginType === "code" && (
+                                                <div className="group">
+                                                    <label
+                                                        htmlFor="code"
+                                                        className="text-caption font-black text-ink-faint uppercase tracking-widest mb-2 px-1 block"
+                                                    >
+                                                        {t(
+                                                            "auth.login.codeLabel",
+                                                        )}
+                                                    </label>
+                                                    <div className="flex gap-2">
+                                                        <div className="relative flex-1">
+                                                            <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
+                                                                <ShieldCheck className="w-4 h-4 text-ink-faint group-focus-within:text-accent transition-colors" />
+                                                            </div>
+                                                            <input
+                                                                type="text"
+                                                                id="code"
+                                                                name="code"
+                                                                required
+                                                                maxLength={6}
+                                                                value={
+                                                                    formData.code
+                                                                }
+                                                                onChange={
+                                                                    handleChange
+                                                                }
+                                                                className="block w-full pl-12 pr-6 py-4.5 bg-canvas/50 border border-border rounded-3xl text-body font-bold text-ink placeholder:text-ink-faint focus:outline-none focus:ring-4 focus:ring-accent/10 focus:border-accent transition-all shadow-inner"
+                                                                placeholder={t(
+                                                                    "auth.login.codePlaceholder",
+                                                                )}
+                                                            />
+                                                        </div>
+                                                        <Button
+                                                            type="button"
+                                                            disabled={
+                                                                countdown > 0 ||
+                                                                sendingCode
+                                                            }
+                                                            loading={
+                                                                sendingCode
+                                                            }
+                                                            onClick={
+                                                                handleSendCode
+                                                            }
+                                                            variant="ink"
+                                                            size="lg"
+                                                            className="rounded-3xl h-auto px-6 py-4 whitespace-nowrap hover:scale-105 shadow-xl shadow-ink/10"
+                                                        >
+                                                            {countdown > 0
+                                                                ? `${countdown}s`
+                                                                : t(
+                                                                      "auth.login.sendCode",
+                                                                  )}
+                                                        </Button>
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </motion.div>
+                                </AnimatePresence>
+
+                                {/* 登录按钮 */}
+                                <div className="relative pb-6">
+                                    <Button
+                                        type="submit"
+                                        loading={loading}
+                                        variant="primary"
+                                        size="lg"
+                                        block
+                                        icon={ArrowRight}
+                                        iconPosition="right"
+                                        className="group relative h-auto py-4.5 rounded-[1.75rem] font-black text-sm shadow-accent/30 hover:scale-[1.02] overflow-hidden scale-fix"
+                                    >
+                                        <span className="relative z-10">
+                                            {loginType === "code"
+                                                ? t("auth.login.submit")
+                                                : t("auth.login.login")}
+                                        </span>
+                                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:animate-[shimmer_2s_infinite]" />
+                                    </Button>
+                                    {/* 验证码模式的自动注册提示 - 绝对定位不占空间 */}
+                                    {loginType === "code" && (
+                                        <div className="absolute top-full left-0 right-0 mt-2 text-caption text-ink-faint text-center font-medium px-2">
+                                            {t("auth.login.autoRegisterHint")}
+                                        </div>
+                                    )}
+                                </div>
+                            </form>
+                        )}
                     </div>
 
                     <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent/30 to-transparent" />

@@ -19,28 +19,53 @@ const KnowledgeFileInfoPanel = ({
         <div className="space-y-6 rounded-2xl border border-[#eef0f6] bg-white p-6">
             <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
                 <div>
-                    <span className="text-caption text-[#8e94ad]">{t("knowledgeBase.files.originalName", "原始文件名")}</span>
-                    <div className="mt-1 text-body font-medium text-[#111426] truncate">{file?.originalName}</div>
+                    <span className="text-caption text-[#8e94ad]">
+                        {t("knowledgeBase.files.originalName", "原始文件名")}
+                    </span>
+                    <div className="mt-1 text-body font-medium text-[#111426] truncate">
+                        {file?.originalName}
+                    </div>
                 </div>
                 <div>
-                    <span className="text-caption text-[#8e94ad]">{t("knowledgeBase.files.size", "文件大小")}</span>
-                    <div className="mt-1 text-body font-medium text-[#111426]">{formatBytes(file?.sizeBytes)}</div>
+                    <span className="text-caption text-[#8e94ad]">
+                        {t("knowledgeBase.files.size", "文件大小")}
+                    </span>
+                    <div className="mt-1 text-body font-medium text-[#111426]">
+                        {formatBytes(file?.sizeBytes)}
+                    </div>
                 </div>
                 <div>
-                    <span className="text-caption text-[#8e94ad]">{t("knowledgeBase.files.status", "知识化状态")}</span>
-                    <div className="mt-1 text-body font-medium text-[#111426]">{file?.structureStatus}</div>
+                    <span className="text-caption text-[#8e94ad]">
+                        {t("knowledgeBase.files.status", "知识化状态")}
+                    </span>
+                    <div className="mt-1 text-body font-medium text-[#111426]">
+                        {file?.structureStatus}
+                    </div>
                 </div>
                 <div>
-                    <span className="text-caption text-[#8e94ad]">{t("knowledgeBase.files.charCount", "提取正文字数")}</span>
-                    <div className="mt-1 text-body font-medium text-[#111426]">{file?.charCount ?? 0} 字</div>
+                    <span className="text-caption text-[#8e94ad]">
+                        {t("knowledgeBase.files.charCount", "提取正文字数")}
+                    </span>
+                    <div className="mt-1 text-body font-medium text-[#111426]">
+                        {file?.charCount ?? 0} 字
+                    </div>
                 </div>
                 <div>
-                    <span className="text-caption text-[#8e94ad]">{t("knowledgeBase.files.chapterCount", "识别章节数")}</span>
-                    <div className="mt-1 text-body font-medium text-[#111426]">{file?.chapterCount ?? 0} 章</div>
+                    <span className="text-caption text-[#8e94ad]">
+                        {t("knowledgeBase.files.chapterCount", "识别章节数")}
+                    </span>
+                    <div className="mt-1 text-body font-medium text-[#111426]">
+                        {file?.chapterCount ?? 0} 章
+                    </div>
                 </div>
                 <div>
-                    <span className="text-caption text-[#8e94ad]">{t("knowledgeBase.files.fileHash", "SHA-256 哈希")}</span>
-                    <div className="mt-1 text-micro font-mono text-[#111426] truncate" title={file?.fileHash}>
+                    <span className="text-caption text-[#8e94ad]">
+                        {t("knowledgeBase.files.fileHash", "SHA-256 哈希")}
+                    </span>
+                    <div
+                        className="mt-1 text-micro font-mono text-[#111426] truncate"
+                        title={file?.fileHash}
+                    >
                         {file?.fileHash}
                     </div>
                 </div>
@@ -58,7 +83,9 @@ const KnowledgeFileInfoPanel = ({
                         >
                             <span
                                 className="h-2 w-2 rounded-full"
-                                style={{ backgroundColor: fileTag.color || "#6765f6" }}
+                                style={{
+                                    backgroundColor: fileTag.color || "#6765f6",
+                                }}
                             />
                             <span>{fileTag.name}</span>
                             {fileTag.source === "AUTO" ? (
@@ -81,9 +108,14 @@ const KnowledgeFileInfoPanel = ({
                         <input
                             type="text"
                             className="rounded-full border border-[#e9eaf4] bg-[#fbfbfe] px-3 py-1 text-caption text-[#111426] placeholder:text-[#8e94ad] focus:border-[#6765f6] focus:bg-white focus:outline-none transition"
-                            placeholder={t("knowledgeBase.tags.typeAndEnter", "输入标签后回车")}
+                            placeholder={t(
+                                "knowledgeBase.tags.typeAndEnter",
+                                "输入标签后回车",
+                            )}
                             value={newTagInput}
-                            onChange={(event) => onNewTagInputChange(event.target.value)}
+                            onChange={(event) =>
+                                onNewTagInputChange(event.target.value)
+                            }
                             onKeyDown={onAddTag}
                         />
                     </div>
@@ -97,7 +129,10 @@ const KnowledgeFileInfoPanel = ({
                     loading={actionLoading}
                     onClick={onReidentify}
                 >
-                    {t("knowledgeBase.viewer.reidentifyBtn", "重新解析章节与正文")}
+                    {t(
+                        "knowledgeBase.viewer.reidentifyBtn",
+                        "重新解析章节与正文",
+                    )}
                 </Button>
             </div>
         </div>

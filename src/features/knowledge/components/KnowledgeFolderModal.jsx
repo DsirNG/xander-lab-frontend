@@ -51,7 +51,11 @@ const KnowledgeFolderModal = ({
             width="max-w-md"
             footer={
                 <>
-                    <Button variant="ghost" onClick={onClose} disabled={loading}>
+                    <Button
+                        variant="ghost"
+                        onClick={onClose}
+                        disabled={loading}
+                    >
                         {t("common.cancel", "取消")}
                     </Button>
                     <Button
@@ -65,7 +69,11 @@ const KnowledgeFolderModal = ({
                 </>
             }
         >
-            <form id="folder-form" onSubmit={handleSubmit} className="space-y-4">
+            <form
+                id="folder-form"
+                onSubmit={handleSubmit}
+                className="space-y-4"
+            >
                 <FormField
                     label={t("knowledgeBase.folders.nameLabel", "文件夹名称")}
                     required

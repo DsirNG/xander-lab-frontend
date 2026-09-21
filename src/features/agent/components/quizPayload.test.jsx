@@ -6,7 +6,11 @@ const QUIZ = {
     id: "quiz-1",
     title: "JavaScript",
     questions: [
-        { id: "q1", prompt: "Which value is truthy?", options: ["false", "true"] },
+        {
+            id: "q1",
+            prompt: "Which value is truthy?",
+            options: ["false", "true"],
+        },
     ],
 };
 
@@ -28,9 +32,7 @@ describe("parseQuizPayload", () => {
 
     it("reads a live quiz step whose payload hangs off the step", () => {
         // 流式 quiz 事件进 liveSteps 后长这样（与 artifact 步同构）。
-        expect(
-            parseQuizPayload({ type: "quiz", payload: QUIZ }),
-        ).toEqual(QUIZ);
+        expect(parseQuizPayload({ type: "quiz", payload: QUIZ })).toEqual(QUIZ);
     });
 
     it("reads the event payload itself", () => {
@@ -38,27 +40,38 @@ describe("parseQuizPayload", () => {
     });
 
     it("reads a quiz nested under a quiz field", () => {
-        expect(parseQuizPayload({ content: JSON.stringify({ quiz: QUIZ }) })).toEqual(
-            QUIZ,
-        );
+        expect(
+            parseQuizPayload({ content: JSON.stringify({ quiz: QUIZ }) }),
+        ).toEqual(QUIZ);
     });
 
     it("returns nothing renderable for a payload without questions", () => {
         // 调用方拿它当判断条件：返回空壳会让消息既不成卡片也不成正文，直接从时间线上消失。
         expect(parseQuizPayload(null)).toBeNull();
         expect(parseQuizPayload({ kind: "quiz" })).toBeNull();
-        expect(parseQuizPayload({ kind: "quiz", content: "不是 JSON" })).toBeNull();
         expect(
-            parseQuizPayload({ kind: "quiz", content: JSON.stringify({ questions: [] }) }),
+            parseQuizPayload({ kind: "quiz", content: "不是 JSON" }),
         ).toBeNull();
         expect(
-            parseQuizPayload({ kind: "quiz", content: JSON.stringify({ hello: "world" }) }),
+            parseQuizPayload({
+                kind: "quiz",
+                content: JSON.stringify({ questions: [] }),
+            }),
+        ).toBeNull();
+        expect(
+            parseQuizPayload({
+                kind: "quiz",
+                content: JSON.stringify({ hello: "world" }),
+            }),
         ).toBeNull();
     });
 
     it("does not mistake an ordinary answer for a quiz card", () => {
         expect(
-            parseQuizPayload({ kind: "answer", content: "这是普通回答，不是答题卡" }),
+            parseQuizPayload({
+                kind: "answer",
+                content: "这是普通回答，不是答题卡",
+            }),
         ).toBeNull();
     });
 });

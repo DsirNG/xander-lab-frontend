@@ -18,11 +18,7 @@ import WorkspaceHomeSectionHeader from "@features/workspace/components/Workspace
 import WorkspaceHomeSidebar from "@features/workspace/components/WorkspaceHomeSidebar";
 import { listAgentConversations } from "@features/agent";
 import { listKnowledgeMaterials } from "@features/knowledge";
-import {
-    listBlogPlans,
-    listMyBlogs,
-    NotificationBell,
-} from "@features/blog";
+import { listBlogPlans, listMyBlogs, NotificationBell } from "@features/blog";
 
 const CONTINUE_SECTIONS = [
     {

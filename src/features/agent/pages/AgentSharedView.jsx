@@ -34,7 +34,9 @@ const ConversationMessage = ({ role, content, imageUrls }) => (
             {role === "user" ? (
                 <span className="whitespace-pre-wrap">{content}</span>
             ) : (
-                <AgentMarkdown content={cleanImageMarkdown(content, imageUrls)} />
+                <AgentMarkdown
+                    content={cleanImageMarkdown(content, imageUrls)}
+                />
             )}
         </div>
     </div>
@@ -50,7 +52,10 @@ const AgentSharedView = () => {
 
     // 分享页此前完全不处理图片工具结果：图片不展示，模型写在正文里的
     // OSS 地址反而被当成普通链接渲染出来。这里与站内对话用同一套判定与清洗。
-    const imageUrls = useMemo(() => imageUrlsFromMessages(messages), [messages]);
+    const imageUrls = useMemo(
+        () => imageUrlsFromMessages(messages),
+        [messages],
+    );
 
     useEffect(() => {
         if (!shareToken) return;

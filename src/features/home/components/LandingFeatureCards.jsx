@@ -1,7 +1,13 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
-import { ArrowRight, BookOpen, Globe, MessageSquare, PenLine } from "lucide-react";
+import {
+    ArrowRight,
+    BookOpen,
+    Globe,
+    MessageSquare,
+    PenLine,
+} from "lucide-react";
 
 const FEATURE_CARDS = [
     {
@@ -59,7 +65,9 @@ const LandingFeatureCards = ({ t }) => {
                                         <Icon className="h-4.5 w-4.5" />
                                     </div>
                                     <h3 className="text-sm font-bold text-[#111426]">
-                                        {t(`landing.features.${card.key}.title`)}
+                                        {t(
+                                            `landing.features.${card.key}.title`,
+                                        )}
                                     </h3>
                                 </div>
 

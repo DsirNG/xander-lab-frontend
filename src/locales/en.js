@@ -5,7 +5,8 @@
 
 export default {
     nav: {
-        loginRequired: "Please sign in or open the workspace to use this feature",
+        loginRequired:
+            "Please sign in or open the workspace to use this feature",
         infra: "Infrastructure",
         modules: "Modules",
         components: "Components",
@@ -530,7 +531,8 @@ export default {
             toolCancelled: "Stopped",
             approval: {
                 title: "Your approval is required",
-                description: "The agent is ready to run {{tool}}. Confirm whether it may continue.",
+                description:
+                    "The agent is ready to run {{tool}}. Confirm whether it may continue.",
                 tool: "Pending action: {{tool}}",
                 approve: "Approve",
                 reject: "Reject",
@@ -610,11 +612,11 @@ export default {
         agentMcp: {
             title: {
                 user: "My MCP servers",
-                admin: "Platform MCP servers"
+                admin: "Platform MCP servers",
             },
             subtitle: {
                 user: "Connect a third-party MCP server to bring its tools into your agent; every call needs your approval",
-                admin: "Configure platform-wide MCP servers available to everyone; each call is still approved by the user who makes it"
+                admin: "Configure platform-wide MCP servers available to everyone; each call is still approved by the user who makes it",
             },
             create: "Add server",
             createTitle: "Add MCP server",
@@ -638,36 +640,47 @@ export default {
             edit: "Edit",
             delete: "Delete",
             deleteTitle: "Delete MCP server",
-            deleteConfirm: "Delete \"{{name}}\"? Its tools are removed from the agent tool surface immediately.",
+            deleteConfirm:
+                'Delete "{{name}}"? Its tools are removed from the agent tool surface immediately.',
             deleted: "Deleted",
             deleteFailed: "Delete failed",
             emptyTitle: "No MCP server configured yet",
-            emptyHint: "Add a remote MCP server and test the connection; its tools then appear in the agent tool table",
+            emptyHint:
+                "Add a remote MCP server and test the connection; its tools then appear in the agent tool table",
             loadFailed: "Failed to load MCP servers",
             actionsFor: "Actions for {{name}}",
             created: "Added",
             updated: "Saved",
             saveFailed: "Save failed",
-            executableHint: "Note: this configures executable capability. Once enabled and probed, the remote tools really enter the agent tool surface, and calls leave this platform carrying your authorization.",
+            executableHint:
+                "Note: this configures executable capability. Once enabled and probed, the remote tools really enter the agent tool surface, and calls leave this platform carrying your authorization.",
             fieldKey: "Server key",
-            fieldKeyHint: "2-20 lowercase letters, digits or hyphens; becomes part of the tool name prefix and cannot change later",
+            fieldKeyHint:
+                "2-20 lowercase letters, digits or hyphens; becomes part of the tool name prefix and cannot change later",
             fieldName: "Display name",
             fieldNamePlaceholder: "e.g. GitHub",
             fieldEndpoint: "Endpoint URL",
-            fieldEndpointHint: "Must be an HTTPS URL with no embedded credentials that resolves to a public address",
+            fieldEndpointHint:
+                "Must be an HTTPS URL with no embedded credentials that resolves to a public address",
             fieldHeaders: "Extra request headers",
-            fieldHeadersHint: "One per line as \"Name: value\", for credentials the remote requires such as Authorization; leave empty if none",
-            formClearHeaders: "Clear the saved credentials (leave empty to keep them)",
+            fieldHeadersHint:
+                'One per line as "Name: value", for credentials the remote requires such as Authorization; leave empty if none',
+            formClearHeaders:
+                "Clear the saved credentials (leave empty to keep them)",
             formEnabled: "Enabled",
-            formEnabledHint: "Only when enabled do the discovered tools enter the agent tool surface; otherwise they never appear",
-            formKeyInvalid: "Server key must be 2-20 lowercase letters, digits or hyphens, starting with a letter",
+            formEnabledHint:
+                "Only when enabled do the discovered tools enter the agent tool surface; otherwise they never appear",
+            formKeyInvalid:
+                "Server key must be 2-20 lowercase letters, digits or hyphens, starting with a letter",
             formNameRequired: "Display name is required",
             formNameTooLong: "Display name must be at most {{max}} characters",
             formEndpointRequired: "Endpoint URL is required",
-            formEndpointTooLong: "Endpoint URL must be at most {{max}} characters",
+            formEndpointTooLong:
+                "Endpoint URL must be at most {{max}} characters",
             formEndpointNotHttps: "Endpoint URL must use HTTPS",
-            formHeadersInvalid: "Header on line {{lines}} is malformed; use \"Name: value\"",
-            formHeadersTooMany: "At most {{max}} headers"
+            formHeadersInvalid:
+                'Header on line {{lines}} is malformed; use "Name: value"',
+            formHeadersTooMany: "At most {{max}} headers",
         },
         agentSkills: {
             title: "Skills",
@@ -689,7 +702,8 @@ export default {
             newVersion: "New version",
             archive: "Archive",
             archiveTitle: "Archive skill",
-            archiveConfirm: "Archive \"{{name}}\"? The agent will no longer read it.",
+            archiveConfirm:
+                'Archive "{{name}}"? The agent will no longer read it.',
             archiveFailed: "Failed to archive, please try again later",
             archived: "Archived",
             createTitle: "New skill",
@@ -2000,7 +2014,8 @@ export default {
             networkError:
                 "Network request failed, please check your connection",
             noRefreshToken: "No refresh token, please log in again",
-            refreshUnavailable: "Unable to refresh the session right now, please try again later",
+            refreshUnavailable:
+                "Unable to refresh the session right now, please try again later",
             retryPrefix: "[HTTP] Retry",
             retrySuffix: "delay",
             cancelled: "Request cancelled",
@@ -2136,7 +2151,8 @@ export default {
         tabDocs: "Document knowledge base",
         tabMirror: "Knowledge mirror / review",
         title: "Document knowledge base",
-        subtitle: "A private knowledge hub and mind maps built on smart tokenisation and chapter extraction",
+        subtitle:
+            "A private knowledge hub and mind maps built on smart tokenisation and chapter extraction",
         folders: {
             allDocs: "All documents",
             title: "Folders",
@@ -2154,7 +2170,8 @@ export default {
             subfolders: "Subfolders",
             newSubfolder: "New subfolder",
             confirmDeleteTitle: "Delete folder",
-            confirmDeleteMsg: "Delete the folder “{{name}}”? All of its subfolders and documents will be permanently deleted.",
+            confirmDeleteMsg:
+                "Delete the folder “{{name}}”? All of its subfolders and documents will be permanently deleted.",
             created: "Folder created",
             renamed: "Folder renamed",
             moved: "Folder moved",
@@ -2170,7 +2187,8 @@ export default {
             viewList: "List view",
             emptyTitle: "No documents in this category yet",
             emptyFolderOnly: "No files directly in this folder",
-            emptyHint: "Use the upload button in the top right — the system splits chapters and builds a mind map automatically.",
+            emptyHint:
+                "Use the upload button in the top right — the system splits chapters and builds a mind map automatically.",
             uploadNow: "Upload a document",
             name: "Name",
             status: "Knowledge structure status",
@@ -2183,7 +2201,8 @@ export default {
             chapterCount: "Detected chapters",
             manageTags: "Attached tags",
             confirmDeleteTitle: "Delete file",
-            confirmDeleteMsg: "Permanently delete the file “{{name}}”? The stored object and the generated mind map will be removed as well.",
+            confirmDeleteMsg:
+                "Permanently delete the file “{{name}}”? The stored object and the generated mind map will be removed as well.",
             moved: "File moved",
             deleted: "File deleted",
             reidentify: "Re-analyse",
@@ -2193,13 +2212,16 @@ export default {
             btn: "Upload document",
             title: "Upload a document to the knowledge base",
             targetFolder: "Destination folder",
-            needFolderFirst: "Create at least one folder on the left first — files cannot be placed directly in the root.",
+            needFolderFirst:
+                "Create at least one folder on the left first — files cannot be placed directly in the root.",
             selectFileLabel: "Choose a file",
             dragHint: "Drag a file here, or click to browse",
-            supportHint: "Supports Markdown, PDF, Word, TXT, JSON, HTML and more (up to 50 MB per file)",
+            supportHint:
+                "Supports Markdown, PDF, Word, TXT, JSON, HTML and more (up to 50 MB per file)",
             tagsLabel: "Tags (optional)",
             tagsPlaceholder: "Type a tag name and press Enter to add it",
-            progressDesc: "Once stored, the text is extracted and chapters and knowledge-graph nodes are detected...",
+            progressDesc:
+                "Once stored, the text is extracted and chapters and knowledge-graph nodes are detected...",
             submitBtn: "Start upload",
             uploadingBtn: "Uploading...",
             preparing: "Preparing upload...",
@@ -2222,7 +2244,8 @@ export default {
             rawFile: "Source file",
             loadFailed: "Failed to load the preview",
             noStructureTitle: "No map yet",
-            noStructureDesc: "For long documents, open “Chapter outline” to generate a mind map for a specific chapter on demand.",
+            noStructureDesc:
+                "For long documents, open “Chapter outline” to generate a mind map for a specific chapter on demand.",
             generateNow: "Generate map now",
             outline: "Chapter list",
             noChapters: "No chapters detected",
@@ -2230,7 +2253,8 @@ export default {
             excerptTitle: "Text excerpt",
             loadFull: "Load full text",
             noContent: "No text content",
-            truncatedNotice: "(Only the first 2,000 characters are shown; click “Load full text” in the top right to read the whole document)",
+            truncatedNotice:
+                "(Only the first 2,000 characters are shown; click “Load full text” in the top right to read the whole document)",
         },
         tags: {
             title: "Tags",
@@ -2290,7 +2314,8 @@ export default {
     },
 
     shared: {
-        readOnly: "This link is view-only; the conversation cannot be continued",
+        readOnly:
+            "This link is view-only; the conversation cannot be continued",
     },
     blogManage: {
         createNew: "New post",

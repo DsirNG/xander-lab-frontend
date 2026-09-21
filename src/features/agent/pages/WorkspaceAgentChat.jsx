@@ -99,7 +99,10 @@ const WorkspaceAgentChat = () => {
         [steps],
     );
 
-    const historicalImageUrls = useMemo(() => imageUrlsFromMessages(messages), [messages]);
+    const historicalImageUrls = useMemo(
+        () => imageUrlsFromMessages(messages),
+        [messages],
+    );
 
     const liveImageUrls = useMemo(() => imageUrlsFromSteps(steps), [steps]);
 
@@ -258,7 +261,10 @@ const WorkspaceAgentChat = () => {
                     </button>
                 </header>
 
-                {messages.length === 0 && steps.length === 0 && approvals.length === 0 && !loading ? (
+                {messages.length === 0 &&
+                steps.length === 0 &&
+                approvals.length === 0 &&
+                !loading ? (
                     <WorkspaceAgentWelcome
                         displayName={displayName}
                         input={input}

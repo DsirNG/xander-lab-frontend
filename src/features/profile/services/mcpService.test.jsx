@@ -9,9 +9,8 @@ const apiMock = vi.hoisted(() => ({
 vi.mock("@api", () => apiMock);
 
 const { mcpOAuthService } = await import("./mcpOAuthService.js");
-const { csdnService } = await import(
-    "@features/platformIntegrations/services/publishingService.js",
-);
+const { csdnService } =
+    await import("@features/platformIntegrations/services/publishingService.js");
 
 afterEach(() => {
     vi.clearAllMocks();

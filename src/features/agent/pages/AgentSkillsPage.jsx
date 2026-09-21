@@ -6,7 +6,10 @@ import RowActionsMenu from "@shared/ui/overlays/RowActionsMenu";
 import ConfirmModal from "@shared/ui/overlays/ConfirmModal";
 import Button from "@shared/ui/primitives/Button";
 import { useToast } from "@shared/hooks/useToast";
-import { agentSkillService, parseSkillToolNames } from "../services/agentSkillService";
+import {
+    agentSkillService,
+    parseSkillToolNames,
+} from "../services/agentSkillService";
 import SkillFormModal from "../components/SkillFormModal";
 
 const PAGE_SIZE = 10;

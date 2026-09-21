@@ -28,7 +28,10 @@ describe("knowledgeBaseService", () => {
         });
 
         it("create 文件夹向端点提交 parentId 与 name", () => {
-            knowledgeBaseService.folders.create({ parentId: 3, name: "微服务架构" });
+            knowledgeBaseService.folders.create({
+                parentId: 3,
+                name: "微服务架构",
+            });
             expect(apiMock.post).toHaveBeenCalledWith(
                 "/api/knowledge-base/folders",
                 { parentId: 3, name: "微服务架构" },
@@ -66,7 +69,12 @@ describe("knowledgeBaseService", () => {
 
     describe("files", () => {
         it("search 文件多维条件检索", () => {
-            const query = { folderId: 5, keyword: "设计模式", page: 1, size: 20 };
+            const query = {
+                folderId: 5,
+                keyword: "设计模式",
+                page: 1,
+                size: 20,
+            };
             knowledgeBaseService.files.search(query);
             expect(apiMock.get).toHaveBeenCalledWith(
                 "/api/knowledge-base/files",

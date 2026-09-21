@@ -14,10 +14,7 @@ const resolveFilename = (response, filename) => {
  * @param {import('axios').AxiosInstance} instance
  * @param {number} timeout
  */
-export const createDownload = (
-    instance,
-    timeout = DEFAULT_DOWNLOAD_TIMEOUT,
-) =>
+export const createDownload = (instance, timeout = DEFAULT_DOWNLOAD_TIMEOUT) =>
     async function download(url, options = {}) {
         const {
             filename,

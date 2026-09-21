@@ -257,7 +257,10 @@ const CustomSelect = ({
             ? `option-${options[highlightedIndex].value}`
             : undefined;
 
-    const isSelectedVal = value !== undefined && value !== null && (value !== "" || selectedOption !== undefined);
+    const isSelectedVal =
+        value !== undefined &&
+        value !== null &&
+        (value !== "" || selectedOption !== undefined);
 
     return (
         <div

@@ -1,10 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import PropTypes from "prop-types";
-import {
-    AlertCircle,
-    Loader2,
-    Sparkles,
-} from "lucide-react";
+import { AlertCircle, Loader2, Sparkles } from "lucide-react";
 import {
     ImageToolProgressPanel,
     ImageToolResult,
@@ -77,7 +73,9 @@ const ConversationMessage = ({ role, content, imageUrls, isStreaming }) => (
                     </span>
                 )
             ) : (
-                <AgentMarkdown content={cleanImageMarkdown(content, imageUrls)} />
+                <AgentMarkdown
+                    content={cleanImageMarkdown(content, imageUrls)}
+                />
             )}
         </div>
     </div>
@@ -124,7 +122,10 @@ export default function AgentShowcaseConversation({
             onScroll={(event) => {
                 const element = event.currentTarget;
                 stickToBottomRef.current =
-                    element.scrollHeight - element.scrollTop - element.clientHeight < 96;
+                    element.scrollHeight -
+                        element.scrollTop -
+                        element.clientHeight <
+                    96;
             }}
             className="min-h-0 min-w-0 flex-1 overflow-y-auto px-4 pb-4 pt-3 sm:px-6"
         >
@@ -190,8 +191,16 @@ export default function AgentShowcaseConversation({
                             />
                         );
                     }
-                    if (message.kind === "answer" || message.kind === "message") {
-                        if (containsResultUrl(message.content, historicalImageUrls)) {
+                    if (
+                        message.kind === "answer" ||
+                        message.kind === "message"
+                    ) {
+                        if (
+                            containsResultUrl(
+                                message.content,
+                                historicalImageUrls,
+                            )
+                        ) {
                             return null;
                         }
                         return (
@@ -259,7 +268,10 @@ export default function AgentShowcaseConversation({
                             />
                         ) : null;
                     }
-                    if (step.type === "answer" || step.type === "answer_delta") {
+                    if (
+                        step.type === "answer" ||
+                        step.type === "answer_delta"
+                    ) {
                         if (containsResultUrl(step.content, liveImageUrls)) {
                             return null;
                         }
@@ -296,7 +308,9 @@ export default function AgentShowcaseConversation({
                 {(isActive || creating || (loading && steps.length > 0)) &&
                     !streamingAnswer &&
                     !activeImageGeneration && (
-                        <ThinkingIndicator label={t("blog.agentChat.thinking")} />
+                        <ThinkingIndicator
+                            label={t("blog.agentChat.thinking")}
+                        />
                     )}
 
                 {(reconnecting || errorMessage) && (
@@ -314,7 +328,9 @@ export default function AgentShowcaseConversation({
                         )}
                         <span className="truncate">
                             {errorMessage ||
-                                (reconnecting ? t("blog.agentChat.reconnecting") : "")}
+                                (reconnecting
+                                    ? t("blog.agentChat.reconnecting")
+                                    : "")}
                         </span>
                     </div>
                 )}

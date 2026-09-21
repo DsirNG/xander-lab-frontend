@@ -71,7 +71,9 @@ describe("AgentSkillsPage", () => {
         expect(await screen.findByText("发版说明")).toBeInTheDocument();
         expect(screen.getByText("release-notes")).toBeInTheDocument();
         expect(screen.getByText("v2")).toBeInTheDocument();
-        expect(screen.getByText("blog.agentSkills.toolCount")).toBeInTheDocument();
+        expect(
+            screen.getByText("blog.agentSkills.toolCount"),
+        ).toBeInTheDocument();
     });
 
     // 与 AgentImagesPage 同一类缺陷：加载失败曾被渲染成"还没有数据"的空态，
@@ -82,9 +84,7 @@ describe("AgentSkillsPage", () => {
         render(<AgentSkillsPage />);
 
         expect(await screen.findByText("boom")).toBeInTheDocument();
-        expect(
-            screen.getByText("blog.agentImages.retry"),
-        ).toBeInTheDocument();
+        expect(screen.getByText("blog.agentImages.retry")).toBeInTheDocument();
         expect(
             screen.queryByText("blog.agentSkills.emptyTitle"),
         ).not.toBeInTheDocument();
@@ -99,9 +99,7 @@ describe("AgentSkillsPage", () => {
         await screen.findByText("发版说明");
         expect(listMock).toHaveBeenCalledTimes(1);
 
-        fireEvent.click(
-            screen.getByLabelText("blog.agentSkills.actionsFor"),
-        );
+        fireEvent.click(screen.getByLabelText("blog.agentSkills.actionsFor"));
         fireEvent.click(
             screen.getByRole("menuitem", {
                 name: "blog.agentSkills.archive",
@@ -129,9 +127,7 @@ describe("AgentSkillsPage", () => {
         render(<AgentSkillsPage />);
 
         await screen.findByText("发版说明");
-        fireEvent.click(
-            screen.getByLabelText("blog.agentSkills.actionsFor"),
-        );
+        fireEvent.click(screen.getByLabelText("blog.agentSkills.actionsFor"));
         fireEvent.click(
             screen.getByRole("menuitem", {
                 name: "blog.agentSkills.archive",
@@ -143,7 +139,9 @@ describe("AgentSkillsPage", () => {
             }),
         );
 
-        await waitFor(() => expect(toastError).toHaveBeenCalledWith("forbidden"));
+        await waitFor(() =>
+            expect(toastError).toHaveBeenCalledWith("forbidden"),
+        );
         expect(toastSuccess).not.toHaveBeenCalled();
         // 失败后不应重取列表，否则看起来像归档成功了。
         expect(listMock).toHaveBeenCalledTimes(1);

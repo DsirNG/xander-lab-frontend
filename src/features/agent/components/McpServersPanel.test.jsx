@@ -31,7 +31,9 @@ const server = (over = {}) => ({
     enabled: true,
     platformOwned: true,
     headersConfigured: false,
-    tools: [{ name: "create_issue", description: "建 issue", inputSchema: null }],
+    tools: [
+        { name: "create_issue", description: "建 issue", inputSchema: null },
+    ],
     lastStatus: "OK",
     lastError: null,
     ...over,
@@ -93,9 +95,7 @@ describe("McpServersPanel", () => {
         await screen.findByText("GitHub");
         expect(service.list).toHaveBeenCalledTimes(1);
 
-        fireEvent.click(
-            screen.getByLabelText("blog.agentMcp.probeFor"),
-        );
+        fireEvent.click(screen.getByLabelText("blog.agentMcp.probeFor"));
 
         await waitFor(() => expect(service.probe).toHaveBeenCalledWith(1));
         await waitFor(() => expect(service.list).toHaveBeenCalledTimes(2));

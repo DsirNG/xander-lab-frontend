@@ -155,10 +155,33 @@ const KnowledgePreviewContentTab = ({
         <div className="relative overflow-hidden rounded-2xl border border-[#e8e6fb] bg-[linear-gradient(105deg,#f1f0ff_0%,#f8f9ff_72%)] p-4 dark:border-white/10 dark:bg-surface">
             <div className="pointer-events-none absolute -right-3 -top-3 h-24 w-24 rounded-full bg-[#7771ed]/10 blur-xl dark:bg-blue-500/10" />
             <div className="pointer-events-none absolute right-2.5 top-2.5 h-16 w-16 opacity-35">
-                <svg viewBox="0 0 100 100" fill="none" className="h-full w-full">
-                    <circle cx="50" cy="50" r="40" stroke="#7771ed" strokeWidth="1.5" strokeDasharray="4 4" />
-                    <circle cx="50" cy="50" r="26" stroke="#6765f6" strokeWidth="1.2" />
-                    <circle cx="50" cy="50" r="12" fill="#7771ed" fillOpacity="0.15" />
+                <svg
+                    viewBox="0 0 100 100"
+                    fill="none"
+                    className="h-full w-full"
+                >
+                    <circle
+                        cx="50"
+                        cy="50"
+                        r="40"
+                        stroke="#7771ed"
+                        strokeWidth="1.5"
+                        strokeDasharray="4 4"
+                    />
+                    <circle
+                        cx="50"
+                        cy="50"
+                        r="26"
+                        stroke="#6765f6"
+                        strokeWidth="1.2"
+                    />
+                    <circle
+                        cx="50"
+                        cy="50"
+                        r="12"
+                        fill="#7771ed"
+                        fillOpacity="0.15"
+                    />
                 </svg>
             </div>
             <div className="relative z-10 pr-12">
@@ -170,7 +193,9 @@ const KnowledgePreviewContentTab = ({
                     {file.displayName}
                 </h4>
                 <div className="mt-1 text-[11px] text-[#8e94ad] dark:text-slate-400">
-                    {ext.toUpperCase()} 文档 · {formatBytes(file.fileSize || file.sizeBytes || 0)} · {chapters.length ? `${chapters.length} 章节` : "智能提炼"}
+                    {ext.toUpperCase()} 文档 ·{" "}
+                    {formatBytes(file.fileSize || file.sizeBytes || 0)} ·{" "}
+                    {chapters.length ? `${chapters.length} 章节` : "智能提炼"}
                 </div>
             </div>
         </div>
@@ -230,7 +255,9 @@ const KnowledgePreviewContentTab = ({
             <div className="flex items-center justify-between border-b border-[#eef0f6] pb-2 dark:border-white/5">
                 <div className="flex items-center gap-1.5 text-xs font-semibold text-[#111426] dark:text-slate-200">
                     <BookOpen className="h-3.5 w-3.5 text-[#6765f6]" />
-                    <span>{activeChapter ? activeChapter.title : "原文档正文"}</span>
+                    <span>
+                        {activeChapter ? activeChapter.title : "原文档正文"}
+                    </span>
                 </div>
                 <div className="flex items-center gap-1.5">
                     {isExcerptTruncated ? (

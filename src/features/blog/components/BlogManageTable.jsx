@@ -117,12 +117,7 @@ const BlogManageTable = ({
                     <div className="flex flex-wrap gap-1.5">
                         {(post.categoryName
                             ? [post.categoryName]
-                            : [
-                                  t(
-                                      "profile.blogManage.tagFrontend",
-                                      "前端",
-                                  ),
-                              ]
+                            : [t("profile.blogManage.tagFrontend", "前端")]
                         ).map((tag, index) => (
                             <span
                                 key={index}
@@ -167,7 +162,10 @@ const BlogManageTable = ({
                         ) : null}
                         {!post.csdnSynced && !post.juejinSynced ? (
                             <span className="rounded border border-border px-1.5 py-0.5 text-[11px] font-medium text-ink-muted">
-                                {t("profile.blogManage.platformWechat", "公众号")}
+                                {t(
+                                    "profile.blogManage.platformWechat",
+                                    "公众号",
+                                )}
                             </span>
                         ) : null}
                     </div>

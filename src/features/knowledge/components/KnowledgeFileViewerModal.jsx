@@ -60,7 +60,9 @@ const KnowledgeFileViewerModal = ({
                 });
                 setPreviewData(data);
                 if (data?.chapters?.length > 0) {
-                    setSelectedChapterId((current) => current || data.chapters[0].id);
+                    setSelectedChapterId(
+                        (current) => current || data.chapters[0].id,
+                    );
                 }
             } catch {
                 // error handled by UI
@@ -99,12 +101,19 @@ const KnowledgeFileViewerModal = ({
         if (!fileId) return;
         setActionLoading(true);
         try {
-            const updated = await knowledgeBaseService.structure.regenerate(fileId);
+            const updated =
+                await knowledgeBaseService.structure.regenerate(fileId);
             setPreviewData((prev) => ({
                 ...prev,
                 structure: updated,
             }));
-            window.__toast?.("success", t("knowledgeBase.viewer.regenerateSuccess", "已重新生成结构导图"));
+            window.__toast?.(
+                "success",
+                t(
+                    "knowledgeBase.viewer.regenerateSuccess",
+                    "已重新生成结构导图",
+                ),
+            );
             onFileUpdated?.();
         } finally {
             setActionLoading(false);
@@ -116,13 +125,20 @@ const KnowledgeFileViewerModal = ({
         if (!fileId || !chapterId) return;
         setActionLoading(true);
         try {
-            const updated = await knowledgeBaseService.structure.generateChapter(fileId, chapterId);
+            const updated =
+                await knowledgeBaseService.structure.generateChapter(
+                    fileId,
+                    chapterId,
+                );
             setPreviewData((prev) => ({
                 ...prev,
                 structure: updated,
             }));
             setTab("structure");
-            window.__toast?.("success", t("knowledgeBase.viewer.chapterGenSuccess", "已生成本章结构图"));
+            window.__toast?.(
+                "success",
+                t("knowledgeBase.viewer.chapterGenSuccess", "已生成本章结构图"),
+            );
             onFileUpdated?.();
         } finally {
             setActionLoading(false);
@@ -136,7 +152,10 @@ const KnowledgeFileViewerModal = ({
         try {
             await knowledgeBaseService.files.reidentify(fileId);
             await loadPreview();
-            window.__toast?.("success", t("knowledgeBase.viewer.reidentifySuccess", "重新识别完成"));
+            window.__toast?.(
+                "success",
+                t("knowledgeBase.viewer.reidentifySuccess", "重新识别完成"),
+            );
             onFileUpdated?.();
         } finally {
             setActionLoading(false);
@@ -150,13 +169,19 @@ const KnowledgeFileViewerModal = ({
             const trimmed = newTagInput.trim().replace(/^#/, "");
             if (!trimmed || !fileId) return;
             try {
-                const tags = await knowledgeBaseService.tags.attachToFile(fileId, [trimmed]);
+                const tags = await knowledgeBaseService.tags.attachToFile(
+                    fileId,
+                    [trimmed],
+                );
                 setPreviewData((prev) => ({
                     ...prev,
                     file: { ...prev.file, tags },
                 }));
                 setNewTagInput("");
-                window.__toast?.("success", t("knowledgeBase.tags.attached", "标签已添加"));
+                window.__toast?.(
+                    "success",
+                    t("knowledgeBase.tags.attached", "标签已添加"),
+                );
                 onFileUpdated?.();
             } catch {
                 // handled
@@ -168,12 +193,18 @@ const KnowledgeFileViewerModal = ({
     const handleRemoveTag = async (tagId) => {
         if (!fileId || !tagId) return;
         try {
-            const tags = await knowledgeBaseService.tags.detachFromFile(fileId, tagId);
+            const tags = await knowledgeBaseService.tags.detachFromFile(
+                fileId,
+                tagId,
+            );
             setPreviewData((prev) => ({
                 ...prev,
                 file: { ...prev.file, tags },
             }));
-            window.__toast?.("success", t("knowledgeBase.tags.detached", "标签已移除"));
+            window.__toast?.(
+                "success",
+                t("knowledgeBase.tags.detached", "标签已移除"),
+            );
             onFileUpdated?.();
         } catch {
             // handled
@@ -211,7 +242,10 @@ const KnowledgeFileViewerModal = ({
             title={
                 <div className="flex items-center gap-2 truncate">
                     <FileText className="h-5 w-5 text-[#6765f6] shrink-0" />
-                    <span className="truncate font-semibold text-[#111426]">{file?.displayName || t("knowledgeBase.viewer.title", "知识结构预览")}</span>
+                    <span className="truncate font-semibold text-[#111426]">
+                        {file?.displayName ||
+                            t("knowledgeBase.viewer.title", "知识结构预览")}
+                    </span>
                 </div>
             }
             width="max-w-5xl"
@@ -220,9 +254,15 @@ const KnowledgeFileViewerModal = ({
                     <div className="flex items-center gap-2 text-micro text-[#8e94ad]">
                         <span>{formatBytes(file?.sizeBytes)}</span>
                         <span>·</span>
-                        <span>{file?.charCount ?? 0} {t("knowledgeBase.files.chars", "字")}</span>
+                        <span>
+                            {file?.charCount ?? 0}{" "}
+                            {t("knowledgeBase.files.chars", "字")}
+                        </span>
                         <span>·</span>
-                        <span>{file?.chapterCount ?? 0} {t("knowledgeBase.files.chaptersCount", "章")}</span>
+                        <span>
+                            {file?.chapterCount ?? 0}{" "}
+                            {t("knowledgeBase.files.chaptersCount", "章")}
+                        </span>
                     </div>
                     <Button variant="ghost" onClick={onClose}>
                         {t("common.close", "关闭")}
@@ -244,9 +284,30 @@ const KnowledgeFileViewerModal = ({
                     <div className="flex items-center justify-between border-b border-[#eef0f6] pb-3">
                         <div className="flex gap-2">
                             {[
-                                { key: "structure", label: t("knowledgeBase.viewer.tabStructure", "知识结构图"), icon: Network },
-                                { key: "chapters", label: t("knowledgeBase.viewer.tabChapters", "章节大纲与正文"), icon: BookOpen },
-                                { key: "info", label: t("knowledgeBase.viewer.tabInfo", "文件属性与标签"), icon: TagIcon },
+                                {
+                                    key: "structure",
+                                    label: t(
+                                        "knowledgeBase.viewer.tabStructure",
+                                        "知识结构图",
+                                    ),
+                                    icon: Network,
+                                },
+                                {
+                                    key: "chapters",
+                                    label: t(
+                                        "knowledgeBase.viewer.tabChapters",
+                                        "章节大纲与正文",
+                                    ),
+                                    icon: BookOpen,
+                                },
+                                {
+                                    key: "info",
+                                    label: t(
+                                        "knowledgeBase.viewer.tabInfo",
+                                        "文件属性与标签",
+                                    ),
+                                    icon: TagIcon,
+                                },
                             ].map(({ key, label, icon: Icon }) => (
                                 <button
                                     key={key}
@@ -273,7 +334,10 @@ const KnowledgeFileViewerModal = ({
                                     loading={actionLoading}
                                     onClick={handleRegenerateStructure}
                                 >
-                                    {t("knowledgeBase.viewer.regenerate", "重新生成结构图")}
+                                    {t(
+                                        "knowledgeBase.viewer.regenerate",
+                                        "重新生成结构图",
+                                    )}
                                 </Button>
                             ) : null}
 
@@ -285,7 +349,12 @@ const KnowledgeFileViewerModal = ({
                                     className="flex items-center gap-1 rounded-xl border border-[#e9eaf4] bg-white px-3 py-1.5 text-caption text-[#555b7b] hover:bg-[#fbfbfe] hover:text-[#111426] transition"
                                 >
                                     <ExternalLink className="h-3.5 w-3.5" />
-                                    <span>{t("knowledgeBase.viewer.rawFile", "源文件")}</span>
+                                    <span>
+                                        {t(
+                                            "knowledgeBase.viewer.rawFile",
+                                            "源文件",
+                                        )}
+                                    </span>
                                 </a>
                             ) : null}
                         </div>
@@ -315,10 +384,17 @@ const KnowledgeFileViewerModal = ({
                                 <div className="rounded-2xl border border-dashed border-[#e9eaf4] bg-[#fbfbfe] p-8 text-center">
                                     <Network className="mx-auto h-10 w-10 text-[#8e94ad]" />
                                     <div className="mt-3 text-title font-medium text-[#111426]">
-                                        {t("knowledgeBase.viewer.noStructureTitle", "暂无结构图")}
+                                        {t(
+                                            "knowledgeBase.viewer.noStructureTitle",
+                                            "暂无结构图",
+                                        )}
                                     </div>
                                     <div className="mt-1 text-caption text-[#8e94ad]">
-                                        {file?.structureMessage || t("knowledgeBase.viewer.noStructureDesc", "大部头文件可进入「章节大纲」按需生成对应章节的脑图。")}
+                                        {file?.structureMessage ||
+                                            t(
+                                                "knowledgeBase.viewer.noStructureDesc",
+                                                "大部头文件可进入「章节大纲」按需生成对应章节的脑图。",
+                                            )}
                                     </div>
                                     <Button
                                         className="mt-4"
@@ -327,7 +403,10 @@ const KnowledgeFileViewerModal = ({
                                         loading={actionLoading}
                                         onClick={handleRegenerateStructure}
                                     >
-                                        {t("knowledgeBase.viewer.generateNow", "立即生成结构图")}
+                                        {t(
+                                            "knowledgeBase.viewer.generateNow",
+                                            "立即生成结构图",
+                                        )}
                                     </Button>
                                 </div>
                             )}
@@ -340,7 +419,11 @@ const KnowledgeFileViewerModal = ({
                             {/* 左侧章节目录树 */}
                             <div className="flex flex-col rounded-2xl border border-[#eef0f6] bg-[#fbfbfe] p-3">
                                 <div className="mb-2 px-2 text-caption font-semibold text-[#8e94ad] uppercase">
-                                    {t("knowledgeBase.viewer.outline", "章节目录")} ({chapters.length})
+                                    {t(
+                                        "knowledgeBase.viewer.outline",
+                                        "章节目录",
+                                    )}{" "}
+                                    ({chapters.length})
                                 </div>
                                 <div className="flex-1 space-y-1 overflow-y-auto pr-1">
                                     {chapters.map((ch) => (
@@ -351,27 +434,40 @@ const KnowledgeFileViewerModal = ({
                                                     ? "bg-[#f2f1fd] text-[#6765f6] font-semibold"
                                                     : "text-[#555b7b] hover:bg-white hover:text-[#111426]"
                                             }`}
-                                            style={{ paddingLeft: `${Math.max(0, (ch.level || 1) - 1) * 12 + 10}px` }}
+                                            style={{
+                                                paddingLeft: `${Math.max(0, (ch.level || 1) - 1) * 12 + 10}px`,
+                                            }}
                                         >
                                             <button
                                                 type="button"
-                                                onClick={() => setSelectedChapterId(ch.id)}
+                                                onClick={() =>
+                                                    setSelectedChapterId(ch.id)
+                                                }
                                                 className="truncate text-left flex-1"
                                                 title={ch.title}
                                             >
                                                 {ch.title}
                                             </button>
 
-                                            {ch.structureStatus === "PENDING" ? (
+                                            {ch.structureStatus ===
+                                            "PENDING" ? (
                                                 <button
                                                     type="button"
-                                                    onClick={() => handleGenerateChapterStructure(ch.id)}
+                                                    onClick={() =>
+                                                        handleGenerateChapterStructure(
+                                                            ch.id,
+                                                        )
+                                                    }
                                                     className="rounded px-1.5 py-0.5 text-micro text-[#6765f6] hover:bg-[#6765f6] hover:text-white transition"
-                                                    title={t("knowledgeBase.viewer.genChapterMindmap", "生成本章脑图")}
+                                                    title={t(
+                                                        "knowledgeBase.viewer.genChapterMindmap",
+                                                        "生成本章脑图",
+                                                    )}
                                                 >
                                                     出图
                                                 </button>
-                                            ) : ch.structureStatus === "READY" ? (
+                                            ) : ch.structureStatus ===
+                                              "READY" ? (
                                                 <CheckCircle2 className="h-3 w-3 text-emerald-500 shrink-0" />
                                             ) : null}
                                         </div>
@@ -379,7 +475,10 @@ const KnowledgeFileViewerModal = ({
 
                                     {chapters.length === 0 ? (
                                         <div className="py-8 text-center text-caption text-[#8e94ad]">
-                                            {t("knowledgeBase.viewer.noChapters", "未识别出章节")}
+                                            {t(
+                                                "knowledgeBase.viewer.noChapters",
+                                                "未识别出章节",
+                                            )}
                                         </div>
                                     ) : null}
                                 </div>
@@ -389,7 +488,11 @@ const KnowledgeFileViewerModal = ({
                             <div className="flex flex-col rounded-2xl border border-[#eef0f6] bg-white p-4">
                                 <div className="mb-3 flex items-center justify-between border-b border-[#eef0f6] pb-2">
                                     <div className="truncate text-body font-semibold text-[#111426]">
-                                        {activeChapter?.title || t("knowledgeBase.viewer.excerptTitle", "正文节选")}
+                                        {activeChapter?.title ||
+                                            t(
+                                                "knowledgeBase.viewer.excerptTitle",
+                                                "正文节选",
+                                            )}
                                     </div>
                                     <div className="flex items-center gap-2">
                                         <Button
@@ -407,7 +510,10 @@ const KnowledgeFileViewerModal = ({
                                                 loading={contentLoading}
                                                 onClick={handleLoadFullContent}
                                             >
-                                                {t("knowledgeBase.viewer.loadFull", "加载全文")}
+                                                {t(
+                                                    "knowledgeBase.viewer.loadFull",
+                                                    "加载全文",
+                                                )}
                                             </Button>
                                         ) : null}
                                     </div>
@@ -415,19 +521,28 @@ const KnowledgeFileViewerModal = ({
 
                                 <div className="flex-1 overflow-y-auto rounded-xl bg-[#fbfbfe] border border-[#eef0f6] p-4 text-body text-[#111426] leading-relaxed text-sm select-text">
                                     {displayText ? (
-                                        <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                                        <ReactMarkdown
+                                            remarkPlugins={[remarkGfm]}
+                                        >
                                             {displayText}
                                         </ReactMarkdown>
                                     ) : (
                                         <div className="py-12 text-center text-[#8e94ad]">
-                                            {t("knowledgeBase.viewer.noContent", "暂无文本内容")}
+                                            {t(
+                                                "knowledgeBase.viewer.noContent",
+                                                "暂无文本内容",
+                                            )}
                                         </div>
                                     )}
                                 </div>
 
-                                {previewData.excerptTruncated && !fullContent ? (
+                                {previewData.excerptTruncated &&
+                                !fullContent ? (
                                     <div className="mt-2 text-micro text-[#8e94ad] text-center">
-                                        {t("knowledgeBase.viewer.truncatedNotice", "（首屏仅展示前 2000 字片段，点击右上角「加载全文」阅读完整正文）")}
+                                        {t(
+                                            "knowledgeBase.viewer.truncatedNotice",
+                                            "（首屏仅展示前 2000 字片段，点击右上角「加载全文」阅读完整正文）",
+                                        )}
                                     </div>
                                 ) : null}
                             </div>

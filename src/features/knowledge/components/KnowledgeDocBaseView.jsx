@@ -121,7 +121,11 @@ const KnowledgeDocBaseView = ({ onSwitchToMirror }) => {
                         onRenameFolder={handleOpenRenameFolder}
                         onMoveFolder={handleOpenMoveFolder}
                         onDeleteFolder={(f) =>
-                            setConfirmDeleteState({ open: true, type: "folder", item: f })
+                            setConfirmDeleteState({
+                                open: true,
+                                type: "folder",
+                                item: f,
+                            })
                         }
                     />
                 </div>
@@ -137,7 +141,9 @@ const KnowledgeDocBaseView = ({ onSwitchToMirror }) => {
                         files={files}
                         selectedFileId={selectedFile?.id}
                         onSelectFile={(file) => {
-                            setSelectedFile((prev) => (prev?.id === file.id ? prev : file));
+                            setSelectedFile((prev) =>
+                                prev?.id === file.id ? prev : file,
+                            );
                         }}
                         total={totalFiles}
                         page={page}
@@ -161,11 +167,17 @@ const KnowledgeDocBaseView = ({ onSwitchToMirror }) => {
                             setActiveFolderId(id);
                             setPage(1);
                         }}
-                        onCreateFolder={() => handleOpenCreateFolder(activeFolderId || 0)}
+                        onCreateFolder={() =>
+                            handleOpenCreateFolder(activeFolderId || 0)
+                        }
                         onRenameFolder={handleOpenRenameFolder}
                         onMoveFolder={handleOpenMoveFolder}
                         onDeleteFolder={(f) =>
-                            setConfirmDeleteState({ open: true, type: "folder", item: f })
+                            setConfirmDeleteState({
+                                open: true,
+                                type: "folder",
+                                item: f,
+                            })
                         }
                         onPageChange={(p) => setPage(p)}
                         onPageSizeChange={(newSize) => {
@@ -181,31 +193,42 @@ const KnowledgeDocBaseView = ({ onSwitchToMirror }) => {
                             setViewerOpen(true);
                         }}
                         onRenameFile={(file) => {
-                            const newName = window.prompt("请输入新的文件名：", file.displayName);
-                            if (newName && newName.trim() && newName.trim() !== file.displayName) {
+                            const newName = window.prompt(
+                                "请输入新的文件名：",
+                                file.displayName,
+                            );
+                            if (
+                                newName &&
+                                newName.trim() &&
+                                newName.trim() !== file.displayName
+                            ) {
                                 handleRenameFile(file.id, newName.trim());
                             }
                         }}
                         onMoveFile={handleOpenMoveFile}
                         onDeleteFile={(file) =>
-                            setConfirmDeleteState({ open: true, type: "file", item: file })
+                            setConfirmDeleteState({
+                                open: true,
+                                type: "file",
+                                item: file,
+                            })
                         }
                         onReidentifyFile={handleReidentifyFile}
                         onOpenUpload={() => setUploadModalOpen(true)}
                     />
                 </div>
 
-            {/* 3. 右侧：知识结构预览面板 (Reference Image Right Panel - 点击文件后展示) */}
-            {selectedFile ? (
-                <KnowledgeStructurePreviewPanel
-                    file={selectedFile}
-                    onClose={() => setSelectedFile(null)}
-                    onOpenFullViewer={(id) => {
-                        setViewingFileId(id);
-                        setViewerOpen(true);
-                    }}
-                />
-            ) : null}
+                {/* 3. 右侧：知识结构预览面板 (Reference Image Right Panel - 点击文件后展示) */}
+                {selectedFile ? (
+                    <KnowledgeStructurePreviewPanel
+                        file={selectedFile}
+                        onClose={() => setSelectedFile(null)}
+                        onOpenFullViewer={(id) => {
+                            setViewingFileId(id);
+                            setViewerOpen(true);
+                        }}
+                    />
+                ) : null}
             </div>
 
             {/* 文件夹模态框 */}
@@ -263,12 +286,24 @@ const KnowledgeDocBaseView = ({ onSwitchToMirror }) => {
             {/* 删除确认模态框 */}
             <ConfirmModal
                 isOpen={confirmDeleteState.open}
-                onClose={() => setConfirmDeleteState({ open: false, type: null, item: null })}
+                onClose={() =>
+                    setConfirmDeleteState({
+                        open: false,
+                        type: null,
+                        item: null,
+                    })
+                }
                 onConfirm={handleConfirmDelete}
                 title={
                     confirmDeleteState.type === "folder"
-                        ? t("knowledgeBase.folders.confirmDeleteTitle", "删除文件夹")
-                        : t("knowledgeBase.files.confirmDeleteTitle", "删除文件")
+                        ? t(
+                              "knowledgeBase.folders.confirmDeleteTitle",
+                              "删除文件夹",
+                          )
+                        : t(
+                              "knowledgeBase.files.confirmDeleteTitle",
+                              "删除文件",
+                          )
                 }
                 message={
                     confirmDeleteState.type === "folder"

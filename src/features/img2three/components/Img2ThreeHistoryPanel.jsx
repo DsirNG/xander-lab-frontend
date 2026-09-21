@@ -2,11 +2,7 @@ import PropTypes from "prop-types";
 import { Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
-const Img2ThreeHistoryPanel = ({
-    loading,
-    tasks,
-    onSelectTask,
-}) => {
+const Img2ThreeHistoryPanel = ({ loading, tasks, onSelectTask }) => {
     const { t } = useTranslation();
 
     return (

@@ -48,10 +48,14 @@ const LandingHighlightsBar = ({ t }) => {
                                 </div>
                                 <div className="min-w-0 flex-1">
                                     <h4 className="text-sm font-bold text-[#111426]">
-                                        {t(`landing.highlights.${item.key}.title`)}
+                                        {t(
+                                            `landing.highlights.${item.key}.title`,
+                                        )}
                                     </h4>
                                     <p className="mt-0.5 truncate text-xs text-[#8087a3]">
-                                        {t(`landing.highlights.${item.key}.desc`)}
+                                        {t(
+                                            `landing.highlights.${item.key}.desc`,
+                                        )}
                                     </p>
                                 </div>
                             </div>

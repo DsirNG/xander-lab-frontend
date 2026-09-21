@@ -1,8 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import {
-    agentConversationService,
-} from "../services/agentConversationService";
+import { agentConversationService } from "../services/agentConversationService";
 import {
     abortableDelay,
     asId,
@@ -44,7 +42,9 @@ export const useAgentConversation = ({ conversationId }) => {
     const [reconnecting, setReconnecting] = useState(false);
     const [errorMessage, setErrorMessage] = useState(null);
     // 深度思考是使用习惯而不是会话状态，所以记在本地、跨会话与刷新都保持。
-    const [deepThinking, setDeepThinkingState] = useState(readDeepThinkingPreference);
+    const [deepThinking, setDeepThinkingState] = useState(
+        readDeepThinkingPreference,
+    );
 
     const activeIdRef = useRef(routeConversationId);
     const cursorRef = useRef(0);
@@ -231,7 +231,9 @@ export const useAgentConversation = ({ conversationId }) => {
                 answerDeltaRef.current = "";
                 updateRunning(false);
                 setConversation((current) =>
-                    current ? { ...current, status: "awaiting_approval" } : current,
+                    current
+                        ? { ...current, status: "awaiting_approval" }
+                        : current,
                 );
                 pushStep({ type: "approval", approval: data });
             } else if (event === "answer_delta") {
@@ -317,7 +319,14 @@ export const useAgentConversation = ({ conversationId }) => {
                 pushStep({ type: "error", message });
             }
         },
-        [isCurrent, pushStep, rememberEvent, scheduleDeltaFlush, t, updateRunning],
+        [
+            isCurrent,
+            pushStep,
+            rememberEvent,
+            scheduleDeltaFlush,
+            t,
+            updateRunning,
+        ],
     );
 
     const beginRunGeneration = useCallback(
@@ -413,7 +422,9 @@ export const useAgentConversation = ({ conversationId }) => {
             if (isCurrent(id)) {
                 setApprovals(
                     Array.isArray(items)
-                        ? items.filter((approval) => approval?.status === "PENDING")
+                        ? items.filter(
+                              (approval) => approval?.status === "PENDING",
+                          )
                         : [],
                 );
             }
@@ -431,7 +442,9 @@ export const useAgentConversation = ({ conversationId }) => {
         const controller = new AbortController();
         loadApprovals(id, controller.signal).catch((error) => {
             if (!controller.signal.aborted && isCurrent(id)) {
-                setErrorMessage(error.message || t("blog.agentChat.loadFailed"));
+                setErrorMessage(
+                    error.message || t("blog.agentChat.loadFailed"),
+                );
             }
         });
         return () => controller.abort();
@@ -958,7 +971,4 @@ export const useAgentConversation = ({ conversationId }) => {
 };
 
 // Keep the historical import path stable while the pure formatters live outside the Hook.
-export {
-    toolCallSummary,
-    compactToolResult,
-} from "../utils/toolMessages";
+export { toolCallSummary, compactToolResult } from "../utils/toolMessages";

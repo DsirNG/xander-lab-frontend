@@ -347,4 +347,3 @@ AgentSidebarUserMenu.propTypes = {
 };
 
 export default AgentSidebarUserMenu;
-

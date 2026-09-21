@@ -130,7 +130,8 @@ const LandingImg2ThreejsSection = ({ t }) => {
     const [metalness, setMetalness] = useState(95);
     const [roughness, setRoughness] = useState(12);
 
-    const currentModel = MODELS.find((m) => m.id === selectedModelId) || MODELS[0];
+    const currentModel =
+        MODELS.find((m) => m.id === selectedModelId) || MODELS[0];
 
     return (
         <section className="relative mx-auto mt-28 w-full max-w-7xl px-3 sm:px-6 lg:px-8">
@@ -148,10 +149,18 @@ const LandingImg2ThreejsSection = ({ t }) => {
             <div className="text-center">
                 <div className="inline-flex items-center gap-2 rounded-full border border-purple-200/80 bg-purple-50/80 px-4 py-1.5 text-xs font-semibold text-purple-700 shadow-xs backdrop-blur-md">
                     <Code2 className="h-3.5 w-3.5 text-purple-600" />
-                    <span>{t("landing.img2threejs.badge", "纯代码 3D 资产 · 0 二进制体积 · 毫秒级即时生成")}</span>
+                    <span>
+                        {t(
+                            "landing.img2threejs.badge",
+                            "纯代码 3D 资产 · 0 二进制体积 · 毫秒级即时生成",
+                        )}
+                    </span>
                 </div>
                 <h2 className="mt-4 text-2xl font-black tracking-tight text-[#111426] sm:text-4xl">
-                    {t("landing.img2threejs.title", "img2threejs —— 纯代码程序化 3D 资产工坊")}
+                    {t(
+                        "landing.img2threejs.title",
+                        "img2threejs —— 纯代码程序化 3D 资产工坊",
+                    )}
                 </h2>
                 <p className="mx-auto mt-3 max-w-3xl text-xs sm:text-sm leading-relaxed text-[#606782]">
                     {t(
@@ -210,7 +219,9 @@ const LandingImg2ThreejsSection = ({ t }) => {
                                 {/* Search Input Mock */}
                                 <div className="mt-3 flex items-center gap-2 rounded-xl border border-[#e2e8f0] bg-white px-2.5 py-1.5 text-xs text-[#8e94aa]">
                                     <Search className="h-3.5 w-3.5" />
-                                    <span className="text-[11px]">搜索 3D 资产库...</span>
+                                    <span className="text-[11px]">
+                                        搜索 3D 资产库...
+                                    </span>
                                 </div>
 
                                 {/* Models List */}
@@ -219,12 +230,15 @@ const LandingImg2ThreejsSection = ({ t }) => {
                                         已编译的程序化 3D 资产
                                     </div>
                                     {MODELS.map((model) => {
-                                        const isSelected = selectedModelId === model.id;
+                                        const isSelected =
+                                            selectedModelId === model.id;
                                         return (
                                             <button
                                                 key={model.id}
                                                 type="button"
-                                                onClick={() => setSelectedModelId(model.id)}
+                                                onClick={() =>
+                                                    setSelectedModelId(model.id)
+                                                }
                                                 className={`group flex w-full cursor-pointer items-center justify-between rounded-xl px-2.5 py-2 text-left transition-colors ${
                                                     isSelected
                                                         ? "bg-purple-50 text-purple-950 font-semibold"
@@ -234,12 +248,19 @@ const LandingImg2ThreejsSection = ({ t }) => {
                                                 <div className="flex min-w-0 items-center gap-2">
                                                     <Box
                                                         className={`h-3.5 w-3.5 shrink-0 ${
-                                                            isSelected ? "text-purple-600" : "text-[#9ea3b9]"
+                                                            isSelected
+                                                                ? "text-purple-600"
+                                                                : "text-[#9ea3b9]"
                                                         }`}
                                                     />
                                                     <div className="min-w-0">
-                                                        <div className="truncate text-xs">{model.name}</div>
-                                                        <div className="text-[10px] text-[#9ea3b9]">{model.polys} · {model.codeSize}</div>
+                                                        <div className="truncate text-xs">
+                                                            {model.name}
+                                                        </div>
+                                                        <div className="text-[10px] text-[#9ea3b9]">
+                                                            {model.polys} ·{" "}
+                                                            {model.codeSize}
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <span className="shrink-0 font-mono text-[9px] font-bold text-purple-600">
@@ -253,8 +274,12 @@ const LandingImg2ThreejsSection = ({ t }) => {
 
                             {/* Sidebar Footer Stats */}
                             <div className="rounded-xl border border-[#edf0f8] bg-white p-2.5 text-center">
-                                <div className="text-[10px] text-[#8e94aa]">运行时体积消耗</div>
-                                <div className="mt-0.5 text-xs font-bold text-emerald-600">0 MB 二进制 / 100% 纯代码</div>
+                                <div className="text-[10px] text-[#8e94aa]">
+                                    运行时体积消耗
+                                </div>
+                                <div className="mt-0.5 text-xs font-bold text-emerald-600">
+                                    0 MB 二进制 / 100% 纯代码
+                                </div>
                             </div>
                         </div>
 
@@ -267,7 +292,9 @@ const LandingImg2ThreejsSection = ({ t }) => {
                                         {currentModel.name}
                                     </h3>
                                     <div className="text-[10px] text-[#8e94aa]">
-                                        资产分类：{currentModel.category} · 拓扑面数：{currentModel.polys} · 源码大小：{currentModel.codeSize}
+                                        资产分类：{currentModel.category} ·
+                                        拓扑面数：{currentModel.polys} ·
+                                        源码大小：{currentModel.codeSize}
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-1.5">
@@ -317,19 +344,25 @@ const LandingImg2ThreejsSection = ({ t }) => {
                                     <div className="relative flex flex-col items-center justify-center rounded-2xl border border-border bg-[#0d111d] p-4 text-white shadow-xs">
                                         <div className="absolute left-3 top-3 flex items-center gap-2 text-micro font-mono text-purple-300">
                                             <span className="h-2 w-2 rounded-full bg-emerald-400 animate-ping" />
-                                            <span>WebGL 60 FPS · 360° 交互式转盘</span>
+                                            <span>
+                                                WebGL 60 FPS · 360° 交互式转盘
+                                            </span>
                                         </div>
                                         <div className="absolute right-3 top-3 flex items-center gap-2">
                                             <button
                                                 type="button"
-                                                onClick={() => setWireframe(!wireframe)}
+                                                onClick={() =>
+                                                    setWireframe(!wireframe)
+                                                }
                                                 className={`rounded-lg border px-2 py-1 text-micro font-bold transition-all ${
                                                     wireframe
                                                         ? "border-purple-400 bg-purple-600 text-white"
                                                         : "border-white/20 bg-white/10 text-slate-300 hover:bg-white/20"
                                                 }`}
                                             >
-                                                {wireframe ? "Wireframe 开" : "Wireframe 关"}
+                                                {wireframe
+                                                    ? "Wireframe 开"
+                                                    : "Wireframe 关"}
                                             </button>
                                         </div>
 
@@ -338,8 +371,13 @@ const LandingImg2ThreejsSection = ({ t }) => {
                                         </div>
 
                                         <div className="w-full flex items-center justify-between border-t border-white/10 pt-2.5 text-micro text-slate-400">
-                                            <span>右键平移 · 滚轮缩放 · 骨骼插槽右手机位就绪</span>
-                                            <span className="font-mono text-purple-300">GPU 显存占用: 0.12 MB</span>
+                                            <span>
+                                                右键平移 · 滚轮缩放 ·
+                                                骨骼插槽右手机位就绪
+                                            </span>
+                                            <span className="font-mono text-purple-300">
+                                                GPU 显存占用: 0.12 MB
+                                            </span>
                                         </div>
                                     </div>
                                 )}
@@ -348,8 +386,13 @@ const LandingImg2ThreejsSection = ({ t }) => {
                                     /* Live Three.js JavaScript Code Inspector */
                                     <div className="overflow-hidden rounded-2xl border border-[#1e293b] bg-[#0d111d] p-4 text-white shadow-xs font-mono text-[11px]">
                                         <div className="flex items-center justify-between border-b border-white/10 pb-2 text-micro text-slate-400">
-                                            <span className="text-purple-300">three_generated_asset.js (ES Module)</span>
-                                            <span className="text-emerald-400">Pure Code / No Binary</span>
+                                            <span className="text-purple-300">
+                                                three_generated_asset.js (ES
+                                                Module)
+                                            </span>
+                                            <span className="text-emerald-400">
+                                                Pure Code / No Binary
+                                            </span>
                                         </div>
                                         <pre className="mt-3 max-h-56 overflow-y-auto text-purple-200 leading-relaxed scrollbar-thin">
                                             {CODE_SNIPPETS[selectedModelId]}
@@ -372,30 +415,54 @@ const LandingImg2ThreejsSection = ({ t }) => {
                                         <div className="mt-4 space-y-4">
                                             <div>
                                                 <div className="flex justify-between text-xs font-semibold text-ink-secondary">
-                                                    <span>金属度 (Metalness)</span>
-                                                    <span className="font-mono text-purple-600">{(metalness / 100).toFixed(2)}</span>
+                                                    <span>
+                                                        金属度 (Metalness)
+                                                    </span>
+                                                    <span className="font-mono text-purple-600">
+                                                        {(
+                                                            metalness / 100
+                                                        ).toFixed(2)}
+                                                    </span>
                                                 </div>
                                                 <input
                                                     type="range"
                                                     min="0"
                                                     max="100"
                                                     value={metalness}
-                                                    onChange={(e) => setMetalness(Number(e.target.value))}
+                                                    onChange={(e) =>
+                                                        setMetalness(
+                                                            Number(
+                                                                e.target.value,
+                                                            ),
+                                                        )
+                                                    }
                                                     className="mt-2 w-full accent-purple-600"
                                                 />
                                             </div>
 
                                             <div>
                                                 <div className="flex justify-between text-xs font-semibold text-ink-secondary">
-                                                    <span>粗糙度 (Roughness)</span>
-                                                    <span className="font-mono text-purple-600">{(roughness / 100).toFixed(2)}</span>
+                                                    <span>
+                                                        粗糙度 (Roughness)
+                                                    </span>
+                                                    <span className="font-mono text-purple-600">
+                                                        {(
+                                                            roughness / 100
+                                                        ).toFixed(2)}
+                                                    </span>
                                                 </div>
                                                 <input
                                                     type="range"
                                                     min="0"
                                                     max="100"
                                                     value={roughness}
-                                                    onChange={(e) => setRoughness(Number(e.target.value))}
+                                                    onChange={(e) =>
+                                                        setRoughness(
+                                                            Number(
+                                                                e.target.value,
+                                                            ),
+                                                        )
+                                                    }
                                                     className="mt-2 w-full accent-purple-600"
                                                 />
                                             </div>
@@ -443,7 +510,8 @@ const LandingImg2ThreejsSection = ({ t }) => {
                         <span>0 二进制资产革命</span>
                     </div>
                     <p className="mt-1.5 text-[11px] leading-relaxed text-[#64748b]">
-                        纯代码程序化构建，数十 KB 代码替代数十 MB 模型文件，网页秒开零网络延迟。
+                        纯代码程序化构建，数十 KB 代码替代数十 MB
+                        模型文件，网页秒开零网络延迟。
                     </p>
                 </div>
                 <div className="rounded-2xl border border-[#ebeef7] bg-white p-4 shadow-2xs">
@@ -452,7 +520,8 @@ const LandingImg2ThreejsSection = ({ t }) => {
                         <span>自动装配骨骼与插槽</span>
                     </div>
                     <p className="mt-1.5 text-[11px] leading-relaxed text-[#64748b]">
-                        自动生成挂载点 (Weapon Socket) 与碰撞体 (Collider)，直接适配游戏角色骨骼。
+                        自动生成挂载点 (Weapon Socket) 与碰撞体
+                        (Collider)，直接适配游戏角色骨骼。
                     </p>
                 </div>
                 <div className="rounded-2xl border border-[#ebeef7] bg-white p-4 shadow-2xs">
@@ -461,7 +530,8 @@ const LandingImg2ThreejsSection = ({ t }) => {
                         <span>PBR 材质与着色器微调</span>
                     </div>
                     <p className="mt-1.5 text-[11px] leading-relaxed text-[#64748b]">
-                        支持实时微调金属度、粗糙度、Clearcoat 漆面层与自发光着色器辉光。
+                        支持实时微调金属度、粗糙度、Clearcoat
+                        漆面层与自发光着色器辉光。
                     </p>
                 </div>
             </div>

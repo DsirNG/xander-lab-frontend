@@ -7,9 +7,7 @@ import React, {
 } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import {
-    ShieldAlert,
-} from "lucide-react";
+import { ShieldAlert } from "lucide-react";
 import { useToast } from "@shared/hooks/useToast";
 import useIsMobile from "@shared/hooks/useIsMobile";
 import { useAgentConversation } from "../hooks/useAgentConversation";
@@ -160,7 +158,10 @@ const AgentChat = () => {
         [steps],
     );
 
-    const historicalImageUrls = useMemo(() => imageUrlsFromMessages(messages), [messages]);
+    const historicalImageUrls = useMemo(
+        () => imageUrlsFromMessages(messages),
+        [messages],
+    );
 
     const liveImageUrls = useMemo(() => imageUrlsFromSteps(steps), [steps]);
 
@@ -446,11 +447,17 @@ const AgentChat = () => {
                                         timeline={timeline}
                                         approvals={approvals}
                                         decidingApprovalId={decidingApprovalId}
-                                        handleApprovalDecision={handleApprovalDecision}
+                                        handleApprovalDecision={
+                                            handleApprovalDecision
+                                        }
                                         handleQuizSubmit={handleQuizSubmit}
-                                        historicalImageUrls={historicalImageUrls}
+                                        historicalImageUrls={
+                                            historicalImageUrls
+                                        }
                                         liveImageUrls={liveImageUrls}
-                                        activeImageGeneration={activeImageGeneration}
+                                        activeImageGeneration={
+                                            activeImageGeneration
+                                        }
                                         isActive={isActive}
                                         streamingAnswer={streamingAnswer}
                                         reconnecting={reconnecting}

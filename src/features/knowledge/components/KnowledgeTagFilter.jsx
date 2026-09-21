@@ -89,7 +89,9 @@ const KnowledgeTagFilter = ({
                         {tag.usageCount != null ? (
                             <span
                                 className={`text-micro ${
-                                    isSelected ? "text-[#6765f6]" : "text-[#8e94ad]"
+                                    isSelected
+                                        ? "text-[#6765f6]"
+                                        : "text-[#8e94ad]"
                                 }`}
                             >
                                 ({tag.usageCount})
@@ -134,7 +136,11 @@ const KnowledgeTagFilter = ({
                     </>
                 }
             >
-                <form id="create-tag-form" onSubmit={handleCreate} className="space-y-4">
+                <form
+                    id="create-tag-form"
+                    onSubmit={handleCreate}
+                    className="space-y-4"
+                >
                     <FormField
                         label={t("knowledgeBase.tags.nameLabel", "标签名")}
                         required
@@ -142,7 +148,10 @@ const KnowledgeTagFilter = ({
                         <input
                             type="text"
                             className={formInputCls}
-                            placeholder={t("knowledgeBase.tags.namePlaceholder", "例如：技术架构、产品设计")}
+                            placeholder={t(
+                                "knowledgeBase.tags.namePlaceholder",
+                                "例如：技术架构、产品设计",
+                            )}
                             value={tagName}
                             onChange={(e) => setTagName(e.target.value)}
                             maxLength={60}
@@ -150,7 +159,9 @@ const KnowledgeTagFilter = ({
                         />
                     </FormField>
 
-                    <FormField label={t("knowledgeBase.tags.colorLabel", "标签颜色")}>
+                    <FormField
+                        label={t("knowledgeBase.tags.colorLabel", "标签颜色")}
+                    >
                         <div className="flex flex-wrap items-center gap-2 pt-1">
                             {DEFAULT_TAG_COLORS.map((c) => (
                                 <button
@@ -168,11 +179,19 @@ const KnowledgeTagFilter = ({
                         </div>
                     </FormField>
 
-                    <FormField label={t("knowledgeBase.tags.descLabel", "说明（可选）")}>
+                    <FormField
+                        label={t(
+                            "knowledgeBase.tags.descLabel",
+                            "说明（可选）",
+                        )}
+                    >
                         <input
                             type="text"
                             className={formInputCls}
-                            placeholder={t("knowledgeBase.tags.descPlaceholder", "便于回忆标签用途")}
+                            placeholder={t(
+                                "knowledgeBase.tags.descPlaceholder",
+                                "便于回忆标签用途",
+                            )}
                             value={tagDesc}
                             onChange={(e) => setTagDesc(e.target.value)}
                             maxLength={200}

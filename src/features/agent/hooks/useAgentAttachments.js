@@ -14,10 +14,7 @@ const useAgentAttachments = ({ t, toast }) => {
 
     const handleFilesSelected = useCallback(
         async (files) => {
-            const remaining = Math.max(
-                0,
-                MAX_ATTACHMENTS - attachments.length,
-            );
+            const remaining = Math.max(0, MAX_ATTACHMENTS - attachments.length);
             if (!remaining) {
                 toast.warning(t("blog.agentChat.attachmentLimit"));
                 return;

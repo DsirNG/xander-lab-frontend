@@ -43,6 +43,10 @@ for (const lang of langs) {
 
 const mcp = [...base].filter((key) => key.startsWith("blog.agentMcp."));
 console.log(`\nblog.agentMcp keys: ${mcp.length}`);
-console.log(`workspace.menu.mcpServers present in all: ${langs.every((l) => sets[l].has("workspace.menu.mcpServers"))}`);
-console.log(`admin.mcpServers.title present in all: ${langs.every((l) => sets[l].has("admin.mcpServers.title"))}`);
+console.log(
+    `workspace.menu.mcpServers present in all: ${langs.every((l) => sets[l].has("workspace.menu.mcpServers"))}`,
+);
+console.log(
+    `admin.mcpServers.title present in all: ${langs.every((l) => sets[l].has("admin.mcpServers.title"))}`,
+);
 process.exit(bad ? 1 : 0);

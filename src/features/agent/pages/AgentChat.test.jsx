@@ -167,7 +167,9 @@ describe("QuizCardStack", () => {
     });
 
     it("parses a quiz embedded in an assistant message", () => {
-        expect(parseQuizPayload({ content: JSON.stringify(quiz) })).toEqual(quiz);
+        expect(parseQuizPayload({ content: JSON.stringify(quiz) })).toEqual(
+            quiz,
+        );
     });
 
     it("rolls the card back to editable when the submission never left", async () => {
@@ -228,7 +230,11 @@ describe("QuizCardStack", () => {
                     id: "quiz-broken",
                     questions: [
                         null,
-                        { id: "q1", prompt: "Still here?", options: [null, "yes"] },
+                        {
+                            id: "q1",
+                            prompt: "Still here?",
+                            options: [null, "yes"],
+                        },
                     ],
                 }}
                 onSubmit={onSubmit}
@@ -236,8 +242,6 @@ describe("QuizCardStack", () => {
         );
 
         expect(screen.getByText("Still here?")).toBeInTheDocument();
-        expect(
-            screen.getByRole("button", { name: /yes/ }),
-        ).toBeInTheDocument();
+        expect(screen.getByRole("button", { name: /yes/ })).toBeInTheDocument();
     });
 });

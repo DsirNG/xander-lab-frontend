@@ -60,10 +60,7 @@ const Img2ThreeResultPanel = ({
                                 aria-hidden="true"
                             />
                         ) : (
-                            <Download
-                                className="h-4 w-4"
-                                aria-hidden="true"
-                            />
+                            <Download className="h-4 w-4" aria-hidden="true" />
                         )}
                         {exportingGlb
                             ? t("img2three.exportingGlb")

@@ -173,8 +173,7 @@ export function createAuthChannel(options = {}) {
             // 构造失败（例如被 CSP / 隐私模式禁用）→ 退回 storage 通道
             channel = null;
             transport =
-                env?.localStorage &&
-                typeof env?.addEventListener === "function"
+                env?.localStorage && typeof env?.addEventListener === "function"
                     ? "storage-event"
                     : "none";
         }
@@ -274,17 +273,21 @@ export function createRefreshMutex(options = {}) {
             };
             try {
                 env.navigator.locks
-                    .request(REFRESH_LOCK_NAME, { ifAvailable: true }, (lock) => {
-                        if (!lock) {
-                            settle(false);
-                            return undefined;
-                        }
-                        settle(true);
-                        // 保持锁直到 release() 被调用
-                        return new Promise((release) => {
-                            releaseFn = release;
-                        });
-                    })
+                    .request(
+                        REFRESH_LOCK_NAME,
+                        { ifAvailable: true },
+                        (lock) => {
+                            if (!lock) {
+                                settle(false);
+                                return undefined;
+                            }
+                            settle(true);
+                            // 保持锁直到 release() 被调用
+                            return new Promise((release) => {
+                                releaseFn = release;
+                            });
+                        },
+                    )
                     .catch(() => settle(false));
             } catch {
                 settle(false);
@@ -306,14 +309,19 @@ export function createRefreshMutex(options = {}) {
         try {
             env.localStorage.setItem(
                 REFRESH_LEASE_KEY,
-                JSON.stringify({ owner: tabId, expiresAt: timestamp + leaseMs }),
+                JSON.stringify({
+                    owner: tabId,
+                    expiresAt: timestamp + leaseMs,
+                }),
             );
         } catch {
             // 写不进去（隐私模式）→ 不阻塞，退回「自己刷新」
             return true;
         }
         // 回读确认：并发写入后写者胜，只有读回自己的租约才算真正拿到
-        const confirmed = parseLease(env.localStorage.getItem(REFRESH_LEASE_KEY));
+        const confirmed = parseLease(
+            env.localStorage.getItem(REFRESH_LEASE_KEY),
+        );
         return confirmed?.owner === tabId;
     };
 

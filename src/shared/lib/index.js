@@ -1,7 +1,1 @@
-export {
-    cn,
-    debounce,
-    throttle,
-    deepClone,
-    storage,
-} from "./utils";
+export { cn, debounce, throttle, deepClone, storage } from "./utils";

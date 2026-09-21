@@ -94,7 +94,9 @@ export const AgentConversationMessage = memo(
                                 <span
                                     key={index}
                                     className="h-1.5 w-1.5 animate-bounce rounded-full bg-current opacity-70"
-                                    style={{ animationDelay: `${index * 140}ms` }}
+                                    style={{
+                                        animationDelay: `${index * 140}ms`,
+                                    }}
                                 />
                             ))}
                         </span>

@@ -41,9 +41,9 @@ describe("parseHeaderLines", () => {
     });
 
     it("一次报出所有出错的行", () => {
-        expect(parseHeaderLines("ok: 1\nbad line\nBad Name: v").invalid).toEqual([
-            2, 3,
-        ]);
+        expect(
+            parseHeaderLines("ok: 1\nbad line\nBad Name: v").invalid,
+        ).toEqual([2, 3]);
     });
 
     it("空输入给空结果而不是抛错", () => {

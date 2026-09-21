@@ -3,11 +3,7 @@ import { useTranslation } from "react-i18next";
 import Button from "@shared/ui/primitives/Button";
 import { ResultStat } from "./AgentQuizPanel";
 
-const KnowledgeAttemptResultPanel = ({
-    attempt,
-    pollError,
-    onRetry,
-}) => {
+const KnowledgeAttemptResultPanel = ({ attempt, pollError, onRetry }) => {
     const { t } = useTranslation();
 
     if (!attempt && !pollError) return null;

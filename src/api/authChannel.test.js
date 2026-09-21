@@ -107,9 +107,7 @@ function fakeLocks() {
 
 test("广播传输优先级：BroadcastChannel > storage 事件 > 无", () => {
     assert.equal(
-        selectAuthTransport(
-            fakeEnv({ BroadcastChannel: function () {} }),
-        ),
+        selectAuthTransport(fakeEnv({ BroadcastChannel: function () {} })),
         "broadcast-channel",
     );
     assert.equal(
@@ -174,7 +172,10 @@ test("BroadcastChannel 通道：发布走 postMessage，收到的消息派发给
     ]);
 
     // 模拟别的 Tab 广播 refresh-success
-    instances[0].receive({ event: "refresh-success", payload: { token: "t1" } });
+    instances[0].receive({
+        event: "refresh-success",
+        payload: { token: "t1" },
+    });
     assert.deepEqual(received, [["refresh-success", { token: "t1" }]]);
 
     channel.close();

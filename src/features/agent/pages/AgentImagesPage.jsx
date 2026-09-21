@@ -214,7 +214,9 @@ const AgentImagesPage = ({ onGenerate }) => {
                         // 首屏拉取失败时一张图都没有，不能再走"还没有生成的图片"空态：
                         // 用户会以为自己没图，其实是请求挂了。
                         <div className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-border/50 bg-canvas py-16 text-center">
-                            <p className="text-sm text-danger-fg">{loadError}</p>
+                            <p className="text-sm text-danger-fg">
+                                {loadError}
+                            </p>
                             <button
                                 type="button"
                                 onClick={handleReload}

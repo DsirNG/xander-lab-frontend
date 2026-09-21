@@ -121,7 +121,8 @@ export default function useEmailReminders({ i18n, t }) {
                     {
                         page,
                         size: pageSize,
-                        status: statusFilter === "ALL" ? undefined : statusFilter,
+                        status:
+                            statusFilter === "ALL" ? undefined : statusFilter,
                         search: debouncedSearch || undefined,
                     },
                     { signal: controller.signal, _silent: true },
@@ -137,7 +138,9 @@ export default function useEmailReminders({ i18n, t }) {
                 const nextTotal = Number(result?.total) || records.length;
                 const nextPages = Math.max(
                     1,
-                    Number(result?.pages) || Math.ceil(nextTotal / pageSize) || 1,
+                    Number(result?.pages) ||
+                        Math.ceil(nextTotal / pageSize) ||
+                        1,
                 );
                 setReminders(records);
                 setTotal(nextTotal);
@@ -151,7 +154,9 @@ export default function useEmailReminders({ i18n, t }) {
                     return;
                 }
                 if (requestSeq !== listRequestSeqRef.current) return;
-                setLoadError(error.message || t("profile.emailReminders.loadError"));
+                setLoadError(
+                    error.message || t("profile.emailReminders.loadError"),
+                );
             } finally {
                 if (
                     requestSeq === listRequestSeqRef.current &&
@@ -177,7 +182,10 @@ export default function useEmailReminders({ i18n, t }) {
             const key = `status-${reminder.id}`;
             setActionKey(key);
             try {
-                await emailReminderService.updateStatus(reminder.id, nextStatus);
+                await emailReminderService.updateStatus(
+                    reminder.id,
+                    nextStatus,
+                );
                 toast.success(t("profile.emailReminders.statusUpdated"));
                 await loadReminders({ showLoading: false });
             } catch {
@@ -189,29 +197,26 @@ export default function useEmailReminders({ i18n, t }) {
         [loadReminders, t, toast],
     );
 
-    const handleDelete = useCallback(
-        async () => {
-            if (!pendingDelete?.id) return;
-            const id = pendingDelete.id;
-            const key = `delete-${id}`;
-            setActionKey(key);
-            try {
-                await emailReminderService.remove(id);
-                setPendingDelete(null);
-                toast.success(t("profile.emailReminders.deleted"));
-                if (reminders.length <= 1 && page > 1) {
-                    setPage((current) => Math.max(1, current - 1));
-                } else {
-                    await loadReminders({ showLoading: false });
-                }
-            } catch {
-                // Shared HTTP handling presents the server error.
-            } finally {
-                setActionKey("");
+    const handleDelete = useCallback(async () => {
+        if (!pendingDelete?.id) return;
+        const id = pendingDelete.id;
+        const key = `delete-${id}`;
+        setActionKey(key);
+        try {
+            await emailReminderService.remove(id);
+            setPendingDelete(null);
+            toast.success(t("profile.emailReminders.deleted"));
+            if (reminders.length <= 1 && page > 1) {
+                setPage((current) => Math.max(1, current - 1));
+            } else {
+                await loadReminders({ showLoading: false });
             }
-        },
-        [loadReminders, page, pendingDelete, reminders.length, t, toast],
-    );
+        } catch {
+            // Shared HTTP handling presents the server error.
+        } finally {
+            setActionKey("");
+        }
+    }, [loadReminders, page, pendingDelete, reminders.length, t, toast]);
 
     return {
         reminders,

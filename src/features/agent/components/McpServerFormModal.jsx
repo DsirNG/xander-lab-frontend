@@ -36,8 +36,7 @@ const McpServerFormModal = ({ isOpen, service, prefill, onClose, onSaved }) => {
     const [formError, setFormError] = useState("");
 
     const editing = Boolean(prefill?.id);
-    const keepsExistingHeaders =
-        editing && Boolean(prefill?.headersConfigured);
+    const keepsExistingHeaders = editing && Boolean(prefill?.headersConfigured);
 
     useEffect(() => {
         if (!isOpen) return;
@@ -108,11 +107,7 @@ const McpServerFormModal = ({ isOpen, service, prefill, onClose, onSaved }) => {
             if (editing) await service.update(prefill.id, payload);
             else await service.create(payload);
             toast.success(
-                t(
-                    editing
-                        ? "blog.agentMcp.updated"
-                        : "blog.agentMcp.created",
-                ),
+                t(editing ? "blog.agentMcp.updated" : "blog.agentMcp.created"),
             );
             onClose();
             onSaved?.();
@@ -177,9 +172,7 @@ const McpServerFormModal = ({ isOpen, service, prefill, onClose, onSaved }) => {
                         <input
                             id="agent-mcp-key"
                             value={form.serverKey}
-                            onChange={(e) =>
-                                patch("serverKey", e.target.value)
-                            }
+                            onChange={(e) => patch("serverKey", e.target.value)}
                             placeholder="github"
                             disabled={editing}
                             className={`${formInputCls} disabled:bg-surface-muted disabled:text-ink-muted`}
@@ -212,9 +205,7 @@ const McpServerFormModal = ({ isOpen, service, prefill, onClose, onSaved }) => {
                     <input
                         id="agent-mcp-endpoint"
                         value={form.endpointUrl}
-                        onChange={(e) =>
-                            patch("endpointUrl", e.target.value)
-                        }
+                        onChange={(e) => patch("endpointUrl", e.target.value)}
                         maxLength={URL_MAX}
                         placeholder="https://mcp.example.com/mcp"
                         className={`${formInputCls} font-mono`}
@@ -229,9 +220,7 @@ const McpServerFormModal = ({ isOpen, service, prefill, onClose, onSaved }) => {
                     <textarea
                         id="agent-mcp-headers"
                         value={form.headersText}
-                        onChange={(e) =>
-                            patch("headersText", e.target.value)
-                        }
+                        onChange={(e) => patch("headersText", e.target.value)}
                         rows={3}
                         placeholder={"Authorization: Bearer xxx"}
                         disabled={form.clearHeaders}

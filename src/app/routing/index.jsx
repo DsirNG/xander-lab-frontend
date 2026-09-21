@@ -87,11 +87,10 @@ const BlogManagePage = React.lazy(() =>
         default: Component,
     })),
 );
-const EmailRemindersPage = React.lazy(
-    () =>
-        import("@features/emailReminders").then(({ EmailRemindersPage }) => ({
-            default: EmailRemindersPage,
-        })),
+const EmailRemindersPage = React.lazy(() =>
+    import("@features/emailReminders").then(({ EmailRemindersPage }) => ({
+        default: EmailRemindersPage,
+    })),
 );
 const KnowledgeMirrorPage = React.lazy(
     () => import("@features/knowledge/pages/KnowledgeMirrorPage"),
@@ -124,9 +123,7 @@ const RequireAdmin = React.lazy(() =>
 import { getModuleConfig } from "@features/modules";
 
 // 通用组件
-const NotFoundPage = React.lazy(
-    () => import("@app/errors/NotFoundPage"),
-);
+const NotFoundPage = React.lazy(() => import("@app/errors/NotFoundPage"));
 
 // 通用 Suspense 包裹器
 /**
@@ -324,7 +321,8 @@ export const createRouter = () => {
                             <BlogPlans />
                         </LazyPage>
                     ),
-                },                {
+                },
+                {
                     path: "plans/:id",
                     element: (
                         <LazyPage>

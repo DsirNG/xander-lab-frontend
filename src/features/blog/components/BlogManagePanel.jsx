@@ -1,10 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import {
-    Plus,
-    Search,
-} from "lucide-react";
+import { Plus, Search } from "lucide-react";
 import ConfirmModal from "@shared/ui/overlays/ConfirmModal";
 import { useToast } from "@shared/hooks/useToast";
 import { blogService, BLOG_STATUS } from "../services/blogService";

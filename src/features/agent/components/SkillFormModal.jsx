@@ -48,10 +48,7 @@ const SkillFormModal = ({ isOpen, tools, prefill, onClose, onSaved }) => {
     }, [isOpen, prefill]);
 
     const isNewVersion = Boolean(prefill?.skillKey);
-    const selected = useMemo(
-        () => new Set(form.toolNames),
-        [form.toolNames],
-    );
+    const selected = useMemo(() => new Set(form.toolNames), [form.toolNames]);
 
     const patch = (key, value) =>
         setForm((current) => ({ ...current, [key]: value }));
@@ -187,7 +184,9 @@ const SkillFormModal = ({ isOpen, tools, prefill, onClose, onSaved }) => {
                             value={form.name}
                             onChange={(e) => patch("name", e.target.value)}
                             maxLength={NAME_MAX}
-                            placeholder={t("blog.agentSkills.fieldNamePlaceholder")}
+                            placeholder={t(
+                                "blog.agentSkills.fieldNamePlaceholder",
+                            )}
                             className={formInputCls}
                         />
                     </FormField>

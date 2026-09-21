@@ -62,7 +62,9 @@ describe("mergeToolTraces", () => {
 
     it("still renders an orphan result when the matching call is missing", () => {
         // 历史数据里有只落了结果的调用，不能因为找不到入参就把它丢掉。
-        const merged = mergeToolTraces([result(1, "query_posts", { ok: true })]);
+        const merged = mergeToolTraces([
+            result(1, "query_posts", { ok: true }),
+        ]);
 
         expect(merged).toHaveLength(1);
         expect(merged[0]).toMatchObject({
@@ -147,9 +149,15 @@ describe("mergeToolTraces", () => {
         ]);
 
         expect(merged).toHaveLength(2);
-        expect(merged[0]).toMatchObject({ tool: "query_knowledge", args: { keyword: "a" } });
+        expect(merged[0]).toMatchObject({
+            tool: "query_knowledge",
+            args: { keyword: "a" },
+        });
         expect(merged[0].result).toMatchObject({ count: 3 });
-        expect(merged[1]).toMatchObject({ tool: "query_posts", args: { keyword: "b" } });
+        expect(merged[1]).toMatchObject({
+            tool: "query_posts",
+            args: { keyword: "b" },
+        });
         expect(merged[1].result).toMatchObject({ count: 9 });
     });
 
@@ -169,9 +177,15 @@ describe("mergeToolTraces", () => {
         ]);
 
         expect(merged).toHaveLength(2);
-        expect(merged[0]).toMatchObject({ args: { keyword: "a" }, status: "done" });
+        expect(merged[0]).toMatchObject({
+            args: { keyword: "a" },
+            status: "done",
+        });
         expect(merged[0].result).toMatchObject({ count: 1 });
-        expect(merged[1]).toMatchObject({ args: { keyword: "b" }, status: "done" });
+        expect(merged[1]).toMatchObject({
+            args: { keyword: "b" },
+            status: "done",
+        });
         expect(merged[1].result).toMatchObject({ count: 2 });
     });
 
@@ -188,9 +202,15 @@ describe("mergeToolTraces", () => {
         ]);
 
         expect(merged).toHaveLength(2);
-        expect(merged[0]).toMatchObject({ args: { keyword: "a" }, status: "done" });
+        expect(merged[0]).toMatchObject({
+            args: { keyword: "a" },
+            status: "done",
+        });
         expect(merged[0].result).toMatchObject({ count: 1 });
-        expect(merged[1]).toMatchObject({ args: { keyword: "b" }, status: "done" });
+        expect(merged[1]).toMatchObject({
+            args: { keyword: "b" },
+            status: "done",
+        });
         expect(merged[1].result).toMatchObject({ count: 2 });
     });
 });
@@ -212,7 +232,11 @@ describe("mergeLiveTraces", () => {
                 stage: "searching",
                 message: "正在检索",
             },
-            { type: "tool_delta", tool: "query_knowledge", content: "命中 3 条" },
+            {
+                type: "tool_delta",
+                tool: "query_knowledge",
+                content: "命中 3 条",
+            },
             {
                 type: "tool",
                 tool: "query_knowledge",
@@ -361,16 +385,44 @@ describe("mergeLiveTraces", () => {
      */
     it("keeps two parallel calls apart when both starts precede both ends", () => {
         const merged = mergeLiveTraces([
-            { type: "tool", tool: "query_knowledge", phase: "start", args: { keyword: "a" } },
-            { type: "tool", tool: "query_posts", phase: "start", args: { keyword: "b" } },
-            { type: "tool", tool: "query_knowledge", phase: "end", result: { ok: true, count: 3 } },
-            { type: "tool", tool: "query_posts", phase: "end", result: { ok: true, count: 9 } },
+            {
+                type: "tool",
+                tool: "query_knowledge",
+                phase: "start",
+                args: { keyword: "a" },
+            },
+            {
+                type: "tool",
+                tool: "query_posts",
+                phase: "start",
+                args: { keyword: "b" },
+            },
+            {
+                type: "tool",
+                tool: "query_knowledge",
+                phase: "end",
+                result: { ok: true, count: 3 },
+            },
+            {
+                type: "tool",
+                tool: "query_posts",
+                phase: "end",
+                result: { ok: true, count: 9 },
+            },
         ]);
 
         expect(merged).toHaveLength(2);
-        expect(merged[0]).toMatchObject({ tool: "query_knowledge", args: { keyword: "a" }, status: "done" });
+        expect(merged[0]).toMatchObject({
+            tool: "query_knowledge",
+            args: { keyword: "a" },
+            status: "done",
+        });
         expect(merged[0].result).toMatchObject({ count: 3 });
-        expect(merged[1]).toMatchObject({ tool: "query_posts", args: { keyword: "b" }, status: "done" });
+        expect(merged[1]).toMatchObject({
+            tool: "query_posts",
+            args: { keyword: "b" },
+            status: "done",
+        });
         expect(merged[1].result).toMatchObject({ count: 9 });
     });
 
@@ -439,15 +491,30 @@ describe("mergeLiveTraces", () => {
         // 失败后模型常常原样重试同一个工具：重试必须是新的一张卡，
         // 否则第一张卡会从"失败"变成"成功"，用户看不到中间那次失败。
         const merged = mergeLiveTraces([
-            { type: "tool", tool: "publish_post", phase: "start", args: { id: 1 } },
+            {
+                type: "tool",
+                tool: "publish_post",
+                phase: "start",
+                args: { id: 1 },
+            },
             {
                 type: "tool",
                 tool: "publish_post",
                 phase: "error",
                 error: "上游超时",
             },
-            { type: "tool", tool: "publish_post", phase: "start", args: { id: 1 } },
-            { type: "tool", tool: "publish_post", phase: "end", result: { ok: true } },
+            {
+                type: "tool",
+                tool: "publish_post",
+                phase: "start",
+                args: { id: 1 },
+            },
+            {
+                type: "tool",
+                tool: "publish_post",
+                phase: "end",
+                result: { ok: true },
+            },
         ]);
 
         expect(merged).toHaveLength(2);

@@ -18,7 +18,10 @@ vi.mock("@shared/hooks/useIsMobile", () => ({ default: () => false }));
 vi.mock("@shared/hooks/useClickOutside", () => ({ default: vi.fn() }));
 
 vi.mock("@features/auth", () => ({
-    useAuthSession: () => ({ userInfo: { nickname: "tester" }, sessionStatus: "authenticated" }),
+    useAuthSession: () => ({
+        userInfo: { nickname: "tester" },
+        sessionStatus: "authenticated",
+    }),
 }));
 
 vi.mock("@/features/agent/components/AgentSessionList", () => ({
@@ -71,7 +74,11 @@ const streamedImageTurn = (answerContent) => ({
             type: "tool",
             tool: "image_generate",
             phase: "end",
-            result: { tool: "image_generate", url: IMAGE_URL, title: "可爱小猫" },
+            result: {
+                tool: "image_generate",
+                url: IMAGE_URL,
+                title: "可爱小猫",
+            },
         },
         { type: "answer_delta", content: answerContent },
     ],
@@ -93,7 +100,9 @@ describe("AgentChat 流式图片地址", () => {
             "src",
             IMAGE_URL,
         );
-        expect(screen.queryByText(new RegExp(IMAGE_URL.slice(0, 20)))).not.toBeInTheDocument();
+        expect(
+            screen.queryByText(new RegExp(IMAGE_URL.slice(0, 20))),
+        ).not.toBeInTheDocument();
     });
 
     it("地址写完后正文不展示，图片仍然在", () => {
@@ -111,7 +120,9 @@ describe("AgentChat 流式图片地址", () => {
     it("没有图片的普通流式回答照常展示", () => {
         hookState.current = {
             ...baseState,
-            liveSteps: [{ type: "answer_delta", content: "正在为你整理复习清单" }],
+            liveSteps: [
+                { type: "answer_delta", content: "正在为你整理复习清单" },
+            ],
         };
 
         render(<AgentChat />);

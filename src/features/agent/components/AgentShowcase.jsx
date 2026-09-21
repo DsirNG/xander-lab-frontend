@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, {
+    useCallback,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+} from "react";
 import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
 import {
@@ -14,10 +20,7 @@ import {
     Sparkles,
 } from "lucide-react";
 import { useAuthSession } from "@features/auth";
-import {
-    imageUrlsFromMessages,
-    imageUrlsFromSteps,
-} from "./imageResult";
+import { imageUrlsFromMessages, imageUrlsFromSteps } from "./imageResult";
 import {
     getActiveImageGeneration,
     hasStreamingAnswer,
@@ -75,7 +78,10 @@ const AgentShowcase = ({ t, welcomeVisual: WelcomeVisual }) => {
         [steps],
     );
 
-    const historicalImageUrls = useMemo(() => imageUrlsFromMessages(messages), [messages]);
+    const historicalImageUrls = useMemo(
+        () => imageUrlsFromMessages(messages),
+        [messages],
+    );
 
     const liveImageUrls = useMemo(() => imageUrlsFromSteps(steps), [steps]);
 
@@ -116,7 +122,9 @@ const AgentShowcase = ({ t, welcomeVisual: WelcomeVisual }) => {
                 if (!conversation?.id) {
                     await createConversation(trimmed, selectedAttachments);
                 } else {
-                    await sendMessage(trimmed, { attachments: selectedAttachments });
+                    await sendMessage(trimmed, {
+                        attachments: selectedAttachments,
+                    });
                 }
                 setInput("");
                 setAttachments([]);
@@ -124,7 +132,15 @@ const AgentShowcase = ({ t, welcomeVisual: WelcomeVisual }) => {
                 toast.error(error.message || t("blog.agentChat.sendFailed"));
             }
         },
-        [conversation?.id, createConversation, navigate, sendMessage, sessionStatus, t, toast],
+        [
+            conversation?.id,
+            createConversation,
+            navigate,
+            sendMessage,
+            sessionStatus,
+            t,
+            toast,
+        ],
     );
 
     const handleSubmit = async () => {
@@ -146,7 +162,9 @@ const AgentShowcase = ({ t, welcomeVisual: WelcomeVisual }) => {
     const handleFilesSelected = useCallback(
         async (files) => {
             if (sessionStatus !== "authenticated") {
-                toast.info(t("nav.loginRequired", "请先登录或进入工作台再使用此功能"));
+                toast.info(
+                    t("nav.loginRequired", "请先登录或进入工作台再使用此功能"),
+                );
                 return;
             }
             const remaining = Math.max(0, 5 - attachments.length);
@@ -166,9 +184,7 @@ const AgentShowcase = ({ t, welcomeVisual: WelcomeVisual }) => {
             setUploadingAttachments(true);
             try {
                 const settled = await Promise.allSettled(
-                    valid.map((file) =>
-                        uploadAgentAttachment(file),
-                    ),
+                    valid.map((file) => uploadAgentAttachment(file)),
                 );
                 const uploaded = settled
                     .filter((item) => item.status === "fulfilled")
@@ -206,7 +222,8 @@ const AgentShowcase = ({ t, welcomeVisual: WelcomeVisual }) => {
         textareaRef.current?.focus();
     };
 
-    const canSend = Boolean(input.trim() || attachments.length) && !uploadingAttachments;
+    const canSend =
+        Boolean(input.trim() || attachments.length) && !uploadingAttachments;
     const hasActiveChat = messages.length > 0 || steps.length > 0;
 
     return (
@@ -314,7 +331,9 @@ const AgentShowcase = ({ t, welcomeVisual: WelcomeVisual }) => {
                                         input={input}
                                         attachments={attachments}
                                         locked={locked}
-                                        uploadingAttachments={uploadingAttachments}
+                                        uploadingAttachments={
+                                            uploadingAttachments
+                                        }
                                         canSend={canSend}
                                         isActive={isActive}
                                         fileInputRef={fileInputRef}
@@ -338,46 +357,76 @@ const AgentShowcase = ({ t, welcomeVisual: WelcomeVisual }) => {
                                     <div className="mt-3.5 flex flex-wrap justify-center gap-2">
                                         <button
                                             type="button"
-                                            onClick={() => handleQuickAction("generateImage")}
+                                            onClick={() =>
+                                                handleQuickAction(
+                                                    "generateImage",
+                                                )
+                                            }
                                             className="flex cursor-pointer items-center gap-1.5 rounded-full border border-[#ececf4] bg-white px-3 py-1.5 text-xs font-semibold text-[#404461] shadow-xs transition-all hover:border-[#817bf2] hover:bg-[#f9f8fe]"
                                         >
                                             <span className="grid h-4 w-4 place-items-center rounded-md bg-emerald-50 text-emerald-500">
                                                 <ImageIcon className="h-3 w-3" />
                                             </span>
-                                            <span>{t("landing.agentWindow.generateImage")}</span>
+                                            <span>
+                                                {t(
+                                                    "landing.agentWindow.generateImage",
+                                                )}
+                                            </span>
                                         </button>
 
                                         <button
                                             type="button"
-                                            onClick={() => handleQuickAction("searchWeb")}
+                                            onClick={() =>
+                                                handleQuickAction("searchWeb")
+                                            }
                                             className="flex cursor-pointer items-center gap-1.5 rounded-full border border-[#ececf4] bg-white px-3 py-1.5 text-xs font-semibold text-[#404461] shadow-xs transition-all hover:border-[#817bf2] hover:bg-[#f9f8fe]"
                                         >
                                             <span className="grid h-4 w-4 place-items-center rounded-md bg-orange-50 text-orange-500">
                                                 <Globe className="h-3 w-3" />
                                             </span>
-                                            <span>{t("landing.agentWindow.searchWeb")}</span>
+                                            <span>
+                                                {t(
+                                                    "landing.agentWindow.searchWeb",
+                                                )}
+                                            </span>
                                         </button>
 
                                         <button
                                             type="button"
-                                            onClick={() => handleQuickAction("generatePractice")}
+                                            onClick={() =>
+                                                handleQuickAction(
+                                                    "generatePractice",
+                                                )
+                                            }
                                             className="flex cursor-pointer items-center gap-1.5 rounded-full border border-[#ececf4] bg-white px-3 py-1.5 text-xs font-semibold text-[#404461] shadow-xs transition-all hover:border-[#817bf2] hover:bg-[#f9f8fe]"
                                         >
                                             <span className="grid h-4 w-4 place-items-center rounded-md bg-blue-50 text-blue-500">
                                                 <PenLine className="h-3 w-3" />
                                             </span>
-                                            <span>{t("landing.agentWindow.generatePractice")}</span>
+                                            <span>
+                                                {t(
+                                                    "landing.agentWindow.generatePractice",
+                                                )}
+                                            </span>
                                         </button>
 
                                         <button
                                             type="button"
-                                            onClick={() => handleQuickAction("importKnowledge")}
+                                            onClick={() =>
+                                                handleQuickAction(
+                                                    "importKnowledge",
+                                                )
+                                            }
                                             className="flex cursor-pointer items-center gap-1.5 rounded-full border border-[#ececf4] bg-white px-3 py-1.5 text-xs font-semibold text-[#404461] shadow-xs transition-all hover:border-[#817bf2] hover:bg-[#f9f8fe]"
                                         >
                                             <span className="grid h-4 w-4 place-items-center rounded-md bg-purple-50 text-purple-500">
                                                 <BookOpen className="h-3 w-3" />
                                             </span>
-                                            <span>{t("landing.agentWindow.importKnowledge")}</span>
+                                            <span>
+                                                {t(
+                                                    "landing.agentWindow.importKnowledge",
+                                                )}
+                                            </span>
                                         </button>
                                     </div>
                                 </div>
@@ -390,7 +439,9 @@ const AgentShowcase = ({ t, welcomeVisual: WelcomeVisual }) => {
                                     steps={steps}
                                     historicalImageUrls={historicalImageUrls}
                                     liveImageUrls={liveImageUrls}
-                                    activeImageGeneration={activeImageGeneration}
+                                    activeImageGeneration={
+                                        activeImageGeneration
+                                    }
                                     isActive={isActive}
                                     creating={creating}
                                     loading={loading}
@@ -410,16 +461,23 @@ const AgentShowcase = ({ t, welcomeVisual: WelcomeVisual }) => {
                                             input={input}
                                             attachments={attachments}
                                             locked={locked}
-                                            uploadingAttachments={uploadingAttachments}
+                                            uploadingAttachments={
+                                                uploadingAttachments
+                                            }
                                             canSend={canSend}
                                             isActive={isActive}
                                             fileInputRef={fileInputRef}
                                             textareaRef={textareaRef}
                                             onInputChange={setInput}
-                                            onFilesSelected={handleFilesSelected}
+                                            onFilesSelected={
+                                                handleFilesSelected
+                                            }
                                             onRemoveAttachment={(url) =>
                                                 setAttachments((current) =>
-                                                    current.filter((att) => att.url !== url),
+                                                    current.filter(
+                                                        (att) =>
+                                                            att.url !== url,
+                                                    ),
                                                 )
                                             }
                                             onSubmit={handleSubmit}
