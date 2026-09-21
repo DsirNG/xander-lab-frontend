@@ -13,6 +13,11 @@ import {
 import Skeleton from "@shared/ui/feedback/Skeleton";
 import RowActionsMenu from "@shared/ui/overlays/RowActionsMenu";
 import { formatBytes } from "../utils/fileHash";
+import {
+    formatKnowledgeDateTime,
+    findKnowledgeChapter,
+    getKnowledgeChapterContent,
+} from "../utils/knowledgePreview";
 import { knowledgeBaseService } from "../services/knowledgeBaseService";
 import KnowledgePreviewContentTab from "./KnowledgePreviewContentTab";
 
@@ -26,14 +31,6 @@ const EXTENSION_BADGES = {
     json: { label: "JSON", bg: "bg-emerald-600 text-white" },
     html: { label: "HTML", bg: "bg-teal-600 text-white" },
 };
-
-function formatDateTime(dateStr) {
-    if (!dateStr) return "-";
-    const d = new Date(dateStr);
-    if (isNaN(d.getTime())) return "-";
-    const pad = (n) => String(n).padStart(2, "0");
-    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
-}
 
 const TABS = [
     { key: "content", label: "内容" },
@@ -145,26 +142,16 @@ const KnowledgeStructurePreviewPanel = ({
 
     // 当前选中的章节
     const activeChapter = useMemo(() => {
-        if (!chapters.length || !selectedChapterId) return null;
-        const findInTree = (nodes) => {
-            for (const n of nodes) {
-                if (n.id === selectedChapterId) return n;
-                if (n.children?.length) {
-                    const found = findInTree(n.children);
-                    if (found) return found;
-                }
-            }
-            return null;
-        };
-        return findInTree(chapters);
+        return findKnowledgeChapter(chapters, selectedChapterId);
     }, [chapters, selectedChapterId]);
 
     // 当前应展示的正文文本
     const displayText = useMemo(() => {
-        if (activeChapter && activeChapter.startOffset != null && activeChapter.endOffset != null && fullContent) {
-            return fullContent.substring(activeChapter.startOffset, activeChapter.endOffset);
-        }
-        return fullContent ?? structureData?.excerpt ?? "";
+        return getKnowledgeChapterContent({
+            fullContent,
+            fallbackText: structureData?.excerpt,
+            chapter: activeChapter,
+        });
     }, [fullContent, structureData, activeChapter]);
 
     const isExcerptTruncated = Boolean(structureData?.excerptTruncated && !fullContent && !activeChapter);
@@ -197,7 +184,7 @@ const KnowledgeStructurePreviewPanel = ({
                                 {file.displayName}
                             </h3>
                             <div className="mt-0.5 text-[11px] text-[#8e94ad] dark:text-slate-500">
-                                {formatBytes(file.fileSize || file.sizeBytes || 0)} · {formatDateTime(file.updatedAt || file.createdAt)}
+                                {formatBytes(file.fileSize || file.sizeBytes || 0)} · {formatKnowledgeDateTime(file.updatedAt || file.createdAt)}
                             </div>
                         </div>
                     </div>
@@ -379,7 +366,7 @@ const KnowledgeStructurePreviewPanel = ({
                             </div>
                             <div className="flex items-center justify-between">
                                 <span className="text-[#8e94ad]">入库时间</span>
-                                <span className="font-medium text-[#111426] dark:text-slate-200">{formatDateTime(file.createdAt)}</span>
+                                <span className="font-medium text-[#111426] dark:text-slate-200">{formatKnowledgeDateTime(file.createdAt)}</span>
                             </div>
                             {file.fileSha256 ? (
                                 <div className="pt-2 border-t border-[#eef0f6] dark:border-white/5">

@@ -12,6 +12,7 @@ import {
 import { TableSkeleton } from "@shared/ui/feedback/Skeleton";
 import RowActionsMenu from "@shared/ui/overlays/RowActionsMenu";
 import { formatBytes } from "../utils/fileHash";
+import { formatKnowledgeDateTime } from "../utils/knowledgePreview";
 
 const EXTENSION_BADGES = {
     pdf: { label: "PDF", bg: "bg-[#ef4444] text-white" },
@@ -23,14 +24,6 @@ const EXTENSION_BADGES = {
     json: { label: "JSON", bg: "bg-[#10b981] text-white" },
     html: { label: "HTML", bg: "bg-[#0d9488] text-white" },
 };
-
-function formatDateTime(dateStr) {
-    if (!dateStr) return "-";
-    const d = new Date(dateStr);
-    if (isNaN(d.getTime())) return "-";
-    const pad = (n) => String(n).padStart(2, "0");
-    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
-}
 
 function renderStatusBadge(status) {
     if (status === "READY") {
@@ -142,7 +135,7 @@ export default function KnowledgeFileTable({
                                     <td className="py-3 px-3 text-[#8e94ad] text-caption">文件夹</td>
                                     <td className="py-3 px-3 text-[#8e94ad] text-caption">-</td>
                                     <td className="py-3 px-3 text-[#8e94ad] text-caption">
-                                        {formatDateTime(folder.updatedAt || folder.createdAt)}
+                                        {formatKnowledgeDateTime(folder.updatedAt || folder.createdAt)}
                                     </td>
                                     <td className="py-3 px-3 text-[#8e94ad] text-caption">-</td>
                                     <td className="py-3 pr-3 text-right" onClick={(event) => event.stopPropagation()}>
@@ -227,7 +220,7 @@ export default function KnowledgeFileTable({
                                         {formatBytes(file.fileSize || file.sizeBytes || 0)}
                                     </td>
                                     <td className="py-3 px-3 text-[#8e94ad] text-caption">
-                                        {formatDateTime(file.updatedAt || file.createdAt)}
+                                        {formatKnowledgeDateTime(file.updatedAt || file.createdAt)}
                                     </td>
                                     <td className="py-3 px-3">
                                         {renderStatusBadge(file.knowledgeState || file.status)}

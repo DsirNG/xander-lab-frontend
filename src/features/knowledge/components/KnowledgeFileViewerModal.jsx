@@ -27,6 +27,10 @@ import KnowledgeStructureNodeCard from "./KnowledgeStructureNodeCard";
 import KnowledgeFileInfoPanel from "./KnowledgeFileInfoPanel";
 import { knowledgeBaseService } from "../services/knowledgeBaseService";
 import { formatBytes } from "../utils/fileHash";
+import {
+    findKnowledgeChapter,
+    getKnowledgeChapterContent,
+} from "../utils/knowledgePreview";
 
 const KnowledgeFileViewerModal = ({
     isOpen,
@@ -178,27 +182,16 @@ const KnowledgeFileViewerModal = ({
 
     // 当前选中的章节对象
     const activeChapter = useMemo(() => {
-        if (!previewData?.chapters || !selectedChapterId) return null;
-        const findInTree = (nodes) => {
-            for (const n of nodes) {
-                if (n.id === selectedChapterId) return n;
-                if (n.children?.length) {
-                    const found = findInTree(n.children);
-                    if (found) return found;
-                }
-            }
-            return null;
-        };
-        return findInTree(previewData.chapters);
+        return findKnowledgeChapter(previewData?.chapters, selectedChapterId);
     }, [previewData, selectedChapterId]);
 
     // 当前章节或文档正文展示
     const displayText = useMemo(() => {
-        const text = fullContent ?? previewData?.excerpt ?? "";
-        if (activeChapter && activeChapter.startOffset != null && activeChapter.endOffset != null && fullContent) {
-            return fullContent.substring(activeChapter.startOffset, activeChapter.endOffset);
-        }
-        return text;
+        return getKnowledgeChapterContent({
+            fullContent,
+            fallbackText: previewData?.excerpt,
+            chapter: activeChapter,
+        });
     }, [fullContent, previewData, activeChapter]);
 
     const copyCurrentText = () => {
