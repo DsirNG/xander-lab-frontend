@@ -18,6 +18,20 @@ const sourceFiles = walk(srcRoot);
 const importPattern = /(?:from\s+|import\s*\()\s*["']([^"']+)["']/g;
 const errors = [];
 const featureGraph = new Map();
+const removedSourceRoots = [
+    "hooks",
+    "context",
+    "utils",
+    "router",
+    "components/layouts",
+    "components/seo",
+];
+const removedRootAliases = [
+    /^@hooks(?:\/|$)/,
+    /^@context(?:\/|$)/,
+    /^@utils(?:\/|$)/,
+    /^@router(?:\/|$)/,
+];
 
 const isCompatibilityFile = (content) =>
     /@deprecated\s+Use\s+/.test(content);
@@ -52,6 +66,20 @@ const featureSpecifier = (specifier) => {
     return null;
 };
 
+const removedSourceRootFromImport = (file, specifier) => {
+    if (!specifier.startsWith(".")) {
+        return removedRootAliases.find((alias) => alias.test(specifier))
+            ? specifier
+            : null;
+    }
+    const resolved = path.normalize(path.resolve(path.dirname(file), specifier));
+    const relativeToSrc = path.relative(srcRoot, resolved).replaceAll(path.sep, "/");
+    return removedSourceRoots.find(
+        (root) =>
+            relativeToSrc === root || relativeToSrc.startsWith(`${root}/`),
+    );
+};
+
 for (const file of sourceFiles) {
     const relative = path.relative(root, file);
     const content = fs.readFileSync(file, "utf8");
@@ -65,6 +93,13 @@ for (const file of sourceFiles) {
         // Component documentation pages use ?raw to display source text; it
         // is not a runtime module dependency and should not affect the graph.
         if (specifier.includes("?raw")) continue;
+
+        const removedRoot = removedSourceRootFromImport(file, specifier);
+        if (removedRoot) {
+            errors.push(
+                `${relative}: import removed root ${specifier}; use the owning app, feature, or shared path`,
+            );
+        }
 
         if (relative.startsWith(`src${path.sep}shared${path.sep}`)) {
             if (appSpecifier(specifier)) {
