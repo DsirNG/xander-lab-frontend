@@ -1,0 +1,3 @@
+interface:
+  display_name: "Feature Dependencies"
+  short_description: "Prevent cyclic and unbounded feature coupling"

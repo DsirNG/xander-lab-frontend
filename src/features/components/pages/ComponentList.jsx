@@ -5,7 +5,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { Plus } from "lucide-react";
 
 // Layout
-import SidebarLayout from "@components/layouts/SidebarLayout";
+import SidebarLayout from "@shared/ui/navigation/SidebarLayout";
 
 // Services & Registries
 import ComponentService from "../services/componentService";

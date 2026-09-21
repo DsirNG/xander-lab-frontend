@@ -1,2 +1,5 @@
-export { default as ContentLayout } from "./ContentLayout";
-export { default as EnhancedDemoSection } from "./EnhancedDemoSection";
+/** @deprecated Use @shared/ui/data-display/ContentLayout. */
+export {
+    ContentLayout,
+    EnhancedDemoSection,
+} from "@shared/ui/data-display/ContentLayout";

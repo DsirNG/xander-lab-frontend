@@ -2,10 +2,10 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Pencil, Plug, Plus, RefreshCw, Trash2 } from "lucide-react";
 import DataTable from "@components/common/DataTable";
-import RowActionsMenu from "@components/common/RowActionsMenu";
+import RowActionsMenu from "@shared/ui/overlays/RowActionsMenu";
 import ConfirmModal from "@components/common/ConfirmModal";
 import Button from "@components/common/Button";
-import { useToast } from "@/hooks/useToast";
+import { useToast } from "@shared/hooks/useToast";
 import McpServerFormModal from "./McpServerFormModal";
 
 const PAGE_SIZE = 10;

@@ -1,9 +1,2 @@
-import { createContext } from "react";
-
-const PureReadingContext = createContext({
-    isPureReading: false,
-    setIsPureReading: () => {},
-    togglePureReading: () => {},
-});
-
-export default PureReadingContext;
+/** @deprecated Use @features/blog/context/pureReadingContextValue. */
+export { default } from "@features/blog/context/pureReadingContextValue";

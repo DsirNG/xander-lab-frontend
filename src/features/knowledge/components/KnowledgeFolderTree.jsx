@@ -17,8 +17,8 @@ import {
     Layers,
     Search,
 } from "lucide-react";
-import Skeleton from "@components/common/Skeleton";
-import RowActionsMenu from "@components/common/RowActionsMenu";
+import Skeleton from "@shared/ui/feedback/Skeleton";
+import RowActionsMenu from "@shared/ui/overlays/RowActionsMenu";
 
 const TAG_DOT_COLORS = [
     "bg-emerald-500",

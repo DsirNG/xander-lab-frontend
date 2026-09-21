@@ -3,7 +3,7 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import FeatureConfigModal from "./FeatureConfigModal";
 
-vi.mock("@/hooks/useToast", () => ({
+vi.mock("@shared/hooks/useToast", () => ({
     useToast: () => ({ success: vi.fn(), error: vi.fn() }),
 }));
 vi.mock("react-i18next", () => ({

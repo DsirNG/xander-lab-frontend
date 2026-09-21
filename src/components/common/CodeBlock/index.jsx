@@ -1,6 +1,6 @@
 import React, { useState, memo } from "react";
 import { useTranslation } from "react-i18next";
-import SyntaxHighlighter from "@components/common/SyntaxHighlighter";
+import SyntaxHighlighter from "@shared/ui/data-display/SyntaxHighlighter";
 import HtmlSandboxPreview from "@components/common/HtmlSandboxPreview";
 import {
     oneLight,

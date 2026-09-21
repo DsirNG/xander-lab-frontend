@@ -9,9 +9,8 @@ import {
     Shield,
     UserRound,
 } from "lucide-react";
-import { authService } from "@features/auth/services/authService";
-import { useAuthSession } from "@features/auth/context/authSessionContextValue";
-import { useToast } from "@hooks/useToast";
+import { updateProfile, useAuthSession } from "@features/auth";
+import { useToast } from "@shared/hooks/useToast";
 import FormField from "@components/common/FormField";
 import { formInputCls } from "@components/common/formStyles";
 
@@ -63,7 +62,7 @@ const AccountInfoPanel = () => {
         }
         setSaving(true);
         try {
-            const updated = await authService.updateProfile({
+            const updated = await updateProfile({
                 nickname: trimmedNickname,
                 avatar: avatar.trim(),
             });

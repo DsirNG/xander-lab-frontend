@@ -23,7 +23,7 @@ import {
 } from "lucide-react";
 import CustomSelect from "@components/common/CustomSelect";
 import Button from "@components/common/Button";
-import useClickOutside from "@hooks/useClickOutside";
+import useClickOutside from "@shared/hooks/useClickOutside";
 import StudioTopBar from "../components/StudioTopBar";
 import {
     convertPreviewUrl,

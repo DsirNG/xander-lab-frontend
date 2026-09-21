@@ -7,7 +7,7 @@ import {
     Headphones,
     Camera,
 } from "lucide-react";
-import { useDragDrop } from "@hooks/useDragDrop";
+import { useDragDrop } from "@shared/hooks/useDragDrop";
 import { motion, AnimatePresence } from "framer-motion";
 
 const ShoppingDemo = () => {

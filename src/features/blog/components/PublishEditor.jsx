@@ -23,8 +23,8 @@ import {
     Table2,
     Type,
 } from "lucide-react";
-import { useToast } from "@/hooks/useToast";
-import useIsMobile from "@hooks/useIsMobile";
+import { useToast } from "@shared/hooks/useToast";
+import useIsMobile from "@shared/hooks/useIsMobile";
 import BlogMarkdown from "./BlogMarkdown";
 import BlogImageLibraryModal from "./BlogImageLibraryModal";
 

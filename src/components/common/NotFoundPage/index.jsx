@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import useBack from "@/hooks/useBack";
+import useBack from "@shared/hooks/useBack";
 import Button from "@components/common/Button";
 
 /**

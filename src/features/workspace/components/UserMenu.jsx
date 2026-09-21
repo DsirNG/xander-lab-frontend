@@ -9,13 +9,9 @@ import {
     Shield,
     UserRound,
 } from "lucide-react";
-import { useAuthSession } from "@features/auth/context/authSessionContextValue";
-import { authService } from "@features/auth/services/authService";
-import {
-    pointsService,
-    formatPoints,
-} from "@features/profile/services/pointsService";
-import { useToast } from "@hooks/useToast";
+import { logout, useAuthSession } from "@features/auth";
+import { formatPoints, getPointsOverview } from "@features/account";
+import { useToast } from "@shared/hooks/useToast";
 
 const getDisplayName = (userInfo) =>
     userInfo?.nickname || userInfo?.username || "";
@@ -50,8 +46,7 @@ const UserMenu = ({ onOpenSettings }) => {
     // 积分余额：挂载与浮框打开时刷新（静默失败，不影响顶栏渲染）。
     useEffect(() => {
         let active = true;
-        pointsService
-            .overview({ _silent: true })
+        getPointsOverview({ _silent: true })
             .then((data) => active && setPoints(data))
             .catch(() => {
                 /* 静默保留旧值 */
@@ -64,7 +59,7 @@ const UserMenu = ({ onOpenSettings }) => {
     const handleLogout = useCallback(async () => {
         setLoggingOut(true);
         try {
-            await authService.logout();
+            await logout();
             window.location.href = "/";
         } catch {
             setLoggingOut(false);

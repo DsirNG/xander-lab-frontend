@@ -7,8 +7,8 @@ import PublishEditor from "../components/PublishEditor";
 import usePublishData from "../hooks/usePublishData";
 import usePublishForm from "../hooks/usePublishForm";
 import usePublishSubmit from "../hooks/usePublishSubmit";
-import { useToast } from "@/hooks/useToast";
-import useIsMobile from "@hooks/useIsMobile";
+import { useToast } from "@shared/hooks/useToast";
+import useIsMobile from "@shared/hooks/useIsMobile";
 import LoadingSpinner from "@components/common/LoadingSpinner";
 import ConfirmModal from "@components/common/ConfirmModal";
 

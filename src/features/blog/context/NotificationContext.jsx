@@ -6,8 +6,8 @@ import React, {
     useState,
 } from "react";
 import { blogPlanService } from "@features/blog/services/blogPlanService";
-import { authService } from "@features/auth/services/authService";
-import { useToast } from "@/hooks/useToast";
+import { isLoggedIn } from "@features/auth";
+import { useToast } from "@shared/hooks/useToast";
 import NotificationContext from "./notificationContextValue";
 
 /**
@@ -237,7 +237,7 @@ export const NotificationProvider = ({ children }) => {
             }
         };
         const onLogin = () => {
-            if (!alive || !authService.isLoggedIn()) return;
+            if (!alive || !isLoggedIn()) return;
             invalidateLoad();
             isLoggedInRef.current = true;
             setLoading(false);
@@ -278,7 +278,7 @@ export const NotificationProvider = ({ children }) => {
         // The access token is authoritative. user_info is merely a UI cache and
         // can be absent while session restoration is still in progress.
         mountedRef.current = true;
-        isLoggedInRef.current = authService.isLoggedIn();
+        isLoggedInRef.current = isLoggedIn();
         if (isLoggedInRef.current) {
             connect();
         }

@@ -7,7 +7,7 @@ const apiMock = vi.hoisted(() => ({
     post: vi.fn(),
 }));
 
-vi.mock("@api/http", () => apiMock);
+vi.mock("@api", () => apiMock);
 
 const {
     fetchProjects,

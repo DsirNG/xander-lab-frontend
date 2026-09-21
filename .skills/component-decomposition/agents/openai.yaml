@@ -1,0 +1,3 @@
+interface:
+  display_name: "Component Decomposition"
+  short_description: "Split React code by responsibility and lifecycle"

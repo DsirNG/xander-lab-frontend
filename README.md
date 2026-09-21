@@ -82,7 +82,7 @@ pnpm install
 npm run dev
 ```
 
-打开浏览器访问 [http://localhost:5173](http://localhost:5173)
+打开浏览器访问 [http://localhost:3000](http://localhost:3000)
 
 ### 构建
 
@@ -110,30 +110,37 @@ npm run preview
 npm run lint
 ```
 
+检查架构边界：
+
+```bash
+pnpm check:architecture
+```
+
 ## 项目结构
 
 ```
 xander-lab-frontend/
 ├── src/
-│   ├── api/              # API 接口层
+│   ├── app/               # 应用组装、路由、Provider、布局和运行时边界
+│   ├── api/               # HTTP / SSE / 上传下载等 Transport Infrastructure
 │   ├── assets/          # 静态资源
-│   ├── components/      # 通用组件
-│   │   ├── common/      # 基础组件
-│   │   └── layouts/     # 布局组件
+│   ├── components/      # 历史兼容入口，停止新增通用组件
 │   ├── config/          # 配置文件
-│   ├── constants/       # 常量定义
 │   ├── features/        # 功能模块（按业务领域划分）
-│   │   ├── home/        # 首页模块
-│   │   ├── infra/       # 基础设施模块
-│   │   ├── modules/     # 功能模块展示
-│   │   └── components/  # 组件展示模块
-│   ├── hooks/           # 自定义 Hooks
+│   │   ├── auth/        # 鉴权与会话
+│   │   ├── account/     # 账户能力
+│   │   ├── agent/       # 智能体
+│   │   ├── knowledge/   # 知识库
+│   │   ├── platformIntegrations/ # 外部发布平台集成
+│   │   ├── workspace/   # 工作台
+│   │   └── ...          # 其他业务 Feature
+│   ├── shared/          # 业务无关的 UI、Hook 和技术能力
+│   │   ├── ui/          # primitives / overlays / forms / data-display 等
+│   │   ├── hooks/       # 无业务语义的通用 Hook
+│   │   └── lib/         # 无业务语义的通用库
 │   ├── locales/         # 国际化资源
-│   ├── router/          # 路由配置
-│   ├── services/        # 业务服务层
+│   ├── router/          # @app/routing 的历史兼容入口
 │   ├── styles/          # 全局样式
-│   ├── types/           # TypeScript 类型定义
-│   ├── utils/           # 工具函数
 │   ├── App.jsx          # 应用根组件
 │   └── main.jsx         # 应用入口
 ├── public/              # 公共静态资源
@@ -155,9 +162,9 @@ xander-lab-frontend/
 项目配置了路径别名，简化导入路径：
 
 ```javascript
-import MainLayout from "@components/layouts/MainLayout";
+import MainLayout from "@app/layouts/MainLayout";
 import HomePage from "@features/home/pages/HomePage";
-import { storage, debounce } from "@utils";
+import Button from "@shared/ui/primitives/Button";
 import { APP_CONFIG } from "@config";
 import "@styles/index.css";
 ```
@@ -165,17 +172,21 @@ import "@styles/index.css";
 支持的别名：
 
 - `@` → `src/`
+- `@app` → `src/app/`
+- `@shared` → `src/shared/`
 - `@components` → `src/components/`
 - `@features` → `src/features/`
-- `@hooks` → `src/hooks/`
-- `@utils` → `src/utils/`
-- `@services` → `src/services/`
+- `@hooks` → `src/hooks/`（兼容别名；新增通用 Hook 使用 `@shared/hooks`）
+- `@utils` → `src/utils/`（兼容别名；新增通用工具使用 `@shared/lib`）
 - `@config` → `src/config/`
-- `@constants` → `src/constants/`
 - `@api` → `src/api/`
 - `@locales` → `src/locales/`
 - `@styles` → `src/styles/`
-- `@types` → `src/types/`
+- `@router` → `src/app/routing/`（兼容别名）
+
+`@components` 和 `@router` 目前保留用于渐进迁移。新增代码应优先使用
+`@app`、`@shared` 和 Feature 的 public API；业务接口放在对应
+`features/<feature>/api/`，不要继续扩张根级业务 `src/api/`。
 
 ## 核心功能
 
@@ -198,7 +209,7 @@ import "@styles/index.css";
 ### 使用工具函数
 
 ```javascript
-import { debounce, throttle, storage, cn } from "@utils";
+import { debounce, throttle, storage, cn } from "@shared/lib";
 
 // 防抖
 const debouncedFn = debounce(() => {
@@ -221,14 +232,14 @@ const className = cn("base-class", isActive && "active-class");
 ### 使用服务
 
 ```javascript
-import { themeService, languageService } from "@services";
+// 业务 Service 归属于对应 Feature，不再集中到根级 services。
+import { useAuthSession } from "@features/auth";
 
-// 主题切换
-themeService.toggleTheme();
-
-// 语言切换
-languageService.setLanguage("zh");
+const { isAuthenticated } = useAuthSession();
 ```
+
+跨 Feature 使用能力时，应从对应 Feature 的 public API 导入；Feature 内部
+实现（Service、Store、Repository）不要被其他 Feature 直接引用。
 
 ### 使用国际化
 

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { blogPlanService } from "../services/blogPlanService";
-import { useToast } from "@/hooks/useToast";
+import { useToast } from "@shared/hooks/useToast";
 
 /**
  * 计划列表/详情共用的计划操作（暂停/恢复/取消/删除/立即执行）

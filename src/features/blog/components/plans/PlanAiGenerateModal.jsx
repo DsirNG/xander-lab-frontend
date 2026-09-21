@@ -4,11 +4,11 @@ import { CalendarDays, Sparkles } from "lucide-react";
 import Modal from "@components/common/Modal";
 import Button from "@components/common/Button";
 import TimezoneSelect from "@components/common/TimezoneSelect";
-import TimeInput from "@components/common/TimeInput";
+import TimeInput from "@shared/ui/forms/TimeInput";
 import FormField from "@components/common/FormField";
 import { formInputCls } from "@components/common/formStyles";
 import { blogPlanService } from "../../services/blogPlanService";
-import { useToast } from "@/hooks/useToast";
+import { useToast } from "@shared/hooks/useToast";
 
 const TIME_RE = /^([01]\d|2[0-3]):[0-5]\d$/;
 const MAX_DAYS = 30;

@@ -1,0 +1,3 @@
+interface:
+  display_name: "Architecture Verification"
+  short_description: "Check boundaries, cycles, compatibility, and regressions"

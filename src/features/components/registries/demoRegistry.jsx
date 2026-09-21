@@ -9,7 +9,7 @@ import {
     ToastNoHoverDemo,
 } from "../components/demo/ToastDemo";
 import LiveDemoSandbox from "../components/demo/LiveDemoSandbox";
-import TagInputDemo from "@/components/common/CreatableMultiSelect/demo.jsx";
+import TagInputDemo from "@shared/ui/forms/CreatableMultiSelect/demo.jsx";
 
 /**
  * 演示组件注册表：将数据库中的 key 映射到工厂函数。

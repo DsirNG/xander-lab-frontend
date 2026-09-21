@@ -4,7 +4,7 @@ import { KeyRound, Loader2, Trash2 } from "lucide-react";
 import FormField from "@components/common/FormField";
 import ConfirmModal from "@components/common/ConfirmModal";
 import { formInputCls } from "@components/common/formStyles";
-import { useToast } from "@/hooks/useToast";
+import { useToast } from "@shared/hooks/useToast";
 import { adminService } from "../services/adminService";
 
 /**

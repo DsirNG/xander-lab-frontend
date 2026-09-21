@@ -1,6 +1,2 @@
-import { useContext } from "react";
-import PureReadingContext from "@/context/pureReadingContextValue";
-
-const usePureReading = () => useContext(PureReadingContext);
-
-export default usePureReading;
+/** @deprecated Use @features/blog/hooks/usePureReading. */
+export { default } from "@features/blog/hooks/usePureReading";

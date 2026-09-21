@@ -14,7 +14,7 @@ import Modal from "@components/common/Modal";
 import Button from "@components/common/Button";
 import FormField from "@components/common/FormField";
 import { formInputCls } from "@components/common/formStyles";
-import RowActionsMenu from "@components/common/RowActionsMenu";
+import RowActionsMenu from "@shared/ui/overlays/RowActionsMenu";
 import { Plus, RefreshCw, Tag as TagIcon, Sparkles } from "lucide-react";
 import KnowledgeBaseSkeleton from "./KnowledgeBaseSkeleton";
 import { knowledgeBaseService } from "../services/knowledgeBaseService";

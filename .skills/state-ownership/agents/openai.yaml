@@ -1,0 +1,3 @@
+interface:
+  display_name: "State Ownership"
+  short_description: "Place hooks, stores, and state at the right boundary"

@@ -15,7 +15,7 @@ import {
     FolderKanban,
     Sparkles,
 } from "lucide-react";
-import useBack from "@/hooks/useBack";
+import useBack from "@shared/hooks/useBack";
 import {
     fetchProjects,
     getStatusColor,

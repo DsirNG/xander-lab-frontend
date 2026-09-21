@@ -4,7 +4,7 @@
  */
 import { Navigate, useLocation } from "react-router-dom";
 import LoadingSpinner from "@components/common/LoadingSpinner";
-import { useAuthSession } from "@features/auth/context/authSessionContextValue";
+import { useAuthSession } from "@features/auth";
 
 const RequireAdmin = ({ children }) => {
     const location = useLocation();

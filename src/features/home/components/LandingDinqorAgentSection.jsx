@@ -117,10 +117,10 @@ const SESSIONS = [
 
 const WAVE_BARS = [12, 28, 45, 18, 36, 52, 22, 40, 60, 32, 18, 48, 56, 26, 38, 20, 44, 50, 16, 30];
 
-const LandingDinqorAgentSection = ({ t }) => {
+const LandingDinqorAgentSection = () => {
     const [activeSessionId, setActiveSessionId] = useState("knowledge_quiz");
     const [quizSelected, setQuizSelected] = useState("B");
-    const [quizSubmitted, setQuizSubmitted] = useState(true);
+    const [quizSubmitted] = useState(true);
     const [drillDownActive, setDrillDownActive] = useState(false);
     const [voiceActive, setVoiceActive] = useState(false);
 

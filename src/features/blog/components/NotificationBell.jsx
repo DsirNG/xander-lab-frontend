@@ -5,8 +5,8 @@ import { Link } from "react-router-dom";
 import Button from "@components/common/Button";
 import { useNotifications } from "@features/blog/context/useNotifications";
 import { blogPlanService } from "@features/blog/services/blogPlanService";
-import { authService } from "@features/auth/services/authService";
-import { useToast } from "@/hooks/useToast";
+import { useAuthSession } from "@features/auth";
+import { useToast } from "@shared/hooks/useToast";
 
 /**
  * 导航栏通知铃铛
@@ -16,12 +16,13 @@ import { useToast } from "@/hooks/useToast";
 const NotificationBell = () => {
     const { t } = useTranslation();
     const toast = useToast();
+    const { userInfo } = useAuthSession();
     const { notifications, unread, loading, load, markAll } =
         useNotifications();
     const [open, setOpen] = useState(false);
     const [broadcasting, setBroadcasting] = useState(false);
     const boxRef = useRef(null);
-    const isAdmin = authService.getLocalUserInfo()?.role === "ADMIN";
+    const isAdmin = userInfo?.role === "ADMIN";
 
     const toggleOpen = () => {
         const next = !open;

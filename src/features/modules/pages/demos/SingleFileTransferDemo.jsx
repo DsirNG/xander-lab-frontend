@@ -14,7 +14,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 
 // 内部模块（路径别名）
-import { useDragDrop } from "@hooks/useDragDrop";
+import { useDragDrop } from "@shared/hooks/useDragDrop";
 
 const getFileIcon = (type) => {
     switch (type) {

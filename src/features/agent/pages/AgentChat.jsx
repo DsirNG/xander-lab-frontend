@@ -38,13 +38,13 @@ import {
     Paperclip,
     FileText,
 } from "lucide-react";
-import { useToast } from "@/hooks/useToast";
+import { useToast } from "@shared/hooks/useToast";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
 import AgentSessionList from "@/features/blog/components/agent/AgentSessionList";
 import AgentPreviewPanel from "@/features/blog/components/agent/AgentPreviewPanel";
 import { blogAgentService } from "@/features/blog/services/blogAgentService";
-import useIsMobile from "@/hooks/useIsMobile";
-import useClickOutside from "@/hooks/useClickOutside";
+import useIsMobile from "@shared/hooks/useIsMobile";
+import useClickOutside from "@shared/hooks/useClickOutside";
 import { useAgentConversation } from "../hooks/useAgentConversation";
 import {
     agentConversationService,
@@ -65,8 +65,8 @@ import {
     liveImageStepResult,
 } from "../components/imageResult";
 import AgentImagesPage from "./AgentImagesPage";
-import ProfileModal from "@features/workspace/components/ProfileModal";
-import { useAuthSession } from "@features/auth/context/authSessionContextValue";
+import { ProfileModal } from "@features/profile";
+import { useAuthSession } from "@features/auth";
 import QuizCardStack from "../components/QuizCardStack";
 import { parseQuizPayload } from "../components/quizPayload";
 import ArtifactCard from "../components/ArtifactCard";

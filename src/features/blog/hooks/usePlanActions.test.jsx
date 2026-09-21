@@ -15,7 +15,7 @@ const toastMock = vi.hoisted(() => ({
 vi.mock("../services/blogPlanService", () => ({
     blogPlanService: planServiceMock,
 }));
-vi.mock("@/hooks/useToast", () => ({ useToast: () => toastMock }));
+vi.mock("@shared/hooks/useToast", () => ({ useToast: () => toastMock }));
 
 const t = (key) => `t:${key}`;
 const plan = { id: 9, topic: "AI 主题" };

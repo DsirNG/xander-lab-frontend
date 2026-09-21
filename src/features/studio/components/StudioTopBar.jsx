@@ -6,7 +6,7 @@
 
 import React from "react";
 import { ArrowLeft } from "lucide-react";
-import useBack from "@/hooks/useBack";
+import useBack from "@shared/hooks/useBack";
 
 const DEFAULT_BACK_LABEL = "返回 Studio";
 

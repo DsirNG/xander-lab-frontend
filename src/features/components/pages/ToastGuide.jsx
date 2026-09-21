@@ -5,10 +5,10 @@ import { Link } from "react-router-dom";
 import CodeBlock from "@/components/common/CodeBlock";
 
 // Import raw code using Vite's ?raw suffix for source display
-import ToastItemCode from "@/components/common/Toast/ToastItem.jsx?raw";
-import ToastContextCode from "@/components/common/Toast/ToastContext.jsx?raw";
-import ToastContainerCode from "@/components/common/Toast/ToastContainer.jsx?raw";
-import ToastIndexCode from "@/components/common/Toast/index.js?raw";
+import ToastItemCode from "@shared/ui/feedback/Toast/ToastItem.jsx?raw";
+import ToastContextCode from "@app/providers/ToastProvider.jsx?raw";
+import ToastContainerCode from "@shared/ui/feedback/Toast/ToastContainer.jsx?raw";
+import ToastIndexCode from "@shared/ui/feedback/Toast/index.js?raw";
 
 const DependencyCard = ({ title, items, icon: Icon }) => (
     <div className="p-6 rounded-[2rem] bg-white  border border-slate-200  shadow-sm">

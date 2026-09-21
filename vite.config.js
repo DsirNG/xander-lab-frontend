@@ -37,6 +37,8 @@ export default defineConfig(({ mode }) => {
         resolve: {
             alias: {
                 "@": path.resolve(projectRoot, "./src"),
+                "@app": path.resolve(projectRoot, "./src/app"),
+                "@shared": path.resolve(projectRoot, "./src/shared"),
                 "@components": path.resolve(projectRoot, "./src/components"),
                 "@features": path.resolve(projectRoot, "./src/features"),
                 "@hooks": path.resolve(projectRoot, "./src/hooks"),
@@ -46,7 +48,7 @@ export default defineConfig(({ mode }) => {
                 "@locales": path.resolve(projectRoot, "./src/locales"),
                 "@styles": path.resolve(projectRoot, "./src/styles"),
                 "@types": path.resolve(projectRoot, "./src/types"),
-                "@router": path.resolve(projectRoot, "./src/router"),
+                "@router": path.resolve(projectRoot, "./src/app/routing"),
             },
         },
         build: {

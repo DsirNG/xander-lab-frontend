@@ -6,7 +6,7 @@
  * @module features/studio/services/studioService
  */
 
-import { download, get, patch, post } from "@api/http";
+import { download, get, patch, post } from "@api";
 
 /** studio 请求通用配置：覆盖 http.js 的 /api baseURL */
 const STUDIO_CONFIG = { baseURL: "" };

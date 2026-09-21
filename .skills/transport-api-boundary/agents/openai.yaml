@@ -1,0 +1,3 @@
+interface:
+  display_name: "Transport API Boundary"
+  short_description: "Separate HTTP transport from business APIs"

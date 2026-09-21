@@ -21,9 +21,9 @@ import {
     Link2,
 } from "lucide-react";
 import DataTable from "@components/common/DataTable";
-import RowActionsMenu from "@components/common/RowActionsMenu";
+import RowActionsMenu from "@shared/ui/overlays/RowActionsMenu";
 import { blogPlanService, PLAN_STATUS } from "../services/blogPlanService";
-import { useToast } from "@/hooks/useToast";
+import { useToast } from "@shared/hooks/useToast";
 import { usePlanActions } from "../hooks/usePlanActions";
 import PlanStatusBadge from "../components/plans/PlanStatusBadge";
 import PlanFormModal from "../components/plans/PlanFormModal";

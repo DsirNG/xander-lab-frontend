@@ -18,8 +18,8 @@ import {
 } from "lucide-react";
 import LoadingSpinner from "@components/common/LoadingSpinner";
 import { img2threeService } from "../services/img2threeService";
-import { authService } from "@features/auth/services/authService";
-import { useToast } from "@/hooks/useToast";
+import { getLocalUserInfo } from "@features/auth";
+import { useToast } from "@shared/hooks/useToast";
 
 const ACCEPTED_IMAGE_TYPES = new Set([
     "image/jpeg",
@@ -203,7 +203,7 @@ const Img2ThreePage = () => {
     );
 
     useEffect(() => {
-        if (!authService.getLocalUserInfo()) {
+        if (!getLocalUserInfo()) {
             navigate("/login", {
                 replace: true,
                 state: {

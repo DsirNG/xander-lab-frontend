@@ -5,7 +5,7 @@ import { Code, FileCode } from "lucide-react";
 import {
     ContentLayout,
     EnhancedDemoSection,
-} from "@components/layouts/ContentLayout";
+} from "@shared/ui/data-display/ContentLayout";
 import { resolveDemo } from "../registries/demoRegistry";
 
 const ComponentContent = ({ component }) => {

@@ -18,13 +18,15 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { useAuthSession } from "@features/auth/context/authSessionContextValue";
+import { useAuthSession } from "@features/auth";
 import WorkspaceHomeSkeleton from "@features/workspace/components/WorkspaceHomeSkeleton";
-import NotificationBell from "@features/blog/components/NotificationBell";
-import { agentConversationService } from "@features/agent/services/agentConversationService";
-import { knowledgeService } from "@features/knowledge/services/knowledgeService";
-import { blogPlanService } from "@features/blog/services/blogPlanService";
-import { blogService } from "@features/blog/services/blogService";
+import { listAgentConversations } from "@features/agent";
+import { listKnowledgeMaterials } from "@features/knowledge";
+import {
+    listBlogPlans,
+    listMyBlogs,
+    NotificationBell,
+} from "@features/blog";
 
 const HOME_ASSET_ROOT = "/assets/workspace/home";
 
@@ -205,16 +207,16 @@ const WorkspaceHomePage = () => {
         (async () => {
             try {
                 const [conv, know, plan, blog] = await Promise.allSettled([
-                    agentConversationService.list({ signal, _silent: true }),
-                    knowledgeService.list(
+                    listAgentConversations({ signal, _silent: true }),
+                    listKnowledgeMaterials(
                         { limit: 3 },
                         { signal, _silent: true },
                     ),
-                    blogPlanService.listPlans(
+                    listBlogPlans(
                         { page: 1, size: 3 },
                         { signal, _silent: true },
                     ),
-                    blogService.getMyBlogs(
+                    listMyBlogs(
                         { status: 1, page: 1, size: 1 },
                         { signal, _silent: true },
                     ),

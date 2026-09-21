@@ -2,9 +2,9 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { KeyRound, Pencil, Plus, Server, Trash2 } from "lucide-react";
 import DataTable from "@components/common/DataTable";
-import RowActionsMenu from "@components/common/RowActionsMenu";
+import RowActionsMenu from "@shared/ui/overlays/RowActionsMenu";
 import ConfirmModal from "@components/common/ConfirmModal";
-import { useToast } from "@/hooks/useToast";
+import { useToast } from "@shared/hooks/useToast";
 import { adminService } from "../services/adminService";
 import ProviderFormModal from "../components/ProviderFormModal";
 

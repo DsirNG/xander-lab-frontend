@@ -4,7 +4,7 @@ import { Loader2 } from "lucide-react";
 import Modal from "@components/common/Modal";
 import FormField from "@components/common/FormField";
 import { formInputCls } from "@components/common/formStyles";
-import { useToast } from "@/hooks/useToast";
+import { useToast } from "@shared/hooks/useToast";
 import { parseHeaderLines } from "../services/agentMcpService";
 
 /** 与后端 AgentMcpServerRequest 的校验规则保持一致，避免明知会被拒还发一次请求。 */

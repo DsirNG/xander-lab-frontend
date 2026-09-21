@@ -1,10 +1,12 @@
 import { Check, Copy, Plug, ShieldCheck, Unplug, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useToast } from "@hooks/useToast";
-import { mcpOAuthService } from "../services/mcpService";
-import CsdnAuthorizationPanel from "./CsdnAuthorizationPanel";
-import JuejinAuthorizationPanel from "./JuejinAuthorizationPanel";
+import { useToast } from "@shared/hooks/useToast";
+import { mcpOAuthService } from "../services/mcpOAuthService";
+import {
+    CsdnAuthorizationPanel,
+    JuejinAuthorizationPanel,
+} from "@features/platformIntegrations";
 
 /** Profile surface for user-owned CSDN authorization used by external MCP clients. */
 const McpAuthorizationPanel = () => {

@@ -5,7 +5,7 @@ import React, {
     useRef,
     useState,
 } from "react";
-import http from "@/api/http";
+import http from "@api";
 
 const previewableAsFragment = (language) => {
     const lang = String(language || "").toLowerCase();

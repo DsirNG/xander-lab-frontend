@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useMemo } from "react";
 import PropTypes from "prop-types";
-import { useTranslation } from "react-i18next";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import {
@@ -22,8 +21,8 @@ import {
     Folder,
 } from "lucide-react";
 import Button from "@components/common/Button";
-import Skeleton from "@components/common/Skeleton";
-import RowActionsMenu from "@components/common/RowActionsMenu";
+import Skeleton from "@shared/ui/feedback/Skeleton";
+import RowActionsMenu from "@shared/ui/overlays/RowActionsMenu";
 import { formatBytes } from "../utils/fileHash";
 import { knowledgeBaseService } from "../services/knowledgeBaseService";
 
@@ -151,7 +150,6 @@ const KnowledgeStructurePreviewPanel = ({
     onClose,
     onOpenFullViewer,
 }) => {
-    const { t } = useTranslation();
     const [activeTab, setActiveTab] = useState("content");
     const [loading, setLoading] = useState(false);
     const [structureData, setStructureData] = useState(null);
@@ -161,7 +159,6 @@ const KnowledgeStructurePreviewPanel = ({
     const [copied, setCopied] = useState(false);
     const [genLoading, setGenLoading] = useState(false);
     const [outlineExpanded, setOutlineExpanded] = useState(true);
-    const [viewFullText, setViewFullText] = useState(false);
 
     // 文件变化时重置状态并加载预览
     useEffect(() => {
@@ -236,16 +233,14 @@ const KnowledgeStructurePreviewPanel = ({
         }
     };
 
-    if (!file) return null;
-
-    const ext = file.extension?.toLowerCase() || "file";
+    const ext = file?.extension?.toLowerCase() || "file";
     const badge = EXTENSION_BADGES[ext] || {
         label: ext.toUpperCase().slice(0, 4),
         bg: "bg-slate-500 text-white",
     };
 
     const rootNode = structureData?.structure?.root;
-    const chapters = structureData?.chapters || [];
+    const chapters = useMemo(() => structureData?.chapters || [], [structureData]);
 
     // 当前选中的章节
     const activeChapter = useMemo(() => {
@@ -272,6 +267,8 @@ const KnowledgeStructurePreviewPanel = ({
     }, [fullContent, structureData, activeChapter]);
 
     const isExcerptTruncated = Boolean(structureData?.excerptTruncated && !fullContent && !activeChapter);
+
+    if (!file) return null;
 
     // 摘要信息提取
     const summaryText =
@@ -433,7 +430,6 @@ const KnowledgeStructurePreviewPanel = ({
                                                 key={ch.id ?? idx}
                                                 onClick={() => {
                                                     setSelectedChapterId(ch.id);
-                                                    setViewFullText(true);
                                                     if (!fullContent) handleLoadFullContent();
                                                 }}
                                                 className="group flex cursor-pointer items-center justify-between rounded-lg px-2 py-1.5 transition hover:bg-white hover:shadow-2xs dark:hover:bg-white/5"

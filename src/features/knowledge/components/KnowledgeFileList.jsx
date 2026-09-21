@@ -12,9 +12,9 @@ import {
     RefreshCw,
     Trash2,
 } from "lucide-react";
-import { TableSkeleton } from "@components/common/Skeleton";
+import { TableSkeleton } from "@shared/ui/feedback/Skeleton";
 import Pagination from "@components/common/Pagination";
-import RowActionsMenu from "@components/common/RowActionsMenu";
+import RowActionsMenu from "@shared/ui/overlays/RowActionsMenu";
 import KnowledgeFileFilterBar from "./KnowledgeFileFilterBar";
 import { formatBytes } from "../utils/fileHash";
 
@@ -67,7 +67,6 @@ function renderStatusBadge(status) {
 }
 
 const KnowledgeFileList = ({
-    folders = [],
     activeFolderId = null,
     breadcrumbs = [],
     subfolders = [],

@@ -1,0 +1,3 @@
+interface:
+  display_name: "File Ownership"
+  short_description: "Classify files before creation or movement"

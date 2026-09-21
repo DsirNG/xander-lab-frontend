@@ -8,14 +8,14 @@
 import { RouterProvider } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import { useMemo, useEffect } from "react";
-import { createRouter } from "./router";
-import { ToastProvider, ToastContainer } from "./components/common/Toast";
-import { useToast } from "./hooks/useToast";
+import { createRouter } from "./app/routing";
+import { ToastProvider } from "@app/providers/ToastProvider";
+import { ToastContainer } from "@shared/ui/feedback/Toast";
+import { useToast } from "@shared/hooks/useToast";
 import ErrorBoundary from "./components/common/ErrorBoundary";
-import { AuthSessionProvider } from "./features/auth/context/AuthSessionProvider";
-import { NotificationProvider } from "./features/blog/context/NotificationContext";
-import AppUpdateModal from "./features/appUpdate/AppUpdateModal";
-import useAppUpdate from "./features/appUpdate/useAppUpdate";
+import { AuthSessionProvider } from "@features/auth";
+import { NotificationProvider } from "@features/blog";
+import { AppUpdateModal, useAppUpdate } from "@features/appUpdate";
 import DomainRedirectModal from "./components/common/DomainRedirectModal";
 
 /**

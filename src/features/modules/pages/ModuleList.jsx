@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
 
 // Layout
-import SidebarLayout from "@components/layouts/SidebarLayout";
+import SidebarLayout from "@shared/ui/navigation/SidebarLayout";
 
 // 配置
 import { getModuleConfig } from "../constants";

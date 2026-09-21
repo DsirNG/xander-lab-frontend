@@ -1,6 +1,2 @@
-import React from "react";
-import BlogManagePanel from "@features/profile/components/BlogManagePanel";
-
-const BlogManagePage = () => <BlogManagePanel />;
-
-export default BlogManagePage;
+/** @deprecated Use @features/blog/pages/BlogManagePage. */
+export { default } from "@features/blog/pages/BlogManagePage";

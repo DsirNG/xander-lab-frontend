@@ -14,11 +14,11 @@ vi.mock("react-router-dom", () => ({
     useSearchParams: () => [new URLSearchParams(), vi.fn()],
 }));
 
-vi.mock("@/hooks/useToast", () => ({ useToast: () => toastMock }));
-vi.mock("@/hooks/useIsMobile", () => ({ default: () => false }));
-vi.mock("@/hooks/useClickOutside", () => ({ default: vi.fn() }));
+vi.mock("@shared/hooks/useToast", () => ({ useToast: () => toastMock }));
+vi.mock("@shared/hooks/useIsMobile", () => ({ default: () => false }));
+vi.mock("@shared/hooks/useClickOutside", () => ({ default: vi.fn() }));
 
-vi.mock("@features/auth/context/authSessionContextValue", () => ({
+vi.mock("@features/auth", () => ({
     useAuthSession: () => ({
         userInfo: { nickname: "tester" },
         sessionStatus: "authenticated",
@@ -51,8 +51,8 @@ vi.mock("@/features/blog/components/agent/AgentSessionList", () => ({
 vi.mock("@/features/blog/components/agent/AgentPreviewPanel", () => ({
     default: () => null,
 }));
-vi.mock("@features/workspace/components/ProfileModal", () => ({
-    default: () => null,
+vi.mock("@features/profile", () => ({
+    ProfileModal: () => null,
 }));
 vi.mock("../components/WorkspaceAgentSidebar", () => ({ default: () => null }));
 

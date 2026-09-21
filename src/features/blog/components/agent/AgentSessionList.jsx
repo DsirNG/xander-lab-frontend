@@ -26,13 +26,9 @@ import {
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { useAuthSession } from "@features/auth/context/authSessionContextValue";
-import { authService } from "@features/auth/services/authService";
-import {
-    pointsService,
-    formatPoints,
-} from "@features/profile/services/pointsService";
-import { useToast } from "@hooks/useToast";
+import { logout, useAuthSession } from "@features/auth";
+import { formatPoints, getPointsOverview } from "@features/account";
+import { useToast } from "@shared/hooks/useToast";
 
 /** 工作台功能入口，与 WorkspaceLayout 菜单一致（当前页面外的独立全屏页面） */
 const FEATURE_ENTRIES = [
@@ -125,8 +121,7 @@ const AgentSessionList = ({
     useEffect(() => {
         if (!menuOpen) return;
         let active = true;
-        pointsService
-            .overview({ _silent: true })
+        getPointsOverview({ _silent: true })
             .then((data) => active && setPoints(data))
             .catch(() => {
                 /* 静默保留旧值 */
@@ -139,7 +134,7 @@ const AgentSessionList = ({
     const handleLogout = async () => {
         setLoggingOut(true);
         try {
-            await authService.logout();
+            await logout();
             window.location.href = "/";
         } catch {
             setLoggingOut(false);

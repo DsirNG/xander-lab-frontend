@@ -259,7 +259,7 @@ const LandingHeadlessAutomationSection = ({ t }) => {
                                     </div>
 
                                     <div className="mt-3.5 grid grid-cols-1 sm:grid-cols-4 gap-2">
-                                        {PIPELINE_STEPS.map((step, idx) => (
+                                        {PIPELINE_STEPS.map((step) => (
                                             <div
                                                 key={step.id}
                                                 className="relative flex flex-col justify-between rounded-xl border border-border bg-surface p-3 text-left shadow-2xs"

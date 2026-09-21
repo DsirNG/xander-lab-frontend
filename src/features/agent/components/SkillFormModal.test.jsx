@@ -18,7 +18,7 @@ vi.mock("../services/agentSkillService", () => ({
     },
 }));
 
-vi.mock("@/hooks/useToast", () => ({
+vi.mock("@shared/hooks/useToast", () => ({
     useToast: () => ({ success: toastSuccess, error: vi.fn() }),
 }));
 

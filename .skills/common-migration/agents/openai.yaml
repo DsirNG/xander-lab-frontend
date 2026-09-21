@@ -1,0 +1,3 @@
+interface:
+  display_name: "Common Migration"
+  short_description: "Migrate legacy common components safely"

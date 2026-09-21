@@ -2,9 +2,9 @@ import React, { useState, useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import { ChevronLeft, X } from "lucide-react";
 import BlogSidebar from "../components/BlogSidebar";
-import useIsMobile from "@hooks/useIsMobile";
+import useIsMobile from "@shared/hooks/useIsMobile";
 import { useTranslation } from "react-i18next";
-import usePureReading from "@/hooks/usePureReading";
+import usePureReading from "../hooks/usePureReading";
 
 /**
  * 博客布局组件

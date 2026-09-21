@@ -3,7 +3,6 @@ import {
     get,
     post,
     put,
-    upload as httpUpload,
 } from "@api";
 import { computeFileSha256 } from "../utils/fileHash";
 

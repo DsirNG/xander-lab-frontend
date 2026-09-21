@@ -15,14 +15,7 @@ import {
     SlidersHorizontal,
     Sparkles,
 } from "lucide-react";
-import { useAuthSession } from "@features/auth/context/authSessionContextValue";
-import { useAgentConversation } from "@features/agent/hooks/useAgentConversation";
-import {
-    agentConversationService,
-    parseToolPayload,
-} from "@features/agent/services/agentConversationService";
-import AgentMarkdown from "@features/agent/components/AgentMarkdown";
-import AgentComposer from "@features/agent/components/AgentComposer";
+import { useAuthSession } from "@features/auth";
 import {
     ImageToolProgressPanel,
     ImageToolResult,
@@ -30,9 +23,6 @@ import {
     ThinkingIndicator,
     QuizMessage,
     ArtifactMessage,
-} from "@features/agent/pages/AgentChat";
-import { SelfCheckCard } from "@features/agent/components/AgentTraceCard";
-import {
     IMAGE_TOOL,
     cleanImageMarkdown,
     containsResultUrl,
@@ -40,10 +30,16 @@ import {
     imageUrlsFromMessages,
     imageUrlsFromSteps,
     liveImageStepResult,
-} from "@features/agent/components/imageResult";
-import { parseQuizPayload } from "@features/agent/components/quizPayload";
+    AgentComposer,
+    AgentMarkdown,
+    SelfCheckCard,
+    parseQuizPayload,
+    parseToolPayload,
+    uploadAgentAttachment,
+    useAgentConversation,
+} from "@features/agent";
 import { GlowingRing3D } from "./LandingIllustrations";
-import { useToast } from "@/hooks/useToast";
+import { useToast } from "@shared/hooks/useToast";
 
 const ThoughtCard = ({ content }) => (
     <div className="flex items-start gap-2 rounded-xl border border-border bg-canvas px-3 py-2 text-xs leading-5 text-ink-muted">
@@ -281,7 +277,7 @@ const LandingAgentWindow = ({ t }) => {
             try {
                 const settled = await Promise.allSettled(
                     valid.map((file) =>
-                        agentConversationService.uploadAttachment(file),
+                        uploadAgentAttachment(file),
                     ),
                 );
                 const uploaded = settled

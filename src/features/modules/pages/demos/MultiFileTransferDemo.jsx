@@ -10,7 +10,7 @@ import {
     FolderOpen,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useDragDrop } from "@hooks/useDragDrop";
+import { useDragDrop } from "@shared/hooks/useDragDrop";
 
 const getFileIconSVG = (type) => {
     if (type === "pdf")

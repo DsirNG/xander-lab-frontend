@@ -14,7 +14,7 @@ import Pagination from "@components/common/Pagination";
 import LoadingSpinner from "@components/common/LoadingSpinner";
 import Button from "@components/common/Button";
 import { blogPlanService, PLAN_STATUS } from "../services/blogPlanService";
-import { useToast } from "@/hooks/useToast";
+import { useToast } from "@shared/hooks/useToast";
 import { usePlanActions } from "../hooks/usePlanActions";
 import PlanStatusBadge from "../components/plans/PlanStatusBadge";
 import PlanFormModal from "../components/plans/PlanFormModal";

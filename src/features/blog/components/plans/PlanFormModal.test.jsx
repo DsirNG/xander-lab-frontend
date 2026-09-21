@@ -12,7 +12,7 @@ const toastMock = vi.hoisted(() => ({ success: vi.fn(), error: vi.fn() }));
 vi.mock("../../services/blogPlanService", () => ({
     blogPlanService: planServiceMock,
 }));
-vi.mock("@/hooks/useToast", () => ({ useToast: () => toastMock }));
+vi.mock("@shared/hooks/useToast", () => ({ useToast: () => toastMock }));
 vi.mock("@/features/knowledge/services/knowledgeService", () => ({
     knowledgeService: { list: vi.fn().mockResolvedValue([]) },
 }));

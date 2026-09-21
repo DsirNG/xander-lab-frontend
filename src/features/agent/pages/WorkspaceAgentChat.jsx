@@ -14,9 +14,9 @@ import {
     SlidersHorizontal,
     Sparkles,
 } from "lucide-react";
-import { useToast } from "@/hooks/useToast";
+import { useToast } from "@shared/hooks/useToast";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
-import { useAuthSession } from "@features/auth/context/authSessionContextValue";
+import { useAuthSession } from "@features/auth";
 import { useAgentConversation } from "../hooks/useAgentConversation";
 import {
     agentConversationService,

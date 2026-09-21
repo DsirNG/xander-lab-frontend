@@ -6,7 +6,7 @@ import {
     Paperclip,
     Calendar,
 } from "lucide-react";
-import { useDragDrop } from "@hooks/useDragDrop";
+import { useDragDrop } from "@shared/hooks/useDragDrop";
 import Button from "@components/common/Button";
 import { motion, AnimatePresence } from "framer-motion";
 

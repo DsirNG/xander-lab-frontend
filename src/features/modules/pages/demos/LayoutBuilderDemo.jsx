@@ -8,7 +8,7 @@ import {
     X,
     Maximize2,
 } from "lucide-react";
-import { useDragDrop } from "@hooks/useDragDrop";
+import { useDragDrop } from "@shared/hooks/useDragDrop";
 import { motion, AnimatePresence } from "framer-motion";
 
 const TOOL_ITEMS = [

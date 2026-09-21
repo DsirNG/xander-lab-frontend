@@ -5,7 +5,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const toastSuccess = vi.fn();
 const toastError = vi.fn();
 
-vi.mock("@/hooks/useToast", () => ({
+vi.mock("@shared/hooks/useToast", () => ({
     useToast: () => ({ success: toastSuccess, error: toastError }),
 }));
 
