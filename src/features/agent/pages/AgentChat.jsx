@@ -9,9 +9,6 @@ import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import {
     ShieldAlert,
-    Globe,
-    PenLine,
-    Image as ImageIcon,
 } from "lucide-react";
 import { useToast } from "@shared/hooks/useToast";
 import {
@@ -27,6 +24,7 @@ import AgentSessionSearchModal from "../components/AgentSessionSearchModal";
 import AgentArtifactPanel from "../components/AgentArtifactPanel";
 import AgentChatSidebar from "../components/AgentChatSidebar";
 import AgentChatHeader from "../components/AgentChatHeader";
+import AgentChatEmptyState from "../components/AgentChatEmptyState";
 import AgentChatInputBar from "../components/AgentChatInputBar";
 import AgentConversationTimeline from "../components/AgentConversationTimeline";
 import ImageToolResult from "../components/ImageToolResult";
@@ -572,78 +570,22 @@ const AgentChat = () => {
                             {messages.length === 0 &&
                             steps.length === 0 &&
                             !loading ? (
-                                <div className="flex h-full flex-col items-center justify-center px-4 pt-10">
-                                    <div className="mb-8 text-display text-ink">
-                                        {t("blog.agentChat.startHeadline")}
-                                    </div>
-
-                                    <AgentChatInputBar
-                                        t={t}
-                                        input={input}
-                                        setInput={setInput}
-                                        attachments={attachments}
-                                        uploading={uploadingAttachments}
-                                        isActive={isActive}
-                                        creating={creating}
-                                        hasConversation={false}
-                                        onFilesSelected={handleFilesSelected}
-                                        onRemoveAttachment={
-                                            handleRemoveAttachment
-                                        }
-                                        onSubmit={handleSubmit}
-                                        onStop={handleStop}
-                                        deepThinking={deepThinking}
-                                        onToggleDeepThinking={() =>
-                                            setDeepThinking(
-                                                (current) => !current,
-                                            )
-                                        }
-                                    />
-
-                                    <div className="mx-auto mt-6 flex w-full max-w-3xl flex-wrap justify-center gap-2">
-                                        <button
-                                            onClick={() =>
-                                                setInput(
-                                                    t(
-                                                        "blog.agentChat.quickGenerateImage",
-                                                    ),
-                                                )
-                                            }
-                                            className="flex items-center gap-2 rounded-xl border border-border bg-[#ffffff] px-4 py-2 text-sm font-semibold text-ink transition hover:bg-surface-muted"
-                                        >
-                                            <ImageIcon className="h-4 w-4 text-emerald-500" />
-                                            {t(
-                                                "blog.agentChat.quickGenerateImage",
-                                            )}
-                                        </button>
-                                        <button
-                                            onClick={() =>
-                                                setInput(
-                                                    t(
-                                                        "blog.agentChat.quickWritePrompt",
-                                                    ),
-                                                )
-                                            }
-                                            className="flex items-center gap-2 rounded-xl border border-border bg-[#ffffff] px-4 py-2 text-sm font-semibold text-ink transition hover:bg-surface-muted"
-                                        >
-                                            <PenLine className="h-4 w-4 text-blue-500" />
-                                            {t("blog.agentChat.quickWrite")}
-                                        </button>
-                                        <button
-                                            onClick={() =>
-                                                setInput(
-                                                    t(
-                                                        "blog.agentChat.quickSearch",
-                                                    ),
-                                                )
-                                            }
-                                            className="flex items-center gap-2 rounded-xl border border-border bg-[#ffffff] px-4 py-2 text-sm font-semibold text-ink transition hover:bg-surface-muted"
-                                        >
-                                            <Globe className="h-4 w-4 text-orange-500" />
-                                            {t("blog.agentChat.quickSearch")}
-                                        </button>
-                                    </div>
-                                </div>
+                                <AgentChatEmptyState
+                                    input={input}
+                                    setInput={setInput}
+                                    attachments={attachments}
+                                    uploading={uploadingAttachments}
+                                    isActive={isActive}
+                                    creating={creating}
+                                    onFilesSelected={handleFilesSelected}
+                                    onRemoveAttachment={handleRemoveAttachment}
+                                    onSubmit={handleSubmit}
+                                    onStop={handleStop}
+                                    deepThinking={deepThinking}
+                                    onToggleDeepThinking={() =>
+                                        setDeepThinking((current) => !current)
+                                    }
+                                />
                             ) : (
                                 <>
                                     <AgentConversationTimeline
