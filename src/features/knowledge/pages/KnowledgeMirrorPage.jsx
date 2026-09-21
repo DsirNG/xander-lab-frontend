@@ -13,19 +13,16 @@ import {
     CheckCircle2,
     CirclePlus,
     Clock3,
-    Mic,
-    Square,
     Target,
 } from "lucide-react";
 import Button from "@shared/ui/primitives/Button";
-import CustomSelect from "@shared/ui/forms/CustomSelect";
-import FormField from "@shared/ui/forms/FormField";
 import LoadingSpinner from "@shared/ui/feedback/LoadingSpinner";
-import Modal from "@shared/ui/overlays/Modal";
-import { formInputCls } from "@shared/ui/forms/formStyles";
+import KnowledgeAttemptResultPanel from "../components/KnowledgeAttemptResultPanel";
+import KnowledgeAudioTestPanel from "../components/KnowledgeAudioTestPanel";
 import KnowledgeDocBaseView from "../components/KnowledgeDocBaseView";
+import KnowledgeEditorModal from "../components/KnowledgeEditorModal";
 import KnowledgeActions from "../components/KnowledgeActions";
-import AgentQuizPanel, { ResultStat } from "../components/AgentQuizPanel";
+import AgentQuizPanel from "../components/AgentQuizPanel";
 import { knowledgeService } from "../services/knowledgeService";
 import { buildKnowledgeQuizPath } from "../utils/knowledgeNavigation";
 
@@ -265,6 +262,9 @@ const KnowledgeMirrorPage = () => {
             setSaving(false);
         }
     };
+
+    const updateForm = (patch) =>
+        setForm((current) => ({ ...current, ...patch }));
 
     // 归档、恢复和删除都会让这条知识离开当前视图，所以统一重新拉一次并把焦点交给第一条。
     const reloadAndFocusFirst = async () => {
@@ -678,41 +678,20 @@ const KnowledgeMirrorPage = () => {
 
                                 {activeMaterial.testMode ===
                                 "AUDIO_RECITATION" ? (
-                                    <div className="mt-5 rounded-2xl border border-border p-4">
-                                        <div className="flex flex-wrap items-center justify-between gap-3">
-                                            <div>
-                                                <div className="text-title text-ink">
-                                                    {t("knowledge.audioTest")}
-                                                </div>
-                                                <div className="mt-1 text-caption text-ink-muted">
-                                                    {t("knowledge.audioHint")}
-                                                </div>
-                                            </div>
-                                            {recording ? (
-                                                <Button
-                                                    variant="danger"
-                                                    icon={Square}
-                                                    onClick={stopRecording}
-                                                >
-                                                    {t("knowledge.stop")}
-                                                </Button>
-                                            ) : (
-                                                <Button
-                                                    icon={Mic}
-                                                    loading={uploading}
-                                                    onClick={startRecording}
-                                                >
-                                                    {t("knowledge.start")}
-                                                </Button>
-                                            )}
-                                        </div>
-                                        {recording ? (
-                                            <div className="mt-4 flex items-center gap-2 text-body text-danger">
-                                                <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-danger" />
-                                                {t("knowledge.recording")}
-                                            </div>
-                                        ) : null}
-                                    </div>
+                                    <KnowledgeAudioTestPanel
+                                        recording={recording}
+                                        uploading={uploading}
+                                        permissionOpen={permissionOpen}
+                                        permissionBlocked={permissionBlocked}
+                                        onStart={startRecording}
+                                        onStop={stopRecording}
+                                        onClosePermission={() =>
+                                            setPermissionOpen(false)
+                                        }
+                                        onRequestMicrophone={
+                                            requestMicrophone
+                                        }
+                                    />
                                 ) : (
                                     <AgentQuizPanel
                                         quiz={quizzes[0] ?? null}
@@ -720,87 +699,11 @@ const KnowledgeMirrorPage = () => {
                                     />
                                 )}
 
-                                {attempt || attemptPollError ? (
-                                    <div className="mt-5 rounded-2xl border border-border p-4">
-                                        <div className="flex items-center justify-between gap-3">
-                                            <div className="text-title text-ink">
-                                                {t("knowledge.latestResult")}
-                                            </div>
-                                            {attempt ? (
-                                                <span className="rounded-full bg-surface-muted px-3 py-1 text-caption text-ink-muted">
-                                                    {t(
-                                                        `knowledge.status.${attempt.status}`,
-                                                    )}
-                                                </span>
-                                            ) : null}
-                                        </div>
-                                        {attempt?.status === "SUCCEEDED" ? (
-                                            <div className="mt-4 grid gap-3 sm:grid-cols-4">
-                                                <ResultStat
-                                                    label={t("knowledge.score")}
-                                                    value={`${attempt.score}%`}
-                                                />
-                                                <ResultStat
-                                                    label={t(
-                                                        "knowledge.correct",
-                                                    )}
-                                                    value={
-                                                        attempt.result
-                                                            ?.correctCount ?? 0
-                                                    }
-                                                />
-                                                <ResultStat
-                                                    label={t(
-                                                        "knowledge.missing",
-                                                    )}
-                                                    value={
-                                                        attempt.result
-                                                            ?.missingCount ?? 0
-                                                    }
-                                                />
-                                                <ResultStat
-                                                    label={t("knowledge.wrong")}
-                                                    value={
-                                                        attempt.result
-                                                            ?.wrongCount ?? 0
-                                                    }
-                                                />
-                                            </div>
-                                        ) : null}
-                                        {attempt?.transcript ? (
-                                            <div className="mt-4 text-body text-ink-muted">
-                                                <span className="font-semibold text-ink-secondary">
-                                                    {t("knowledge.transcript")}
-                                                    ：
-                                                </span>
-                                                {attempt.transcript}
-                                            </div>
-                                        ) : null}
-                                        {attempt?.errorMessage ? (
-                                            <div className="mt-4 text-body text-danger">
-                                                {attempt.errorMessage}
-                                            </div>
-                                        ) : null}
-                                        {attemptPollError ? (
-                                            <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-xl bg-warning-soft p-3 text-caption text-warning-fg">
-                                                <span>
-                                                    {t(
-                                                        "knowledge.attemptPollError",
-                                                    )}
-                                                </span>
-                                                <Button
-                                                    variant="outline"
-                                                    size="sm"
-                                                    onClick={retryAttempt}
-                                                >
-                                                    {t(
-                                                        "knowledge.retryAttempt",
-                                                    )}
-                                                </Button>
-                                            </div>
-                                        ) : null}
-                                    </div>
-                                ) : null}
+                                <KnowledgeAttemptResultPanel
+                                    attempt={attempt}
+                                    pollError={attemptPollError}
+                                    onRetry={retryAttempt}
+                                />
                                 {activeMaterial.nextReviewAt ? (
                                     <div className="mt-4 flex items-center gap-2 text-caption text-ink-muted">
                                         <Clock3 className="h-4 w-4" />
@@ -823,133 +726,16 @@ const KnowledgeMirrorPage = () => {
                 )}
             </div>
 
-            <Modal
+            <KnowledgeEditorModal
                 isOpen={editorOpen}
                 onClose={() => setEditorOpen(false)}
-                title={t(
-                    editingId == null
-                        ? "knowledge.createTitle"
-                        : "knowledge.editTitle",
-                )}
-                width="max-w-2xl"
-                footer={
-                    <>
-                        <Button
-                            variant="ghost"
-                            onClick={() => setEditorOpen(false)}
-                        >
-                            {t("common.cancel")}
-                        </Button>
-                        <Button
-                            type="submit"
-                            form="knowledge-editor-form"
-                            loading={saving}
-                        >
-                            {t(
-                                editingId == null
-                                    ? "knowledge.create"
-                                    : "knowledge.save",
-                            )}
-                        </Button>
-                    </>
-                }
-            >
-                <form
-                    id="knowledge-editor-form"
-                    className="space-y-4"
-                    onSubmit={submitEditor}
-                >
-                    <FormField
-                        label={t("knowledge.form.title")}
-                        htmlFor="knowledge-title"
-                    >
-                        <input
-                            id="knowledge-title"
-                            className={formInputCls}
-                            value={form.title}
-                            maxLength={100}
-                            onChange={(event) =>
-                                setForm((current) => ({
-                                    ...current,
-                                    title: event.target.value,
-                                }))
-                            }
-                        />
-                    </FormField>
-                    <FormField label={t("knowledge.form.type")}>
-                        <CustomSelect
-                            value={form.knowledgeType}
-                            onChange={(value) =>
-                                setForm((current) => ({
-                                    ...current,
-                                    knowledgeType: value,
-                                    testMode:
-                                        value === "RECITATION"
-                                            ? "AUDIO_RECITATION"
-                                            : value === "MATH"
-                                              ? "PRACTICE"
-                                              : "AI_QA",
-                                }))
-                            }
-                            options={["RECITATION", "CONCEPT", "MATH"].map(
-                                (value) => ({ value, label: typeLabel(value) }),
-                            )}
-                        />
-                    </FormField>
-                    <FormField
-                        label={t("knowledge.form.content")}
-                        htmlFor="knowledge-content"
-                        hint={t("knowledge.form.contentHint")}
-                    >
-                        <textarea
-                            id="knowledge-content"
-                            className={`${formInputCls} min-h-48 resize-y`}
-                            value={form.content}
-                            maxLength={10000}
-                            onChange={(event) =>
-                                setForm((current) => ({
-                                    ...current,
-                                    content: event.target.value,
-                                }))
-                            }
-                        />
-                    </FormField>
-                    {/* 改正文会把掌握度清零，这件事必须在保存之前说，而不是等分数掉了让用户自己猜。 */}
-                    {editingId == null ? null : (
-                        <div className="rounded-2xl bg-surface-muted p-3 text-caption text-ink-muted">
-                            {t("knowledge.editResetHint")}
-                        </div>
-                    )}
-                </form>
-            </Modal>
-            <Modal
-                isOpen={permissionOpen}
-                onClose={() => setPermissionOpen(false)}
-                title={t("knowledge.permissionTitle")}
-                width="max-w-md"
-                footer={
-                    <>
-                        <Button
-                            variant="ghost"
-                            onClick={() => setPermissionOpen(false)}
-                        >
-                            {t("common.cancel")}
-                        </Button>
-                        <Button icon={Mic} onClick={requestMicrophone}>
-                            {t("knowledge.allowMicrophone")}
-                        </Button>
-                    </>
-                }
-            >
-                <div className="rounded-2xl bg-accent-soft p-4 text-body text-ink-secondary">
-                    {permissionBlocked
-                        ? t("knowledge.permissionBlockedHint")
-                        : t("knowledge.permissionHint")}
-                </div>
-                <div className="mt-4 text-caption text-ink-muted">
-                    {t("knowledge.permissionPrivacy")}
-                </div>
-            </Modal>
+                editingId={editingId}
+                form={form}
+                onFormChange={updateForm}
+                onSubmit={submitEditor}
+                saving={saving}
+                typeLabel={typeLabel}
+            />
         </div>
     );
 };
