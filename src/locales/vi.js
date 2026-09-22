@@ -39,6 +39,27 @@ export default {
             generatePractice: "Tạo bài luyện tập",
             importKnowledge: "Nhập tri thức",
         },
+        capabilities: {
+            title: "Năng lực cốt lõi",
+            subtitle:
+                "Một bộ công cụ thông minh cho trò chuyện, tìm kiếm, sáng tạo và tích lũy kiến thức",
+            chat: {
+                title: "Trò chuyện thông minh",
+                desc: "Đặt câu hỏi bất cứ lúc nào và nhận câu trả lời rõ ràng, đáng tin cậy",
+            },
+            search: {
+                title: "Tìm kiếm web",
+                desc: "Nhanh chóng tìm thông tin hữu ích và chắt lọc thành kết luận rõ ràng",
+            },
+            creation: {
+                title: "Xưởng sáng tạo",
+                desc: "Biến ý tưởng thành hình ảnh, văn bản và sản phẩm hoàn chỉnh",
+            },
+            knowledge: {
+                title: "Gương tri thức",
+                desc: "Nhập tài liệu để xây dựng kho kiến thức tương tác và học hỏi liên tục",
+            },
+        },
         engines: {
             title: "Bốn động cơ cốt lõi",
             subtitle:

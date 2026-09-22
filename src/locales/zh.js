@@ -37,6 +37,27 @@ export default {
             generatePractice: "生成练习",
             importKnowledge: "导入知识",
         },
+        capabilities: {
+            title: "核心能力",
+            subtitle:
+                "从对话、搜索、创作到知识沉淀，一套智能能力覆盖完整工作流",
+            chat: {
+                title: "智能对话",
+                desc: "随时交流，获得清晰可靠的回答",
+            },
+            search: {
+                title: "全网搜索",
+                desc: "快速检索信息，整理为可用结论",
+            },
+            creation: {
+                title: "创意创作",
+                desc: "生成图像、文本与灵感，支持从想法到成品",
+            },
+            knowledge: {
+                title: "知识镜像",
+                desc: "导入个人资料，构建可互动、可持续学习的知识库",
+            },
+        },
         engines: {
             title: "四大核心引擎",
             subtitle: "四大引擎协同驱动，覆盖创作全链路，释放 AI 无限生产力",

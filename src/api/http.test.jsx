@@ -16,7 +16,8 @@ const { requestInterceptors, responseInterceptors, axiosMock, instanceMock } =
         mockInstance.defaults = {};
         mockInstance.request = vi.fn();
         mockInstance.get = vi.fn();
-        mockInstance.post = vi.fn();
+        const refreshPost = vi.fn();
+        mockInstance.post = refreshPost;
         mockInstance.put = vi.fn();
         mockInstance.patch = vi.fn();
         mockInstance.delete = vi.fn();
@@ -29,7 +30,7 @@ const { requestInterceptors, responseInterceptors, axiosMock, instanceMock } =
             axiosMock: {
                 default: vi.fn(),
                 create: vi.fn(() => mockInstance),
-                post: vi.fn(),
+                post: refreshPost,
                 isCancel: vi.fn(),
             },
         };
@@ -348,7 +349,8 @@ describe("refresh failure classification (§45)", () => {
         responseInterceptors[0].err({ config, response: { status: 401 } });
 
     const refreshOk = (accessToken, refreshToken) => ({
-        data: { code: 200, data: { accessToken, refreshToken } },
+        code: 200,
+        data: { accessToken, refreshToken },
     });
 
     it("暂时性失败（503）保留凭据、不强制登出，且不伪装成登录过期", async () => {

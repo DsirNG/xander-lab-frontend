@@ -39,6 +39,27 @@ export default {
             generatePractice: "Créer un exercice",
             importKnowledge: "Importer des savoirs",
         },
+        capabilities: {
+            title: "Capacités clés",
+            subtitle:
+                "Un ensemble intelligent pour dialoguer, rechercher, créer et capitaliser les connaissances",
+            chat: {
+                title: "Dialogue intelligent",
+                desc: "Posez vos questions et obtenez des réponses claires et fiables",
+            },
+            search: {
+                title: "Recherche web",
+                desc: "Trouvez les informations utiles et transformez-les en conclusions claires",
+            },
+            creation: {
+                title: "Studio créatif",
+                desc: "Transformez vos idées en images, textes et créations abouties",
+            },
+            knowledge: {
+                title: "Miroir des connaissances",
+                desc: "Importez vos ressources dans une base interactive qui apprend en continu",
+            },
+        },
         engines: {
             title: "Quatre moteurs fondamentaux",
             subtitle:

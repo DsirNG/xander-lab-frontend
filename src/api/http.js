@@ -88,7 +88,6 @@ const instance = axios.create({
 });
 
 const authRecovery = createAuthRecovery({
-    axios,
     instance,
     baseURL: BASE_URL,
     refreshURL: "/api/auth/refresh",

@@ -39,6 +39,27 @@ export default {
             generatePractice: "練習問題を生成",
             importKnowledge: "ナレッジをインポート",
         },
+        capabilities: {
+            title: "主な機能",
+            subtitle:
+                "対話、検索、創作、知識の蓄積までを一つのインテリジェントツールで支援",
+            chat: {
+                title: "スマートチャット",
+                desc: "いつでも質問でき、明確で信頼できる回答を得られます",
+            },
+            search: {
+                title: "ウェブ検索",
+                desc: "必要な情報をすばやく探し、使える結論に整理します",
+            },
+            creation: {
+                title: "クリエイティブスタジオ",
+                desc: "アイデアを画像や文章、完成したコンテンツへ発展させます",
+            },
+            knowledge: {
+                title: "ナレッジミラー",
+                desc: "資料を取り込み、対話しながら学び続ける知識ベースを構築します",
+            },
+        },
         engines: {
             title: "4大コアエンジン",
             subtitle:

@@ -39,6 +39,27 @@ export default {
             generatePractice: "Generate Practice",
             importKnowledge: "Import Knowledge",
         },
+        capabilities: {
+            title: "Core Capabilities",
+            subtitle:
+                "One intelligent toolkit for conversation, search, creation, and lasting knowledge",
+            chat: {
+                title: "Intelligent Chat",
+                desc: "Ask anything and get clear, reliable answers",
+            },
+            search: {
+                title: "Web Search",
+                desc: "Find useful information and turn it into clear conclusions",
+            },
+            creation: {
+                title: "Creative Studio",
+                desc: "Turn ideas into images, writing, and finished creative work",
+            },
+            knowledge: {
+                title: "Knowledge Mirror",
+                desc: "Import your materials into an interactive, continuously learning knowledge base",
+            },
+        },
         engines: {
             title: "Four Core Engines",
             subtitle:

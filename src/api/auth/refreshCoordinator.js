@@ -20,7 +20,6 @@ const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
  * is injected so replayed requests re-enter the same interceptor pipeline.
  */
 export function createAuthRecovery({
-    axios,
     instance,
     baseURL,
     refreshURL = "/api/auth/refresh",
@@ -163,12 +162,32 @@ export function createAuthRecovery({
     }
 
     const attemptRefresh = async (refreshToken) => {
-        const response = await axios.post(
+        // Refresh must use the shared transport instance so it inherits the
+        // same base URL and request instrumentation. The explicit bypass
+        // flags prevent this recovery request from recursively refreshing,
+        // retrying, or entering the normal request queue.
+        const response = await instance.post(
             `${baseURL}${refreshURL}`,
             { refreshToken },
-            { timeout: refreshTimeout },
+            {
+                timeout: refreshTimeout,
+                dedupe: false,
+                withToken: false,
+                _silent: true,
+                _skipAuthRecovery: true,
+                _skipRetry: true,
+                rawResponse: true,
+            },
         );
-        const body = response.data;
+        // The shared instance returns the raw API envelope when rawResponse
+        // is enabled. Keep compatibility with an Axios-shaped test adapter
+        // as well, so this boundary remains explicit and easy to exercise.
+        const body =
+            response?.data &&
+            typeof response.data === "object" &&
+            "code" in response.data
+                ? response.data
+                : response;
         const tokenData = body?.data;
         if (
             (body?.code !== 200 && body?.code !== 0) ||
