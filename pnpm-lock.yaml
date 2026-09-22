@@ -14,8 +14,8 @@ importers:
                 specifier: ^0.5.19
                 version: 0.5.19(tailwindcss@4.1.18)
             axios:
-                specifier: ^1.13.5
-                version: 1.13.5(debug@4.4.3(supports-color@7.2.0))
+                specifier: ^1.20.0
+                version: 1.20.0(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)
             clsx:
                 specifier: ^2.1.1
                 version: 2.1.1
@@ -53,8 +53,8 @@ importers:
                 specifier: ^10.1.0
                 version: 10.1.0(@types/react@19.2.13)(react@19.2.4)(supports-color@7.2.0)
             react-router-dom:
-                specifier: ^7.12.0
-                version: 7.13.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+                specifier: ^7.18.4
+                version: 7.18.4(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
             react-syntax-highlighter:
                 specifier: ^16.1.0
                 version: 16.1.0(react@19.2.4)
@@ -1363,6 +1363,13 @@ packages:
         engines: { node: ">=0.4.0" }
         hasBin: true
 
+    agent-base@6.0.2:
+        resolution:
+            {
+                integrity: sha512-RZNwNclF7+MS/8bDg70amg32dyeZGZxiDuQmZxKLAlQjr3jGyLx+4Kkk58UO7D2QdgFIQCovuSuZESne6RG6XQ==,
+            }
+        engines: { node: ">= 6.0.0" }
+
     ajv@6.12.6:
         resolution:
             {
@@ -1495,10 +1502,10 @@ packages:
             }
         engines: { node: ">= 0.4" }
 
-    axios@1.13.5:
+    axios@1.20.0:
         resolution:
             {
-                integrity: sha512-cz4ur7Vb0xS4/KUN0tPWe44eqxrIu31me+fbang3ijiNscE129POzipJJA6zniq2C/Z6sJCjMimjS8Lc/GAs8Q==,
+                integrity: sha512-r8aOh8j9cGKpgQAqpzrUHnSIc6a59Y3Xf/cv8sy1DrHCkZHzQGEuoq1tARk6qSyDdtQGSDgpb9kFlruzPvrgwg==,
             }
 
     bail@2.0.2:
@@ -2139,10 +2146,10 @@ packages:
                 integrity: sha512-GX+ysw4PBCz0PzosHDepZGANEuFCMLrnRTiEy9McGjmkCQYwRq4A/X786G/fjM/+OjsWSU1ZrY5qyARZmO/uwg==,
             }
 
-    follow-redirects@1.15.11:
+    follow-redirects@1.16.0:
         resolution:
             {
-                integrity: sha512-deG2P0JfjrTxl50XGCDyfI97ZGVCxIpfKYmfyrQ54n5FO/0gfIES8C/Psl6kWVDolizcaaxZJnTS0QSMxvnsBQ==,
+                integrity: sha512-y5rN/uOsadFT/JfYwhxRS5R7Qce+g3zG97+JrtFZlC9klX/W5hD7iiLzScI4nZqUS7DNUdhPgw4xI8W2LuXlUw==,
             }
         engines: { node: ">=4.0" }
         peerDependencies:
@@ -2158,10 +2165,10 @@ packages:
             }
         engines: { node: ">= 0.4" }
 
-    form-data@4.0.5:
+    form-data@4.0.6:
         resolution:
             {
-                integrity: sha512-8RipRLol37bNs2bhoV67fiTEvdTrbMUYcFTiy3+wuuOnUog2QBHCZWXDRijWQfAkhBj2Uf5UnVaiWwA5vdd82w==,
+                integrity: sha512-vKatAh4SlVfgbv+YtmhiRjhEMJsYpsG1Y2rMQtR+SVSbytsSD1YGzDIcrAJmdFec88u/+VoGmxnl+80gL1tRCQ==,
             }
         engines: { node: ">= 6" }
 
@@ -2346,6 +2353,13 @@ packages:
             }
         engines: { node: ">= 0.4" }
 
+    hasown@2.0.4:
+        resolution:
+            {
+                integrity: sha512-T2UbfbBEF32wiepXIsMlTW9+dDYC6wMh/t/vYA4tuOMKqWz/n3vr1NFSxQiyP+zk2mXsoMA/i/7qV6LKut1t1A==,
+            }
+        engines: { node: ">= 0.4" }
+
     hast-util-from-dom@5.0.1:
         resolution:
             {
@@ -2448,6 +2462,13 @@ packages:
             {
                 integrity: sha512-ol6UPyBWqsrO6EJySPz2O7ZSr856WDrEzM5zMqp+FJJLGMW35cLYmmZnl0vztAZxRUoNZJFTCohfjuIJ8I4QBQ==,
             }
+
+    https-proxy-agent@5.0.1:
+        resolution:
+            {
+                integrity: sha512-dFcAjpTQFgoLMzC2VwU+C/CbS7uRL0lWmxDITmqm7C+7F0Odmj6s9l6alZc6AELXhrnggM2CeWSXHGOdX2YtwA==,
+            }
+        engines: { node: ">= 6" }
 
     i18next-browser-languagedetector@8.2.0:
         resolution:
@@ -3583,11 +3604,12 @@ packages:
                 integrity: sha512-TwEZ+X+yCJmYfL7TPUOcvBZ4QfoT5YenQiJuX//0th53DE6w0xxLEtfK3iyryQFddXuvkIk51EEgrJQ0WJkOmQ==,
             }
 
-    proxy-from-env@1.1.0:
+    proxy-from-env@2.1.0:
         resolution:
             {
-                integrity: sha512-D+zkORCbA9f1tdWRK0RaCR3GPv50cMxcrz4X8k5LTSUD1Dkw47mKJEZQNunItRTkWwgtaUSo1RVFRIG9ZXiFYg==,
+                integrity: sha512-cJ+oHTW1VAEa8cJslgmUZrc+sjRKgAKl3Zyse6+PV38hZe/V6Z14TbCuXcan9F9ghlz4QrFr2c92TNF82UkYHA==,
             }
+        engines: { node: ">=10" }
 
     punycode@2.3.1:
         resolution:
@@ -3665,20 +3687,20 @@ packages:
             }
         engines: { node: ">=0.10.0" }
 
-    react-router-dom@7.13.0:
+    react-router-dom@7.18.4:
         resolution:
             {
-                integrity: sha512-5CO/l5Yahi2SKC6rGZ+HDEjpjkGaG/ncEP7eWFTvFxbHP8yeeI0PxTDjimtpXYlR3b3i9/WIL4VJttPrESIf2g==,
+                integrity: sha512-yrfmJHIpDG7taCpqKjT1G5B6q3O2K+RN8/fgNf0lTjCwiPbQ0ei6vXX9ZjQR+7ld8Tr7Z5xmyMnZ8YJrphWQUw==,
             }
         engines: { node: ">=20.0.0" }
         peerDependencies:
             react: ">=18"
             react-dom: ">=18"
 
-    react-router@7.13.0:
+    react-router@7.18.4:
         resolution:
             {
-                integrity: sha512-PZgus8ETambRT17BUm/LL8lX3Of+oiLaPuVTRH3l1eLvSPpKO3AvhAEb5N7ihAFZQrYDqkvvWfFh9p0z9VsjLw==,
+                integrity: sha512-PUPQcMhMGRAslLcvtlPz/kmzBEWPhLdgLFrL7pLNepBL6dX0lWj4WD2cUYVgYCuT3jxvghYFg81cDTj44DhetQ==,
             }
         engines: { node: ">=20.0.0" }
         peerDependencies:
@@ -5174,6 +5196,12 @@ snapshots:
 
     acorn@8.15.0: {}
 
+    agent-base@6.0.2(supports-color@7.2.0):
+        dependencies:
+            debug: 4.4.3(supports-color@7.2.0)
+        transitivePeerDependencies:
+            - supports-color
+
     ajv@6.12.6:
         dependencies:
             fast-deep-equal: 3.1.3
@@ -5273,13 +5301,15 @@ snapshots:
         dependencies:
             possible-typed-array-names: 1.1.0
 
-    axios@1.13.5(debug@4.4.3(supports-color@7.2.0)):
+    axios@1.20.0(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0):
         dependencies:
-            follow-redirects: 1.15.11(debug@4.4.3(supports-color@7.2.0))
-            form-data: 4.0.5
-            proxy-from-env: 1.1.0
+            follow-redirects: 1.16.0(debug@4.4.3(supports-color@7.2.0))
+            form-data: 4.0.6
+            https-proxy-agent: 5.0.1(supports-color@7.2.0)
+            proxy-from-env: 2.1.0
         transitivePeerDependencies:
             - debug
+            - supports-color
 
     bail@2.0.2: {}
 
@@ -5558,7 +5588,7 @@ snapshots:
             es-errors: 1.3.0
             get-intrinsic: 1.3.0
             has-tostringtag: 1.0.2
-            hasown: 2.0.2
+            hasown: 2.0.4
 
     es-shim-unscopables@1.1.0:
         dependencies:
@@ -5750,7 +5780,7 @@ snapshots:
 
     flatted@3.3.3: {}
 
-    follow-redirects@1.15.11(debug@4.4.3(supports-color@7.2.0)):
+    follow-redirects@1.16.0(debug@4.4.3(supports-color@7.2.0)):
         optionalDependencies:
             debug: 4.4.3(supports-color@7.2.0)
 
@@ -5758,12 +5788,12 @@ snapshots:
         dependencies:
             is-callable: 1.2.7
 
-    form-data@4.0.5:
+    form-data@4.0.6:
         dependencies:
             asynckit: 0.4.0
             combined-stream: 1.0.8
             es-set-tostringtag: 2.1.0
-            hasown: 2.0.2
+            hasown: 2.0.4
             mime-types: 2.1.35
 
     format@0.2.2: {}
@@ -5859,6 +5889,10 @@ snapshots:
             has-symbols: 1.1.0
 
     hasown@2.0.2:
+        dependencies:
+            function-bind: 1.1.2
+
+    hasown@2.0.4:
         dependencies:
             function-bind: 1.1.2
 
@@ -5963,6 +5997,13 @@ snapshots:
             void-elements: 3.1.0
 
     html-url-attributes@3.0.1: {}
+
+    https-proxy-agent@5.0.1(supports-color@7.2.0):
+        dependencies:
+            agent-base: 6.0.2(supports-color@7.2.0)
+            debug: 4.4.3(supports-color@7.2.0)
+        transitivePeerDependencies:
+            - supports-color
 
     i18next-browser-languagedetector@8.2.0:
         dependencies:
@@ -6807,7 +6848,7 @@ snapshots:
 
     property-information@7.1.0: {}
 
-    proxy-from-env@1.1.0: {}
+    proxy-from-env@2.1.0: {}
 
     punycode@2.3.1: {}
 
@@ -6859,13 +6900,13 @@ snapshots:
 
     react-refresh@0.18.0: {}
 
-    react-router-dom@7.13.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4):
+    react-router-dom@7.18.4(react-dom@19.2.4(react@19.2.4))(react@19.2.4):
         dependencies:
             react: 19.2.4
             react-dom: 19.2.4(react@19.2.4)
-            react-router: 7.13.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+            react-router: 7.18.4(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
 
-    react-router@7.13.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4):
+    react-router@7.18.4(react-dom@19.2.4(react@19.2.4))(react@19.2.4):
         dependencies:
             cookie: 1.1.1
             react: 19.2.4

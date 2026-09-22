@@ -1,5 +1,5 @@
 # Stage 1: Build the application
-FROM node:20-alpine AS builder
+FROM node:22-alpine AS builder
 
 # Set working directory
 WORKDIR /app
@@ -8,9 +8,10 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install dependencies
-RUN npm config set registry https://registry.npmmirror.com && \
-    npm install && \
-    npm cache clean --force
+RUN corepack enable && \
+    corepack prepare pnpm@11.20.0 --activate && \
+    pnpm install --frozen-lockfile && \
+    pnpm store prune
 
 
 
@@ -20,12 +21,18 @@ COPY . .
 # Optional private API endpoint used only while generating SEO artifacts.
 ARG SEO_API_BASE=http://host.docker.internal:30002/api
 ENV SEO_API_BASE=${SEO_API_BASE}
+ARG VITE_API_BASE_URL=https://api.dinqor.cn
+ARG VITE_REQUEST_TIMEOUT=30000
+ARG VITE_OSS_DOMAIN=https://food-cinder.oss-cn-beijing.aliyuncs.com
+ENV VITE_API_BASE_URL=${VITE_API_BASE_URL}
+ENV VITE_REQUEST_TIMEOUT=${VITE_REQUEST_TIMEOUT}
+ENV VITE_OSS_DOMAIN=${VITE_OSS_DOMAIN}
 # Docker hosts without IPv6 connectivity can otherwise fail when Cloudflare's
 # IPv6 address is selected first during SEO prerendering.
 ENV NODE_OPTIONS=--dns-result-order=ipv4first
 
 # Build the application
-RUN echo "SEO prerender API base: ${SEO_API_BASE}" && npm run build:seo
+RUN echo "SEO prerender API base: ${SEO_API_BASE}" && pnpm run build:seo
 
 # Stage 2: Production image with Nginx
 FROM nginx:alpine

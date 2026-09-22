@@ -15,11 +15,10 @@
 
 ### 基本规则
 
-- **缩进**: 使用 2 个空格
-- **引号**: 使用单引号 `'`（JSX 属性使用双引号）
-- **分号**: 语句末尾不使用分号（遵循项目 ESLint 配置）
-- **尾随逗号**: 多行对象/数组使用尾随逗号
-- **行宽**: 建议不超过 100 字符
+- **格式化**: 以仓库根目录的 `.prettierrc`/Prettier 实际结果为准；当前项目使用 4 个空格、双引号、分号和多行尾随逗号。
+- **自动格式化**: 提交前运行 `pnpm format:check`；需要修复时运行 `pnpm format`。
+- **静态检查**: 提交前运行 `pnpm lint` 和 `pnpm check:architecture`。
+- **行宽**: 不手工追求固定列宽，避免为了换行破坏 JSX 可读性；交给 Prettier 处理。
 
 ```javascript
 // ✅ 好的
@@ -152,28 +151,42 @@ const shouldRender = true;
 
 ```javascript
 // 1. React 核心
-import React from 'react'
-import { useState, useEffect } from 'react'
+import React from "react";
+import { useState, useEffect } from "react";
 
 // 2. 第三方库
-import { motion } from 'framer-motion'
-import { Link } from 'react-router-dom'
+import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 
 // 3. 路径别名导入（按字母顺序）
-import { API_CONFIG } from '@config'
-import MainLayout from '@components/layouts/MainLayout'
-import HomePage from '@features/home/pages/HomePage'
-import { storage } from '@utils'
+import { APP_CONFIG } from "@config";
+import MainLayout from "@app/layouts/MainLayout";
+import HomePage from "@features/home/pages/HomePage";
+import { storage } from "@shared/lib";
 
 // 4. 相对路径导入
-import { localHelper } from './helpers'
+import { localHelper } from "./helpers";
 
 // 5. 类型导入（TypeScript）
-import type { User } from '@types'
+import type { User } from "./types";
 
 // 6. 样式文件（最后）
-import styles from './Component.module.css'
+import styles from "./Component.module.css";
 ```
+
+---
+
+## 项目边界与请求规范
+
+- 应用组装、路由、Provider、全局错误边界和运行时更新逻辑放在 `src/app`。
+- 业务 Entity、业务组件、业务 Hook、业务 Store 和业务接口归属对应 `src/features/<feature>`。
+- 业务无关的设计系统和技术能力放在 `src/shared`；Shared 不得依赖 App 或 Feature。
+- Feature 跨域只能导入另一个 Feature 的 public API（`@features/<name>`），不得 deep import 内部实现，依赖图必须无环。
+- 所有网络请求必须使用 `@api/http` 导出的封装；业务 Endpoint 放在对应 Feature，禁止原生 `fetch`、新建 Axios 实例或在 Feature 中直接导入 `axios`。
+- 初始页面请求使用共享 `LoadingSpinner` 的 `fullScreen` 状态；用户主动操作保留按钮级 loading。
+- 新增或修改 i18n key 必须同步维护 `zh`、`en`、`fr`、`ja`、`ru`、`vi` 六种语言，并运行 `pnpm run check:i18n`。
+- 通用组件优先复用 `COMPONENTS.md` 中已登记的能力；新增公开 API 时同步更新组件目录。
+- `src/components/common` 只保留历史兼容出口，不得新增业务源码。
 
 ---
 
@@ -354,7 +367,7 @@ return <div>{content()}</div>;
 }
 
 // ✅ 使用 clsx 或 cn 处理条件类名
-import { cn } from '@utils'
+import { cn } from "@shared/lib";
 
 <div className={cn(
   'base-classes',
@@ -375,9 +388,9 @@ import { cn } from '@utils'
 
 ### 界面视觉规范
 
-- **禁止使用 border / ring 做分割和描边**：区块、卡片、工具栏、按钮、徽标之间的分割一律通过背景色差实现（`bg-surface` / `bg-surface-muted` / `bg-accent-soft` 等），层级用阴影（`shadow-sm` / `shadow-lg`）表达；`border` / `ring-1` 一律不用，唯一例外是键盘焦点环（`focus:ring-*`）。
-- **小字不配大字号字重**：`text-micro` / `text-caption` / `text-xs` 文字字重不超过 `font-medium`（500），`text-xs` 操作性按钮最多 `font-semibold`；`font-bold` 只用于 `text-sm` 以上的标题级文字。
-- **状态表达优先用颜色而非描边**：选中/悬停状态用背景色（`bg-accent-soft`、`bg-surface-muted`）或焦点环（`focus:ring-*`）表达，禁止用 `border border-*` 描边方案。
+- **优先使用设计 Token**：新代码使用 `bg-surface`、`text-ink`、`border-border`、`accent` 等项目 Token，避免随意新增十六进制颜色和临时字体值；历史 Landing/Demo 视觉代码只在触及时渐进收敛。
+- **边界表达要有语义**：卡片层级优先使用背景差异和阴影；表单控件、键盘焦点、状态徽标和确有必要的分隔线可以使用 `border` 或 `ring`，但不得为了装饰机械叠加描边。
+- **小字不配大字号字重**：`text-micro` / `text-caption` / `text-xs` 文字字重通常不超过 `font-medium`（500），`text-xs` 操作性按钮最多 `font-semibold`；已有视觉稿例外应在修改时再调整。
 
 ---
 
@@ -385,44 +398,23 @@ import { cn } from '@utils'
 
 ### Commit Message 格式
 
-```
-<type>(<scope>): <subject>
+仓库提交标题必须使用中文并以 `【dxd】` 开头，正文必须包含 `desc:`，并且只提交当前任务相关文件：
 
-<body>
+```text
+【dxd】统一前端请求边界
 
-<footer>
-```
-
-### Type 类型
-
-```
-feat:     新功能
-fix:      Bug 修复
-docs:     文档更新
-style:    代码格式（不影响功能）
-refactor: 重构
-perf:     性能优化
-test:     测试相关
-chore:    构建/工具链相关
+desc: 所有业务请求统一经过共享 Transport，补充架构检查和回归验证。
 ```
 
-### 示例
+提交前至少运行与改动匹配的检查；架构或公共组件迁移通常应运行：
 
 ```bash
-# ✅ 好的提交信息
-feat(home): 添加英雄区动画效果
-fix(api): 修复用户登录超时问题
-docs(readme): 更新安装说明
-refactor(utils): 重构防抖函数实现
-
-# ✅ 包含详细说明
-feat(drag-drop): 实现拖拽预览功能
-
-- 添加自定义预览元素支持
-- 实现透明 ghost image 技术
-- 添加拖拽提示文本
-
-Closes #123
+pnpm run check:architecture
+pnpm run check:i18n
+pnpm run lint
+pnpm run format:check
+pnpm test
+pnpm build
 ```
 
 ### 分支命名
@@ -597,8 +589,8 @@ const LazyComponent = React.lazy(() => import("./Component"));
 
 // ✅ 验证用户输入
 const sanitizeInput = (input) => {
-  return input.replace(/<script>/g, '')
-}
+    return input.replace(/<script>/g, "");
+};
 ```
 
 ---

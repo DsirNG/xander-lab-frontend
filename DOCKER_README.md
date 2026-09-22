@@ -110,4 +110,4 @@ docker system prune -a
 
 ---
 
-**详细文档**: 查看 `DOCKER_DEPLOYMENT.md`
+**详细文档**: 本文件即为 Docker 部署文档；阿里云镜像部署请查看 `ALIYUN_DEPLOY_README.md`。

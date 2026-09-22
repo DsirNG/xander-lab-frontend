@@ -186,8 +186,8 @@ feature graph 是否有环
 lint / tests / build
 ```
 
-仓库提供 `pnpm check:architecture` 检查 Shared 反向依赖、Feature → App、跨 Feature deep import 和 Feature 环依赖。
+仓库提供 `pnpm run check:architecture` 检查 Shared 反向依赖、Feature → App、跨 Feature deep import、Feature 环依赖以及绕过共享 Transport 的直接请求；`pnpm run check:i18n` 检查六种语言资源的 key 完整性。
 
 文档和代码必须同步维护。当前开发服务器端口以 `vite.config.js` 为准：`3000`。
 
-最后更新：2026-09-21
+最后更新：2026-09-22

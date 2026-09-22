@@ -40,17 +40,27 @@ else
 fi
 
 SEO_API_BASE=${SEO_API_BASE:-http://host.docker.internal:30002/api}
+VITE_API_BASE_URL=${VITE_API_BASE_URL:-https://api.dinqor.cn}
+VITE_REQUEST_TIMEOUT=${VITE_REQUEST_TIMEOUT:-30000}
+VITE_OSS_DOMAIN=${VITE_OSS_DOMAIN:-https://food-cinder.oss-cn-beijing.aliyuncs.com}
 
 echo -e "${YELLOW}Step 1: Building Docker image...${NC}"
 if [ "$USE_COMPOSE" = true ]; then
     # Keep Docker layer cache between deployments. Dependencies only need to be
     # reinstalled when package.json changes; --no-cache made every deploy redo
     # the most expensive layers and increased the chance of an SSH timeout.
-    docker-compose build --build-arg SEO_API_BASE="$SEO_API_BASE"
+    docker-compose build \
+        --build-arg SEO_API_BASE="$SEO_API_BASE" \
+        --build-arg VITE_API_BASE_URL="$VITE_API_BASE_URL" \
+        --build-arg VITE_REQUEST_TIMEOUT="$VITE_REQUEST_TIMEOUT" \
+        --build-arg VITE_OSS_DOMAIN="$VITE_OSS_DOMAIN"
 else
     docker build \
         --add-host host.docker.internal:host-gateway \
         --build-arg SEO_API_BASE="$SEO_API_BASE" \
+        --build-arg VITE_API_BASE_URL="$VITE_API_BASE_URL" \
+        --build-arg VITE_REQUEST_TIMEOUT="$VITE_REQUEST_TIMEOUT" \
+        --build-arg VITE_OSS_DOMAIN="$VITE_OSS_DOMAIN" \
         -t $IMAGE_NAME:latest .
 fi
 

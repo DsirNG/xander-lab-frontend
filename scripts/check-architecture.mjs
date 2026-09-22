@@ -16,6 +16,8 @@ const sourceFiles = walk(srcRoot);
 const importPattern = /(?:from\s+|import\s*\()\s*["']([^"']+)["']/g;
 const errors = [];
 const featureGraph = new Map();
+const rawRequestPattern =
+    /\bfetch\s*\(|\baxios\.(?:create|get|post|put|patch|delete|request)\s*\(/;
 const removedSourceRoots = [
     "hooks",
     "context",
@@ -29,6 +31,7 @@ const removedRootAliases = [
     /^@context(?:\/|$)/,
     /^@utils(?:\/|$)/,
     /^@router(?:\/|$)/,
+    /^@components\/(?:common|layouts|seo)(?:\/|$)/,
 ];
 
 const isCompatibilityFile = (content) => /@deprecated\s+Use\s+/.test(content);
@@ -105,6 +108,16 @@ for (const file of sourceFiles) {
     const isTest = /\.test\.[jt]sx?$/.test(file);
     const sourceFeature = featureNameFromFile(file);
     const compatibility = isCompatibilityFile(content);
+
+    if (
+        !isTest &&
+        !relative.replaceAll(path.sep, "/").endsWith("src/api/http.js") &&
+        rawRequestPattern.test(content)
+    ) {
+        errors.push(
+            `${relative}: direct network client usage; use the shared @api/http transport`,
+        );
+    }
 
     for (const match of content.matchAll(importPattern)) {
         const specifier = match[1];

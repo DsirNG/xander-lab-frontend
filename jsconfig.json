@@ -7,8 +7,6 @@
             "@shared/*": ["src/shared/*"],
             "@components/*": ["src/components/*"],
             "@features/*": ["src/features/*"],
-            "@hooks/*": ["src/hooks/*"],
-            "@utils/*": ["src/utils/*"],
             "@config/*": ["src/config/*"],
             "@api/*": ["src/api/*"],
             "@locales/*": ["src/locales/*"],

@@ -56,8 +56,8 @@ DinQorAI 是一个知识分享与学习平台，专注于记录和分享在项�
 
 ### 环境要求
 
-- Node.js >= 18.0.0
-- npm >= 9.0.0 或 pnpm >= 8.0.0
+- Node.js >= 22.13.0
+- pnpm >= 10.0.0
 
 ### 安装
 
@@ -69,8 +69,6 @@ git clone <repository-url>
 cd xander-lab-frontend
 
 # 安装依赖
-npm install
-# 或使用 pnpm
 pnpm install
 ```
 
@@ -79,7 +77,7 @@ pnpm install
 启动开发服务器：
 
 ```bash
-npm run dev
+pnpm dev
 ```
 
 打开浏览器访问 [http://localhost:3000](http://localhost:3000)
@@ -89,7 +87,7 @@ npm run dev
 构建生产版本：
 
 ```bash
-npm run build
+pnpm build
 ```
 
 构建产物将输出到 `dist/` 目录。
@@ -99,7 +97,7 @@ npm run build
 预览构建结果：
 
 ```bash
-npm run preview
+pnpm preview
 ```
 
 ### 代码检查
@@ -107,54 +105,62 @@ npm run preview
 运行 ESLint 检查：
 
 ```bash
-npm run lint
+pnpm lint
 ```
 
 检查架构边界：
 
+````bash
+pnpm run check:architecture
+
+检查六种语言资源的 key 完整性：
+
 ```bash
-pnpm check:architecture
+pnpm run check:i18n
+````
+
 ```
 
 ## 项目结构
 
 ```
+
 xander-lab-frontend/
 ├── src/
-│   ├── app/               # 应用组装、路由、Provider、布局和运行时边界
-│   ├── api/               # HTTP / 鉴权恢复 / SSE / 上传下载等 Transport Infrastructure
-│   ├── assets/          # 静态资源
-│   ├── components/      # 仅保留 Demo 沙箱用户代码的 CustomSelect 历史字符串别名
-│   ├── config/          # 配置文件
-│   ├── features/        # 功能模块（按业务领域划分）
-│   │   ├── auth/        # 鉴权与会话
-│   │   ├── account/     # 账户能力
-│   │   ├── agent/       # 智能体
-│   │   ├── knowledge/   # 知识库
-│   │   ├── platformIntegrations/ # 外部发布平台集成
-│   │   ├── workspace/   # 工作台
-│   │   └── ...          # 其他业务 Feature
-│   ├── shared/          # 业务无关的 UI、Hook 和技术能力
-│   │   ├── ui/          # primitives / overlays / forms / data-display 等
-│   │   ├── hooks/       # 无业务语义的通用 Hook
-│   │   └── lib/         # 无业务语义的通用库
-│   ├── locales/         # 国际化资源
-│   ├── styles/          # 全局样式
-│   ├── App.jsx          # 应用根组件
-│   └── main.jsx         # 应用入口
-├── public/              # 公共静态资源
-├── .editorconfig        # 编辑器配置
-├── jsconfig.json        # JavaScript 配置（路径别名）
-├── tailwind.config.js   # TailwindCSS 配置
-├── vite.config.js       # Vite 配置
-└── package.json         # 项目依赖配置
-```
+│ ├── app/ # 应用组装、路由、Provider、布局和运行时边界
+│ ├── api/ # HTTP / 鉴权恢复 / SSE / 上传下载等 Transport Infrastructure
+│ ├── assets/ # 静态资源
+│ ├── components/ # 仅保留 Demo 沙箱用户代码的 CustomSelect 历史字符串别名
+│ ├── config/ # 配置文件
+│ ├── features/ # 功能模块（按业务领域划分）
+│ │ ├── auth/ # 鉴权与会话
+│ │ ├── account/ # 账户能力
+│ │ ├── agent/ # 智能体
+│ │ ├── knowledge/ # 知识库
+│ │ ├── platformIntegrations/ # 外部发布平台集成
+│ │ ├── workspace/ # 工作台
+│ │ └── ... # 其他业务 Feature
+│ ├── shared/ # 业务无关的 UI、Hook 和技术能力
+│ │ ├── ui/ # primitives / overlays / forms / data-display 等
+│ │ ├── hooks/ # 无业务语义的通用 Hook
+│ │ └── lib/ # 无业务语义的通用库
+│ ├── locales/ # 国际化资源
+│ ├── styles/ # 全局样式
+│ ├── App.jsx # 应用根组件
+│ └── main.jsx # 应用入口
+├── public/ # 公共静态资源
+├── .editorconfig # 编辑器配置
+├── jsconfig.json # JavaScript 配置（路径别名）
+├── tailwind.config.js # TailwindCSS 配置
+├── vite.config.js # Vite 配置
+└── package.json # 项目依赖配置
+
+````
 
 ## 文档
 
 - [项目架构文档](./PROJECT_ARCHITECTURE.md) - 详细的架构说明和设计原则
 - [编码规范](./CODING_STANDARDS.md) - 代码风格和开发规范
-- [快速开始指南](./QUICK_START.md) - 快速上手指南
 
 ## 路径别名
 
@@ -166,25 +172,21 @@ import HomePage from "@features/home/pages/HomePage";
 import Button from "@shared/ui/primitives/Button";
 import { APP_CONFIG } from "@config";
 import "@styles/index.css";
-```
+````
 
 支持的别名：
 
 - `@` → `src/`
 - `@app` → `src/app/`
 - `@shared` → `src/shared/`
-- `@components` → `src/components/`
+- `@components` → `src/components/`（仅保留 Demo 沙箱的历史 CustomSelect 兼容出口，业务代码不得新增）
 - `@features` → `src/features/`
-- `@hooks` → `src/hooks/`（兼容别名；新增通用 Hook 使用 `@shared/hooks`）
-- `@utils` → `src/utils/`（兼容别名；新增通用工具使用 `@shared/lib`）
 - `@config` → `src/config/`
 - `@api` → `src/api/`
 - `@locales` → `src/locales/`
 - `@styles` → `src/styles/`
-- `@router` → `src/app/routing/`（兼容别名）
 
-`@components` 和 `@router` 目前保留用于渐进迁移。新增代码应优先使用
-`@app`、`@shared` 和 Feature 的 public API；业务接口放在对应
+新增代码应优先使用 `@app`、`@shared` 和 Feature 的 public API；业务接口放在对应
 `features/<feature>/api/`，不要继续扩张根级业务 `src/api/`。
 
 ## 核心功能
@@ -259,14 +261,11 @@ const Component = () => {
 
 ## 环境变量
 
-创建 `.env` 文件配置环境变量：
+复制 `.env.example` 为本地环境文件后再按需修改。`.env.development`、`.env.production`
+和包含部署凭据的文件均不提交 Git：
 
 ```bash
-# API 基础地址
-VITE_API_BASE_URL=https://api.example.com
-
-# 应用版本
-VITE_APP_VERSION=1.0.0
+cp .env.example .env.development
 ```
 
 在代码中使用：
@@ -280,13 +279,13 @@ const apiUrl = import.meta.env.VITE_API_BASE_URL;
 ### 开发环境
 
 ```bash
-npm run dev
+pnpm dev
 ```
 
 ### 生产构建
 
 ```bash
-npm run build
+pnpm build
 ```
 
 构建产物位于 `dist/` 目录，可以直接部署到静态服务器。
@@ -334,7 +333,6 @@ DinQorAI Team
 
 - [项目架构文档](./PROJECT_ARCHITECTURE.md)
 - [编码规范](./CODING_STANDARDS.md)
-- [快速开始指南](./QUICK_START.md)
 
 ---
 

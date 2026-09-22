@@ -79,7 +79,7 @@
 
 | 组件                  | 路径                                              | 适用场景                       | 关键 API / 说明                                                                                                                                     |
 | --------------------- | ------------------------------------------------- | ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `MainLayout`          | `@app/layouts/MainLayout`                         | 平台主站应用 Shell             | 带全局导航、页脚和主内容出口；它可以组合鉴权和通知等产品能力；工作室独立编辑器页不要嵌入。旧路径 `@components/layouts/MainLayout` 仅作兼容出口。    |
+| `MainLayout`          | `@app/layouts/MainLayout`                         | 平台主站应用 Shell             | 带全局导航、页脚和主内容出口；它可以组合鉴权和通知等产品能力；工作室独立编辑器页不要嵌入。旧路径已移除，业务代码不得继续使用。                      |
 | `ContentLayout`       | `@shared/ui/data-display/ContentLayout`           | 标题 + 描述 + 场景演示型内容页 | `item`、`scenarios`、`renderDemoSection`、`basePath`、`extraHeaderButtons`；详见其目录 README。旧路径仅作兼容出口。                                 |
 | `EnhancedDemoSection` | `@shared/ui/data-display/ContentLayout`           | 需要案例与代码展示的内容区块   | `title`、`desc`、`children`、`code`。旧路径仅作兼容出口。                                                                                           |
 | `SidebarLayout`       | `@shared/ui/navigation/SidebarLayout`             | 左侧导航 + 右侧内容的模块页    | 传入导航项和内容渲染，适合组件库、知识库等。旧路径仅作兼容出口。                                                                                    |

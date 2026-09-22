@@ -36,7 +36,8 @@ set ALIYUN_REGISTRY_PASSWORD=your-password
 
 ### 2. 配置文件说明
 
-`docker-registry-config.yml` 文件包含默认配置，可以通过环境变量覆盖。
+`docker-registry-config.yml` 仅作为配置字段参考；部署脚本不会从 YAML 读取凭据，
+请通过命令行参数和环境变量传入。密码或访问令牌不得写入仓库内文件。
 
 ## 🚀 使用方法
 
