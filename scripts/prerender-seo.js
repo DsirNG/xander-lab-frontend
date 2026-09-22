@@ -9,6 +9,9 @@
  *
  * 用法: node scripts/prerender-seo.js
  *
+ * SEO_PRERENDER_REQUIRED=true 时，博客 API 不可用会让构建失败；默认情况下
+ * 只生成静态 SEO 页面并保留已有 sitemap，避免前端镜像构建被运行时 API 阻断。
+ *
  * @module scripts/prerender-seo
  */
 
@@ -24,6 +27,7 @@ const SITE_URL = "https://dinqor.cn";
 // 构建环境可通过 SEO_API_BASE 覆盖默认公网 API。生产 Docker 构建默认由
 // docker-compose 注入 host.docker.internal:30002/api，以直连部署机 Spring Boot 服务。
 const API_BASE = process.env.SEO_API_BASE || "https://api.dinqor.cn/api";
+const SEO_PRERENDER_REQUIRED = process.env.SEO_PRERENDER_REQUIRED === "true";
 const API_TIMEOUT_MS = 15_000;
 const API_RETRY_COUNT = 3;
 const DIST_DIR = path.join(__dirname, "..", "dist");
@@ -361,7 +365,21 @@ async function main() {
 
     // ---- 1. 博客详情页预渲染 ----
     console.log("📝 获取博客列表...");
-    const blogs = await fetchAllBlogs();
+    let blogs = [];
+    let shouldUpdateSitemap = true;
+
+    try {
+        blogs = await fetchAllBlogs();
+    } catch (error) {
+        if (SEO_PRERENDER_REQUIRED) {
+            throw error;
+        }
+
+        shouldUpdateSitemap = false;
+        console.warn(
+            `  ⚠️ 博客 API 不可用，跳过博客详情页预渲染并保留已有 sitemap：${error.message}`,
+        );
+    }
 
     if (blogs.length > 0) {
         console.log(`  找到 ${blogs.length} 篇博客，开始生成 HTML...`);
@@ -454,7 +472,11 @@ async function main() {
 
     // ---- 4. 生成动态 sitemap ----
     console.log("🗺️  生成 sitemap.xml...");
-    generateDynamicSitemap(blogs);
+    if (shouldUpdateSitemap) {
+        generateDynamicSitemap(blogs);
+    } else {
+        console.log("  ℹ️ 已保留构建输入中的 sitemap.xml");
+    }
 
     // ---- 5. 汇总 ----
     console.log(`\n✅ SEO 预渲染完成！`);

@@ -35,6 +35,8 @@ set IMAGE_NAME=xander-lab-frontend
 set CONTAINER_NAME=xander-lab-frontend
 set PORT=30001
 set NETWORK_NAME=xander-network
+if "!SEO_API_BASE!"=="" set SEO_API_BASE=http://host.docker.internal:30002/api
+if "!SEO_PRERENDER_REQUIRED!"=="" set SEO_PRERENDER_REQUIRED=true
 
 REM 解析命令行参数
 :parse_args
@@ -172,7 +174,7 @@ echo   步骤 1: 构建 Docker 镜像
 echo ========================================
 echo.
 echo 构建本地镜像: !LOCAL_IMAGE_NAME!
-docker build -t !LOCAL_IMAGE_NAME! .
+docker build --build-arg SEO_API_BASE=!SEO_API_BASE! --build-arg SEO_PRERENDER_REQUIRED=!SEO_PRERENDER_REQUIRED! -t !LOCAL_IMAGE_NAME! .
 if errorlevel 1 (
     echo 错误: Docker 构建失败
     exit /b 1

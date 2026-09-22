@@ -302,6 +302,8 @@ docker build -t xander-lab-frontend .
 docker run -p 80:80 xander-lab-frontend
 ```
 
+Docker 构建会生成静态 SEO 页面。默认的 `Dockerfile` 允许在没有后端 API 的本地环境中保留输入的 `public/sitemap.xml` 并完成构建；`deploy.sh`、`deploy-aliyun.sh` 和 Compose 部署默认将 `SEO_PRERENDER_REQUIRED=true`，后端不可用时会阻止生产镜像发布。只有在明确接受暂时不更新博客 SEO 页面时，才设置 `SEO_PRERENDER_REQUIRED=false`。
+
 ## 贡献指南
 
 1. Fork 本仓库
@@ -336,4 +338,4 @@ DinQorAI Team
 
 ---
 
-**最后更新**: 2026-02-05
+**最后更新**: 2026-09-22

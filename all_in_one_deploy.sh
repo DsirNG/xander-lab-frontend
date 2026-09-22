@@ -26,6 +26,7 @@ export VITE_API_BASE_URL="${VITE_API_BASE_URL:-https://api.dinqor.cn}"
 export VITE_REQUEST_TIMEOUT="${VITE_REQUEST_TIMEOUT:-30000}"
 export VITE_OSS_DOMAIN="${VITE_OSS_DOMAIN:-https://food-cinder.oss-cn-beijing.aliyuncs.com}"
 export SEO_API_BASE="${SEO_API_BASE:-http://host.docker.internal:30002/api}"
+export SEO_PRERENDER_REQUIRED="${SEO_PRERENDER_REQUIRED:-true}"
 
 # 优先使用 VPC 推送
 REGISTRY_TO_USE="$REGISTRY_VPC"
@@ -38,6 +39,7 @@ echo "$ALIYUN_REGISTRY_PASSWORD" | docker login "$REGISTRY_TO_USE" -u "$USERNAME
 echo "正在本地构建前端镜像: $IMAGE_NAME:$TAG ..."
 if ! docker build \
     --build-arg SEO_API_BASE="$SEO_API_BASE" \
+    --build-arg SEO_PRERENDER_REQUIRED="$SEO_PRERENDER_REQUIRED" \
     --build-arg VITE_API_BASE_URL="$VITE_API_BASE_URL" \
     --build-arg VITE_REQUEST_TIMEOUT="$VITE_REQUEST_TIMEOUT" \
     --build-arg VITE_OSS_DOMAIN="$VITE_OSS_DOMAIN" \

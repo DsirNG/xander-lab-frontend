@@ -40,6 +40,7 @@ else
 fi
 
 SEO_API_BASE=${SEO_API_BASE:-http://host.docker.internal:30002/api}
+SEO_PRERENDER_REQUIRED=${SEO_PRERENDER_REQUIRED:-true}
 VITE_API_BASE_URL=${VITE_API_BASE_URL:-https://api.dinqor.cn}
 VITE_REQUEST_TIMEOUT=${VITE_REQUEST_TIMEOUT:-30000}
 VITE_OSS_DOMAIN=${VITE_OSS_DOMAIN:-https://food-cinder.oss-cn-beijing.aliyuncs.com}
@@ -51,6 +52,7 @@ if [ "$USE_COMPOSE" = true ]; then
     # the most expensive layers and increased the chance of an SSH timeout.
     docker-compose build \
         --build-arg SEO_API_BASE="$SEO_API_BASE" \
+        --build-arg SEO_PRERENDER_REQUIRED="$SEO_PRERENDER_REQUIRED" \
         --build-arg VITE_API_BASE_URL="$VITE_API_BASE_URL" \
         --build-arg VITE_REQUEST_TIMEOUT="$VITE_REQUEST_TIMEOUT" \
         --build-arg VITE_OSS_DOMAIN="$VITE_OSS_DOMAIN"
@@ -58,6 +60,7 @@ else
     docker build \
         --add-host host.docker.internal:host-gateway \
         --build-arg SEO_API_BASE="$SEO_API_BASE" \
+        --build-arg SEO_PRERENDER_REQUIRED="$SEO_PRERENDER_REQUIRED" \
         --build-arg VITE_API_BASE_URL="$VITE_API_BASE_URL" \
         --build-arg VITE_REQUEST_TIMEOUT="$VITE_REQUEST_TIMEOUT" \
         --build-arg VITE_OSS_DOMAIN="$VITE_OSS_DOMAIN" \

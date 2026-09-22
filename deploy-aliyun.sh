@@ -23,6 +23,8 @@
 #   ALIYUN_REGISTRY_NAMESPACE 命名空间
 #   ALIYUN_REGISTRY_USERNAME  登录用户名
 #   ALIYUN_REGISTRY_PASSWORD  登录密码或访问令牌
+#   SEO_API_BASE              SEO 预渲染使用的后端地址
+#   SEO_PRERENDER_REQUIRED    是否要求博客 API 可用后才允许构建（默认: true）
 #
 # 示例:
 #   ./deploy-aliyun.sh -t v1.0.0 -e production
@@ -50,6 +52,11 @@ IMAGE_NAME="xander-lab-frontend"
 CONTAINER_NAME="xander-lab-frontend"
 PORT=30001
 NETWORK_NAME="xander-network"
+SEO_API_BASE="${SEO_API_BASE:-http://host.docker.internal:30002/api}"
+SEO_PRERENDER_REQUIRED="${SEO_PRERENDER_REQUIRED:-true}"
+VITE_API_BASE_URL="${VITE_API_BASE_URL:-https://api.dinqor.cn}"
+VITE_REQUEST_TIMEOUT="${VITE_REQUEST_TIMEOUT:-30000}"
+VITE_OSS_DOMAIN="${VITE_OSS_DOMAIN:-https://food-cinder.oss-cn-beijing.aliyuncs.com}"
 
 # 解析命令行参数
 parse_args() {
@@ -114,6 +121,8 @@ ${YELLOW}环境变量:${NC}
   ALIYUN_REGISTRY_NAMESPACE 命名空间
   ALIYUN_REGISTRY_USERNAME  登录用户名
   ALIYUN_REGISTRY_PASSWORD  登录密码或访问令牌
+  SEO_API_BASE              SEO 预渲染使用的后端地址
+  SEO_PRERENDER_REQUIRED    是否要求博客 API 可用后才允许构建（默认: true）
 
 ${YELLOW}示例:${NC}
   ./deploy-aliyun.sh -t v1.0.0 -e production
@@ -169,7 +178,13 @@ build_image() {
   LOCAL_IMAGE_NAME="${IMAGE_NAME}:${TAG}"
   
   echo -e "${YELLOW}构建本地镜像: ${LOCAL_IMAGE_NAME}${NC}"
-  docker build -t "$LOCAL_IMAGE_NAME" .
+  docker build \
+    --build-arg SEO_API_BASE="$SEO_API_BASE" \
+    --build-arg SEO_PRERENDER_REQUIRED="$SEO_PRERENDER_REQUIRED" \
+    --build-arg VITE_API_BASE_URL="$VITE_API_BASE_URL" \
+    --build-arg VITE_REQUEST_TIMEOUT="$VITE_REQUEST_TIMEOUT" \
+    --build-arg VITE_OSS_DOMAIN="$VITE_OSS_DOMAIN" \
+    -t "$LOCAL_IMAGE_NAME" .
   
   echo -e "${YELLOW}标记镜像: ${LOCAL_IMAGE_NAME} -> ${FULL_IMAGE_NAME}${NC}"
   docker tag "$LOCAL_IMAGE_NAME" "$FULL_IMAGE_NAME"

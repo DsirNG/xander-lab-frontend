@@ -5,7 +5,7 @@ FROM node:22-alpine AS builder
 WORKDIR /app
 
 # Copy package files
-COPY package*.json ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 
 # Install dependencies
 RUN corepack enable && \
@@ -21,6 +21,8 @@ COPY . .
 # Optional private API endpoint used only while generating SEO artifacts.
 ARG SEO_API_BASE=http://host.docker.internal:30002/api
 ENV SEO_API_BASE=${SEO_API_BASE}
+ARG SEO_PRERENDER_REQUIRED=false
+ENV SEO_PRERENDER_REQUIRED=${SEO_PRERENDER_REQUIRED}
 ARG VITE_API_BASE_URL=https://api.dinqor.cn
 ARG VITE_REQUEST_TIMEOUT=30000
 ARG VITE_OSS_DOMAIN=https://food-cinder.oss-cn-beijing.aliyuncs.com
@@ -32,7 +34,9 @@ ENV VITE_OSS_DOMAIN=${VITE_OSS_DOMAIN}
 ENV NODE_OPTIONS=--dns-result-order=ipv4first
 
 # Build the application
-RUN echo "SEO prerender API base: ${SEO_API_BASE}" && pnpm run build:seo
+RUN echo "SEO prerender API base: ${SEO_API_BASE}" && \
+    echo "SEO prerender required: ${SEO_PRERENDER_REQUIRED}" && \
+    pnpm run build:seo
 
 # Stage 2: Production image with Nginx
 FROM nginx:alpine
