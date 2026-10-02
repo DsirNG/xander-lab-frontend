@@ -5,11 +5,17 @@ import React, {
     useRef,
     useState,
 } from "react";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import {
+    useNavigate,
+    useOutletContext,
+    useParams,
+    useSearchParams,
+} from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { SlidersHorizontal } from "lucide-react";
 import { useToast } from "@shared/hooks/useToast";
 import LoadingSpinner from "@shared/ui/feedback/LoadingSpinner";
+import Modal from "@shared/ui/overlays/Modal";
 import { useAuthSession } from "@features/auth";
 import { useAgentConversation } from "../hooks/useAgentConversation";
 import useAgentAttachments from "../hooks/useAgentAttachments";
@@ -19,7 +25,6 @@ import AgentConversationTimeline from "../components/AgentConversationTimeline";
 import WorkspaceAgentConversationMessage, {
     WorkspaceAgentThoughtCard,
 } from "../components/WorkspaceAgentConversationMessage";
-import WorkspaceAgentSidebar from "../components/WorkspaceAgentSidebar";
 import WorkspaceAgentSkeleton from "../components/WorkspaceAgentSkeleton";
 import WorkspaceAgentWelcome from "../components/WorkspaceAgentWelcome";
 import { mergeLiveTraces, mergeToolTraces } from "../components/agentTrace";
@@ -35,6 +40,7 @@ import {
 const WorkspaceAgentChat = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
+    const { plugins = [] } = useOutletContext() || {};
     const { conversationId } = useParams();
     const [searchParams, setSearchParams] = useSearchParams();
     const queryParam = searchParams.get("q");
@@ -45,7 +51,7 @@ const WorkspaceAgentChat = () => {
         userInfo?.nickname || userInfo?.username || "XanderDING";
 
     const [input, setInput] = useState("");
-    const [drawerOpen, setDrawerOpen] = useState(false);
+    const [previewPlugin, setPreviewPlugin] = useState(null);
 
     const {
         attachments,
@@ -86,6 +92,15 @@ const WorkspaceAgentChat = () => {
     const isActive = running || conversation?.status === "running";
     const awaitingApproval = conversation?.status === "awaiting_approval";
     const locked = isActive || awaitingApproval || creating;
+
+    const usePreviewPlugin = () => {
+        if (!previewPlugin) return;
+        setInput(
+            `${input}${input && !input.endsWith(" ") ? " " : ""}@${previewPlugin.key} `,
+        );
+        setPreviewPlugin(null);
+        requestAnimationFrame(() => textareaRef.current?.focus());
+    };
 
     // 同一次工具调用的 start/progress/delta/end 先合成一条轨迹，收口后仍能展开回看。
     const steps = useMemo(() => mergeLiveTraces(liveSteps), [liveSteps]);
@@ -235,19 +250,6 @@ const WorkspaceAgentChat = () => {
 
     return (
         <div className="relative flex h-full w-full min-w-0 overflow-hidden bg-[#fafafa]">
-            <WorkspaceAgentSidebar
-                open={drawerOpen}
-                sessions={sessions}
-                activeConversationId={conversationId}
-                onOpenChange={setDrawerOpen}
-                onNewConversation={handleNewConversation}
-                onSelectConversation={(sessionId) =>
-                    navigate(`/workspace/ai/${sessionId}`)
-                }
-                onTogglePin={handleTogglePin}
-                t={t}
-            />
-
             {/* Main Chat Content Area */}
             <main className="relative flex min-h-0 min-w-0 flex-1 flex-col bg-[#fdfdfe]">
                 {/* Top Right Header Controls */}
@@ -284,6 +286,8 @@ const WorkspaceAgentChat = () => {
                         onToggleDeepThinking={() =>
                             setDeepThinking((current) => !current)
                         }
+                        plugins={plugins}
+                        onPluginPreview={setPreviewPlugin}
                     />
                 ) : (
                     /* Active Chat Stream State */
@@ -338,6 +342,8 @@ const WorkspaceAgentChat = () => {
                                     onToggleDeepThinking={() =>
                                         setDeepThinking((current) => !current)
                                     }
+                                    plugins={plugins}
+                                    onPluginPreview={setPreviewPlugin}
                                     t={t}
                                 />
                                 <div className="mt-1.5 text-center text-micro text-[#a0a5ba]">
@@ -351,6 +357,39 @@ const WorkspaceAgentChat = () => {
                     </>
                 )}
             </main>
+            <Modal
+                isOpen={Boolean(previewPlugin)}
+                onClose={() => setPreviewPlugin(null)}
+                title={
+                    previewPlugin?.name || t("workspace.pluginsPage.preview")
+                }
+                width="max-w-xl"
+                footer={
+                    <button
+                        type="button"
+                        onClick={usePreviewPlugin}
+                        className="rounded-lg bg-ink px-4 py-2 text-caption font-semibold text-white"
+                    >
+                        {t("workspace.pluginsPage.usePlugin")}
+                    </button>
+                }
+            >
+                <div className="space-y-4">
+                    <div className="text-micro font-semibold uppercase tracking-[0.12em] text-accent">
+                        {previewPlugin?.type === "mcp" ? "MCP" : "Skill"}
+                        {previewPlugin?.key ? ` @${previewPlugin.key}` : ""}
+                    </div>
+                    <p className="text-body leading-6 text-ink">
+                        {previewPlugin?.description ||
+                            t("workspace.pluginsPage.emptyHint")}
+                    </p>
+                    {previewPlugin?.instructions ? (
+                        <pre className="max-h-64 overflow-auto whitespace-pre-wrap rounded-xl border border-border bg-surface-muted p-4 text-caption leading-6 text-ink-secondary">
+                            {previewPlugin.instructions}
+                        </pre>
+                    ) : null}
+                </div>
+            </Modal>
         </div>
     );
 };

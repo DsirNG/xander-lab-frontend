@@ -87,6 +87,9 @@ const AgentSkillsPage = React.lazy(
 const AgentMcpServersPage = React.lazy(
     () => import("@features/agent/pages/AgentMcpServersPage"),
 );
+const WorkspacePluginsPage = React.lazy(
+    () => import("@features/workspace/pages/WorkspacePluginsPage"),
+);
 const BlogManagePage = React.lazy(() =>
     import("@features/blog").then(({ BlogManagePage: Component }) => ({
         default: Component,
@@ -330,7 +333,7 @@ export const createRouter = () => {
                     path: "plugins",
                     element: (
                         <LazyPage>
-                            <AgentMcpServersPage />
+                            <WorkspacePluginsPage />
                         </LazyPage>
                     ),
                 },
