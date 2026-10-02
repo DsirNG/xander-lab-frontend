@@ -661,7 +661,8 @@ export default {
             probeFor: "Tester la connexion de {{name}}",
             probeOk: "Connecté, {{count}} outils détectés",
             probeFailed: "Échec de la connexion",
-            oauthCompleted: "Autorisation OAuth terminée ; test de la connexion",
+            oauthCompleted:
+                "Autorisation OAuth terminée ; test de la connexion",
             oauthFailed: "Échec de l’autorisation OAuth",
             oauthUrlMissing: "URL d’autorisation OAuth manquante",
             edit: "Modifier",

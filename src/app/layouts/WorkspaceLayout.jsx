@@ -7,9 +7,9 @@ import { WorkspaceShell, WorkspaceSidebar } from "@features/workspace";
 const WorkspaceLayoutInner = () => {
     const { userInfo } = useAuthSession();
     const location = useLocation();
-    const oauthConsentRequested = new URLSearchParams(
-        location.search,
-    ).has("mcpOAuthRequest");
+    const oauthConsentRequested = new URLSearchParams(location.search).has(
+        "mcpOAuthRequest",
+    );
     const [settingsOpen, setSettingsOpen] = useState(false);
 
     useEffect(() => {

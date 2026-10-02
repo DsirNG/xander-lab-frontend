@@ -6,17 +6,16 @@ import RowActionsMenu from "@shared/ui/overlays/RowActionsMenu";
 import ConfirmModal from "@shared/ui/overlays/ConfirmModal";
 import Button from "@shared/ui/primitives/Button";
 import { useToast } from "@shared/hooks/useToast";
-import {
-    completeMcpOAuth,
-    startMcpOAuth,
-} from "../services/agentMcpService";
+import { completeMcpOAuth, startMcpOAuth } from "../services/agentMcpService";
 import McpServerFormModal from "./McpServerFormModal";
 
 const PAGE_SIZE = 10;
 
 const isOAuthRequired = (message) => {
     const value = String(message || "");
-    return /oauth/i.test(value) || /要求 OAuth|需要 OAuth|授权后再测试/.test(value);
+    return (
+        /oauth/i.test(value) || /要求 OAuth|需要 OAuth|授权后再测试/.test(value)
+    );
 };
 
 /**

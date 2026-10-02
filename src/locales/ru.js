@@ -655,7 +655,8 @@ export default {
             probeFor: "Проверить подключение {{name}}",
             probeOk: "Подключено, найдено инструментов: {{count}}",
             probeFailed: "Не удалось подключиться",
-            oauthCompleted: "Авторизация OAuth завершена, проверяем подключение",
+            oauthCompleted:
+                "Авторизация OAuth завершена, проверяем подключение",
             oauthFailed: "Ошибка авторизации OAuth",
             oauthUrlMissing: "Отсутствует URL авторизации OAuth",
             edit: "Изменить",

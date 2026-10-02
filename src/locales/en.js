@@ -658,7 +658,8 @@ export default {
             probeFor: "Test connection for {{name}}",
             probeOk: "Connected, discovered {{count}} tools",
             probeFailed: "Connection failed",
-            oauthCompleted: "OAuth authorization complete; testing the connection",
+            oauthCompleted:
+                "OAuth authorization complete; testing the connection",
             oauthFailed: "OAuth authorization failed",
             oauthUrlMissing: "OAuth authorization URL is missing",
             edit: "Edit",
