@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
     Bell,
@@ -28,9 +28,13 @@ const TABS = [
 
 const ENABLED_TABS = ["account", "mcp"];
 
-const ProfileModal = ({ open, onClose }) => {
+const ProfileModal = ({ open, onClose, initialTab = "account" }) => {
     const { t } = useTranslation();
-    const [activeTab, setActiveTab] = useState("account");
+    const [activeTab, setActiveTab] = useState(initialTab);
+
+    useEffect(() => {
+        if (open) setActiveTab(initialTab);
+    }, [initialTab, open]);
 
     return (
         <Modal

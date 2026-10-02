@@ -26,6 +26,14 @@ export const agentMcpService = build(userBase);
 /** 平台级服务器（管理员维护，全部用户可用）。 */
 export const adminMcpService = build(adminBase);
 
+/** Start the OAuth 2.1 + PKCE flow for a user-owned remote MCP server. */
+export const startMcpOAuth = (id, config) =>
+    post(`${userBase}/${id}/oauth/start`, undefined, config);
+
+/** Exchange the OAuth callback code and persist the remote bearer token. */
+export const completeMcpOAuth = (payload, config) =>
+    post(`${userBase}/oauth/complete`, payload, config);
+
 /** 请求头名称允许的字符集，与后端 HEADER_NAME_PATTERN 保持一致。 */
 const HEADER_NAME_PATTERN = /^[A-Za-z0-9!#$%&'*+.^_`|~-]+$/;
 

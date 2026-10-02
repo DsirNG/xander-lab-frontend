@@ -7,7 +7,12 @@
  */
 
 import React from "react";
-import { createBrowserRouter, Navigate, Outlet } from "react-router-dom";
+import {
+    createBrowserRouter,
+    Navigate,
+    Outlet,
+    useLocation,
+} from "react-router-dom";
 
 // Layouts (始终需要，保持静态导入)
 import MainLayout from "@app/layouts/MainLayout";
@@ -124,6 +129,13 @@ import { getModuleConfig } from "@features/modules";
 
 // 通用组件
 const NotFoundPage = React.lazy(() => import("@app/errors/NotFoundPage"));
+
+// Older production OAuth clients redirect consent requests to /profile.
+// Keep that URL compatible while the canonical consent surface is the workspace.
+const LegacyMcpOAuthRedirect = () => {
+    const location = useLocation();
+    return <Navigate to={`/workspace${location.search}`} replace />;
+};
 
 // 通用 Suspense 包裹器
 /**
@@ -315,6 +327,14 @@ export const createRouter = () => {
                     ),
                 },
                 {
+                    path: "plugins",
+                    element: (
+                        <LazyPage>
+                            <AgentMcpServersPage />
+                        </LazyPage>
+                    ),
+                },
+                {
                     path: "plans",
                     element: (
                         <LazyPage>
@@ -483,6 +503,10 @@ export const createRouter = () => {
                     <PublicSourcePage />
                 </LazyPage>
             ),
+        },
+        {
+            path: "/profile",
+            element: <ProtectedPage page={<LegacyMcpOAuthRedirect />} />,
         },
     ];
 

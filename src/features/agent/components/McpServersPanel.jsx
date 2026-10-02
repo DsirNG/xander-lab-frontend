@@ -6,9 +6,18 @@ import RowActionsMenu from "@shared/ui/overlays/RowActionsMenu";
 import ConfirmModal from "@shared/ui/overlays/ConfirmModal";
 import Button from "@shared/ui/primitives/Button";
 import { useToast } from "@shared/hooks/useToast";
+import {
+    completeMcpOAuth,
+    startMcpOAuth,
+} from "../services/agentMcpService";
 import McpServerFormModal from "./McpServerFormModal";
 
 const PAGE_SIZE = 10;
+
+const isOAuthRequired = (message) => {
+    const value = String(message || "");
+    return /oauth/i.test(value) || /要求 OAuth|需要 OAuth|授权后再测试/.test(value);
+};
 
 /**
  * 远端 MCP 服务器列表，用户版与管理版共用。
@@ -32,6 +41,7 @@ const McpServersPanel = ({ service, variant = "user" }) => {
     const [deleting, setDeleting] = useState(null);
     const [deleteBusy, setDeleteBusy] = useState(false);
     const [probingId, setProbingId] = useState(null);
+    const [oauthBusy, setOauthBusy] = useState(false);
 
     const scope = variant === "admin" ? "admin" : "user";
 
@@ -56,12 +66,82 @@ const McpServersPanel = ({ service, variant = "user" }) => {
         loadData();
     }, [loadData]);
 
+    // OAuth providers redirect back to the plugin page with the authorization
+    // code. Complete the exchange before the user tries the connection again.
+    useEffect(() => {
+        if (variant !== "user") return undefined;
+        const params = new URLSearchParams(window.location.search);
+        const state = params.get("state");
+        const code = params.get("code");
+        if (!state || !code) return undefined;
+
+        let active = true;
+        setOauthBusy(true);
+        completeMcpOAuth({ state, code })
+            .then(async ({ serverId } = {}) => {
+                if (!active) return;
+                window.history.replaceState(
+                    {},
+                    document.title,
+                    window.location.pathname,
+                );
+                toast.success(t("blog.agentMcp.oauthCompleted"));
+                await loadData();
+                if (serverId) {
+                    try {
+                        const result = await service.probe(Number(serverId));
+                        if (result?.lastStatus !== "OK") {
+                            toast.error(
+                                result?.lastError ||
+                                    t("blog.agentMcp.probeFailed"),
+                            );
+                        }
+                    } catch (error) {
+                        toast.error(
+                            error?.message || t("blog.agentMcp.probeFailed"),
+                        );
+                    }
+                    await loadData();
+                }
+            })
+            .catch((error) => {
+                if (active) {
+                    toast.error(
+                        error?.message || t("blog.agentMcp.oauthFailed"),
+                    );
+                }
+            })
+            .finally(() => active && setOauthBusy(false));
+
+        return () => {
+            active = false;
+        };
+    }, [loadData, service, t, toast, variant]);
+
     // 客户端分页：一个人（或一个平台）配的服务器是几台的量级，不值得为它加分页接口。
     const total = servers.length;
     const pageRows = useMemo(
         () => servers.slice((page - 1) * pageSize, page * pageSize),
         [servers, page, pageSize],
     );
+
+    const handleStartOAuth = async (server) => {
+        try {
+            setOauthBusy(true);
+            const result = await startMcpOAuth(server.id);
+            if (!result?.authorizationUrl) {
+                throw new Error(t("blog.agentMcp.oauthUrlMissing"));
+            }
+            window.location.assign(result.authorizationUrl);
+        } catch (error) {
+            toast.error(
+                error?.response?.data?.message ||
+                    error.message ||
+                    t("blog.agentMcp.oauthFailed"),
+            );
+            setOauthBusy(false);
+        }
+    };
 
     const handleProbe = async (server) => {
         try {
@@ -73,6 +153,8 @@ const McpServersPanel = ({ service, variant = "user" }) => {
                         count: (updated.tools || []).length,
                     }),
                 );
+            } else if (isOAuthRequired(updated?.lastError)) {
+                await handleStartOAuth(server);
             } else {
                 toast.error(
                     updated?.lastError || t("blog.agentMcp.probeFailed"),
@@ -80,11 +162,9 @@ const McpServersPanel = ({ service, variant = "user" }) => {
             }
             await loadData();
         } catch (err) {
-            toast.error(
-                err?.response?.data?.message ||
-                    err.message ||
-                    t("blog.agentMcp.probeFailed"),
-            );
+            const message = err?.response?.data?.message || err.message;
+            if (isOAuthRequired(message)) await handleStartOAuth(server);
+            else toast.error(message || t("blog.agentMcp.probeFailed"));
         } finally {
             setProbingId(null);
         }
@@ -210,7 +290,7 @@ const McpServersPanel = ({ service, variant = "user" }) => {
                     <button
                         type="button"
                         onClick={() => handleProbe(server)}
-                        disabled={probingId === server.id}
+                        disabled={probingId === server.id || oauthBusy}
                         title={t("blog.agentMcp.probe")}
                         aria-label={t("blog.agentMcp.probeFor", {
                             name: server.displayName,
