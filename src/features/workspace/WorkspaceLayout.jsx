@@ -1,10 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
-import ProtectedRoute from "@features/auth/components/ProtectedRoute";
-import { useAuthSession } from "@features/auth/context/authSessionContextValue";
+import { Outlet, useLocation, useMatch, useNavigate } from "react-router-dom";
+import { ProtectedRoute, useAuthSession } from "@features/auth";
 import { useToast } from "@shared/hooks/useToast";
-import { useAgentConversation } from "@features/agent/hooks/useAgentConversation";
-import { agentPluginService } from "@features/agent/services/agentPluginService";
+import { agentPluginService, useAgentConversation } from "@features/agent";
 import ProfileModal from "./components/ProfileModal";
 import WorkspaceShell from "./components/WorkspaceShell";
 import WorkspaceSidebar from "./components/WorkspaceSidebar";
@@ -14,7 +12,8 @@ const WorkspaceLayoutInner = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const toast = useToast();
-    const { conversationId } = useParams();
+    const conversationId = useMatch("/workspace/ai/:conversationId")?.params
+        .conversationId;
     const [settingsOpen, setSettingsOpen] = useState(false);
     const [skills, setSkills] = useState([]);
     const [mcpServers, setMcpServers] = useState([]);
@@ -116,7 +115,6 @@ const WorkspaceLayoutInner = () => {
                     <WorkspaceSidebar
                         userInfo={userInfo}
                         sessions={agent.sessions}
-                        plugins={plugins}
                         activeConversationId={conversationId}
                         onNewConversation={handleNewConversation}
                         onSelectConversation={handleSelectConversation}

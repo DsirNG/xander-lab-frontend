@@ -17,7 +17,6 @@ import { useToast } from "@shared/hooks/useToast";
 import LoadingSpinner from "@shared/ui/feedback/LoadingSpinner";
 import Modal from "@shared/ui/overlays/Modal";
 import { useAuthSession } from "@features/auth";
-import { useAgentConversation } from "../hooks/useAgentConversation";
 import useAgentAttachments from "../hooks/useAgentAttachments";
 import useAgentQueryBootstrap from "../hooks/useAgentQueryBootstrap";
 import AgentComposer from "../components/AgentComposer";
@@ -40,7 +39,8 @@ import {
 const WorkspaceAgentChat = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
-    const { plugins = [] } = useOutletContext() || {};
+    const agent = useOutletContext();
+    const { plugins = [] } = agent;
     const { conversationId } = useParams();
     const [searchParams, setSearchParams] = useSearchParams();
     const queryParam = searchParams.get("q");
@@ -68,7 +68,6 @@ const WorkspaceAgentChat = () => {
     const stickToBottomRef = useRef(true);
 
     const {
-        sessions,
         conversation,
         messages,
         loading,
@@ -85,9 +84,7 @@ const WorkspaceAgentChat = () => {
         cancelTurn,
         decideApproval,
         createConversation,
-        setConversationPinned,
-        reset,
-    } = useAgentConversation({ conversationId });
+    } = agent;
 
     const isActive = running || conversation?.status === "running";
     const awaitingApproval = conversation?.status === "awaiting_approval";
@@ -212,25 +209,6 @@ const WorkspaceAgentChat = () => {
             }
         },
         [decideApproval, t, toast],
-    );
-
-    const handleNewConversation = () => {
-        reset();
-        setInput("");
-        clearAttachments();
-        navigate("/workspace/ai", { replace: true });
-    };
-
-    // 置顶失败时回滚由 hook 负责，这里只补一个提示。
-    const handleTogglePin = useCallback(
-        async (sessionId, pinned) => {
-            try {
-                await setConversationPinned(sessionId, pinned);
-            } catch (error) {
-                toast.error(error.message || t("workspace.agent.pinFailed"));
-            }
-        },
-        [setConversationPinned, t, toast],
     );
 
     useAgentQueryBootstrap({

@@ -75,11 +75,11 @@ const Img2ThreePage = React.lazy(
 const WorkspaceLayout = React.lazy(
     () => import("@app/layouts/WorkspaceLayout"),
 );
-const WorkspaceHomePage = React.lazy(
-    () => import("@features/workspace/pages/WorkspaceHomePage"),
-);
 const WorkspaceAgentChat = React.lazy(
     () => import("@features/agent/pages/WorkspaceAgentChat"),
+);
+const AgentImagesPage = React.lazy(
+    () => import("@features/agent/pages/AgentImagesPage"),
 );
 const AgentSkillsPage = React.lazy(
     () => import("@features/agent/pages/AgentSkillsPage"),
@@ -299,11 +299,7 @@ export const createRouter = () => {
             children: [
                 {
                     index: true,
-                    element: (
-                        <LazyPage>
-                            <WorkspaceHomePage />
-                        </LazyPage>
-                    ),
+                    element: <Navigate to="ai" replace />,
                 },
                 {
                     path: "ai/:conversationId?",
@@ -326,6 +322,14 @@ export const createRouter = () => {
                     element: (
                         <LazyPage>
                             <AgentMcpServersPage />
+                        </LazyPage>
+                    ),
+                },
+                {
+                    path: "images",
+                    element: (
+                        <LazyPage>
+                            <AgentImagesPage />
                         </LazyPage>
                     ),
                 },

@@ -8,3 +8,5 @@
 export { default as AdminMcpServersPanel } from "./components/AdminMcpServersPanel";
 export { listAgentConversations } from "./capabilities";
 export { default as AgentShowcase } from "./components/AgentShowcase";
+export { useAgentConversation } from "./hooks/useAgentConversation";
+export { agentPluginService } from "./services/agentPluginService";

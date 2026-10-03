@@ -119,7 +119,7 @@ const AgentImagesPage = ({ onGenerate }) => {
         }
         // Redirect to agent chat to generate the image
         navigate(
-            `/workspace/agent?q=${encodeURIComponent("生成一张图片: " + query)}`,
+            `/workspace/ai?q=${encodeURIComponent("生成一张图片: " + query)}`,
         );
     };
 

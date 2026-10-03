@@ -12,6 +12,7 @@ vi.mock("react-router-dom", () => ({
     useNavigate: () => vi.fn(),
     useParams: () => ({ conversationId: "1" }),
     useSearchParams: () => [new URLSearchParams(), vi.fn()],
+    useOutletContext: () => hookState.current,
 }));
 
 vi.mock("@shared/hooks/useToast", () => ({ useToast: () => toastMock }));
@@ -49,10 +50,6 @@ vi.mock("@features/profile", () => ({
     ProfileModal: () => null,
 }));
 vi.mock("../components/WorkspaceAgentSidebar", () => ({ default: () => null }));
-
-vi.mock("../hooks/useAgentConversation", () => ({
-    useAgentConversation: () => hookState.current,
-}));
 
 import WorkspaceAgentChat from "./WorkspaceAgentChat";
 

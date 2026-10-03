@@ -12,8 +12,7 @@ import {
     UserRound,
 } from "lucide-react";
 import Modal from "@shared/ui/overlays/Modal";
-import AccountInfoPanel from "@features/profile/components/AccountInfoPanel";
-import McpAuthorizationPanel from "@features/profile/components/McpAuthorizationPanel";
+import { AccountInfoPanel, McpAuthorizationPanel } from "@features/profile";
 
 const TABS = [
     { id: "account", icon: UserRound },
