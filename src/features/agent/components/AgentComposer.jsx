@@ -409,6 +409,12 @@ const AgentComposer = ({
                                   )
                         }
                         onKeyDown={(event) => {
+                            if (
+                                event.nativeEvent?.isComposing ||
+                                event.isComposing ||
+                                event.keyCode === 229
+                            )
+                                return;
                             if (event.key === "@") setMentionMenuOpen(true);
                             if (event.key === "Enter" && !event.shiftKey) {
                                 event.preventDefault();
