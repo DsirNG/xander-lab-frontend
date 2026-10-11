@@ -197,8 +197,19 @@ const WorkspaceSidebar = ({
             className="hidden h-dvh w-[220px] shrink-0 flex-col border-r border-border bg-canvas px-3.5 py-5 lg:flex"
             aria-label="DinQor Agent"
         >
-            <div className="px-2 text-title font-semibold text-ink">
-                DinQor Agent
+            <div className="flex items-center justify-between px-2">
+                <div className="text-title font-semibold text-ink">
+                    DinQor Agent
+                </div>
+                <button
+                    type="button"
+                    onClick={() => setSearchOpen(true)}
+                    className="grid h-8 w-8 place-items-center rounded-md text-ink-muted transition-colors hover:bg-surface-muted hover:text-accent"
+                    title={t("workspace.agent.searchPlaceholder", "搜索对话")}
+                    aria-label={t("workspace.agent.searchPlaceholder", "搜索对话")}
+                >
+                    <Search className="h-4 w-4" aria-hidden="true" />
+                </button>
             </div>
 
             <div className="mt-7 flex min-h-0 flex-1 flex-col">
@@ -271,19 +282,10 @@ const WorkspaceSidebar = ({
                         )}
                     </div>
 
-                    <div className="mt-5 flex items-center justify-between px-2">
+                    <div className="mt-5 px-2">
                         <span className="text-caption font-semibold text-ink-muted">
                             {t("workspace.agent.groups.recent", "最近")}
                         </span>
-                        <button
-                            type="button"
-                            onClick={() => setSearchOpen(true)}
-                            className="grid h-7 w-7 place-items-center rounded-md text-ink-muted transition-colors hover:bg-surface-muted hover:text-accent"
-                            title={t("workspace.agent.searchPlaceholder", "搜索对话")}
-                            aria-label={t("workspace.agent.searchPlaceholder", "搜索对话")}
-                        >
-                            <Search className="h-4 w-4" aria-hidden="true" />
-                        </button>
                     </div>
                     <div className="mt-2 space-y-0.5">
                         {recentSessions.length ? (
