@@ -157,7 +157,7 @@ const McpAuthorizationPanel = () => {
     };
 
     return (
-        <section className="flex min-w-0 flex-1 flex-col overflow-y-auto p-5 px-ultra-tight sm:p-8">
+        <section className="min-w-0 p-5 px-ultra-tight sm:p-8">
             <div className="mx-auto w-full max-w-3xl">
                 <div className="mb-6 flex items-start justify-between gap-4">
                     <div className="min-w-0">

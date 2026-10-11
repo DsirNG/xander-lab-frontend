@@ -1,6 +1,5 @@
 import React, { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
-import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import Button from "@shared/ui/primitives/Button";
@@ -15,6 +14,8 @@ const Modal = ({
     children,
     footer,
     width = "max-w-md",
+    height = 560,
+    bodyScrollable = true,
     closeOnOutsideClick = true,
     hideCloseButton = false,
     className = "",
@@ -100,80 +101,74 @@ const Modal = ({
     const titleId = title ? "modal-title" : undefined;
 
     return createPortal(
-        <AnimatePresence>
-            {isOpen && (
-                // 【修复 2】外层容器必须是 motion 组件，否则 exit 动画会失效瞬间卸载
-                <motion.div
-                    key="modal-container"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.16, ease: "easeOut" }}
-                    className="fixed inset-0 z-[1000] flex items-center justify-center p-4 sm:p-6"
-                    onClick={closeOnOutsideClick ? onClose : undefined}
+        isOpen ? (
+            <div
+                className="fixed inset-0 z-[1000] flex items-center justify-center p-4 sm:p-6"
+                onClick={closeOnOutsideClick ? onClose : undefined}
+            >
+                {/* 弹层保持静态渲染，避免透明度动画造成残影。 */}
+                <div aria-hidden="true" className="absolute inset-0 bg-ink/60" />
+
+                {/* 弹窗内容 */}
+                <div
+                    ref={modalRef}
+                    role="dialog"
+                    aria-modal="true"
+                    aria-labelledby={titleId}
+                    tabIndex={-1}
+                    className={`relative w-full ${width} bg-canvas rounded-3xl shadow-2xl shadow-ink/30 flex flex-col overflow-hidden antialiased outline-none ${className}`}
+                    style={{
+                        height: `min(${height}px, calc(100dvh - 3rem))`,
+                        WebkitFontSmoothing: "antialiased",
+                    }}
+                    onClick={(e) => e.stopPropagation()}
                 >
-                    {/* 背景遮罩 */}
-                    <div className="absolute inset-0 bg-ink/60" />
+                    {/* 头部标题与关闭按钮 */}
+                    {(title || !hideCloseButton) && (
+                        <div className="flex-shrink-0 flex items-center justify-between px-6 py-5">
+                            {typeof title === "string" ? (
+                                <div
+                                    id={titleId}
+                                    className="text-title font-black text-ink tracking-tight"
+                                >
+                                    {title}
+                                </div>
+                            ) : (
+                                <div className="flex-1">{title}</div>
+                            )}
 
-                    {/* 弹窗内容 */}
-                    <div
-                        ref={modalRef}
-                        role="dialog"
-                        aria-modal="true"
-                        aria-labelledby={titleId}
-                        tabIndex={-1}
-                        className={`relative w-full ${width} bg-canvas rounded-3xl shadow-2xl shadow-ink/30 flex flex-col max-h-[90dvh] overflow-hidden antialiased transform-gpu outline-none ${className}`}
-                        style={{
-                            WebkitFontSmoothing: "antialiased",
-                            backfaceVisibility: "hidden",
-                        }}
-                        onClick={(e) => e.stopPropagation()}
-                    >
-                        {/* 头部标题与关闭按钮 */}
-                        {(title || !hideCloseButton) && (
-                            <div className="flex-shrink-0 flex items-center justify-between px-6 py-5">
-                                {typeof title === "string" ? (
-                                    <div
-                                        id={titleId}
-                                        className="text-title font-black text-ink tracking-tight"
-                                    >
-                                        {title}
-                                    </div>
-                                ) : (
-                                    <div className="flex-1">{title}</div>
-                                )}
-
-                                {!hideCloseButton && (
-                                    <Button
-                                        onClick={onClose}
-                                        aria-label={t(
-                                            "common.aria.close",
-                                            "Close",
-                                        )}
-                                        variant="ghost"
-                                        size="xs"
-                                        icon={X}
-                                        className="-mr-2 rounded-full hover:text-danger hover:bg-danger-soft"
-                                    />
-                                )}
-                            </div>
-                        )}
-
-                        {/* 主体自适应滚动区域 */}
-                        <div className="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar px-6 pb-6 text-ink-muted">
-                            {children}
+                            {!hideCloseButton && (
+                                <Button
+                                    onClick={onClose}
+                                    aria-label={t(
+                                        "common.aria.close",
+                                        "Close",
+                                    )}
+                                    variant="ghost"
+                                    size="xs"
+                                    icon={X}
+                                    className="-mr-2 rounded-full hover:text-danger hover:bg-danger-soft"
+                                />
+                            )}
                         </div>
+                    )}
 
-                        {/* 底部按钮栏（若提供） */}
-                        {footer && (
-                            <div className="flex-shrink-0 px-6 py-5 bg-surface/50 flex items-center justify-end gap-3 rounded-b-3xl flex-wrap">
-                                {footer}
-                            </div>
-                        )}
+                    {/* 主体自适应滚动区域 */}
+                    <div
+                        className={`min-h-0 flex-1 ${bodyScrollable ? "overflow-y-auto" : "overflow-hidden"} overflow-x-hidden custom-scrollbar px-6 pb-6 text-ink-muted`}
+                    >
+                        {children}
                     </div>
-                </motion.div>
-            )}
-        </AnimatePresence>,
+
+                    {/* 底部按钮栏（若提供） */}
+                    {footer && (
+                        <div className="flex-shrink-0 px-6 py-5 bg-surface/50 flex items-center justify-end gap-3 rounded-b-3xl flex-wrap">
+                            {footer}
+                        </div>
+                    )}
+                </div>
+            </div>
+        ) : null,
         document.body,
     );
 };

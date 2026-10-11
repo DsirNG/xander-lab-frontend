@@ -212,7 +212,7 @@ const WorkspaceConversationSearchModal = ({ open, onClose, onSelect }) => {
             onClose={close}
             title={t("workspace.agent.searchPlaceholder", "搜索对话")}
             width="max-w-lg"
-            className="h-[560px]"
+            height={560}
         >
             <div className="flex flex-col gap-3">
                 <div className="flex items-center gap-3 rounded-xl border border-border px-3.5 py-2.5">

@@ -31,6 +31,7 @@ const ConfirmModal = ({
             }}
             title={title}
             width="max-w-sm"
+            height={320}
             closeOnOutsideClick={closeOnOutsideClick && !confirming}
             hideCloseButton={confirming}
             footer={

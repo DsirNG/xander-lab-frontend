@@ -14,6 +14,7 @@ export default function AppUpdateModal({ isOpen }) {
             closeOnOutsideClick={false}
             hideCloseButton
             width="max-w-sm"
+            height={320}
             footer={
                 <button
                     type="button"

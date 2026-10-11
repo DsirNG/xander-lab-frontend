@@ -36,6 +36,7 @@ export default function DomainRedirectModal() {
             onClose={() => setShow(false)}
             title={t("common.domainRedirect.title", "网站已迁移")}
             width="max-w-sm"
+            height={360}
             footer={
                 <>
                     <Button

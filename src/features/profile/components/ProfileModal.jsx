@@ -42,12 +42,13 @@ const ProfileModal = ({ open, onClose, initialTab = "account" }) => {
             onClose={onClose}
             title={t("workspace.settings")}
             width="max-w-4xl"
-            className="h-[680px]"
+            height={680}
+            bodyScrollable={false}
         >
-            <div className="flex min-h-[420px] flex-col gap-4 lg:flex-row lg:gap-6">
+            <div className="flex h-full min-h-0 flex-col gap-4 lg:flex-row lg:gap-6">
                 {/* 设置分类导航：移动端横向滚动，桌面端左侧竖排 */}
                 <nav
-                    className="flex min-w-0 shrink-0 gap-1 overflow-x-auto overscroll-x-contain rounded-xl border border-border bg-surface p-1 lg:w-44 lg:flex-col lg:overflow-x-visible lg:overflow-y-auto"
+                    className="flex min-h-0 min-w-0 shrink-0 gap-1 overflow-x-auto overscroll-x-contain rounded-xl border border-border bg-surface p-1 custom-scrollbar lg:h-full lg:w-44 lg:flex-col lg:overflow-x-hidden lg:overflow-y-auto"
                     aria-label={t("workspace.settings")}
                 >
                     {TABS.map((tab) => {
@@ -83,7 +84,7 @@ const ProfileModal = ({ open, onClose, initialTab = "account" }) => {
                 </nav>
 
                 {/* 设置内容 */}
-                <div className="min-w-0 flex-1">
+                <div className="min-h-0 min-w-0 flex-1 overflow-y-auto overscroll-y-contain custom-scrollbar">
                     {activeTab === "account" ? (
                         <AccountInfoPanel />
                     ) : activeTab === "mcp" ? (
