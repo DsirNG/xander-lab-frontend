@@ -1310,9 +1310,12 @@ export default {
             nicknamePlaceholder: "Nhập biệt danh",
             nicknameRequired: "Vui lòng nhập biệt danh",
             avatar: "Ảnh đại diện",
-            avatarHint: "JPG / PNG / GIF, tối đa 2MB",
+            avatarHint: "Di chuột lên ảnh đại diện để tải JPG, PNG, GIF hoặc WebP (tối đa 2MB)",
             avatarInvalid:
                 "Định dạng hoặc kích thước ảnh đại diện không hợp lệ",
+            uploadAvatar: "Tải ảnh đại diện lên",
+            avatarUploadReady: "Đã tải ảnh lên. Nhấn Lưu để áp dụng.",
+            avatarUploadFailed: "Không thể tải ảnh đại diện lên. Vui lòng thử lại.",
             username: "Tên người dùng",
             email: "Email",
             role: "Vai trò",

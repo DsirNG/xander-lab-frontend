@@ -42,6 +42,7 @@ const ProfileModal = ({ open, onClose, initialTab = "account" }) => {
             onClose={onClose}
             title={t("workspace.settings")}
             width="max-w-4xl"
+            className="h-[680px]"
         >
             <div className="flex min-h-[420px] flex-col gap-4 lg:flex-row lg:gap-6">
                 {/* 设置分类导航：移动端横向滚动，桌面端左侧竖排 */}

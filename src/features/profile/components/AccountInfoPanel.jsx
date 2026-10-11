@@ -1,20 +1,27 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
     AtSign,
     CalendarDays,
     CheckCircle2,
-    Image as ImageIcon,
     Loader2,
     Shield,
+    Upload,
     UserRound,
 } from "lucide-react";
+import { upload as uploadFile } from "@api";
 import { updateProfile, useAuthSession } from "@features/auth";
 import { useToast } from "@shared/hooks/useToast";
 import FormField from "@shared/ui/forms/FormField";
 import { formInputCls } from "@shared/ui/forms/formStyles";
 
-const DEFAULT_AVATAR_SEED = "https://api.dicebear.com/7.x/avataaars/svg?seed=";
+const MAX_AVATAR_BYTES = 2 * 1024 * 1024;
+const AVATAR_CONTENT_TYPES = new Set([
+    "image/jpeg",
+    "image/png",
+    "image/gif",
+    "image/webp",
+]);
 
 /**
  * 账户信息面板：展示并编辑昵称 / 头像，账号字段（用户名、邮箱、角色、注册时间）只读。
@@ -28,7 +35,9 @@ const AccountInfoPanel = () => {
     );
     const [avatar, setAvatar] = useState(userInfo?.avatar || "");
     const [saving, setSaving] = useState(false);
+    const [avatarUploading, setAvatarUploading] = useState(false);
     const [avatarError, setAvatarError] = useState(false);
+    const avatarInputRef = useRef(null);
 
     const dateFormatter = useMemo(
         () =>
@@ -44,7 +53,7 @@ const AccountInfoPanel = () => {
     const handleAvatarError = useCallback(() => setAvatarError(true), []);
     const handleAvatarLoad = useCallback(() => setAvatarError(false), []);
 
-    const avatarPreview = avatar.trim() ? (
+    const avatarPreview = avatar.trim() && !avatarError ? (
         <img
             src={avatar.trim()}
             alt={t("profile.account.avatar")}
@@ -53,6 +62,43 @@ const AccountInfoPanel = () => {
             className="h-full w-full rounded-xl object-cover"
         />
     ) : null;
+
+    const handleAvatarFileChange = async (event) => {
+        const input = event.currentTarget;
+        const file = input.files?.[0];
+        input.value = "";
+        if (!file) return;
+        if (
+            !AVATAR_CONTENT_TYPES.has(file.type) ||
+            file.size > MAX_AVATAR_BYTES
+        ) {
+            toast.error(t("profile.account.avatarInvalid"));
+            return;
+        }
+
+        setAvatarUploading(true);
+        try {
+            const uploaded = await uploadFile("/api/upload/oss", file, {
+                fieldName: "file",
+                extraData: { type: "avatar" },
+                config: { _silent: true },
+            });
+            if (typeof uploaded?.url !== "string" || !uploaded.url.trim())
+                throw new Error("Avatar upload response did not include a URL");
+
+            const avatarUrl = new URL(
+                uploaded.url,
+                window.location.origin,
+            ).toString();
+            setAvatar(avatarUrl);
+            setAvatarError(false);
+            toast.info(t("profile.account.avatarUploadReady"));
+        } catch {
+            toast.error(t("profile.account.avatarUploadFailed"));
+        } finally {
+            setAvatarUploading(false);
+        }
+    };
 
     const handleSave = async () => {
         const trimmedNickname = nickname.trim();
@@ -119,17 +165,56 @@ const AccountInfoPanel = () => {
                 </div>
             </div>
             <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:gap-5">
-                <div className="relative h-20 w-20 shrink-0">
-                    {avatarPreview || (
-                        <span className="grid h-full w-full place-items-center rounded-xl bg-accent text-lg font-black uppercase text-white">
-                            {avatarText}
+                <div className="flex shrink-0 flex-col items-center gap-2 sm:items-start">
+                    <div className="text-caption font-semibold text-ink">
+                        {t("profile.account.avatar")}
+                    </div>
+                    <button
+                        type="button"
+                        onClick={() => avatarInputRef.current?.click()}
+                        disabled={avatarUploading || saving}
+                        className="group relative h-20 w-20 overflow-hidden rounded-xl bg-accent text-lg font-black uppercase text-white outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 disabled:cursor-wait"
+                        title={t("profile.account.uploadAvatar")}
+                        aria-label={t("profile.account.uploadAvatar")}
+                    >
+                        {avatarPreview || (
+                            <span className="grid h-full w-full place-items-center">
+                                {avatarText}
+                            </span>
+                        )}
+                        <span className="absolute inset-0 grid place-items-center bg-ink/55 text-white opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
+                            {avatarUploading ? (
+                                <Loader2
+                                    className="h-5 w-5 animate-spin"
+                                    aria-hidden="true"
+                                />
+                            ) : (
+                                <Upload
+                                    className="h-5 w-5"
+                                    aria-hidden="true"
+                                />
+                            )}
                         </span>
-                    )}
-                    {avatarError ? (
-                        <span className="absolute inset-x-0 -bottom-1.5 text-center text-micro font-medium text-danger">
-                            {t("profile.account.avatarInvalid")}
-                        </span>
-                    ) : null}
+                    </button>
+                    <input
+                        ref={avatarInputRef}
+                        type="file"
+                        accept="image/jpeg,image/png,image/gif,image/webp"
+                        onChange={handleAvatarFileChange}
+                        disabled={avatarUploading || saving}
+                        className="sr-only"
+                        tabIndex={-1}
+                        aria-hidden="true"
+                    />
+                    <div
+                        className={`max-w-40 text-center text-micro font-medium sm:text-left ${
+                            avatarError ? "text-danger" : "text-ink-faint"
+                        }`}
+                    >
+                        {avatarError
+                            ? t("profile.account.avatarInvalid")
+                            : t("profile.account.avatarHint")}
+                    </div>
                 </div>
                 <div className="min-w-0 flex-1 space-y-3">
                     <FormField
@@ -153,31 +238,11 @@ const AccountInfoPanel = () => {
                             />
                         </div>
                     </FormField>
-                    <FormField
-                        label={t("profile.account.avatar")}
-                        htmlFor="account-avatar"
-                        hint={t("profile.account.avatarHint")}
-                    >
-                        <div className="relative">
-                            <ImageIcon className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-faint" />
-                            <input
-                                id="account-avatar"
-                                type="url"
-                                maxLength={255}
-                                value={avatar}
-                                onChange={(event) =>
-                                    setAvatar(event.target.value)
-                                }
-                                placeholder={`${DEFAULT_AVATAR_SEED}...`}
-                                className={`${formInputCls} pl-9`}
-                            />
-                        </div>
-                    </FormField>
                     <div className="pt-1">
                         <button
                             type="button"
                             onClick={handleSave}
-                            disabled={saving}
+                            disabled={saving || avatarUploading}
                             className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-lg bg-accent px-5 text-xs font-bold text-white shadow-sm shadow-accent/20 transition hover:brightness-105 disabled:opacity-60"
                         >
                             {saving ? (
