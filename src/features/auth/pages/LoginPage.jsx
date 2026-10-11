@@ -1,31 +1,42 @@
-import React, { useState, useEffect, useRef } from "react";
-import { useNavigate, useLocation, Link } from "react-router-dom";
+import React, { useEffect, useRef, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import {
-    Mail,
-    Lock,
-    ShieldCheck,
     ArrowRight,
-    Github,
-    Globe,
-    Sparkles,
-    Fingerprint,
-    Shield,
-    QrCode,
+    LockKeyhole,
+    Mail,
+    MessageCircle,
     RefreshCw,
 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
 import { authService } from "../services/authService";
 import { useToast } from "@shared/hooks/useToast";
-import FloatingParticles from "../components/FloatingParticles";
 import Button from "@shared/ui/primitives/Button";
+import FormField from "@shared/ui/forms/FormField";
+import { formInputCls } from "@shared/ui/forms/formStyles";
+import { twMerge } from "tailwind-merge";
 
-/**
- * 登录/注册页面
- * 支持两种模式：
- * - 密码登录：已有账号的用户使用用户名/邮箱 + 密码登录
- * - 验证码登录/注册：输入邮箱验证码，未注册自动创建账号
- */
+const GoogleMark = () => (
+    <svg aria-hidden="true" viewBox="0 0 48 48" className="h-5 w-5">
+        <path
+            fill="#4285F4"
+            d="M43.6 24.5c0-1.4-.1-2.8-.4-4.1H24v7.8h11a9.4 9.4 0 0 1-4.1 6.2v5.1h6.7c3.9-3.6 6-8.8 6-15Z"
+        />
+        <path
+            fill="#34A853"
+            d="M24 44c5.5 0 10.1-1.8 13.5-4.8l-6.7-5.1c-1.8 1.2-4 1.9-6.8 1.9-5.2 0-9.7-3.5-11.3-8.1H5.8v5.2A20 20 0 0 0 24 44Z"
+        />
+        <path
+            fill="#FBBC05"
+            d="M12.7 27.9a12 12 0 0 1 0-7.8v-5.2H5.8a20 20 0 0 0 0 18.2l6.9-5.2Z"
+        />
+        <path
+            fill="#EA4335"
+            d="M24 12c3 0 5.7 1 7.8 3.1l5.8-5.8A19.4 19.4 0 0 0 24 4 20 20 0 0 0 5.8 14.9l6.9 5.2C14.3 15.5 18.8 12 24 12Z"
+        />
+    </svg>
+);
+
+/** Login and registration share the existing password and email-code auth flows. */
 const LoginPage = () => {
     const navigate = useNavigate();
     const location = useLocation();
@@ -35,7 +46,9 @@ const LoginPage = () => {
     const fromSearch = location.state?.from?.search || "";
 
     const [loading, setLoading] = useState(false);
-    const [loginType, setLoginType] = useState("code");
+    const [authMode, setAuthMode] = useState("login");
+    const [loginType, setLoginType] = useState("password");
+    const [showWechatQr, setShowWechatQr] = useState(false);
     const [qrState, setQrState] = useState({
         ticket: "",
         image: "",
@@ -49,6 +62,7 @@ const LoginPage = () => {
     });
     const [countdown, setCountdown] = useState(0);
     const [sendingCode, setSendingCode] = useState(false);
+    const [codeInputFocused, setCodeInputFocused] = useState(false);
     const sendCodeLockRef = useRef(false);
 
     const stopQrPolling = () => {
@@ -93,7 +107,7 @@ const LoginPage = () => {
                         }
                     }
                 } catch {
-                    // Keep the QR visible; transient polling failures are retried on the next tick.
+                    // A transient poll failure is retried on the next tick.
                 }
             }, 1500);
         } catch (err) {
@@ -103,34 +117,36 @@ const LoginPage = () => {
     };
 
     useEffect(() => () => stopQrPolling(), []);
-    // QR polling is intentionally restarted only when the selected login mode changes.
     useEffect(() => {
-        if (loginType === "qr" && !qrState.ticket && qrState.status !== "error")
+        if (showWechatQr && !qrState.ticket && qrState.status !== "error") {
             startQrLogin();
-        if (loginType !== "qr") stopQrPolling();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [loginType]);
-
-    /** 验证码倒计时 */
-    useEffect(() => {
-        let timer;
-        if (countdown > 0) {
-            timer = setTimeout(() => setCountdown(countdown - 1), 1000);
         }
-        return () => clearTimeout(timer);
+        if (!showWechatQr) stopQrPolling();
+        // QR polling follows the dialog visibility, not each polling response.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [showWechatQr]);
+
+    useEffect(() => {
+        if (countdown <= 0) return undefined;
+        const timer = window.setTimeout(
+            () => setCountdown(countdown - 1),
+            1000,
+        );
+        return () => window.clearTimeout(timer);
     }, [countdown]);
 
-    /** 更新表单字段 */
-    const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+    const handleChange = (event) => {
+        const { name, value } = event.target;
+        setFormData((current) => ({ ...current, [name]: value }));
     };
 
-    /** 发送验证码到邮箱 */
-    const handleSendCode = async () => {
-        if (sendingCode || sendCodeLockRef.current || countdown > 0) {
-            return;
-        }
+    const handleCodeChange = (event) => {
+        const code = event.target.value.replace(/\D/g, "").slice(0, 6);
+        setFormData((current) => ({ ...current, code }));
+    };
 
+    const handleSendCode = async () => {
+        if (sendingCode || sendCodeLockRef.current || countdown > 0) return;
         if (!formData.account || !formData.account.includes("@")) {
             toast.warning(t("auth.login.invalidEmail"));
             return;
@@ -149,13 +165,14 @@ const LoginPage = () => {
         }
     };
 
-    /** 提交登录 */
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    const handleSubmit = async (event) => {
+        event.preventDefault();
         setLoading(true);
-
         try {
-            await authService.login({ ...formData, type: loginType });
+            await authService.login({
+                ...formData,
+                type: authMode === "register" ? "code" : loginType,
+            });
             toast.success(t("auth.login.authSuccess"));
             navigate(`${fromPath}${fromSearch}`, { replace: true });
         } catch (err) {
@@ -165,365 +182,439 @@ const LoginPage = () => {
         }
     };
 
+    const selectAuthMode = (mode) => {
+        setAuthMode(mode);
+        setLoginType(mode === "register" ? "code" : "password");
+        setShowWechatQr(false);
+    };
+
+    const openWechatQr = () => {
+        setQrState({ ticket: "", image: "", status: "" });
+        setShowWechatQr(true);
+    };
+
+    const closeWechatQr = () => {
+        stopQrPolling();
+        setQrState({ ticket: "", image: "", status: "" });
+        setShowWechatQr(false);
+    };
+
+    const isCodeFlow = authMode === "register" || loginType === "code";
+    const inputClassName = twMerge(
+        formInputCls,
+        "h-12 rounded-lg border-border bg-white px-3.5 text-body text-ink placeholder:text-ink-faint focus:border-accent focus:ring-accent/10",
+    );
+
     return (
-        <div className="min-h-screen flex flex-col items-center justify-center p-4 sm:p-6 px-ultra-tight bg-surface overflow-y-auto selection:bg-accent/30">
-            {/* 高级艺术背景 */}
-            <div className="absolute inset-0 pointer-events-none z-0">
-                {/*<DigitalOrbit />*/}
-                <FloatingParticles />
-                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-canvas/80" />
-            </div>
-
-            {/* 品牌悬浮顶栏 */}
-            <motion.header
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="fixed top-0 left-0 right-0 p-4 flex justify-between items-center z-50 max-w-7xl mx-auto w-full"
-            >
-                <Link to="/" className="group flex items-center gap-3 min-w-0">
-                    <div className="relative">
-                        <div className="absolute inset-0 bg-accent blur-md opacity-20 group-hover:opacity-40 transition-opacity" />
-                        <div className="relative p-2.5 rounded-2xl bg-canvas border border-border shadow-xl group-hover:scale-110 transition-transform duration-500">
-                            <img
-                                src="/assets/workspace/workspace-logo.svg"
-                                alt=""
-                                className="h-8 w-8"
+        <main className="grid min-h-screen bg-white text-ink lg:grid-cols-2">
+            <section className="relative hidden min-h-screen overflow-hidden bg-gradient-to-br from-surface-muted via-white to-accent-soft lg:flex">
+                <svg
+                    aria-hidden="true"
+                    viewBox="0 0 900 1200"
+                    preserveAspectRatio="xMidYMid slice"
+                    className="absolute inset-0 h-full w-full"
+                >
+                    <defs>
+                        <linearGradient
+                            id="login-flow"
+                            x1="0"
+                            y1="0"
+                            x2="1"
+                            y2="1"
+                        >
+                            <stop
+                                offset="0%"
+                                stopColor="var(--color-accent-100)"
                             />
-                        </div>
-                    </div>
-                    <div className="flex flex-col min-w-0">
-                        <span className="font-black tracking-tighter text-xl text-ink leading-none truncate">
-                            DINQOR AI
-                        </span>
-                        <span className="text-micro font-bold text-ink-faint leading-none mt-1 tracking-[0.2em] truncate">
-                            {t("auth.login.unifiedAuth")}
-                        </span>
-                    </div>
-                </Link>
+                            <stop
+                                offset="52%"
+                                stopColor="var(--color-accent-200)"
+                            />
+                            <stop
+                                offset="100%"
+                                stopColor="var(--color-canvas)"
+                            />
+                        </linearGradient>
+                    </defs>
+                    <path
+                        d="M-110 165C150 255 145 520 380 655S640 450 1010 535"
+                        fill="none"
+                        stroke="url(#login-flow)"
+                        strokeWidth="190"
+                        strokeLinecap="round"
+                        opacity="0.72"
+                    />
+                    <path
+                        d="M-110 165C150 255 145 520 380 655S640 450 1010 535"
+                        fill="none"
+                        stroke="var(--color-canvas)"
+                        strokeWidth="1.5"
+                        opacity="0.9"
+                    />
+                    <path
+                        d="M-90 790C150 650 270 980 490 1005S760 815 1020 870"
+                        fill="none"
+                        stroke="var(--color-accent-100)"
+                        strokeWidth="116"
+                        strokeLinecap="round"
+                        opacity="0.7"
+                    />
+                </svg>
+            </section>
 
-                <div className="flex items-center gap-2">
-                    <Button
-                        variant="ghost"
-                        size="lg"
-                        icon={Globe}
-                        className="hidden sm:flex border border-transparent hover:border-border shadow-sm"
+            <section className="flex min-h-screen items-center justify-center px-6 py-10 sm:px-10 lg:px-12 xl:px-16">
+                <div className="w-full max-w-[420px]">
+                    <Link
+                        to="/"
+                        aria-label="DinQorAI"
+                        className="mb-10 flex w-fit items-center gap-3 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent lg:mb-12"
                     >
-                        <span>{t("auth.login.systemStatus")}</span>{" "}
-                        <span className="text-success animate-pulse font-black uppercase">
-                            {t("auth.login.systemSecure")}
+                        <img
+                            src="/assets/workspace/workspace-logo.svg"
+                            alt=""
+                            className="h-10 w-10"
+                        />
+                        <span className="text-xl font-bold tracking-tight text-ink">
+                            DinQor<span className="text-accent">AI</span>
                         </span>
-                    </Button>
-                    <div className="w-px h-4 bg-border mx-2 hidden sm:block" />
-                    <a
-                        href="https://github.com"
-                        className="p-3 text-ink-faint hover:text-accent transition-colors"
+                    </Link>
+
+                    <div
+                        role="tablist"
+                        aria-label={t("auth.login.identityGateway")}
+                        className="mb-8 flex gap-8 border-b border-border"
                     >
-                        <Github className="w-6 h-6" />
-                    </a>
-                </div>
-            </motion.header>
+                        {["login", "register"].map((mode) => (
+                            <button
+                                key={mode}
+                                type="button"
+                                role="tab"
+                                aria-selected={authMode === mode}
+                                onClick={() => selectAuthMode(mode)}
+                                className={`relative -mb-px border-b-2 px-0.5 pb-3 text-body font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
+                                    authMode === mode
+                                        ? "border-accent text-accent"
+                                        : "border-transparent text-ink-muted hover:text-ink"
+                                }`}
+                            >
+                                {mode === "login"
+                                    ? t("auth.login.login")
+                                    : t("auth.login.register")}
+                            </button>
+                        ))}
+                    </div>
 
-            {/* 主交互卡片 */}
-            <motion.div
-                initial={{ opacity: 0, y: 40, scale: 0.98 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                className="relative z-10 w-full max-w-[480px] my-auto"
-            >
-                {/* 装饰发光背景 */}
-                {/*<div className="absolute -top-20 -right-20 w-64 h-64 bg-accent/10 rounded-full blur-[100px] animate-pulse" />*/}
-                {/*<div className="absolute -bottom-20 -left-20 w-64 h-64 bg-accent/10 rounded-full blur-[100px] animate-pulse delay-700" />*/}
+                    <h1 className="text-3xl font-bold tracking-tight text-ink">
+                        {authMode === "login"
+                            ? t("auth.login.welcomeBack")
+                            : t("auth.login.registerTitle")}
+                    </h1>
+                    <p className="mt-2 text-body leading-relaxed text-ink-muted">
+                        {authMode === "login"
+                            ? t("auth.login.loginSubtitle")
+                            : t("auth.login.registerSubtitle")}
+                    </p>
 
-                <div className="relative bg-canvas/70 backdrop-blur-xl border border-canvas/40 rounded-[3.5rem] overflow-hidden">
-                    <div className="p-6 sm:p-8 relative z-10">
-                        {/* 装饰图标 */}
-                        {/*<div className="absolute top-0 right-0 p-8 opacity-10">*/}
-                        {/*    <Cpu className="w-16 h-16 text-accent" />*/}
-                        {/*</div>*/}
-
-                        {/* 引导标题 */}
-                        <div className="mb-6">
-                            <div className="flex items-center gap-2 flex-wrap mb-4">
-                                <Sparkles className="w-4 h-4 text-accent animate-bounce" />
-                                <span className="text-micro font-black text-accent uppercase tracking-[0.3em]">
-                                    {t("auth.login.identityGateway")}
-                                </span>
-                            </div>
-                            <div className="text-3xl font-black text-ink tracking-tight mb-4">
-                                {t("auth.login.loginAccess")}
-                                <span className="text-accent text-4xl">.</span>
-                            </div>
-                            <div className="text-ink-muted text-sm font-medium leading-relaxed">
-                                {t("auth.login.loginDesc")}
-                            </div>
-                        </div>
-
-                        {/* 模式选择 Tab */}
-                        <div className="grid grid-cols-3 p-1.5 bg-surface-muted/50 rounded-2xl mb-5 border border-border/50">
-                            {[
-                                {
-                                    id: "code",
-                                    label: t("auth.login.codeAuth"),
-                                    icon: Shield,
-                                },
-                                {
-                                    id: "password",
-                                    label: t("auth.login.passwordAuth"),
-                                    icon: Fingerprint,
-                                },
-                                {
-                                    id: "qr",
-                                    label: t("auth.login.qrAuth"),
-                                    icon: QrCode,
-                                },
-                            ].map((tab) => (
-                                <Button
-                                    key={tab.id}
-                                    onClick={() => setLoginType(tab.id)}
-                                    variant="ghost"
-                                    size="sm"
-                                    icon={tab.icon}
-                                    className={`relative h-auto py-3.5 rounded-xl overflow-hidden transition-all duration-500 font-black ${
-                                        loginType === tab.id
-                                            ? "text-white"
-                                            : "text-ink-muted hover:text-ink-secondary"
-                                    }`}
+                    {showWechatQr ? (
+                        <div className="mt-8 flex flex-col items-center rounded-xl border border-border bg-white px-5 py-6 text-center">
+                            <div className="mb-4 flex w-full items-center justify-between">
+                                <button
+                                    type="button"
+                                    onClick={closeWechatQr}
+                                    className="rounded-md text-caption text-ink-muted hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
                                 >
-                                    <span className="relative z-10">
-                                        {tab.label}
-                                    </span>
-                                    {loginType === tab.id && (
-                                        <motion.div
-                                            layoutId="active-pill-immersive"
-                                            className="absolute inset-0 bg-accent shadow-lg shadow-accent/20 pointer-events-none"
-                                            transition={{
-                                                type: "tween",
-                                                duration: 0.3,
-                                                ease: "easeInOut",
-                                            }}
-                                        />
-                                    )}
-                                </Button>
-                            ))}
-                        </div>
-
-                        {loginType === "qr" ? (
-                            <div className="flex flex-col items-center gap-4 py-4 text-center">
+                                    {t("auth.login.qrBack")}
+                                </button>
+                                <span className="text-caption font-medium text-ink">
+                                    {t("auth.login.wechatQrTitle")}
+                                </span>
+                                <span className="w-10" aria-hidden="true" />
+                            </div>
+                            <div className="rounded-xl border border-border bg-white p-2">
                                 {qrState.image ? (
                                     <img
                                         src={qrState.image}
                                         alt={t("auth.login.qrAlt")}
-                                        className="w-56 h-56 rounded-2xl border border-border bg-white p-2"
+                                        className="h-52 w-52 rounded-lg"
                                     />
                                 ) : (
-                                    <div className="w-56 h-56 rounded-2xl bg-surface-muted animate-pulse" />
-                                )}
-                                <div className="text-sm font-semibold text-ink-muted">
-                                    {qrState.status === "CONFIRMED"
-                                        ? t("auth.login.qrConfirmed")
-                                        : qrState.status === "EXPIRED"
-                                          ? t("auth.login.qrExpired")
-                                          : t("auth.login.qrHint")}
-                                </div>
-                                {(qrState.status === "EXPIRED" ||
-                                    qrState.status === "error") && (
-                                    <Button
-                                        type="button"
-                                        icon={RefreshCw}
-                                        onClick={startQrLogin}
-                                    >
-                                        {t("auth.login.qrRefresh")}
-                                    </Button>
+                                    <div
+                                        role="status"
+                                        className="h-52 w-52 animate-pulse rounded-lg bg-surface-muted"
+                                    />
                                 )}
                             </div>
-                        ) : (
-                            <form onSubmit={handleSubmit} className="space-y-4">
-                                <AnimatePresence mode="wait">
-                                    <motion.div
-                                        key={loginType}
-                                        initial={{ opacity: 0, x: 10 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        exit={{ opacity: 0, x: -10 }}
-                                        transition={{ duration: 0.3 }}
-                                        className="space-y-4"
+                            <p
+                                role="status"
+                                className="mt-4 text-caption text-ink-muted"
+                            >
+                                {qrState.status === "CONFIRMED"
+                                    ? t("auth.login.qrConfirmed")
+                                    : qrState.status === "EXPIRED"
+                                      ? t("auth.login.qrExpired")
+                                      : qrState.status === "error"
+                                        ? t("auth.login.qrUnavailable")
+                                        : t("auth.login.qrHint")}
+                            </p>
+                            {(qrState.status === "EXPIRED" ||
+                                qrState.status === "error") && (
+                                <Button
+                                    type="button"
+                                    icon={RefreshCw}
+                                    onClick={startQrLogin}
+                                    variant="outline"
+                                    className="mt-4"
+                                >
+                                    {t("auth.login.qrRefresh")}
+                                </Button>
+                            )}
+                        </div>
+                    ) : (
+                        <form
+                            onSubmit={handleSubmit}
+                            className="mt-7 space-y-5"
+                        >
+                            <div className="space-y-4">
+                                <FormField
+                                    label={
+                                        isCodeFlow
+                                            ? t("auth.login.emailLabel")
+                                            : t("auth.login.accountLabel")
+                                    }
+                                    htmlFor="account"
+                                >
+                                    <div className="relative">
+                                        <Mail
+                                            aria-hidden="true"
+                                            className="pointer-events-none absolute left-3.5 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-ink-faint"
+                                        />
+                                        <input
+                                            type={isCodeFlow ? "email" : "text"}
+                                            id="account"
+                                            name="account"
+                                            autoComplete={
+                                                isCodeFlow
+                                                    ? "email"
+                                                    : "username"
+                                            }
+                                            required
+                                            value={formData.account}
+                                            onChange={handleChange}
+                                            className={twMerge(
+                                                inputClassName,
+                                                isCodeFlow
+                                                    ? "pl-11 pr-32"
+                                                    : "pl-11",
+                                            )}
+                                            placeholder={
+                                                isCodeFlow
+                                                    ? t(
+                                                          "auth.login.emailPlaceholder",
+                                                      )
+                                                    : t(
+                                                          "auth.login.accountPlaceholder",
+                                                      )
+                                            }
+                                        />
+                                        {isCodeFlow && (
+                                            <Button
+                                                type="button"
+                                                size="sm"
+                                                variant="ghost"
+                                                disabled={countdown > 0}
+                                                loading={sendingCode}
+                                                onClick={handleSendCode}
+                                                className="absolute right-1.5 top-1/2 -translate-y-1/2 px-2.5 text-accent hover:bg-accent-soft hover:text-accent-fg"
+                                            >
+                                                {countdown > 0
+                                                    ? `${countdown}s`
+                                                    : t("auth.login.sendCode")}
+                                            </Button>
+                                        )}
+                                    </div>
+                                </FormField>
+
+                                {isCodeFlow ? (
+                                    <FormField
+                                        label={t("auth.login.codeLabel")}
+                                        htmlFor="code"
                                     >
-                                        <div className="space-y-4">
-                                            {/* 账号/邮箱输入 */}
-                                            <div className="group">
-                                                <label
-                                                    htmlFor="account"
-                                                    className="text-caption font-black text-ink-faint uppercase tracking-widest mb-2 px-1 block"
-                                                >
-                                                    {loginType === "password"
-                                                        ? t(
-                                                              "auth.login.accountLabel",
-                                                          )
-                                                        : t(
-                                                              "auth.login.emailLabel",
-                                                          )}
-                                                </label>
-                                                <div className="relative">
-                                                    <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
-                                                        <Mail className="w-4 h-4 text-ink-faint group-focus-within:text-accent transition-colors" />
-                                                    </div>
-                                                    <input
-                                                        type={
-                                                            loginType === "code"
-                                                                ? "email"
-                                                                : "text"
-                                                        }
-                                                        id="account"
-                                                        name="account"
-                                                        required
-                                                        value={formData.account}
-                                                        onChange={handleChange}
-                                                        className="block w-full pl-12 pr-6 py-4.5 bg-canvas/50 border border-border rounded-3xl text-body font-bold text-ink placeholder:text-ink-faint focus:outline-none focus:ring-4 focus:ring-accent/10 focus:border-accent transition-all shadow-inner"
-                                                        placeholder={
-                                                            loginType ===
-                                                            "password"
-                                                                ? t(
-                                                                      "auth.login.accountPlaceholder",
-                                                                  )
-                                                                : t(
-                                                                      "auth.login.emailPlaceholder",
-                                                                  )
-                                                        }
-                                                    />
-                                                </div>
+                                        <div className="relative rounded-lg border border-border bg-white px-2.5 py-1.5 transition focus-within:border-accent focus-within:ring-2 focus-within:ring-accent/10">
+                                            <div
+                                                aria-hidden="true"
+                                                className="grid h-9 grid-cols-6 gap-1.5 sm:gap-2"
+                                            >
+                                                {Array.from(
+                                                    { length: 6 },
+                                                    (_, index) => {
+                                                        const value =
+                                                            formData.code[
+                                                                index
+                                                            ];
+                                                        const isCurrent =
+                                                            codeInputFocused &&
+                                                            index ===
+                                                                formData.code
+                                                                    .length &&
+                                                            formData.code
+                                                                .length < 6;
+                                                        const slotClassName =
+                                                            value
+                                                                ? "border-accent-200 bg-accent-50 text-ink"
+                                                                : isCurrent
+                                                                  ? "border-accent bg-white text-accent"
+                                                                  : "border-border bg-surface text-ink-faint";
+
+                                                        return (
+                                                            <span
+                                                                key={index}
+                                                                className={`flex min-w-0 items-center justify-center rounded-md border text-title transition-colors ${slotClassName}`}
+                                                            >
+                                                                {value || ""}
+                                                            </span>
+                                                        );
+                                                    },
+                                                )}
                                             </div>
-
-                                            {/* 密码输入（仅密码模式） */}
-                                            {loginType === "password" && (
-                                                <div className="group">
-                                                    <label
-                                                        htmlFor="password"
-                                                        className="text-caption font-black text-ink-faint uppercase tracking-widest mb-2 px-1 block"
-                                                    >
-                                                        {t(
-                                                            "auth.login.passwordLabel",
-                                                        )}
-                                                    </label>
-                                                    <div className="relative">
-                                                        <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
-                                                            <Lock className="w-4 h-4 text-ink-faint group-focus-within:text-accent transition-colors" />
-                                                        </div>
-                                                        <input
-                                                            type="password"
-                                                            id="password"
-                                                            name="password"
-                                                            required
-                                                            value={
-                                                                formData.password
-                                                            }
-                                                            onChange={
-                                                                handleChange
-                                                            }
-                                                            className="block w-full pl-12 pr-6 py-4.5 bg-canvas/50 border border-border rounded-3xl text-body font-bold text-ink placeholder:text-ink-faint focus:outline-none focus:ring-4 focus:ring-accent/10 focus:border-accent transition-all shadow-inner"
-                                                            placeholder={t(
-                                                                "auth.login.passwordPlaceholder",
-                                                            )}
-                                                        />
-                                                    </div>
-                                                </div>
-                                            )}
-
-                                            {/* 验证码输入（仅验证码模式） */}
-                                            {loginType === "code" && (
-                                                <div className="group">
-                                                    <label
-                                                        htmlFor="code"
-                                                        className="text-caption font-black text-ink-faint uppercase tracking-widest mb-2 px-1 block"
-                                                    >
-                                                        {t(
-                                                            "auth.login.codeLabel",
-                                                        )}
-                                                    </label>
-                                                    <div className="flex gap-2">
-                                                        <div className="relative flex-1">
-                                                            <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
-                                                                <ShieldCheck className="w-4 h-4 text-ink-faint group-focus-within:text-accent transition-colors" />
-                                                            </div>
-                                                            <input
-                                                                type="text"
-                                                                id="code"
-                                                                name="code"
-                                                                required
-                                                                maxLength={6}
-                                                                value={
-                                                                    formData.code
-                                                                }
-                                                                onChange={
-                                                                    handleChange
-                                                                }
-                                                                className="block w-full pl-12 pr-6 py-4.5 bg-canvas/50 border border-border rounded-3xl text-body font-bold text-ink placeholder:text-ink-faint focus:outline-none focus:ring-4 focus:ring-accent/10 focus:border-accent transition-all shadow-inner"
-                                                                placeholder={t(
-                                                                    "auth.login.codePlaceholder",
-                                                                )}
-                                                            />
-                                                        </div>
-                                                        <Button
-                                                            type="button"
-                                                            disabled={
-                                                                countdown > 0 ||
-                                                                sendingCode
-                                                            }
-                                                            loading={
-                                                                sendingCode
-                                                            }
-                                                            onClick={
-                                                                handleSendCode
-                                                            }
-                                                            variant="ink"
-                                                            size="lg"
-                                                            className="rounded-3xl h-auto px-6 py-4 whitespace-nowrap hover:scale-105 shadow-xl shadow-ink/10"
-                                                        >
-                                                            {countdown > 0
-                                                                ? `${countdown}s`
-                                                                : t(
-                                                                      "auth.login.sendCode",
-                                                                  )}
-                                                        </Button>
-                                                    </div>
-                                                </div>
-                                            )}
+                                            <input
+                                                type="text"
+                                                id="code"
+                                                name="code"
+                                                inputMode="numeric"
+                                                pattern="[0-9]{6}"
+                                                autoComplete="one-time-code"
+                                                required
+                                                maxLength={6}
+                                                value={formData.code}
+                                                onChange={handleCodeChange}
+                                                onFocus={() =>
+                                                    setCodeInputFocused(true)
+                                                }
+                                                onBlur={() =>
+                                                    setCodeInputFocused(false)
+                                                }
+                                                aria-label={t(
+                                                    "auth.login.codeLabel",
+                                                )}
+                                                className="absolute inset-0 h-full w-full cursor-text rounded-lg opacity-0"
+                                            />
                                         </div>
-                                    </motion.div>
-                                </AnimatePresence>
-
-                                {/* 登录按钮 */}
-                                <div className="relative pb-6">
-                                    <Button
-                                        type="submit"
-                                        loading={loading}
-                                        variant="primary"
-                                        size="lg"
-                                        block
-                                        icon={ArrowRight}
-                                        iconPosition="right"
-                                        className="group relative h-auto py-4.5 rounded-[1.75rem] font-black text-sm shadow-accent/30 hover:scale-[1.02] overflow-hidden scale-fix"
+                                    </FormField>
+                                ) : (
+                                    <FormField
+                                        label={t("auth.login.passwordLabel")}
+                                        htmlFor="password"
                                     >
-                                        <span className="relative z-10">
-                                            {loginType === "code"
-                                                ? t("auth.login.submit")
-                                                : t("auth.login.login")}
-                                        </span>
-                                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:animate-[shimmer_2s_infinite]" />
-                                    </Button>
-                                    {/* 验证码模式的自动注册提示 - 绝对定位不占空间 */}
-                                    {loginType === "code" && (
-                                        <div className="absolute top-full left-0 right-0 mt-2 text-caption text-ink-faint text-center font-medium px-2">
-                                            {t("auth.login.autoRegisterHint")}
+                                        <div className="relative">
+                                            <LockKeyhole
+                                                aria-hidden="true"
+                                                className="pointer-events-none absolute left-3.5 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-ink-faint"
+                                            />
+                                            <input
+                                                type="password"
+                                                id="password"
+                                                name="password"
+                                                autoComplete="current-password"
+                                                required
+                                                value={formData.password}
+                                                onChange={handleChange}
+                                                className={twMerge(
+                                                    inputClassName,
+                                                    "pl-11",
+                                                )}
+                                                placeholder={t(
+                                                    "auth.login.passwordPlaceholder",
+                                                )}
+                                            />
                                         </div>
-                                    )}
-                                </div>
-                            </form>
-                        )}
-                    </div>
+                                    </FormField>
+                                )}
+                            </div>
 
-                    <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent/30 to-transparent" />
+                            {authMode === "login" && (
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        setLoginType((current) =>
+                                            current === "password"
+                                                ? "code"
+                                                : "password",
+                                        )
+                                    }
+                                    className="text-caption font-medium text-accent hover:text-accent-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                                >
+                                    {loginType === "password"
+                                        ? t("auth.login.switchToCode")
+                                        : t("auth.login.switchToPassword")}
+                                </button>
+                            )}
+
+                            <Button
+                                type="submit"
+                                loading={loading}
+                                variant="primary"
+                                size="lg"
+                                block
+                                icon={ArrowRight}
+                                iconPosition="right"
+                                className="rounded-lg"
+                            >
+                                {authMode === "register"
+                                    ? t("auth.login.registerSubmit")
+                                    : t("auth.login.login")}
+                            </Button>
+
+                            {isCodeFlow && (
+                                <p className="text-center text-caption leading-relaxed text-ink-faint">
+                                    {authMode === "register"
+                                        ? t("auth.login.autoRegisterHint")
+                                        : t("auth.login.codeLoginHint")}
+                                </p>
+                            )}
+                        </form>
+                    )}
+
+                    {!showWechatQr && (
+                        <>
+                            <div className="my-7 flex items-center gap-4">
+                                <span className="h-px flex-1 bg-border" />
+                                <span className="text-caption text-ink-faint">
+                                    {t("auth.login.socialDivider")}
+                                </span>
+                                <span className="h-px flex-1 bg-border" />
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-3">
+                                <button
+                                    type="button"
+                                    onClick={openWechatQr}
+                                    className="flex h-11 items-center justify-center gap-2 rounded-lg border border-border bg-white text-caption font-medium text-ink transition-colors hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                                >
+                                    <MessageCircle
+                                        aria-hidden="true"
+                                        className="h-5 w-5 text-[#07c160]"
+                                    />
+                                    {t("auth.login.wechat")}
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        toast.warning(
+                                            t("auth.login.googleUnavailable"),
+                                        )
+                                    }
+                                    className="flex h-11 items-center justify-center gap-2 rounded-lg border border-border bg-white text-caption font-medium text-ink transition-colors hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                                    aria-label={t("auth.login.google")}
+                                >
+                                    <GoogleMark />
+                                    {t("auth.login.google")}
+                                </button>
+                            </div>
+                        </>
+                    )}
                 </div>
-            </motion.div>
-        </div>
+            </section>
+        </main>
     );
 };
 
