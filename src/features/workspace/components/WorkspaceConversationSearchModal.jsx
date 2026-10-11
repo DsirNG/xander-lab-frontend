@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { Loader2, MessageCircle, Search, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import Modal from "@shared/ui/overlays/Modal";
@@ -8,6 +8,14 @@ import {
 } from "@features/agent/services/agentConversationService";
 
 const PAGE_SIZE = 20;
+
+const debugConversationSearch = (event, details = {}) => {
+    if (!import.meta.env.DEV) return;
+    console.debug(`[ConversationSearch] ${event}`, {
+        at: new Date().toISOString(),
+        ...details,
+    });
+};
 
 const appendUnique = (current, incoming) => {
     const seen = new Set(current.map((item) => String(item.id)));
@@ -24,6 +32,7 @@ const appendUnique = (current, incoming) => {
 
 const WorkspaceConversationSearchModal = ({ open, onClose, onSelect }) => {
     const { t } = useTranslation();
+    const modalInstanceId = useId();
     const [query, setQuery] = useState("");
     const [items, setItems] = useState([]);
     const [page, setPage] = useState(1);
@@ -37,6 +46,19 @@ const WorkspaceConversationSearchModal = ({ open, onClose, onSelect }) => {
     const requestControllerRef = useRef(null);
     const resultsRef = useRef(null);
     const sentinelRef = useRef(null);
+    const previousOpenRef = useRef(open);
+
+    useEffect(() => {
+        const wasOpen = previousOpenRef.current;
+        previousOpenRef.current = open;
+        if (wasOpen !== open) {
+            debugConversationSearch("visibility-change", {
+                modalInstanceId,
+                from: wasOpen,
+                to: open,
+            });
+        }
+    }, [modalInstanceId, open]);
 
     useEffect(() => {
         const requestVersion = ++requestVersionRef.current;
@@ -54,6 +76,12 @@ const WorkspaceConversationSearchModal = ({ open, onClose, onSelect }) => {
             return undefined;
         }
 
+        debugConversationSearch("search-effect", {
+            modalInstanceId,
+            requestVersion,
+            queryLength: query.length,
+            retryKey,
+        });
         const controller = new AbortController();
         requestControllerRef.current = controller;
         setLoading(true);
@@ -61,8 +89,17 @@ const WorkspaceConversationSearchModal = ({ open, onClose, onSelect }) => {
         setLoadError(false);
         setLoadMoreError(false);
         const delay = query.trim() ? 250 : 0;
+        let requestStarted = false;
         const timer = window.setTimeout(async () => {
+            requestStarted = true;
             try {
+                debugConversationSearch("list-request-start", {
+                    modalInstanceId,
+                    requestVersion,
+                    page: 1,
+                    size: PAGE_SIZE,
+                    queryLength: query.length,
+                });
                 const response = await agentConversationService.list({
                     page: 1,
                     size: PAGE_SIZE,
@@ -76,7 +113,21 @@ const WorkspaceConversationSearchModal = ({ open, onClose, onSelect }) => {
                 setItems(result.items);
                 setPage(result.page || 1);
                 setHasMore(result.hasMore);
-            } catch {
+                debugConversationSearch("list-request-success", {
+                    modalInstanceId,
+                    requestVersion,
+                    itemCount: result.items.length,
+                    hasMore: result.hasMore,
+                });
+            } catch (error) {
+                debugConversationSearch(
+                    controller.signal.aborted ? "list-request-aborted" : "list-request-error",
+                    {
+                        modalInstanceId,
+                        requestVersion,
+                        errorName: controller.signal.aborted ? undefined : error?.name,
+                    },
+                );
                 if (controller.signal.aborted || requestVersion !== requestVersionRef.current)
                     return;
                 setItems([]);
@@ -91,8 +142,13 @@ const WorkspaceConversationSearchModal = ({ open, onClose, onSelect }) => {
         return () => {
             window.clearTimeout(timer);
             controller.abort();
+            debugConversationSearch("search-effect-cleanup", {
+                modalInstanceId,
+                requestVersion,
+                requestStarted,
+            });
         };
-    }, [open, query, retryKey]);
+    }, [modalInstanceId, open, query, retryKey]);
 
     const loadMore = useCallback(async () => {
         if (!open || loading || loadingMore || loadError || loadMoreError || !hasMore)
@@ -145,6 +201,7 @@ const WorkspaceConversationSearchModal = ({ open, onClose, onSelect }) => {
     }, [hasMore, loadError, loadMore, loadMoreError, loading, loadingMore, open, items.length]);
 
     const close = () => {
+        debugConversationSearch("close-request", { modalInstanceId });
         requestControllerRef.current?.abort();
         onClose();
     };

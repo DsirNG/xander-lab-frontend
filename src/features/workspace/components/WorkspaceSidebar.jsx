@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useId, useMemo, useRef, useState } from "react";
 import PropTypes from "prop-types";
 import {
     Blocks,
@@ -129,6 +129,7 @@ const WorkspaceSidebar = ({
     onSelectView,
 }) => {
     const { t } = useTranslation();
+    const sidebarInstanceId = useId();
     const [searchOpen, setSearchOpen] = useState(false);
     const sessionListRef = useRef(null);
     const loadMoreSentinelRef = useRef(null);
@@ -203,7 +204,17 @@ const WorkspaceSidebar = ({
                 </div>
                 <button
                     type="button"
-                    onClick={() => setSearchOpen(true)}
+                    onClick={(event) => {
+                        if (import.meta.env.DEV) {
+                            console.debug("[ConversationSearch] open-click", {
+                                at: new Date().toISOString(),
+                                sidebarInstanceId,
+                                clickCount: event.detail,
+                                alreadyOpen: searchOpen,
+                            });
+                        }
+                        setSearchOpen(true);
+                    }}
                     className="grid h-8 w-8 place-items-center rounded-md text-ink-muted transition-colors hover:bg-surface-muted hover:text-accent"
                     title={t("workspace.agent.searchPlaceholder", "搜索对话")}
                     aria-label={t("workspace.agent.searchPlaceholder", "搜索对话")}
