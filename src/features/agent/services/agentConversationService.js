@@ -16,8 +16,14 @@ export const agentConversationService = {
             onProgress,
             config: { _silent: true, ...config },
         }),
-    /** 会话列表 */
-    list: (config) => get(BASE, undefined, config),
+    /** 会话分页列表，可选按标题搜索。 */
+    list: ({ page = 1, size = 30, search, ...config } = {}) => {
+        const params = { ...config.params, page, size };
+        const normalizedSearch = typeof search === "string" ? search.trim() : "";
+        if (normalizedSearch) params.search = normalizedSearch;
+        else delete params.search;
+        return get(BASE, undefined, { ...config, params });
+    },
     /** 会话详情，返回 { conversation, messages } */
     get: (id, config) => get(`${BASE}/${id}`, undefined, config),
     /** 消息列表 */
@@ -72,6 +78,23 @@ export const agentConversationService = {
                 ? { ...config?.headers, "Last-Event-ID": String(afterEventId) }
                 : config?.headers,
         }),
+};
+
+export const normalizeAgentConversationPage = (response) => {
+    if (Array.isArray(response)) {
+        return {
+            items: response,
+            page: 1,
+            size: response.length,
+            hasMore: false,
+        };
+    }
+    return {
+        items: Array.isArray(response?.items) ? response.items : [],
+        page: Number.isInteger(response?.page) ? response.page : 1,
+        size: Number.isInteger(response?.size) ? response.size : 30,
+        hasMore: Boolean(response?.hasMore),
+    };
 };
 
 /** 把后端消息体解析为渲染友好的对象，供页面直接使用 */

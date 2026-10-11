@@ -1,14 +1,17 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import PropTypes from "prop-types";
 import {
     Blocks,
     ChevronRight,
     Image,
+    Loader2,
     Pin,
     PinOff,
     Plus,
+    Search,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import WorkspaceConversationSearchModal from "./WorkspaceConversationSearchModal";
 
 const parseSessionTime = (value) => {
     if (!value) return 0;
@@ -111,14 +114,24 @@ const WorkspaceSidebar = ({
     userInfo,
     sessions,
     activeConversationId,
+    sessionsLoading,
+    sessionsHasMore,
+    sessionsLoadingMore,
+    sessionsLoadError,
+    sessionsLoadMoreError,
     onNewConversation,
     onSelectConversation,
     onTogglePin,
+    onLoadSessions,
+    onLoadMoreSessions,
     onOpenSettings,
     activeView,
     onSelectView,
 }) => {
     const { t } = useTranslation();
+    const [searchOpen, setSearchOpen] = useState(false);
+    const sessionListRef = useRef(null);
+    const loadMoreSentinelRef = useRef(null);
     const displayName = userInfo?.nickname || userInfo?.username || "DinQorAI";
     const avatarText = displayName.slice(0, 2).toUpperCase();
     const linkClass = (view) =>
@@ -130,9 +143,12 @@ const WorkspaceSidebar = ({
 
     const { pinnedSessions, recentSessions } = useMemo(() => {
         const sorted = [...(sessions || [])].sort(
-            (a, b) =>
-                parseSessionTime(b.updatedAt || b.createdAt) -
-                parseSessionTime(a.updatedAt || a.createdAt),
+            (a, b) => {
+                const timeDifference =
+                    parseSessionTime(b.updatedAt || b.createdAt) -
+                    parseSessionTime(a.updatedAt || a.createdAt);
+                return timeDifference || Number(b.id) - Number(a.id);
+            },
         );
         return {
             pinnedSessions: sorted.filter(
@@ -143,6 +159,38 @@ const WorkspaceSidebar = ({
             ),
         };
     }, [sessions]);
+
+    useEffect(() => {
+        const root = sessionListRef.current;
+        const sentinel = loadMoreSentinelRef.current;
+        if (
+            !root ||
+            !sentinel ||
+            !sessionsHasMore ||
+            sessionsLoadingMore ||
+            sessionsLoadMoreError ||
+            typeof onLoadMoreSessions !== "function" ||
+            typeof IntersectionObserver === "undefined"
+        ) {
+            return undefined;
+        }
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                if (entries.some((entry) => entry.isIntersecting))
+                    onLoadMoreSessions();
+            },
+            { root, rootMargin: "120px" },
+        );
+        observer.observe(sentinel);
+        return () => observer.disconnect();
+    }, [
+        onLoadMoreSessions,
+        sessionsHasMore,
+        sessionsLoadMoreError,
+        sessionsLoadingMore,
+        sessions.length,
+    ]);
 
     return (
         <aside
@@ -193,7 +241,10 @@ const WorkspaceSidebar = ({
                     </button>
                 </nav>
 
-                <div className="mt-4 min-h-0 flex-1 overflow-y-auto border-t border-border pt-5">
+                <div
+                    ref={sessionListRef}
+                    className="mt-4 min-h-0 flex-1 overflow-y-auto border-t border-border pt-5"
+                >
                     <div className="px-2 text-caption font-semibold text-ink-muted">
                         {t("workspace.agent.groups.pinned", "置顶")}
                     </div>
@@ -220,8 +271,19 @@ const WorkspaceSidebar = ({
                         )}
                     </div>
 
-                    <div className="mt-5 px-2 text-caption font-semibold text-ink-muted">
-                        {t("workspace.agent.groups.recent", "最近")}
+                    <div className="mt-5 flex items-center justify-between px-2">
+                        <span className="text-caption font-semibold text-ink-muted">
+                            {t("workspace.agent.groups.recent", "最近")}
+                        </span>
+                        <button
+                            type="button"
+                            onClick={() => setSearchOpen(true)}
+                            className="grid h-7 w-7 place-items-center rounded-md text-ink-muted transition-colors hover:bg-surface-muted hover:text-accent"
+                            title={t("workspace.agent.searchPlaceholder", "搜索对话")}
+                            aria-label={t("workspace.agent.searchPlaceholder", "搜索对话")}
+                        >
+                            <Search className="h-4 w-4" aria-hidden="true" />
+                        </button>
                     </div>
                     <div className="mt-2 space-y-0.5">
                         {recentSessions.length ? (
@@ -239,6 +301,19 @@ const WorkspaceSidebar = ({
                                     t={t}
                                 />
                             ))
+                        ) : sessionsLoadError && sessions.length === 0 ? (
+                            <button
+                                type="button"
+                                onClick={() => onLoadSessions?.()}
+                                className="w-full px-2 py-1 text-left text-micro text-accent hover:underline"
+                            >
+                                {t("workspace.agent.loadSessionsFailed", "加载失败，点击重试")}
+                            </button>
+                        ) : sessionsLoading && sessions.length === 0 ? (
+                            <div className="flex items-center gap-2 px-2 py-1 text-micro text-ink-muted">
+                                <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" />
+                                {t("workspace.agent.loadingSessions", "正在加载对话…")}
+                            </div>
                         ) : (
                             <div className="px-2 py-1 text-micro text-ink-faint">
                                 {t(
@@ -247,6 +322,33 @@ const WorkspaceSidebar = ({
                                 )}
                             </div>
                         )}
+                    </div>
+                    <div
+                        ref={loadMoreSentinelRef}
+                        className="flex min-h-10 items-center justify-center px-2"
+                    >
+                        {sessionsLoadingMore ? (
+                            <span className="flex items-center gap-2 text-micro text-ink-muted">
+                                <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" />
+                                {t("workspace.agent.loadingSessions", "正在加载对话…")}
+                            </span>
+                        ) : sessionsLoadMoreError ? (
+                            <button
+                                type="button"
+                                onClick={onLoadMoreSessions}
+                                className="text-micro text-accent hover:underline"
+                            >
+                                {t("workspace.agent.loadSessionsFailed", "加载失败，点击重试")}
+                            </button>
+                        ) : sessionsHasMore ? (
+                            <button
+                                type="button"
+                                onClick={onLoadMoreSessions}
+                                className="text-micro text-ink-muted hover:text-accent"
+                            >
+                                {t("workspace.agent.loadMoreSessions", "加载更多对话")}
+                            </button>
+                        ) : null}
                     </div>
                 </div>
             </div>
@@ -280,6 +382,11 @@ const WorkspaceSidebar = ({
                     aria-hidden="true"
                 />
             </button>
+            <WorkspaceConversationSearchModal
+                open={searchOpen}
+                onClose={() => setSearchOpen(false)}
+                onSelect={onSelectConversation}
+            />
         </aside>
     );
 };
@@ -292,6 +399,11 @@ WorkspaceSidebar.propTypes = {
         username: PropTypes.string,
     }),
     sessions: PropTypes.arrayOf(PropTypes.object),
+    sessionsLoading: PropTypes.bool,
+    sessionsHasMore: PropTypes.bool,
+    sessionsLoadingMore: PropTypes.bool,
+    sessionsLoadError: PropTypes.bool,
+    sessionsLoadMoreError: PropTypes.bool,
     activeConversationId: PropTypes.oneOfType([
         PropTypes.string,
         PropTypes.number,
@@ -299,6 +411,8 @@ WorkspaceSidebar.propTypes = {
     onNewConversation: PropTypes.func.isRequired,
     onSelectConversation: PropTypes.func.isRequired,
     onTogglePin: PropTypes.func.isRequired,
+    onLoadSessions: PropTypes.func,
+    onLoadMoreSessions: PropTypes.func,
     onOpenSettings: PropTypes.func.isRequired,
     activeView: PropTypes.oneOf(["images", "plugins", null]),
     onSelectView: PropTypes.func.isRequired,
@@ -307,6 +421,11 @@ WorkspaceSidebar.propTypes = {
 WorkspaceSidebar.defaultProps = {
     userInfo: null,
     sessions: [],
+    sessionsLoading: false,
+    sessionsHasMore: false,
+    sessionsLoadingMore: false,
+    sessionsLoadError: false,
+    sessionsLoadMoreError: false,
     activeConversationId: null,
     activeView: null,
 };

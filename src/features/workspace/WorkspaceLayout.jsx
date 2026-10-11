@@ -138,10 +138,17 @@ const WorkspaceLayoutInner = () => {
                     <WorkspaceSidebar
                         userInfo={userInfo}
                         sessions={agent.sessions}
+                        sessionsLoading={agent.sessionsLoading}
+                        sessionsHasMore={agent.sessionsHasMore}
+                        sessionsLoadingMore={agent.sessionsLoadingMore}
+                        sessionsLoadError={agent.sessionsLoadError}
+                        sessionsLoadMoreError={agent.sessionsLoadMoreError}
                         activeConversationId={conversationId}
                         onNewConversation={handleNewConversation}
                         onSelectConversation={handleSelectConversation}
                         onTogglePin={handleTogglePin}
+                        onLoadSessions={agent.loadSessions}
+                        onLoadMoreSessions={agent.loadMoreSessions}
                         onOpenSettings={() => setSettingsOpen(true)}
                         activeView={activeView}
                         onSelectView={handleSelectView}

@@ -1,8 +1,33 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { agentConversationService } from "../services/agentConversationService";
+import {
+    agentConversationService,
+    normalizeAgentConversationPage,
+} from "../services/agentConversationService";
 import { isAbortError } from "../utils/conversationState";
 
 const SESSIONS_POLL_INTERVAL_MS = 5000;
+const SESSIONS_PAGE_SIZE = 30;
+
+const mergeFirstPage = (current, firstPage) => {
+    const firstPageIds = new Set(firstPage.map((item) => String(item.id)));
+    return [
+        ...firstPage,
+        ...current.filter((item) => !firstPageIds.has(String(item.id))),
+    ];
+};
+
+const appendUniqueSessions = (current, nextPage) => {
+    const seen = new Set(current.map((item) => String(item.id)));
+    const additions = [];
+    nextPage.forEach((item) => {
+        const key = String(item.id);
+        if (!seen.has(key)) {
+            seen.add(key);
+            additions.push(item);
+        }
+    });
+    return [...current, ...additions];
+};
 
 /**
  * 会话列表的生命周期与当前会话流式状态无关：列表可以在离开当前会话后继续刷新，
@@ -11,34 +36,93 @@ const SESSIONS_POLL_INTERVAL_MS = 5000;
 export const useAgentSessions = () => {
     const [sessions, setSessions] = useState([]);
     const [sessionsLoading, setSessionsLoading] = useState(true);
+    const [sessionsHasMore, setSessionsHasMore] = useState(false);
+    const [sessionsLoadingMore, setSessionsLoadingMore] = useState(false);
+    const [sessionsLoadError, setSessionsLoadError] = useState(false);
+    const [sessionsLoadMoreError, setSessionsLoadMoreError] = useState(false);
     const sessionsControllerRef = useRef(null);
+    const sessionsMoreControllerRef = useRef(null);
     const sessionsRequestRef = useRef(0);
+    const sessionsPageRef = useRef(1);
+    const sessionsHasMoreRef = useRef(false);
+    const sessionsLoadingMoreRef = useRef(false);
 
     /** quiet 用于轮询刷新：不闪列表骨架，失败也保留上一次的列表。 */
     const loadSessions = useCallback(async ({ quiet = false } = {}) => {
         const requestId = ++sessionsRequestRef.current;
         sessionsControllerRef.current?.abort();
+        sessionsMoreControllerRef.current?.abort();
+        sessionsMoreControllerRef.current = null;
+        sessionsLoadingMoreRef.current = false;
+        setSessionsLoadingMore(false);
+        setSessionsLoadMoreError(false);
         const controller = new AbortController();
         sessionsControllerRef.current = controller;
-        if (!quiet) setSessionsLoading(true);
+        if (!quiet) {
+            setSessionsLoading(true);
+            setSessionsLoadError(false);
+        }
         try {
-            const list = await agentConversationService.list({
+            const response = await agentConversationService.list({
+                page: 1,
+                size: SESSIONS_PAGE_SIZE,
                 _silent: true,
                 dedupe: false,
                 signal: controller.signal,
             });
-            if (requestId === sessionsRequestRef.current)
-                setSessions(Array.isArray(list) ? list : []);
+            const result = normalizeAgentConversationPage(response);
+            if (requestId === sessionsRequestRef.current) {
+                setSessions((current) => mergeFirstPage(current, result.items));
+                sessionsHasMoreRef.current = result.hasMore;
+                setSessionsHasMore(result.hasMore);
+                setSessionsLoadError(false);
+            }
         } catch (error) {
-            if (
-                !quiet &&
-                !isAbortError(error) &&
-                requestId === sessionsRequestRef.current
-            )
-                setSessions([]);
+            if (!isAbortError(error) && requestId === sessionsRequestRef.current) {
+                if (!quiet) setSessionsLoadError(true);
+            }
         } finally {
             if (requestId === sessionsRequestRef.current)
                 setSessionsLoading(false);
+        }
+    }, []);
+
+    const loadMoreSessions = useCallback(async () => {
+        if (!sessionsHasMoreRef.current || sessionsLoadingMoreRef.current)
+            return false;
+
+        const requestId = sessionsRequestRef.current;
+        const page = sessionsPageRef.current + 1;
+        const controller = new AbortController();
+        sessionsMoreControllerRef.current = controller;
+        sessionsLoadingMoreRef.current = true;
+        setSessionsLoadingMore(true);
+        setSessionsLoadMoreError(false);
+
+        try {
+            const response = await agentConversationService.list({
+                page,
+                size: SESSIONS_PAGE_SIZE,
+                _silent: true,
+                dedupe: false,
+                signal: controller.signal,
+            });
+            const result = normalizeAgentConversationPage(response);
+            if (requestId !== sessionsRequestRef.current) return false;
+            setSessions((current) => appendUniqueSessions(current, result.items));
+            sessionsPageRef.current = result.page || page;
+            sessionsHasMoreRef.current = result.hasMore;
+            setSessionsHasMore(result.hasMore);
+            return true;
+        } catch (error) {
+            if (!isAbortError(error) && requestId === sessionsRequestRef.current)
+                setSessionsLoadMoreError(true);
+            return false;
+        } finally {
+            if (requestId === sessionsRequestRef.current) {
+                sessionsLoadingMoreRef.current = false;
+                setSessionsLoadingMore(false);
+            }
         }
     }, []);
 
@@ -129,7 +213,10 @@ export const useAgentSessions = () => {
 
     useEffect(() => {
         loadSessions();
-        return () => sessionsControllerRef.current?.abort();
+        return () => {
+            sessionsControllerRef.current?.abort();
+            sessionsMoreControllerRef.current?.abort();
+        };
     }, [loadSessions]);
 
     // 有会话在执行时轮询列表：离开该会话后仍能看到转圈变蓝点；全部收口后自动停。
@@ -153,7 +240,12 @@ export const useAgentSessions = () => {
     return {
         sessions,
         sessionsLoading,
+        sessionsHasMore,
+        sessionsLoadingMore,
+        sessionsLoadError,
+        sessionsLoadMoreError,
         loadSessions,
+        loadMoreSessions,
         prependSession,
         markConversationRead,
         setConversationPinned,
