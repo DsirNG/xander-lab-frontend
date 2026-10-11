@@ -5,6 +5,7 @@ import FormField from "@shared/ui/forms/FormField";
 import ConfirmModal from "@shared/ui/overlays/ConfirmModal";
 import { formInputCls } from "@shared/ui/forms/formStyles";
 import { useToast } from "@shared/hooks/useToast";
+import { isRequestCancelled } from "@api";
 import { adminService } from "../services/adminService";
 
 /**
@@ -38,8 +39,8 @@ const AdminWechatCredentialPage = () => {
         try {
             setLoading(true);
             const [data, payData] = await Promise.all([
-                adminService.getWechatCredential(),
-                adminService.getVirtualPaySettings(),
+                adminService.getWechatCredential({ _silent: true }),
+                adminService.getVirtualPaySettings({ _silent: true }),
             ]);
             setAppId(data?.appId || "");
             setConfigured(Boolean(data?.secretConfigured));
@@ -51,8 +52,11 @@ const AdminWechatCredentialPage = () => {
                 pro: payData?.pro || current.pro,
                 ultra: payData?.ultra || current.ultra,
             }));
-        } catch {
-            toast.error(t("admin.wechatCredential.loadFailed"));
+        } catch (error) {
+            if (isRequestCancelled(error)) return;
+            toast.error(
+                error?.message || t("admin.wechatCredential.loadFailed"),
+            );
         } finally {
             setLoading(false);
         }
@@ -133,7 +137,7 @@ const AdminWechatCredentialPage = () => {
     };
 
     return (
-        <div className="mx-auto w-full max-w-2xl space-y-6">
+        <div className="mx-auto w-full max-w-2xl space-y-6 px-4 py-5 sm:px-6 sm:py-6">
             <div>
                 <div className="flex items-center gap-2">
                     <h2 className="text-lg font-bold text-ink">

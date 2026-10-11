@@ -108,7 +108,7 @@ const Modal = ({
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    transition={{ duration: 0.2 }}
+                    transition={{ duration: 0.16, ease: "easeOut" }}
                     className="fixed inset-0 z-[1000] flex items-center justify-center p-4 sm:p-6"
                     onClick={closeOnOutsideClick ? onClose : undefined}
                 >
@@ -116,28 +116,16 @@ const Modal = ({
                     <div className="absolute inset-0 bg-ink/60" />
 
                     {/* 弹窗内容 */}
-                    <motion.div
+                    <div
                         ref={modalRef}
                         role="dialog"
                         aria-modal="true"
                         aria-labelledby={titleId}
                         tabIndex={-1}
-                        key="modal-content"
-                        initial={{ transform: "translate3d(0, 30px, 0)" }}
-                        animate={{ transform: "translate3d(0, 0px, 0)" }}
-                        exit={{ transform: "translate3d(0, 30px, 0)" }}
-                        transition={{
-                            type: "tween",
-                            ease: "easeInOut",
-                            duration: 0.3,
-                        }}
-                        // 【修复 1】增加 antialiased 和 transform-gpu 类名
                         className={`relative w-full ${width} bg-canvas rounded-3xl shadow-2xl shadow-ink/30 flex flex-col max-h-[90dvh] overflow-hidden antialiased transform-gpu outline-none ${className}`}
-                        // 【修复 1 补充】强制保留硬件加速，防止动画结束时字体重新渲染
                         style={{
                             WebkitFontSmoothing: "antialiased",
                             backfaceVisibility: "hidden",
-                            transform: "translateZ(0)",
                         }}
                         onClick={(e) => e.stopPropagation()}
                     >
@@ -182,7 +170,7 @@ const Modal = ({
                                 {footer}
                             </div>
                         )}
-                    </motion.div>
+                    </div>
                 </motion.div>
             )}
         </AnimatePresence>,

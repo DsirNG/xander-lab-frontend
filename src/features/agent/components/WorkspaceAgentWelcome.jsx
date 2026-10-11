@@ -23,13 +23,7 @@ const WorkspaceAgentWelcome = ({
 
     return (
         <div className="flex min-h-0 flex-1 flex-col items-center justify-center px-4 pb-12 pt-4 text-center">
-            <div className="relative mb-4 flex items-center justify-center">
-                <img
-                    src="/assets/workspace/home/hero-orb.svg"
-                    alt=""
-                    className="h-28 w-28 object-contain transition-transform duration-700"
-                />
-            </div>
+
 
             <h1 className="text-2xl font-bold text-[#111426] sm:text-3xl">
                 {t("workspace.home.welcome", "欢迎回来，")}{" "}
@@ -53,6 +47,7 @@ const WorkspaceAgentWelcome = ({
                     isActive={isActive}
                     fileInputRef={fileInputRef}
                     textareaRef={textareaRef}
+                    alwaysExpanded
                     showQuickActions
                     onInputChange={onInputChange}
                     onFilesSelected={onFilesSelected}

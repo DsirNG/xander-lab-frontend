@@ -126,13 +126,6 @@ const WorkspaceAgentChat = () => {
             });
     }, [approvals, messages, steps]);
 
-    useEffect(() => {
-        const element = textareaRef.current;
-        if (!element) return;
-        element.style.height = "auto";
-        element.style.height = `${Math.min(element.scrollHeight, 120)}px`;
-    }, [input]);
-
     const submitText = useCallback(
         async (text, selectedAttachments = []) => {
             const trimmed =
@@ -153,7 +146,7 @@ const WorkspaceAgentChat = () => {
                         selectedAttachments,
                     );
                     if (!detail?.conversation?.id) return;
-                    navigate(`/workspace/ai/${detail.conversation.id}`, {
+                    navigate(`/app/${detail.conversation.id}`, {
                         replace: true,
                     });
                     setInput("");
@@ -311,6 +304,7 @@ const WorkspaceAgentChat = () => {
                                     isActive={isActive}
                                     fileInputRef={fileInputRef}
                                     textareaRef={textareaRef}
+                                    alwaysExpanded
                                     onInputChange={setInput}
                                     onFilesSelected={handleFilesSelected}
                                     onRemoveAttachment={handleRemoveAttachment}

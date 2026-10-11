@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
     AtSign,
     Blocks,
@@ -8,7 +8,6 @@ import {
     Globe,
     Image as ImageIcon,
     Loader2,
-    Mic,
     PenLine,
     Plus,
     Send,
@@ -76,6 +75,7 @@ const AgentComposer = ({
     isActive,
     fileInputRef,
     textareaRef,
+    alwaysExpanded = false,
     showQuickActions = false,
     deepThinking = false,
     onInputChange,
@@ -90,6 +90,7 @@ const AgentComposer = ({
 }) => {
     const [addMenuOpen, setAddMenuOpen] = useState(false);
     const [mentionMenuOpen, setMentionMenuOpen] = useState(false);
+    const [multiline, setMultiline] = useState(alwaysExpanded);
     const [recentPluginIds, setRecentPluginIds] = useState(() => {
         try {
             return JSON.parse(
@@ -111,6 +112,36 @@ const AgentComposer = ({
         document.addEventListener("mousedown", handleOutside);
         return () => document.removeEventListener("mousedown", handleOutside);
     }, []);
+
+    useLayoutEffect(() => {
+        const textarea = textareaRef.current;
+        if (!textarea) return undefined;
+
+        const measureLines = () => {
+            textarea.style.height = "auto";
+            const naturalHeight = textarea.scrollHeight;
+            const shouldExpand =
+                alwaysExpanded ||
+                naturalHeight > (multiline ? 48 : 40) + 1;
+            textarea.style.height = `${Math.min(
+                Math.max(naturalHeight, shouldExpand ? 48 : 40),
+                120,
+            )}px`;
+            setMultiline((current) =>
+                current === shouldExpand ? current : shouldExpand,
+            );
+        };
+
+        measureLines();
+        const observer =
+            typeof ResizeObserver !== "undefined"
+                ? new ResizeObserver(measureLines)
+                : null;
+        if (textarea.parentElement) observer?.observe(textarea.parentElement);
+        return () => {
+            observer?.disconnect();
+        };
+    }, [alwaysExpanded, input, multiline, textareaRef]);
 
     const orderedPlugins = useMemo(() => {
         const rank = new Map(recentPluginIds.map((id, index) => [id, index]));
@@ -160,7 +191,12 @@ const AgentComposer = ({
 
     return (
         <>
-            <div className="relative rounded-[1.75rem] border border-[#e5e7f2] bg-white p-1 shadow-[0_4px_20px_rgba(103,101,246,0.04)] transition-all focus-within:border-[#817bf2] focus-within:ring-2 focus-within:ring-[#817bf2]/20">
+            <div
+                data-multiline={multiline ? "true" : "false"}
+                className={`relative rounded-[1.75rem] border border-[#e5e7f2] bg-white shadow-[0_4px_20px_rgba(103,101,246,0.04)] transition-all focus-within:border-[#817bf2] focus-within:ring-2 focus-within:ring-[#817bf2]/20 ${
+                    multiline ? "min-h-[88px] p-2" : "min-h-[48px] p-1"
+                }`}
+            >
                 {attachments.length > 0 ? (
                     <div className="flex flex-wrap gap-2 px-2 pb-2">
                         {attachments.map((attachment) => (
@@ -173,23 +209,84 @@ const AgentComposer = ({
                     </div>
                 ) : null}
 
-                <div ref={menuRef} className="relative flex items-center gap-2">
-                    <button
-                        type="button"
-                        onClick={() => {
-                            setAddMenuOpen((open) => !open);
-                            setMentionMenuOpen(false);
-                        }}
-                        disabled={locked || uploadingAttachments}
-                        className="grid h-9 w-9 shrink-0 cursor-pointer place-items-center rounded-full text-[#8e94aa] transition-colors hover:bg-[#f5f4fb] hover:text-[#6765f6] disabled:opacity-50"
-                        title={t("blog.agentChat.addAttachment", "添加")}
+                <div
+                    ref={menuRef}
+                    className={`relative flex min-h-0 ${
+                        multiline
+                            ? "flex-col"
+                            : "flex-row items-center gap-2"
+                    }`}
+                >
+                    <div
+                        className={`min-w-0 ${
+                            multiline
+                                ? "order-1 min-h-[48px] w-full flex-1"
+                                : "order-2 flex flex-1 items-center"
+                        }`}
                     >
-                        {uploadingAttachments ? (
-                            <Loader2 className="h-5 w-5 animate-spin" />
-                        ) : (
-                            <Plus className="h-5 w-5" />
-                        )}
-                    </button>
+                        <textarea
+                            ref={textareaRef}
+                            rows={1}
+                            value={input}
+                            onChange={(event) => onInputChange(event.target.value)}
+                            disabled={locked}
+                            placeholder={
+                                locked
+                                    ? t(
+                                          "blog.agentChat.inputLockedPlaceholder",
+                                          "执行中，请稍候",
+                                      )
+                                    : t(
+                                          "workspace.agent.inputPlaceholder",
+                                          "告诉 DinQor 你想做什么...",
+                                      )
+                            }
+                            onKeyDown={(event) => {
+                                if (
+                                    event.nativeEvent?.isComposing ||
+                                    event.isComposing ||
+                                    event.keyCode === 229
+                                )
+                                    return;
+                                if (event.key === "@") setMentionMenuOpen(true);
+                                if (event.key === "Enter" && !event.shiftKey) {
+                                    event.preventDefault();
+                                    if (!locked && canSend) onSubmit();
+                                }
+                            }}
+                            className={`block w-full min-w-0 resize-none bg-transparent px-2 py-2 text-sm text-[#111426] outline-none placeholder:text-[#a0a5ba] disabled:opacity-60 ${
+                                multiline
+                                    ? "min-h-[48px] max-h-[120px] overflow-y-auto"
+                                    : "min-h-[40px] max-h-[120px] flex-1"
+                            }`}
+                        />
+                    </div>
+
+                    <div
+                        className={`shrink-0 items-center gap-2 ${
+                            multiline
+                                ? "order-2 mt-1 flex w-full justify-between"
+                                : "contents"
+                        }`}
+                    >
+                        <button
+                            type="button"
+                            onClick={() => {
+                                setAddMenuOpen((open) => !open);
+                                setMentionMenuOpen(false);
+                            }}
+                            disabled={locked || uploadingAttachments}
+                            className={`grid h-9 w-9 shrink-0 cursor-pointer place-items-center rounded-full text-[#8e94aa] transition-colors hover:bg-[#f5f4fb] hover:text-[#6765f6] disabled:opacity-50 ${
+                                multiline ? "" : "order-1"
+                            }`}
+                            title={t("blog.agentChat.addAttachment", "添加")}
+                        >
+                            {uploadingAttachments ? (
+                                <Loader2 className="h-5 w-5 animate-spin" />
+                            ) : (
+                                <Plus className="h-5 w-5" />
+                            )}
+                        </button>
 
                     {addMenuOpen ? (
                         <div className="absolute bottom-12 left-0 z-30 w-72 overflow-hidden rounded-xl border border-[#e5e7f2] bg-white p-1.5 text-left shadow-[0_12px_32px_rgba(17,20,38,0.12)]">
@@ -320,25 +417,6 @@ const AgentComposer = ({
                         </div>
                     ) : null}
 
-                    <button
-                        type="button"
-                        onClick={() => {
-                            setMentionMenuOpen((open) => !open);
-                            setAddMenuOpen(false);
-                        }}
-                        disabled={locked}
-                        className="grid h-9 w-9 shrink-0 place-items-center rounded-full text-[#8e94aa] transition-colors hover:bg-[#f5f4fb] hover:text-[#6765f6] disabled:opacity-50"
-                        title={t(
-                            "workspace.agent.mentionPlugin",
-                            "选择 Skill 或 MCP",
-                        )}
-                        aria-label={t(
-                            "workspace.agent.mentionPlugin",
-                            "选择 Skill 或 MCP",
-                        )}
-                    >
-                        <AtSign className="h-5 w-5" aria-hidden="true" />
-                    </button>
 
                     {mentionMenuOpen ? (
                         <div className="absolute bottom-12 left-10 z-30 w-72 overflow-hidden rounded-xl border border-[#e5e7f2] bg-white p-1.5 text-left shadow-[0_12px_32px_rgba(17,20,38,0.12)]">
@@ -391,74 +469,13 @@ const AgentComposer = ({
                         }}
                     />
 
-                    <textarea
-                        ref={textareaRef}
-                        rows={1}
-                        value={input}
-                        onChange={(event) => onInputChange(event.target.value)}
-                        disabled={locked}
-                        placeholder={
-                            locked
-                                ? t(
-                                      "blog.agentChat.inputLockedPlaceholder",
-                                      "执行中，请稍候",
-                                  )
-                                : t(
-                                      "workspace.agent.inputPlaceholder",
-                                      "告诉 DinQor 你想做什么...",
-                                  )
-                        }
-                        onKeyDown={(event) => {
-                            if (
-                                event.nativeEvent?.isComposing ||
-                                event.isComposing ||
-                                event.keyCode === 229
-                            )
-                                return;
-                            if (event.key === "@") setMentionMenuOpen(true);
-                            if (event.key === "Enter" && !event.shiftKey) {
-                                event.preventDefault();
-                                if (!locked && canSend) onSubmit();
-                            }
-                        }}
-                        className="min-h-[40px] min-w-0 flex-1 resize-none bg-transparent px-2 py-2 text-sm text-[#111426] outline-none placeholder:text-[#a0a5ba] disabled:opacity-60"
-                    />
-
-                    {/* 深度思考：开了才允许为"把计划做完"多花自检轮次，默认关着换回复速度。 */}
-                    {onToggleDeepThinking ? (
-                        <button
-                            type="button"
-                            onClick={onToggleDeepThinking}
-                            aria-pressed={deepThinking}
-                            title={t(
-                                "blog.agentChat.deepThinkingHint",
-                                "开启后智能体会自检并补完计划里的步骤，结果更完整但更慢",
-                            )}
-                            className={`flex h-9 shrink-0 cursor-pointer items-center gap-1.5 rounded-full px-2.5 text-xs font-semibold transition-colors ${
-                                deepThinking
-                                    ? "bg-[#eeedfe] text-[#5d55fa]"
-                                    : "text-[#8e94aa] hover:bg-[#f5f4fb] hover:text-[#6765f6]"
-                            }`}
-                        >
-                            <Brain className="h-4 w-4" aria-hidden="true" />
-                            <span className="hidden sm:inline">
-                                {t("blog.agentChat.deepThinking", "深度思考")}
-                            </span>
-                        </button>
-                    ) : null}
-
-                    <button
-                        type="button"
-                        className="grid h-9 w-9 shrink-0 place-items-center rounded-full text-[#8e94aa] transition-colors hover:bg-[#f5f4fb] hover:text-[#6765f6]"
-                    >
-                        <Mic className="h-5 w-5" />
-                    </button>
-
                     {isActive ? (
                         <button
                             type="button"
                             onClick={onCancel}
-                            className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-[#111426] text-white transition-colors hover:bg-[#2e334e]"
+                            className={`grid h-9 w-9 shrink-0 place-items-center rounded-full bg-[#111426] text-white transition-colors hover:bg-[#2e334e] ${
+                                multiline ? "" : "order-4"
+                            }`}
                         >
                             <Square className="h-3.5 w-3.5 fill-current" />
                         </button>
@@ -467,11 +484,14 @@ const AgentComposer = ({
                             type="button"
                             onClick={onSubmit}
                             disabled={locked || !canSend}
-                            className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-[#5d55fa] text-white transition-colors hover:bg-[#4d44f3] disabled:opacity-40"
+                            className={`grid h-9 w-9 shrink-0 place-items-center rounded-full bg-[#111426] text-white transition-colors hover:bg-[#2e334e] disabled:opacity-40 ${
+                                multiline ? "" : "order-4"
+                            }`}
                         >
                             <Send className="h-4 w-4" />
                         </button>
                     )}
+                    </div>
                 </div>
             </div>
 

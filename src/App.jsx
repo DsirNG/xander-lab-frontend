@@ -7,7 +7,7 @@
 
 import { RouterProvider } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
-import { useMemo, useEffect } from "react";
+import { useEffect } from "react";
 import { createRouter } from "./app/routing";
 import { ToastProvider } from "@app/providers/ToastProvider";
 import { ToastContainer } from "@shared/ui/feedback/Toast";
@@ -17,6 +17,10 @@ import { AuthSessionProvider } from "@features/auth";
 import { NotificationProvider } from "@features/blog";
 import { AppUpdateModal, useAppUpdate } from "@app/update";
 import DomainRedirectModal from "@app/bootstrap/DomainRedirectModal";
+
+// createBrowserRouter registers browser listeners; keep one instance even when
+// React StrictMode re-runs component initialization in development.
+const router = createRouter();
 
 /**
  * 全局 Toast 桥接
@@ -43,8 +47,6 @@ function ToastBridge() {
  * @returns {JSX.Element} 应用根组件
  */
 function App() {
-    // 路由实例只创建一次，翻译由页面组件内部解析
-    const router = useMemo(() => createRouter(), []);
     const updateRequired = useAppUpdate();
 
     return (

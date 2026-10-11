@@ -28,4 +28,5 @@ export {
     axiosInstance,
     tokenStorage,
     HttpError,
+    isRequestCancelled,
 } from "./http";

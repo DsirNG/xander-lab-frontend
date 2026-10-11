@@ -5,6 +5,7 @@ import DataTable from "@shared/ui/data-display/DataTable";
 import RowActionsMenu from "@shared/ui/overlays/RowActionsMenu";
 import ConfirmModal from "@shared/ui/overlays/ConfirmModal";
 import { useToast } from "@shared/hooks/useToast";
+import { isRequestCancelled } from "@api";
 import { adminService } from "../services/adminService";
 import ProviderFormModal from "../components/ProviderFormModal";
 
@@ -25,10 +26,11 @@ const AdminModelProvidersPage = () => {
     const loadProviders = useCallback(async () => {
         try {
             setLoading(true);
-            const data = await adminService.listProviders();
+            const data = await adminService.listProviders({ _silent: true });
             setProviders(data || []);
-        } catch {
-            toast.error(t("admin.providers.loadFailed"));
+        } catch (error) {
+            if (isRequestCancelled(error)) return;
+            toast.error(error?.message || t("admin.providers.loadFailed"));
         } finally {
             setLoading(false);
         }

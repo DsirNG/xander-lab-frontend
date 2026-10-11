@@ -4,6 +4,7 @@ import { Pencil, SlidersHorizontal } from "lucide-react";
 import DataTable from "@shared/ui/data-display/DataTable";
 import RowActionsMenu from "@shared/ui/overlays/RowActionsMenu";
 import { useToast } from "@shared/hooks/useToast";
+import { isRequestCancelled } from "@api";
 import { adminService, FEATURE_KEYS } from "../services/adminService";
 import FeatureConfigModal from "../components/FeatureConfigModal";
 
@@ -29,8 +30,8 @@ const AdminFeatureModelConfigsPage = () => {
         try {
             setLoading(true);
             const [configData, providerData] = await Promise.all([
-                adminService.listFeatureConfigs(),
-                adminService.listProviders(),
+                adminService.listFeatureConfigs({ _silent: true }),
+                adminService.listProviders({ _silent: true }),
             ]);
             const ordered = FEATURE_KEYS.map(
                 (key) =>
@@ -48,8 +49,9 @@ const AdminFeatureModelConfigsPage = () => {
             );
             setConfigs(ordered);
             setProviders(providerData || []);
-        } catch {
-            toast.error(t("admin.configs.loadFailed"));
+        } catch (error) {
+            if (isRequestCancelled(error)) return;
+            toast.error(error?.message || t("admin.configs.loadFailed"));
         } finally {
             setLoading(false);
         }

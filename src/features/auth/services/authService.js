@@ -24,7 +24,7 @@ const persistTokenResponse = (res) => {
 export const authService = {
     qrCreate: () => post(`${BASE}/qr/create`, undefined, { _silent: true }),
     qrStatus: (ticket) =>
-        get(`${BASE}/qr/status`, { ticket }, { _silent: true }),
+        get(`${BASE}/qr/status`, { ticket }, { _silent: true, dedupe: false }),
     qrExchange: async (ticket, exchangeCode) => {
         const res = await post(`${BASE}/qr/exchange`, undefined, {
             params: { ticket, exchangeCode },

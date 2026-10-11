@@ -1,19 +1,31 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Outlet, useLocation, useMatch, useNavigate } from "react-router-dom";
+import {
+    Outlet,
+    useLocation,
+    useNavigate,
+    useParams,
+    useSearchParams,
+} from "react-router-dom";
 import { ProtectedRoute, useAuthSession } from "@features/auth";
 import { useToast } from "@shared/hooks/useToast";
 import { agentPluginService, useAgentConversation } from "@features/agent";
 import ProfileModal from "./components/ProfileModal";
 import WorkspaceShell from "./components/WorkspaceShell";
 import WorkspaceSidebar from "./components/WorkspaceSidebar";
+import AgentImagesPage from "@features/agent/pages/AgentImagesPage";
+import WorkspacePluginsPage from "./pages/WorkspacePluginsPage";
 
 const WorkspaceLayoutInner = () => {
     const { userInfo } = useAuthSession();
     const navigate = useNavigate();
     const location = useLocation();
     const toast = useToast();
-    const conversationId = useMatch("/workspace/ai/:conversationId")?.params
-        .conversationId;
+    const { conversationId } = useParams();
+    const [searchParams, setSearchParams] = useSearchParams();
+    const requestedView = searchParams.get("view");
+    const activeView = ["images", "plugins"].includes(requestedView)
+        ? requestedView
+        : null;
     const [settingsOpen, setSettingsOpen] = useState(false);
     const [skills, setSkills] = useState([]);
     const [mcpServers, setMcpServers] = useState([]);
@@ -89,12 +101,23 @@ const WorkspaceLayoutInner = () => {
 
     const handleNewConversation = useCallback(() => {
         agent.reset();
-        navigate("/workspace/ai", { replace: true });
+        navigate("/app", { replace: true });
     }, [agent, navigate]);
 
     const handleSelectConversation = useCallback(
-        (sessionId) => navigate(`/workspace/ai/${sessionId}`),
+        (sessionId) => navigate(`/app/${sessionId}`),
         [navigate],
+    );
+
+    const handleSelectView = useCallback(
+        (view) => {
+            setSearchParams((current) => {
+                const next = new URLSearchParams(current);
+                next.set("view", view);
+                return next;
+            });
+        },
+        [setSearchParams],
     );
 
     const handleTogglePin = useCallback(
@@ -120,10 +143,18 @@ const WorkspaceLayoutInner = () => {
                         onSelectConversation={handleSelectConversation}
                         onTogglePin={handleTogglePin}
                         onOpenSettings={() => setSettingsOpen(true)}
+                        activeView={activeView}
+                        onSelectView={handleSelectView}
                     />
                 }
             >
-                <Outlet context={{ ...agent, plugins }} />
+                {activeView === "images" ? (
+                    <AgentImagesPage />
+                ) : activeView === "plugins" ? (
+                    <WorkspacePluginsPage />
+                ) : (
+                    <Outlet context={{ ...agent, plugins }} />
+                )}
             </WorkspaceShell>
 
             <ProfileModal

@@ -69,6 +69,7 @@ const LoginPage = () => {
             qrTimerRef.current = window.setInterval(async () => {
                 try {
                     const current = await authService.qrStatus(result.ticket);
+                    if (!qrTimerRef.current) return;
                     setQrState((previous) => ({
                         ...previous,
                         status: current.status,

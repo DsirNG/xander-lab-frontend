@@ -62,7 +62,7 @@ const SessionItem = ({ session, active, onSelect, onTogglePin, t }) => {
     return (
         <div
             className={`group relative flex w-full items-center rounded-xl transition-colors ${
-                active ? "bg-[#f2f1fd]" : "hover:bg-[#f7f6fc]"
+                active ? "bg-[#f1f5f9]" : "hover:bg-[#f7f6fc]"
             }`}
         >
             <button
@@ -85,11 +85,11 @@ const SessionItem = ({ session, active, onSelect, onTogglePin, t }) => {
                         <Loader2 className="h-3.5 w-3.5 animate-spin text-[#9ea3b9]" />
                     ) : null}
                     {unread ? (
-                        <span className="h-2 w-2 rounded-full bg-[#3b82f6]" />
+                        <span className="h-2 w-2 rounded-full bg-[#111426]" />
                     ) : null}
                 </span>
                 <span
-                    className={`truncate text-sm font-normal ${active ? "text-[#6055f6]" : "text-[#0d0d0d]"}`}
+                    className={`truncate text-sm ${active ? "font-semibold text-[#111426]" : "font-normal text-[#0d0d0d]"}`}
                 >
                     {session.title || t("blog.agent.untitled", "未命名对话")}
                 </span>

@@ -5,6 +5,7 @@ import DataTable from "@shared/ui/data-display/DataTable";
 import RowActionsMenu from "@shared/ui/overlays/RowActionsMenu";
 import ConfirmModal from "@shared/ui/overlays/ConfirmModal";
 import { useToast } from "@shared/hooks/useToast";
+import { isRequestCancelled } from "@api";
 import { adminService } from "../services/adminService";
 
 /**
@@ -30,11 +31,12 @@ const AdminUsersPage = () => {
                 keyword: keyword || undefined,
                 page,
                 size: pageSize,
-            });
+            }, { _silent: true });
             setUsers(data?.records || []);
             setTotal(Number(data?.total) || 0);
-        } catch {
-            toast.error(t("admin.users.loadFailed"));
+        } catch (error) {
+            if (isRequestCancelled(error)) return;
+            toast.error(error?.message || t("admin.users.loadFailed"));
         } finally {
             setLoading(false);
         }

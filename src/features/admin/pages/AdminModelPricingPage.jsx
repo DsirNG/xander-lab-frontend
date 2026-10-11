@@ -5,6 +5,7 @@ import DataTable from "@shared/ui/data-display/DataTable";
 import RowActionsMenu from "@shared/ui/overlays/RowActionsMenu";
 import ConfirmModal from "@shared/ui/overlays/ConfirmModal";
 import { useToast } from "@shared/hooks/useToast";
+import { isRequestCancelled } from "@api";
 import { adminService } from "../services/adminService";
 import PricingFormModal from "../components/PricingFormModal";
 import { milliPer1kToYuanPerM } from "../utils/pricingUnits";
@@ -32,10 +33,11 @@ const AdminModelPricingPage = () => {
     const loadPrices = useCallback(async () => {
         try {
             setLoading(true);
-            const data = await adminService.listModelPrices();
+            const data = await adminService.listModelPrices({ _silent: true });
             setPrices(data || []);
-        } catch {
-            toast.error(t("admin.pricing.loadFailed"));
+        } catch (error) {
+            if (isRequestCancelled(error)) return;
+            toast.error(error?.message || t("admin.pricing.loadFailed"));
         } finally {
             setLoading(false);
         }

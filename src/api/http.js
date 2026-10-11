@@ -33,6 +33,7 @@ import {
     getBizErrorMessage,
     getHttpErrorMessage,
     HttpError,
+    isRequestCancelled,
 } from "./errors/normalizeHttpError";
 import {
     addPendingRequest,
@@ -46,6 +47,7 @@ import { createUpload } from "./transfer/upload";
 
 export { buildRequestKey };
 export { HttpError };
+export { isRequestCancelled };
 export { tokenStorage };
 
 // ─────────────────────────────────────────────
@@ -109,7 +111,15 @@ instance.interceptors.request.use(
         // 8.1 防重复请求（幂等锁）
         // 默认对所有方法防重复（GET/POST/PUT/DELETE/PATCH），
         // 可用 config.dedupe: false 关闭（上传/下载/SSE 已默认关闭）
-        const shouldDedupe = config.dedupe ?? true;
+        // React StrictMode intentionally replays effects in development. If an
+        // identical GET aborts the first request, page-level catches can report
+        // a false load failure while the replayed request succeeds. Keep reads
+        // concurrent in dev by default; callers can still opt into dedupe.
+        const isDevelopmentRead =
+            IS_DEV &&
+            String(config.method || "").toLowerCase() === "get" &&
+            config.dedupe === undefined;
+        const shouldDedupe = config.dedupe ?? !isDevelopmentRead;
 
         if (shouldDedupe) {
             addPendingRequest(config);

@@ -9,7 +9,7 @@ const projectRoot = fileURLToPath(new URL(".", import.meta.url));
 export default defineConfig(({ mode }) => {
     const env = loadEnv(mode, projectRoot, "VITE_");
     const apiProxyTarget =
-        env.VITE_API_PROXY_TARGET?.trim() || "https://api.dinqor.cn";
+        env.VITE_API_PROXY_TARGET?.trim() || "https://api.xiaodongding.dpdns.org";
     const appVersion = `${Date.now()}`;
 
     const versionManifestPlugin = {

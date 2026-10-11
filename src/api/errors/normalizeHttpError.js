@@ -17,6 +17,14 @@ export class HttpError extends Error {
     }
 }
 
+/** True when Axios rejected a request because it was deliberately cancelled. */
+export const isRequestCancelled = (error) =>
+    Boolean(
+        error?.isCancelled ||
+        error?.code === "ERR_CANCELED" ||
+        error?.name === "CanceledError",
+    );
+
 const HTTP_ERROR_KEYS = {
     400: "http.errors.badRequest",
     401: "http.errors.unauthorized",

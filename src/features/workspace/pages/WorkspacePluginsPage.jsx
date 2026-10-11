@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
     Blocks,
     Check,
@@ -15,7 +15,8 @@ import {
     Wifi,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { agentPluginService } from "@features/agent";
+import { useSearchParams } from "react-router-dom";
+import { agentPluginService } from "@features/agent/services/agentPluginService";
 import Modal from "@shared/ui/overlays/Modal";
 
 const emptyForm = {
@@ -23,6 +24,7 @@ const emptyForm = {
     displayName: "",
     endpointUrl: "",
     headers: "",
+    enabled: true,
 };
 
 const getPluginRows = (skills, servers) => [
@@ -47,6 +49,7 @@ const getPluginRows = (skills, servers) => [
 
 const WorkspacePluginsPage = () => {
     const { t } = useTranslation();
+    const [searchParams, setSearchParams] = useSearchParams();
     const [skills, setSkills] = useState([]);
     const [servers, setServers] = useState([]);
     const [query, setQuery] = useState("");
@@ -58,14 +61,17 @@ const WorkspacePluginsPage = () => {
     const [editingServer, setEditingServer] = useState(null);
     const [error, setError] = useState("");
     const [testingId, setTestingId] = useState(null);
+    const loadRequestRef = useRef(0);
 
     const loadPlugins = useCallback(async () => {
+        const requestId = ++loadRequestRef.current;
         setLoading(true);
         setError("");
         const [skillsResult, serversResult] = await Promise.allSettled([
             agentPluginService.listSkills(),
             agentPluginService.listMcpServers(),
         ]);
+        if (requestId !== loadRequestRef.current) return;
         if (skillsResult.status === "fulfilled") {
             setSkills(
                 Array.isArray(skillsResult.value) ? skillsResult.value : [],
@@ -76,21 +82,25 @@ const WorkspacePluginsPage = () => {
                 Array.isArray(serversResult.value) ? serversResult.value : [],
             );
         }
-        if (
-            skillsResult.status === "rejected" &&
+        const failures = [
+            skillsResult.status === "rejected"
+                ? skillsResult.reason?.message ||
+                  t("workspace.pluginsPage.skillsLoadFailed", "技能加载失败")
+                : null,
             serversResult.status === "rejected"
-        ) {
-            setError(
-                skillsResult.reason?.message ||
-                    serversResult.reason?.message ||
-                    t("workspace.pluginsPage.loadFailed"),
-            );
-        }
+                ? serversResult.reason?.message ||
+                  t("workspace.pluginsPage.serversLoadFailed", "MCP 服务加载失败")
+                : null,
+        ].filter(Boolean);
+        if (failures.length) setError(failures.join("；"));
         setLoading(false);
     }, [t]);
 
     useEffect(() => {
         loadPlugins();
+        return () => {
+            loadRequestRef.current += 1;
+        };
     }, [loadPlugins]);
 
     const probeServer = useCallback(
@@ -111,10 +121,35 @@ const WorkspacePluginsPage = () => {
                     updated?.lastError &&
                     /OAuth|认证请求头无法解密/.test(updated.lastError)
                 ) {
-                    const authorization =
-                        await agentPluginService.startMcpOAuth(server.id);
-                    if (authorization?.authorizationUrl)
-                        window.location.assign(authorization.authorizationUrl);
+                    try {
+                        const authorization =
+                            await agentPluginService.startMcpOAuth(server.id);
+                        if (authorization?.authorizationUrl) {
+                            window.location.assign(
+                                authorization.authorizationUrl,
+                            );
+                        } else {
+                            setError(
+                                t(
+                                    "workspace.pluginsPage.oauthUnavailable",
+                                    "当前 API 未提供 MCP OAuth 授权接口，请使用静态请求头或部署 OAuth 接口。",
+                                ),
+                            );
+                        }
+                    } catch (oauthStartError) {
+                        setError(
+                            oauthStartError.status === 404
+                                ? t(
+                                      "workspace.pluginsPage.oauthUnavailable",
+                                      "当前 API 未提供 MCP OAuth 授权接口，请使用静态请求头或部署 OAuth 接口。",
+                                  )
+                                : oauthStartError.message ||
+                                      t(
+                                          "workspace.pluginsPage.oauthFailed",
+                                          "MCP OAuth 授权失败，请重试",
+                                      ),
+                        );
+                    }
                 }
             } catch (probeError) {
                 setError(
@@ -132,20 +167,25 @@ const WorkspacePluginsPage = () => {
     );
 
     useEffect(() => {
-        const params = new URLSearchParams(window.location.search);
-        const state = params.get("state");
-        const code = params.get("code");
+        const state = searchParams.get("state");
+        const code = searchParams.get("code");
         if (!state || !code) return undefined;
         let active = true;
+        const clearOAuthParams = () => {
+            setSearchParams(
+                (current) => {
+                    const next = new URLSearchParams(current);
+                    next.delete("state");
+                    next.delete("code");
+                    return next;
+                },
+                { replace: true },
+            );
+        };
         agentPluginService
             .completeMcpOAuth({ state, code })
             .then(async (result) => {
                 if (!active) return;
-                window.history.replaceState(
-                    {},
-                    document.title,
-                    window.location.pathname,
-                );
                 const serverId = Number(result?.serverId);
                 const latest = await agentPluginService.listMcpServers();
                 if (!active) return;
@@ -153,23 +193,31 @@ const WorkspacePluginsPage = () => {
                 const server = Array.isArray(latest)
                     ? latest.find((item) => item.id === serverId)
                     : null;
-                if (server) await probeServer(server);
+                clearOAuthParams();
+                if (server?.enabled !== false) await probeServer(server);
             })
             .catch(
-                (oauthError) =>
-                    active &&
+                (oauthError) => {
+                    if (!active) return;
+                    clearOAuthParams();
                     setError(
-                        oauthError.message ||
+                        oauthError.status === 404
+                            ? t(
+                                  "workspace.pluginsPage.oauthUnavailable",
+                                  "当前 API 未提供 MCP OAuth 授权接口，请使用静态请求头或部署 OAuth 接口。",
+                              )
+                            : oauthError.message ||
                             t(
                                 "workspace.pluginsPage.oauthFailed",
                                 "MCP OAuth 授权失败，请重试",
                             ),
-                    ),
+                    );
+                },
             );
         return () => {
             active = false;
         };
-    }, [probeServer, t]);
+    }, [probeServer, searchParams, setSearchParams, t]);
 
     const rows = useMemo(
         () =>
@@ -192,7 +240,7 @@ const WorkspacePluginsPage = () => {
                 serverKey: form.serverKey,
                 displayName: form.displayName,
                 endpointUrl: form.endpointUrl,
-                enabled: editingServer?.enabled ?? true,
+                enabled: form.enabled,
             };
             if (form.headers.trim()) {
                 const headers = JSON.parse(form.headers);
@@ -220,7 +268,7 @@ const WorkspacePluginsPage = () => {
             setFormOpen(false);
             setEditingServer(null);
             await loadPlugins();
-            await probeServer(saved);
+            if (saved?.enabled !== false) await probeServer(saved);
         } catch (submitError) {
             setError(
                 submitError.message || t("workspace.pluginsPage.saveFailed"),
@@ -237,6 +285,7 @@ const WorkspacePluginsPage = () => {
             displayName: server.displayName || "",
             endpointUrl: server.endpointUrl || "",
             headers: "",
+            enabled: server.enabled !== false,
         });
         setFormOpen(true);
         setError("");
@@ -354,6 +403,9 @@ const WorkspacePluginsPage = () => {
                                 required
                                 pattern="^[a-z][a-z0-9-]{1,19}$"
                                 disabled={Boolean(editingServer)}
+                                aria-label={t(
+                                    "workspace.pluginsPage.serverKey",
+                                )}
                                 value={form.serverKey}
                                 onChange={(event) =>
                                     setForm({
@@ -368,6 +420,9 @@ const WorkspacePluginsPage = () => {
                             />
                             <input
                                 required
+                                aria-label={t(
+                                    "workspace.pluginsPage.displayName",
+                                )}
                                 value={form.displayName}
                                 onChange={(event) =>
                                     setForm({
@@ -383,6 +438,9 @@ const WorkspacePluginsPage = () => {
                             <input
                                 required
                                 type="url"
+                                aria-label={t(
+                                    "workspace.pluginsPage.endpointUrl",
+                                )}
                                 value={form.endpointUrl}
                                 onChange={(event) =>
                                     setForm({
@@ -428,6 +486,25 @@ const WorkspacePluginsPage = () => {
                                     </span>
                                 </div>
                             </details>
+                            <label className="flex items-center gap-2 text-caption text-ink sm:col-span-2">
+                                <input
+                                    type="checkbox"
+                                    checked={form.enabled}
+                                    onChange={(event) =>
+                                        setForm({
+                                            ...form,
+                                            enabled: event.target.checked,
+                                        })
+                                    }
+                                    className="h-4 w-4 rounded border-border accent-accent"
+                                />
+                                <span>
+                                    {t(
+                                        "workspace.pluginsPage.enabled",
+                                        "启用此 MCP 服务",
+                                    )}
+                                </span>
+                            </label>
                             <div className="flex justify-end gap-2 sm:col-span-2">
                                 <button
                                     type="button"
@@ -453,8 +530,18 @@ const WorkspacePluginsPage = () => {
                     </Modal>
                 ) : null}
                 {error ? (
-                    <div className="mb-4 rounded-lg border border-danger/20 bg-danger/5 px-3 py-2 text-caption text-danger">
+                    <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-danger/20 bg-danger/5 px-3 py-2 text-caption text-danger">
                         {error}
+                        {rows.length === 0 ? (
+                            <button
+                                type="button"
+                                onClick={loadPlugins}
+                                className="inline-flex h-8 shrink-0 items-center gap-2 rounded-lg border border-danger/20 bg-canvas px-3 font-semibold text-danger transition hover:bg-danger/5"
+                            >
+                                <RefreshCw className="h-3.5 w-3.5" aria-hidden="true" />
+                                {t("blog.agentImages.retry", "重新加载")}
+                            </button>
+                        ) : null}
                     </div>
                 ) : null}
                 <div className="flex items-center gap-2">
@@ -494,7 +581,10 @@ const WorkspacePluginsPage = () => {
                                                   plugin.id,
                                           )
                                         : null;
-                                const status = server?.lastStatus;
+                                const status =
+                                    server?.enabled === false
+                                        ? "DISABLED"
+                                        : server?.lastStatus;
                                 const isTesting = server?.id === testingId;
                                 const StatusIcon =
                                     status === "OK"
@@ -513,7 +603,12 @@ const WorkspacePluginsPage = () => {
                                                 "workspace.pluginsPage.connectionFailed",
                                                 "连接失败",
                                             )
-                                          : t(
+                                          : status === "DISABLED"
+                                            ? t(
+                                                  "workspace.pluginsPage.disabled",
+                                                  "已停用",
+                                              )
+                                            : t(
                                                 "workspace.pluginsPage.notTested",
                                                 "未测试",
                                             );
@@ -536,6 +631,21 @@ const WorkspacePluginsPage = () => {
                                                 <span className="rounded bg-surface-muted px-1.5 py-0.5 text-micro uppercase text-ink-faint">
                                                     {plugin.type}
                                                 </span>
+                                                {plugin.type === "mcp" ? (
+                                                    <span
+                                                        className={`rounded px-1.5 py-0.5 text-micro ${server?.enabled === false ? "bg-surface-muted text-ink-faint" : "bg-success/10 text-success"}`}
+                                                    >
+                                                        {server?.enabled === false
+                                                            ? t(
+                                                                  "workspace.pluginsPage.disabled",
+                                                                  "已停用",
+                                                              )
+                                                            : t(
+                                                                  "workspace.pluginsPage.enabledShort",
+                                                                  "已启用",
+                                                              )}
+                                                    </span>
+                                                ) : null}
                                             </div>
                                             <div
                                                 className={`mt-1 truncate text-caption ${status === "FAILED" ? "text-danger" : "text-ink-muted"}`}
@@ -573,7 +683,8 @@ const WorkspacePluginsPage = () => {
                                                     }
                                                     disabled={
                                                         isTesting ||
-                                                        Boolean(testingId)
+                                                        Boolean(testingId) ||
+                                                        server?.enabled === false
                                                     }
                                                     className="inline-flex h-8 items-center gap-1 rounded-md border border-border px-2 text-micro font-semibold text-ink-muted hover:border-accent hover:text-accent disabled:opacity-50"
                                                     title={t(
@@ -639,7 +750,7 @@ const WorkspacePluginsPage = () => {
                                 );
                             })}
                         </div>
-                    ) : (
+                    ) : error ? null : (
                         <div className="flex min-h-48 flex-col items-center justify-center text-center">
                             <Blocks
                                 className="h-8 w-8 text-ink-faint"

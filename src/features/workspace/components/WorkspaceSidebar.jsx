@@ -1,7 +1,13 @@
 import { useMemo } from "react";
 import PropTypes from "prop-types";
-import { Blocks, ChevronRight, Image, Pin, PinOff, Plus } from "lucide-react";
-import { Link, NavLink } from "react-router-dom";
+import {
+    Blocks,
+    ChevronRight,
+    Image,
+    Pin,
+    PinOff,
+    Plus,
+} from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 const parseSessionTime = (value) => {
@@ -109,10 +115,18 @@ const WorkspaceSidebar = ({
     onSelectConversation,
     onTogglePin,
     onOpenSettings,
+    activeView,
+    onSelectView,
 }) => {
     const { t } = useTranslation();
     const displayName = userInfo?.nickname || userInfo?.username || "DinQorAI";
     const avatarText = displayName.slice(0, 2).toUpperCase();
+    const linkClass = (view) =>
+        `flex min-h-10 items-center gap-3 rounded-lg px-3 text-body font-medium transition-colors ${
+            activeView === view
+                ? "bg-accent-soft text-accent"
+                : "text-ink-secondary hover:bg-surface-muted hover:text-ink"
+        }`;
 
     const { pinnedSessions, recentSessions } = useMemo(() => {
         const sorted = [...(sessions || [])].sort(
@@ -129,13 +143,6 @@ const WorkspaceSidebar = ({
             ),
         };
     }, [sessions]);
-
-    const linkClass = ({ isActive }) =>
-        `flex min-h-10 items-center gap-3 rounded-lg px-3 text-body font-medium transition-colors ${
-            isActive
-                ? "bg-accent-soft text-accent"
-                : "text-ink-secondary hover:bg-surface-muted hover:text-ink"
-        }`;
 
     return (
         <aside
@@ -159,26 +166,34 @@ const WorkspaceSidebar = ({
                 </button>
 
                 <nav
-                    className="mt-4 flex flex-col gap-1"
-                    aria-label="Agent tools"
+                    className="mt-3 flex flex-col gap-1"
+                    aria-label="Agent 工具"
                 >
-                    <NavLink to="/workspace/images" className={linkClass}>
+                    <button
+                        type="button"
+                        onClick={() => onSelectView("images")}
+                        className={linkClass("images")}
+                    >
                         <Image
                             className="h-[17px] w-[17px]"
                             aria-hidden="true"
                         />
-                        <span>{t("workspace.menu.images")}</span>
-                    </NavLink>
-                    <NavLink to="/workspace/plugins" className={linkClass}>
+                        <span>{t("workspace.menu.images", "图片")}</span>
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => onSelectView("plugins")}
+                        className={linkClass("plugins")}
+                    >
                         <Blocks
                             className="h-[17px] w-[17px]"
                             aria-hidden="true"
                         />
-                        <span>{t("workspace.menu.plugins")}</span>
-                    </NavLink>
+                        <span>{t("workspace.menu.plugins", "插件")}</span>
+                    </button>
                 </nav>
 
-                <div className="mt-6 min-h-0 flex-1 overflow-y-auto border-t border-border pt-5">
+                <div className="mt-4 min-h-0 flex-1 overflow-y-auto border-t border-border pt-5">
                     <div className="px-2 text-caption font-semibold text-ink-muted">
                         {t("workspace.agent.groups.pinned", "置顶")}
                     </div>
@@ -189,8 +204,9 @@ const WorkspaceSidebar = ({
                                     key={session.id}
                                     session={session}
                                     active={
+                                        activeView === null &&
                                         String(activeConversationId) ===
-                                        String(session.id)
+                                            String(session.id)
                                     }
                                     onSelect={onSelectConversation}
                                     onTogglePin={onTogglePin}
@@ -214,8 +230,9 @@ const WorkspaceSidebar = ({
                                     key={session.id}
                                     session={session}
                                     active={
+                                        activeView === null &&
                                         String(activeConversationId) ===
-                                        String(session.id)
+                                            String(session.id)
                                     }
                                     onSelect={onSelectConversation}
                                     onTogglePin={onTogglePin}
@@ -283,12 +300,15 @@ WorkspaceSidebar.propTypes = {
     onSelectConversation: PropTypes.func.isRequired,
     onTogglePin: PropTypes.func.isRequired,
     onOpenSettings: PropTypes.func.isRequired,
+    activeView: PropTypes.oneOf(["images", "plugins", null]),
+    onSelectView: PropTypes.func.isRequired,
 };
 
 WorkspaceSidebar.defaultProps = {
     userInfo: null,
     sessions: [],
     activeConversationId: null,
+    activeView: null,
 };
 
 export default WorkspaceSidebar;
