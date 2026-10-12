@@ -1038,9 +1038,9 @@ export default {
             codeSendFailed: "Gửi mã thất bại, kiểm tra kết nối mạng",
             authSuccess: "Xác thực thành công, chào mừng",
             authFailed: "Xác thực thất bại, kiểm tra thông tin đăng nhập",
-            loginAccess: "Truy cập đăng nhập",
+            loginAccess: "Chào mừng bạn trở lại",
             loginDesc:
-                "Nhận quyền truy cập đầy đủ vào DinQorAI, quản lý blog và dữ liệu đa chiều.",
+                "Đăng nhập DinQorAI để quản lý blog, đăng bài và tiếp tục sáng tạo.",
             emailLabel: "Địa chỉ email",
             emailPlaceholder: "Nhập địa chỉ email",
             codeLabel: "Mã xác minh",
@@ -1315,6 +1315,14 @@ export default {
         },
     },
     profile: {
+        connector: {
+            installRequired: "Hãy cài đặt và bật tiện ích DinQorAI, sau đó tải lại trang này.",
+            startFailed: "Không thể bắt đầu xác thực qua tiện ích. Vui lòng thử lại.",
+            opening: "Đang mở trang đăng nhập của nền tảng…",
+            waiting: "Hoàn tất đăng nhập hoặc quét mã QR trong tab nền tảng vừa mở.",
+            hint: "Sau khi đăng nhập, liên kết sẽ hoàn tất và tab tự đóng. Vui lòng giữ tab mở.",
+            expired: "Xác thực đã hết thời gian. Vui lòng bắt đầu lại.",
+        },
         title: "Trung tâm cá nhân",
         subtitle: "Quản lý tài khoản và quy trình tự động hóa",
         open: "Mở trung tâm cá nhân",

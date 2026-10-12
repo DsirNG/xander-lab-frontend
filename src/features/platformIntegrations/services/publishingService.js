@@ -5,6 +5,8 @@ const JUEJIN_AUTH = "/api/publishing/juejin/authorization";
 
 export const csdnService = {
     startAuthorization: () => post(`${CSDN_AUTH}/start`),
+    startExtensionAuthorization: () => post(`${CSDN_AUTH}/start`, undefined, { _sensitive: true, dedupe: false }),
+    cancelExtensionAuthorization: (taskId) => post(`${CSDN_AUTH}/extension/${taskId}/cancel`, undefined, { _silent: true }),
     getAuthorizationStatus: () =>
         get(`${CSDN_AUTH}/status`, undefined, { _silent: true, dedupe: false }),
     cancelAuthorization: () =>
@@ -17,6 +19,8 @@ export const csdnService = {
 
 export const juejinService = {
     startAuthorization: () => post(`${JUEJIN_AUTH}/start`),
+    startExtensionAuthorization: () => post(`${JUEJIN_AUTH}/start`, undefined, { _sensitive: true, dedupe: false }),
+    cancelExtensionAuthorization: (taskId) => post(`${JUEJIN_AUTH}/extension/${taskId}/cancel`, undefined, { _silent: true }),
     getAuthorizationStatus: () =>
         get(`${JUEJIN_AUTH}/status`, undefined, {
             _silent: true,
@@ -30,6 +34,65 @@ export const juejinService = {
     disconnect: () => deleteRequest(JUEJIN_AUTH),
     syncCatalog: () => post("/api/publishing/juejin/catalog/sync"),
 };
+
+const CONNECTOR_CHANNEL = "dinqorai-platform-connector";
+
+/** Checks whether the installed browser extension injected its page bridge. */
+export const isPlatformConnectorAvailable = () =>
+    requestConnector({ type: "PING" }).then((reply) => reply?.available === true).catch(() => false);
+
+/** Sends a one-use, short-lived authorization grant to the extension without exposing platform cookies to the page. */
+export const startPlatformConnectorAuthorization = async (platform, authorization) =>
+    requestConnector({
+        type: "START",
+        platform,
+        taskId: authorization.taskId,
+        transferToken: authorization.transferToken,
+    });
+
+/** Asks the extension to close its platform tab and discards the matching server-side grant. */
+export const cancelPlatformConnectorAuthorization = async (taskId, service) => {
+    if (!taskId) return;
+    requestConnector({ type: "CANCEL", taskId }).catch(() => {});
+    await service.cancelExtensionAuthorization(taskId);
+};
+
+/** Creates a Workers grant and hands it to the installed extension. */
+export const beginPlatformConnectorAuthorization = async (platform, service) => {
+    if (!await isPlatformConnectorAvailable()) {
+        throw new Error("CONNECTOR_NOT_INSTALLED");
+    }
+    const task = await service.startExtensionAuthorization();
+    try {
+        await startPlatformConnectorAuthorization(platform, task);
+        return task;
+    } catch (error) {
+        await cancelPlatformConnectorAuthorization(task.taskId, service).catch(() => {});
+        throw error;
+    }
+};
+
+function requestConnector(payload) {
+    const requestId = window.crypto.randomUUID();
+    return new Promise((resolve, reject) => {
+        const timeout = window.setTimeout(() => {
+            window.removeEventListener("message", onMessage);
+            reject(new Error("Browser connector is not available"));
+        }, 1200);
+        const onMessage = (event) => {
+            if (event.source !== window || event.origin !== window.location.origin
+                || event.data?.channel !== CONNECTOR_CHANNEL || event.data.requestId !== requestId) return;
+            if (event.data.type !== "PONG" && event.data.type !== "START_RESULT") return;
+            window.clearTimeout(timeout);
+            window.removeEventListener("message", onMessage);
+            if (event.data.type === "PONG") resolve({ available: event.data.available === true });
+            else if (event.data.ok) resolve({ ok: true });
+            else reject(new Error("Browser connector could not open the platform page"));
+        };
+        window.addEventListener("message", onMessage);
+        window.postMessage({ channel: CONNECTOR_CHANNEL, ...payload, requestId }, window.location.origin);
+    });
+}
 
 /** Blog publishing commands owned by the external-platform integration. */
 export const syncBlogToCsdn = (postId, config) =>

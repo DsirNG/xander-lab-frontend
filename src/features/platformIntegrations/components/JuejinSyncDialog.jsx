@@ -1,16 +1,21 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { CheckCircle2, LoaderCircle, QrCode } from "lucide-react";
+import { CheckCircle2, ExternalLink, LoaderCircle } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import Modal from "@shared/ui/overlays/Modal";
-import { juejinService, syncBlogToJuejin } from "../services/publishingService";
+import {
+    beginPlatformConnectorAuthorization,
+    cancelPlatformConnectorAuthorization,
+    juejinService,
+    syncBlogToJuejin,
+} from "../services/publishingService";
 
 /** Authorizes Juejin when needed, then resumes synchronization of the selected post. */
 const JuejinSyncDialog = ({ post, isOpen = true, onClose, onSuccess }) => {
     const { t } = useTranslation();
     const timerRef = useRef(null);
     const syncingRef = useRef(false);
+    const authorizationRef = useRef(null);
     const [phase, setPhase] = useState("checking");
-    const [qrCode, setQrCode] = useState(null);
     const [result, setResult] = useState(null);
     const [error, setError] = useState("");
     const postId = post?.id;
@@ -41,9 +46,12 @@ const JuejinSyncDialog = ({ post, isOpen = true, onClose, onSuccess }) => {
                     await syncPost();
                     return;
                 }
-                const authorization = await juejinService.startAuthorization();
-                if (!active) return;
-                setQrCode(authorization?.qrCodeDataUrl || null);
+                const authorization = await beginPlatformConnectorAuthorization("juejin", juejinService);
+                authorizationRef.current = authorization;
+                if (!active) {
+                    void cancelPlatformConnectorAuthorization(authorization.taskId, juejinService);
+                    return;
+                }
                 setPhase("authorize");
                 timerRef.current = window.setInterval(async () => {
                     try {
@@ -51,6 +59,7 @@ const JuejinSyncDialog = ({ post, isOpen = true, onClose, onSuccess }) => {
                             await juejinService.getAuthorizationStatus();
                         if (current?.status === "AUTHORIZED") {
                             window.clearInterval(timerRef.current);
+                            authorizationRef.current = null;
                             await syncPost();
                         }
                     } catch {
@@ -60,7 +69,9 @@ const JuejinSyncDialog = ({ post, isOpen = true, onClose, onSuccess }) => {
             } catch (err) {
                 if (!active) return;
                 setError(
-                    err?.message ||
+                        err?.message === "CONNECTOR_NOT_INSTALLED"
+                            ? t("profile.connector.installRequired")
+                            : err?.message ||
                         t("profile.blogManage.juejin.authorizationFailed"),
                 );
                 setPhase("error");
@@ -70,6 +81,8 @@ const JuejinSyncDialog = ({ post, isOpen = true, onClose, onSuccess }) => {
         return () => {
             active = false;
             if (timerRef.current) window.clearInterval(timerRef.current);
+            void cancelPlatformConnectorAuthorization(authorizationRef.current?.taskId, juejinService);
+            authorizationRef.current = null;
         };
     }, [isOpen, postId, syncPost, t]);
 
@@ -106,18 +119,9 @@ const JuejinSyncDialog = ({ post, isOpen = true, onClose, onSuccess }) => {
 
             {phase === "authorize" && (
                 <div className="flex flex-col items-center gap-3 text-center py-2">
-                    {qrCode ? (
-                        <img
-                            src={qrCode}
-                            alt={t("profile.blogManage.juejin.qrAlt")}
-                            className="h-52 w-52 rounded-xl bg-surface object-contain p-2 sm:h-60 sm:w-60"
-                        />
-                    ) : (
-                        <QrCode className="h-16 w-16 text-ink-faint" />
-                    )}
-                    <div className="text-caption font-medium text-ink-muted">
-                        {t("profile.blogManage.juejin.scanHint")}
-                    </div>
+                    <ExternalLink className="h-14 w-14 text-accent" />
+                    <div className="text-caption font-semibold text-ink-secondary">{t("profile.connector.waiting")}</div>
+                    <div className="text-caption text-ink-muted">{t("profile.connector.hint")}</div>
                 </div>
             )}
 

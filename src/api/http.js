@@ -132,7 +132,7 @@ instance.interceptors.request.use(
         }
 
         // 8.3 开发环境请求日志
-        if (IS_DEV) {
+        if (IS_DEV && !config._sensitive) {
             console.groupCollapsed(
                 `%c[HTTP] ➤ ${config.method?.toUpperCase()} ${config.url}`,
                 "color: #4ade80; font-weight: bold",
@@ -160,7 +160,7 @@ instance.interceptors.response.use(
         const { data: body, config } = response;
 
         // 开发环境响应日志
-        if (IS_DEV) {
+        if (IS_DEV && !config._sensitive) {
             console.groupCollapsed(
                 `%c[HTTP] ✓ ${config.method?.toUpperCase()} ${config.url}`,
                 "color: #60a5fa; font-weight: bold",
@@ -245,7 +245,7 @@ instance.interceptors.response.use(
             error.message ||
             i18n.t("http.errors.networkError");
 
-        if (IS_DEV) {
+        if (IS_DEV && !config?._sensitive) {
             console.groupCollapsed(
                 `%c[HTTP] ✗ ${config?.method?.toUpperCase()} ${config?.url} [${status ?? "Network Error"}]`,
                 "color: #f87171; font-weight: bold",

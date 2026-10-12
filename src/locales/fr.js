@@ -1059,9 +1059,9 @@ export default {
             authSuccess: "Authentification réussie, bienvenue",
             authFailed:
                 "Échec de l'authentification, vérifiez vos identifiants",
-            loginAccess: "Accès par connexion",
+            loginAccess: "Bon retour",
             loginDesc:
-                "Obtenez l'accès complet à DinQorAI, la gestion du blog et les données multidimensionnelles.",
+                "Connectez-vous pour gérer vos blogs, publier du contenu et poursuivre vos créations avec DinQorAI.",
             emailLabel: "Adresse email",
             emailPlaceholder: "Entrez votre adresse email",
             codeLabel: "Code de vérification",
@@ -1341,6 +1341,14 @@ export default {
         },
     },
     profile: {
+        connector: {
+            installRequired: "Installez et activez l’extension DinQorAI, puis actualisez cette page.",
+            startFailed: "Impossible de démarrer l’autorisation. Veuillez réessayer.",
+            opening: "Ouverture de la page de connexion de la plateforme…",
+            waiting: "Connectez-vous ou scannez le code QR dans l’onglet de la plateforme qui vient de s’ouvrir.",
+            hint: "La liaison se terminera automatiquement et l’onglet se fermera. Gardez-le ouvert.",
+            expired: "L’autorisation a expiré. Veuillez recommencer.",
+        },
         title: "Espace personnel",
         subtitle: "Gérez votre compte et vos flux d’automatisation",
         open: "Ouvrir l’espace personnel",

@@ -5,7 +5,7 @@ import Modal from "@shared/ui/overlays/Modal";
 import Button from "@shared/ui/primitives/Button";
 import { ENV_CONFIG } from "@config/env";
 
-const OFFICIAL_HOSTS = ["dinqor.cn", "www.dinqor.cn"];
+const OFFICIAL_HOSTS = ["dinqor.cn", "www.dinqor.cn", "xiaod.dpdns.org"];
 
 /**
  * 域名迁移提示弹窗

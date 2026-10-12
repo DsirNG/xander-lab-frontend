@@ -1052,9 +1052,9 @@ export default {
             authSuccess:
                 "Authentication successful, welcome through the security gateway",
             authFailed: "Authentication failed, please check your credentials",
-            loginAccess: "Login Access",
+            loginAccess: "Welcome back",
             loginDesc:
-                "Get access to DinQorAI full features, blog management, and multi-dimensional data.",
+                "Sign in to manage your blogs, publish content, and continue creating with DinQorAI.",
             emailLabel: "Email",
             emailPlaceholder: "Enter your email address",
             codeLabel: "Verification Code",
@@ -1327,6 +1327,14 @@ export default {
         },
     },
     profile: {
+        connector: {
+            installRequired: "Install and enable the DinQorAI browser extension, then refresh this page.",
+            startFailed: "Could not start browser extension authorization. Please try again.",
+            opening: "Opening the platform sign-in page…",
+            waiting: "Complete sign-in or scan the QR code in the platform tab that just opened.",
+            hint: "The link will finish automatically and close the tab after sign-in. Keep the tab open.",
+            expired: "Authorization timed out. Please start again.",
+        },
         title: "Personal Center",
         subtitle: "Manage your account and automation workflows",
         open: "Open personal center",
