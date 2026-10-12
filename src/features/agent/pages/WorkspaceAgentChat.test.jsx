@@ -2,7 +2,9 @@ import React from "react";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const { toastMock } = vi.hoisted(() => ({
+const { toastMock, setSearchParamsMock, routeState } = vi.hoisted(() => ({
+    setSearchParamsMock: vi.fn(),
+    routeState: { search: "" },
     toastMock: { warning: vi.fn(), success: vi.fn(), error: vi.fn() },
 }));
 
@@ -11,7 +13,10 @@ const hookState = { current: {} };
 vi.mock("react-router-dom", () => ({
     useNavigate: () => vi.fn(),
     useParams: () => ({ conversationId: "1" }),
-    useSearchParams: () => [new URLSearchParams(), vi.fn()],
+    useSearchParams: () => [
+        new URLSearchParams(routeState.search),
+        setSearchParamsMock,
+    ],
     useOutletContext: () => hookState.current,
 }));
 
@@ -176,5 +181,58 @@ describe("WorkspaceAgentChat 附件数量", () => {
             ).toBeGreaterThan(0),
         );
         expect(toastMock.warning).not.toHaveBeenCalled();
+    });
+});
+
+describe("WorkspaceAgentChat actual workspace outputs", () => {
+    beforeEach(() => {
+        vi.clearAllMocks();
+        routeState.search = "";
+        hookState.current = { ...baseState, workspaceResults: [] };
+    });
+
+    it("opens the persisted generated task in the conversation route", async () => {
+        hookState.current.workspaceResults = [
+            {
+                id: 91,
+                dataContent: JSON.stringify({
+                    tool: "blog_generate",
+                    result: { ok: true, taskId: 71 },
+                }),
+            },
+        ];
+        render(<WorkspaceAgentChat />);
+        await waitFor(() => expect(setSearchParamsMock).toHaveBeenCalled());
+        expect(setSearchParamsMock.mock.calls[0][0].get("blogTaskId")).toBe(
+            "71",
+        );
+    });
+
+    it("respects an explicitly closed article across refresh", () => {
+        routeState.search = "closedTaskId=71&draftPostId=91";
+        hookState.current.workspaceResults = [
+            {
+                id: 91,
+                dataContent: JSON.stringify({
+                    tool: "blog_generate",
+                    result: { ok: true, taskId: 71 },
+                }),
+            },
+        ];
+        render(<WorkspaceAgentChat />);
+        expect(setSearchParamsMock).not.toHaveBeenCalled();
+    });
+
+    it("does not create a work panel from an assistant claim without a service outcome", () => {
+        hookState.current.messages = [
+            {
+                id: 1,
+                role: "assistant",
+                kind: "answer",
+                content: "I created task 71",
+            },
+        ];
+        render(<WorkspaceAgentChat />);
+        expect(setSearchParamsMock).not.toHaveBeenCalled();
     });
 });

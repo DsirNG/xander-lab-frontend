@@ -46,7 +46,7 @@ const BlogPublish = () => {
             if (error) {
                 if (isEditMode) {
                     toast.error(error.message || t("blog.articleNotFound"));
-                    navigate("/workspace/blog-manage", { replace: true });
+                    navigate("/app?view=articles", { replace: true });
                 }
                 return;
             }
@@ -100,11 +100,7 @@ const BlogPublish = () => {
     }, [isEditMode]);
 
     const leavePage = () => {
-        if (window.history.state?.idx > 0) {
-            navigate(-1);
-        } else {
-            navigate(isEditMode ? "/workspace/blog-manage" : "/workspace");
-        }
+        navigate("/app?view=articles");
     };
 
     const handleBack = () => {
@@ -126,7 +122,7 @@ const BlogPublish = () => {
     }
 
     return (
-        <div className="h-dvh bg-canvas flex flex-col overflow-hidden font-sans">
+        <div className="h-full min-h-0 bg-canvas flex flex-col overflow-hidden font-sans">
             <PublishHeader
                 t={t}
                 isEditMode={isEditMode}

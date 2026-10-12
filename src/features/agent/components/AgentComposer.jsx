@@ -48,18 +48,18 @@ const AttachmentPreview = ({ attachment, onRemove }) => (
             <img
                 src={attachment.url}
                 alt={attachment.name}
-                className="h-16 w-16 rounded-xl border border-[#e5e7f2] object-cover"
+                className="h-16 w-16 rounded-xl border border-border object-cover"
             />
         ) : (
-            <div className="flex h-10 items-center gap-2 rounded-xl border border-[#e5e7f2] px-3 text-xs text-[#242741]">
-                <FileText className="h-4 w-4 text-[#8e94aa]" />
+            <div className="flex h-10 items-center gap-2 rounded-xl border border-border px-3 text-xs text-ink">
+                <FileText className="h-4 w-4 text-ink-muted" />
                 <span className="max-w-40 truncate">{attachment.name}</span>
             </div>
         )}
         <button
             type="button"
             onClick={() => onRemove(attachment.url)}
-            className="absolute -right-1 -top-1 grid h-5 w-5 place-items-center rounded-full bg-[#111426] text-white"
+            className="absolute -right-1 -top-1 grid h-5 w-5 place-items-center rounded-full bg-ink text-white"
         >
             <X className="h-3 w-3" />
         </button>
@@ -77,15 +77,16 @@ const AgentComposer = ({
     textareaRef,
     alwaysExpanded = false,
     showQuickActions = false,
-    deepThinking = false,
+    deepThinking: _deepThinking = false,
     onInputChange,
     onFilesSelected,
     onRemoveAttachment,
     onSubmit,
     onCancel,
-    onToggleDeepThinking,
+    onToggleDeepThinking: _onToggleDeepThinking,
     plugins = [],
     onPluginPreview,
+    quickActions = QUICK_ACTIONS,
     t,
 }) => {
     const [addMenuOpen, setAddMenuOpen] = useState(false);
@@ -121,8 +122,7 @@ const AgentComposer = ({
             textarea.style.height = "auto";
             const naturalHeight = textarea.scrollHeight;
             const shouldExpand =
-                alwaysExpanded ||
-                naturalHeight > (multiline ? 48 : 40) + 1;
+                alwaysExpanded || naturalHeight > (multiline ? 48 : 40) + 1;
             textarea.style.height = `${Math.min(
                 Math.max(naturalHeight, shouldExpand ? 48 : 40),
                 120,
@@ -193,7 +193,7 @@ const AgentComposer = ({
         <>
             <div
                 data-multiline={multiline ? "true" : "false"}
-                className={`relative rounded-[1.75rem] border border-[#e5e7f2] bg-white shadow-[0_4px_20px_rgba(103,101,246,0.04)] transition-all focus-within:border-[#817bf2] focus-within:ring-2 focus-within:ring-[#817bf2]/20 ${
+                className={`relative rounded-[1.75rem] border border-border bg-white shadow-sm transition-all focus-within:border-border-strong focus-within:ring-2 focus-within:ring-border-strong/20 ${
                     multiline ? "min-h-[88px] p-2" : "min-h-[48px] p-1"
                 }`}
             >
@@ -212,9 +212,7 @@ const AgentComposer = ({
                 <div
                     ref={menuRef}
                     className={`relative flex min-h-0 ${
-                        multiline
-                            ? "flex-col"
-                            : "flex-row items-center gap-2"
+                        multiline ? "flex-col" : "flex-row items-center gap-2"
                     }`}
                 >
                     <div
@@ -228,8 +226,11 @@ const AgentComposer = ({
                             ref={textareaRef}
                             rows={1}
                             value={input}
-                            onChange={(event) => onInputChange(event.target.value)}
+                            onChange={(event) =>
+                                onInputChange(event.target.value)
+                            }
                             disabled={locked}
+                            aria-label={t("workspace.agent.inputPlaceholder")}
                             placeholder={
                                 locked
                                     ? t(
@@ -254,7 +255,7 @@ const AgentComposer = ({
                                     if (!locked && canSend) onSubmit();
                                 }
                             }}
-                            className={`block w-full min-w-0 resize-none bg-transparent px-2 py-2 text-sm text-[#111426] outline-none placeholder:text-[#a0a5ba] disabled:opacity-60 ${
+                            className={`block w-full min-w-0 resize-none bg-transparent px-2 py-2 text-sm text-ink outline-none placeholder:text-ink-faint disabled:opacity-60 ${
                                 multiline
                                     ? "min-h-[48px] max-h-[120px] overflow-y-auto"
                                     : "min-h-[40px] max-h-[120px] flex-1"
@@ -276,7 +277,7 @@ const AgentComposer = ({
                                 setMentionMenuOpen(false);
                             }}
                             disabled={locked || uploadingAttachments}
-                            className={`grid h-9 w-9 shrink-0 cursor-pointer place-items-center rounded-full text-[#8e94aa] transition-colors hover:bg-[#f5f4fb] hover:text-[#6765f6] disabled:opacity-50 ${
+                            className={`grid h-9 w-9 shrink-0 cursor-pointer place-items-center rounded-full text-ink-muted transition-colors hover:bg-surface-muted hover:text-ink disabled:opacity-50 ${
                                 multiline ? "" : "order-1"
                             }`}
                             title={t("blog.agentChat.addAttachment", "添加")}
@@ -288,87 +289,147 @@ const AgentComposer = ({
                             )}
                         </button>
 
-                    {addMenuOpen ? (
-                        <div className="absolute bottom-12 left-0 z-30 w-72 overflow-hidden rounded-xl border border-[#e5e7f2] bg-white p-1.5 text-left shadow-[0_12px_32px_rgba(17,20,38,0.12)]">
-                            <div className="px-2 py-1.5 text-micro font-semibold uppercase tracking-[0.12em] text-[#8e94aa]">
-                                {t("workspace.agent.addSection", "添加")}
+                        {addMenuOpen ? (
+                            <div className="absolute bottom-12 left-0 z-30 w-72 overflow-hidden rounded-xl border border-border bg-white p-1.5 text-left shadow-[0_12px_32px_rgba(17,20,38,0.12)]">
+                                <div className="px-2 py-1.5 text-micro font-semibold uppercase tracking-[0.12em] text-ink-muted">
+                                    {t("workspace.agent.addSection", "添加")}
+                                </div>
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        fileInputRef.current?.click();
+                                        setAddMenuOpen(false);
+                                    }}
+                                    className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-caption text-ink hover:bg-surface-muted"
+                                >
+                                    <span className="grid h-6 w-6 place-items-center rounded-md bg-surface-muted text-ink">
+                                        +
+                                    </span>
+                                    <span>
+                                        {t(
+                                            "workspace.agent.addFiles",
+                                            "文件和文件夹",
+                                        )}
+                                    </span>
+                                </button>
+                                <button
+                                    type="button"
+                                    disabled
+                                    className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-caption text-ink-faint"
+                                >
+                                    <Target
+                                        className="h-4 w-4"
+                                        aria-hidden="true"
+                                    />
+                                    <span>
+                                        {t("workspace.agent.addGoal", "目标")}
+                                    </span>
+                                    <span className="text-micro">
+                                        {t(
+                                            "workspace.agent.comingSoon",
+                                            "即将推出",
+                                        )}
+                                    </span>
+                                </button>
+                                <button
+                                    type="button"
+                                    disabled
+                                    className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-caption text-ink-faint"
+                                >
+                                    <PenLine
+                                        className="h-4 w-4"
+                                        aria-hidden="true"
+                                    />
+                                    <span>
+                                        {t(
+                                            "workspace.agent.planMode",
+                                            "计划模式",
+                                        )}
+                                    </span>
+                                    <span className="text-micro">
+                                        {t(
+                                            "workspace.agent.comingSoon",
+                                            "即将推出",
+                                        )}
+                                    </span>
+                                </button>
+                                <button
+                                    type="button"
+                                    disabled
+                                    className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-caption text-ink-faint"
+                                >
+                                    <PenLine
+                                        className="h-4 w-4"
+                                        aria-hidden="true"
+                                    />
+                                    <span>
+                                        {t("workspace.agent.draw", "绘图")}
+                                    </span>
+                                    <span className="text-micro">
+                                        {t(
+                                            "workspace.agent.comingSoon",
+                                            "即将推出",
+                                        )}
+                                    </span>
+                                </button>
+                                <div className="mt-1 border-t border-[#f0f0f5] pt-1">
+                                    <div className="px-2 py-1.5 text-micro font-semibold uppercase tracking-[0.12em] text-ink-muted">
+                                        {t("workspace.menu.plugins", "插件")}
+                                    </div>
+                                    {orderedPlugins.length ? (
+                                        orderedPlugins.map((plugin) => (
+                                            <button
+                                                key={plugin.id}
+                                                type="button"
+                                                onClick={() =>
+                                                    previewPlugin(plugin)
+                                                }
+                                                className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-caption text-ink hover:bg-surface-muted"
+                                            >
+                                                <span className="grid h-6 w-6 place-items-center rounded-md bg-surface-muted text-ink">
+                                                    {pluginIcon(plugin)}
+                                                </span>
+                                                <span className="min-w-0 flex-1 truncate">
+                                                    <span className="block truncate">
+                                                        {plugin.name}
+                                                    </span>
+                                                    {plugin.description ? (
+                                                        <span className="block truncate text-micro font-normal text-ink-faint">
+                                                            {plugin.description}
+                                                        </span>
+                                                    ) : null}
+                                                </span>
+                                                {recentPluginIds.includes(
+                                                    plugin.id,
+                                                ) ? (
+                                                    <span className="text-micro text-ink-muted">
+                                                        {t(
+                                                            "workspace.agent.recent",
+                                                            "最近",
+                                                        )}
+                                                    </span>
+                                                ) : null}
+                                            </button>
+                                        ))
+                                    ) : (
+                                        <div className="px-2 py-2 text-micro text-ink-muted">
+                                            {t(
+                                                "workspace.pluginsPage.empty",
+                                                "暂无可用插件",
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
                             </div>
-                            <button
-                                type="button"
-                                onClick={() => {
-                                    fileInputRef.current?.click();
-                                    setAddMenuOpen(false);
-                                }}
-                                className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-caption text-[#242741] hover:bg-[#f5f4fb]"
-                            >
-                                <span className="grid h-6 w-6 place-items-center rounded-md bg-[#f2f1fd] text-[#6765f6]">
-                                    +
-                                </span>
-                                <span>
+                        ) : null}
+
+                        {mentionMenuOpen ? (
+                            <div className="absolute bottom-12 left-10 z-30 w-72 overflow-hidden rounded-xl border border-border bg-white p-1.5 text-left shadow-[0_12px_32px_rgba(17,20,38,0.12)]">
+                                <div className="px-2 py-1.5 text-micro text-ink-muted">
                                     {t(
-                                        "workspace.agent.addFiles",
-                                        "文件和文件夹",
+                                        "workspace.agent.mentionHint",
+                                        "选择后会插入到当前消息",
                                     )}
-                                </span>
-                            </button>
-                            <button
-                                type="button"
-                                disabled
-                                className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-caption text-[#a0a5ba]"
-                            >
-                                <Target
-                                    className="h-4 w-4"
-                                    aria-hidden="true"
-                                />
-                                <span>
-                                    {t("workspace.agent.addGoal", "目标")}
-                                </span>
-                                <span className="text-micro">
-                                    {t(
-                                        "workspace.agent.comingSoon",
-                                        "即将推出",
-                                    )}
-                                </span>
-                            </button>
-                            <button
-                                type="button"
-                                disabled
-                                className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-caption text-[#a0a5ba]"
-                            >
-                                <PenLine
-                                    className="h-4 w-4"
-                                    aria-hidden="true"
-                                />
-                                <span>
-                                    {t("workspace.agent.planMode", "计划模式")}
-                                </span>
-                                <span className="text-micro">
-                                    {t(
-                                        "workspace.agent.comingSoon",
-                                        "即将推出",
-                                    )}
-                                </span>
-                            </button>
-                            <button
-                                type="button"
-                                disabled
-                                className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-caption text-[#a0a5ba]"
-                            >
-                                <PenLine
-                                    className="h-4 w-4"
-                                    aria-hidden="true"
-                                />
-                                <span>{t("workspace.agent.draw", "绘图")}</span>
-                                <span className="text-micro">
-                                    {t(
-                                        "workspace.agent.comingSoon",
-                                        "即将推出",
-                                    )}
-                                </span>
-                            </button>
-                            <div className="mt-1 border-t border-[#f0f0f5] pt-1">
-                                <div className="px-2 py-1.5 text-micro font-semibold uppercase tracking-[0.12em] text-[#8e94aa]">
-                                    {t("workspace.menu.plugins", "插件")}
                                 </div>
                                 {orderedPlugins.length ? (
                                     orderedPlugins.map((plugin) => (
@@ -378,35 +439,21 @@ const AgentComposer = ({
                                             onClick={() =>
                                                 previewPlugin(plugin)
                                             }
-                                            className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-caption text-[#242741] hover:bg-[#f5f4fb]"
+                                            className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-caption text-ink hover:bg-surface-muted"
                                         >
-                                            <span className="grid h-6 w-6 place-items-center rounded-md bg-[#f2f1fd] text-[#6765f6]">
+                                            <span className="text-ink">
                                                 {pluginIcon(plugin)}
                                             </span>
                                             <span className="min-w-0 flex-1 truncate">
-                                                <span className="block truncate">
-                                                    {plugin.name}
-                                                </span>
-                                                {plugin.description ? (
-                                                    <span className="block truncate text-micro font-normal text-[#a0a5ba]">
-                                                        {plugin.description}
-                                                    </span>
-                                                ) : null}
+                                                {plugin.name}
                                             </span>
-                                            {recentPluginIds.includes(
-                                                plugin.id,
-                                            ) ? (
-                                                <span className="text-micro text-[#8e94aa]">
-                                                    {t(
-                                                        "workspace.agent.recent",
-                                                        "最近",
-                                                    )}
-                                                </span>
-                                            ) : null}
+                                            <span className="text-micro text-ink-faint">
+                                                @{plugin.key}
+                                            </span>
                                         </button>
                                     ))
                                 ) : (
-                                    <div className="px-2 py-2 text-micro text-[#8e94aa]">
+                                    <div className="px-2 py-2 text-micro text-ink-muted">
                                         {t(
                                             "workspace.pluginsPage.empty",
                                             "暂无可用插件",
@@ -414,99 +461,70 @@ const AgentComposer = ({
                                     </div>
                                 )}
                             </div>
-                        </div>
-                    ) : null}
+                        ) : null}
+                        <input
+                            ref={fileInputRef}
+                            type="file"
+                            multiple
+                            className="hidden"
+                            accept={ACCEPTED_ATTACHMENT_TYPES}
+                            onChange={(event) => {
+                                onFilesSelected(
+                                    Array.from(event.target.files || []),
+                                );
+                                event.target.value = "";
+                            }}
+                        />
 
-
-                    {mentionMenuOpen ? (
-                        <div className="absolute bottom-12 left-10 z-30 w-72 overflow-hidden rounded-xl border border-[#e5e7f2] bg-white p-1.5 text-left shadow-[0_12px_32px_rgba(17,20,38,0.12)]">
-                            <div className="px-2 py-1.5 text-micro text-[#8e94aa]">
-                                {t(
-                                    "workspace.agent.mentionHint",
-                                    "选择后会插入到当前消息",
-                                )}
-                            </div>
-                            {orderedPlugins.length ? (
-                                orderedPlugins.map((plugin) => (
-                                    <button
-                                        key={plugin.id}
-                                        type="button"
-                                        onClick={() => previewPlugin(plugin)}
-                                        className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-caption text-[#242741] hover:bg-[#f5f4fb]"
-                                    >
-                                        <span className="text-[#6765f6]">
-                                            {pluginIcon(plugin)}
-                                        </span>
-                                        <span className="min-w-0 flex-1 truncate">
-                                            {plugin.name}
-                                        </span>
-                                        <span className="text-micro text-[#a0a5ba]">
-                                            @{plugin.key}
-                                        </span>
-                                    </button>
-                                ))
-                            ) : (
-                                <div className="px-2 py-2 text-micro text-[#8e94aa]">
-                                    {t(
-                                        "workspace.pluginsPage.empty",
-                                        "暂无可用插件",
-                                    )}
-                                </div>
-                            )}
-                        </div>
-                    ) : null}
-                    <input
-                        ref={fileInputRef}
-                        type="file"
-                        multiple
-                        className="hidden"
-                        accept={ACCEPTED_ATTACHMENT_TYPES}
-                        onChange={(event) => {
-                            onFilesSelected(
-                                Array.from(event.target.files || []),
-                            );
-                            event.target.value = "";
-                        }}
-                    />
-
-                    {isActive ? (
-                        <button
-                            type="button"
-                            onClick={onCancel}
-                            className={`grid h-9 w-9 shrink-0 place-items-center rounded-full bg-[#111426] text-white transition-colors hover:bg-[#2e334e] ${
-                                multiline ? "" : "order-4"
-                            }`}
-                        >
-                            <Square className="h-3.5 w-3.5 fill-current" />
-                        </button>
-                    ) : (
-                        <button
-                            type="button"
-                            onClick={onSubmit}
-                            disabled={locked || !canSend}
-                            className={`grid h-9 w-9 shrink-0 place-items-center rounded-full bg-[#111426] text-white transition-colors hover:bg-[#2e334e] disabled:opacity-40 ${
-                                multiline ? "" : "order-4"
-                            }`}
-                        >
-                            <Send className="h-4 w-4" />
-                        </button>
-                    )}
+                        {isActive ? (
+                            <button
+                                type="button"
+                                onClick={onCancel}
+                                aria-label={
+                                    isActive
+                                        ? t("common.cancel")
+                                        : t("blog.agentChat.send")
+                                }
+                                className={`grid h-9 w-9 shrink-0 place-items-center rounded-full bg-ink text-white transition-colors hover:bg-ink-secondary ${
+                                    multiline ? "" : "order-4"
+                                }`}
+                            >
+                                <Square className="h-3.5 w-3.5 fill-current" />
+                            </button>
+                        ) : (
+                            <button
+                                type="button"
+                                onClick={onSubmit}
+                                disabled={locked || !canSend}
+                                aria-label={
+                                    isActive
+                                        ? t("common.cancel")
+                                        : t("blog.agentChat.send")
+                                }
+                                className={`grid h-9 w-9 shrink-0 place-items-center rounded-full bg-ink text-white transition-colors hover:bg-ink-secondary disabled:opacity-40 ${
+                                    multiline ? "" : "order-4"
+                                }`}
+                            >
+                                <Send className="h-4 w-4" />
+                            </button>
+                        )}
                     </div>
                 </div>
             </div>
 
             {showQuickActions ? (
                 <div className="mt-4 flex flex-wrap justify-center gap-2.5">
-                    {QUICK_ACTIONS.map(({ key, icon: Icon, iconClassName }) => (
+                    {quickActions.map(({ key, icon: Icon, iconClassName }) => (
                         <button
                             key={key}
                             type="button"
+                            disabled={locked}
                             onClick={() =>
                                 onInputChange(
                                     t(`workspace.agent.actions.${key}`),
                                 )
                             }
-                            className="flex cursor-pointer items-center gap-2 rounded-xl border border-[#ececf4] bg-white px-3.5 py-2 text-xs font-semibold text-[#33364d] transition-all hover:border-[#817bf2] hover:bg-[#f9f8fe]"
+                            className="flex cursor-pointer items-center gap-2 rounded-xl border border-border bg-white px-3.5 py-2 text-xs font-semibold text-ink-secondary transition-all hover:border-border-strong hover:bg-surface-muted"
                         >
                             <span
                                 className={`grid h-5 w-5 place-items-center rounded-md ${iconClassName}`}

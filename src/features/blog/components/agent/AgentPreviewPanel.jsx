@@ -30,6 +30,7 @@ const AgentPreviewPanel = ({
     onViewPublished,
     onSelectVersion,
     onClose,
+    draftActionLabel,
 }) => {
     const { t } = useTranslation();
     const [metaOpen, setMetaOpen] = useState(false);
@@ -123,7 +124,7 @@ const AgentPreviewPanel = ({
                                         ) : (
                                             <FileText className="h-3.5 w-3.5" />
                                         )}
-                                        {t("blog.agent.toDraft")}
+                                        {draftActionLabel || t("blog.agent.toDraft")}
                                     </button>
                                 )}
                                 <button

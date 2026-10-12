@@ -23,9 +23,7 @@ const PublishHeader = ({
                     onClick={onBack}
                     className="flex h-10 w-10 items-center justify-center text-ink-muted hover:bg-surface-muted rounded-lg transition-colors"
                     title={
-                        isEditMode
-                            ? t("blog.backToManage")
-                            : t("blog.backToBlog")
+                        t("blog.backToManage")
                     }
                 >
                     <ChevronLeft className="w-5 h-5 transition-transform" />
@@ -48,12 +46,12 @@ const PublishHeader = ({
                 <button
                     onClick={onSaveDraft}
                     disabled={loading}
-                    title={t("blog.saveDraft")}
+                    title={t("contentLibrary.saveToLibrary")}
                     className="flex h-10 w-10 sm:w-auto sm:px-3 text-caption font-semibold text-ink-muted hover:text-ink transition-colors items-center justify-center gap-2 rounded-lg hover:bg-surface-muted disabled:opacity-50"
                 >
                     <Save className="w-4 h-4" />{" "}
                     <span className="hidden md:inline">
-                        {t("blog.saveDraft")}
+                        {t("contentLibrary.saveToLibrary")}
                     </span>
                 </button>
                 <button

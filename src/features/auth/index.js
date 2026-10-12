@@ -11,5 +11,6 @@ export {
     getLocalUserInfo,
     isLoggedIn,
     logout,
+    changePassword,
     updateProfile,
 } from "./capabilities";

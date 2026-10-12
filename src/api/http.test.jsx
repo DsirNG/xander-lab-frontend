@@ -115,7 +115,7 @@ vi.mock("../../utils", () => ({
     cn: (...parts) => parts.filter(Boolean).join(" "),
 }));
 
-const { tokenStorage, buildRequestKey, HttpError } = await import("./http.js");
+const { tokenStorage, buildRequestKey, HttpError, sanitizeLogHeaders } = await import("./http.js");
 
 beforeEach(() => {
     localStorage.clear();
@@ -166,6 +166,22 @@ describe("HttpError", () => {
         expect(err.status).toBe(403);
         expect(err.code).toBe(4003);
         expect(err.data).toEqual({ message: "boom" });
+    });
+});
+
+describe("sanitizeLogHeaders", () => {
+    it("redacts credential headers while preserving ordinary headers", () => {
+        expect(sanitizeLogHeaders({
+            Authorization: "Bearer secret-access-token",
+            Cookie: "session=secret-cookie",
+            "X-Api-Key": "secret-api-key",
+            Accept: "application/json",
+        })).toEqual({
+            Authorization: "[REDACTED]",
+            Cookie: "[REDACTED]",
+            "X-Api-Key": "[REDACTED]",
+            Accept: "application/json",
+        });
     });
 });
 
@@ -508,6 +524,7 @@ describe("refresh failure classification (§45)", () => {
         const [, , options] = axiosMock.post.mock.calls[0];
         expect(options.timeout).toBe(15000);
         expect(options.timeout).not.toBe(30000);
+        expect(options._sensitive).toBe(true);
     });
 });
 

@@ -51,7 +51,7 @@ const usePublishSubmit = ({
                     BLOG_STATUS.PUBLISHED,
                 );
                 toast.success(t("blog.publishSuccess"));
-                navigate("/workspace/blog-manage");
+                navigate("/app?view=articles");
                 return;
             }
 
@@ -63,7 +63,7 @@ const usePublishSubmit = ({
             clearPublishRequestId();
             consumeDraft();
             toast.success(t("blog.publishSuccess"));
-            navigate("/blog/");
+            navigate("/app?view=articles");
         } catch (err) {
             if (isEditMode) {
                 toast.error(err.message || t("blog.publishError"));
@@ -86,7 +86,7 @@ const usePublishSubmit = ({
                             clearPublishRequestId();
                             consumeDraft();
                             toast.success(t("blog.publishSuccess"));
-                            navigate("/blog/");
+                            navigate("/app?view=articles");
                             return;
                         }
                     } catch {
@@ -123,14 +123,14 @@ const usePublishSubmit = ({
                 await blogService.updateBlog(editId, buildPayload(false));
                 await blogService.updateBlogStatus(editId, BLOG_STATUS.DRAFT);
                 toast.success(t("blog.saveDraftServerSuccess"));
-                navigate("/workspace/blog-manage");
+                navigate("/app?view=articles");
                 return;
             }
 
             await blogService.publishBlog(buildPayload(false));
             consumeDraft();
             toast.success(t("blog.saveDraftServerSuccess"));
-            navigate("/workspace/blog-manage");
+            navigate("/app?view=articles");
         } catch (err) {
             if (!isEditMode) {
                 if (saveDraft(formData)) {

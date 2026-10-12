@@ -1,61 +1,16 @@
 import PropTypes from "prop-types";
 import {
-    Calendar,
     CloudUpload,
-    Code,
     Eye,
     FilePenLine,
     FileText,
-    Globe,
-    LayoutTemplate,
-    Lightbulb,
-    Link2,
     Send,
-    Star,
     Trash2,
     Undo,
 } from "lucide-react";
 import DataTable from "@shared/ui/data-display/DataTable";
 import RowActionsMenu from "@shared/ui/overlays/RowActionsMenu";
 import { BLOG_STATUS } from "../services/blogService";
-
-const getTopicStyle = (topic = "") => {
-    if (topic.includes("设计") || topic.includes("API"))
-        return { icon: FileText, color: "text-blue-500", bg: "bg-blue-50" };
-    if (
-        topic.includes("Websocket") ||
-        topic.includes("网络") ||
-        topic.includes("区别")
-    )
-        return { icon: Globe, color: "text-blue-500", bg: "bg-blue-50" };
-    if (
-        topic.includes("CSS") ||
-        topic.includes("样式") ||
-        topic.includes("盒模型")
-    )
-        return {
-            icon: LayoutTemplate,
-            color: "text-green-500",
-            bg: "bg-green-50",
-        };
-    if (topic.includes("中级") || topic.includes("开发"))
-        return { icon: Code, color: "text-orange-500", bg: "bg-orange-50" };
-    if (
-        topic.includes("闭包") ||
-        topic.includes("JS") ||
-        topic.includes("JavaScript")
-    )
-        return {
-            icon: Calendar,
-            color: "text-purple-500",
-            bg: "bg-purple-50",
-        };
-    if (topic.includes("资讯") || topic.includes("精选"))
-        return { icon: Star, color: "text-blue-500", bg: "bg-blue-50" };
-    if (topic.includes("面试") || topic.includes("解析"))
-        return { icon: Lightbulb, color: "text-red-500", bg: "bg-red-50" };
-    return { icon: Link2, color: "text-accent", bg: "bg-accent-soft" };
-};
 
 const BlogManageTable = ({
     t,
@@ -71,7 +26,8 @@ const BlogManageTable = ({
     onPreview,
     onEdit,
     onStatusChange,
-    onSyncCsdn,
+    onSync,
+    busy = false,
     onDelete,
 }) => (
     <DataTable
@@ -82,19 +38,15 @@ const BlogManageTable = ({
                 title: t("profile.blogManage.articleColumn", "文章信息"),
                 width: "30%",
                 render: (post) => {
-                    const style = getTopicStyle(
-                        post.title || post.categoryName,
-                    );
-                    const Icon = style.icon;
                     return (
                         <div className="flex min-w-0 items-start gap-3 py-1">
                             <div
-                                className={`mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${style.bg}`}
+                                className={`mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-surface-muted`}
                             >
-                                <Icon className={`h-4 w-4 ${style.color}`} />
+                                <FileText className="h-4 w-4 text-ink-muted" />
                             </div>
                             <div className="min-w-0 flex-1">
-                                <div className="truncate text-sm font-bold text-ink">
+                                <div className="truncate text-sm font-medium text-ink">
                                     {post.title ||
                                         t(
                                             "profile.blogManage.untitled",
@@ -117,11 +69,11 @@ const BlogManageTable = ({
                     <div className="flex flex-wrap gap-1.5">
                         {(post.categoryName
                             ? [post.categoryName]
-                            : [t("profile.blogManage.tagFrontend", "前端")]
+                            : [t("contentLibrary.uncategorized")]
                         ).map((tag, index) => (
                             <span
                                 key={index}
-                                className="rounded-full border border-indigo-100 bg-indigo-50 px-2 py-0.5 text-[11px] font-medium text-indigo-600"
+                                className="rounded-md border border-border bg-surface-muted px-2 py-0.5 text-caption text-ink-muted"
                             >
                                 {tag}
                             </span>
@@ -162,10 +114,7 @@ const BlogManageTable = ({
                         ) : null}
                         {!post.csdnSynced && !post.juejinSynced ? (
                             <span className="rounded border border-border px-1.5 py-0.5 text-[11px] font-medium text-ink-muted">
-                                {t(
-                                    "profile.blogManage.platformWechat",
-                                    "公众号",
-                                )}
+                                {t("contentLibrary.notSynced")}
                             </span>
                         ) : null}
                     </div>
@@ -177,16 +126,18 @@ const BlogManageTable = ({
                 width: "15%",
                 render: (post) => (
                     <span className="text-[12px] font-medium text-ink-muted">
-                        {new Date(
-                            post.updatedAt || post.createdAt || Date.now(),
-                        ).toLocaleString("zh-CN", {
-                            hour12: false,
-                            year: "numeric",
-                            month: "numeric",
-                            day: "numeric",
-                            hour: "2-digit",
-                            minute: "2-digit",
-                        })}
+                        {post.updatedAt || post.createdAt
+                            ? new Date(
+                                  post.updatedAt || post.createdAt,
+                              ).toLocaleString(undefined, {
+                                  hour12: false,
+                                  year: "numeric",
+                                  month: "numeric",
+                                  day: "numeric",
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                              })
+                            : "—"}
                     </span>
                 ),
             },
@@ -201,8 +152,7 @@ const BlogManageTable = ({
                             key: "view",
                             label: t("profile.blogManage.actions.view", "查看"),
                             icon: Eye,
-                            onClick: (event) => {
-                                event.stopPropagation();
+                            onClick: () => {
                                 onPreview(post);
                             },
                         },
@@ -210,8 +160,7 @@ const BlogManageTable = ({
                             key: "edit",
                             label: t("profile.blogManage.actions.edit", "编辑"),
                             icon: FilePenLine,
-                            onClick: (event) => {
-                                event.stopPropagation();
+                            onClick: () => {
                                 onEdit(post);
                             },
                         },
@@ -224,8 +173,7 @@ const BlogManageTable = ({
                                 "发布",
                             ),
                             icon: Send,
-                            onClick: (event) => {
-                                event.stopPropagation();
+                            onClick: () => {
                                 onStatusChange(
                                     post,
                                     BLOG_STATUS.PUBLISHED,
@@ -242,8 +190,7 @@ const BlogManageTable = ({
                                 "取消发布",
                             ),
                             icon: Undo,
-                            onClick: (event) => {
-                                event.stopPropagation();
+                            onClick: () => {
                                 onStatusChange(
                                     post,
                                     BLOG_STATUS.DRAFT,
@@ -254,15 +201,11 @@ const BlogManageTable = ({
                     }
                     menuItems.push(
                         {
-                            key: "syncCsdn",
-                            label: t(
-                                "profile.blogManage.actions.syncCsdn",
-                                "同步到 CSDN",
-                            ),
+                            key: "sync",
+                            label: t("articleSync.title"),
                             icon: CloudUpload,
-                            onClick: (event) => {
-                                event.stopPropagation();
-                                onSyncCsdn(post);
+                            onClick: () => {
+                                onSync(post);
                             },
                         },
                         {
@@ -273,8 +216,7 @@ const BlogManageTable = ({
                             ),
                             icon: Trash2,
                             danger: true,
-                            onClick: (event) => {
-                                event.stopPropagation();
+                            onClick: () => {
                                 onDelete(post);
                             },
                         },
@@ -284,19 +226,29 @@ const BlogManageTable = ({
                             className="ml-2 flex items-center justify-start"
                             onClick={(event) => event.stopPropagation()}
                         >
-                            <RowActionsMenu actions={menuItems} size="sm" />
+                            <RowActionsMenu
+                                actions={menuItems.map((item) => ({
+                                    ...item,
+                                    disabled: busy,
+                                }))}
+                                ariaLabel={t("profile.blogManage.actionsColumn")}
+                                size="sm"
+                            />
                         </div>
                     );
                 },
             },
         ]}
+        emptyTitle={t("contentLibrary.emptyArticles")}
+        emptyHint={t("contentLibrary.emptyArticleHint")}
+        emptyIcon={FileText}
         rows={posts}
         loading={loading}
         loadingText={t("profile.blogManage.loading")}
         error={loadError ? t("profile.blogManage.loadError") : ""}
         onRetry={loadPosts}
         onRetryLabel={t("profile.blogManage.retry")}
-        minWidth="940px"
+        minWidth="840px"
         page={page}
         pageSize={pageSize}
         total={total}
@@ -321,7 +273,8 @@ BlogManageTable.propTypes = {
     onPreview: PropTypes.func.isRequired,
     onEdit: PropTypes.func.isRequired,
     onStatusChange: PropTypes.func.isRequired,
-    onSyncCsdn: PropTypes.func.isRequired,
+    onSync: PropTypes.func.isRequired,
+    busy: PropTypes.bool,
     onDelete: PropTypes.func.isRequired,
 };
 

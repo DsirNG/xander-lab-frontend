@@ -1,16 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Plus, Search } from "lucide-react";
+import { Plus, Search, RefreshCw } from "lucide-react";
 import ConfirmModal from "@shared/ui/overlays/ConfirmModal";
 import { useToast } from "@shared/hooks/useToast";
 import { blogService, BLOG_STATUS } from "../services/blogService";
-import {
-    CsdnSyncDialog,
-    JuejinSyncDialog,
-} from "@features/platformIntegrations";
-import ArticleOverviewCard from "./manage/ArticleOverviewCard";
-import ArticlePerformanceCard from "./manage/ArticlePerformanceCard";
+import ArticleSyncModal from "./manage/ArticleSyncModal";
+import Button from "@shared/ui/primitives/Button";
 import BlogPreviewModal from "./manage/BlogPreviewModal";
 import BlogManageTable from "./BlogManageTable";
 
@@ -18,9 +14,17 @@ const DEFAULT_PAGE_SIZE = 10;
 const SEARCH_DEBOUNCE_MS = 300;
 
 const FILTERS = [
-    { id: "all", status: undefined, label: "全部状态" },
-    { id: "published", status: BLOG_STATUS.PUBLISHED, label: "已发布" },
-    { id: "draft", status: BLOG_STATUS.DRAFT, label: "草稿" },
+    { id: "all", status: undefined, key: "contentLibrary.all" },
+    {
+        id: "published",
+        status: BLOG_STATUS.PUBLISHED,
+        key: "profile.blogManage.status.published",
+    },
+    {
+        id: "draft",
+        status: BLOG_STATUS.DRAFT,
+        key: "profile.blogManage.status.draft",
+    },
 ];
 
 const getList = (result) => {
@@ -34,7 +38,7 @@ const BlogManagePanel = () => {
     const toast = useToast();
     const navigate = useNavigate();
 
-    const [statusFilter] = useState("all");
+    const [statusFilter, setStatusFilter] = useState("all");
 
     const [searchInput, setSearchInput] = useState("");
     const [search, setSearch] = useState("");
@@ -46,8 +50,7 @@ const BlogManagePanel = () => {
     const [loadError, setLoadError] = useState(false);
     const [actionKey, setActionKey] = useState("");
     const [confirmAction, setConfirmAction] = useState(null);
-    const [csdnPost, setCsdnPost] = useState(null);
-    const [juejinPost, setJuejinPost] = useState(null);
+    const [syncPost, setSyncPost] = useState(null);
     const [previewPostId, setPreviewPostId] = useState(null);
 
     const abortRef = useRef(null);
@@ -79,7 +82,10 @@ const BlogManagePanel = () => {
                 );
                 if (seq !== requestSeq.current) return;
                 setPosts(getList(result));
-                setTotal(Number(result?.total) || 0);
+                setTotal(
+                    Number(result?.total) ||
+                        (Array.isArray(result) ? result.length : 0),
+                );
             } catch (err) {
                 if (err.name === "CanceledError" || err.code === "ERR_CANCELED")
                     return;
@@ -143,22 +149,26 @@ const BlogManagePanel = () => {
     };
 
     return (
-        <div className="flex h-full flex-col overflow-hidden bg-surface">
+        <div className="flex h-full min-h-0 min-w-0 flex-col overflow-hidden bg-canvas">
             {/* Header */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between shrink-0 mb-6 gap-4 px-4 sm:px-6 pt-4 sm:pt-6">
+            <div className="flex shrink-0 flex-wrap items-start justify-between gap-4 border-b border-border px-5 py-5 sm:px-8">
                 <div className="min-w-0">
-                    <h1 className="text-[24px] font-bold text-ink">
-                        {t("profile.blogManage.title", "发布文章")}
+                    <h1 className="text-xl font-semibold text-ink">
+                        {t("contentLibrary.articles")}
                     </h1>
                     <p className="mt-1 text-sm text-ink-muted">
-                        {t(
-                            "profile.blogManage.description",
-                            "创建、发布与管理你的多平台文章内容，让优质内容触达更多读者。",
-                        )}
+                        {t("contentLibrary.articleDescription")}
                     </p>
                 </div>
-                <div className="flex items-center gap-3 shrink-0">
-                    <div className="relative w-64 hidden sm:block">
+                <div className="flex w-full min-w-0 flex-wrap items-center gap-2 sm:w-auto">
+                    <Button
+                        variant="ghost"
+                        icon={RefreshCw}
+                        loading={loading}
+                        onClick={() => loadPosts()}
+                        aria-label={t("contentLibrary.refresh")}
+                    />
+                    <div className="relative min-w-0 flex-1 sm:w-64">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-faint" />
                         <input
                             value={searchInput}
@@ -167,25 +177,48 @@ const BlogManagePanel = () => {
                                 "blogManage.searchPlaceholder",
                                 "搜索文章标题、内容或标签",
                             )}
-                            className="w-full h-10 pl-9 pr-4 rounded-full bg-white border-none shadow-[0_2px_10px_rgba(0,0,0,0.02)] text-sm outline-none focus:ring-2 focus:ring-accent/20"
+                            className="w-full h-10 pl-9 pr-4 rounded-lg bg-canvas border border-border text-sm text-ink outline-none focus:ring-2 focus:ring-border-strong"
                         />
                     </div>
-                    <button
-                        onClick={() => navigate("/workspace/publish")}
-                        className="h-10 px-5 rounded-full bg-indigo-500 text-white text-sm font-bold flex items-center gap-1.5 shadow-md hover:bg-indigo-600 transition"
+                    <Button
+                        variant="ink"
+                        icon={Plus}
+                        onClick={() => navigate("/app?view=publish")}
                     >
-                        <Plus className="w-4 h-4" />{" "}
-                        {t("blogManage.createNew", "新建文章")}
-                    </button>
+                        {t("blogManage.createNew")}
+                    </Button>
                 </div>
             </div>
 
+            <div
+                className="flex shrink-0 items-center gap-1 px-5 py-3 sm:px-8"
+                role="group"
+                aria-label={t("profile.blogManage.statusLabel")}
+            >
+                {FILTERS.map((filter) => (
+                    <Button
+                        key={filter.id}
+                        size="sm"
+                        variant={statusFilter === filter.id ? "ink" : "ghost"}
+                        aria-pressed={statusFilter === filter.id}
+                        onClick={() => {
+                            setStatusFilter(filter.id);
+                            setPage(1);
+                        }}
+                    >
+                        {t(filter.key)}
+                    </Button>
+                ))}
+                <span className="ml-auto text-caption text-ink-faint">
+                    {t("contentLibrary.total", { count: total })}
+                </span>
+            </div>
             {/* Content Area */}
-            <div className="flex flex-1 min-h-0 min-w-0 gap-6 px-4 sm:px-6 pb-4 sm:pb-6">
+            <div className="flex flex-1 min-h-0 min-w-0 px-5 sm:px-8 pb-5">
                 {/* Left Table Area */}
-                <div className="flex flex-1 min-w-0 flex-col bg-white rounded-[24px] shadow-[0_2px_15px_rgba(0,0,0,0.02)] border border-border/20 overflow-hidden">
+                <div className="flex flex-1 min-h-0 min-w-0 flex-col bg-canvas rounded-xl border border-border overflow-hidden">
                     {/* Table */}
-                    <div className="flex-1 min-h-0 p-5">
+                    <div className="flex-1 min-h-0">
                         <BlogManageTable
                             t={t}
                             posts={posts}
@@ -202,21 +235,16 @@ const BlogManagePanel = () => {
                             }}
                             onPreview={(post) => setPreviewPostId(post.id)}
                             onEdit={(post) =>
-                                navigate(`/workspace/publish?id=${post.id}`)
+                                navigate(`/app?view=publish&id=${post.id}`)
                             }
                             onStatusChange={handleStatus}
-                            onSyncCsdn={(post) => setCsdnPost(post)}
+                            onSync={setSyncPost}
+                            busy={Boolean(actionKey)}
                             onDelete={(post) =>
                                 setConfirmAction({ type: "trash", post })
                             }
                         />
                     </div>
-                </div>
-
-                {/* Right Sidebar */}
-                <div className="hidden w-[320px] shrink-0 xl:flex flex-col gap-5 overflow-y-auto pb-2 pr-1">
-                    <ArticleOverviewCard />
-                    <ArticlePerformanceCard />
                 </div>
             </div>
 
@@ -239,38 +267,17 @@ const BlogManagePanel = () => {
                 onClose={() => setPreviewPostId(null)}
             />
 
-            {csdnPost && (
-                <CsdnSyncDialog
-                    post={csdnPost}
-                    onClose={() => setCsdnPost(null)}
-                    onSuccess={() => {
-                        setPosts((current) =>
-                            current.map((post) =>
-                                post.id === csdnPost.id
-                                    ? { ...post, csdnSynced: true }
-                                    : post,
-                            ),
-                        );
-                        toast.success(t("profile.blogManage.csdn.synced"));
-                        loadPosts({ showLoading: false });
+            {syncPost && (
+                <ArticleSyncModal
+                    key={syncPost.id}
+                    post={syncPost}
+                    onClose={() => setSyncPost(null)}
+                    onSynced={(platform) => {
+                        const field = `${platform}Synced`;
+                        setPosts((current) => current.map((post) => post.id === syncPost.id ? { ...post, [field]: true } : post));
+                        setSyncPost((current) => ({ ...current, [field]: true }));
                     }}
-                />
-            )}
-            {juejinPost && (
-                <JuejinSyncDialog
-                    post={juejinPost}
-                    onClose={() => setJuejinPost(null)}
-                    onSuccess={() => {
-                        setPosts((current) =>
-                            current.map((post) =>
-                                post.id === juejinPost.id
-                                    ? { ...post, juejinSynced: true }
-                                    : post,
-                            ),
-                        );
-                        toast.success(t("profile.blogManage.juejin.synced"));
-                        loadPosts({ showLoading: false });
-                    }}
+                    onCompleted={() => loadPosts({ showLoading: false })}
                 />
             )}
         </div>

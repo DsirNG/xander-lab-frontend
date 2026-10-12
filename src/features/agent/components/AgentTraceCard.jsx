@@ -19,7 +19,7 @@ const STATUS_META = {
         spin: true,
         label: "toolRunning",
     },
-    done: { Icon: Check, tone: "text-emerald-600", label: "toolSucceeded" },
+    done: { Icon: Check, tone: "text-success", label: "toolSucceeded" },
     error: { Icon: AlertCircle, tone: "text-danger", label: "toolFailed" },
     cancelled: { Icon: Ban, tone: "text-ink-faint", label: "toolCancelled" },
 };

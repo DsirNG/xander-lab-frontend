@@ -146,7 +146,11 @@ export function useAgentConversationLive({
                     content: `${draft?.content || ""}${data?.delta || ""}`,
                 });
                 scheduleDeltaFlush();
-            } else if (event === "tool_end" || event === "tool_error") {
+            } else if (
+                event === "tool_end" ||
+                event === "tool_result" ||
+                event === "tool_error"
+            ) {
                 const key = toolTraceKey(data);
                 const tool = data?.tool || "tool";
                 toolDeltaRef.current.delete(key);
@@ -164,7 +168,7 @@ export function useAgentConversationLive({
                     traceKey: key,
                     tool,
                     invocationId: data?.invocationId,
-                    phase: event === "tool_end" ? "end" : "error",
+                    phase: event === "tool_error" ? "error" : "end",
                     result: data?.result,
                     error: data?.error,
                 });

@@ -100,7 +100,7 @@ const PlanAiGenerateModal = ({ isOpen, onClose, onSaved }) => {
             <Button
                 onClick={submit}
                 loading={generating}
-                variant="primary"
+                variant="ink"
                 icon={Sparkles}
             >
                 {t("blogPlans.aiGenerate")}

@@ -62,8 +62,12 @@ const LoginPage = () => {
     });
     const [countdown, setCountdown] = useState(0);
     const [sendingCode, setSendingCode] = useState(false);
-    const [codeInputFocused, setCodeInputFocused] = useState(false);
     const sendCodeLockRef = useRef(false);
+    const [showResetPassword, setShowResetPassword] = useState(false);
+    const [resetEmail, setResetEmail] = useState("");
+    const [resetCode, setResetCode] = useState("");
+    const [resetNewPassword, setResetNewPassword] = useState("");
+    const [resetConfirmPassword, setResetConfirmPassword] = useState("");
 
     const stopQrPolling = () => {
         if (qrTimerRef.current) window.clearInterval(qrTimerRef.current);
@@ -145,16 +149,16 @@ const LoginPage = () => {
         setFormData((current) => ({ ...current, code }));
     };
 
-    const handleSendCode = async () => {
+    const sendVerificationCode = async (email) => {
         if (sendingCode || sendCodeLockRef.current || countdown > 0) return;
-        if (!formData.account || !formData.account.includes("@")) {
+        if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
             toast.warning(t("auth.login.invalidEmail"));
             return;
         }
         sendCodeLockRef.current = true;
         setSendingCode(true);
         try {
-            await authService.sendCode(formData.account);
+            await authService.sendCode(email.trim());
             setCountdown(60);
             toast.success(t("auth.login.codeSent"));
         } catch (err) {
@@ -162,6 +166,67 @@ const LoginPage = () => {
         } finally {
             sendCodeLockRef.current = false;
             setSendingCode(false);
+        }
+    };
+
+    const handleSendCode = () => sendVerificationCode(formData.account);
+    const handleSendResetCode = () => sendVerificationCode(resetEmail);
+
+    const openPasswordReset = () => {
+        setResetEmail(formData.account.includes("@") ? formData.account : "");
+        setResetCode("");
+        setResetNewPassword("");
+        setResetConfirmPassword("");
+        setCountdown(0);
+        setShowWechatQr(false);
+        setShowResetPassword(true);
+    };
+
+    const closePasswordReset = () => {
+        if (resetEmail.trim()) {
+            setFormData((current) => ({
+                ...current,
+                account: resetEmail.trim(),
+            }));
+        }
+        setShowResetPassword(false);
+        setResetCode("");
+        setResetNewPassword("");
+        setResetConfirmPassword("");
+        setCountdown(0);
+    };
+
+    const handleResetPassword = async (event) => {
+        event.preventDefault();
+        if (resetNewPassword.length < 6 || resetNewPassword.length > 72) {
+            toast.warning(t("auth.login.passwordLength"));
+            return;
+        }
+        if (resetNewPassword !== resetConfirmPassword) {
+            toast.warning(t("auth.login.passwordMismatch"));
+            return;
+        }
+
+        setLoading(true);
+        try {
+            await authService.resetPassword({
+                email: resetEmail.trim(),
+                code: resetCode,
+                newPassword: resetNewPassword,
+            });
+            setFormData((current) => ({
+                ...current,
+                account: resetEmail.trim(),
+                password: "",
+                code: "",
+            }));
+            setLoginType("password");
+            closePasswordReset();
+            toast.success(t("auth.login.passwordResetSuccess"));
+        } catch (err) {
+            toast.error(err.message || t("auth.login.passwordResetFailed"));
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -183,12 +248,14 @@ const LoginPage = () => {
     };
 
     const selectAuthMode = (mode) => {
+        setShowResetPassword(false);
         setAuthMode(mode);
         setLoginType(mode === "register" ? "code" : "password");
         setShowWechatQr(false);
     };
 
     const openWechatQr = () => {
+        setShowResetPassword(false);
         setQrState({ ticket: "", image: "", status: "" });
         setShowWechatQr(true);
     };
@@ -202,11 +269,12 @@ const LoginPage = () => {
     const isCodeFlow = authMode === "register" || loginType === "code";
     const inputClassName = twMerge(
         formInputCls,
-        "h-12 rounded-lg border-border bg-white px-3.5 text-body text-ink placeholder:text-ink-faint focus:border-accent focus:ring-accent/10",
+        "h-12 rounded-none border-0 border-b border-border-strong bg-transparent px-0 text-body text-ink shadow-none placeholder:text-ink-faint focus:border-ink focus:ring-0",
     );
 
     return (
-        <main className="grid min-h-screen bg-white text-ink lg:grid-cols-2">
+        <main className="grid min-h-screen bg-white text-ink lg:grid-cols-2"
+        >
             <section className="relative hidden min-h-screen overflow-hidden bg-gradient-to-br from-surface-muted via-white to-accent-soft lg:flex">
                 <svg
                     aria-hidden="true"
@@ -267,7 +335,7 @@ const LoginPage = () => {
                     <Link
                         to="/"
                         aria-label="DinQorAI"
-                        className="mb-10 flex w-fit items-center gap-3 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent lg:mb-12"
+                        className="mb-10 flex w-fit items-center gap-3 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink lg:mb-12"
                     >
                         <img
                             src="/assets/workspace/workspace-logo.svg"
@@ -275,44 +343,50 @@ const LoginPage = () => {
                             className="h-10 w-10"
                         />
                         <span className="text-xl font-bold tracking-tight text-ink">
-                            DinQor<span className="text-accent">AI</span>
+                            DinQor<span>AI</span>
                         </span>
                     </Link>
 
-                    <div
-                        role="tablist"
-                        aria-label={t("auth.login.identityGateway")}
-                        className="mb-8 flex gap-8 border-b border-border"
-                    >
-                        {["login", "register"].map((mode) => (
-                            <button
-                                key={mode}
-                                type="button"
-                                role="tab"
-                                aria-selected={authMode === mode}
-                                onClick={() => selectAuthMode(mode)}
-                                className={`relative -mb-px border-b-2 px-0.5 pb-3 text-body font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
-                                    authMode === mode
-                                        ? "border-accent text-accent"
-                                        : "border-transparent text-ink-muted hover:text-ink"
-                                }`}
-                            >
-                                {mode === "login"
-                                    ? t("auth.login.login")
-                                    : t("auth.login.register")}
-                            </button>
-                        ))}
-                    </div>
+                    {!showResetPassword && (
+                        <div
+                            role="tablist"
+                            aria-label={t("auth.login.identityGateway")}
+                            className="mb-8 flex gap-8 border-b border-border"
+                        >
+                            {["login", "register"].map((mode) => (
+                                <button
+                                    key={mode}
+                                    type="button"
+                                    role="tab"
+                                    aria-selected={authMode === mode}
+                                    onClick={() => selectAuthMode(mode)}
+                                    className={`relative -mb-px border-b-2 px-0.5 pb-3 text-body font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink ${
+                                        authMode === mode
+                                            ? "border-ink text-ink"
+                                            : "border-transparent text-ink-muted hover:text-ink"
+                                    }`}
+                                >
+                                    {mode === "login"
+                                        ? t("auth.login.login")
+                                        : t("auth.login.register")}
+                                </button>
+                            ))}
+                        </div>
+                    )}
 
                     <h1 className="text-3xl font-bold tracking-tight text-ink">
-                        {authMode === "login"
-                            ? t("auth.login.welcomeBack")
-                            : t("auth.login.registerTitle")}
+                        {showResetPassword
+                            ? t("auth.login.resetPasswordTitle")
+                            : authMode === "login"
+                              ? t("auth.login.welcomeBack")
+                              : t("auth.login.registerTitle")}
                     </h1>
                     <p className="mt-2 text-body leading-relaxed text-ink-muted">
-                        {authMode === "login"
-                            ? t("auth.login.loginSubtitle")
-                            : t("auth.login.registerSubtitle")}
+                        {showResetPassword
+                            ? t("auth.login.resetPasswordDescription")
+                            : authMode === "login"
+                              ? t("auth.login.loginSubtitle")
+                              : t("auth.login.registerSubtitle")}
                     </p>
 
                     {showWechatQr ? (
@@ -321,7 +395,7 @@ const LoginPage = () => {
                                 <button
                                     type="button"
                                     onClick={closeWechatQr}
-                                    className="rounded-md text-caption text-ink-muted hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                                    className="rounded-md text-caption text-ink-muted hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink"
                                 >
                                     {t("auth.login.qrBack")}
                                 </button>
@@ -369,6 +443,130 @@ const LoginPage = () => {
                                 </Button>
                             )}
                         </div>
+                    ) : showResetPassword ? (
+                        <form
+                            onSubmit={handleResetPassword}
+                            className="mt-7 space-y-5"
+                        >
+                            <div className="space-y-4">
+                                <FormField
+                                    label={t("auth.login.emailLabel")}
+                                    htmlFor="reset-email"
+                                >
+                                    <div className="relative">
+                                        <input
+                                            id="reset-email"
+                                            type="email"
+                                            autoComplete="email"
+                                            required
+                                            value={resetEmail}
+                                            onChange={(event) =>
+                                                setResetEmail(event.target.value)
+                                            }
+                                            className={twMerge(inputClassName, "pr-32")}
+                                            placeholder={t("auth.login.emailPlaceholder")}
+                                        />
+                                        <Button
+                                            type="button"
+                                            size="sm"
+                                            variant="ghost"
+                                            disabled={countdown > 0 || sendingCode}
+                                            loading={sendingCode}
+                                            onClick={handleSendResetCode}
+                                            className="absolute right-0 top-1/2 -translate-y-1/2 px-2.5 text-ink hover:bg-surface-muted hover:text-ink-secondary"
+                                        >
+                                            {countdown > 0
+                                                ? `${countdown}s`
+                                                : t("auth.login.sendCode")}
+                                        </Button>
+                                    </div>
+                                </FormField>
+                                <FormField
+                                    label={t("auth.login.codeLabel")}
+                                    htmlFor="reset-code"
+                                >
+                                    <input
+                                        id="reset-code"
+                                        type="text"
+                                        inputMode="numeric"
+                                        pattern="[0-9]{6}"
+                                        autoComplete="one-time-code"
+                                        required
+                                        maxLength={6}
+                                        value={resetCode}
+                                        onChange={(event) =>
+                                            setResetCode(
+                                                event.target.value
+                                                    .replace(/\D/g, "")
+                                                    .slice(0, 6),
+                                            )
+                                        }
+                                        className={inputClassName}
+                                        placeholder={t("auth.login.codePlaceholder")}
+                                    />
+                                </FormField>
+                                <FormField
+                                    label={t("auth.login.newPasswordLabel")}
+                                    htmlFor="reset-new-password"
+                                    hint={t("auth.login.passwordLength")}
+                                >
+                                    <input
+                                        id="reset-new-password"
+                                        type="password"
+                                        autoComplete="new-password"
+                                        required
+                                        minLength={6}
+                                        maxLength={72}
+                                        value={resetNewPassword}
+                                            onChange={(event) =>
+                                                setResetNewPassword(
+                                                    event.target.value,
+                                                )
+                                            }
+                                        className={inputClassName}
+                                        placeholder={t("auth.login.newPasswordPlaceholder")}
+                                    />
+                                </FormField>
+                                <FormField
+                                    label={t("auth.login.confirmPasswordLabel")}
+                                    htmlFor="reset-confirm-password"
+                                >
+                                    <input
+                                        id="reset-confirm-password"
+                                        type="password"
+                                        autoComplete="new-password"
+                                        required
+                                        minLength={6}
+                                        maxLength={72}
+                                        value={resetConfirmPassword}
+                                            onChange={(event) =>
+                                                setResetConfirmPassword(
+                                                    event.target.value,
+                                                )
+                                            }
+                                        className={inputClassName}
+                                        placeholder={t("auth.login.confirmPasswordPlaceholder")}
+                                    />
+                                </FormField>
+                            </div>
+                            <Button
+                                type="submit"
+                                loading={loading}
+                                variant="ink"
+                                size="lg"
+                                block
+                                className="rounded-lg"
+                            >
+                                {t("auth.login.resetPasswordSubmit")}
+                            </Button>
+                            <button
+                                type="button"
+                                onClick={closePasswordReset}
+                                className="w-full text-center text-caption font-medium text-ink-muted hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink"
+                            >
+                                {t("auth.login.backToLogin")}
+                            </button>
+                        </form>
                     ) : (
                         <form
                             onSubmit={handleSubmit}
@@ -424,7 +622,7 @@ const LoginPage = () => {
                                                 disabled={countdown > 0}
                                                 loading={sendingCode}
                                                 onClick={handleSendCode}
-                                                className="absolute right-1.5 top-1/2 -translate-y-1/2 px-2.5 text-accent hover:bg-accent-soft hover:text-accent-fg"
+                                                className="absolute right-1.5 top-1/2 -translate-y-1/2 px-2.5 text-ink hover:bg-surface-muted hover:text-ink-secondary"
                                             >
                                                 {countdown > 0
                                                     ? `${countdown}s`
@@ -439,66 +637,20 @@ const LoginPage = () => {
                                         label={t("auth.login.codeLabel")}
                                         htmlFor="code"
                                     >
-                                        <div className="relative rounded-lg border border-border bg-white px-2.5 py-1.5 transition focus-within:border-accent focus-within:ring-2 focus-within:ring-accent/10">
-                                            <div
-                                                aria-hidden="true"
-                                                className="grid h-9 grid-cols-6 gap-1.5 sm:gap-2"
-                                            >
-                                                {Array.from(
-                                                    { length: 6 },
-                                                    (_, index) => {
-                                                        const value =
-                                                            formData.code[
-                                                                index
-                                                            ];
-                                                        const isCurrent =
-                                                            codeInputFocused &&
-                                                            index ===
-                                                                formData.code
-                                                                    .length &&
-                                                            formData.code
-                                                                .length < 6;
-                                                        const slotClassName =
-                                                            value
-                                                                ? "border-accent-200 bg-accent-50 text-ink"
-                                                                : isCurrent
-                                                                  ? "border-accent bg-white text-accent"
-                                                                  : "border-border bg-surface text-ink-faint";
-
-                                                        return (
-                                                            <span
-                                                                key={index}
-                                                                className={`flex min-w-0 items-center justify-center rounded-md border text-title transition-colors ${slotClassName}`}
-                                                            >
-                                                                {value || ""}
-                                                            </span>
-                                                        );
-                                                    },
-                                                )}
-                                            </div>
-                                            <input
-                                                type="text"
-                                                id="code"
-                                                name="code"
-                                                inputMode="numeric"
-                                                pattern="[0-9]{6}"
-                                                autoComplete="one-time-code"
-                                                required
-                                                maxLength={6}
-                                                value={formData.code}
-                                                onChange={handleCodeChange}
-                                                onFocus={() =>
-                                                    setCodeInputFocused(true)
-                                                }
-                                                onBlur={() =>
-                                                    setCodeInputFocused(false)
-                                                }
-                                                aria-label={t(
-                                                    "auth.login.codeLabel",
-                                                )}
-                                                className="absolute inset-0 h-full w-full cursor-text rounded-lg opacity-0"
-                                            />
-                                        </div>
+                                        <input
+                                            type="text"
+                                            id="code"
+                                            name="code"
+                                            inputMode="numeric"
+                                            pattern="[0-9]{6}"
+                                            autoComplete="one-time-code"
+                                            required
+                                            maxLength={6}
+                                            value={formData.code}
+                                            onChange={handleCodeChange}
+                                            aria-label={t("auth.login.codeLabel")}
+                                            className={inputClassName}
+                                        />
                                     </FormField>
                                 ) : (
                                     <FormField
@@ -529,6 +681,17 @@ const LoginPage = () => {
                                         </div>
                                     </FormField>
                                 )}
+                                {!isCodeFlow && authMode === "login" && (
+                                    <div className="flex justify-end">
+                                        <button
+                                            type="button"
+                                            onClick={openPasswordReset}
+                                            className="text-caption font-medium text-ink-muted hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink"
+                                        >
+                                            {t("auth.login.forgotPassword")}
+                                        </button>
+                                    </div>
+                                )}
                             </div>
 
                             {authMode === "login" && (
@@ -541,7 +704,7 @@ const LoginPage = () => {
                                                 : "password",
                                         )
                                     }
-                                    className="text-caption font-medium text-accent hover:text-accent-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                                    className="text-caption font-medium text-ink hover:text-ink-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink"
                                 >
                                     {loginType === "password"
                                         ? t("auth.login.switchToCode")
@@ -552,7 +715,7 @@ const LoginPage = () => {
                             <Button
                                 type="submit"
                                 loading={loading}
-                                variant="primary"
+                                variant="ink"
                                 size="lg"
                                 block
                                 icon={ArrowRight}
@@ -574,7 +737,7 @@ const LoginPage = () => {
                         </form>
                     )}
 
-                    {!showWechatQr && (
+                    {!showWechatQr && !showResetPassword && (
                         <>
                             <div className="my-7 flex items-center gap-4">
                                 <span className="h-px flex-1 bg-border" />
@@ -588,7 +751,7 @@ const LoginPage = () => {
                                 <button
                                     type="button"
                                     onClick={openWechatQr}
-                                    className="flex h-11 items-center justify-center gap-2 rounded-lg border border-border bg-white text-caption font-medium text-ink transition-colors hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                                    className="flex h-11 items-center justify-center gap-2 rounded-lg border border-border bg-white text-caption font-medium text-ink transition-colors hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink"
                                 >
                                     <MessageCircle
                                         aria-hidden="true"
@@ -603,7 +766,7 @@ const LoginPage = () => {
                                             t("auth.login.googleUnavailable"),
                                         )
                                     }
-                                    className="flex h-11 items-center justify-center gap-2 rounded-lg border border-border bg-white text-caption font-medium text-ink transition-colors hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                                    className="flex h-11 items-center justify-center gap-2 rounded-lg border border-border bg-white text-caption font-medium text-ink transition-colors hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink"
                                     aria-label={t("auth.login.google")}
                                 >
                                     <GoogleMark />

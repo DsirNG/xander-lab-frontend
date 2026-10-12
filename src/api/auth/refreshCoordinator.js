@@ -173,6 +173,7 @@ export function createAuthRecovery({
                 timeout: refreshTimeout,
                 dedupe: false,
                 withToken: false,
+                _sensitive: true,
                 _silent: true,
                 _skipAuthRecovery: true,
                 _skipRetry: true,

@@ -17,6 +17,11 @@ afterEach(() => {
 });
 
 describe("csdnService", () => {
+    it("tests the saved session through the authenticated backend", () => {
+        csdnService.testConnection();
+        expect(apiMock.post).toHaveBeenCalledWith("/api/publishing/csdn/connection/test", undefined,
+            { _silent: true, dedupe: false });
+    });
     it("授权流程端点映射", () => {
         csdnService.startAuthorization();
         expect(apiMock.post).toHaveBeenCalledWith(

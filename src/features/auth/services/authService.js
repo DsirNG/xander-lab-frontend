@@ -22,13 +22,14 @@ const persistTokenResponse = (res) => {
 };
 
 export const authService = {
-    qrCreate: () => post(`${BASE}/qr/create`, undefined, { _silent: true }),
+    qrCreate: () => post(`${BASE}/qr/create`, undefined, { _silent: true, _sensitive: true }),
     qrStatus: (ticket) =>
-        get(`${BASE}/qr/status`, { ticket }, { _silent: true, dedupe: false }),
+        get(`${BASE}/qr/status`, { ticket }, { _silent: true, _sensitive: true, dedupe: false }),
     qrExchange: async (ticket, exchangeCode) => {
         const res = await post(`${BASE}/qr/exchange`, undefined, {
             params: { ticket, exchangeCode },
             _silent: true,
+            _sensitive: true,
         });
         return persistTokenResponse(res);
     },
@@ -40,8 +41,24 @@ export const authService = {
      * @returns {Promise<void>}
      */
     sendCode: (email) => {
-        return get(`${BASE}/code`, { email });
+        return get(`${BASE}/code`, { email }, { _sensitive: true });
     },
+
+    /** Reset a forgotten password after the email verification code is checked. */
+    resetPassword: (data) =>
+        post(`${BASE}/reset-password`, data, {
+            _sensitive: true,
+            _skipRetry: true,
+            dedupe: false,
+        }),
+
+    /** Change the signed-in user's password after verifying the current one. */
+    changePassword: (data) =>
+        put(`${BASE}/password`, data, {
+            _sensitive: true,
+            _skipRetry: true,
+            dedupe: false,
+        }),
 
     /**
      * 登录（支持密码或验证码）
@@ -51,7 +68,7 @@ export const authService = {
      * @returns {Promise<Object>} TokenResponse { accessToken, refreshToken, userInfo }
      */
     login: async (data) => {
-        const res = await post(`${BASE}/login`, data);
+        const res = await post(`${BASE}/login`, data, { _sensitive: true });
         return persistTokenResponse(res);
     },
 
@@ -68,6 +85,7 @@ export const authService = {
                 { refreshToken },
                 {
                     _silent: true,
+                    _sensitive: true,
                     _skipAuthRecovery: true,
                 },
             );
@@ -87,7 +105,7 @@ export const authService = {
      * GET /api/auth/me
      */
     getCurrentUser: () => {
-        return get(`${BASE}/me`);
+        return get(`${BASE}/me`, undefined, { _sensitive: true });
     },
 
     /**
@@ -111,6 +129,7 @@ export const authService = {
             return null;
         return get(`${BASE}/me`, undefined, {
             _silent: true,
+            _sensitive: true,
             dedupe: false,
             ...config,
         });

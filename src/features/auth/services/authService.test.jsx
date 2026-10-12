@@ -38,10 +38,11 @@ describe("authService.login", () => {
             authService.login({ account: "a", password: "p" }),
         ).resolves.toBe(res);
 
-        expect(apiMock.post).toHaveBeenCalledWith("/api/auth/login", {
-            account: "a",
-            password: "p",
-        });
+        expect(apiMock.post).toHaveBeenCalledWith(
+            "/api/auth/login",
+            { account: "a", password: "p" },
+            { _sensitive: true },
+        );
         expect(apiMock.tokenStorage.setToken).toHaveBeenCalledWith("at", {
             notify: false,
         });
@@ -69,6 +70,53 @@ describe("authService.login", () => {
     });
 });
 
+describe("authService password management", () => {
+    it("does not log email verification requests in development", async () => {
+        apiMock.get.mockResolvedValue(undefined);
+
+        await authService.sendCode("user@example.com");
+
+        expect(apiMock.get).toHaveBeenCalledWith(
+            "/api/auth/code",
+            { email: "user@example.com" },
+            { _sensitive: true },
+        );
+    });
+
+    it("uses the email-verification endpoint to reset a forgotten password", async () => {
+        const input = {
+            email: "user@example.com",
+            code: "123456",
+            newPassword: "new-password",
+        };
+        apiMock.post.mockResolvedValue({});
+
+        await authService.resetPassword(input);
+
+        expect(apiMock.post).toHaveBeenCalledWith(
+            "/api/auth/reset-password",
+            input,
+            { _sensitive: true, _skipRetry: true, dedupe: false },
+        );
+    });
+
+    it("uses the authenticated endpoint to change a password", async () => {
+        const input = {
+            currentPassword: "old-password",
+            newPassword: "new-password",
+        };
+        apiMock.put.mockResolvedValue({});
+
+        await authService.changePassword(input);
+
+        expect(apiMock.put).toHaveBeenCalledWith(
+            "/api/auth/password",
+            input,
+            { _sensitive: true, _skipRetry: true, dedupe: false },
+        );
+    });
+});
+
 describe("authService.qrExchange", () => {
     it("扫码兑换成功后保存令牌、用户信息并分发登录事件", async () => {
         const res = {
@@ -89,6 +137,7 @@ describe("authService.qrExchange", () => {
             {
                 params: { ticket: "ticket-1", exchangeCode: "exchange-1" },
                 _silent: true,
+                _sensitive: true,
             },
         );
         expect(apiMock.tokenStorage.setToken).toHaveBeenCalledWith("qr-at", {
@@ -119,7 +168,7 @@ describe("authService.logout", () => {
         expect(apiMock.post).toHaveBeenCalledWith(
             "/api/auth/logout",
             { refreshToken: "rt" },
-            { _silent: true, _skipAuthRecovery: true },
+            { _silent: true, _sensitive: true, _skipAuthRecovery: true },
         );
         expect(apiMock.tokenStorage.clear).toHaveBeenCalled();
         expect(eventSpy).toHaveBeenCalledWith(
@@ -162,6 +211,7 @@ describe("authService.checkCurrentSession", () => {
 
         expect(apiMock.get).toHaveBeenCalledWith("/api/auth/me", undefined, {
             _silent: true,
+            _sensitive: true,
             dedupe: false,
             retry: 2,
         });

@@ -50,6 +50,24 @@ export { HttpError };
 export { isRequestCancelled };
 export { tokenStorage };
 
+const SENSITIVE_LOG_HEADERS = new Set([
+    "authorization",
+    "cookie",
+    "set-cookie",
+    "x-api-key",
+    "x-auth-token",
+]);
+
+export const sanitizeLogHeaders = (headers) => {
+    const values = typeof headers?.toJSON === "function" ? headers.toJSON() : headers;
+    return Object.fromEntries(
+        Object.entries(values || {}).map(([name, value]) => [
+            name,
+            SENSITIVE_LOG_HEADERS.has(name.toLowerCase()) ? "[REDACTED]" : value,
+        ]),
+    );
+};
+
 // ─────────────────────────────────────────────
 // 1. 常量 & 配置
 // ─────────────────────────────────────────────
@@ -137,7 +155,7 @@ instance.interceptors.request.use(
                 `%c[HTTP] ➤ ${config.method?.toUpperCase()} ${config.url}`,
                 "color: #4ade80; font-weight: bold",
             );
-            console.log("Headers:", config.headers);
+            console.log("Headers:", sanitizeLogHeaders(config.headers));
             if (config.params) console.log("Params:", config.params);
             if (config.data) console.log("Body:", config.data);
             console.groupEnd();

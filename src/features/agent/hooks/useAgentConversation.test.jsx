@@ -243,6 +243,23 @@ describe("useAgentConversation autonomy events", () => {
         };
     };
 
+    it("consumes the Workers tool_result event as a completed live tool outcome", async () => {
+        const { result, emit } = await streamHarness();
+        await emit({
+            id: 1,
+            event: "tool_result",
+            data: { tool: "blog_generate", result: { ok: true, taskId: 71 } },
+        });
+        expect(result.current.liveSteps).toContainEqual(
+            expect.objectContaining({
+                type: "tool",
+                tool: "blog_generate",
+                phase: "end",
+                result: { ok: true, taskId: 71 },
+            }),
+        );
+    });
+
     it("keeps one plan step and replaces it whenever the agent rewrites the plan", async () => {
         const { result, emit } = await streamHarness();
 

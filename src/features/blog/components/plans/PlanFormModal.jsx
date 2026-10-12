@@ -193,7 +193,7 @@ const PlanFormModal = ({ isOpen, plan, onClose, onSaved }) => {
             <Button onClick={onClose} disabled={saving} variant="outline">
                 {t("common.cancel")}
             </Button>
-            <Button onClick={submit} loading={saving} variant="primary">
+            <Button onClick={submit} loading={saving} variant="ink">
                 {t("common.save")}
             </Button>
         </>

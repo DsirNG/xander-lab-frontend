@@ -5,14 +5,22 @@ import {
     FileText,
     KeyRound,
     Mail,
+    Monitor,
+    Moon,
     Plug,
-    Settings2,
+    Share2,
     Shield,
-    SlidersHorizontal,
+    Sun,
+    SunMoon,
     UserRound,
 } from "lucide-react";
 import Modal from "@shared/ui/overlays/Modal";
-import { AccountInfoPanel, McpAuthorizationPanel } from "@features/profile";
+import {
+    AccountInfoPanel,
+    McpAuthorizationPanel,
+    PasswordSettingsPanel,
+} from "@features/profile";
+import { PlatformConnectionsPanel } from "@features/platformIntegrations";
 
 const TABS = [
     { id: "account", icon: UserRound },
@@ -22,12 +30,20 @@ const TABS = [
     { id: "history", icon: FileText },
     { id: "apiKeys", icon: KeyRound },
     { id: "mcp", icon: Plug },
-    { id: "preferences", icon: SlidersHorizontal },
+    { id: "platforms", icon: Share2 },
+    { id: "appearance", icon: SunMoon },
 ];
 
-const ENABLED_TABS = ["account", "mcp"];
+const ENABLED_TABS = ["account", "security", "mcp", "platforms", "appearance"];
 
-const ProfileModal = ({ open, onClose, initialTab = "account" }) => {
+const ProfileModal = ({
+    open,
+    onClose,
+    initialTab = "account",
+    themeMode,
+    resolvedTheme,
+    onThemeModeChange,
+}) => {
     const { t } = useTranslation();
     const [activeTab, setActiveTab] = useState("account");
 
@@ -64,7 +80,7 @@ const ProfileModal = ({ open, onClose, initialTab = "account" }) => {
                                 onClick={() => enabled && setActiveTab(tab.id)}
                                 className={`flex min-h-11 shrink-0 items-center gap-2 rounded-lg px-3 py-2.5 text-left text-xs font-semibold transition lg:w-full lg:min-h-10 lg:py-2 ${
                                     active
-                                        ? "bg-accent-soft text-ink"
+                                        ? "bg-ink text-white"
                                         : enabled
                                           ? "text-ink-muted hover:bg-surface-muted hover:text-ink-secondary"
                                           : "cursor-not-allowed text-ink-faint opacity-50"
@@ -86,16 +102,72 @@ const ProfileModal = ({ open, onClose, initialTab = "account" }) => {
                 <div className="min-h-0 min-w-0 flex-1 overflow-y-auto overscroll-y-contain custom-scrollbar">
                     {activeTab === "account" ? (
                         <AccountInfoPanel />
+                    ) : activeTab === "security" ? (
+                        <PasswordSettingsPanel />
                     ) : activeTab === "mcp" ? (
                         <McpAuthorizationPanel />
+                    ) : activeTab === "platforms" ? (
+                        <PlatformConnectionsPanel />
+                    ) : activeTab === "appearance" ? (
+                        <section className="space-y-6">
+                            <div>
+                                <div className="text-title font-semibold text-ink">
+                                    {t("profile.appearance.title")}
+                                </div>
+                                <div className="mt-2 text-caption leading-6 text-ink-muted">
+                                    {t("profile.appearance.description")}
+                                </div>
+                            </div>
+                            <div
+                                role="group"
+                                aria-label={t("profile.appearance.title")}
+                                className="grid gap-3 sm:grid-cols-3"
+                            >
+                                {[
+                                    { id: "light", icon: Sun },
+                                    { id: "dark", icon: Moon },
+                                    { id: "system", icon: Monitor },
+                                ].map(({ id, icon: Icon }) => {
+                                    const selected = themeMode === id;
+                                    return (
+                                        <button
+                                            key={id}
+                                            type="button"
+                                            aria-pressed={selected}
+                                            onClick={() =>
+                                                onThemeModeChange(id)
+                                            }
+                                            className={`flex min-h-28 flex-col items-start justify-between rounded-2xl border p-4 text-left transition-all ${
+                                                selected
+                                                    ? "border-ink bg-ink text-white shadow-sm"
+                                                    : "border-border bg-canvas text-ink hover:border-border-strong hover:bg-surface-muted"
+                                            }`}
+                                        >
+                                            <Icon className="h-5 w-5" />
+                                            <span className="text-body font-semibold">
+                                                {t(
+                                                    `profile.appearance.${id}`,
+                                                )}
+                                            </span>
+                                        </button>
+                                    );
+                                })}
+                            </div>
+                            <div className="rounded-xl bg-surface-muted px-4 py-3 text-caption leading-6 text-ink-secondary">
+                                {themeMode === "system"
+                                    ? t(
+                                          "profile.appearance.systemStatus",
+                                          {
+                                              mode: t(
+                                                  `profile.appearance.${resolvedTheme}`,
+                                              ),
+                                          },
+                                      )
+                                    : t("profile.appearance.savedHint")}
+                            </div>
+                        </section>
                     ) : (
                         <div className="flex h-64 flex-col items-center justify-center gap-2 text-center">
-                            <span className="grid h-12 w-12 place-items-center rounded-2xl bg-surface text-ink-faint">
-                                <Settings2
-                                    className="h-6 w-6"
-                                    aria-hidden="true"
-                                />
-                            </span>
                             <div className="text-sm font-bold text-ink-secondary">
                                 {t("profile.comingSoon")}
                             </div>

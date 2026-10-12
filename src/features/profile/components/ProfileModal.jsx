@@ -14,6 +14,8 @@ import {
 import Modal from "@shared/ui/overlays/Modal";
 import AccountInfoPanel from "./AccountInfoPanel";
 import McpAuthorizationPanel from "./McpAuthorizationPanel";
+import PasswordSettingsPanel from "./PasswordSettingsPanel";
+import { PlatformConnectionsPanel } from "@features/platformIntegrations";
 
 const TABS = [
     { id: "account", icon: UserRound },
@@ -23,10 +25,11 @@ const TABS = [
     { id: "history", icon: FileText },
     { id: "apiKeys", icon: KeyRound },
     { id: "mcp", icon: Plug },
+    { id: "platforms", icon: Plug },
     { id: "preferences", icon: SlidersHorizontal },
 ];
 
-const ENABLED_TABS = ["account", "mcp"];
+const ENABLED_TABS = ["account", "security", "mcp", "platforms"];
 
 const ProfileModal = ({ open, onClose, initialTab = "account" }) => {
     const { t } = useTranslation();
@@ -87,8 +90,12 @@ const ProfileModal = ({ open, onClose, initialTab = "account" }) => {
                 <div className="min-h-0 min-w-0 flex-1 overflow-y-auto overscroll-y-contain custom-scrollbar">
                     {activeTab === "account" ? (
                         <AccountInfoPanel />
+                    ) : activeTab === "security" ? (
+                        <PasswordSettingsPanel />
                     ) : activeTab === "mcp" ? (
                         <McpAuthorizationPanel />
+                    ) : activeTab === "platforms" ? (
+                        <PlatformConnectionsPanel />
                     ) : (
                         <div className="flex h-64 flex-col items-center justify-center gap-2 text-center">
                             <span className="grid h-12 w-12 place-items-center rounded-2xl bg-surface text-ink-faint">

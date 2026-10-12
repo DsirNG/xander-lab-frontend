@@ -1,7 +1,9 @@
 import PropTypes from "prop-types";
 
 const WorkspaceShell = ({ sidebar, children }) => (
-    <div className="flex h-dvh min-w-0 overflow-hidden bg-canvas">
+    <div
+        className="flex h-dvh min-w-0 flex-col overflow-hidden bg-canvas lg:flex-row"
+    >
         {sidebar}
 
         <main className="min-h-0 min-w-0 flex-1 overflow-hidden bg-canvas">

@@ -1,4 +1,5 @@
 import { useTranslation } from "react-i18next";
+import { FileText, PenLine, BookOpen } from "lucide-react";
 import AgentComposer from "./AgentComposer";
 
 const WorkspaceAgentWelcome = ({
@@ -18,24 +19,22 @@ const WorkspaceAgentWelcome = ({
     onCancel,
     deepThinking,
     onToggleDeepThinking,
+    plugins,
+    onPluginPreview,
 }) => {
     const { t } = useTranslation();
 
     return (
         <div className="flex min-h-0 flex-1 flex-col items-center justify-center px-4 pb-12 pt-4 text-center">
-
-
-            <h1 className="text-2xl font-bold text-[#111426] sm:text-3xl">
-                {t("workspace.home.welcome", "欢迎回来，")}{" "}
-                <span className="text-[#6765f6]">{displayName}</span>
-            </h1>
-
-            <p className="mt-2 text-sm text-[#8b91a9]">
-                {t(
-                    "workspace.agent.subtitle",
-                    "你的 AI 智能体伙伴，随时为你提供专业、可靠的帮助",
-                )}
-            </p>
+            <div className="mb-5 text-micro font-medium uppercase tracking-[0.2em] text-ink-muted">
+                {t("workspace.agent.livingWorkspace")}
+            </div>
+            <div className="text-display font-medium tracking-tight text-ink sm:text-[32px]">
+                {t("workspace.agent.startWork", { name: displayName })}
+            </div>
+            <div className="mt-3 max-w-lg text-body leading-6 text-ink-muted">
+                {t("workspace.agent.workHint")}
+            </div>
 
             <div className="mt-8 w-full max-w-2xl px-2">
                 <AgentComposer
@@ -49,6 +48,25 @@ const WorkspaceAgentWelcome = ({
                     textareaRef={textareaRef}
                     alwaysExpanded
                     showQuickActions
+                    plugins={plugins}
+                    onPluginPreview={onPluginPreview}
+                    quickActions={[
+                        {
+                            key: "writeArticle",
+                            icon: PenLine,
+                            iconClassName: "text-ink-secondary",
+                        },
+                        {
+                            key: "analyzeDocument",
+                            icon: FileText,
+                            iconClassName: "text-ink-secondary",
+                        },
+                        {
+                            key: "organizeKnowledge",
+                            icon: BookOpen,
+                            iconClassName: "text-ink-secondary",
+                        },
+                    ]}
                     onInputChange={onInputChange}
                     onFilesSelected={onFilesSelected}
                     onRemoveAttachment={onRemoveAttachment}

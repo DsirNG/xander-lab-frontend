@@ -37,6 +37,7 @@ export const useAgentConversation = ({ conversationId }) => {
     } = useAgentSessions();
     const [conversation, setConversation] = useState(null);
     const [messages, setMessages] = useState([]);
+    const [workspaceResults, setWorkspaceResults] = useState([]);
     const [loading, setLoading] = useState(Boolean(routeConversationId));
     const [creating, setCreating] = useState(false);
     const [running, setRunning] = useState(false);
@@ -115,6 +116,11 @@ export const useAgentConversation = ({ conversationId }) => {
             if (nextRunVersion !== null) runVersionRef.current = nextRunVersion;
 
             setConversation(snapshot);
+            setWorkspaceResults(
+                Array.isArray(detail.workspaceResults)
+                    ? detail.workspaceResults
+                    : [],
+            );
             setMessages(
                 collapsePlanUpdates(
                     restorePlanMessage(detail.messages, snapshot),
@@ -608,6 +614,7 @@ export const useAgentConversation = ({ conversationId }) => {
         createControllerRef.current?.abort();
         setConversation(null);
         setMessages([]);
+        setWorkspaceResults([]);
         setLoading(false);
         updateRunning(false);
         setReconnecting(false);
@@ -638,6 +645,7 @@ export const useAgentConversation = ({ conversationId }) => {
         if (!id) {
             setConversation(null);
             setMessages([]);
+            setWorkspaceResults([]);
             setLoading(false);
             return undefined;
         }
@@ -650,6 +658,7 @@ export const useAgentConversation = ({ conversationId }) => {
             return undefined;
         }
         setMessages([]);
+        setWorkspaceResults([]);
         setLoading(true);
         const controller = new AbortController();
         routeControllerRef.current = controller;
@@ -719,6 +728,7 @@ export const useAgentConversation = ({ conversationId }) => {
         sessionsLoadMoreError,
         conversation,
         messages,
+        workspaceResults,
         loading,
         creating,
         running,

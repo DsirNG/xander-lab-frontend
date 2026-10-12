@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import {
     ArrowLeft,
     CalendarClock,
@@ -27,7 +27,8 @@ import RunDetailModal from "../components/plans/RunDetailModal";
 const BlogPlanDetail = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
-    const { id } = useParams();
+    const [searchParams] = useSearchParams();
+    const id = searchParams.get("planId");
     const toast = useToast();
 
     const [formOpen, setFormOpen] = useState(false);
@@ -73,7 +74,7 @@ const BlogPlanDetail = () => {
                     {t("blogPlans.notFound")}
                 </div>
                 <Button
-                    onClick={() => navigate("/workspace/plans")}
+                    onClick={() => navigate("/app?view=plans")}
                     variant="outline"
                     size="md"
                 >
@@ -86,7 +87,7 @@ const BlogPlanDetail = () => {
     return (
         <div className="mx-auto flex h-full min-h-0 w-full max-w-5xl flex-col overflow-hidden px-4 py-6 sm:px-6 lg:px-8">
             <Button
-                onClick={() => navigate("/workspace/plans")}
+                onClick={() => navigate("/app?view=plans")}
                 variant="ghost"
                 size="sm"
                 icon={ArrowLeft}
@@ -95,10 +96,10 @@ const BlogPlanDetail = () => {
             </Button>
 
             <div className="min-h-0 flex-1 overflow-y-auto pb-4">
-                <div className="mt-3 rounded-2xl border border-border bg-canvas/60 p-5 shadow-sm">
+                <div className="mt-3 rounded-xl border border-border bg-canvas p-5">
                     <div className="flex items-start justify-between gap-3">
                         <div className="min-w-0">
-                            <div className="truncate text-xl font-bold text-ink">
+                            <div className="truncate text-xl font-semibold text-ink">
                                 {plan.topic}
                             </div>
                             <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-ink-faint">
@@ -133,7 +134,7 @@ const BlogPlanDetail = () => {
                                 plan.nextRunAt
                                     ? new Date(
                                           plan.nextRunAt,
-                                      ).toLocaleDateString()
+                                      ).toLocaleString()
                                     : "—",
                             )}
                             {infoRow(
@@ -166,7 +167,7 @@ const BlogPlanDetail = () => {
                                             plan.status === PLAN_STATUS.RUNNING
                                         }
                                         loading={actions.busyId === plan.id}
-                                        variant="primary"
+                                        variant="ink"
                                         size="lg"
                                         icon={Zap}
                                     >
@@ -321,7 +322,7 @@ const BlogPlanDetail = () => {
                                                     <td className="max-w-[14rem] px-4 py-2.5">
                                                         {run.localPostId ? (
                                                             <a
-                                                                href={`/blog/${run.localPostId}`}
+                                                                href="/app?view=articles"
                                                                 className="text-accent hover:underline"
                                                             >
                                                                 #

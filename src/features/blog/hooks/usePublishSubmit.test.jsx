@@ -95,7 +95,7 @@ describe("usePublishSubmit 发布流程", () => {
         expect(storeMock.clearPublishRequestId).toHaveBeenCalled();
         expect(consumeDraft).toHaveBeenCalled();
         expect(toast.success).toHaveBeenCalledWith("t:blog.publishSuccess");
-        expect(navigateMock).toHaveBeenCalledWith("/blog/");
+        expect(navigateMock).toHaveBeenCalledWith("/app?view=articles");
         expect(result.current.loading).toBe(false);
     });
 
@@ -120,7 +120,7 @@ describe("usePublishSubmit 发布流程", () => {
         );
         expect(blogServiceMock.updateBlogStatus).toHaveBeenCalledWith(7, 1);
         expect(blogServiceMock.publishBlog).not.toHaveBeenCalled();
-        expect(navigateMock).toHaveBeenCalledWith("/workspace/blog-manage");
+        expect(navigateMock).toHaveBeenCalledWith("/app?view=articles");
     });
 });
 
@@ -144,7 +144,7 @@ describe("usePublishSubmit 发布失败降级", () => {
         expect(storeMock.clearPublishRequestId).toHaveBeenCalled();
         expect(consumeDraft).toHaveBeenCalled();
         expect(toast.success).toHaveBeenCalledWith("t:blog.publishSuccess");
-        expect(navigateMock).toHaveBeenCalledWith("/blog/");
+        expect(navigateMock).toHaveBeenCalledWith("/app?view=articles");
     });
 
     it("无响应错误时轮询 5 次全部未发布，提示状态未知", async () => {
@@ -220,7 +220,7 @@ describe("usePublishSubmit 保存草稿", () => {
         expect(toast.success).toHaveBeenCalledWith(
             "t:blog.saveDraftServerSuccess",
         );
-        expect(navigateMock).toHaveBeenCalledWith("/workspace/blog-manage");
+        expect(navigateMock).toHaveBeenCalledWith("/app?view=articles");
     });
 
     it("编辑模式：更新文章为草稿状态", async () => {

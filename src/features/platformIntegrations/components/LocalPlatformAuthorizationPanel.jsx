@@ -18,18 +18,35 @@ import {
 } from "../services/publishingService";
 
 /** Lets the browser extension open the platform login page and submit its session to Workers. */
-const LocalPlatformAuthorizationPanel = ({ platform, service, extraActions }) => {
+const LocalPlatformAuthorizationPanel = ({
+    platform,
+    service,
+    extraActions,
+    displayName,
+    brand,
+    brandColor,
+    publishingEnabled = false,
+    formats = [],
+    compact = false,
+    commonCopy = false,
+    initialStatus,
+}) => {
     const { t } = useTranslation();
     const toast = useToast();
     const pollRef = useRef(null);
     const expiryRef = useRef(null);
     const taskRef = useRef(null);
     const cancelRequestedRef = useRef(false);
-    const [state, setState] = useState("loading");
+    const [state, setState] = useState(initialStatus || "loading");
     const [busy, setBusy] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [connectorProgress, setConnectorProgress] = useState("OPENING");
+    const [connectorErrorCode, setConnectorErrorCode] = useState(null);
+    const [connectorDiagnostic, setConnectorDiagnostic] = useState(null);
 
-    const text = useCallback((key) => t(`profile.${platform}.${key}`), [platform, t]);
+    const text = useCallback((key) => t(commonCopy
+        ? `profile.platformConnections.card.${key}`
+        : `profile.${platform}.${key}`), [commonCopy, platform, t]);
     const stopPolling = useCallback(() => {
         if (pollRef.current) window.clearInterval(pollRef.current);
         if (expiryRef.current) window.clearTimeout(expiryRef.current);
@@ -58,9 +75,9 @@ const LocalPlatformAuthorizationPanel = ({ platform, service, extraActions }) =>
         }
     }, [service]);
 
-    const pollStatus = useCallback(async () => {
-        try {
-            const result = await service.getAuthorizationStatus();
+  const pollStatus = useCallback(async () => {
+      try {
+          const result = await service.getAuthorizationStatus();
             if (result?.status !== "AUTHORIZED") return;
             stopPolling();
             taskRef.current = null;
@@ -70,19 +87,53 @@ const LocalPlatformAuthorizationPanel = ({ platform, service, extraActions }) =>
             toast.success(text("authorized"));
         } catch {
             // Continue checking while the short-lived extension grant is active.
-        }
-    }, [service, stopPolling, toast, text]);
+      }
+  }, [service, stopPolling, toast, text]);
 
     useEffect(() => {
-        void loadStatus();
+        const onConnectorProgress = (event) => {
+            const message = event.data;
+            if (event.source !== window || event.origin !== window.location.origin
+                || message?.channel !== "dinqorai-platform-connector"
+                || message.type !== "AUTHORIZATION_PROGRESS"
+                || message.taskId !== taskRef.current?.taskId) return;
+
+            if (["WAITING_FOR_SESSION", "SUBMITTING", "RETRYING", "COMPLETED"].includes(message.state)) {
+                setConnectorProgress(message.state);
+                setConnectorErrorCode(message.errorCode || null);
+                setConnectorDiagnostic(message.diagnostic || null);
+                if (message.state === "COMPLETED") void pollStatus();
+                return;
+            }
+            if (message.state !== "FAILED") return;
+
+            setConnectorProgress("FAILED");
+            setConnectorErrorCode(message.errorCode || "SUBMISSION_FAILED");
+            setConnectorDiagnostic(message.diagnostic || null);
+            stopPolling();
+            setBusy(false);
+            setState("NOT_AUTHORIZED");
+            void cancelTask();
+        };
+
+        window.addEventListener("message", onConnectorProgress);
+        return () => window.removeEventListener("message", onConnectorProgress);
+    }, [cancelTask, pollStatus, stopPolling]);
+
+    useEffect(() => {
+        if (initialStatus) setState(initialStatus);
+        else void loadStatus();
         return () => {
             stopPolling();
             void cancelTask();
         };
-    }, [cancelTask, loadStatus, stopPolling]);
+    }, [cancelTask, initialStatus, loadStatus, stopPolling]);
 
     const start = async () => {
         cancelRequestedRef.current = false;
+        setConnectorProgress("OPENING");
+        setConnectorErrorCode(null);
+        setConnectorDiagnostic(null);
         setBusy(true);
         setIsModalOpen(true);
         try {
@@ -96,11 +147,12 @@ const LocalPlatformAuthorizationPanel = ({ platform, service, extraActions }) =>
                 return;
             }
             await startPlatformConnectorAuthorization(platform, task);
-            if (cancelRequestedRef.current) {
+            if (cancelRequestedRef.current || taskRef.current?.taskId !== task.taskId) {
                 await cancelTask();
                 return;
             }
             setState("PENDING");
+            setConnectorProgress((current) => current === "OPENING" ? "WAITING_FOR_SESSION" : current);
             pollRef.current = window.setInterval(pollStatus, 2000);
             expiryRef.current = window.setTimeout(() => {
                 if (taskRef.current?.taskId !== task.taskId) return;
@@ -148,22 +200,84 @@ const LocalPlatformAuthorizationPanel = ({ platform, service, extraActions }) =>
     const loading = state === "loading";
     const authorized = state === "AUTHORIZED";
     const expired = state === "EXPIRED";
+    const title = displayName || text("title");
+    const connectorWorking = ["OPENING", "WAITING_FOR_SESSION", "SUBMITTING", "RETRYING", "COMPLETED"].includes(connectorProgress);
+    const connectorErrorKey = {
+        SITE_PERMISSION_REQUIRED: "sitePermissionRequired",
+        COOKIE_ACCESS_FAILED: "cookieAccessFailed",
+        SESSION_NOT_RECOGNIZED: "sessionNotRecognized",
+        HANDOFF_INVALID: "handoffInvalid",
+        TASK_CONFLICT: "taskConflict",
+        TASK_EXPIRED: "expired",
+        NETWORK_ERROR: "networkRetrying",
+        SERVICE_UNAVAILABLE: "serviceRetrying",
+    }[connectorErrorCode] || "submissionFailed";
+    const connectorMessage = connectorProgress === "FAILED"
+        ? t(`profile.connector.${connectorErrorKey}`, { platform: title })
+        : connectorProgress === "WAITING_FOR_SESSION"
+            ? t(connectorErrorCode === "SESSION_COOKIE_MISSING"
+                ? "profile.connector.sessionCookieMissing"
+                : "profile.connector.waiting", { platform: title })
+            : connectorProgress === "SUBMITTING"
+                ? t("profile.connector.submitting", { platform: title })
+                : connectorProgress === "RETRYING"
+                    ? t(connectorErrorCode === "NETWORK_ERROR"
+                        ? "profile.connector.networkRetrying"
+                        : "profile.connector.serviceRetrying")
+                    : connectorProgress === "COMPLETED"
+                        ? t("profile.connector.saving")
+                        : t("profile.connector.opening", { platform: title });
     const titleNode = (
         <div className="flex items-center gap-2">
-            <ExternalLink className="h-5 w-5 text-accent" />
-            <div className="text-title font-black text-ink">{text("title")}</div>
+            <ExternalLink className="h-5 w-5 text-ink" />
+            <div className="text-title font-black text-ink">{title}</div>
         </div>
     );
+    const diagnosticStatus = connectorDiagnostic?.httpStatus
+        ? t("profile.connector.diagnosticStatus", {
+            httpStatus: connectorDiagnostic.httpStatus,
+            responseCode: connectorDiagnostic.responseCode ?? "-",
+        })
+        : null;
+    const cookieScopes = connectorDiagnostic?.cookieScopes;
+    const diagnosticCookieScopes = cookieScopes
+        ? t("profile.connector.diagnosticCookieScopes", {
+            cookieCount: connectorDiagnostic.cookieCount ?? 0,
+            domain: cookieScopes.domain ?? 0,
+            userToken: cookieScopes.userToken ?? 0,
+            partitioned: cookieScopes.partitioned ?? 0,
+            partitionedToken: cookieScopes.partitionedToken ?? 0,
+        })
+        : null;
+    const diagnosticIdentityHints = cookieScopes
+        ? t("profile.connector.diagnosticIdentityHints", {
+            identityHints: cookieScopes.identityHints ?? 0,
+            username: cookieScopes.username ?? 0,
+            cookieStore: t(cookieScopes.cookieStoreMatched ? "profile.connector.diagnosticYes" : "profile.connector.diagnosticNo"),
+            partitionKey: t(cookieScopes.partitionKeyAvailable ? "profile.connector.diagnosticYes" : "profile.connector.diagnosticNo"),
+        })
+        : null;
 
     return (
-        <div className="mt-4 rounded-xl border border-border bg-surface p-5">
+        <div className={`${compact ? "min-w-0 rounded-xl border border-border bg-surface p-4" : "mt-4 rounded-xl border border-border bg-surface p-5"}`}>
             <div className="flex items-start gap-3">
-                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-accent-soft text-accent">
-                    <Link2 className="h-5 w-5" />
+                <span
+                    className="grid h-10 w-10 shrink-0 place-items-center overflow-hidden rounded-xl text-xs font-black text-white"
+                    style={{ backgroundColor: brandColor || "#475569" }}
+                    aria-hidden="true"
+                >
+                    {brand || <Link2 className="h-5 w-5" />}
                 </span>
                 <div className="min-w-0 flex-1">
-                    <div className="text-sm font-bold text-ink">{text("title")}</div>
-                    <div className="mt-1 text-caption text-ink-muted">{text("description")}</div>
+                    <div className="flex flex-wrap items-center gap-2">
+                        <div className="text-sm font-bold text-ink">{title}</div>
+                        <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${publishingEnabled ? "bg-success-soft text-success" : "bg-surface-muted text-ink-muted"}`}>
+                            {publishingEnabled ? t("profile.platformConnections.publishReady") : t("profile.platformConnections.bindingOnly")}
+                        </span>
+                    </div>
+                    <div className="mt-1 text-caption text-ink-muted">
+                        {commonCopy ? t("profile.platformConnections.platformDescription", { platform: title }) : text("description")}
+                    </div>
                 </div>
                 {loading ? <LoaderCircle className="h-5 w-5 animate-spin text-accent" />
                     : authorized ? <CheckCircle2 className="h-5 w-5 text-success" />
@@ -172,8 +286,12 @@ const LocalPlatformAuthorizationPanel = ({ platform, service, extraActions }) =>
             </div>
 
             {loading && <div className="mt-4 text-caption text-ink-muted">{text("checking")}</div>}
+            {!loading && authorized && <div className="mt-3 text-caption font-semibold text-success">{commonCopy ? text("connected") : text("authorized")}</div>}
             {!loading && expired && <div className="mt-4 text-caption font-semibold text-warning">{text("sessionExpired")}</div>}
             {!loading && state === "UNAVAILABLE" && <div className="mt-4 text-caption text-warning">{text("unavailable")}</div>}
+            {formats.length > 0 && <div className="mt-3 flex flex-wrap gap-1.5">
+                {formats.map((format) => <span key={format} className="rounded-md border border-border px-2 py-1 text-[10px] font-semibold text-ink-muted">{t(`profile.platformConnections.formats.${format}`)}</span>)}
+            </div>}
 
             {!loading && !authorized && state !== "UNAVAILABLE" && (
                 <button type="button" onClick={start} disabled={busy}
@@ -197,11 +315,29 @@ const LocalPlatformAuthorizationPanel = ({ platform, service, extraActions }) =>
             <Modal isOpen={isModalOpen} onClose={closeModal} title={titleNode} width="max-w-md" closeOnOutsideClick={false}>
                 <div className="flex min-h-52 flex-col items-center justify-center gap-4 py-6 text-center">
                     <ExternalLink className="h-12 w-12 text-accent" />
-                    <div className="max-w-sm text-sm font-semibold text-ink-secondary">
-                        {state === "PENDING" ? t("profile.connector.waiting") : t("profile.connector.opening")}
+                    <div aria-live="polite" className={`max-w-sm text-sm font-semibold ${connectorProgress === "FAILED" ? "text-danger" : "text-ink-secondary"}`}>
+                        {connectorMessage}
                     </div>
-                    <div className="max-w-sm text-caption text-ink-muted">{t("profile.connector.hint")}</div>
-                    {state === "PENDING" && <LoaderCircle className="h-5 w-5 animate-spin text-accent" />}
+                    {connectorErrorCode === "SESSION_COOKIE_MISSING" && connectorProgress === "WAITING_FOR_SESSION" && (
+                        <div className="max-w-sm text-caption text-warning">
+                            {t("profile.connector.sessionCookieMissingHint")}
+                        </div>
+                    )}
+                    {diagnosticStatus && (
+                        <div className="max-w-sm text-micro text-ink-faint">{diagnosticStatus}</div>
+                    )}
+                    {diagnosticCookieScopes && (
+                        <div className="max-w-sm text-micro text-ink-faint">{diagnosticCookieScopes}</div>
+                    )}
+                    {diagnosticIdentityHints && (
+                        <div className="max-w-sm text-micro text-ink-faint">{diagnosticIdentityHints}</div>
+                    )}
+                    <div className="max-w-sm text-caption text-ink-muted">
+                        {connectorProgress === "FAILED" ? t("profile.connector.retryHint") : t("profile.connector.hint")}
+                    </div>
+                    {connectorProgress === "FAILED"
+                        ? <TriangleAlert className="h-5 w-5 text-warning" />
+                        : connectorWorking && <LoaderCircle className="h-5 w-5 animate-spin text-accent" />}
                 </div>
             </Modal>
         </div>

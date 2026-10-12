@@ -2,12 +2,12 @@ import { useTranslation } from "react-i18next";
 import { PLAN_STATUS } from "../../services/blogPlanService";
 
 const STYLE = {
-    [PLAN_STATUS.ACTIVE]: "bg-blue-50 text-blue-600",
-    [PLAN_STATUS.RUNNING]: "bg-blue-50 text-blue-600",
-    [PLAN_STATUS.PAUSED]: "bg-orange-50 text-orange-600",
+    [PLAN_STATUS.ACTIVE]: "bg-surface-muted text-ink",
+    [PLAN_STATUS.RUNNING]: "bg-surface-muted text-ink",
+    [PLAN_STATUS.PAUSED]: "bg-surface-muted text-ink-muted",
     [PLAN_STATUS.CANCELLED]: "bg-surface text-ink-muted ring-1 ring-border",
-    [PLAN_STATUS.FINISHED]: "bg-green-50 text-green-600",
-    [PLAN_STATUS.FAILED]: "bg-red-50 text-red-600 ring-1 ring-red-200",
+    [PLAN_STATUS.FINISHED]: "bg-surface-muted text-ink",
+    [PLAN_STATUS.FAILED]: "bg-danger-soft text-danger",
 };
 
 const LABEL_KEY = {

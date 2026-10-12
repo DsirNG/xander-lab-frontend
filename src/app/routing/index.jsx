@@ -7,6 +7,7 @@ import { createBrowserRouter, Navigate } from "react-router-dom";
 
 import RouteSEOLayout from "@app/seo/RouteSEOLayout";
 import { RouteErrorPage } from "@app/update";
+import LegacyContentRedirect from "./LegacyContentRedirect";
 import { LazyPage } from "./RouteElements";
 
 const LoginPage = React.lazy(() => import("@features/auth/pages/LoginPage"));
@@ -108,6 +109,10 @@ export const createRouter = () =>
                         },
                     ],
                 },
+                { path: "/workspace/blog-manage", element: <LegacyContentRedirect view="articles" /> },
+                { path: "/workspace/plans", element: <LegacyContentRedirect view="plans" /> },
+                { path: "/workspace/plans/:id", element: <LegacyContentRedirect view="plans" /> },
+                { path: "/workspace/publish", element: <LegacyContentRedirect view="publish" /> },
                 { path: "*", element: <Navigate to="/app" replace /> },
             ],
         },

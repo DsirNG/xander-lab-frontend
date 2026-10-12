@@ -56,8 +56,8 @@ const WorkspaceAgentConversationMessage = ({
         <div
             className={
                 role === "user"
-                    ? "max-w-[85%] rounded-3xl bg-[#f2f1fd] px-4 py-2.5 text-sm leading-6 text-black sm:max-w-[75%]"
-                    : "w-full min-w-0 py-1 text-sm leading-6 text-[#242741]"
+                    ? "max-w-[85%] rounded-3xl bg-surface-muted px-4 py-2.5 text-sm leading-6 text-black sm:max-w-[75%]"
+                    : "w-full min-w-0 py-1 text-sm leading-6 text-ink"
             }
         >
             {role === "user" ? (

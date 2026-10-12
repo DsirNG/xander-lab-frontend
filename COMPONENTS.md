@@ -84,8 +84,8 @@
 | `EnhancedDemoSection` | `@shared/ui/data-display/ContentLayout`           | 需要案例与代码展示的内容区块   | `title`、`desc`、`children`、`code`。旧路径仅作兼容出口。                                                                                                                                  |
 | `SidebarLayout`       | `@shared/ui/navigation/SidebarLayout`             | 左侧导航 + 右侧内容的模块页    | 传入导航项和内容渲染，适合组件库、知识库等。旧路径仅作兼容出口。                                                                                                                           |
 | `BlogLayout`          | `@features/blog/layouts/BlogLayout`               | 博客相关路由                   | 已集成博客侧栏及移动端行为。                                                                                                                                                               |
-| `WorkspaceShell`      | `@features/workspace/components/WorkspaceShell`   | PC 工作台的整页骨架            | `sidebar` 传入左侧栏，`children` 作为右侧圆角内容框插槽；左侧背景 `#fefefe`，右侧使用 `#f5f5fe` → `#fdfdfe`（24%）渐变，并以 `90rem` 最大宽度居中。                                        |
-| `WorkspaceSidebar`    | `@features/workspace/components/WorkspaceSidebar` | PC 工作台左侧导航与对话列表    | `userInfo`、`sessions`、`activeConversationId`、`onNewConversation`、`onSelectConversation`、`onTogglePin`、`onOpenSettings`；包含新建对话、图片、插件、置顶和最近对话，以及底部账户入口。 |
+| `WorkspaceShell`      | `@features/workspace/components/WorkspaceShell`   | PC 工作台的整页骨架            | `sidebar` 传入左侧栏，`children` 作为右侧圆角内容框插槽；使用黑白灰局部 token 覆盖，保持全屏高度与内容内部滚动。                                        |
+| `WorkspaceSidebar`    | `@features/workspace/components/WorkspaceSidebar` | PC 工作台左侧导航与对话列表    | `userInfo`、`sessions`、`activeConversationId`、`onNewConversation`、`onSelectConversation`、`onTogglePin`、`onOpenSettings`；包含新建对话、图片、插件、可折叠历史（置顶和最近对话），以及底部账户入口。 |
 
 ## 业务能力（优先复用现有页面片段）
 
@@ -93,7 +93,8 @@
 | ----------------- | --------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Studio 文件树     | `@features/studio/components/CompilerFileExplorer` 的 `FileTreeNodes` | 源码浏览树；配合 Studio 文件内容接口使用。                                                                                                                 |
 | Studio 顶部栏     | `@features/studio/components/StudioTopBar`                            | 全屏 Studio 页左上角 logo（点击返回上一页）+ 标题 + 右侧操作区；`backLabel` 自定义返回文案、`showBack` 隐藏返回按钮、`fallbackTo` 兜底路由（无历史时用）。 |
-| 平台账号授权面板 | `@features/platformIntegrations/components/LocalPlatformAuthorizationPanel` | CSDN / 掘金浏览器扩展绑定面板；接收 `platform`、对应的 `service` 和可选授权成功后的 `extraActions`。 |
+| 多平台账号绑定页 | `@features/platformIntegrations/components/PlatformConnectionsPanel` | 设置页中的多平台绑定目录；CSDN / 掘金提供一键发文，其余平台显示为账号绑定。 |
+| 平台账号授权卡片 | `@features/platformIntegrations/components/LocalPlatformAuthorizationPanel` | 浏览器扩展绑定卡片；接收 `platform`、对应的 `service` 和可选授权成功后的 `extraActions`。 |
 | Studio 公开源码页 | `@features/studio/pages/PublicSourcePage`                             | 公开项目的匿名源码浏览与下载入口，不另建重复页面。                                                                                                         |
 | 博客卡片          | `@features/blog/components/BlogCard`                                  | 博客列表、推荐区使用，输入为 `blog`。                                                                                                                      |
 | 博客侧栏          | `@features/blog/components/BlogSidebar`                               | 博客布局内导航，输入 `onNavigate`。                                                                                                                        |
@@ -128,3 +129,7 @@
 2. 阅读候选组件源码与同类页面的实际调用，确认 API 和样式边界。
 3. 只有现有组件无法满足且无法合理扩展时，才新增组件；新增后更新本目录。
 4. 样式一律使用上文 Design Tokens；评审时拒绝新增随意色值与任意字号。
+
+AgentComposer 支持可选 `quickActions`（`key` / `icon` / `iconClassName`），首页可复用输入框展示不同任务入口。AgentArtifactPanel 支持 `editable`，在右侧编辑标题与 Markdown，通过 `onCreateDraft({ title, content })` 调用真实服务保存草稿（工作台保持当前对话，`draftPostId` 恢复已保存内容）；未开启时保持原预览行为。
+
+工作区上下文：文章根据实际 `blog_generate` 工具结果展开；AgentArtifactPanel 的 `onEditingChange` 防止生成新文章时覆盖尚在编辑的内容，编辑支持摘要、分类、标签。发布面板仅支持当前 Workers 的 CSDN/掘金，以已保存的 `postId` 发起会话审批。记忆入口仅展示真实 `recall_memory` 返回的内容，文件入口复用附件上传服务。

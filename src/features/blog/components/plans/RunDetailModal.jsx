@@ -94,7 +94,7 @@ const RunDetailModal = ({ isOpen, run, onClose }) => {
                 {run.localPostId && (
                     <Row label={t("blogPlans.localPost")}>
                         <a
-                            href={`/blog/${run.localPostId}`}
+                            href="/app?view=articles"
                             className="text-accent hover:underline"
                         >
                             #{run.localPostId}

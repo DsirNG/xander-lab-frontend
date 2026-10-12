@@ -1,4 +1,11 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import {
+    Suspense,
+    useCallback,
+    useEffect,
+    useLayoutEffect,
+    useMemo,
+    useState,
+} from "react";
 import {
     Outlet,
     useLocation,
@@ -9,11 +16,23 @@ import {
 import { ProtectedRoute, useAuthSession } from "@features/auth";
 import { useToast } from "@shared/hooks/useToast";
 import { agentPluginService, useAgentConversation } from "@features/agent";
+import { BlogManagePage, BlogPlansPage, BlogPlanDetailPage, BlogPublishPage } from "@features/blog";
+import LoadingSpinner from "@shared/ui/feedback/LoadingSpinner";
 import ProfileModal from "./components/ProfileModal";
 import WorkspaceShell from "./components/WorkspaceShell";
 import WorkspaceSidebar from "./components/WorkspaceSidebar";
 import AgentImagesPage from "@features/agent/pages/AgentImagesPage";
 import WorkspacePluginsPage from "./pages/WorkspacePluginsPage";
+
+const THEME_STORAGE_KEY = "dinqor.workspace.theme";
+const readThemePreference = () => {
+    try {
+        const stored = window.localStorage.getItem(THEME_STORAGE_KEY);
+        return ["light", "dark", "system"].includes(stored) ? stored : "system";
+    } catch {
+        return "system";
+    }
+};
 
 const WorkspaceLayoutInner = () => {
     const { userInfo } = useAuthSession();
@@ -23,13 +42,56 @@ const WorkspaceLayoutInner = () => {
     const { conversationId } = useParams();
     const [searchParams, setSearchParams] = useSearchParams();
     const requestedView = searchParams.get("view");
-    const activeView = ["images", "plugins"].includes(requestedView)
+    const activeView = [
+        "images",
+        "plugins",
+        "writing",
+        "documents",
+        "memory",
+        "articles",
+        "plans",
+        "publish",
+    ].includes(requestedView)
         ? requestedView
         : null;
     const [settingsOpen, setSettingsOpen] = useState(false);
+    const [themeMode, setThemeMode] = useState(readThemePreference);
+    const [systemPrefersDark, setSystemPrefersDark] = useState(
+        () =>
+            window.matchMedia?.("(prefers-color-scheme: dark)").matches ??
+            false,
+    );
     const [skills, setSkills] = useState([]);
     const [mcpServers, setMcpServers] = useState([]);
     const agent = useAgentConversation({ conversationId });
+    const resolvedTheme =
+        themeMode === "system"
+            ? systemPrefersDark
+                ? "dark"
+                : "light"
+            : themeMode;
+
+    useEffect(() => {
+        try {
+            window.localStorage.setItem(THEME_STORAGE_KEY, themeMode);
+        } catch {
+            // Keep the current selection for this session if storage is unavailable.
+        }
+    }, [themeMode]);
+
+    useEffect(() => {
+        const media = window.matchMedia?.("(prefers-color-scheme: dark)");
+        if (!media) return undefined;
+        const updateSystemTheme = () => setSystemPrefersDark(media.matches);
+        updateSystemTheme();
+        media.addEventListener?.("change", updateSystemTheme);
+        return () => media.removeEventListener?.("change", updateSystemTheme);
+    }, []);
+
+    useLayoutEffect(() => {
+        document.documentElement.dataset.theme = resolvedTheme;
+        document.documentElement.style.colorScheme = resolvedTheme;
+    }, [resolvedTheme]);
 
     const hasMcpOAuthRequest = useMemo(
         () =>
@@ -113,7 +175,10 @@ const WorkspaceLayoutInner = () => {
         (view) => {
             setSearchParams((current) => {
                 const next = new URLSearchParams(current);
-                next.set("view", view);
+                next.delete("planId");
+                next.delete("id");
+                if (view === "chat") next.delete("view");
+                else next.set("view", view);
                 return next;
             });
         },
@@ -150,12 +215,28 @@ const WorkspaceLayoutInner = () => {
                         onLoadSessions={agent.loadSessions}
                         onLoadMoreSessions={agent.loadMoreSessions}
                         onOpenSettings={() => setSettingsOpen(true)}
-                        activeView={activeView}
+                        activeView={
+                            activeView === "publish" ? "articles" : activeView
+                        }
                         onSelectView={handleSelectView}
                     />
                 }
             >
-                {activeView === "images" ? (
+                {["articles", "plans", "publish"].includes(activeView) ? (
+                    <Suspense fallback={<LoadingSpinner fullScreen />}>
+                        {activeView === "articles" ? (
+                            <BlogManagePage />
+                        ) : activeView === "publish" ? (
+                            <BlogPublishPage />
+                        ) : searchParams.get("planId") ? (
+                            <BlogPlanDetailPage
+                                key={searchParams.get("planId")}
+                            />
+                        ) : (
+                            <BlogPlansPage />
+                        )}
+                    </Suspense>
+                ) : activeView === "images" ? (
                     <AgentImagesPage />
                 ) : activeView === "plugins" ? (
                     <WorkspacePluginsPage />
@@ -168,6 +249,9 @@ const WorkspaceLayoutInner = () => {
                 open={settingsOpen}
                 onClose={() => setSettingsOpen(false)}
                 initialTab={hasMcpOAuthRequest ? "mcp" : "account"}
+                themeMode={themeMode}
+                resolvedTheme={resolvedTheme}
+                onThemeModeChange={setThemeMode}
             />
         </>
     );

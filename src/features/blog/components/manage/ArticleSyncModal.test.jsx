@@ -1,0 +1,50 @@
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import ArticleSyncModal from "./ArticleSyncModal";
+import { blogService } from "../../services/blogService";
+vi.mock("react-i18next", () => ({ useTranslation: () => ({ t: (key) => key }) }));
+vi.mock("../../services/blogService", () => ({ blogService: { syncToCsdn: vi.fn(), syncToJuejin: vi.fn() } }));
+const mount = (post = {}, callbacks = {}) => render(<ArticleSyncModal post={{ id: 17, title: "Article", ...post }} onClose={vi.fn()} {...callbacks} />);
+beforeEach(() => { vi.clearAllMocks(); blogService.syncToCsdn.mockResolvedValue({}); blogService.syncToJuejin.mockResolvedValue({}); });
+describe("platform sync selection", () => {
+    it("waits for explicit confirmation and disables platforms already synced", async () => {
+        mount({ csdnSynced: true });
+        expect(screen.getByRole("checkbox", { name: /CSDN/ })).toBeDisabled();
+        expect(screen.getByRole("button", { name: "articleSync.confirm" })).toBeDisabled();
+        fireEvent.click(screen.getByRole("checkbox", { name: /blogPlans.juejin/ }));
+        expect(blogService.syncToJuejin).not.toHaveBeenCalled();
+        fireEvent.click(screen.getByRole("button", { name: "articleSync.confirm" }));
+        await waitFor(() => expect(screen.getByRole("checkbox", { name: /blogPlans.juejin/ })).toBeDisabled());
+        expect(blogService.syncToCsdn).not.toHaveBeenCalled();
+        expect(blogService.syncToJuejin).toHaveBeenCalledWith(17, { _silent: true });
+    });
+    it("syncs multiple selections and retries only the failed platform", async () => {
+        blogService.syncToJuejin.mockRejectedValueOnce(new Error("vendor failed"));
+        const onSynced = vi.fn();
+        mount({}, { onSynced });
+        fireEvent.click(screen.getByRole("checkbox", { name: /CSDN/ }));
+        fireEvent.click(screen.getByRole("checkbox", { name: /blogPlans.juejin/ }));
+        fireEvent.click(screen.getByRole("button", { name: "articleSync.confirm" }));
+        await screen.findByRole("alert");
+        await waitFor(() => expect(screen.getByRole("button", { name: "articleSync.confirm" })).toBeEnabled());
+        expect(screen.getByRole("checkbox", { name: /CSDN/ })).toBeDisabled();
+        fireEvent.click(screen.getByRole("button", { name: "articleSync.confirm" }));
+        await waitFor(() => expect(screen.getByRole("checkbox", { name: /blogPlans.juejin/ })).toBeDisabled());
+        expect(blogService.syncToCsdn).toHaveBeenCalledTimes(1);
+        expect(blogService.syncToJuejin).toHaveBeenCalledTimes(2);
+        expect(onSynced.mock.calls).toEqual([["csdn"], ["juejin"]]);
+    });
+    it("blocks duplicate confirmations and closing during synchronization", async () => {
+        let finish;
+        blogService.syncToCsdn.mockImplementationOnce(() => new Promise((resolve) => { finish = resolve; }));
+        const onClose = vi.fn();
+        mount({}, { onClose });
+        fireEvent.click(screen.getByRole("checkbox", { name: /CSDN/ }));
+        const confirm = screen.getByRole("button", { name: "articleSync.confirm" });
+        fireEvent.click(confirm); fireEvent.click(confirm);
+        fireEvent.click(screen.getByRole("button", { name: "common.close", exact: true }));
+        expect(onClose).not.toHaveBeenCalled();
+        expect(blogService.syncToCsdn).toHaveBeenCalledTimes(1);
+        await act(async () => finish({}));
+    });
+});

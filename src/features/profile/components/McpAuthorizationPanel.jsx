@@ -3,10 +3,6 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useToast } from "@shared/hooks/useToast";
 import { mcpOAuthService } from "../services/mcpOAuthService";
-import {
-    CsdnAuthorizationPanel,
-    JuejinAuthorizationPanel,
-} from "@features/platformIntegrations";
 
 /** Profile surface for user-owned CSDN authorization used by external MCP clients. */
 const McpAuthorizationPanel = () => {
@@ -333,8 +329,6 @@ const McpAuthorizationPanel = () => {
                     </div>
                 )}
 
-                <CsdnAuthorizationPanel />
-                <JuejinAuthorizationPanel />
             </div>
         </section>
     );

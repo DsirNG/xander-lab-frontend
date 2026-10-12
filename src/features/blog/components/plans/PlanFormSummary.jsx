@@ -8,7 +8,7 @@ const PlanFormSummary = ({ t, form, nextRun, planTypes }) => (
             {t("blogPlans.nextRun")}
         </div>
         <div className="mt-2 flex items-center gap-2">
-            <CalendarDays className="h-4 w-4 shrink-0 text-accent" />
+            <CalendarDays className="h-4 w-4 shrink-0 text-ink-muted" />
             <span className="text-title text-ink">{nextRun.date}</span>
             <span className="text-caption text-ink-muted">
                 {nextRun.weekday}
@@ -54,7 +54,7 @@ const PlanFormSummary = ({ t, form, nextRun, planTypes }) => (
                     {[
                         t("blogPlans.localPlatform"),
                         form.syncCsdn && "CSDN",
-                        form.syncJuejin && "掘金",
+                        form.syncJuejin && t("blogPlans.juejin"),
                     ]
                         .filter(Boolean)
                         .join(" · ")}
@@ -83,8 +83,8 @@ const PlanFormSummary = ({ t, form, nextRun, planTypes }) => (
         </div>
 
         <div className="mt-auto pt-5">
-            <div className="flex gap-3 rounded-xl bg-accent-soft p-4 text-caption text-accent-fg">
-                <Sparkles className="h-4 w-4 shrink-0 text-accent" />
+            <div className="flex gap-3 rounded-xl bg-surface-muted p-4 text-caption text-ink-muted">
+                <Sparkles className="h-4 w-4 shrink-0 text-ink-muted" />
                 <span>{t("blogPlans.customDailyHint")}</span>
             </div>
         </div>

@@ -367,9 +367,9 @@ html {
     background: linear-gradient(
         90deg,
         transparent 0%,
-        #8d87ff 24%,
-        #72d6ff 48%,
-        #ff9ee4 72%,
+        #000000 24%,
+        #777777 48%,
+        #000000 72%,
         transparent 100%
     );
     background-position: 0 0;
@@ -407,4 +407,121 @@ html {
     html {
         scroll-behavior: auto;
     }
+}
+
+:root[data-theme="light"] {
+    color-scheme: light;
+    --color-accent: #000000;
+    --color-accent-50: #ffffff;
+    --color-accent-100: #fafafa;
+    --color-accent-200: #f0f0f0;
+    --color-accent-300: #e5e5e5;
+    --color-accent-400: #cccccc;
+    --color-accent-500: #666666;
+    --color-accent-600: #000000;
+    --color-accent-700: #222222;
+    --color-accent-800: #333333;
+    --color-accent-900: #444444;
+    --color-accent-soft: #f5f5f5;
+    --color-accent-muted: #eeeeee;
+    --color-accent-fg: #000000;
+    --color-primary: #000000;
+    --color-primary-50: #ffffff;
+    --color-primary-100: #fafafa;
+    --color-primary-200: #f0f0f0;
+    --color-primary-300: #e5e5e5;
+    --color-primary-400: #cccccc;
+    --color-primary-500: #666666;
+    --color-primary-600: #000000;
+    --color-primary-700: #222222;
+    --color-primary-800: #333333;
+    --color-primary-900: #444444;
+    --color-primary-dark: #222222;
+    --color-ink: #000000;
+    --color-ink-secondary: #333333;
+    --color-ink-muted: #666666;
+    --color-ink-faint: #999999;
+    --color-canvas: #ffffff;
+    --color-surface: #ffffff;
+    --color-surface-muted: #fafafa;
+    --color-background-light: #ffffff;
+    --color-surface-light: #ffffff;
+    --color-border: #e8e8e8;
+    --color-border-strong: #d0d0d0;
+    --color-success: #059669;
+    --color-success-soft: #ecfdf5;
+    --color-success-fg: #047857;
+    --color-warning: #d97706;
+    --color-warning-soft: #fffbeb;
+    --color-warning-fg: #b45309;
+    --color-info: #64748b;
+    --color-info-soft: #f1f5f9;
+    --color-info-fg: #475569;
+}
+
+:root[data-theme="dark"] {
+    color-scheme: dark;
+    --color-accent: #ffffff;
+    --color-accent-50: #0a0a0a;
+    --color-accent-100: #111111;
+    --color-accent-200: #1b1b1b;
+    --color-accent-300: #292929;
+    --color-accent-400: #444444;
+    --color-accent-500: #999999;
+    --color-accent-600: #ffffff;
+    --color-accent-700: #dddddd;
+    --color-accent-800: #cccccc;
+    --color-accent-900: #bbbbbb;
+    --color-accent-soft: #1b1b1b;
+    --color-accent-muted: #292929;
+    --color-accent-fg: #ffffff;
+    --color-primary: #ffffff;
+    --color-primary-50: #0a0a0a;
+    --color-primary-100: #111111;
+    --color-primary-200: #1b1b1b;
+    --color-primary-300: #292929;
+    --color-primary-400: #444444;
+    --color-primary-500: #999999;
+    --color-primary-600: #ffffff;
+    --color-primary-700: #dddddd;
+    --color-primary-800: #cccccc;
+    --color-primary-900: #bbbbbb;
+    --color-primary-dark: #dddddd;
+    --color-ink: #ffffff;
+    --color-ink-secondary: #dddddd;
+    --color-ink-muted: #aaaaaa;
+    --color-ink-faint: #777777;
+    --color-canvas: #000000;
+    --color-surface: #0a0a0a;
+    --color-surface-muted: #141414;
+    --color-background-light: #000000;
+    --color-surface-light: #0a0a0a;
+    --color-border: #292929;
+    --color-border-strong: #444444;
+    --color-success: #34d399;
+    --color-success-soft: #052e2b;
+    --color-success-fg: #a7f3d0;
+    --color-warning: #fbbf24;
+    --color-warning-soft: #2b2110;
+    --color-warning-fg: #fde68a;
+    --color-info: #94a3b8;
+    --color-info-soft: #1e293b;
+    --color-info-fg: #cbd5e1;
+}
+
+:root[data-theme="dark"] .bg-white {
+    background-color: var(--color-canvas) !important;
+}
+
+:root[data-theme="dark"] .bg-ink.text-white,
+:root[data-theme="dark"] .bg-ink-secondary.text-white,
+:root[data-theme="dark"] .bg-accent.text-white,
+:root[data-theme="dark"] .bg-accent-700.text-white,
+:root[data-theme="dark"] .bg-primary.text-white,
+:root[data-theme="dark"] .bg-primary-700.text-white {
+    color: #000000 !important;
+}
+
+:root[data-theme="dark"] .text-black {
+    color: var(--color-ink) !important;
 }
