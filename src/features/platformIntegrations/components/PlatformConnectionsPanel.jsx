@@ -3,7 +3,6 @@ import { LoaderCircle, RefreshCw } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useToast } from "@shared/hooks/useToast";
 import LocalPlatformAuthorizationPanel from "./LocalPlatformAuthorizationPanel";
-import PlatformConnectionAction from "./PlatformConnectionAction";
 import {
     csdnService,
     createPlatformConnectionService,
@@ -145,8 +144,7 @@ const PlatformConnectionsPanel = () => {
                         compact
                         commonCopy
                         allowProfileRefresh={platform.id === "wechat_mp"}
-                        extraActions={platform.id === "csdn" ? () => <PlatformConnectionAction platform="csdn" />
-                            : platform.id === "juejin" ? () => <><PlatformConnectionAction platform="juejin" /><JuejinCatalogAction /></> : undefined}
+                        extraActions={platform.id === "juejin" ? () => <JuejinCatalogAction /> : undefined}
                     />
                 ))}
             </div>}

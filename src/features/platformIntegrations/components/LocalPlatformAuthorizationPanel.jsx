@@ -1,8 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
     CheckCircle2,
+    CircleUserRound,
     ExternalLink,
+    Link2,
     LoaderCircle,
+    ShieldCheck,
     ShieldOff,
     TriangleAlert,
     Unplug,
@@ -31,7 +34,7 @@ const LocalPlatformAuthorizationPanel = ({
     initialProfile = null,
     allowProfileRefresh = false,
 }) => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const toast = useToast();
     const pollRef = useRef(null);
     const expiryRef = useRef(null);
@@ -39,7 +42,9 @@ const LocalPlatformAuthorizationPanel = ({
     const cancelRequestedRef = useRef(false);
     const [state, setState] = useState(initialStatus || "loading");
     const [profile, setProfile] = useState(initialProfile);
+    const [authorizedAt, setAuthorizedAt] = useState(initialProfile?.authorizedAt || null);
     const [busy, setBusy] = useState(false);
+    const [refreshingStatus, setRefreshingStatus] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [connectorProgress, setConnectorProgress] = useState("OPENING");
     const [connectorErrorCode, setConnectorErrorCode] = useState(null);
@@ -60,11 +65,38 @@ const LocalPlatformAuthorizationPanel = ({
         try {
             const result = await service.getAuthorizationStatus();
             setState(result?.status || "NOT_AUTHORIZED");
-            setProfile(result?.profile || null);
+            setProfile(result?.profile ? { ...result.profile, authorizedAt: result.authorizedAt || null } : null);
+            setAuthorizedAt(result?.authorizedAt || null);
         } catch {
             setState("UNAVAILABLE");
         }
     }, [service]);
+
+    const refreshStatus = useCallback(async () => {
+        setRefreshingStatus(true);
+        try {
+            const verification = service.testConnection ? await service.testConnection() : null;
+            const result = await service.getAuthorizationStatus();
+            const nextProfile = result?.profile || verification
+                ? { ...result?.profile, ...verification, authorizedAt: result?.authorizedAt || null }
+                : null;
+            setState(result?.status || (verification ? "AUTHORIZED" : "NOT_AUTHORIZED"));
+            setProfile(nextProfile);
+            setAuthorizedAt(result?.authorizedAt || null);
+            if (verification) toast.success(t("profile.platformConnection.success"));
+        } catch (error) {
+            const status = error?.response?.status;
+            if (status === 409) {
+                setState("EXPIRED");
+                setProfile(null);
+                setAuthorizedAt(null);
+            }
+            const key = status === 409 ? "expired" : status === 429 ? "rateLimited" : "failed";
+            toast.error(t(`profile.platformConnection.${key}`, { platform: title }));
+        } finally {
+            setRefreshingStatus(false);
+        }
+    }, [service, t, toast, title]);
 
     const cancelTask = useCallback(async () => {
         const task = taskRef.current;
@@ -84,7 +116,8 @@ const LocalPlatformAuthorizationPanel = ({
             stopPolling();
             taskRef.current = null;
             setState("AUTHORIZED");
-            setProfile(result?.profile || null);
+            setProfile(result?.profile ? { ...result.profile, authorizedAt: result.authorizedAt || null } : null);
+            setAuthorizedAt(result?.authorizedAt || null);
             setBusy(false);
             setIsModalOpen(false);
             toast.success(text("authorized"));
@@ -127,6 +160,7 @@ const LocalPlatformAuthorizationPanel = ({
         if (initialStatus) {
             setState(initialStatus);
             setProfile(initialProfile);
+            setAuthorizedAt(initialProfile?.authorizedAt || null);
         }
         else void loadStatus();
         return () => {
@@ -134,6 +168,33 @@ const LocalPlatformAuthorizationPanel = ({
             void cancelTask();
         };
     }, [cancelTask, initialProfile, initialStatus, loadStatus, stopPolling]);
+
+    useEffect(() => {
+        if (initialStatus !== "AUTHORIZED") return undefined;
+        let active = true;
+        const loadAccountDetails = async () => {
+            let verification = null;
+            try {
+                if (service.testConnection) verification = await service.testConnection();
+            } catch {
+                // Keep the saved account summary visible when a live platform check fails.
+            }
+            try {
+                const result = await service.getAuthorizationStatus();
+                if (!active) return;
+                if (result?.status) setState(result.status);
+                const nextProfile = result?.profile || verification
+                    ? { ...result?.profile, ...verification, authorizedAt: result?.authorizedAt || null }
+                    : null;
+                setProfile(nextProfile);
+                setAuthorizedAt(result?.authorizedAt || null);
+            } catch {
+                // The platform list already supplied the connection state.
+            }
+        };
+        void loadAccountDetails();
+        return () => { active = false; };
+    }, [initialStatus, service]);
 
     const start = async () => {
         cancelRequestedRef.current = false;
@@ -196,6 +257,7 @@ const LocalPlatformAuthorizationPanel = ({
             await service.disconnect();
             setState("NOT_AUTHORIZED");
             setProfile(null);
+            setAuthorizedAt(null);
             toast.success(text("disconnected"));
         } catch (error) {
             toast.error(error?.message || text("disconnectFailed"));
@@ -280,52 +342,81 @@ const LocalPlatformAuthorizationPanel = ({
                     ? text("sessionExpired")
                     : state === "UNAVAILABLE"
                         ? text("unavailable")
-                        : null;
+                        : text("unboundStatus");
         const compactStatusColor = authorized ? "text-success" : expired || state === "UNAVAILABLE" ? "text-warning" : "text-ink-muted";
+        const accountName = profile?.nickname || title;
+        const accountId = profile?.username || "—";
+        const formatTime = (value) => value ? new Date(value).toLocaleString(i18n.resolvedLanguage, { dateStyle: "short", timeStyle: "short" }) : "—";
+        const accountEvents = [
+            ["authorizedAt", authorizedAt],
+            ["verifiedAt", profile?.verifiedAt],
+        ];
 
         return (
-            <div className="min-w-0 rounded-xl border border-border bg-surface p-3">
+            <div className="flex h-44 min-w-0 flex-col rounded-xl border border-border bg-surface p-3">
                 <div className="flex min-w-0 items-center gap-3">
                     {brandMark}
                     <div className="min-w-0 flex-1">
-                        <div className="truncate text-body font-semibold text-ink">{title}</div>
-                        {compactStatus && <div className={`mt-0.5 truncate text-caption ${compactStatusColor}`}>{compactStatus}</div>}
+                        <div className="truncate text-body font-semibold text-ink" title={title}>{title}</div>
+                        <div className={`mt-0.5 truncate text-caption ${compactStatusColor}`} title={compactStatus}>{compactStatus}</div>
                     </div>
                     {loading && <LoaderCircle className="h-4 w-4 shrink-0 animate-spin text-accent" />}
+                    {!loading && authorized && <>
+                        <button type="button" onClick={refreshStatus} disabled={refreshingStatus || busy}
+                            title={t("profile.platformConnections.card.verifyStatus")}
+                            aria-label={`${t("profile.platformConnections.card.verifyStatus")} ${title}`}
+                            className="grid h-9 w-9 shrink-0 place-items-center rounded-lg border border-border text-success hover:bg-success-soft disabled:opacity-50">
+                            {refreshingStatus ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <ShieldCheck className="h-4 w-4" />}
+                        </button>
+                        <button type="button" onClick={disconnect} disabled={busy}
+                            title={text("disconnect")} aria-label={`${text("disconnect")} ${title}`}
+                            className="grid h-9 w-9 shrink-0 place-items-center rounded-lg border border-border text-ink-muted hover:bg-canvas disabled:opacity-50">
+                            {busy ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <Unplug className="h-4 w-4" />}
+                        </button>
+                    </>}
                     {!loading && !authorized && state !== "UNAVAILABLE" && (
                         <button type="button" onClick={start} disabled={busy}
-                            className="inline-flex min-h-9 shrink-0 items-center gap-1.5 rounded-lg bg-accent px-3 py-2 text-caption font-semibold text-white hover:bg-accent/90 disabled:opacity-50">
-                            {busy ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <ExternalLink className="h-4 w-4" />}
-                            {expired ? text("reauthorize") : text("connect")}
+                            title={expired ? text("reauthorize") : text("connect")}
+                            aria-label={`${expired ? text("reauthorize") : text("connect")} ${title}`}
+                            className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-accent text-white hover:bg-accent/90 disabled:opacity-50">
+                            {busy ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <Link2 className="h-4 w-4" />}
                         </button>
                     )}
                 </div>
-                {authorized && profile?.nickname && (
-                    <div className="mt-3 flex min-w-0 items-center gap-2 border-t border-border pt-3">
-                        {profile.avatarUrl ? <img src={profile.avatarUrl} alt="" referrerPolicy="no-referrer" className="h-8 w-8 shrink-0 rounded-full object-cover" /> : null}
-                        <div className="min-w-0 truncate text-caption font-medium text-ink-secondary">{profile.nickname}</div>
-                    </div>
-                )}
-                {authorized && allowProfileRefresh && !profile?.nickname && (
-                    <div className="mt-3 border-t border-border pt-3">
-                        <div className="mb-2 text-caption text-ink-muted">{t("profile.platformConnections.card.profileRefreshHint")}</div>
+                <div className="mt-2 flex min-h-0 flex-1 items-center border-t border-border pt-2">
+                    {authorized ? (
+                        <div className="grid min-w-0 flex-1 grid-cols-[minmax(0,1fr)_minmax(0,0.9fr)] items-center gap-3">
+                            <div className="flex min-w-0 items-center gap-2">
+                                {profile?.avatarUrl
+                                    ? <img src={profile.avatarUrl} alt="" referrerPolicy="no-referrer" className="h-9 w-9 shrink-0 rounded-full object-cover" />
+                                    : <CircleUserRound className="h-9 w-9 shrink-0 text-ink-faint" />}
+                                <div className="min-w-0 flex-1">
+                                    <div className="truncate text-caption font-medium text-ink-secondary" title={accountName}>{accountName}</div>
+                                    <div className="truncate text-micro text-ink-muted" title={accountId}>{t("profile.platformConnection.accountId", { id: accountId })}</div>
+                                </div>
+                            </div>
+                            <div className="min-w-0 space-y-1">
+                                {accountEvents.map(([key, value]) => {
+                                    const label = t(`profile.platformConnection.${key}`, { time: formatTime(value) });
+                                    return <div key={key} className="truncate text-micro text-ink-muted" title={label}>{label}</div>;
+                                })}
+                            </div>
+                        </div>
+                    ) : <div className={`min-w-0 flex-1 truncate text-caption ${compactStatusColor}`} title={state === "UNAVAILABLE" ? text("unavailable") : expired ? text("sessionExpired") : loading ? text("checking") : text("unboundHint")}>
+                        {state === "UNAVAILABLE" ? text("unavailable") : expired ? text("sessionExpired") : loading ? text("checking") : text("unboundHint")}
+                    </div>}
+                </div>
+                <div className="mt-2 flex h-10 shrink-0 items-center gap-2 overflow-hidden">
+                    {authorized && extraActions?.()}
+                    {authorized && allowProfileRefresh && !profile?.nickname && (
                         <button type="button" onClick={start} disabled={busy}
-                            className="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-border px-3 py-2 text-caption font-semibold text-ink-secondary hover:bg-canvas disabled:opacity-50">
-                            {busy ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <ExternalLink className="h-4 w-4" />}
+                            title={t("profile.platformConnections.card.refreshProfile")}
+                            className="inline-flex min-h-7 items-center gap-1 rounded-md border border-border px-2 text-micro font-semibold text-ink-secondary hover:bg-canvas disabled:opacity-50">
+                            {busy ? <LoaderCircle className="h-3.5 w-3.5 animate-spin" /> : <ExternalLink className="h-3.5 w-3.5" />}
                             {t("profile.platformConnections.card.refreshProfile")}
                         </button>
-                    </div>
-                )}
-                {!loading && (authorized || expired) && (
-                    <div className="mt-2 flex flex-wrap gap-2">
-                        {authorized && extraActions?.()}
-                        <button type="button" onClick={disconnect} disabled={busy}
-                            className="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-border px-3 py-2 text-caption font-semibold text-ink-muted hover:bg-canvas disabled:opacity-50">
-                            {busy ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <Unplug className="h-4 w-4" />}
-                            {text("disconnect")}
-                        </button>
-                    </div>
-                )}
+                    )}
+                </div>
             </div>
         );
     }
