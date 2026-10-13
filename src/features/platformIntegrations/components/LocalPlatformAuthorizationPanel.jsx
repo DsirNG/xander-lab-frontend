@@ -82,11 +82,14 @@ const LocalPlatformAuthorizationPanel = ({
             const result = await service.getAuthorizationStatus();
             const nextProfile = result?.profile || verification
                 ? { ...result?.profile, ...verification, authorizedAt: result?.authorizedAt || null }
-                : null;
+                : profile;
             setState(result?.status || (verification ? "AUTHORIZED" : "NOT_AUTHORIZED"));
             setProfile(nextProfile);
-            setAuthorizedAt(result?.authorizedAt || null);
+            setAuthorizedAt(result?.authorizedAt || authorizedAt);
             if (verification) toast.success(t("profile.platformConnection.success"));
+            else if (allowProfileRefresh && !result?.profile) {
+                toast.warning(t("profile.platformConnections.card.profileRefreshHint"));
+            }
         } catch (error) {
             const status = error?.response?.status;
             if (status === 409) {
@@ -99,7 +102,7 @@ const LocalPlatformAuthorizationPanel = ({
         } finally {
             setRefreshingStatus(false);
         }
-    }, [service, t, toast, title]);
+    }, [allowProfileRefresh, authorizedAt, profile, service, t, toast, title]);
 
     const cancelTask = useCallback(async () => {
         const task = taskRef.current;
@@ -371,7 +374,7 @@ const LocalPlatformAuthorizationPanel = ({
                     </div>
                     {loading && <LoaderCircle className="h-4 w-4 shrink-0 animate-spin text-accent" />}
                     {!loading && authorized && <>
-                        <button type="button" onClick={allowProfileRefresh ? start : refreshStatus} disabled={refreshingStatus || busy}
+                        <button type="button" onClick={refreshStatus} disabled={refreshingStatus || busy}
                             title={verifyLabel}
                             aria-label={`${verifyLabel} ${title}`}
                             className="grid h-9 w-9 shrink-0 place-items-center rounded-lg border border-border text-success hover:bg-success-soft disabled:opacity-50">
