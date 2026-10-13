@@ -7,6 +7,13 @@ const JUEJIN_AUTH = "/api/publishing/juejin/authorization";
 export const createPlatformConnectionService = (platform) => {
     const authorizationPath = `/api/publishing/${encodeURIComponent(platform)}/authorization`;
     return {
+        ...(platform === "wechat_mp" ? {
+            testConnection: () => post(`/api/publishing/${encodeURIComponent(platform)}/connection/test`, undefined, { _silent: true, dedupe: false }),
+            refreshConnection: async () => {
+                const accountProfile = await readWechatAccountProfile();
+                return post(`/api/publishing/${encodeURIComponent(platform)}/connection/test`, { accountProfile }, { _silent: true, dedupe: false });
+            },
+        } : {}),
         startExtensionAuthorization: () => post(`${authorizationPath}/start`, undefined, { _sensitive: true, dedupe: false }),
         cancelExtensionAuthorization: (taskId) => post(`${authorizationPath}/extension/${taskId}/cancel`, undefined, { _silent: true }),
         getAuthorizationStatus: () => get(`${authorizationPath}/status`, undefined, { _silent: true, dedupe: false }),
@@ -58,6 +65,15 @@ const CONNECTOR_CHANNEL = "dinqorai-platform-connector";
 export const isPlatformConnectorAvailable = () =>
     requestConnector({ type: "PING" }).then((reply) => reply?.available === true).catch(() => false);
 
+/** Reads the visible account name and avatar through the extension without exposing platform cookies to the page. */
+export const readWechatAccountProfile = async () => {
+    const reply = await requestConnector({ type: "READ_PROFILE" });
+    const nickname = typeof reply?.profile?.nickname === "string" ? reply.profile.nickname.trim() : "";
+    if (!nickname || nickname.length > 200) throw new Error("WECHAT_PROFILE_NOT_FOUND");
+    const avatarUrl = typeof reply.profile.avatarUrl === "string" ? reply.profile.avatarUrl : null;
+    return { nickname, avatarUrl };
+};
+
 /** Sends a one-use, short-lived authorization grant to the extension without exposing platform cookies to the page. */
 export const startPlatformConnectorAuthorization = async (platform, authorization) =>
     requestConnector({
@@ -95,14 +111,16 @@ function requestConnector(payload) {
         const timeout = window.setTimeout(() => {
             window.removeEventListener("message", onMessage);
             reject(new Error("Browser connector is not available"));
-        }, payload.type === "START" ? 10000 : 2500);
+        }, payload.type === "START" ? 10000 : payload.type === "READ_PROFILE" ? 30000 : 2500);
         const onMessage = (event) => {
             if (event.source !== window || event.origin !== window.location.origin
                 || event.data?.channel !== CONNECTOR_CHANNEL || event.data.requestId !== requestId) return;
-            if (event.data.type !== "PONG" && event.data.type !== "START_RESULT") return;
+            if (event.data.type !== "PONG" && event.data.type !== "START_RESULT" && event.data.type !== "PROFILE_RESULT") return;
             window.clearTimeout(timeout);
             window.removeEventListener("message", onMessage);
             if (event.data.type === "PONG") resolve({ available: event.data.available === true });
+            else if (event.data.type === "PROFILE_RESULT" && event.data.ok) resolve({ profile: event.data.profile });
+            else if (event.data.type === "PROFILE_RESULT") reject(new Error(event.data.errorCode || "WECHAT_PROFILE_NOT_FOUND"));
             else if (event.data.ok) resolve({ ok: true });
             else reject(new Error("Browser connector could not open the platform page"));
         };

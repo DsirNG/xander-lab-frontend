@@ -78,7 +78,8 @@ const LocalPlatformAuthorizationPanel = ({
     const refreshStatus = useCallback(async () => {
         setRefreshingStatus(true);
         try {
-            const verification = service.testConnection ? await service.testConnection() : null;
+            const verifyConnection = service.refreshConnection || service.testConnection;
+            const verification = verifyConnection ? await verifyConnection() : null;
             const result = await service.getAuthorizationStatus();
             const nextProfile = result?.profile || verification
                 ? { ...result?.profile, ...verification, authorizedAt: result?.authorizedAt || null }
@@ -91,6 +92,10 @@ const LocalPlatformAuthorizationPanel = ({
                 toast.warning(t("profile.platformConnections.card.profileRefreshHint"));
             }
         } catch (error) {
+            if (error?.message === "WECHAT_PROFILE_NOT_FOUND") {
+                toast.warning(t("profile.platformConnections.card.profileRefreshHint"));
+                return;
+            }
             const status = error?.response?.status;
             if (status === 409) {
                 setState("EXPIRED");
