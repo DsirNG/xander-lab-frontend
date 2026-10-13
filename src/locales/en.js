@@ -1505,7 +1505,7 @@ export default {
                 disconnected: "Platform disconnected",
                 disconnectFailed: "Could not disconnect platform",
                 checking: "Checking connection…",
-                profileRefreshHint: "Reconnect once to read the Official Account name and avatar.",
+                profileRefreshHint: "Your account is still connected, but the extension could not read its profile. Update and reload the extension, sign in to the Official Account dashboard, then refresh. You do not need to reconnect.",
                 refreshProfile: "Read account profile",
                 unboundStatus: "Not connected",
                 unboundHint: "This platform is not connected",

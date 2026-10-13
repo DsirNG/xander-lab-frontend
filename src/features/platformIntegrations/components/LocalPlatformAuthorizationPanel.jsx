@@ -128,20 +128,34 @@ const LocalPlatformAuthorizationPanel = ({
 
   const pollStatus = useCallback(async () => {
       try {
-          const result = await service.getAuthorizationStatus();
+          let result = await service.getAuthorizationStatus();
+            if (!taskRef.current) return;
             if (result?.status !== "AUTHORIZED") return;
             stopPolling();
             taskRef.current = null;
+            let profileReadFailed = false;
+            if (allowProfileRefresh && !result?.profile && service.refreshConnection) {
+                try {
+                    const refreshedProfile = await service.refreshConnection();
+                    if (refreshedProfile?.nickname) result = { ...result, profile: refreshedProfile };
+                } catch {
+                    profileReadFailed = true;
+                }
+            }
             setState("AUTHORIZED");
             setProfile(result?.profile ? { ...result.profile, authorizedAt: result.authorizedAt || null } : null);
             setAuthorizedAt(result?.authorizedAt || null);
             setBusy(false);
             setIsModalOpen(false);
-            toast.success(text("authorized"));
+            if (profileReadFailed && !result?.profile) {
+                toast.warning(t("profile.platformConnections.card.profileRefreshHint"));
+            } else {
+                toast.success(text("authorized"));
+            }
         } catch {
             // Continue checking while the short-lived extension grant is active.
       }
-  }, [service, stopPolling, toast, text]);
+  }, [allowProfileRefresh, service, stopPolling, t, toast, text]);
 
     useEffect(() => {
         const onConnectorProgress = (event) => {

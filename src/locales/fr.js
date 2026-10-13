@@ -1520,7 +1520,7 @@ export default {
                 disconnected: "Plateforme déconnectée",
                 disconnectFailed: "Impossible de déconnecter la plateforme",
                 checking: "Vérification de la connexion…",
-                profileRefreshHint: "Reconnectez une fois pour lire le nom et l’avatar du compte officiel.",
+                profileRefreshHint: "Votre compte reste connecté, mais l’extension n’a pas pu lire son profil. Mettez l’extension à jour et rechargez-la, connectez-vous au tableau de bord du compte officiel, puis actualisez. Il n’est pas nécessaire de reconnecter le compte.",
                 refreshProfile: "Lire le profil du compte",
                 unboundStatus: "Non connecté",
                 unboundHint: "Cette plateforme n’est pas connectée",

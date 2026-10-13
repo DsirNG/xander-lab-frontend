@@ -1501,7 +1501,7 @@ export default {
                 disconnected: "連携を解除しました",
                 disconnectFailed: "連携を解除できませんでした",
                 checking: "連携状態を確認中…",
-                profileRefreshHint: "一度再連携すると、公式アカウント名とアバターを読み取れます。",
+                profileRefreshHint: "アカウントの連携は維持されていますが、拡張機能がプロフィールを読み取れませんでした。拡張機能を更新して再読み込みし、公式アカウントの管理画面にログインしてから再試行してください。再連携は不要です。",
                 refreshProfile: "アカウント情報を読み取る",
                 unboundStatus: "未連携",
                 unboundHint: "このプラットフォームは未連携です",

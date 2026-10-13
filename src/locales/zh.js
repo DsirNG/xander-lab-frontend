@@ -1450,7 +1450,7 @@ export default {
                 disconnected: "已断开平台绑定",
                 disconnectFailed: "断开绑定失败",
                 checking: "正在检查绑定状态…",
-                profileRefreshHint: "当前已绑定。重新连接一次即可读取公众号名称和头像。",
+                profileRefreshHint: "绑定已保留，但扩展暂未读取到公众号资料。请更新并重新加载浏览器扩展，确认已登录公众号后台后再点刷新，无需重新绑定。",
                 refreshProfile: "读取公众号资料",
                 unboundStatus: "未绑定",
                 unboundHint: "未绑定该平台",

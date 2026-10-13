@@ -1493,7 +1493,7 @@ export default {
                 disconnected: "Đã ngắt kết nối nền tảng",
                 disconnectFailed: "Không thể ngắt kết nối nền tảng",
                 checking: "Đang kiểm tra kết nối…",
-                profileRefreshHint: "Kết nối lại một lần để đọc tên và ảnh đại diện của tài khoản chính thức.",
+                profileRefreshHint: "Tài khoản vẫn được kết nối nhưng tiện ích chưa đọc được hồ sơ. Hãy cập nhật và tải lại tiện ích, đăng nhập trang quản lý Tài khoản chính thức rồi thử làm mới. Không cần kết nối lại.",
                 refreshProfile: "Đọc thông tin tài khoản",
                 unboundStatus: "Chưa liên kết",
                 unboundHint: "Nền tảng này chưa được liên kết",
