@@ -5,6 +5,8 @@ import {
     ExternalLink,
     Link2,
     LoaderCircle,
+    RefreshCw,
+    ShieldAlert,
     ShieldCheck,
     ShieldOff,
     TriangleAlert,
@@ -343,7 +345,10 @@ const LocalPlatformAuthorizationPanel = ({
                     : state === "UNAVAILABLE"
                         ? text("unavailable")
                         : text("unboundStatus");
-        const compactStatusColor = authorized ? "text-success" : expired || state === "UNAVAILABLE" ? "text-warning" : "text-ink-muted";
+        const compactStatusColor = authorized ? "text-success" : expired ? "text-danger" : state === "UNAVAILABLE" ? "text-warning" : "text-ink-muted";
+        const verifyLabel = allowProfileRefresh
+            ? t("profile.platformConnections.card.refreshProfile")
+            : t("profile.platformConnections.card.verifyStatus");
         const accountName = profile?.nickname || title;
         const accountId = profile?.username || "—";
         const formatTime = (value) => value ? new Date(value).toLocaleString(i18n.resolvedLanguage, { dateStyle: "short", timeStyle: "short" }) : "—";
@@ -358,15 +363,19 @@ const LocalPlatformAuthorizationPanel = ({
                     {brandMark}
                     <div className="min-w-0 flex-1">
                         <div className="truncate text-body font-semibold text-ink" title={title}>{title}</div>
-                        <div className={`mt-0.5 truncate text-caption ${compactStatusColor}`} title={compactStatus}>{compactStatus}</div>
+                        <div className={`mt-0.5 flex min-w-0 items-center gap-1 truncate text-caption ${compactStatusColor}`} title={compactStatus}>
+                            <span className="truncate">{compactStatus}</span>
+                            {authorized && <ShieldCheck className="h-3.5 w-3.5 shrink-0" aria-label={compactStatus} />}
+                            {expired && <ShieldAlert className="h-3.5 w-3.5 shrink-0" aria-label={compactStatus} />}
+                        </div>
                     </div>
                     {loading && <LoaderCircle className="h-4 w-4 shrink-0 animate-spin text-accent" />}
                     {!loading && authorized && <>
-                        <button type="button" onClick={refreshStatus} disabled={refreshingStatus || busy}
-                            title={t("profile.platformConnections.card.verifyStatus")}
-                            aria-label={`${t("profile.platformConnections.card.verifyStatus")} ${title}`}
+                        <button type="button" onClick={allowProfileRefresh ? start : refreshStatus} disabled={refreshingStatus || busy}
+                            title={verifyLabel}
+                            aria-label={`${verifyLabel} ${title}`}
                             className="grid h-9 w-9 shrink-0 place-items-center rounded-lg border border-border text-success hover:bg-success-soft disabled:opacity-50">
-                            {refreshingStatus ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <ShieldCheck className="h-4 w-4" />}
+                            {refreshingStatus || busy ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
                         </button>
                         <button type="button" onClick={disconnect} disabled={busy}
                             title={text("disconnect")} aria-label={`${text("disconnect")} ${title}`}
@@ -408,14 +417,6 @@ const LocalPlatformAuthorizationPanel = ({
                 </div>
                 <div className="mt-2 flex h-10 shrink-0 items-center gap-2 overflow-hidden">
                     {authorized && extraActions?.()}
-                    {authorized && allowProfileRefresh && !profile?.nickname && (
-                        <button type="button" onClick={start} disabled={busy}
-                            title={t("profile.platformConnections.card.refreshProfile")}
-                            className="inline-flex min-h-7 items-center gap-1 rounded-md border border-border px-2 text-micro font-semibold text-ink-secondary hover:bg-canvas disabled:opacity-50">
-                            {busy ? <LoaderCircle className="h-3.5 w-3.5 animate-spin" /> : <ExternalLink className="h-3.5 w-3.5" />}
-                            {t("profile.platformConnections.card.refreshProfile")}
-                        </button>
-                    )}
                 </div>
             </div>
         );
