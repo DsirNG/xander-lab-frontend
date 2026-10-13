@@ -10,8 +10,15 @@ export const createPlatformConnectionService = (platform) => {
         ...(platform === "wechat_mp" ? {
             testConnection: () => post(`/api/publishing/${encodeURIComponent(platform)}/connection/test`, undefined, { _silent: true, dedupe: false }),
             refreshConnection: async () => {
+                const endpoint = `/api/publishing/${encodeURIComponent(platform)}/connection/test`;
+                try {
+                    await post(endpoint, undefined, { _silent: true, dedupe: false });
+                } catch (error) {
+                    // Older bindings may not have a saved profile yet; still ask the extension to read it.
+                    if (error?.response?.status !== 404) throw error;
+                }
                 const accountProfile = await readWechatAccountProfile();
-                return post(`/api/publishing/${encodeURIComponent(platform)}/connection/test`, { accountProfile }, { _silent: true, dedupe: false });
+                return post(endpoint, { accountProfile }, { _silent: true, dedupe: false });
             },
         } : {}),
         startExtensionAuthorization: () => post(`${authorizationPath}/start`, undefined, { _sensitive: true, dedupe: false }),
