@@ -1432,6 +1432,8 @@ export default {
         },
         platformConnections: {
             title: "发布平台账号",
+            extensionRequired: "绑定账号需要 DinQorAI 浏览器扩展",
+            securityDetails: "扩展与安全说明",
             description: "管理各内容平台的登录绑定。CSDN 与掘金支持一键发文，其余平台目前仅支持账号绑定。",
             extensionHint: "需要安装并启用 DinQorAI 浏览器扩展。点击绑定后会在新标签页打开对应平台，请在该页面登录。",
             securityNote: "授权依赖浏览器扩展识别登录 Cookie，并非平台官方 OAuth。所选平台 Cookie 会发送到 DinQor Workers 并加密保存；断开绑定会删除 DinQor 保存的凭证，不会退出平台网站。",
@@ -1448,6 +1450,8 @@ export default {
                 disconnected: "已断开平台绑定",
                 disconnectFailed: "断开绑定失败",
                 checking: "正在检查绑定状态…",
+                profileRefreshHint: "当前已绑定。重新连接一次即可读取公众号名称和头像。",
+                refreshProfile: "读取公众号资料",
                 sessionExpired: "平台登录凭证已失效，请重新绑定。",
                 unavailable: "暂时无法读取平台绑定状态。",
             },

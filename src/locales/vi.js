@@ -1475,6 +1475,8 @@ export default {
         },
         platformConnections: {
             title: "Tài khoản nền tảng",
+            extensionRequired: "Cài tiện ích DinQorAI để liên kết tài khoản",
+            securityDetails: "Thông tin tiện ích và bảo mật",
             description: "Quản lý kết nối tài khoản trên các nền tảng nội dung. CSDN và Juejin hỗ trợ đăng bài bằng một cú nhấp; các nền tảng khác hiện chỉ hỗ trợ liên kết tài khoản.",
             extensionHint: "Cài đặt và bật tiện ích trình duyệt DinQorAI. Khi bắt đầu liên kết, nền tảng đã chọn sẽ mở trong tab mới để bạn đăng nhập.",
             securityNote: "Tiện ích phát hiện và chuyển cookie nền tảng; đây không phải OAuth chính thức. Cookie của nền tảng đã chọn được mã hóa trên DinQor Workers. Ngắt kết nối sẽ xóa bản lưu của DinQor nhưng không đăng xuất khỏi nền tảng.",
@@ -1491,6 +1493,8 @@ export default {
                 disconnected: "Đã ngắt kết nối nền tảng",
                 disconnectFailed: "Không thể ngắt kết nối nền tảng",
                 checking: "Đang kiểm tra kết nối…",
+                profileRefreshHint: "Kết nối lại một lần để đọc tên và ảnh đại diện của tài khoản chính thức.",
+                refreshProfile: "Đọc thông tin tài khoản",
                 sessionExpired: "Phiên nền tảng đã hết hạn. Vui lòng kết nối lại.",
                 unavailable: "Không thể kiểm tra trạng thái kết nối.",
             },

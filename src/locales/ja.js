@@ -1483,6 +1483,8 @@ export default {
         },
         platformConnections: {
             title: "投稿プラットフォームのアカウント",
+            extensionRequired: "アカウント連携には DinQorAI ブラウザー拡張機能が必要です",
+            securityDetails: "拡張機能とセキュリティの詳細",
             description: "コンテンツプラットフォームのアカウント連携を管理します。CSDN と Juejin はワンクリック投稿に対応し、その他のプラットフォームは現在アカウント連携のみです。",
             extensionHint: "DinQorAI ブラウザー拡張機能をインストールして有効にしてください。連携を開始すると、選択したプラットフォームが新しいタブで開きます。",
             securityNote: "拡張機能がプラットフォームの Cookie を検出して送信します。公式 OAuth 認証ではありません。選択したプラットフォームの Cookie は DinQor Workers に暗号化して保存され、連携解除時に DinQor の保存分が削除されますが、プラットフォームからはログアウトされません。",
@@ -1499,6 +1501,8 @@ export default {
                 disconnected: "連携を解除しました",
                 disconnectFailed: "連携を解除できませんでした",
                 checking: "連携状態を確認中…",
+                profileRefreshHint: "一度再連携すると、公式アカウント名とアバターを読み取れます。",
+                refreshProfile: "アカウント情報を読み取る",
                 sessionExpired: "プラットフォームのセッションが期限切れです。再連携してください。",
                 unavailable: "連携状態を確認できません。",
             },

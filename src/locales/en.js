@@ -1487,6 +1487,8 @@ export default {
         },
         platformConnections: {
             title: "Publishing accounts",
+            extensionRequired: "Install the DinQorAI browser extension to connect accounts",
+            securityDetails: "Extension and security details",
             description: "Manage account connections for content platforms. One-click publishing is available for CSDN and Juejin; other platforms currently support account binding only.",
             extensionHint: "Install and enable the DinQorAI browser extension. Binding opens the selected platform in a new tab for you to sign in.",
             securityNote: "Authorization uses the browser extension to detect and transfer platform cookies; it is not official platform OAuth. Cookies for the selected platform are encrypted in DinQor Workers. Disconnecting deletes DinQor's saved copy but does not sign you out of the platform.",
@@ -1503,6 +1505,8 @@ export default {
                 disconnected: "Platform disconnected",
                 disconnectFailed: "Could not disconnect platform",
                 checking: "Checking connection…",
+                profileRefreshHint: "Reconnect once to read the Official Account name and avatar.",
+                refreshProfile: "Read account profile",
                 sessionExpired: "The platform session expired. Connect the account again.",
                 unavailable: "The platform connection status is unavailable.",
             },

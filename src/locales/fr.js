@@ -1502,6 +1502,8 @@ export default {
         },
         platformConnections: {
             title: "Comptes de publication",
+            extensionRequired: "Installez l’extension DinQorAI pour connecter vos comptes",
+            securityDetails: "Détails sur l’extension et la sécurité",
             description: "Gérez les comptes de vos plateformes de contenu. La publication en un clic est disponible pour CSDN et Juejin ; les autres plateformes permettent uniquement la connexion du compte pour le moment.",
             extensionHint: "Installez et activez l’extension de navigateur DinQorAI. La connexion ouvre la plateforme sélectionnée dans un nouvel onglet.",
             securityNote: "L’extension détecte et transmet les cookies de la plateforme ; il ne s’agit pas d’un OAuth officiel. Les cookies de la plateforme choisie sont chiffrés dans DinQor Workers. La déconnexion supprime la copie de DinQor sans fermer votre session sur la plateforme.",
@@ -1518,6 +1520,8 @@ export default {
                 disconnected: "Plateforme déconnectée",
                 disconnectFailed: "Impossible de déconnecter la plateforme",
                 checking: "Vérification de la connexion…",
+                profileRefreshHint: "Reconnectez une fois pour lire le nom et l’avatar du compte officiel.",
+                refreshProfile: "Lire le profil du compte",
                 sessionExpired: "La session a expiré. Reconnectez le compte.",
                 unavailable: "L’état de connexion est indisponible.",
             },
