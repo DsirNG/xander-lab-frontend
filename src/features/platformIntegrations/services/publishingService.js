@@ -15,7 +15,7 @@ export const createPlatformConnectionService = (platform) => {
                     await post(endpoint, undefined, { _silent: true, dedupe: false });
                 } catch (error) {
                     // Older bindings may not have a saved profile yet; still ask the extension to read it.
-                    if (error?.response?.status !== 404) throw error;
+                    if (error?.response?.status !== 404 && error?.code !== 404) throw error;
                 }
                 const accountProfile = await readWechatAccountProfile();
                 return post(endpoint, { accountProfile }, { _silent: true, dedupe: false });

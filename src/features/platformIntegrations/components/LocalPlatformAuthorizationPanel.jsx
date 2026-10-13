@@ -96,14 +96,20 @@ const LocalPlatformAuthorizationPanel = ({
                 toast.warning(t("profile.platformConnections.card.profileRefreshHint"));
                 return;
             }
-            const status = error?.response?.status;
+            const status = error?.response?.status ?? (error?.status === 200 ? error?.code : undefined);
+            if (status === 404 && allowProfileRefresh) {
+                toast.warning(error.message || t("profile.platformConnections.card.profileRefreshHint"));
+                return;
+            }
             if (status === 409) {
                 setState("EXPIRED");
                 setProfile(null);
                 setAuthorizedAt(null);
             }
             const key = status === 409 ? "expired" : status === 429 ? "rateLimited" : "failed";
-            toast.error(t(`profile.platformConnection.${key}`, { platform: title }));
+            toast.error(error?.status === 200 && error?.message
+                ? error.message
+                : t(`profile.platformConnection.${key}`, { platform: title }));
         } finally {
             setRefreshingStatus(false);
         }
