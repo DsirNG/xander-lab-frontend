@@ -53,6 +53,7 @@ const LocalPlatformAuthorizationPanel = ({
     const text = useCallback((key) => t(commonCopy
         ? `profile.platformConnections.card.${key}`
         : `profile.${platform}.${key}`), [commonCopy, platform, t]);
+    const title = displayName || text("title");
     const stopPolling = useCallback(() => {
         if (pollRef.current) window.clearInterval(pollRef.current);
         if (expiryRef.current) window.clearTimeout(expiryRef.current);
@@ -269,7 +270,6 @@ const LocalPlatformAuthorizationPanel = ({
     const loading = state === "loading";
     const authorized = state === "AUTHORIZED";
     const expired = state === "EXPIRED";
-    const title = displayName || text("title");
     const connectorWorking = ["OPENING", "WAITING_FOR_SESSION", "SUBMITTING", "RETRYING", "COMPLETED"].includes(connectorProgress);
     const connectorErrorKey = {
         SITE_PERMISSION_REQUIRED: "sitePermissionRequired",
