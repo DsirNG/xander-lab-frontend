@@ -41,8 +41,8 @@ describe("PlanFormModal business controls", () => {
             target: { value: "2026-09-01" },
         });
         fireEvent.click(screen.getByText("blogPlans.aiPractical"));
-        fireEvent.click(screen.getByText("blogPlans.syncCsdn"));
-        fireEvent.click(screen.getByText("blogPlans.syncJuejin"));
+        fireEvent.click(screen.getByLabelText("profile.platformConnections.platforms.csdn"));
+        fireEvent.click(screen.getByLabelText("profile.platformConnections.platforms.juejin"));
         fireEvent.click(screen.getByRole("button", { name: "common.save" }));
 
         await waitFor(() =>
@@ -76,8 +76,8 @@ describe("PlanFormModal business controls", () => {
             />,
         );
 
-        expect(screen.getByLabelText("blogPlans.syncCsdn")).toBeChecked();
-        expect(screen.getByLabelText("blogPlans.syncJuejin")).not.toBeChecked();
+        expect(screen.getByLabelText("profile.platformConnections.platforms.csdn")).toBeChecked();
+        expect(screen.getByLabelText("profile.platformConnections.platforms.juejin")).not.toBeChecked();
         expect(
             screen.getByLabelText("blogPlans.firstExecutionDate"),
         ).toHaveValue("2026-09-07");

@@ -3,35 +3,13 @@ import { LoaderCircle, RefreshCw } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useToast } from "@shared/hooks/useToast";
 import LocalPlatformAuthorizationPanel from "./LocalPlatformAuthorizationPanel";
+import { getPlatformLogoSrc } from "../platformLogos";
 import {
     csdnService,
     createPlatformConnectionService,
     getPlatformConnectionStatuses,
     juejinService,
 } from "../services/publishingService";
-
-const PLATFORM_LOGO_FILES = {
-    csdn: "csdn",
-    juejin: "juejin",
-    wechat_mp: "wechat",
-    weibo: "sinaweibo",
-    zhihu: "zhihu",
-    xiaohongshu: "xiaohongshu",
-    bilibili: "bilibili",
-    aliyun_dev: "alibabacloud",
-};
-
-const PLATFORM_FAVICONS = {
-    cnblogs: "https://www.cnblogs.com/favicon.ico",
-    baijiahao: "https://baijiahao.baidu.com/favicon.ico",
-    douyin: "https://www.douyin.com/favicon.ico",
-    toutiao: "https://www.toutiao.com/favicon.ico",
-    "51cto": "https://www.51cto.com/favicon.ico",
-    jianshu: "https://www.jianshu.com/favicon.ico",
-    segmentfault: "https://segmentfault.com/favicon.ico",
-    oschina: "https://www.oschina.net/favicon.ico",
-    tencent_dev: "https://cloud.tencent.com/favicon.ico",
-};
 
 const PLATFORM_DEFINITIONS = [
     { id: "csdn", publishing: true },
@@ -53,9 +31,7 @@ const PLATFORM_DEFINITIONS = [
     { id: "aliyun_dev" },
 ].map((item) => ({
     ...item,
-    logoSrc: PLATFORM_LOGO_FILES[item.id]
-        ? `/assets/platform-logos/${PLATFORM_LOGO_FILES[item.id]}.svg`
-        : PLATFORM_FAVICONS[item.id],
+    logoSrc: getPlatformLogoSrc(item.id),
     service: item.id === "csdn" ? csdnService
         : item.id === "juejin" ? juejinService
             : createPlatformConnectionService(item.id),
