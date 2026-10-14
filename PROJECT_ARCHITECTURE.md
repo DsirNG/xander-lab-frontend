@@ -7,7 +7,7 @@
 - React 19 + Vite 7
 - React Router DOM 7
 - Tailwind CSS 4 + CSS Modules
-- i18next，支持 zh / en / fr / ja / ru / vi
+- i18next，支持中文（zh）和英文（en）
 - Axios、SSE、Framer Motion、Three.js
 
 ## 核心依赖模型
@@ -84,7 +84,7 @@ src/
 │   └── httpMethods.js           # 请求方法、SSE、取消和传输门面
 ├── components/                  # 仅保留 Demo 沙箱用户代码的历史 CustomSelect 字符串别名
 │   └── common/                  # 停止新增，业务代码不得导入
-├── locales/                     # 六种语言，暂时保持根级
+├── locales/                     # 中文与英文，暂时保持根级
 ├── styles/
 ├── config/
 ├── App.jsx
@@ -186,7 +186,7 @@ feature graph 是否有环
 lint / tests / build
 ```
 
-仓库提供 `pnpm run check:architecture` 检查 Shared 反向依赖、Feature → App、跨 Feature deep import、Feature 环依赖以及绕过共享 Transport 的直接请求；`pnpm run check:i18n` 检查六种语言资源的 key 完整性。
+仓库提供 `pnpm run check:architecture` 检查 Shared 反向依赖、Feature → App、跨 Feature deep import、Feature 环依赖以及绕过共享 Transport 的直接请求；`pnpm run check:i18n` 检查中文与英文资源的 key 完整性。
 
 文档和代码必须同步维护。当前开发服务器端口以 `vite.config.js` 为准：`3000`。
 

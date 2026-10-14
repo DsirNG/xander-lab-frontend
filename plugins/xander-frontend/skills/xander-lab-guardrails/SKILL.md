@@ -21,6 +21,6 @@ description: Apply Xander Lab API, authentication, task-page, and loading-state 
 
 ## Completion checklist
 
-- Update all six locales for any new i18n key.
+- Keep both `src/locales/zh.js` and `src/locales/en.js` in sync for every new i18n key.
 - Never commit credentials or local runtime configuration.
 - Run focused validation and stage only task files.

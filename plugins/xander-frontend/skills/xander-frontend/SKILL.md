@@ -19,7 +19,7 @@ Use this skill as the project entry workflow. It supplies repository-specific ro
 
 ## Required project rules
 
-- A new i18n key requires updates to all six locale files.
+- New or changed i18n keys must stay in sync in `src/locales/zh.js` and `src/locales/en.js`.
 - Place global behavior such as auth notices and Toast bridges in `App.jsx`, not `MainLayout`.
 - Studio Node-service calls use the same HTTP client with `baseURL: ''`.
 - Do not create a new axios instance or use native `fetch`.

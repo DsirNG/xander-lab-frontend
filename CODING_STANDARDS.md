@@ -184,7 +184,7 @@ import styles from "./Component.module.css";
 - Feature 跨域只能导入另一个 Feature 的 public API（`@features/<name>`），不得 deep import 内部实现，依赖图必须无环。
 - 所有网络请求必须使用 `@api/http` 导出的封装；业务 Endpoint 放在对应 Feature，禁止原生 `fetch`、新建 Axios 实例或在 Feature 中直接导入 `axios`。
 - 初始页面请求使用共享 `LoadingSpinner` 的 `fullScreen` 状态；用户主动操作保留按钮级 loading。
-- 新增或修改 i18n key 必须同步维护 `zh`、`en`、`fr`、`ja`、`ru`、`vi` 六种语言，并运行 `pnpm run check:i18n`。
+- 新增或修改 i18n key 必须同步维护中文 `zh` 和英文 `en`，并运行 `pnpm run check:i18n`。
 - 通用组件优先复用 `COMPONENTS.md` 中已登记的能力；新增公开 API 时同步更新组件目录。
 - `src/components/common` 只保留历史兼容出口，不得新增业务源码。
 

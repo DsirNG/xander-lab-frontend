@@ -1,6 +1,6 @@
 ---
 name: frontend-norms
-description: DinQorAI 前端（xander-lab-frontend）编码规范。Use when writing or editing React/JSX code, adding or editing i18n keys, routes, pages, or components in this project. Covers the mandatory 6-language i18n rule, http.js request rules, component reuse, routing, loading states and verification commands.
+description: DinQorAI 前端（xander-lab-frontend）编码规范。Use when writing or editing React/JSX code, adding or editing i18n keys, routes, pages, or components in this project. Covers the mandatory Chinese and English i18n rule, http.js request rules, component reuse, routing, loading states and verification commands.
 ---
 
 # 前端规范（xander-lab-frontend）
@@ -9,16 +9,16 @@ description: DinQorAI 前端（xander-lab-frontend）编码规范。Use when wri
 
 ## 国际化（本项目最高频返工点，硬性规则）
 
-- **新增任意 i18n key 必须同时更新 6 种语言**：`src/locales/zh.js`、`en.js`、`fr.js`、`ja.js`、`ru.js`、`vi.js`。少一个语言文件都算未完成。
+- **新增或修改 i18n key 必须同步维护中文和英文**：`src/locales/zh.js` 与 `src/locales/en.js`。
 - 带变量的文案用 i18next 插值 `{{var}}`，调用处 `t('key', { var: value })`。
 - 所有 UI 文案一律走 `t()`，禁止硬编码中文/英文（按钮、占位符、toast、空态、徽标、列表标题等全部算）。
 - 修改语言文件后先 `node --check src/locales/<文件>` 校验语法。
 - 别靠眼看，用仓库自带的两个脚本机械校验（互补，两个都要跑）：
-    - `node scripts/verify-i18n-key-parity.mjs`——以 `zh` 为基准比对 6 语言的**扁平键集合**，缺键/多键即退出码 1。这是硬规则的正式门禁。
+    - `node scripts/verify-i18n-key-parity.mjs`——比对中英文的**扁平键集合**，缺键/多键即退出码 1。这是硬规则的正式门禁。
     - `node scripts/find-missing-i18n-keys.mjs`——检查代码里 `t("...")` 用到的键是否存在于 `en.js`。
-- 常见坑：`t("key", "中文默认值")` 写了默认值**不代表键已存在**——默认值只让中文界面看着正常，其余 5 种语言会回落到中文，键集合校验照样报缺。新增卡片/组件时最容易只加 `zh` 就收工。
-- 换行风格**不统一**：`zh.js` 是 CRLF，`en/fr/ja/ru/vi` 是 LF。用脚本批量改这些文件时按各自原样保留（别统一）；读进来要先 `split(/\r?\n/)` 并记住原 EOL，否则行尾的 `\r` 会让 `^...$` 锚点匹配不上。
-- 校验 EOL **别用 `grep -c $'\r'`**：Git Bash 里的 MSYS grep 按文本模式读文件，六个文件会报出同一个数字，看起来「全是 CRLF」，据此写脚本就会把 CRLF 行插进 LF 文件。改用 Python 数字节，或看 `git diff --stat` 是否每个文件只 `+1`：
+- 常见坑：`t("key", "中文默认值")` 写了默认值**不代表键已存在**——默认值只让中文界面看着正常，英文界面会回落到中文，键集合校验照样报缺。新增卡片/组件时最容易只加 `zh` 就收工。
+- 换行风格**不统一**：`zh.js` 是 CRLF，`en.js` 是 LF。修改时按各自原样保留（别统一）；读进来要先 `split(/\r?\n/)` 并记住原 EOL，否则行尾的 `\r` 会让 `^...$` 锚点匹配不上。
+- 校验 EOL **别用 `grep -c $'\r'`**：Git Bash 里的 MSYS grep 按文本模式读文件，两个文件会报出同一个数字，看起来「全是 CRLF」，据此写脚本就会把 CRLF 行插进 LF 文件。改用 Python 数字节，或看 `git diff --stat` 是否每个文件只 `+1`：
   `python -c "import pathlib;b=pathlib.Path('src/locales/en.js').read_bytes();print('CR',b.count(b'\r'),'LF',b.count(b'\n'))"`
 - 改这些文件优先用字节级脚本（`read_bytes`/`write_bytes`），不要用 `read_text`/`write_text`：后者在 Windows 上会把 `\n` 翻成 `\r\n`，diff 直接变成整文件重写。
 
@@ -53,7 +53,7 @@ description: DinQorAI 前端（xander-lab-frontend）编码规范。Use when wri
 ```bash
 # 校验改动过的语言文件
 node --check src/locales/zh.js
-# 六语言键集合一致性（硬门禁，改过任何文案/组件必跑）
+# 中英文键集合一致性（硬门禁，改过任何文案/组件必跑）
 node scripts/verify-i18n-key-parity.mjs
 # 代码里 t("...") 用到的键是否都在 en.js
 node scripts/find-missing-i18n-keys.mjs

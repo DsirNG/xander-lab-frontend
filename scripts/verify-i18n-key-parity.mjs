@@ -1,5 +1,5 @@
 /**
- * 校验六语言键集完全一致。
+ * 校验中英文键集完全一致。
  *
  * 与 find-missing-i18n-keys.mjs 互补：那个是「用法驱动」的，只检查 JSX 里出现的
  * t("...") 有没有对应文案；这个是「集合驱动」的，直接比对各语言扁平化后的键路径集合。
@@ -9,7 +9,7 @@
  * 用法：node scripts/verify-i18n-key-parity.mjs
  * 退出码非 0 表示存在差异。
  */
-const langs = ["zh", "en", "fr", "ja", "ru", "vi"];
+const langs = ["zh", "en"];
 
 const flatten = (value, prefix = "", out = []) => {
     if (value && typeof value === "object" && !Array.isArray(value)) {

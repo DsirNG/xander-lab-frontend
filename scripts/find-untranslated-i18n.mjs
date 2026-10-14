@@ -113,7 +113,7 @@ const identicalAllowedKeys = new Set([
     "components.toast.tag",
 ]);
 
-const locales = ["zh", "fr", "ja", "ru", "vi"];
+const locales = ["zh"];
 
 async function main() {
     const enModule = await import(

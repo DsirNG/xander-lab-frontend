@@ -16,13 +16,10 @@ const resources = {
 
 const localeLoaders = {
     en: () => import("./en"),
-    fr: () => import("./fr"),
-    ja: () => import("./ja"),
-    ru: () => import("./ru"),
-    vi: () => import("./vi"),
 };
 
 const localePromises = new Map();
+const supportedLanguages = new Set(["zh", "en"]);
 
 const normalizeLanguage = (language) =>
     String(language || "zh")
@@ -65,7 +62,7 @@ const i18nInitPromise = i18n
         // load: 'languageOnly' 只影响资源加载层级，并不会把 i18n.language 归一为纯语言代码
         load: "languageOnly",
         // 显式声明受支持的语言
-        supportedLngs: ["en", "zh", "fr", "ja", "ru", "vi"],
+        supportedLngs: [...supportedLanguages],
         nonExplicitSupportedLngs: false,
         fallbackLng: "zh",
         detection: {
@@ -76,7 +73,10 @@ const i18nInitPromise = i18n
             // 关键：把检测到的 zh-CN/en-US 归一为 zh/en。
             // 否则 i18n.language 仍是 'zh-CN'，LANG_LABELS['zh-CN'] 取不到值，
             // MainLayout 的语言标签会回落成 'EN'。
-            convertDetectedLanguage: (lng) => lng.split("-")[0].toLowerCase(),
+            convertDetectedLanguage: (lng) => {
+                const locale = normalizeLanguage(lng);
+                return supportedLanguages.has(locale) ? locale : "zh";
+            },
         },
         interpolation: {
             escapeValue: false, // react already safes from xss

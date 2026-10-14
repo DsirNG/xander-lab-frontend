@@ -39,7 +39,7 @@ DinQorAI 由三个服务组成：
 
 ## 国际化与路由
 
-- 项目支持 zh / en / fr / ja / ru / vi。新增任意 i18n key 时，必须同时更新 `src/locales/*.js` 的六种语言。
+- 项目支持中文（zh）和英文（en）。新增或修改 i18n key 时，只需同步维护 `src/locales/zh.js` 与 `src/locales/en.js`。
 - MainLayout 下包括首页、组件、博客列表（前台展示）；功能工具统一收进 `/workspace` 工作台（需登录）：博客智能体 `/workspace/agent`、发文 `/workspace/publish`、定时发文 `/workspace/plans`、博客管理 `/workspace/blog-manage`、定时邮箱 `/workspace/email-reminders`、图生3d `/workspace/img2three`、工作室 `/workspace/studio/*`（其中 `publish`、`agent` 为独立全屏创作页，位于侧边栏布局之外）。独立路由还包括 `components/share`；`/profile` 仅保留个人设置。
 - 全局处理逻辑（toast、鉴权提示等）放在 `App.jsx` 层级，不能放在 `MainLayout`。
 

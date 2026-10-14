@@ -6,22 +6,14 @@ import { loadLocale } from "@locales";
 import Button from "@shared/ui/primitives/Button";
 import styles from "./Navbar.module.css";
 
-const LANGUAGES = ["zh", "en", "fr", "ja", "ru", "vi"];
+const LANGUAGES = ["zh", "en"];
 const LANG_LABELS = {
     zh: "中文",
     en: "EN",
-    fr: "FR",
-    ja: "日本語",
-    ru: "RU",
-    vi: "VI",
 };
 const LANG_FULL = {
     zh: "简体中文",
     en: "English",
-    fr: "Français",
-    ja: "日本語",
-    ru: "Русский",
-    vi: "Tiếng Việt",
 };
 
 function LanguageReel({ langReel, size }) {

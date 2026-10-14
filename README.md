@@ -113,7 +113,7 @@ pnpm lint
 ````bash
 pnpm run check:architecture
 
-检查六种语言资源的 key 完整性：
+检查中文与英文语言资源的 key 完整性：
 
 ```bash
 pnpm run check:i18n
