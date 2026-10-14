@@ -2,6 +2,7 @@ import { useTranslation } from "react-i18next";
 import { PLAN_STATUS } from "../../services/blogPlanService";
 
 const STYLE = {
+    DRAFT: "bg-surface-muted text-ink-muted",
     [PLAN_STATUS.ACTIVE]: "bg-surface-muted text-ink",
     [PLAN_STATUS.RUNNING]: "bg-surface-muted text-ink",
     [PLAN_STATUS.PAUSED]: "bg-surface-muted text-ink-muted",
@@ -11,6 +12,7 @@ const STYLE = {
 };
 
 const LABEL_KEY = {
+    DRAFT: "blogPlans.seriesStatusDraft",
     [PLAN_STATUS.ACTIVE]: "blogPlans.statusActive",
     [PLAN_STATUS.RUNNING]: "blogPlans.statusRunning",
     [PLAN_STATUS.PAUSED]: "blogPlans.statusPaused",

@@ -52,6 +52,17 @@ export const blogPlanService = {
     /** AI 生成计划：按主题方向 + 天数创建 N 个一次性计划，返回创建后的计划列表 */
     aiGenerate: (payload, config) =>
         post("/api/blog-plans/ai-generate", payload, config),
+    listSeries: (config) => get("/api/blog-plan-series", undefined, config),
+    getSeries: (id, config) =>
+        get(`/api/blog-plan-series/${id}`, undefined, config),
+    createSeriesDraft: (payload, config) =>
+        post("/api/blog-plan-series", payload, config),
+    updateSeriesDraft: (id, payload, config) =>
+        patch(`/api/blog-plan-series/${id}`, payload, config),
+    activateSeries: (id, config) =>
+        post(`/api/blog-plan-series/${id}/activate`, undefined, config),
+    updateSeriesStatus: (id, action, config) =>
+        patch(`/api/blog-plan-series/${id}/status`, { action }, config),
 
     /* ---------- 用户通知 ---------- */
     /** 未读通知数（工作台铃铛角标） */

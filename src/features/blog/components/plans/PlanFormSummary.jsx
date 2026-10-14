@@ -51,12 +51,16 @@ const PlanFormSummary = ({ t, form, nextRun, planTypes }) => (
                     {t("blogPlans.publishPlatforms")}
                 </div>
                 <div className="mt-1 text-body font-semibold text-ink">
-                    {[
-                        t("blogPlans.localPlatform"),
-                        form.syncCsdn && "CSDN",
-                        form.syncJuejin && t("blogPlans.juejin"),
-                    ]
-                        .filter(Boolean)
+                    {(form.platforms || ["local"])
+                        .map((platform) =>
+                            platform === "local"
+                                ? t("blogPlans.localPlatform")
+                                : platform === "csdn"
+                                  ? "CSDN"
+                                  : platform === "juejin"
+                                    ? t("blogPlans.juejin")
+                                    : platform,
+                        )
                         .join(" · ")}
                 </div>
             </div>
@@ -98,8 +102,7 @@ PlanFormSummary.propTypes = {
         topic: PropTypes.string.isRequired,
         timezone: PropTypes.string.isRequired,
         scheduleType: PropTypes.string.isRequired,
-        syncCsdn: PropTypes.bool.isRequired,
-        syncJuejin: PropTypes.bool.isRequired,
+        platforms: PropTypes.arrayOf(PropTypes.string),
         audience: PropTypes.string.isRequired,
         tone: PropTypes.string.isRequired,
     }).isRequired,

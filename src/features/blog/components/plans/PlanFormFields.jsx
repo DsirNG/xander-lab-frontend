@@ -2,6 +2,7 @@ import React from "react";
 import { Check } from "lucide-react";
 import FormField from "@shared/ui/forms/FormField";
 import CustomSelect from "@shared/ui/forms/CustomSelect";
+import PlanPlatformPicker from "./PlanPlatformPicker";
 import TimezoneSelect from "@shared/ui/forms/TimezoneSelect";
 import TimeInput from "@shared/ui/forms/TimeInput";
 import { formInputCls } from "@shared/ui/forms/formStyles";
@@ -186,38 +187,11 @@ export default function PlanFormFields({
                 <div className="mb-2 text-caption font-semibold text-ink">
                     {t("blogPlans.publishPlatforms")}
                 </div>
-                <div
-                    className={`flex flex-wrap gap-2 ${form.autoPublish ? "" : "opacity-50"}`}
-                >
-                    <div className="flex items-center gap-2 rounded-xl border border-accent bg-accent-soft px-3 py-2 text-caption text-accent">
-                        <Check className="h-4 w-4" />{" "}
-                        {t("blogPlans.localPlatform")}
-                    </div>
-                    {[
-                        [
-                            "syncJuejin",
-                            form.syncJuejin,
-                            t("blogPlans.syncJuejin"),
-                        ],
-                        ["syncCsdn", form.syncCsdn, t("blogPlans.syncCsdn")],
-                    ].map(([field, checked, label]) => (
-                        <label
-                            key={field}
-                            className={`flex cursor-pointer items-center gap-2 rounded-xl border px-3 py-2 text-caption transition-colors ${checked ? "border-accent bg-accent-soft text-accent" : "border-border bg-canvas text-ink-secondary"}`}
-                        >
-                            <input
-                                type="checkbox"
-                                checked={checked}
-                                disabled={!form.autoPublish}
-                                onChange={(event) =>
-                                    updateForm(field, event.target.checked)
-                                }
-                                className="h-4 w-4 rounded border-border text-accent focus:ring-accent"
-                            />
-                            {label}
-                        </label>
-                    ))}
-                </div>
+                <PlanPlatformPicker
+                    value={form.platforms}
+                    onChange={(platforms) => updateForm("platforms", platforms)}
+                    disabled={!form.autoPublish}
+                />
             </div>
 
             <label className="flex cursor-pointer items-center gap-3 text-body text-ink-secondary">

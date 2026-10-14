@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import {
@@ -16,12 +16,13 @@ import {
 } from "lucide-react";
 import DataTable from "@shared/ui/data-display/DataTable";
 import RowActionsMenu from "@shared/ui/overlays/RowActionsMenu";
-import { PLAN_STATUS } from "../services/blogPlanService";
+import { blogPlanService, PLAN_STATUS } from "../services/blogPlanService";
 import useBlogPlans from "../hooks/useBlogPlans";
 import { usePlanActions } from "../hooks/usePlanActions";
 import PlanStatusBadge from "../components/plans/PlanStatusBadge";
 import PlanFormModal from "../components/plans/PlanFormModal";
 import PlanAiGenerateModal from "../components/plans/PlanAiGenerateModal";
+import PlanSeriesList from "../components/plans/PlanSeriesList";
 import Button from "@shared/ui/primitives/Button";
 
 /**
@@ -33,6 +34,19 @@ const BlogPlans = () => {
     const [formOpen, setFormOpen] = useState(false);
     const [aiOpen, setAiOpen] = useState(false);
     const [editingPlan, setEditingPlan] = useState(null);
+    const [series, setSeries] = useState([]);
+    const [editingSeries, setEditingSeries] = useState(null);
+
+    const loadSeries = useCallback(async () => {
+        try {
+            setSeries((await blogPlanService.listSeries()) || []);
+        } catch {
+            setSeries([]);
+        }
+    }, []);
+    useEffect(() => {
+        loadSeries();
+    }, [loadSeries]);
 
     const {
         plans,
@@ -47,6 +61,8 @@ const BlogPlans = () => {
     } = useBlogPlans();
 
     const actions = usePlanActions({ onChanged: loadPlans, t });
+    const refreshPlansAndSeries = async () =>
+        Promise.all([loadPlans(), loadSeries()]);
 
     const openCreate = () => {
         setEditingPlan(null);
@@ -65,7 +81,11 @@ const BlogPlans = () => {
             render: (plan) => {
                 const mainTag = plan.runOnce
                     ? t("blogPlans.oneShot")
-                    : t(plan.scheduleType === "WEEKLY" ? "blogPlans.typeWeekly" : "blogPlans.typeDaily");
+                    : t(
+                          plan.scheduleType === "WEEKLY"
+                              ? "blogPlans.typeWeekly"
+                              : "blogPlans.typeDaily",
+                      );
                 const secondaryTag =
                     plan.autoPublish === false
                         ? t("blog.saveDraft")
@@ -126,7 +146,10 @@ const BlogPlans = () => {
                         title={plan.nextRunAt}
                     >
                         {plan.nextRunAt
-                            ? new Date(plan.nextRunAt).toLocaleString(undefined, { timeZone: plan.timezone || undefined })
+                            ? new Date(plan.nextRunAt).toLocaleString(
+                                  undefined,
+                                  { timeZone: plan.timezone || undefined },
+                              )
                             : "—"}
                     </span>
                     <span className="mt-1 block truncate text-xs text-ink-muted">
@@ -267,6 +290,15 @@ const BlogPlans = () => {
                     {t("contentLibrary.total", { count: total })}
                 </span>
             </div>
+            <PlanSeriesList
+                t={t}
+                series={series}
+                onEdit={(item) => {
+                    setEditingSeries(item);
+                    setAiOpen(true);
+                }}
+                onChanged={refreshPlansAndSeries}
+            />
             <div className="flex min-h-0 flex-1 flex-col px-5 pb-5 sm:px-8">
                 <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-xl border border-border">
                     <DataTable
@@ -300,8 +332,12 @@ const BlogPlans = () => {
             />
             <PlanAiGenerateModal
                 isOpen={aiOpen}
-                onClose={() => setAiOpen(false)}
-                onSaved={loadPlans}
+                initialDraft={editingSeries}
+                onClose={() => {
+                    setAiOpen(false);
+                    setEditingSeries(null);
+                }}
+                onSaved={refreshPlansAndSeries}
             />
         </div>
     );
