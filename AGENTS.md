@@ -49,3 +49,11 @@ DinQorAI 由三个服务组成：
 - 本地 Java 配置使用 `application-local.yml`，自动加载且不得提交 git。
 - 完成编辑后运行与改动相匹配的验证。只 stage 当前任务相关文件，不提交凭据、环境配置或无关用户改动。
 - 提交标题使用中文并以 `【dxd】` 为前缀；正文包含 `desc:`。
+
+
+## 项目 Skills（React 适配）
+
+- 开始前端实现、修复或重构时，读取 [.agents/skills/dinqor-project-change/SKILL.md](.agents/skills/dinqor-project-change/SKILL.md)，按其任务路由加载相关专项规则。
+- 页面兼容性、弹框固定宽高和内部滚动、flex 剩余空间布局使用 `dinqor-css-layout`；按钮 loading、防抖和重复提交保护使用 `dinqor-component-governance`。
+- 此目录为参考项目 `D:/frontend-final-20260918/.agents/skills` 的 React 项目适配，不采用其 Vue、Pinia、Element Plus、API 成功码或提交格式。
+- 本目录 skills 以当前 AGENTS.md、COMPONENTS.md 和真实代码/配置为依据；与 `.opencode/skills/frontend-norms` 协同使用，不另建冲突规范。仅更新 skill 文档时验证技能格式和引用，无需运行应用全量构建。

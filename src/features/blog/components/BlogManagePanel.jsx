@@ -169,7 +169,7 @@ const BlogManagePanel = () => {
                         aria-label={t("contentLibrary.refresh")}
                     />
                     <div className="relative min-w-0 flex-1 sm:w-64">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-faint" />
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-ink-faint" />
                         <input
                             value={searchInput}
                             onChange={(e) => setSearchInput(e.target.value)}

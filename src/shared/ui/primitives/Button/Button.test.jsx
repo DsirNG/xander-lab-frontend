@@ -94,6 +94,16 @@ describe("Button", () => {
             "h-5",
             "w-5",
         );
+
+        rerender(
+            <Button size="lg" icon={Check}>
+                完成
+            </Button>,
+        );
+        expect(screen.getByRole("button").querySelector("svg")).toHaveClass(
+            "h-5",
+            "w-5",
+        );
     });
 
     it("replaces the icon with a spinner while loading", () => {

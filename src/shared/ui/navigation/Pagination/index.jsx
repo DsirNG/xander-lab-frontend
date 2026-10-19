@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import CustomSelect from "@shared/ui/forms/CustomSelect";
 import Button from "@shared/ui/primitives/Button";
@@ -96,7 +96,7 @@ const Pagination = ({
                     disabled={disabled || page <= 1}
                     variant="outline"
                     size="lg"
-                    icon={ChevronLeft}
+                    icon={ArrowLeft}
                     aria-label={t("common.pagination.prevPage")}
                     className="!border-border !bg-canvas !text-ink-secondary hover:!border-accent-600 hover:!text-accent-600 hover:!bg-surface-muted rounded-xl"
                 />
@@ -132,7 +132,7 @@ const Pagination = ({
                     disabled={disabled || page >= totalPages}
                     variant="outline"
                     size="lg"
-                    icon={ChevronRight}
+                    icon={ArrowRight}
                     aria-label={t("common.pagination.nextPage")}
                     className="!border-border !bg-canvas !text-ink-secondary hover:!border-accent-600 hover:!text-accent-600 hover:!bg-surface-muted rounded-xl"
                 />

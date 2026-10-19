@@ -201,10 +201,10 @@ button {
         overflow-x: clip;
     }
 
-    /* 媒体元素自适应容器宽度 */
+    /* 媒体元素自适应容器宽度；Lucide 图标保留 h-/w- 指定的尺寸比例。 */
     img,
     video,
-    svg,
+    svg:not(.lucide),
     canvas {
         max-width: 100%;
     }
