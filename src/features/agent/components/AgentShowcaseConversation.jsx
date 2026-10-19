@@ -46,17 +46,10 @@ const ConversationMessage = ({ role, content, imageUrls, isStreaming }) => (
                 <span className="whitespace-pre-wrap">{content}</span>
             ) : isStreaming ? (
                 content ? (
-                    <div className="flex items-start gap-0.5">
-                        <div className="min-w-0 flex-1">
-                            <AgentMarkdown
-                                content={cleanImageMarkdown(content, imageUrls)}
-                            />
-                        </div>
-                        <span
-                            className="mt-1.5 inline-block h-4 w-[3px] shrink-0 animate-pulse rounded-sm bg-current align-middle"
-                            aria-hidden="true"
-                        />
-                    </div>
+                    <AgentMarkdown
+                        content={cleanImageMarkdown(content, imageUrls)}
+                        isStreaming
+                    />
                 ) : (
                     <span
                         className="inline-flex items-center gap-1 px-1"
@@ -95,6 +88,7 @@ export default function AgentShowcaseConversation({
     liveImageUrls,
     activeImageGeneration,
     isActive,
+    cancelling = false,
     creating,
     loading,
     reconnecting,
@@ -313,7 +307,7 @@ export default function AgentShowcaseConversation({
                         />
                     )}
 
-                {(reconnecting || errorMessage) && (
+                {(reconnecting || errorMessage || cancelling) && (
                     <div
                         className={`flex items-center gap-2 rounded-xl border px-3 py-2 text-xs font-semibold ${
                             errorMessage
@@ -328,9 +322,9 @@ export default function AgentShowcaseConversation({
                         )}
                         <span className="truncate">
                             {errorMessage ||
-                                (reconnecting
-                                    ? t("blog.agentChat.reconnecting")
-                                    : "")}
+                                (cancelling
+                                    ? t("blog.agentChat.stopping")
+                                    : t("blog.agentChat.reconnecting"))}
                         </span>
                     </div>
                 )}
@@ -347,6 +341,7 @@ AgentShowcaseConversation.propTypes = {
     liveImageUrls: PropTypes.instanceOf(Set).isRequired,
     activeImageGeneration: PropTypes.shape({ message: PropTypes.string }),
     isActive: PropTypes.bool.isRequired,
+    cancelling: PropTypes.bool,
     creating: PropTypes.bool.isRequired,
     loading: PropTypes.bool.isRequired,
     reconnecting: PropTypes.bool.isRequired,

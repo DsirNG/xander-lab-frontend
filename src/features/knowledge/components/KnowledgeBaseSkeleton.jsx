@@ -3,7 +3,7 @@ import React from "react";
 /**
  * 工作台标准骨架块样式（与 WorkspaceHomeSkeleton 1:1 统一）
  */
-const BLOCK = "animate-pulse rounded bg-[#e9eaf4]/60";
+const BLOCK = "animate-pulse rounded bg-ink-muted/10";
 
 /**
  * 知识库全局加载骨架屏
@@ -13,7 +13,7 @@ const BLOCK = "animate-pulse rounded bg-[#e9eaf4]/60";
 const KnowledgeBaseSkeleton = () => {
     return (
         <div
-            className="flex h-full min-h-0 flex-1 flex-col space-y-4 overflow-hidden p-5 text-body text-[#555b7b]"
+            className="flex h-full min-h-0 flex-1 flex-col space-y-4 overflow-hidden bg-canvas p-5 text-body text-ink-secondary"
             aria-busy="true"
             aria-label="知识库加载中"
         >
@@ -34,13 +34,13 @@ const KnowledgeBaseSkeleton = () => {
             {/* 2. 下方三栏区域骨架 */}
             <div className="flex min-h-0 flex-1 gap-4">
                 {/* 2.1 左侧卡片骨架 (文件夹 + 标签 + 存储容量) */}
-                <div className="hidden w-64 shrink-0 flex-col justify-between rounded-2xl border border-[#e9eaf3] bg-white/70 p-4 shadow-xs lg:flex">
+                <div className="hidden w-64 shrink-0 flex-col justify-between rounded-2xl border border-border bg-surface p-4 shadow-xs lg:flex">
                     <div className="space-y-4">
                         {/* 快捷视图 全部文档 */}
                         <div className={`${BLOCK} h-9 w-full rounded-xl`} />
 
                         {/* 目录分类树 */}
-                        <div className="border-t border-[#eef0f6] pt-3">
+                        <div className="border-t border-border pt-3">
                             <div className="flex items-center justify-between px-1 mb-3">
                                 <div className={`${BLOCK} h-4 w-16`} />
                                 <div className="flex gap-1.5">
@@ -103,7 +103,7 @@ const KnowledgeBaseSkeleton = () => {
                         </div>
 
                         {/* 标签 */}
-                        <div className="border-t border-[#eef0f6] pt-3">
+                        <div className="border-t border-border pt-3">
                             <div className="flex items-center justify-between px-1 mb-3">
                                 <div className={`${BLOCK} h-4 w-12`} />
                                 <div className={`${BLOCK} h-4 w-4 rounded`} />
@@ -136,7 +136,7 @@ const KnowledgeBaseSkeleton = () => {
                     </div>
 
                     {/* 底部存储容量 */}
-                    <div className="border-t border-[#eef0f6] pt-3">
+                    <div className="border-t border-border pt-3">
                         <div className="flex justify-between items-center mb-2">
                             <div className={`${BLOCK} h-3 w-16`} />
                             <div className={`${BLOCK} h-3 w-20`} />
@@ -146,9 +146,9 @@ const KnowledgeBaseSkeleton = () => {
                 </div>
 
                 {/* 2.2 中间工作台卡片骨架 */}
-                <div className="flex min-w-0 flex-1 flex-col justify-between rounded-2xl border border-[#e9eaf3] bg-white/70 p-4 shadow-xs">
+                <div className="flex min-w-0 flex-1 flex-col justify-between rounded-2xl border border-border bg-surface p-4 shadow-xs">
                     {/* 顶部工具栏骨架 */}
-                    <div className="shrink-0 flex flex-wrap items-center justify-between gap-3 border-b border-[#eef0f6] pb-3">
+                    <div className="shrink-0 flex flex-wrap items-center justify-between gap-3 border-b border-border pb-3">
                         <div
                             className={`${BLOCK} h-8.5 min-w-[220px] max-w-xs flex-1 rounded-xl`}
                         />
@@ -170,7 +170,7 @@ const KnowledgeBaseSkeleton = () => {
                     <div className="flex-1 min-h-0 overflow-hidden">
                         <div className="w-full space-y-3">
                             {/* 表头骨架 */}
-                            <div className="flex items-center gap-4 pb-2.5 border-b border-[#eef0f6]">
+                            <div className="flex items-center gap-4 pb-2.5 border-b border-border">
                                 <div className={`${BLOCK} h-3.5 w-4 rounded`} />
                                 <div className={`${BLOCK} h-3.5 w-36`} />
                                 <div
@@ -235,7 +235,7 @@ const KnowledgeBaseSkeleton = () => {
                             ].map((row, idx) => (
                                 <div
                                     key={idx}
-                                    className="flex items-center gap-4 py-2.5 border-b border-[#f3f4f8]"
+                                    className="flex items-center gap-4 py-2.5 border-b border-border"
                                 >
                                     <div
                                         className={`${BLOCK} h-3.5 w-4 rounded`}
@@ -269,7 +269,7 @@ const KnowledgeBaseSkeleton = () => {
                     </div>
 
                     {/* 底部通用分页骨架 */}
-                    <div className="shrink-0 flex items-center justify-between border-t border-[#eef0f6] pt-3">
+                    <div className="shrink-0 flex items-center justify-between border-t border-border pt-3">
                         <div className={`${BLOCK} h-4 w-20`} />
                         <div className="flex items-center gap-1.5">
                             <div className={`${BLOCK} h-7 w-7 rounded-lg`} />

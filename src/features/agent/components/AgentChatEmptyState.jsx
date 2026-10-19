@@ -8,6 +8,7 @@ const AgentChatEmptyState = ({
     attachments,
     uploading,
     isActive,
+    isCancelling,
     creating,
     onFilesSelected,
     onRemoveAttachment,
@@ -31,6 +32,7 @@ const AgentChatEmptyState = ({
                 attachments={attachments}
                 uploading={uploading}
                 isActive={isActive}
+                isCancelling={isCancelling}
                 creating={creating}
                 hasConversation={false}
                 onFilesSelected={onFilesSelected}

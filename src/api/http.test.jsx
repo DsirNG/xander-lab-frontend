@@ -1,4 +1,5 @@
 import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
+import i18n from "@locales/index";
 
 const { requestInterceptors, responseInterceptors, axiosMock, instanceMock } =
     vi.hoisted(() => {
@@ -57,6 +58,7 @@ vi.mock("@config/env", () => ({
 
 vi.mock("@locales/index", () => ({
     default: {
+        language: "zh",
         t: (key, fallback) => fallback ?? key,
     },
 }));
@@ -118,6 +120,7 @@ vi.mock("../../utils", () => ({
 const { tokenStorage, buildRequestKey, HttpError, sanitizeLogHeaders } = await import("./http.js");
 
 beforeEach(() => {
+    i18n.language = "zh";
     localStorage.clear();
     vi.clearAllMocks();
     axiosMock.isCancel.mockReturnValue(false);
@@ -210,6 +213,17 @@ describe("buildRequestKey", () => {
 });
 
 describe("request interceptor", () => {
+    it("reads interface language for each request independently of Agent reply preference", async () => {
+        localStorage.setItem("agent.replyLanguage", "zh");
+        const config = { method: "post", url: "/agent/messages", headers: {}, dedupe: false };
+        i18n.language = "en-US";
+        const first = await requestInterceptors[0]({ ...config, headers: {} });
+        expect(first.headers["Accept-Language"]).toBe("en");
+        i18n.language = "zh-CN";
+        const second = await requestInterceptors[0]({ ...config, headers: {} });
+        expect(second.headers["Accept-Language"]).toBe("zh-CN");
+        expect(first.headers["Accept-Language"]).toBe("en");
+    });
     it("attaches the Authorization header when a token exists", async () => {
         tokenStorage.setToken("tok-123", { notify: false });
         const config = await requestInterceptors[0]({

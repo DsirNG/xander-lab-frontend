@@ -23,10 +23,10 @@ const SIZE_CLASSES = {
 };
 
 const ICON_CLASSES = {
-    xs: "h-3.5 w-3.5",
-    sm: "h-3.5 w-3.5",
-    md: "h-4 w-4",
-    lg: "h-4 w-4",
+    xs: "h-4 w-4",
+    sm: "h-4 w-4",
+    md: "h-5 w-5",
+    lg: "h-5 w-5",
 };
 
 const SQUARE_CLASSES = {

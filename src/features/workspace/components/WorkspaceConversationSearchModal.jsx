@@ -2,10 +2,7 @@ import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { Loader2, MessageCircle, Search, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import Modal from "@shared/ui/overlays/Modal";
-import {
-    agentConversationService,
-    normalizeAgentConversationPage,
-} from "@features/agent/services/agentConversationService";
+import { listAgentConversationPage } from "@features/agent";
 
 const PAGE_SIZE = 20;
 
@@ -100,7 +97,7 @@ const WorkspaceConversationSearchModal = ({ open, onClose, onSelect }) => {
                     size: PAGE_SIZE,
                     queryLength: query.length,
                 });
-                const response = await agentConversationService.list({
+                const result = await listAgentConversationPage({
                     page: 1,
                     size: PAGE_SIZE,
                     search: query,
@@ -108,7 +105,6 @@ const WorkspaceConversationSearchModal = ({ open, onClose, onSelect }) => {
                     dedupe: false,
                     signal: controller.signal,
                 });
-                const result = normalizeAgentConversationPage(response);
                 if (requestVersion !== requestVersionRef.current) return;
                 setItems(result.items);
                 setPage(result.page || 1);
@@ -175,7 +171,7 @@ const WorkspaceConversationSearchModal = ({ open, onClose, onSelect }) => {
         setLoadingMore(true);
         setLoadMoreError(false);
         try {
-            const response = await agentConversationService.list({
+            const result = await listAgentConversationPage({
                 page: nextPage,
                 size: PAGE_SIZE,
                 search: query,
@@ -183,7 +179,6 @@ const WorkspaceConversationSearchModal = ({ open, onClose, onSelect }) => {
                 dedupe: false,
                 signal: controller.signal,
             });
-            const result = normalizeAgentConversationPage(response);
             if (requestVersion !== requestVersionRef.current) return;
             setItems((current) => appendUnique(current, result.items));
             setPage(result.page || nextPage);

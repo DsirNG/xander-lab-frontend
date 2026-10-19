@@ -16,6 +16,62 @@ vi.mock("@shared/ui/data-display/CodeBlock", () => ({
 }));
 
 describe("AgentMarkdown", () => {
+    it("anchors the streaming cursor to the Markdown content instead of its container edge", () => {
+        const { container } = render(
+            <AgentMarkdown content="The answer ends here." isStreaming />,
+        );
+
+        const markdown = container.querySelector(".prose");
+        const cursor = container.querySelector("[data-streaming-cursor]");
+
+        expect(cursor).toBeInTheDocument();
+        expect(cursor.parentElement).toBe(markdown);
+        expect(cursor).toHaveAttribute("aria-hidden", "true");
+    });
+
+    it("positions the streaming cursor at the measured end of the rendered text", () => {
+        const rangeDescriptor = Object.getOwnPropertyDescriptor(
+            Range.prototype,
+            "getBoundingClientRect",
+        );
+        const measuredRange = vi.fn(function measureRange() {
+            return { left: 260, right: 260, top: 154, height: 24 };
+        });
+        Object.defineProperty(Range.prototype, "getBoundingClientRect", {
+            configurable: true,
+            value: measuredRange,
+        });
+        const rootRect = { left: 100, top: 50 };
+        const elementRectSpy = vi
+            .spyOn(HTMLElement.prototype, "getBoundingClientRect")
+            .mockImplementation(function getElementRect() {
+                return this.classList?.contains("prose")
+                    ? rootRect
+                    : { left: 0, top: 0 };
+            });
+
+        try {
+            const { container } = render(
+                <AgentMarkdown content="The answer ends here." isStreaming />,
+            );
+            const cursor = container.querySelector("[data-streaming-cursor]");
+
+            expect(cursor.style.left).toBe("160px");
+            expect(cursor.style.top).toBe("108px");
+        } finally {
+            elementRectSpy.mockRestore();
+            if (rangeDescriptor) {
+                Object.defineProperty(
+                    Range.prototype,
+                    "getBoundingClientRect",
+                    rangeDescriptor,
+                );
+            } else {
+                delete Range.prototype.getBoundingClientRect;
+            }
+        }
+    });
+
     it("renders GFM structure and secures external links", () => {
         const content = [
             "## Result",

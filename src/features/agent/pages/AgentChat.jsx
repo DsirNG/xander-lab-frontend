@@ -104,6 +104,7 @@ const AgentChat = () => {
         loading,
         creating,
         running,
+        cancelling,
         approvals,
         decidingApprovalId,
         reconnecting,
@@ -179,6 +180,7 @@ const AgentChat = () => {
     }, [messages, steps]);
 
     const handleSubmit = async () => {
+        if (locked || uploadingAttachments) return;
         if (!input.trim() && attachments.length === 0) {
             toast.warning(t("blog.agentChat.inputRequired"));
             return;
@@ -210,8 +212,8 @@ const AgentChat = () => {
                     navigate(`/workspace/agent/${detail.conversation.id}`, {
                         replace: true,
                     });
-                    setInput("");
-                    clearAttachments();
+                    setInput((current) => current === text ? "" : current);
+                    clearAttachments(selectedAttachments);
                 } catch (error) {
                     toast.error(
                         error.message || t("blog.agentChat.sendFailed"),
@@ -322,12 +324,13 @@ const AgentChat = () => {
     const navigationLocked = loading || creating;
 
     const statusLine = useMemo(() => {
+        if (cancelling) return t("blog.agentChat.stopping");
         if (reconnecting) return t("blog.agentChat.reconnecting");
         if (isActive) return t("blog.agentChat.running");
         if (conversation?.status === "failed")
             return conversation.errorMessage || t("blog.agentChat.failed");
         return t("blog.agentChat.ready");
-    }, [reconnecting, isActive, conversation, t]);
+    }, [cancelling, reconnecting, isActive, conversation, t]);
 
     const showArtifact = Boolean(blogTaskId);
     const artifactPanel = (
@@ -423,6 +426,7 @@ const AgentChat = () => {
                                     attachments={attachments}
                                     uploading={uploadingAttachments}
                                     isActive={isActive}
+                                    isCancelling={cancelling}
                                     creating={creating}
                                     onFilesSelected={handleFilesSelected}
                                     onRemoveAttachment={handleRemoveAttachment}
@@ -459,6 +463,7 @@ const AgentChat = () => {
                                             activeImageGeneration
                                         }
                                         isActive={isActive}
+                                        cancelling={cancelling}
                                         streamingAnswer={streamingAnswer}
                                         reconnecting={reconnecting}
                                         errorMessage={errorMessage}
@@ -474,6 +479,7 @@ const AgentChat = () => {
                                             attachments={attachments}
                                             uploading={uploadingAttachments}
                                             isActive={isActive}
+                                            isCancelling={cancelling}
                                             awaitingApproval={awaitingApproval}
                                             creating={creating}
                                             hasConversation={true}

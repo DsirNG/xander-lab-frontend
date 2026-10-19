@@ -255,6 +255,14 @@ export function useAgentConversationLive({
                     next[index] = step;
                     return next;
                 });
+            } else if (event === "complete") {
+                if (streamFrameRef.current != null) {
+                    window.cancelAnimationFrame(streamFrameRef.current);
+                    streamFrameRef.current = null;
+                }
+                flushBufferedDeltas();
+                updateRunning(false);
+                setConversation((current) => current ? { ...current, status: "ready" } : current);
             } else if (event === "error") {
                 const message =
                     typeof data === "string"
@@ -266,6 +274,7 @@ export function useAgentConversationLive({
         },
         [
             isCurrent,
+            flushBufferedDeltas,
             pushStep,
             rememberEvent,
             scheduleDeltaFlush,

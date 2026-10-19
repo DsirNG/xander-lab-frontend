@@ -1,6 +1,9 @@
+import { lazy } from "react";
 /** Public capabilities exposed by external publishing integrations. */
-export { default as CsdnAuthorizationPanel } from "./components/CsdnAuthorizationPanel";
-export { default as CsdnSyncDialog } from "./components/CsdnSyncDialog";
-export { default as JuejinAuthorizationPanel } from "./components/JuejinAuthorizationPanel";
-export { default as PlatformConnectionsPanel } from "./components/PlatformConnectionsPanel";
-export { default as JuejinSyncDialog } from "./components/JuejinSyncDialog";
+export const CsdnAuthorizationPanel = lazy(() => import("./components/CsdnAuthorizationPanel"));
+export const CsdnSyncDialog = lazy(() => import("./components/CsdnSyncDialog"));
+export const JuejinAuthorizationPanel = lazy(() => import("./components/JuejinAuthorizationPanel"));
+export const PlatformConnectionsPanel = lazy(() => import("./components/PlatformConnectionsPanel"));
+export const JuejinSyncDialog = lazy(() => import("./components/JuejinSyncDialog"));
+
+export { getPlatformLogoSrc } from "./platformLogos";

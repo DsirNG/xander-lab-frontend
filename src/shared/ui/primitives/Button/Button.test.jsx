@@ -74,6 +74,28 @@ describe("Button", () => {
         expect(btn.querySelector("svg")).not.toBeNull();
     });
 
+    it("keeps button icons readable at each size", () => {
+        const { rerender } = render(
+            <Button size="sm" icon={Check}>
+                完成
+            </Button>,
+        );
+        expect(screen.getByRole("button").querySelector("svg")).toHaveClass(
+            "h-4",
+            "w-4",
+        );
+
+        rerender(
+            <Button size="md" icon={Check}>
+                完成
+            </Button>,
+        );
+        expect(screen.getByRole("button").querySelector("svg")).toHaveClass(
+            "h-5",
+            "w-5",
+        );
+    });
+
     it("replaces the icon with a spinner while loading", () => {
         render(
             <Button icon={Check} loading>
@@ -121,7 +143,6 @@ describe("Button", () => {
         expect(Loader2).toBeDefined();
     });
 });
-
 
 describe("Button duplicate click protection", () => {
     it("executes immediately and suppresses repeated clicks during the configured interval", () => {

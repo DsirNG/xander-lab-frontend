@@ -5,10 +5,12 @@ import { toolCallSummary, compactToolResult } from "./useAgentConversation.js";
 import { mergeLiveTraces } from "../components/agentTrace.js";
 import { agentConversationService } from "../services/agentConversationService.js";
 
-const { translate } = vi.hoisted(() => ({ translate: (key) => key }));
+const { translationState } = vi.hoisted(() => ({
+    translationState: { t: (key) => key },
+}));
 
 vi.mock("react-i18next", () => ({
-    useTranslation: () => ({ t: translate }),
+    useTranslation: () => ({ t: translationState.t }),
 }));
 
 vi.mock("../services/agentConversationService.js", () => ({
@@ -36,6 +38,7 @@ vi.mock("../services/agentConversationService.js", () => ({
 }));
 
 beforeEach(() => {
+    translationState.t = (key) => key;
     vi.clearAllMocks();
     agentConversationService.list.mockResolvedValue([]);
 });
@@ -894,4 +897,112 @@ describe("useAgentConversation deep thinking preference", () => {
 
         expect(result.current.deepThinking).toBe(true);
     });
+});
+
+describe("useAgentConversation cancellation state", () => {
+    it("shows stopping immediately and clears it after a terminal snapshot", async () => {
+        const { useAgentConversation } =
+            await import("./useAgentConversation.js");
+        const ready = {
+            conversation: { id: 42, status: "ready", runVersion: 3 },
+            messages: [],
+        };
+        let finishStream;
+        agentConversationService.get
+            .mockResolvedValueOnce(ready)
+            .mockResolvedValue({
+                ...ready,
+                messages: [
+                    {
+                        id: 2,
+                        role: "assistant",
+                        kind: "answer",
+                        content: "好的，已停止当前任务。",
+                    },
+                ],
+            });
+        agentConversationService.sendMessageStream.mockImplementation(
+            () =>
+                new Promise((resolve) => {
+                    finishStream = resolve;
+                }),
+        );
+        agentConversationService.cancel.mockResolvedValue({
+            id: 42,
+            status: "running",
+            cancelRequested: 1,
+        });
+
+        const { result } = renderHook(() =>
+            useAgentConversation({ conversationId: "42" }),
+        );
+        await waitFor(() => expect(result.current.loading).toBe(false));
+
+        let sendRequest;
+        act(() => {
+            sendRequest = result.current.sendMessage("继续执行任务");
+        });
+        await waitFor(() =>
+            expect(
+                agentConversationService.sendMessageStream,
+            ).toHaveBeenCalled(),
+        );
+
+        let cancelRequest;
+        act(() => {
+            cancelRequest = result.current.cancelTurn();
+        });
+        expect(result.current.cancelling).toBe(true);
+        await act(async () => {
+            await cancelRequest;
+        });
+        expect(result.current.cancelling).toBe(true);
+
+        await act(async () => {
+            finishStream();
+            await sendRequest;
+        });
+        await waitFor(() => expect(result.current.cancelling).toBe(false));
+        expect(result.current.running).toBe(false);
+        expect(result.current.messages).toContainEqual(
+            expect.objectContaining({ content: "好的，已停止当前任务。" }),
+        );
+    });
+});
+
+it("keeps existing messages and an active stream when the UI language changes", async () => {
+    const { useAgentConversation } = await import("./useAgentConversation.js");
+    const originalMessages = [
+        { id: 1, role: "user", kind: "message", content: "历史中文消息" },
+    ];
+    agentConversationService.get.mockResolvedValue({
+        conversation: { id: 7, status: "ready", runVersion: 0 },
+        messages: originalMessages,
+    });
+    agentConversationService.sendMessageStream.mockImplementation(
+        () => new Promise(() => {}),
+    );
+    const { result, rerender } = renderHook(() =>
+        useAgentConversation({ conversationId: "7" }),
+    );
+    await waitFor(() => expect(result.current.loading).toBe(false));
+    act(() => {
+        void result.current.sendMessage("Continue in English");
+    });
+    await waitFor(() =>
+        expect(
+            agentConversationService.sendMessageStream,
+        ).toHaveBeenCalledTimes(1),
+    );
+    const call = agentConversationService.sendMessageStream.mock.calls[0];
+    const signal = call[4].signal;
+    const messages = result.current.messages;
+    const getCalls = agentConversationService.get.mock.calls.length;
+    translationState.t = (key) => `en:${key}`;
+    rerender();
+    expect(agentConversationService.get).toHaveBeenCalledTimes(getCalls);
+    expect(signal.aborted).toBe(false);
+    expect(result.current.messages).toEqual(messages);
+    expect(result.current.messages[0].content).toBe("历史中文消息");
+    expect(result.current.running).toBe(true);
 });

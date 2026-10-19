@@ -1,4 +1,4 @@
-import React, { useState, memo } from "react";
+import React, { useEffect, useState, memo } from "react";
 import { useTranslation } from "react-i18next";
 import SyntaxHighlighter from "@shared/ui/data-display/SyntaxHighlighter";
 import {
@@ -9,6 +9,27 @@ import { Code2, Copy, Check, FileCode2, Play } from "lucide-react";
 import Button from "@shared/ui/primitives/Button";
 
 const PREVIEWABLE_LANGUAGES = new Set(["html", "htm", "svg"]);
+const LANGUAGE_LABELS = {
+    bash: "Bash",
+    shell: "Shell",
+    sh: "Shell",
+    powershell: "PowerShell",
+    javascript: "JavaScript",
+    js: "JavaScript",
+    typescript: "TypeScript",
+    ts: "TypeScript",
+    jsx: "JSX",
+    tsx: "TSX",
+    json: "JSON",
+    html: "HTML",
+    htm: "HTML",
+    css: "CSS",
+    svg: "SVG",
+    yaml: "YAML",
+    yml: "YAML",
+    sql: "SQL",
+    text: "Text",
+};
 
 /**
  * Shared code display with syntax highlighting, copy, and optional live preview.
@@ -26,9 +47,29 @@ const CodeBlock = memo(
     }) => {
         const { t } = useTranslation();
         const [copied, setCopied] = useState(false);
+        const [isDarkTheme, setIsDarkTheme] = useState(
+            () =>
+                typeof document !== "undefined" &&
+                document.documentElement.dataset.theme === "dark",
+        );
         const [mode, setMode] = useState(
             defaultMode === "preview" ? "preview" : "code",
         );
+
+        useEffect(() => {
+            const root = document.documentElement;
+            const syncTheme = () =>
+                setIsDarkTheme(root.dataset.theme === "dark");
+            const observer = new MutationObserver(syncTheme);
+
+            syncTheme();
+            observer.observe(root, {
+                attributes: true,
+                attributeFilter: ["data-theme"],
+            });
+
+            return () => observer.disconnect();
+        }, []);
 
         const resolvedCode =
             code != null ? code : String(children ?? "").replace(/\n$/, "");
@@ -37,7 +78,10 @@ const CodeBlock = memo(
             Boolean(PreviewComponent) &&
             PREVIEWABLE_LANGUAGES.has(normalizedLanguage);
         const activeMode = canPreview ? mode : "code";
-        const languageLabel = normalizedLanguage.toUpperCase();
+        const languageLabel =
+            LANGUAGE_LABELS[normalizedLanguage] ??
+            normalizedLanguage.charAt(0).toUpperCase() +
+                normalizedLanguage.slice(1);
         const isConversation = appearance === "conversation";
 
         const handleCopy = async () => {
@@ -53,19 +97,45 @@ const CodeBlock = memo(
 
         return (
             <div
-                className={`overflow-hidden border border-border bg-canvas ${
+                className={`overflow-hidden ${
                     isConversation
-                        ? "rounded-3xl shadow-none"
-                        : "rounded-2xl shadow-sm"
+                        ? "rounded-3xl text-ink shadow-none"
+                        : "rounded-2xl border border-border bg-canvas shadow-sm"
                 } ${className || ""}`}
+                style={
+                    isConversation
+                        ? {
+                              backgroundColor:
+                                  "var(--color-code-block-conversation)",
+                          }
+                        : undefined
+                }
             >
-                <div className="flex items-center justify-between gap-3 border-b border-border bg-surface px-3 py-2">
-                    <div className="flex min-w-0 items-center gap-1.5 text-ink-secondary">
+                <div
+                    className={`flex items-center justify-between gap-3 ${
+                        isConversation
+                            ? "px-5 pb-1 pt-3 sm:px-6 sm:pt-4"
+                            : "border-b border-border bg-surface px-3 py-2"
+                    }`}
+                >
+                    <div
+                        className={`flex min-w-0 items-center gap-2 ${
+                            isConversation ? "text-inherit" : "text-ink-secondary"
+                        }`}
+                    >
                         <FileCode2
-                            className="h-3.5 w-3.5 shrink-0 text-ink-faint"
+                            className={`h-4 w-4 shrink-0 ${
+                                isConversation ? "opacity-80" : "text-ink-faint"
+                            }`}
                             aria-hidden="true"
                         />
-                        <span className="truncate text-caption font-bold tracking-wide">
+                        <span
+                            className={`truncate ${
+                                isConversation
+                                    ? "text-sm font-semibold"
+                                    : "text-caption font-bold tracking-wide"
+                            }`}
+                        >
                             {languageLabel}
                         </span>
                     </div>
@@ -74,15 +144,17 @@ const CodeBlock = memo(
                         <Button
                             onClick={() => setMode("code")}
                             variant="ghost"
-                            size="xs"
+                            size={isConversation ? "md" : "xs"}
                             icon={Code2}
                             title={t("common.codeBlock.showCode")}
                             aria-label={t("common.codeBlock.showCode")}
                             aria-pressed={activeMode === "code"}
                             className={
-                                activeMode === "code"
-                                    ? "bg-border/70 text-ink hover:bg-border/70 hover:text-ink"
-                                    : ""
+                                isConversation
+                                    ? "text-inherit hover:bg-black/10 hover:text-inherit"
+                                    : activeMode === "code"
+                                      ? "bg-border/70 text-ink hover:bg-border/70 hover:text-ink"
+                                      : ""
                             }
                         />
 
@@ -90,15 +162,17 @@ const CodeBlock = memo(
                             <Button
                                 onClick={() => setMode("preview")}
                                 variant="ghost"
-                                size="xs"
+                                size={isConversation ? "md" : "xs"}
                                 icon={Play}
                                 title={t("common.codeBlock.showPreview")}
                                 aria-label={t("common.codeBlock.showPreview")}
                                 aria-pressed={activeMode === "preview"}
                                 className={
-                                    activeMode === "preview"
-                                        ? "bg-border/70 text-ink hover:bg-border/70 hover:text-ink"
-                                        : ""
+                                    isConversation
+                                        ? "text-inherit hover:bg-black/10 hover:text-inherit"
+                                        : activeMode === "preview"
+                                          ? "bg-border/70 text-ink hover:bg-border/70 hover:text-ink"
+                                          : ""
                                 }
                             />
                         ) : null}
@@ -106,7 +180,7 @@ const CodeBlock = memo(
                         <Button
                             onClick={handleCopy}
                             variant="ghost"
-                            size="xs"
+                            size={isConversation ? "md" : "xs"}
                             icon={copied ? Check : Copy}
                             title={
                                 copied
@@ -118,7 +192,15 @@ const CodeBlock = memo(
                                     ? t("common.codeBlock.copied")
                                     : t("common.codeBlock.copy")
                             }
-                            className={copied ? "text-success" : ""}
+                            className={
+                                isConversation
+                                    ? copied
+                                        ? "text-success"
+                                        : "text-inherit hover:bg-black/10 hover:text-inherit"
+                                    : copied
+                                      ? "text-success"
+                                      : ""
+                            }
                         />
                     </div>
                 </div>
@@ -139,7 +221,7 @@ const CodeBlock = memo(
                     <div
                         className={`overflow-auto ${
                             isConversation
-                                ? "max-h-[70dvh] bg-surface"
+                                ? "max-h-[70dvh] bg-transparent"
                                 : "max-h-[600px] bg-[#1e1e1e]"
                         }`}
                     >
@@ -149,15 +231,21 @@ const CodeBlock = memo(
                                     ? "html"
                                     : normalizedLanguage
                             }
-                            style={isConversation ? oneLight : vscDarkPlus}
+                            style={
+                                isConversation && !isDarkTheme
+                                    ? oneLight
+                                    : vscDarkPlus
+                            }
                             customStyle={{
                                 margin: 0,
-                                padding: "1.25rem 1.5rem",
+                                padding: isConversation
+                                    ? "0.5rem 1.5rem 1.25rem"
+                                    : "1.25rem 1.5rem",
                                 fontSize: "0.875rem",
                                 background: "transparent",
                                 lineHeight: "1.6",
                             }}
-                            showLineNumbers
+                            showLineNumbers={!isConversation}
                         >
                             {resolvedCode}
                         </SyntaxHighlighter>

@@ -12,3 +12,7 @@ export const listAgentConversations = async (config) => {
 };
 export const uploadAgentAttachment = (file, onProgress, config) =>
     agentConversationService.uploadAttachment(file, onProgress, config);
+
+/** Returns a normalized conversation page, including pagination metadata. */
+export const listAgentConversationPage = async (config) =>
+    normalizeAgentConversationPage(await agentConversationService.list(config));

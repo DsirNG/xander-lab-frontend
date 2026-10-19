@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useSearchParams } from "react-router-dom";
-import { agentPluginService } from "@features/agent/services/agentPluginService";
+import { agentPluginService } from "@features/agent";
 import Modal from "@shared/ui/overlays/Modal";
 
 const emptyForm = {

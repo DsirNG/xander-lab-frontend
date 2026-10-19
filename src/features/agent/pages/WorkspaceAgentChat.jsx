@@ -102,6 +102,7 @@ const WorkspaceAgentChat = () => {
         loading,
         creating,
         running,
+        cancelling,
         approvals,
         decidingApprovalId,
         reconnecting,
@@ -231,8 +232,8 @@ const WorkspaceAgentChat = () => {
                     navigate(`/app/${detail.conversation.id}`, {
                         replace: true,
                     });
-                    setInput("");
-                    clearAttachments();
+                    setInput((current) => current === text ? "" : current);
+                    clearAttachments(selectedAttachments);
                 } catch (error) {
                     toast.error(
                         error.message || t("blog.agentChat.sendFailed"),
@@ -256,6 +257,7 @@ const WorkspaceAgentChat = () => {
     );
 
     const handleSubmit = async () => {
+        if (locked || uploadingAttachments) return;
         if (!input.trim() && attachments.length === 0) {
             toast.warning(t("blog.agentChat.inputRequired"));
             return;
@@ -335,7 +337,6 @@ const WorkspaceAgentChat = () => {
             className="relative flex h-full w-full min-w-0 overflow-hidden bg-surface-muted"
             onDragOver={(event) => {
                 if (
-                    locked ||
                     uploadingAttachments ||
                     !event.dataTransfer.types.includes("Files")
                 )
@@ -350,7 +351,7 @@ const WorkspaceAgentChat = () => {
             onDrop={(event) => {
                 event.preventDefault();
                 setDraggingFile(false);
-                if (!locked && !uploadingAttachments)
+                if (!uploadingAttachments)
                     handleFilesSelected(Array.from(event.dataTransfer.files));
             }}
         >
@@ -418,9 +419,7 @@ const WorkspaceAgentChat = () => {
                     </div>
                 ) : null}
 
-                {["writing", "documents", "memory"].includes(
-                    workspaceView,
-                ) ? (
+                {["writing", "documents", "memory"].includes(workspaceView) ? (
                     <>
                         <WorkspaceAgentLibraryView
                             view={workspaceView}
@@ -433,13 +432,10 @@ const WorkspaceAgentChat = () => {
                             onAskFile={askAboutFile}
                             onCorrectMemory={(memory) =>
                                 chooseWorkspacePrompt(
-                                    t(
-                                        "workspace.agent.correctMemoryPrompt",
-                                        {
-                                            key: memory.memoryKey,
-                                            content: memory.content,
-                                        },
-                                    ),
+                                    t("workspace.agent.correctMemoryPrompt", {
+                                        key: memory.memoryKey,
+                                        content: memory.content,
+                                    }),
                                 )
                             }
                             onDeleteMemory={deleteMemory}
@@ -458,6 +454,7 @@ const WorkspaceAgentChat = () => {
                                     uploadingAttachments={uploadingAttachments}
                                     canSend={canSend}
                                     isActive={isActive}
+                                    isCancelling={cancelling}
                                     fileInputRef={fileInputRef}
                                     textareaRef={textareaRef}
                                     alwaysExpanded
@@ -478,9 +475,9 @@ const WorkspaceAgentChat = () => {
                         </div>
                     </>
                 ) : messages.length === 0 &&
-                steps.length === 0 &&
-                approvals.length === 0 &&
-                !loading ? (
+                  steps.length === 0 &&
+                  approvals.length === 0 &&
+                  !loading ? (
                     <WorkspaceAgentWelcome
                         displayName={displayName}
                         input={input}
@@ -489,6 +486,7 @@ const WorkspaceAgentChat = () => {
                         uploadingAttachments={uploadingAttachments}
                         canSend={canSend}
                         isActive={isActive}
+                        isCancelling={cancelling}
                         fileInputRef={fileInputRef}
                         textareaRef={textareaRef}
                         onInputChange={setInput}
@@ -524,6 +522,7 @@ const WorkspaceAgentChat = () => {
                             liveImageUrls={liveImageUrls}
                             activeImageGeneration={activeImageGeneration}
                             isActive={isActive}
+                            cancelling={cancelling}
                             streamingAnswer={streamingAnswer}
                             reconnecting={reconnecting}
                             errorMessage={errorMessage}
@@ -545,6 +544,7 @@ const WorkspaceAgentChat = () => {
                                     uploadingAttachments={uploadingAttachments}
                                     canSend={canSend}
                                     isActive={isActive}
+                                    isCancelling={cancelling}
                                     fileInputRef={fileInputRef}
                                     textareaRef={textareaRef}
                                     alwaysExpanded

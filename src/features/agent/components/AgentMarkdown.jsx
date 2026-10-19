@@ -1,4 +1,10 @@
-import React, { memo, useEffect, useState } from "react";
+import React, {
+    memo,
+    useEffect,
+    useLayoutEffect,
+    useRef,
+    useState,
+} from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
@@ -219,6 +225,9 @@ const STREAMING_PARSE_INTERVAL_MS = 180;
 const AgentMarkdown = memo(
     ({ content, codeAppearance = "conversation", isStreaming = false }) => {
         const [previewSrc, setPreviewSrc] = useState(null);
+        const markdownRef = useRef(null);
+        const [streamingCursorPosition, setStreamingCursorPosition] =
+            useState(null);
         const rawContent = content || "";
 
         // 节流后的待解析文本：流式期间最多每 180ms 推进一次，收尾时立刻对齐真实内容。
@@ -249,9 +258,78 @@ const AgentMarkdown = memo(
             [parseContent],
         );
 
+        useLayoutEffect(() => {
+            if (!isStreaming) {
+                setStreamingCursorPosition(null);
+                return;
+            }
+
+            const markdownRoot = markdownRef.current;
+            if (!markdownRoot) return;
+
+            const walker = document.createTreeWalker(
+                markdownRoot,
+                NodeFilter.SHOW_TEXT,
+            );
+            let lastTextNode = null;
+            let lastTextOffset = 0;
+
+            while (walker.nextNode()) {
+                const textNode = walker.currentNode;
+                const text = textNode.textContent || "";
+                for (let offset = text.length; offset > 0; offset -= 1) {
+                    if (/\S/u.test(text[offset - 1])) {
+                        lastTextNode = textNode;
+                        lastTextOffset = offset;
+                        break;
+                    }
+                }
+            }
+
+            if (!lastTextNode || typeof document.createRange !== "function") {
+                setStreamingCursorPosition(null);
+                return;
+            }
+
+            const range = document.createRange();
+            range.setStart(lastTextNode, lastTextOffset);
+            range.collapse(true);
+            let caretRect = range.getBoundingClientRect?.();
+            let cursorLeft = caretRect?.left;
+
+            // Some browsers return an empty rectangle for a collapsed range.
+            // Measure the final character in that case and place the caret just
+            // after it, which still keeps it at the rendered text tail.
+            if ((!caretRect || caretRect.height === 0) && lastTextOffset > 0) {
+                range.setStart(lastTextNode, lastTextOffset - 1);
+                range.setEnd(lastTextNode, lastTextOffset);
+                caretRect = range.getBoundingClientRect?.();
+                cursorLeft = caretRect?.right;
+            }
+
+            const rootRect = markdownRoot.getBoundingClientRect();
+
+            if (!caretRect) {
+                setStreamingCursorPosition(null);
+                return;
+            }
+
+            const cursorHeight = 16;
+            setStreamingCursorPosition({
+                left: cursorLeft - rootRect.left,
+                top:
+                    caretRect.top -
+                    rootRect.top +
+                    Math.max(0, (caretRect.height - cursorHeight) / 2),
+            });
+        }, [isStreaming, rendered]);
+
         return (
             <>
-                <div className="prose prose-sm min-w-0 max-w-none break-words prose-li:my-1.5 prose-li:leading-7 prose-li:text-ink-secondary prose-strong:text-ink prose-pre:my-3 prose-pre:bg-transparent prose-pre:p-0 prose-table:text-sm [&_.katex-display]:my-4 [&_.katex-display]:overflow-x-auto [&_.katex-display]:py-1">
+                <div
+                    ref={markdownRef}
+                    className="prose prose-sm relative min-w-0 max-w-none break-words prose-li:my-1.5 prose-li:leading-7 prose-li:text-ink-secondary prose-strong:text-ink prose-pre:my-3 prose-pre:bg-transparent prose-pre:p-0 prose-table:text-sm [&_.katex-display]:my-4 [&_.katex-display]:overflow-x-auto [&_.katex-display]:py-1"
+                >
                     <ReactMarkdown
                         remarkPlugins={[remarkGfm, remarkMath]}
                         rehypePlugins={[rehypeKatex]}
@@ -259,6 +337,16 @@ const AgentMarkdown = memo(
                     >
                         {rendered}
                     </ReactMarkdown>
+                    {isStreaming ? (
+                        <span
+                            data-streaming-cursor
+                            className="pointer-events-none absolute z-10 h-4 w-[3px] animate-pulse rounded-sm bg-current"
+                            style={
+                                streamingCursorPosition || { left: 0, top: 0 }
+                            }
+                            aria-hidden="true"
+                        />
+                    ) : null}
                 </div>
                 <Modal
                     isOpen={!!previewSrc}

@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { agentConversationService } from "../services/agentConversationService";
 
 const MAX_ATTACHMENTS = 5;
@@ -11,10 +11,13 @@ const MAX_ATTACHMENT_SIZE_BYTES = 20 * 1024 * 1024;
 const useAgentAttachments = ({ t, toast }) => {
     const [attachments, setAttachments] = useState([]);
     const [uploadingAttachments, setUploadingAttachments] = useState(false);
+    const pendingUploads = useRef(0);
+    const attachmentsRef = useRef(attachments);
+    attachmentsRef.current = attachments;
 
     const handleFilesSelected = useCallback(
         async (files) => {
-            const remaining = Math.max(0, MAX_ATTACHMENTS - attachments.length);
+            const remaining = Math.max(0, MAX_ATTACHMENTS - attachmentsRef.current.length - pendingUploads.current);
             if (!remaining) {
                 toast.warning(t("blog.agentChat.attachmentLimit"));
                 return;
@@ -35,6 +38,7 @@ const useAgentAttachments = ({ t, toast }) => {
             });
             if (!valid.length) return;
 
+            pendingUploads.current += valid.length;
             setUploadingAttachments(true);
             try {
                 const settled = await Promise.allSettled(
@@ -45,18 +49,21 @@ const useAgentAttachments = ({ t, toast }) => {
                 const uploaded = settled
                     .filter((item) => item.status === "fulfilled")
                     .map((item) => item.value);
-                if (uploaded.length)
+                if (uploaded.length) {
+                    attachmentsRef.current = [...attachmentsRef.current, ...uploaded].slice(0, MAX_ATTACHMENTS);
                     setAttachments((current) =>
                         [...current, ...uploaded].slice(0, MAX_ATTACHMENTS),
                     );
+                }
                 if (settled.some((item) => item.status === "rejected")) {
                     toast.error(t("blog.agentChat.attachmentUploadFailed"));
                 }
             } finally {
-                setUploadingAttachments(false);
+                pendingUploads.current -= valid.length;
+                setUploadingAttachments(pendingUploads.current > 0);
             }
         },
-        [attachments.length, t, toast],
+        [t, toast],
     );
 
     const handleRemoveAttachment = useCallback((url) => {
@@ -65,7 +72,14 @@ const useAgentAttachments = ({ t, toast }) => {
         );
     }, []);
 
-    const clearAttachments = useCallback(() => setAttachments([]), []);
+    const clearAttachments = useCallback((submitted = null) => {
+        const urls = submitted && new Set(submitted.map((file) => file.url));
+        setAttachments((current) => {
+            const next = urls ? current.filter((file) => !urls.has(file.url)) : [];
+            attachmentsRef.current = next;
+            return next;
+        });
+    }, []);
 
     return {
         attachments,

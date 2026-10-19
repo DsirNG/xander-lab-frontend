@@ -44,6 +44,27 @@ describe("Pagination", () => {
         );
     });
 
+    it("uses full-size, theme-aware controls for pagination", () => {
+        render(
+            <Pagination
+                page={2}
+                pageSize={10}
+                total={100}
+                onPageChange={vi.fn()}
+            />,
+        );
+
+        const previous = screen.getByRole("button", {
+            name: /prevPage|上一页|prev/i,
+        });
+        const currentPage = screen.getByRole("button", { name: "2" });
+
+        expect(previous).toHaveClass("h-11", "w-11", "!bg-canvas");
+        expect(previous.querySelector("svg")).toHaveClass("h-5", "w-5");
+        expect(currentPage).toHaveClass("!h-11", "!w-11", "bg-accent");
+        expect(currentPage).not.toHaveClass("md:h-7", "md:w-7");
+    });
+
     it("calls onPageChange with the target page when a number is clicked", () => {
         const onPageChange = vi.fn();
         render(

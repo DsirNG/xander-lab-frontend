@@ -75,22 +75,22 @@ const Pagination = ({
             className={`flex shrink-0 flex-col gap-2 px-3 py-2.5 sm:flex-row sm:items-center sm:justify-between sm:px-4 ${className}`}
         >
             <div className="flex flex-wrap items-center gap-2">
-                <div className="text-xs font-medium text-[#8e94ad]">
+                <div className="text-caption text-ink-muted">
                     {t("common.pagination.pageInfo", { from, to, total })}
                 </div>
                 <div className="w-[7.5rem]">
                     <CustomSelect
-                        size="sm"
+                        size="md"
                         variant="outline"
                         options={sizeOptions}
                         value={String(pageSize)}
                         onChange={handlePageSizeChange}
-                        triggerClassName="!border-[#e9eaf4] !bg-white !text-[#555b7b] hover:!border-[#6765f6] hover:!bg-[#fbfbfe] rounded-xl"
-                        dropdownClassName="!border-[#eef0f6] !bg-white !shadow-xl !shadow-[#111426]/8 rounded-xl"
+                        triggerClassName="!border-border !bg-canvas !text-ink-secondary hover:!border-accent-600 hover:!bg-surface-muted rounded-xl"
+                        dropdownClassName="!border-border !bg-canvas !shadow-xl !shadow-ink/10 rounded-xl"
                     />
                 </div>
             </div>
-            <div className="flex items-center gap-1 flex-wrap">
+            <div className="flex flex-wrap items-center gap-1.5">
                 <Button
                     onClick={() => onPageChange?.(Math.max(1, page - 1))}
                     disabled={disabled || page <= 1}
@@ -98,7 +98,7 @@ const Pagination = ({
                     size="lg"
                     icon={ChevronLeft}
                     aria-label={t("common.pagination.prevPage")}
-                    className="md:h-7 md:w-7 !border-[#e9eaf4] !bg-white !text-[#555b7b] hover:!border-[#6765f6] hover:!text-[#6765f6] hover:!bg-[#fbfbfe] rounded-lg"
+                    className="!border-border !bg-canvas !text-ink-secondary hover:!border-accent-600 hover:!text-accent-600 hover:!bg-surface-muted rounded-xl"
                 />
                 {pageItems.map((item, index) =>
                     item === "ellipsis" ? (
@@ -115,10 +115,10 @@ const Pagination = ({
                             disabled={disabled}
                             variant="outline"
                             size="lg"
-                            className={`md:h-7 md:w-7 rounded-lg transition ${
+                            className={`!h-11 !w-11 !p-0 rounded-xl transition ${
                                 page === item
                                     ? "bg-accent text-white border-accent hover:bg-accent-700 hover:text-white hover:border-accent shadow-2xs"
-                                    : "!border-[#e9eaf4] !bg-white !text-[#555b7b] hover:!border-[#6765f6] hover:!text-[#6765f6] hover:!bg-[#fbfbfe]"
+                                    : "!border-border !bg-canvas !text-ink-secondary hover:!border-accent-600 hover:!text-accent-600 hover:!bg-surface-muted"
                             }`}
                         >
                             {item}
@@ -134,7 +134,7 @@ const Pagination = ({
                     size="lg"
                     icon={ChevronRight}
                     aria-label={t("common.pagination.nextPage")}
-                    className="md:h-7 md:w-7 !border-[#e9eaf4] !bg-white !text-[#555b7b] hover:!border-[#6765f6] hover:!text-[#6765f6] hover:!bg-[#fbfbfe] rounded-lg"
+                    className="!border-border !bg-canvas !text-ink-secondary hover:!border-accent-600 hover:!text-accent-600 hover:!bg-surface-muted rounded-xl"
                 />
             </div>
         </div>

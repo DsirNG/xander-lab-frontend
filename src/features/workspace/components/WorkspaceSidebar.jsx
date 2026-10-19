@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import WorkspaceConversationSearchModal from "./WorkspaceConversationSearchModal";
+import WorkspaceAccountMenu from "./WorkspaceAccountMenu";
 
 const parseSessionTime = (value) => {
     if (!value) return 0;
@@ -142,8 +143,6 @@ const WorkspaceSidebar = ({
     const [collapsed, setCollapsed] = useState(false);
     const sessionListRef = useRef(null);
     const loadMoreSentinelRef = useRef(null);
-    const displayName = userInfo?.nickname || userInfo?.username || "DinQorAI";
-    const avatarText = displayName.slice(0, 2).toUpperCase();
     const sidebarToggleLabel = t(
         collapsed
             ? "workspace.agent.expandSidebar"
@@ -196,10 +195,10 @@ const WorkspaceSidebar = ({
         </button>
     );
     const isViewActive = (view) => activeView === view;
-    const chatIsActive = activeView === null;
+    const chatIsActive = activeView === null && !activeConversationId;
     const newConversationClass = chatIsActive
-        ? "bg-ink font-semibold text-white hover:bg-ink-secondary"
-        : "text-ink-secondary hover:text-ink";
+        ? "bg-surface-muted font-semibold text-ink"
+        : "text-ink-secondary hover:bg-surface-muted hover:text-ink";
     const linkClass = (view) => {
         const active = isViewActive(view);
         return `group/nav relative flex h-10 items-center text-body transition-colors duration-200 ${
@@ -208,10 +207,8 @@ const WorkspaceSidebar = ({
                 : "w-full gap-3 rounded-lg px-3"
         } ${
             active
-                ? collapsed
-                    ? "bg-ink text-white"
-                    : "bg-ink font-semibold text-white"
-                : "text-ink-secondary hover:text-ink"
+                ? "bg-surface-muted font-semibold text-ink"
+                : "text-ink-secondary hover:bg-surface-muted hover:text-ink"
         }`;
     };
     const navIconClass = (view) => {
@@ -219,7 +216,7 @@ const WorkspaceSidebar = ({
         return `grid shrink-0 place-items-center ${
             collapsed
                 ? "h-9 w-9"
-                : `h-8 w-8 rounded-lg transition-colors ${active ? "bg-white/10" : "group-hover/nav:bg-surface-muted"}`
+                : `h-8 w-8 rounded-lg transition-colors ${active ? "" : "group-hover/nav:bg-surface-muted"}`
         }`;
     };
     const primaryItems = [
@@ -363,7 +360,7 @@ const WorkspaceSidebar = ({
                 >
                     {!collapsed ? <div className="mb-1 px-3 pt-1 text-micro font-medium uppercase tracking-[0.12em] text-ink-faint">{t("workspace.agent.workspaceNav")}</div> : null}
                     {primaryItems.map(({ view, icon: Icon, label }) => (
-                        <button key={view} type="button" onClick={() => onSelectView(view)} className={linkClass(view)} title={collapsed ? label : undefined} aria-label={label}>
+                        <button key={view} type="button" onClick={() => onSelectView(view)} className={linkClass(view)} title={collapsed ? label : undefined} aria-label={label} aria-current={isViewActive(view) ? "page" : undefined}>
                             <span className={navIconClass(view)}>
                                 <Icon className={collapsed ? "h-5 w-5" : "h-[17px] w-[17px]"} aria-hidden="true" />
                             </span>
@@ -373,7 +370,7 @@ const WorkspaceSidebar = ({
                     <div className={`my-2 border-t border-border ${collapsed ? "w-9" : "mx-2"}`} />
                     {!collapsed ? <div className="mb-1 px-3 text-micro font-medium uppercase tracking-[0.12em] text-ink-faint">{t("workspace.agent.tools")}</div> : null}
                     {utilityItems.map(({ view, icon: Icon, label }) => (
-                        <button key={view} type="button" onClick={() => onSelectView(view)} className={linkClass(view)} title={collapsed ? label : undefined} aria-label={label}>
+                        <button key={view} type="button" onClick={() => onSelectView(view)} className={linkClass(view)} title={collapsed ? label : undefined} aria-label={label} aria-current={isViewActive(view) ? "page" : undefined}>
                             <span className={navIconClass(view)}>
                                 <Icon className={collapsed ? "h-5 w-5" : "h-[17px] w-[17px]"} aria-hidden="true" />
                             </span>
@@ -518,36 +515,13 @@ const WorkspaceSidebar = ({
                 </div>
             </div>
 
-            <button
-                type="button"
-                onClick={onOpenSettings}
-                className={`mt-3 flex min-h-[48px] items-center rounded-xl border border-border bg-canvas text-left transition-colors hover:bg-surface-muted ${collapsed ? "w-10 justify-center border-0" : "gap-3 px-3"}`}
-                aria-label={t("workspace.settings")}
-                title={collapsed ? displayName : undefined}
-            >
-                <span className={`relative grid shrink-0 place-items-center overflow-hidden rounded-full border border-border bg-surface-muted text-micro font-bold text-ink ${collapsed ? "h-8 w-8" : "h-9 w-9"}`}>
-                    {avatarText}
-                    {userInfo?.avatar ? (
-                        <img
-                            src={userInfo.avatar}
-                            alt=""
-                            className="absolute inset-0 h-full w-full object-cover"
-                        />
-                    ) : null}
-                </span>
-                {!collapsed ? <span className="min-w-0 flex-1">
-                    <span className="block truncate text-caption font-medium text-ink">
-                        {displayName}
-                    </span>
-                    <span className="mt-0.5 block truncate text-micro text-ink-muted">
-                        {userInfo?.role || "USER"}
-                    </span>
-                </span> : null}
-                {!collapsed ? <ChevronRight
-                    className="h-4 w-4 shrink-0 text-ink-faint"
-                    aria-hidden="true"
-                /> : null}
-            </button>
+            <div className="mt-3">
+                <WorkspaceAccountMenu
+                    userInfo={userInfo}
+                    onOpenSettings={onOpenSettings}
+                    collapsed={collapsed}
+                />
+            </div>
             <WorkspaceConversationSearchModal
                 open={searchOpen}
                 onClose={() => setSearchOpen(false)}
@@ -567,16 +541,18 @@ const WorkspaceSidebar = ({
                     <button type="button" onClick={openSearch} className="grid h-8 w-8 place-items-center rounded-lg text-ink-muted hover:bg-surface-muted" aria-label={t("workspace.agent.searchPlaceholder")}>
                         <Search className="h-4 w-4" />
                     </button>
-                    <button type="button" onClick={onOpenSettings} className="grid h-8 w-8 place-items-center rounded-full bg-surface-muted text-micro font-semibold text-ink" aria-label={t("workspace.settings")}>
-                        {userInfo?.avatar ? <img src={userInfo.avatar} alt="" className="h-full w-full rounded-full object-cover" /> : avatarText}
-                    </button>
+                    <WorkspaceAccountMenu
+                        userInfo={userInfo}
+                        onOpenSettings={onOpenSettings}
+                        compact
+                    />
                 </div>
             </div>
             <nav className="mt-2 flex gap-1 overflow-x-auto pb-0.5" aria-label={t("workspace.agent.workspaceNav")}>
                 {[...primaryItems, ...utilityItems].map(({ view, icon: Icon, label }) => {
                     const active = view === "chat" ? !activeView : activeView === view;
                     return (
-                        <button key={view} type="button" onClick={() => onSelectView(view)} aria-current={active ? "page" : undefined} className={`flex h-9 shrink-0 items-center gap-1.5 rounded-lg px-2.5 text-micro transition-colors ${active ? "bg-ink font-semibold text-white" : "text-ink-muted hover:bg-surface-muted hover:text-ink"}`}>
+                        <button key={view} type="button" onClick={() => onSelectView(view)} aria-current={active ? "page" : undefined} className={`flex h-9 shrink-0 items-center gap-1.5 rounded-lg px-2.5 text-micro transition-colors ${active ? "bg-surface-muted font-semibold text-ink" : "text-ink-muted hover:bg-surface-muted hover:text-ink"}`}>
                             <Icon className="h-3.5 w-3.5" aria-hidden="true" />
                             {label}
                         </button>
@@ -591,8 +567,10 @@ const WorkspaceSidebar = ({
 WorkspaceSidebar.propTypes = {
     userInfo: PropTypes.shape({
         avatar: PropTypes.string,
+        email: PropTypes.string,
         nickname: PropTypes.string,
         role: PropTypes.string,
+        tier: PropTypes.string,
         username: PropTypes.string,
     }),
     sessions: PropTypes.arrayOf(PropTypes.object),

@@ -2,11 +2,11 @@
  * 工作台首页骨架屏
  * 与 WorkspaceHomePage 布局逐区块对应：顶栏 / Hero / 快捷操作 / 继续进行 / 今日概览 / 右侧栏
  */
-const BLOCK = "animate-pulse rounded bg-[#e9eaf4]/60";
+const BLOCK = "animate-pulse rounded bg-ink-muted/10";
 
 const WorkspaceHomeSkeleton = () => (
     <div
-        className="h-full min-h-0 overflow-y-auto text-body text-[#555b7b]"
+        className="h-full min-h-0 overflow-y-auto bg-canvas text-body text-ink-secondary"
         aria-busy="true"
         aria-label="loading"
     >
@@ -26,7 +26,7 @@ const WorkspaceHomeSkeleton = () => (
         <div className="px-5 pb-5">
             <div className="flex flex-col items-stretch gap-5 xl:flex-row">
                 <div className="min-w-0 flex-1 space-y-5">
-                    <div className="min-h-[12.5rem] rounded-2xl bg-[linear-gradient(105deg,#f1f0ff_0%,#f8f9ff_72%)] px-10 py-7">
+                    <div className="min-h-[12.5rem] rounded-2xl bg-surface-muted px-10 py-7">
                         <div className="space-y-3">
                             <div className={`${BLOCK} h-8 w-64 max-w-full`} />
                             <div className={`${BLOCK} h-5 w-80 max-w-full`} />
@@ -51,10 +51,10 @@ const WorkspaceHomeSkeleton = () => (
                             {[1, 2, 3].map((section) => (
                                 <div
                                     key={section}
-                                    className="rounded-2xl border border-[#e9eaf3] bg-white/55 p-4"
+                                    className="rounded-2xl border border-border bg-surface p-4"
                                 >
                                     <div className={`${BLOCK} h-5 w-28`} />
-                                    <div className="mt-3 divide-y divide-[#eef0f6]">
+                                    <div className="mt-3 divide-y divide-border">
                                         {[1, 2, 3].map((row) => (
                                             <div
                                                 key={row}
@@ -83,7 +83,7 @@ const WorkspaceHomeSkeleton = () => (
                             {[1, 2, 3, 4].map((stat) => (
                                 <div
                                     key={stat}
-                                    className="min-h-[8.5rem] rounded-2xl border border-[#e9eaf3] bg-white/48 p-4"
+                                    className="min-h-[8.5rem] rounded-2xl border border-border bg-surface p-4"
                                 >
                                     <div className="flex items-center gap-3">
                                         <div
@@ -104,9 +104,9 @@ const WorkspaceHomeSkeleton = () => (
                 </div>
 
                 <aside className="grid shrink-0 grid-cols-1 gap-4 sm:grid-cols-2 xl:w-[20rem] xl:grid-cols-1">
-                    <div className="h-[24rem] rounded-2xl border border-[#e7e9f1] bg-white/70 p-5">
+                    <div className="h-[24rem] rounded-2xl border border-border bg-surface p-5">
                         <div className={`${BLOCK} h-5 w-28`} />
-                        <div className="mt-3 divide-y divide-[#eceef4]">
+                        <div className="mt-3 divide-y divide-border">
                             {[1, 2, 3, 4, 5].map((todo) => (
                                 <div
                                     key={todo}
@@ -128,13 +128,13 @@ const WorkspaceHomeSkeleton = () => (
                         </div>
                     </div>
 
-                    <div className="h-[24rem] rounded-2xl border border-[#e7e9f1] bg-white/70 p-5">
+                    <div className="h-[24rem] rounded-2xl border border-border bg-surface p-5">
                         <div className={`${BLOCK} h-5 w-24`} />
                         <div className="mt-4 flex flex-col gap-2.5">
                             {[1, 2, 3].map((suggestion) => (
                                 <div
                                     key={suggestion}
-                                    className="flex-1 rounded-xl border border-[#ececf6] bg-[linear-gradient(120deg,#f6f4ff_0%,#fbfbff_100%)] p-3"
+                                    className="flex-1 rounded-xl border border-border bg-surface-muted p-3"
                                 >
                                     <div className="flex gap-3">
                                         <div

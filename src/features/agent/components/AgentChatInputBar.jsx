@@ -11,6 +11,7 @@ import {
     X,
 } from "lucide-react";
 import useClickOutside from "@shared/hooks/useClickOutside";
+import { pasteAttachments } from "../utils/pasteAttachments";
 
 const AgentChatInputBar = ({
     t,
@@ -19,6 +20,7 @@ const AgentChatInputBar = ({
     attachments,
     uploading,
     isActive,
+    isCancelling = false,
     awaitingApproval,
     creating,
     hasConversation,
@@ -97,7 +99,7 @@ const AgentChatInputBar = ({
                     <div ref={menuRef} className="relative shrink-0 self-end">
                         <button
                             type="button"
-                            disabled={locked || uploading}
+                            disabled={uploading}
                             onClick={() => setMenuOpen((open) => !open)}
                             className="flex h-9 w-9 items-center justify-center rounded-full text-ink-muted transition hover:bg-surface-muted hover:text-ink disabled:opacity-50"
                             aria-label={t("blog.agentChat.addAttachment")}
@@ -149,13 +151,14 @@ const AgentChatInputBar = ({
                         />
                     </div>
                     <textarea
+                        disabled={awaitingApproval || creating}
                         ref={textareaRef}
                         rows={1}
                         value={input}
                         onChange={(event) => setInput(event.target.value)}
-                        disabled={locked}
+                        onPaste={(event) => pasteAttachments(event, { input, onInputChange: setInput, onFilesSelected })}
                         placeholder={
-                            locked
+                            isActive
                                 ? t("blog.agentChat.inputLockedPlaceholder")
                                 : t("blog.agentChat.inputPlaceholder")
                         }
@@ -209,9 +212,24 @@ const AgentChatInputBar = ({
                             <button
                                 type="button"
                                 onClick={onStop}
-                                className="flex h-8 w-8 items-center justify-center rounded-full bg-ink text-white transition hover:bg-ink-secondary"
+                                disabled={isCancelling}
+                                aria-label={
+                                    isCancelling
+                                        ? t("blog.agentChat.stopping")
+                                        : t("blog.agentChat.stop")
+                                }
+                                title={
+                                    isCancelling
+                                        ? t("blog.agentChat.stopping")
+                                        : t("blog.agentChat.stop")
+                                }
+                                className="flex h-8 w-8 items-center justify-center rounded-full bg-ink text-white transition hover:bg-ink-secondary disabled:cursor-wait disabled:opacity-80"
                             >
-                                <Square className="h-3 w-3 fill-current" />
+                                {isCancelling ? (
+                                    <Loader2 className="h-4 w-4 animate-spin" />
+                                ) : (
+                                    <Square className="h-3 w-3 fill-current" />
+                                )}
                             </button>
                         ) : (
                             <button

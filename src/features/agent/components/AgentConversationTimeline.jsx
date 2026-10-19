@@ -42,6 +42,7 @@ const AgentConversationTimeline = memo(
         liveImageUrls,
         activeImageGeneration,
         isActive,
+        cancelling = false,
         streamingAnswer,
         reconnecting,
         errorMessage,
@@ -291,7 +292,7 @@ const AgentConversationTimeline = memo(
                                 label={t("blog.agentChat.thinking")}
                             />
                         )}
-                    {(reconnecting || errorMessage) && (
+                    {(reconnecting || errorMessage || cancelling) && (
                         <div
                             className={`flex items-center gap-2 rounded-xl border px-3 py-2 text-xs font-semibold ${
                                 errorMessage
@@ -305,7 +306,10 @@ const AgentConversationTimeline = memo(
                                 <Loader2 className="h-3.5 w-3.5 shrink-0 animate-spin" />
                             )}
                             <span className="truncate">
-                                {errorMessage || statusLine}
+                                {errorMessage ||
+                                    (cancelling
+                                        ? t("blog.agentChat.stopping")
+                                        : statusLine)}
                             </span>
                         </div>
                     )}

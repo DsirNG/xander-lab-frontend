@@ -19,7 +19,13 @@ const MAX_RECONNECT_DELAY_MS = 5000;
  * Dindor 对话状态：服务端快照是事实来源，SSE 仅负责增量反馈与断线续传。
  */
 export const useAgentConversation = ({ conversationId }) => {
-    const { t } = useTranslation();
+    const { t: translate } = useTranslation();
+    const translateRef = useRef(translate);
+    useEffect(() => {
+        translateRef.current = translate;
+    }, [translate]);
+    // UI language changes must not recreate route loaders or abort an active stream.
+    const t = useCallback((...args) => translateRef.current(...args), []);
     const routeConversationId = asId(conversationId);
     const {
         sessions,
@@ -41,6 +47,7 @@ export const useAgentConversation = ({ conversationId }) => {
     const [loading, setLoading] = useState(Boolean(routeConversationId));
     const [creating, setCreating] = useState(false);
     const [running, setRunning] = useState(false);
+    const [cancelling, setCancelling] = useState(false);
     const [approvals, setApprovals] = useState([]);
     const [decidingApprovalId, setDecidingApprovalId] = useState(null);
     const [liveSteps, setLiveSteps] = useState([]);
@@ -57,6 +64,8 @@ export const useAgentConversation = ({ conversationId }) => {
     const createControllerRef = useRef(null);
     const creatingRef = useRef(false);
     const runningRef = useRef(false);
+    const cancellingRef = useRef(false);
+    const cancelRequestRef = useRef(0);
     const pendingFirstMessageRef = useRef(null);
     const readReportedRef = useRef(new Set());
     const deepThinkingRef = useRef(deepThinking);
@@ -81,6 +90,11 @@ export const useAgentConversation = ({ conversationId }) => {
     const updateRunning = useCallback((value) => {
         runningRef.current = value;
         setRunning(value);
+    }, []);
+
+    const updateCancelling = useCallback((value) => {
+        cancellingRef.current = value;
+        setCancelling(value);
     }, []);
 
     const {
@@ -129,12 +143,14 @@ export const useAgentConversation = ({ conversationId }) => {
             const status = snapshot?.status;
             if (status === "running") {
                 updateRunning(true);
+                if (runChanged) updateCancelling(false);
             } else if (
                 status === "ready" ||
                 status === "failed" ||
                 status === "awaiting_approval"
             ) {
                 updateRunning(false);
+                updateCancelling(false);
             }
             if (status === "failed") {
                 setErrorMessage(
@@ -156,6 +172,7 @@ export const useAgentConversation = ({ conversationId }) => {
             isCurrent,
             runVersionRef,
             t,
+            updateCancelling,
             updateRunning,
         ],
     );
@@ -402,6 +419,8 @@ export const useAgentConversation = ({ conversationId }) => {
             const controller = new AbortController();
             turnControllerRef.current = controller;
             beginRunGeneration(null, { clearLive: displayUserMessage });
+            cancelRequestRef.current += 1;
+            updateCancelling(false);
             updateRunning(true);
             setConversation((current) =>
                 current ? { ...current, status: "running" } : current,
@@ -475,29 +494,59 @@ export const useAgentConversation = ({ conversationId }) => {
             refreshAfterClientError,
             streamEpochRef,
             t,
+            updateCancelling,
             updateRunning,
         ],
     );
 
     const cancelTurn = useCallback(async () => {
         const id = activeIdRef.current;
-        if (!id || !runningRef.current) return;
-        const requestEpoch = streamEpochRef.current;
+        if (!id || !runningRef.current || cancellingRef.current) return;
+        const cancelRequest = ++cancelRequestRef.current;
+        updateCancelling(true);
         try {
-            await agentConversationService.cancel(id, {
-                _silent: true,
-                dedupe: false,
-            });
+            const cancelledConversation = await agentConversationService.cancel(
+                id,
+                {
+                    _silent: true,
+                    dedupe: false,
+                },
+            );
+            if (!isCurrent(id) || cancelRequestRef.current !== cancelRequest)
+                return;
+
+            if (cancelledConversation?.status === "running") {
+                if (Number(cancelledConversation.cancelRequested) !== 1) {
+                    setErrorMessage(t("blog.agentChat.stopFailed"));
+                    updateCancelling(false);
+                }
+                return;
+            }
+
+            if (cancelledConversation?.status) {
+                setConversation((current) =>
+                    current && String(current.id) === id
+                        ? { ...current, ...cancelledConversation }
+                        : current,
+                );
+                updateRunning(false);
+                updateCancelling(false);
+            }
         } catch (error) {
             if (
                 isCurrent(id) &&
-                streamEpochRef.current === requestEpoch &&
+                cancelRequestRef.current === cancelRequest &&
                 !isAbortError(error)
             ) {
-                setErrorMessage(error.message || t("blog.agentChat.failed"));
+                updateCancelling(false);
+                if (runningRef.current) {
+                    setErrorMessage(
+                        error.message || t("blog.agentChat.stopFailed"),
+                    );
+                }
             }
         }
-    }, [isCurrent, streamEpochRef, t]);
+    }, [isCurrent, t, updateCancelling, updateRunning]);
 
     const decideApproval = useCallback(
         async (approvalId, approved, reason = "") => {
@@ -608,6 +657,8 @@ export const useAgentConversation = ({ conversationId }) => {
 
     const reset = useCallback(() => {
         beginRunGeneration();
+        cancelRequestRef.current += 1;
+        updateCancelling(false);
         pendingFirstMessageRef.current = null;
         routeControllerRef.current?.abort();
         turnControllerRef.current?.abort();
@@ -619,7 +670,7 @@ export const useAgentConversation = ({ conversationId }) => {
         updateRunning(false);
         setReconnecting(false);
         setErrorMessage(null);
-    }, [beginRunGeneration, updateRunning]);
+    }, [beginRunGeneration, updateCancelling, updateRunning]);
 
     useEffect(() => {
         const id = asId(conversationId);
@@ -636,6 +687,8 @@ export const useAgentConversation = ({ conversationId }) => {
         if (isNewlyCreated) pending.routeInitialized = true;
 
         beginRunGeneration(null, { clearLive: !isNewlyCreated });
+        cancelRequestRef.current += 1;
+        updateCancelling(false);
         routeControllerRef.current?.abort();
         turnControllerRef.current?.abort();
         activeIdRef.current = id;
@@ -673,6 +726,7 @@ export const useAgentConversation = ({ conversationId }) => {
         conversationId,
         openConversation,
         streamEpochRef,
+        updateCancelling,
         updateRunning,
     ]);
 
@@ -732,6 +786,7 @@ export const useAgentConversation = ({ conversationId }) => {
         loading,
         creating,
         running,
+        cancelling,
         approvals,
         decidingApprovalId,
         reconnecting,

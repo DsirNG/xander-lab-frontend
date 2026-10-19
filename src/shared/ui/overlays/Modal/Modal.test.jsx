@@ -24,6 +24,17 @@ describe("Modal", () => {
         expect(screen.getByText("弹窗内容")).toBeInTheDocument();
     });
 
+    it("can render without a backdrop", () => {
+        render(
+            <Modal isOpen onClose={vi.fn()} title="无蒙版" showBackdrop={false}>
+                内容
+            </Modal>,
+        );
+
+        expect(screen.getByRole("dialog")).toBeInTheDocument();
+        expect(document.querySelector("[data-modal-backdrop]")).toBeNull();
+    });
+
     it("renders the footer when provided", () => {
         render(
             <Modal
@@ -47,7 +58,10 @@ describe("Modal", () => {
                 内容
             </Modal>,
         );
-        fireEvent.click(screen.getByRole("button", { name: /close/i }));
+        const closeButton = screen.getByRole("button", { name: /close/i });
+        expect(closeButton).toHaveClass("h-10", "w-10");
+        expect(closeButton.querySelector("svg")).toHaveClass("h-5", "w-5");
+        fireEvent.click(closeButton);
         expect(onClose).toHaveBeenCalledTimes(1);
     });
 
@@ -136,7 +150,6 @@ describe("Modal", () => {
         expect(close).toHaveFocus();
     });
 });
-
 
 describe("nested Modal compatibility", () => {
     it("keeps the background locked and handles Escape only in the top dialog", () => {

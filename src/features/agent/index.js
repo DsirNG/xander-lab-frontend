@@ -1,3 +1,4 @@
+import { lazy } from "react";
 /**
  * Public capabilities exposed by the agent feature.
  *
@@ -10,3 +11,6 @@ export { listAgentConversations } from "./capabilities";
 export { default as AgentShowcase } from "./components/AgentShowcase";
 export { useAgentConversation } from "./hooks/useAgentConversation";
 export { agentPluginService } from "./services/agentPluginService";
+
+export { listAgentConversationPage } from "./capabilities";
+export const AgentImagesPage = lazy(() => import("./pages/AgentImagesPage"));

@@ -5,6 +5,7 @@ import AgentComposer from "./AgentComposer";
 
 const renderComposer = (overrides = {}) => {
     const onSubmit = vi.fn();
+    const onCancel = vi.fn();
     render(
         <AgentComposer
             input="你好"
@@ -19,13 +20,13 @@ const renderComposer = (overrides = {}) => {
             onFilesSelected={vi.fn()}
             onRemoveAttachment={vi.fn()}
             onSubmit={onSubmit}
-            onCancel={vi.fn()}
+            onCancel={onCancel}
             onToggleDeepThinking={vi.fn()}
             t={(key, fallback) => fallback || key}
             {...overrides}
         />,
     );
-    return { onSubmit };
+    return { onSubmit, onCancel };
 };
 
 describe("AgentComposer 回车发送", () => {
@@ -68,5 +69,19 @@ describe("AgentComposer 回车发送", () => {
         fireEvent.keyDown(screen.getByRole("textbox"), { key: "Enter" });
 
         expect(onSubmit).not.toHaveBeenCalled();
+    });
+
+    it("shows a disabled stopping state after the stop action starts", () => {
+        const { onCancel } = renderComposer({
+            isActive: true,
+            isCancelling: true,
+        });
+        const stopButton = screen.getByRole("button", {
+            name: "blog.agentChat.stopping",
+        });
+
+        expect(stopButton).toBeDisabled();
+        fireEvent.click(stopButton);
+        expect(onCancel).not.toHaveBeenCalled();
     });
 });

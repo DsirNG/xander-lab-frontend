@@ -55,6 +55,7 @@ const AgentShowcase = ({ t, welcomeVisual: WelcomeVisual }) => {
         loading,
         creating,
         running,
+        cancelling,
         reconnecting,
         errorMessage,
         liveSteps,
@@ -336,6 +337,7 @@ const AgentShowcase = ({ t, welcomeVisual: WelcomeVisual }) => {
                                         }
                                         canSend={canSend}
                                         isActive={isActive}
+                                        isCancelling={cancelling}
                                         fileInputRef={fileInputRef}
                                         textareaRef={textareaRef}
                                         showQuickActions={false}
@@ -443,6 +445,7 @@ const AgentShowcase = ({ t, welcomeVisual: WelcomeVisual }) => {
                                         activeImageGeneration
                                     }
                                     isActive={isActive}
+                                    cancelling={cancelling}
                                     creating={creating}
                                     loading={loading}
                                     reconnecting={reconnecting}
@@ -466,6 +469,7 @@ const AgentShowcase = ({ t, welcomeVisual: WelcomeVisual }) => {
                                             }
                                             canSend={canSend}
                                             isActive={isActive}
+                                            isCancelling={cancelling}
                                             fileInputRef={fileInputRef}
                                             textareaRef={textareaRef}
                                             onInputChange={setInput}

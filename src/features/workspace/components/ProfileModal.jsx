@@ -12,6 +12,7 @@ import {
     Shield,
     Sun,
     SunMoon,
+    SlidersHorizontal,
     UserRound,
 } from "lucide-react";
 import Modal from "@shared/ui/overlays/Modal";
@@ -19,6 +20,7 @@ import {
     AccountInfoPanel,
     McpAuthorizationPanel,
     PasswordSettingsPanel,
+    LanguagePreferencesPanel,
 } from "@features/profile";
 import { PlatformConnectionsPanel } from "@features/platformIntegrations";
 
@@ -32,9 +34,17 @@ const TABS = [
     { id: "mcp", icon: Plug },
     { id: "platforms", icon: Share2 },
     { id: "appearance", icon: SunMoon },
+    { id: "preferences", icon: SlidersHorizontal },
 ];
 
-const ENABLED_TABS = ["account", "security", "mcp", "platforms", "appearance"];
+const ENABLED_TABS = [
+    "account",
+    "security",
+    "mcp",
+    "platforms",
+    "appearance",
+    "preferences",
+];
 
 const ProfileModal = ({
     open,
@@ -59,6 +69,7 @@ const ProfileModal = ({
             width="max-w-4xl"
             height={680}
             bodyScrollable={false}
+            showBackdrop={false}
         >
             <div className="flex h-full min-h-0 flex-col gap-4 lg:flex-row lg:gap-6">
                 {/* 设置分类导航：移动端横向滚动，桌面端左侧竖排 */}
@@ -108,6 +119,8 @@ const ProfileModal = ({
                         <McpAuthorizationPanel />
                     ) : activeTab === "platforms" ? (
                         <PlatformConnectionsPanel />
+                    ) : activeTab === "preferences" ? (
+                        <LanguagePreferencesPanel />
                     ) : activeTab === "appearance" ? (
                         <section className="space-y-6">
                             <div>
@@ -145,9 +158,7 @@ const ProfileModal = ({
                                         >
                                             <Icon className="h-5 w-5" />
                                             <span className="text-body font-semibold">
-                                                {t(
-                                                    `profile.appearance.${id}`,
-                                                )}
+                                                {t(`profile.appearance.${id}`)}
                                             </span>
                                         </button>
                                     );
@@ -155,14 +166,11 @@ const ProfileModal = ({
                             </div>
                             <div className="rounded-xl bg-surface-muted px-4 py-3 text-caption leading-6 text-ink-secondary">
                                 {themeMode === "system"
-                                    ? t(
-                                          "profile.appearance.systemStatus",
-                                          {
-                                              mode: t(
-                                                  `profile.appearance.${resolvedTheme}`,
-                                              ),
-                                          },
-                                      )
+                                    ? t("profile.appearance.systemStatus", {
+                                          mode: t(
+                                              `profile.appearance.${resolvedTheme}`,
+                                          ),
+                                      })
                                     : t("profile.appearance.savedHint")}
                             </div>
                         </section>

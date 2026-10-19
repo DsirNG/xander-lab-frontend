@@ -3,6 +3,8 @@
  * Agent conversation API wrapper
  */
 import { delete as del, get, post, postStream, getStream, upload } from "@api";
+import i18n from "@/locales";
+import { getReplyLanguage } from "@shared/preferences/agentLanguage";
 
 const BASE = "/api/agent/conversations";
 
@@ -19,7 +21,8 @@ export const agentConversationService = {
     /** 会话分页列表，可选按标题搜索。 */
     list: ({ page = 1, size = 30, search, ...config } = {}) => {
         const params = { ...config.params, page, size };
-        const normalizedSearch = typeof search === "string" ? search.trim() : "";
+        const normalizedSearch =
+            typeof search === "string" ? search.trim() : "";
         if (normalizedSearch) params.search = normalizedSearch;
         else delete params.search;
         return get(BASE, undefined, { ...config, params });
@@ -45,7 +48,19 @@ export const agentConversationService = {
     ) =>
         postStream(
             `${BASE}/${id}/messages/stream`,
-            { content, attachments, deepThinking },
+            {
+                content,
+                attachments,
+                deepThinking,
+                locale: (
+                    i18n.resolvedLanguage ||
+                    i18n.language ||
+                    "zh"
+                ).startsWith("en")
+                    ? "en"
+                    : "zh",
+                replyLanguage: getReplyLanguage(),
+            },
             { onEvent, ...config },
         ),
     /** 请求停止当前正在执行的一轮 */

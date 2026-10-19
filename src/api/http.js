@@ -126,6 +126,8 @@ export { download, upload };
 
 instance.interceptors.request.use(
     (config) => {
+        config.headers["Accept-Language"] = String(i18n.language || "zh")
+            .toLowerCase().startsWith("en") ? "en" : "zh-CN";
         // 8.1 防重复请求（幂等锁）
         // 默认对所有方法防重复（GET/POST/PUT/DELETE/PATCH），
         // 可用 config.dedupe: false 关闭（上传/下载/SSE 已默认关闭）

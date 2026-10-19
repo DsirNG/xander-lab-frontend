@@ -504,6 +504,8 @@ export default {
             inputLockedPlaceholder: "Dindor 执行中，请稍候",
             send: "发送",
             stop: "停止",
+            stopping: "正在停止，请稍候…",
+            stopFailed: "停止请求失败，请重试。",
             running: "执行中…",
             thinking: "思考中…",
             callingTool: "工具调用中…",
@@ -1224,6 +1226,9 @@ export default {
         points: "积分",
         userMenu: "用户菜单",
         myProfile: "个人中心",
+        accountMenu: {
+            subscriptionTier: "订阅等级",
+        },
         logoutFailed: "退出登录失败，请重试",
         agent: {
             categoryUnavailable: "分类加载失败，可稍后重新打开编辑器重试。",
@@ -1362,6 +1367,17 @@ export default {
         },
     },
     profile: {
+        language: {
+            "title": "语言与回复",
+            "description": "分别设置界面语言与 Agent 回复偏好。",
+            "interface": "界面语言",
+            "reply": "Agent 回复语言",
+            "auto": "自动",
+            "autoHint": "自动模式跟随当前提问的主要语言；短句参考上下文，无法判断时使用界面语言。明确指定语言或翻译目标的请求始终优先。",
+            "historyHint": "更改只影响界面与后续新回复，不会翻译、清空或重写已有对话，也不会中断正在生成的回答。设置保存在当前设备。",
+            "loadError": "语言加载失败，请重试。"
+        },
+
         connector: {
             installRequired: "请先安装并启用 DinQorAI 浏览器扩展，然后刷新此页面。",
             startFailed: "无法启动浏览器扩展授权，请重试。",

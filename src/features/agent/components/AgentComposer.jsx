@@ -1,4 +1,5 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { pasteAttachments } from "../utils/pasteAttachments";
 import {
     AtSign,
     Blocks,
@@ -73,6 +74,7 @@ const AgentComposer = ({
     uploadingAttachments,
     canSend,
     isActive,
+    isCancelling = false,
     fileInputRef,
     textareaRef,
     alwaysExpanded = false,
@@ -229,10 +231,10 @@ const AgentComposer = ({
                             onChange={(event) =>
                                 onInputChange(event.target.value)
                             }
-                            disabled={locked}
+                            onPaste={(event) => pasteAttachments(event, { input, onInputChange, onFilesSelected })}
                             aria-label={t("workspace.agent.inputPlaceholder")}
                             placeholder={
-                                locked
+                                isActive
                                     ? t(
                                           "blog.agentChat.inputLockedPlaceholder",
                                           "执行中，请稍候",
@@ -276,7 +278,7 @@ const AgentComposer = ({
                                 setAddMenuOpen((open) => !open);
                                 setMentionMenuOpen(false);
                             }}
-                            disabled={locked || uploadingAttachments}
+                            disabled={uploadingAttachments}
                             className={`grid h-9 w-9 shrink-0 cursor-pointer place-items-center rounded-full text-ink-muted transition-colors hover:bg-surface-muted hover:text-ink disabled:opacity-50 ${
                                 multiline ? "" : "order-1"
                             }`}
@@ -480,16 +482,26 @@ const AgentComposer = ({
                             <button
                                 type="button"
                                 onClick={onCancel}
+                                disabled={isCancelling}
                                 aria-label={
-                                    isActive
-                                        ? t("common.cancel")
-                                        : t("blog.agentChat.send")
+                                    isCancelling
+                                        ? t("blog.agentChat.stopping")
+                                        : t("blog.agentChat.stop")
                                 }
-                                className={`grid h-9 w-9 shrink-0 place-items-center rounded-full bg-ink text-white transition-colors hover:bg-ink-secondary ${
+                                title={
+                                    isCancelling
+                                        ? t("blog.agentChat.stopping")
+                                        : t("blog.agentChat.stop")
+                                }
+                                className={`grid h-9 w-9 shrink-0 place-items-center rounded-full bg-ink text-white transition-colors hover:bg-ink-secondary disabled:cursor-wait disabled:opacity-80 ${
                                     multiline ? "" : "order-4"
                                 }`}
                             >
-                                <Square className="h-3.5 w-3.5 fill-current" />
+                                {isCancelling ? (
+                                    <Loader2 className="h-4 w-4 animate-spin" />
+                                ) : (
+                                    <Square className="h-3.5 w-3.5 fill-current" />
+                                )}
                             </button>
                         ) : (
                             <button

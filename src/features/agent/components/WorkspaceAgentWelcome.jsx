@@ -10,6 +10,7 @@ const WorkspaceAgentWelcome = ({
     uploadingAttachments,
     canSend,
     isActive,
+    isCancelling,
     fileInputRef,
     textareaRef,
     onInputChange,
@@ -44,6 +45,7 @@ const WorkspaceAgentWelcome = ({
                     uploadingAttachments={uploadingAttachments}
                     canSend={canSend}
                     isActive={isActive}
+                    isCancelling={isCancelling}
                     fileInputRef={fileInputRef}
                     textareaRef={textareaRef}
                     alwaysExpanded

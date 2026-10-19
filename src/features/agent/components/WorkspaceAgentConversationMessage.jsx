@@ -67,17 +67,10 @@ const WorkspaceAgentConversationMessage = ({
                 </>
             ) : isStreaming ? (
                 content ? (
-                    <div className="flex items-start gap-0.5">
-                        <div className="min-w-0 flex-1">
-                            <AgentMarkdown
-                                content={cleanImageMarkdown(content, imageUrls)}
-                            />
-                        </div>
-                        <span
-                            className="mt-1.5 inline-block h-4 w-[3px] shrink-0 animate-pulse rounded-sm bg-current align-middle"
-                            aria-hidden="true"
-                        />
-                    </div>
+                    <AgentMarkdown
+                        content={cleanImageMarkdown(content, imageUrls)}
+                        isStreaming
+                    />
                 ) : (
                     <span
                         className="inline-flex items-center gap-1 px-1"

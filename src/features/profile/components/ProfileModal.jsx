@@ -15,6 +15,7 @@ import Modal from "@shared/ui/overlays/Modal";
 import AccountInfoPanel from "./AccountInfoPanel";
 import McpAuthorizationPanel from "./McpAuthorizationPanel";
 import PasswordSettingsPanel from "./PasswordSettingsPanel";
+import LanguagePreferencesPanel from "./LanguagePreferencesPanel";
 import { PlatformConnectionsPanel } from "@features/platformIntegrations";
 
 const TABS = [
@@ -29,7 +30,7 @@ const TABS = [
     { id: "preferences", icon: SlidersHorizontal },
 ];
 
-const ENABLED_TABS = ["account", "security", "mcp", "platforms"];
+const ENABLED_TABS = ["account", "security", "mcp", "platforms", "preferences"];
 
 const ProfileModal = ({ open, onClose, initialTab = "account" }) => {
     const { t } = useTranslation();
@@ -47,6 +48,7 @@ const ProfileModal = ({ open, onClose, initialTab = "account" }) => {
             width="max-w-4xl"
             height={680}
             bodyScrollable={false}
+            showBackdrop={false}
         >
             <div className="flex h-full min-h-0 flex-col gap-4 lg:flex-row lg:gap-6">
                 {/* 设置分类导航：移动端横向滚动，桌面端左侧竖排 */}
@@ -96,6 +98,8 @@ const ProfileModal = ({ open, onClose, initialTab = "account" }) => {
                         <McpAuthorizationPanel />
                     ) : activeTab === "platforms" ? (
                         <PlatformConnectionsPanel />
+                    ) : activeTab === "preferences" ? (
+                        <LanguagePreferencesPanel />
                     ) : (
                         <div className="flex h-64 flex-col items-center justify-center gap-2 text-center">
                             <span className="grid h-12 w-12 place-items-center rounded-2xl bg-surface text-ink-faint">

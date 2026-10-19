@@ -522,6 +522,8 @@ export default {
             inputLockedPlaceholder: "Dindor is working…",
             send: "Send",
             stop: "Stop",
+            stopping: "Stopping, please wait…",
+            stopFailed: "Could not stop the task. Please try again.",
             running: "Working…",
             thinking: "Thinking…",
             callingTool: "Calling tool…",
@@ -1276,6 +1278,9 @@ export default {
         points: "Points",
         userMenu: "User menu",
         myProfile: "My profile",
+        accountMenu: {
+            subscriptionTier: "Subscription tier",
+        },
         logoutFailed: "Logout failed, please try again",
         agent: {
             categoryUnavailable: "Categories could not be loaded. Reopen the editor to retry.",
@@ -1415,6 +1420,17 @@ export default {
         },
     },
     profile: {
+        language: {
+            "title": "Language & replies",
+            "description": "Choose the app language and how the agent replies.",
+            "interface": "App language",
+            "reply": "Agent reply language",
+            "auto": "Auto",
+            "autoHint": "Auto follows the main language of your question, uses conversation context for short follow-ups, and falls back to the app language. Explicit language or translation requests always take priority.",
+            "historyHint": "Changes apply to the interface and future replies. Existing messages stay unchanged and ongoing responses are not interrupted. Preferences are saved on this device.",
+            "loadError": "Unable to load this language. Please try again."
+        },
+
         connector: {
             installRequired: "Install and enable the DinQorAI browser extension, then refresh this page.",
             startFailed: "Could not start browser extension authorization. Please try again.",

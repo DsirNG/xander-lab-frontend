@@ -21,7 +21,7 @@ import LoadingSpinner from "@shared/ui/feedback/LoadingSpinner";
 import ProfileModal from "./components/ProfileModal";
 import WorkspaceShell from "./components/WorkspaceShell";
 import WorkspaceSidebar from "./components/WorkspaceSidebar";
-import AgentImagesPage from "@features/agent/pages/AgentImagesPage";
+import { AgentImagesPage } from "@features/agent";
 import WorkspacePluginsPage from "./pages/WorkspacePluginsPage";
 
 const THEME_STORAGE_KEY = "dinqor.workspace.theme";
@@ -237,7 +237,7 @@ const WorkspaceLayoutInner = () => {
                         )}
                     </Suspense>
                 ) : activeView === "images" ? (
-                    <AgentImagesPage />
+                    <Suspense fallback={<LoadingSpinner fullScreen />}><AgentImagesPage /></Suspense>
                 ) : activeView === "plugins" ? (
                     <WorkspacePluginsPage />
                 ) : (

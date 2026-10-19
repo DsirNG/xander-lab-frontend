@@ -22,6 +22,7 @@ const Modal = ({
     bodyScrollable = true,
     closeOnOutsideClick = true,
     hideCloseButton = false,
+    showBackdrop = true,
     className = "",
 }) => {
     const modalRef = useRef(null);
@@ -123,7 +124,13 @@ const Modal = ({
                 onClick={closeOnOutsideClick ? onClose : undefined}
             >
                 {/* 弹层保持静态渲染，避免透明度动画造成残影。 */}
-                <div aria-hidden="true" className="absolute inset-0 bg-ink/60" />
+                {showBackdrop ? (
+                    <div
+                        aria-hidden="true"
+                        data-modal-backdrop
+                        className="absolute inset-0 bg-ink/60"
+                    />
+                ) : null}
 
                 {/* 弹窗内容 */}
                 <div
@@ -161,7 +168,7 @@ const Modal = ({
                                     onClick={onClose}
                                     aria-label={t("common.aria.close", "Close")}
                                     variant="ghost"
-                                    size="xs"
+                                    size="md"
                                     icon={X}
                                     className="-mr-2 rounded-full hover:text-danger hover:bg-danger-soft"
                                 />
