@@ -4,6 +4,36 @@
  */
 
 export default {
+    alipay: {
+        "title": "订阅与支付宝支付",
+        "description": "选择订阅套餐，前往支付宝完成付款。付款后将为当前账号开通对应权益。",
+        "loading": "正在加载订阅套餐",
+        "loadFailed": "订阅套餐加载失败",
+        "retry": "重试",
+        "sandbox": "当前为沙箱环境，请使用支付宝沙箱钱包，交易不使用真实资金。",
+        "unavailable": "支付宝支付暂未开放，请稍后再试。",
+        "duration": "有效期 {{days}} 天",
+        "buy": "使用支付宝购买",
+        "checkoutFailed": "未能发起支付，请重试。重复操作会继续使用同一订单。",
+        "existingOrder": "已有订单已结束，请查看支付结果后重新选择套餐。",
+        "checkResult": "查看最近一次支付结果",
+        "resultTitle": "支付宝支付结果",
+        "noOrder": "暂无可确认的订单。请使用下单时的账号和浏览器返回此页面。",
+        "confirmFailed": "暂时无法确认付款结果，请稍后刷新。请勿重复付款。",
+        "pending": "尚未确认付款，请稍后刷新。",
+        "confirming": "正在确认付款结果",
+        "refresh": "刷新支付结果",
+        "signIn": "登录下单账号",
+        "back": "返回应用",
+        "status": {
+            "PENDING": "尚未确认付款，请稍后刷新。",
+            "PAID": "已确认付款，正在发放订阅权益，请稍后刷新。",
+            "DELIVERED": "付款成功，订阅权益已开通。",
+            "CLOSED": "订单已关闭。",
+            "REFUND_PENDING": "退款正在确认中。",
+            "REFUNDED": "已确认退款。订阅权益由客服核对处理。"
+        }
+    },
     nav: {
         loginRequired: "请先登录或进入工作台再使用此功能",
         infra: "基础模块",
@@ -1443,6 +1473,7 @@ export default {
         logoutConfirmTitle: "退出登录",
         logoutConfirmMessage: "确定要退出当前账号吗？",
         nav: {
+            subscription: "订阅与支付",
             account: "账户信息",
             security: "安全设置",
             notifications: "通知设置",

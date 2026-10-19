@@ -11,6 +11,7 @@ import LegacyContentRedirect from "./LegacyContentRedirect";
 import { LazyPage } from "./RouteElements";
 
 const LoginPage = React.lazy(() => import("@features/auth/pages/LoginPage"));
+const AlipayReturnPage = React.lazy(() => import("@features/account/pages/AlipayReturnPage"));
 const WorkspaceLayout = React.lazy(
     () => import("@features/workspace/WorkspaceLayout"),
 );
@@ -49,6 +50,7 @@ export const createRouter = () =>
             element: <RouteSEOLayout />,
             errorElement: <RouteErrorPage />,
             children: [
+                { path: "/payment/alipay/return", element: <LazyPage><AlipayReturnPage /></LazyPage> },
                 { path: "/", element: <Navigate to="/app" replace /> },
                 {
                     path: "/login",

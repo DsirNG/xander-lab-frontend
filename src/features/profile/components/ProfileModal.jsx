@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
     Bell,
+    CreditCard,
     FileText,
     KeyRound,
     Mail,
@@ -17,9 +18,11 @@ import McpAuthorizationPanel from "./McpAuthorizationPanel";
 import PasswordSettingsPanel from "./PasswordSettingsPanel";
 import LanguagePreferencesPanel from "./LanguagePreferencesPanel";
 import { PlatformConnectionsPanel } from "@features/platformIntegrations";
+import { AlipaySubscriptionPanel } from "@features/account";
 
 const TABS = [
     { id: "account", icon: UserRound },
+    { id: "subscription", icon: CreditCard },
     { id: "security", icon: Shield },
     { id: "notifications", icon: Bell },
     { id: "templates", icon: Mail },
@@ -30,7 +33,7 @@ const TABS = [
     { id: "preferences", icon: SlidersHorizontal },
 ];
 
-const ENABLED_TABS = ["account", "security", "mcp", "platforms", "preferences"];
+const ENABLED_TABS = ["account", "subscription", "security", "mcp", "platforms", "preferences"];
 
 const ProfileModal = ({ open, onClose, initialTab = "account" }) => {
     const { t } = useTranslation();
@@ -92,6 +95,8 @@ const ProfileModal = ({ open, onClose, initialTab = "account" }) => {
                 <div className="min-h-0 min-w-0 flex-1 overflow-y-auto overscroll-y-contain custom-scrollbar">
                     {activeTab === "account" ? (
                         <AccountInfoPanel />
+                    ) : activeTab === "subscription" ? (
+                        <AlipaySubscriptionPanel />
                     ) : activeTab === "security" ? (
                         <PasswordSettingsPanel />
                     ) : activeTab === "mcp" ? (

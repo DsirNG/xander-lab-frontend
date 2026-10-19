@@ -4,6 +4,36 @@
  */
 
 export default {
+    alipay: {
+        "title": "Subscription and Alipay",
+        "description": "Choose a plan and complete payment with Alipay. Benefits will be applied to your current account after payment is verified.",
+        "loading": "Loading subscription plans",
+        "loadFailed": "Unable to load subscription plans",
+        "retry": "Retry",
+        "sandbox": "Sandbox environment. Use the Alipay sandbox wallet. No real money is charged.",
+        "unavailable": "Alipay payments are not available yet. Please try again later.",
+        "duration": "Valid for {{days}} days",
+        "buy": "Pay with Alipay",
+        "checkoutFailed": "Unable to start payment. Retry to continue with the same order.",
+        "existingOrder": "The existing order has ended. Check its payment result before choosing another plan.",
+        "checkResult": "Check your latest payment",
+        "resultTitle": "Alipay payment result",
+        "noOrder": "No order to confirm. Return using the account and browser that placed the order.",
+        "confirmFailed": "Payment could not be confirmed. Refresh later and avoid paying again.",
+        "pending": "Payment has not been confirmed. Refresh later.",
+        "confirming": "Confirming payment",
+        "refresh": "Refresh payment result",
+        "signIn": "Sign in to your ordering account",
+        "back": "Back to app",
+        "status": {
+            "PENDING": "Payment has not been confirmed. Refresh later.",
+            "PAID": "Payment is confirmed. Subscription benefits are being applied. Refresh later.",
+            "DELIVERED": "Payment confirmed. Your subscription is active.",
+            "CLOSED": "This order is closed.",
+            "REFUND_PENDING": "Your refund is being confirmed.",
+            "REFUNDED": "Your refund is confirmed. Contact support to review subscription benefits."
+        }
+    },
     nav: {
         loginRequired:
             "Please sign in or open the workspace to use this feature",
@@ -1498,6 +1528,7 @@ export default {
         logoutConfirmMessage:
             "Are you sure you want to log out of this account?",
         nav: {
+            subscription: "Subscription & payment",
             account: "Account",
             security: "Security",
             notifications: "Notifications",
