@@ -1,8 +1,12 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useId, useRef } from "react";
 import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import Button from "@shared/ui/primitives/Button";
+
+// Only the topmost dialog handles keyboard input; body locking survives nested dialogs.
+const openDialogs = [];
+let originalBodyStyles;
 
 /**
  * 通用弹窗组件
@@ -24,24 +28,36 @@ const Modal = ({
     const previousFocusRef = useRef(null);
     const { t } = useTranslation();
 
-    // 拦截背景滚动并防止滚动条消失引发的布局抖动
+    const instanceId = useId();
     useEffect(() => {
-        if (isOpen) {
-            const scrollbarWidth =
-                window.innerWidth - document.documentElement.clientWidth;
+        if (!isOpen) return undefined;
+        if (!openDialogs.length) {
+            originalBodyStyles = {
+                overflow: document.body.style.overflow,
+                paddingRight: document.body.style.paddingRight,
+            };
+            const scrollbarWidth = Math.max(
+                0,
+                window.innerWidth - document.documentElement.clientWidth,
+            );
+            const padding =
+                parseFloat(
+                    window.getComputedStyle(document.body).paddingRight,
+                ) || 0;
             document.body.style.overflow = "hidden";
-            if (scrollbarWidth > 0) {
-                document.body.style.paddingRight = `${scrollbarWidth}px`;
-            }
-        } else {
-            document.body.style.overflow = "";
-            document.body.style.paddingRight = "";
+            if (scrollbarWidth)
+                document.body.style.paddingRight = `${padding + scrollbarWidth}px`;
         }
+        openDialogs.push(instanceId);
         return () => {
-            document.body.style.overflow = "";
-            document.body.style.paddingRight = "";
+            const index = openDialogs.indexOf(instanceId);
+            if (index !== -1) openDialogs.splice(index, 1);
+            if (!openDialogs.length && originalBodyStyles) {
+                Object.assign(document.body.style, originalBodyStyles);
+                originalBodyStyles = undefined;
+            }
         };
-    }, [isOpen]);
+    }, [isOpen, instanceId]);
 
     // 焦点陷阱：打开时聚焦弹窗内第一个可聚焦元素，关闭时恢复之前的焦点
     useEffect(() => {
@@ -66,7 +82,7 @@ const Modal = ({
     // 绑定 ESC 键关闭 + 焦点陷阱 Tab 键循环
     useEffect(() => {
         const handleKeyDown = (e) => {
-            if (!isOpen) return;
+            if (!isOpen || openDialogs.at(-1) !== instanceId) return;
             if (e.key === "Escape" && closeOnOutsideClick) {
                 onClose();
                 return;
@@ -94,11 +110,11 @@ const Modal = ({
         };
         window.addEventListener("keydown", handleKeyDown);
         return () => window.removeEventListener("keydown", handleKeyDown);
-    }, [isOpen, closeOnOutsideClick, onClose]);
+    }, [isOpen, closeOnOutsideClick, onClose, instanceId]);
 
     if (typeof document === "undefined") return null;
 
-    const titleId = title ? "modal-title" : undefined;
+    const titleId = title ? `modal-title-${instanceId}` : undefined;
 
     return createPortal(
         isOpen ? (
@@ -118,7 +134,8 @@ const Modal = ({
                     tabIndex={-1}
                     className={`relative w-full ${width} bg-canvas rounded-3xl shadow-2xl shadow-ink/30 flex flex-col overflow-hidden antialiased outline-none ${className}`}
                     style={{
-                        height: `min(${height}px, calc(100dvh - 3rem))`,
+                        height,
+                        maxHeight: "calc(100dvh - 3rem)",
                         WebkitFontSmoothing: "antialiased",
                     }}
                     onClick={(e) => e.stopPropagation()}
@@ -129,21 +146,20 @@ const Modal = ({
                             {typeof title === "string" ? (
                                 <div
                                     id={titleId}
-                                    className="text-title font-black text-ink tracking-tight"
+                                    className="min-w-0 flex-1 break-words text-title font-black text-ink tracking-tight"
                                 >
                                     {title}
                                 </div>
                             ) : (
-                                <div className="flex-1">{title}</div>
+                                <div id={titleId} className="min-w-0 flex-1">
+                                    {title}
+                                </div>
                             )}
 
                             {!hideCloseButton && (
                                 <Button
                                     onClick={onClose}
-                                    aria-label={t(
-                                        "common.aria.close",
-                                        "Close",
-                                    )}
+                                    aria-label={t("common.aria.close", "Close")}
                                     variant="ghost"
                                     size="xs"
                                     icon={X}
@@ -155,7 +171,7 @@ const Modal = ({
 
                     {/* 主体自适应滚动区域 */}
                     <div
-                        className={`min-h-0 flex-1 ${bodyScrollable ? "overflow-y-auto" : "overflow-hidden"} overflow-x-hidden custom-scrollbar px-6 pb-6 text-ink-muted`}
+                        className={`min-h-0 flex-1 ${bodyScrollable ? "overflow-y-auto overscroll-contain" : "overflow-hidden"} overflow-x-hidden custom-scrollbar px-6 pb-6 text-ink-muted`}
                     >
                         {children}
                     </div>

@@ -121,14 +121,21 @@ const WorkspaceConversationSearchModal = ({ open, onClose, onSelect }) => {
                 });
             } catch (error) {
                 debugConversationSearch(
-                    controller.signal.aborted ? "list-request-aborted" : "list-request-error",
+                    controller.signal.aborted
+                        ? "list-request-aborted"
+                        : "list-request-error",
                     {
                         modalInstanceId,
                         requestVersion,
-                        errorName: controller.signal.aborted ? undefined : error?.name,
+                        errorName: controller.signal.aborted
+                            ? undefined
+                            : error?.name,
                     },
                 );
-                if (controller.signal.aborted || requestVersion !== requestVersionRef.current)
+                if (
+                    controller.signal.aborted ||
+                    requestVersion !== requestVersionRef.current
+                )
                     return;
                 setItems([]);
                 setHasMore(false);
@@ -151,7 +158,14 @@ const WorkspaceConversationSearchModal = ({ open, onClose, onSelect }) => {
     }, [modalInstanceId, open, query, retryKey]);
 
     const loadMore = useCallback(async () => {
-        if (!open || loading || loadingMore || loadError || loadMoreError || !hasMore)
+        if (
+            !open ||
+            loading ||
+            loadingMore ||
+            loadError ||
+            loadMoreError ||
+            !hasMore
+        )
             return;
         const requestVersion = requestVersionRef.current;
         const nextPage = page + 1;
@@ -175,18 +189,39 @@ const WorkspaceConversationSearchModal = ({ open, onClose, onSelect }) => {
             setPage(result.page || nextPage);
             setHasMore(result.hasMore);
         } catch {
-            if (!controller.signal.aborted && requestVersion === requestVersionRef.current)
+            if (
+                !controller.signal.aborted &&
+                requestVersion === requestVersionRef.current
+            )
                 setLoadMoreError(true);
         } finally {
             if (requestVersion === requestVersionRef.current)
                 setLoadingMore(false);
         }
-    }, [hasMore, loadError, loadMoreError, loading, loadingMore, open, page, query]);
+    }, [
+        hasMore,
+        loadError,
+        loadMoreError,
+        loading,
+        loadingMore,
+        open,
+        page,
+        query,
+    ]);
 
     useEffect(() => {
         const root = resultsRef.current;
         const sentinel = sentinelRef.current;
-        if (!open || !root || !sentinel || !hasMore || loading || loadingMore || loadError || loadMoreError)
+        if (
+            !open ||
+            !root ||
+            !sentinel ||
+            !hasMore ||
+            loading ||
+            loadingMore ||
+            loadError ||
+            loadMoreError
+        )
             return undefined;
         if (typeof IntersectionObserver === "undefined") return undefined;
 
@@ -198,7 +233,16 @@ const WorkspaceConversationSearchModal = ({ open, onClose, onSelect }) => {
         );
         observer.observe(sentinel);
         return () => observer.disconnect();
-    }, [hasMore, loadError, loadMore, loadMoreError, loading, loadingMore, open, items.length]);
+    }, [
+        hasMore,
+        loadError,
+        loadMore,
+        loadMoreError,
+        loading,
+        loadingMore,
+        open,
+        items.length,
+    ]);
 
     const close = () => {
         debugConversationSearch("close-request", { modalInstanceId });
@@ -214,15 +258,21 @@ const WorkspaceConversationSearchModal = ({ open, onClose, onSelect }) => {
             width="max-w-lg"
             height={560}
         >
-            <div className="flex flex-col gap-3">
+            <div className="flex h-full min-h-0 flex-col gap-3">
                 <div className="flex items-center gap-3 rounded-xl border border-border px-3.5 py-2.5">
-                    <Search className="h-4 w-4 shrink-0 text-ink-muted" aria-hidden="true" />
+                    <Search
+                        className="h-4 w-4 shrink-0 text-ink-muted"
+                        aria-hidden="true"
+                    />
                     <input
                         type="search"
                         value={query}
                         onChange={(event) => setQuery(event.target.value)}
                         maxLength={100}
-                        placeholder={t("workspace.agent.searchPlaceholder", "搜索对话")}
+                        placeholder={t(
+                            "workspace.agent.searchPlaceholder",
+                            "搜索对话",
+                        )}
                         autoFocus
                         className="min-w-0 flex-1 bg-transparent text-body text-ink outline-none placeholder:text-ink-faint"
                     />
@@ -240,21 +290,32 @@ const WorkspaceConversationSearchModal = ({ open, onClose, onSelect }) => {
 
                 <div
                     ref={resultsRef}
-                    className="max-h-[50vh] min-h-32 overflow-y-auto pr-1"
+                    className="min-h-0 flex-1 overflow-y-auto overscroll-contain pr-1"
                     aria-busy={loading || loadingMore}
                 >
                     {loading ? (
                         <div className="flex min-h-32 items-center justify-center gap-2 text-caption text-ink-muted">
-                            <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
-                            {t("workspace.agent.loadingSessions", "正在加载对话…")}
+                            <Loader2
+                                className="h-4 w-4 animate-spin"
+                                aria-hidden="true"
+                            />
+                            {t(
+                                "workspace.agent.loadingSessions",
+                                "正在加载对话…",
+                            )}
                         </div>
                     ) : loadError ? (
                         <button
                             type="button"
-                            onClick={() => setRetryKey((current) => current + 1)}
+                            onClick={() =>
+                                setRetryKey((current) => current + 1)
+                            }
                             className="flex min-h-32 w-full items-center justify-center text-caption text-accent hover:underline"
                         >
-                            {t("workspace.agent.loadSessionsFailed", "加载失败，点击重试")}
+                            {t(
+                                "workspace.agent.loadSessionsFailed",
+                                "加载失败，点击重试",
+                            )}
                         </button>
                     ) : items.length ? (
                         <>
@@ -270,19 +331,35 @@ const WorkspaceConversationSearchModal = ({ open, onClose, onSelect }) => {
                                         className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left transition-colors hover:bg-surface-muted"
                                     >
                                         <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-accent-soft text-accent">
-                                            <MessageCircle className="h-4 w-4" aria-hidden="true" />
+                                            <MessageCircle
+                                                className="h-4 w-4"
+                                                aria-hidden="true"
+                                            />
                                         </span>
                                         <span className="min-w-0 flex-1 truncate text-body text-ink">
-                                            {session.title || t("blog.agent.untitled", "未命名对话")}
+                                            {session.title ||
+                                                t(
+                                                    "blog.agent.untitled",
+                                                    "未命名对话",
+                                                )}
                                         </span>
                                     </button>
                                 ))}
                             </div>
-                            <div ref={sentinelRef} className="flex min-h-10 items-center justify-center">
+                            <div
+                                ref={sentinelRef}
+                                className="flex min-h-10 items-center justify-center"
+                            >
                                 {loadingMore ? (
                                     <span className="flex items-center gap-2 text-caption text-ink-muted">
-                                        <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
-                                        {t("workspace.agent.loadingSessions", "正在加载对话…")}
+                                        <Loader2
+                                            className="h-4 w-4 animate-spin"
+                                            aria-hidden="true"
+                                        />
+                                        {t(
+                                            "workspace.agent.loadingSessions",
+                                            "正在加载对话…",
+                                        )}
                                     </span>
                                 ) : loadMoreError ? (
                                     <button
@@ -290,7 +367,10 @@ const WorkspaceConversationSearchModal = ({ open, onClose, onSelect }) => {
                                         onClick={loadMore}
                                         className="text-caption text-accent hover:underline"
                                     >
-                                        {t("workspace.agent.loadSessionsFailed", "加载失败，点击重试")}
+                                        {t(
+                                            "workspace.agent.loadSessionsFailed",
+                                            "加载失败，点击重试",
+                                        )}
                                     </button>
                                 ) : hasMore ? (
                                     <button
@@ -298,7 +378,10 @@ const WorkspaceConversationSearchModal = ({ open, onClose, onSelect }) => {
                                         onClick={loadMore}
                                         className="text-caption text-ink-muted hover:text-accent"
                                     >
-                                        {t("workspace.agent.loadMoreSessions", "加载更多对话")}
+                                        {t(
+                                            "workspace.agent.loadMoreSessions",
+                                            "加载更多对话",
+                                        )}
                                     </button>
                                 ) : null}
                             </div>
@@ -306,8 +389,14 @@ const WorkspaceConversationSearchModal = ({ open, onClose, onSelect }) => {
                     ) : (
                         <div className="flex min-h-32 items-center justify-center text-caption text-ink-muted">
                             {query.trim()
-                                ? t("blog.agentChat.searchNoMatches", "没有找到匹配的会话")
-                                : t("workspace.agent.noConversations", "暂无对话")}
+                                ? t(
+                                      "blog.agentChat.searchNoMatches",
+                                      "没有找到匹配的会话",
+                                  )
+                                : t(
+                                      "workspace.agent.noConversations",
+                                      "暂无对话",
+                                  )}
                         </div>
                     )}
                 </div>

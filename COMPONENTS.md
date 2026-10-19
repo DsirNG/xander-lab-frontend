@@ -133,3 +133,6 @@
 AgentComposer 支持可选 `quickActions`（`key` / `icon` / `iconClassName`），首页可复用输入框展示不同任务入口。AgentArtifactPanel 支持 `editable`，在右侧编辑标题与 Markdown，通过 `onCreateDraft({ title, content })` 调用真实服务保存草稿（工作台保持当前对话，`draftPostId` 恢复已保存内容）；未开启时保持原预览行为。
 
 工作区上下文：文章根据实际 `blog_generate` 工具结果展开；AgentArtifactPanel 的 `onEditingChange` 防止生成新文章时覆盖尚在编辑的内容，编辑支持摘要、分类、标签。发布面板仅支持当前 Workers 的 CSDN/掘金，以已保存的 `postId` 发起会话审批。记忆入口仅展示真实 `recall_memory` 返回的内容，文件入口复用附件上传服务。
+
+- `Button` 支持 `debounceMs`（默认 0）：首次点击立即执行，指定间隔内拦截重复点击与表单默认提交；异步写入仍需业务级 pending 锁，并通过 `loading` 展示 spinner。
+- `Modal` 固定高度受动态视口限制；主体使用 `min-h-0 flex-1` 内部滚动。多弹框共享背景滚动锁，只有最上层处理 Escape / Tab。

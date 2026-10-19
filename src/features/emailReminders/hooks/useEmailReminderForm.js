@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useToast } from "@shared/hooks/useToast";
 import { emailReminderService } from "../services/emailReminderService";
 import {
@@ -85,6 +85,7 @@ const createInitialForm = () => {
 export default function useEmailReminderForm({ onClose, onCreated, t }) {
     const toast = useToast();
     const [form, setForm] = useState(createInitialForm);
+    const creatingRef = useRef(false);
     const [isCreating, setIsCreating] = useState(false);
     const [clientRequestId] = useState(createClientRequestId);
     const [isTemplatePickerOpen, setIsTemplatePickerOpen] = useState(false);
@@ -209,6 +210,7 @@ export default function useEmailReminderForm({ onClose, onCreated, t }) {
 
     const handleCreate = async (event) => {
         event.preventDefault();
+        if (creatingRef.current) return;
         const recipientEmail = form.recipientEmail.trim();
         const subject = form.subject.trim();
         const message = form.message.trim();
@@ -271,6 +273,7 @@ export default function useEmailReminderForm({ onClose, onCreated, t }) {
             }
         }
 
+        creatingRef.current = true;
         setIsCreating(true);
         try {
             await emailReminderService.create(payload);
@@ -281,6 +284,7 @@ export default function useEmailReminderForm({ onClose, onCreated, t }) {
         } catch {
             // Shared HTTP handling presents the server error.
         } finally {
+            creatingRef.current = false;
             setIsCreating(false);
         }
     };

@@ -1,4 +1,4 @@
-import React, { forwardRef } from "react";
+import React, { forwardRef, useRef } from "react";
 import { Loader2 } from "lucide-react";
 import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
@@ -60,6 +60,8 @@ const Button = forwardRef(
             icon: Icon,
             iconPosition = "left",
             loading = false,
+            debounceMs = 0,
+            onClick,
             disabled = false,
             block = false,
             className = "",
@@ -69,6 +71,19 @@ const Button = forwardRef(
         },
         ref,
     ) => {
+        const lastClickRef = useRef(-Infinity);
+        const handleClick = (event) => {
+            if (
+                disabled ||
+                loading ||
+                performance.now() - lastClickRef.current < debounceMs
+            ) {
+                event.preventDefault();
+                return;
+            }
+            lastClickRef.current = performance.now();
+            onClick?.(event);
+        };
         const isLink = variant === "link";
         const iconOnly = !!Icon && !children;
 
@@ -104,6 +119,7 @@ const Button = forwardRef(
                 aria-busy={loading || undefined}
                 className={classes}
                 {...rest}
+                onClick={handleClick}
             >
                 {(!Icon || iconPosition === "left") && (Icon || loading)
                     ? renderIcon()

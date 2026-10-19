@@ -136,3 +136,45 @@ describe("Modal", () => {
         expect(close).toHaveFocus();
     });
 });
+
+
+describe("nested Modal compatibility", () => {
+    it("keeps the background locked and handles Escape only in the top dialog", () => {
+        const outerClose = vi.fn();
+        const innerClose = vi.fn();
+        const { rerender } = render(
+            <>
+                <Modal isOpen onClose={outerClose} title="outer" />
+                <Modal isOpen onClose={innerClose} title="inner" />
+            </>,
+        );
+        fireEvent.keyDown(window, { key: "Escape" });
+        expect(innerClose).toHaveBeenCalledTimes(1);
+        expect(outerClose).not.toHaveBeenCalled();
+        const ids = screen
+            .getAllByRole("dialog")
+            .map((dialog) => dialog.getAttribute("aria-labelledby"));
+        expect(new Set(ids).size).toBe(2);
+        rerender(
+            <>
+                <Modal isOpen onClose={outerClose} title="outer" />
+                <Modal isOpen={false} onClose={innerClose} title="inner" />
+            </>,
+        );
+        expect(document.body.style.overflow).toBe("hidden");
+        fireEvent.keyDown(window, { key: "Escape" });
+        expect(outerClose).toHaveBeenCalledTimes(1);
+    });
+    it("restores existing body styles after the last dialog unmounts", () => {
+        document.body.style.overflow = "auto";
+        document.body.style.paddingRight = "12px";
+        const { unmount } = render(
+            <Modal isOpen onClose={vi.fn()} title="dialog" />,
+        );
+        unmount();
+        expect(document.body.style.overflow).toBe("auto");
+        expect(document.body.style.paddingRight).toBe("12px");
+        document.body.style.overflow = "";
+        document.body.style.paddingRight = "";
+    });
+});

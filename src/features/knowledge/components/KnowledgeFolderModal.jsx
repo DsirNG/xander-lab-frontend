@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import PropTypes from "prop-types";
 import { useTranslation } from "react-i18next";
 import Modal from "@shared/ui/overlays/Modal";
@@ -20,6 +20,9 @@ const KnowledgeFolderModal = ({
     const { t } = useTranslation();
     const [name, setName] = useState("");
 
+    const submittingRef = useRef(false);
+    const [submitting, setSubmitting] = useState(false);
+    const busy = loading || submitting;
     const isEdit = Boolean(folder);
 
     useEffect(() => {
@@ -31,18 +34,27 @@ const KnowledgeFolderModal = ({
     const handleSubmit = async (e) => {
         e.preventDefault();
         const trimmed = name.trim();
-        if (!trimmed) return;
-        await onSubmit({
-            id: folder?.id,
-            parentId: folder ? folder.parentId : parentId,
-            name: trimmed,
-        });
+        if (!trimmed || busy || submittingRef.current) return;
+        submittingRef.current = true;
+        setSubmitting(true);
+        try {
+            await onSubmit({
+                id: folder?.id,
+                parentId: folder ? folder.parentId : parentId,
+                name: trimmed,
+            });
+        } finally {
+            submittingRef.current = false;
+            setSubmitting(false);
+        }
     };
 
     return (
         <Modal
             isOpen={isOpen}
-            onClose={onClose}
+            onClose={() => {
+                if (!submittingRef.current && !loading) onClose();
+            }}
             title={
                 isEdit
                     ? t("knowledgeBase.folders.renameTitle", "重命名文件夹")
@@ -51,17 +63,13 @@ const KnowledgeFolderModal = ({
             width="max-w-md"
             footer={
                 <>
-                    <Button
-                        variant="ghost"
-                        onClick={onClose}
-                        disabled={loading}
-                    >
+                    <Button variant="ghost" onClick={onClose} disabled={busy}>
                         {t("common.cancel", "取消")}
                     </Button>
                     <Button
                         type="submit"
                         form="folder-form"
-                        loading={loading}
+                        loading={busy}
                         disabled={!name.trim()}
                     >
                         {t("common.confirm", "确定")}

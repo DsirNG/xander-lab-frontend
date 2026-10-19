@@ -121,3 +121,29 @@ describe("Button", () => {
         expect(Loader2).toBeDefined();
     });
 });
+
+
+describe("Button duplicate click protection", () => {
+    it("executes immediately and suppresses repeated clicks during the configured interval", () => {
+        const clock = vi.spyOn(performance, "now");
+        const onClick = vi.fn();
+        try {
+            clock.mockReturnValue(1000);
+            render(
+                <Button onClick={onClick} debounceMs={300}>
+                    save
+                </Button>,
+            );
+            const button = screen.getByRole("button", { name: "save" });
+            fireEvent.click(button);
+            clock.mockReturnValue(1100);
+            fireEvent.click(button);
+            expect(onClick).toHaveBeenCalledTimes(1);
+            clock.mockReturnValue(1300);
+            fireEvent.click(button);
+            expect(onClick).toHaveBeenCalledTimes(2);
+        } finally {
+            clock.mockRestore();
+        }
+    });
+});

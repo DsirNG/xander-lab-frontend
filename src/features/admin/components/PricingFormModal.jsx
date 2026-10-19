@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Loader2 } from "lucide-react";
+import Button from "@shared/ui/primitives/Button";
 import Modal from "@shared/ui/overlays/Modal";
 import FormField from "@shared/ui/forms/FormField";
 import { formInputCls } from "@shared/ui/forms/formStyles";
@@ -32,6 +32,11 @@ const PricingFormModal = ({ isOpen, price, onClose, onSaved }) => {
     const [remark, setRemark] = useState("");
     const [saving, setSaving] = useState(false);
     const [formError, setFormError] = useState("");
+
+    const savingRef = useRef(false);
+    const close = () => {
+        if (!savingRef.current) onClose();
+    };
 
     const editing = Boolean(price);
 
@@ -68,6 +73,7 @@ const PricingFormModal = ({ isOpen, price, onClose, onSaved }) => {
     };
 
     const handleSubmit = async () => {
+        if (savingRef.current) return;
         const trimmedModel = model.trim();
         const inputMilli = parsePrice(inputPrice);
         const outputMilli = parsePrice(outputPrice);
@@ -87,6 +93,7 @@ const PricingFormModal = ({ isOpen, price, onClose, onSaved }) => {
             return;
         }
         try {
+            savingRef.current = true;
             setSaving(true);
             await adminService.upsertModelPrice(trimmedModel, {
                 inputMilliPer1kToken: inputMilli,
@@ -108,31 +115,24 @@ const PricingFormModal = ({ isOpen, price, onClose, onSaved }) => {
                 err?.response?.data?.message || t("admin.pricing.saveFailed"),
             );
         } finally {
+            savingRef.current = false;
             setSaving(false);
         }
     };
 
     const footer = (
         <>
-            <button
-                type="button"
-                onClick={onClose}
-                disabled={saving}
-                className="rounded-xl px-5 py-2.5 text-caption font-bold text-ink-muted transition hover:bg-surface-muted disabled:opacity-50"
-            >
+            <Button variant="ghost" onClick={close} disabled={saving}>
                 {t("common.cancel")}
-            </button>
-            <button
-                type="button"
+            </Button>
+            <Button
+                variant="ink"
                 onClick={handleSubmit}
-                disabled={saving}
-                className="inline-flex items-center gap-2 rounded-xl bg-ink px-6 py-2.5 text-caption font-bold text-white transition hover:bg-accent active:scale-95 disabled:opacity-60"
+                loading={saving}
+                debounceMs={300}
             >
-                {saving ? (
-                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                ) : null}
                 {t("common.save")}
-            </button>
+            </Button>
         </>
     );
 
@@ -159,7 +159,7 @@ const PricingFormModal = ({ isOpen, price, onClose, onSaved }) => {
     return (
         <Modal
             isOpen={isOpen}
-            onClose={onClose}
+            onClose={close}
             title={
                 editing
                     ? t("admin.pricing.editTitle")
