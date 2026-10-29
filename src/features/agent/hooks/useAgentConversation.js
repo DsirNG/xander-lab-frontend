@@ -104,7 +104,10 @@ export const useAgentConversation = ({ conversationId }) => {
         cursorRef,
         pushStep,
         runVersionRef,
+        runStartedAtRef,
         streamEpochRef,
+        thinkingStartedAtRef,
+        thoughtDurations,
     } = useAgentConversationLive({
         t,
         isCurrent,
@@ -125,9 +128,21 @@ export const useAgentConversation = ({ conversationId }) => {
                 runVersionRef.current !== null &&
                 nextRunVersion !== null &&
                 runVersionRef.current !== nextRunVersion;
+            const runStartNeedsSync = runVersionRef.current === null || runChanged;
             if (runChanged)
                 beginRunGeneration(nextRunVersion, { clearLive: false });
             if (nextRunVersion !== null) runVersionRef.current = nextRunVersion;
+
+            if (snapshot?.status === "running") {
+                const runStartedAt = Date.parse(
+                    snapshot.runStartedAt || snapshot.updatedAt || "",
+                );
+                if (Number.isFinite(runStartedAt)) {
+                    runStartedAtRef.current = runStartedAt;
+                    if (runStartNeedsSync || !thinkingStartedAtRef.current)
+                        thinkingStartedAtRef.current = runStartedAt;
+                }
+            }
 
             setConversation(snapshot);
             setWorkspaceResults(
@@ -170,7 +185,9 @@ export const useAgentConversation = ({ conversationId }) => {
             beginRunGeneration,
             clearLiveState,
             isCurrent,
+            runStartedAtRef,
             runVersionRef,
+            thinkingStartedAtRef,
             t,
             updateCancelling,
             updateRunning,
@@ -549,7 +566,7 @@ export const useAgentConversation = ({ conversationId }) => {
     }, [isCurrent, t, updateCancelling, updateRunning]);
 
     const decideApproval = useCallback(
-        async (approvalId, approved, reason = "") => {
+        async (approvalId, approved, reason = "", location = null) => {
             const id = activeIdRef.current;
             if (!id || !approvalId || decidingApprovalId != null) return null;
             setDecidingApprovalId(approvalId);
@@ -559,6 +576,7 @@ export const useAgentConversation = ({ conversationId }) => {
                     approvalId,
                     approved,
                     reason,
+                    location,
                     { _silent: true, dedupe: false },
                 );
                 const detail = await agentConversationService.get(id, {
@@ -792,6 +810,9 @@ export const useAgentConversation = ({ conversationId }) => {
         reconnecting,
         errorMessage,
         liveSteps,
+        thoughtDurations,
+        thinkingStartedAt:
+            thinkingStartedAtRef.current ?? runStartedAtRef.current,
         deepThinking,
         setDeepThinking,
         loadSessions,

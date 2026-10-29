@@ -1,13 +1,9 @@
-import { FileText, Sparkles } from "lucide-react";
+import { FileText } from "lucide-react";
 import AgentMarkdown from "./AgentMarkdown";
+import { AgentThoughtCard } from "./AgentConversationMessage";
 import { cleanImageMarkdown } from "./imageResult";
 
-export const WorkspaceAgentThoughtCard = ({ content }) => (
-    <div className="flex items-start gap-2 rounded-xl border border-border bg-canvas px-3 py-2 text-xs leading-5 text-ink-muted">
-        <Sparkles className="mt-0.5 h-3.5 w-3.5 shrink-0 text-ink-muted" />
-        <span className="whitespace-pre-wrap">{content}</span>
-    </div>
-);
+export const WorkspaceAgentThoughtCard = AgentThoughtCard;
 
 const MessageAttachments = ({ attachments = [] }) =>
     attachments.length ? (

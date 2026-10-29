@@ -1,14 +1,58 @@
-import { memo } from "react";
-import { FileText, Sparkles } from "lucide-react";
+import { memo, useState } from "react";
+import {
+    ChevronDown,
+    ChevronRight,
+    FileText,
+    Sparkles,
+} from "lucide-react";
+import { useTranslation } from "react-i18next";
 import AgentMarkdown from "./AgentMarkdown";
 import { cleanImageMarkdown } from "./imageResult";
+import { formatActivityDuration } from "../utils/formatActivityDuration";
 
-export const AgentThoughtCard = ({ content }) => (
-    <div className="flex items-start gap-2 rounded-xl border border-border bg-canvas px-3 py-2 text-xs leading-5 text-ink-muted">
-        <Sparkles className="mt-0.5 h-3.5 w-3.5 shrink-0 text-ink-muted" />
-        <span className="whitespace-pre-wrap">{content}</span>
-    </div>
-);
+export const AgentThoughtCard = ({ content, durationMs }) => {
+    const { t } = useTranslation();
+    const [open, setOpen] = useState(false);
+    const Chevron = open ? ChevronDown : ChevronRight;
+    const duration = Number.isFinite(durationMs)
+        ? formatActivityDuration(durationMs)
+        : null;
+
+    return (
+        <div className="w-full text-xs leading-5 text-ink-muted">
+            <button
+                type="button"
+                onClick={() => setOpen((current) => !current)}
+                aria-expanded={open}
+                className="flex min-h-8 max-w-full items-center gap-2 rounded-md px-1 text-left transition-colors hover:text-ink-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+            >
+                <Sparkles
+                    className="h-3.5 w-3.5 shrink-0 text-ink-faint"
+                    aria-hidden="true"
+                />
+                <span className="truncate">
+                    {duration
+                        ? t("blog.agentChat.thoughtFor", { duration })
+                        : t("blog.agentChat.thoughtContent")}
+                </span>
+                <Chevron
+                    className="h-3.5 w-3.5 shrink-0 text-ink-faint"
+                    aria-hidden="true"
+                />
+                <span className="sr-only">
+                    {open
+                        ? t("blog.agentChat.traceHide")
+                        : t("blog.agentChat.traceShow")}
+                </span>
+            </button>
+            {open && content ? (
+                <div className="ml-6 mt-1 whitespace-pre-wrap text-ink-muted">
+                    {content}
+                </div>
+            ) : null}
+        </div>
+    );
+};
 
 const MessageAttachments = ({ attachments = [] }) =>
     attachments.length ? (

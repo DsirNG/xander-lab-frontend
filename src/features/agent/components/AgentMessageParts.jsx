@@ -12,6 +12,7 @@ import QuizCardStack from "./QuizCardStack";
 import { parseQuizPayload } from "./quizPayload";
 import ArtifactCard from "./ArtifactCard";
 import { parseArtifactPayload } from "./artifactPayload";
+import AgentActivityDuration from "./AgentActivityDuration";
 
 export { default as ImageToolResult } from "./ImageToolResult";
 
@@ -139,24 +140,30 @@ export const ImageToolProgressPanel = ({ message }) => {
     );
 };
 
-export const ThinkingIndicator = ({ label }) => (
+export const ThinkingIndicator = ({ label, startedAt }) => (
     <div
         className="flex justify-start"
         role="status"
         aria-live="polite"
         aria-label={label}
     >
-        <div
-            className="inline-flex min-h-8 items-center gap-1 px-1"
-            aria-hidden="true"
-        >
-            {[0, 1, 2].map((index) => (
-                <span
-                    key={index}
-                    className="h-1.5 w-1.5 animate-bounce rounded-full bg-ink-muted"
-                    style={{ animationDelay: `${index * 140}ms` }}
-                />
-            ))}
+        <div className="inline-flex min-h-8 items-center gap-2 px-1 text-xs text-ink-muted">
+            <span className="inline-flex items-center gap-1" aria-hidden="true">
+                {[0, 1, 2].map((index) => (
+                    <span
+                        key={index}
+                        className="h-1.5 w-1.5 animate-bounce rounded-full bg-ink-muted"
+                        style={{ animationDelay: `${index * 140}ms` }}
+                    />
+                ))}
+            </span>
+            <span>{label}</span>
+            {startedAt ? (
+                <>
+                    <span aria-hidden="true">·</span>
+                    <AgentActivityDuration startedAt={startedAt} active />
+                </>
+            ) : null}
         </div>
     </div>
 );

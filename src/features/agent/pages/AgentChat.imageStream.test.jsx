@@ -6,7 +6,7 @@ const hookState = { current: {} };
 
 vi.mock("react-router-dom", () => ({
     useNavigate: () => vi.fn(),
-    useParams: () => ({}),
+    useParams: () => ({ conversationId: "1" }),
     useSearchParams: () => [new URLSearchParams(), vi.fn()],
 }));
 

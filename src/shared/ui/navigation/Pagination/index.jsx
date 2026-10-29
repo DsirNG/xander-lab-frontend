@@ -86,7 +86,7 @@ const Pagination = ({
                         value={String(pageSize)}
                         onChange={handlePageSizeChange}
                         triggerClassName="!border-border !bg-canvas !text-ink-secondary hover:!border-accent-600 hover:!bg-surface-muted rounded-xl"
-                        dropdownClassName="!border-border !bg-canvas !shadow-xl !shadow-ink/10 rounded-xl"
+                        dropdownClassName="!border-border !bg-canvas !shadow-md !shadow-black/20 rounded-xl"
                     />
                 </div>
             </div>

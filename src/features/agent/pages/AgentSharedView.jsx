@@ -6,10 +6,10 @@ import {
     Bot,
     Loader2,
     MessageSquareText,
-    Sparkles,
 } from "lucide-react";
 import { get } from "@api";
 import AgentMarkdown from "../components/AgentMarkdown";
+import { AgentThoughtCard } from "../components/AgentConversationMessage";
 import ArtifactCard from "../components/ArtifactCard";
 import ImageToolResult from "../components/ImageToolResult";
 import { parseArtifactPayload } from "../components/artifactPayload";
@@ -131,15 +131,11 @@ const AgentSharedView = () => {
                         }
                         if (message.kind === "thought") {
                             return (
-                                <div
+                                <AgentThoughtCard
                                     key={message.id}
-                                    className="flex items-start gap-2 rounded-xl border border-border bg-canvas px-3 py-2 text-xs leading-5 text-ink-muted"
-                                >
-                                    <Sparkles className="mt-0.5 h-3.5 w-3.5 shrink-0 text-ink-muted" />
-                                    <span className="whitespace-pre-wrap">
-                                        {message.content}
-                                    </span>
-                                </div>
+                                    content={message.content}
+                                    durationMs={message.durationMs}
+                                />
                             );
                         }
                         if (message.kind === "tool_result") {

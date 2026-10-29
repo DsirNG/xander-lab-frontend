@@ -23,7 +23,7 @@ describe("ThinkingIndicator", () => {
             "aria-label",
             "Working...",
         );
-        expect(screen.queryByText("Working...")).not.toBeInTheDocument();
+        expect(screen.getByText("Working...")).toBeVisible();
         expect(container.querySelectorAll(".animate-bounce")).toHaveLength(3);
     });
 });

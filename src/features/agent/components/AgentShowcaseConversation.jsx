@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import PropTypes from "prop-types";
-import { AlertCircle, Loader2, Sparkles } from "lucide-react";
+import { AlertCircle, Loader2 } from "lucide-react";
 import {
     ImageToolProgressPanel,
     ImageToolResult,
@@ -19,17 +19,7 @@ import {
 import { SelfCheckCard } from "./AgentTraceCard";
 import { parseQuizPayload } from "./quizPayload";
 import { parseToolPayload } from "../services/agentConversationService";
-
-const ThoughtCard = ({ content }) => (
-    <div className="flex items-start gap-2 rounded-xl border border-border bg-canvas px-3 py-2 text-xs leading-5 text-ink-muted">
-        <Sparkles className="mt-0.5 h-3.5 w-3.5 shrink-0 text-ink-muted" />
-        <span className="whitespace-pre-wrap">{content}</span>
-    </div>
-);
-
-ThoughtCard.propTypes = {
-    content: PropTypes.string.isRequired,
-};
+import { AgentThoughtCard as ThoughtCard } from "./AgentConversationMessage";
 
 const ConversationMessage = ({ role, content, imageUrls, isStreaming }) => (
     <div
@@ -156,6 +146,7 @@ export default function AgentShowcaseConversation({
                             <ThoughtCard
                                 key={message.id}
                                 content={message.content}
+                                durationMs={message.durationMs}
                             />
                         );
                     }
@@ -224,6 +215,7 @@ export default function AgentShowcaseConversation({
                             <ThoughtCard
                                 key={`live-${index}`}
                                 content={step.content}
+                                durationMs={step.durationMs}
                             />
                         );
                     }

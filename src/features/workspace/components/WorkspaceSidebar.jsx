@@ -182,7 +182,7 @@ const WorkspaceSidebar = ({
             onClick={() => setCollapsed(false)}
             aria-label={sidebarToggleLabel}
             title={sidebarToggleLabel}
-            className="group/logo relative grid h-10 w-10 shrink-0 place-items-center rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
+            className="group/logo relative grid h-8 w-8 shrink-0 place-items-center rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
         >
             <img
                 src="/assets/workspace/workspace-logo.svg"
@@ -201,7 +201,7 @@ const WorkspaceSidebar = ({
         : "text-ink-secondary hover:bg-surface-muted hover:text-ink";
     const linkClass = (view) => {
         const active = isViewActive(view);
-        return `group/nav relative flex h-10 items-center text-body transition-colors duration-200 ${
+        return `group/nav relative flex h-9 items-center text-body transition-colors duration-200 ${
             collapsed
                 ? "h-11 w-11 justify-center rounded-xl"
                 : "w-full gap-3 rounded-lg px-3"
@@ -355,7 +355,7 @@ const WorkspaceSidebar = ({
                 ) : null}
 
                 <nav
-                    className={`flex w-full flex-col ${collapsed ? "mt-2 items-center gap-1" : "mt-5 gap-1"}`}
+                    className={`flex w-full flex-col ${collapsed ? "mt-2 items-center gap-1" : "mt-3 gap-0"}`}
                     aria-label={t("workspace.agent.tools")}
                 >
                     {!collapsed ? <div className="mb-1 px-3 pt-1 text-micro font-medium uppercase tracking-[0.12em] text-ink-faint">{t("workspace.agent.workspaceNav")}</div> : null}
@@ -367,7 +367,7 @@ const WorkspaceSidebar = ({
                             {!collapsed ? <span>{label}</span> : null}
                         </button>
                     ))}
-                    <div className={`my-2 border-t border-border ${collapsed ? "w-9" : "mx-2"}`} />
+                    <div className={`my-1 border-t border-border ${collapsed ? "w-9" : "mx-2"}`} />
                     {!collapsed ? <div className="mb-1 px-3 text-micro font-medium uppercase tracking-[0.12em] text-ink-faint">{t("workspace.agent.tools")}</div> : null}
                     {utilityItems.map(({ view, icon: Icon, label }) => (
                         <button key={view} type="button" onClick={() => onSelectView(view)} className={linkClass(view)} title={collapsed ? label : undefined} aria-label={label} aria-current={isViewActive(view) ? "page" : undefined}>
@@ -383,7 +383,7 @@ const WorkspaceSidebar = ({
                     type="button"
                     onClick={() => setHistoryOpen((open) => !open)}
                     aria-expanded={historyOpen}
-                    className="mt-6 flex items-center justify-between border-t border-border px-2 pt-4 text-caption text-ink-muted"
+                    className="mt-3 flex items-center justify-between border-t border-border px-2 pt-3 text-caption text-ink-muted"
                 >
                     {t("blog.agentChat.recentChats")}
                     <ChevronRight
@@ -393,7 +393,7 @@ const WorkspaceSidebar = ({
                 <div
                     hidden={!historyOpen || collapsed}
                     ref={sessionListRef}
-                    className="mt-3 min-h-0 flex-1 overflow-y-auto"
+                    className="mt-2 min-h-0 flex-1 overflow-y-auto"
                 >
                     <div className="px-2 text-caption font-semibold text-ink-muted">
                         {t("workspace.agent.groups.pinned", "置顶")}

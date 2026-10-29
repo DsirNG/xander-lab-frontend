@@ -34,6 +34,7 @@ it("captures language preferences for a new request without rewriting its conten
         deepThinking: false,
         locale: "en",
         replyLanguage: "auto",
+        timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     });
     setReplyLanguage("zh");
     expect(payload.replyLanguage).toBe("auto");

@@ -1,5 +1,5 @@
 import { memo } from "react";
-import { AlertCircle, Loader2 } from "lucide-react";
+import { AlertCircle, FileText, Loader2 } from "lucide-react";
 import LoadingSpinner from "@shared/ui/feedback/LoadingSpinner";
 import AgentApprovalCard from "./AgentApprovalCard";
 import {
@@ -44,6 +44,10 @@ const AgentConversationTimeline = memo(
         isActive,
         cancelling = false,
         streamingAnswer,
+        articleOutput,
+        onOpenArticle,
+        thoughtDurations = [],
+        thinkingStartedAt,
         reconnecting,
         errorMessage,
         statusLine,
@@ -124,6 +128,7 @@ const AgentConversationTimeline = memo(
                                 <ThoughtComponent
                                     key={message.id}
                                     content={message.content}
+                                    durationMs={message.durationMs}
                                 />
                             );
                         }
@@ -192,13 +197,19 @@ const AgentConversationTimeline = memo(
                                     attachments={step.attachments}
                                 />
                             );
-                        if (step.type === "thought")
+                        if (step.type === "thought") {
+                            const thoughtIndex = steps
+                                .slice(0, index)
+                                .filter((entry) => entry.type === "thought")
+                                .length;
                             return (
                                 <ThoughtComponent
                                     key={`live-${index}`}
                                     content={step.content}
+                                    durationMs={thoughtDurations[thoughtIndex]}
                                 />
                             );
+                        }
                         if (step.type === "plan")
                             return (
                                 <PlanCard
@@ -280,6 +291,24 @@ const AgentConversationTimeline = memo(
                         }
                         return null;
                     })}
+                    {articleOutput?.taskId && onOpenArticle ? (
+                        <div className="flex justify-start">
+                            <button
+                                type="button"
+                                onClick={onOpenArticle}
+                                aria-label={t("workspace.agent.openGeneratedArticle")}
+                                className="inline-flex min-h-9 max-w-full items-center gap-2 rounded-lg px-2 text-left text-xs text-ink-secondary transition-colors hover:bg-surface-muted hover:text-ink"
+                            >
+                                <FileText className="h-4 w-4 shrink-0 text-ink-muted" aria-hidden="true" />
+                                <span className="truncate font-medium">
+                                    {articleOutput.title || t("blog.agent.article")}
+                                </span>
+                                <span className="shrink-0 text-ink-faint">
+                                    {t("workspace.agent.openGeneratedArticle")}
+                                </span>
+                            </button>
+                        </div>
+                    ) : null}
                     {activeImageGeneration ? (
                         <ImageToolProgressPanel
                             message={activeImageGeneration.message}
@@ -287,9 +316,15 @@ const AgentConversationTimeline = memo(
                     ) : null}
                     {(isActive || creating || (loading && steps.length > 0)) &&
                         !streamingAnswer &&
-                        !activeImageGeneration && (
+                        !activeImageGeneration &&
+                        !steps.some(
+                            (step) =>
+                                step.type === "trace" &&
+                                step.status === "running",
+                        ) && (
                             <ThinkingIndicator
                                 label={t("blog.agentChat.thinking")}
+                                startedAt={thinkingStartedAt}
                             />
                         )}
                     {(reconnecting || errorMessage || cancelling) && (

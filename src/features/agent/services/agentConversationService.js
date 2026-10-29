@@ -60,6 +60,7 @@ export const agentConversationService = {
                     ? "en"
                     : "zh",
                 replyLanguage: getReplyLanguage(),
+                timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC",
             },
             { onEvent, ...config },
         ),
@@ -69,10 +70,10 @@ export const agentConversationService = {
     listApprovals: (id, config) =>
         get(`${BASE}/${id}/approvals`, undefined, config),
     /** Decides one persisted action without creating a new tool invocation. */
-    decideApproval: (id, approvalId, approved, reason, config) =>
+    decideApproval: (id, approvalId, approved, reason, location, config) =>
         post(
             `${BASE}/${id}/approvals/${approvalId}/decision`,
-            { approved, reason },
+            { approved, reason, ...(location ? { location } : {}) },
             config,
         ),
     /** 上报已读：清掉列表上的“生成完成”提醒，不改变会话排序时间 */

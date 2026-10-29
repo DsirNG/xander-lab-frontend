@@ -42,6 +42,8 @@ import {
     hasStreamingAnswer,
 } from "../utils/conversationState";
 
+const EMPTY_ITEMS = [];
+
 const WorkspaceAgentChat = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
@@ -49,7 +51,7 @@ const WorkspaceAgentChat = () => {
     const { plugins = [] } = agent;
     const { conversationId } = useParams();
     const [searchParams, setSearchParams] = useSearchParams();
-    const blogTaskId = searchParams.get("blogTaskId");
+    const requestedBlogTaskId = searchParams.get("blogTaskId");
     const workspaceView = ["writing", "documents", "memory"].includes(
         searchParams.get("view"),
     )
@@ -57,15 +59,6 @@ const WorkspaceAgentChat = () => {
         : "chat";
     const reduceMotion = useReducedMotion();
     const toast = useToast();
-    const artifact = useAgentArtifact({
-        stayInWorkspace: true,
-        blogTaskId,
-        navigate,
-        searchParams,
-        setSearchParams,
-        t,
-        toast,
-    });
     const queryParam = searchParams.get("q");
     const { userInfo } = useAuthSession();
 
@@ -94,6 +87,7 @@ const WorkspaceAgentChat = () => {
     const chatEndRef = useRef(null);
     const chatScrollRef = useRef(null);
     const stickToBottomRef = useRef(true);
+    const routeConversationRef = useRef(conversationId);
 
     const {
         conversation,
@@ -108,6 +102,8 @@ const WorkspaceAgentChat = () => {
         reconnecting,
         errorMessage,
         liveSteps,
+        thoughtDurations,
+        thinkingStartedAt,
         deepThinking,
         setDeepThinking,
         sendMessage,
@@ -123,24 +119,77 @@ const WorkspaceAgentChat = () => {
         setFilePreview(null);
     }, [conversationId]);
 
-    const isActive = running || conversation?.status === "running";
-    const awaitingApproval = conversation?.status === "awaiting_approval";
+    const conversationMatchesRoute = conversationId
+        ? String(conversation?.id ?? "") === String(conversationId)
+        : !conversation?.id;
+    const visibleMessages = conversationMatchesRoute ? messages : EMPTY_ITEMS;
+    const visibleWorkspaceResults = conversationMatchesRoute
+        ? workspaceResults
+        : EMPTY_ITEMS;
+    const visibleLiveSteps = conversationMatchesRoute ? liveSteps : EMPTY_ITEMS;
+    const visibleApprovals = conversationMatchesRoute ? approvals : EMPTY_ITEMS;
+    const pageLoading = loading || !conversationMatchesRoute;
+    const visibleThoughtDurations = conversationMatchesRoute
+        ? thoughtDurations
+        : EMPTY_ITEMS;
+    const visibleThinkingStartedAt = conversationMatchesRoute
+        ? thinkingStartedAt
+        : null;
+    const visibleReconnecting = conversationMatchesRoute && reconnecting;
+    const visibleErrorMessage = conversationMatchesRoute ? errorMessage : null;
+    const visibleCancelling = conversationMatchesRoute && cancelling;
+    const isActive =
+        conversationMatchesRoute &&
+        (running || conversation?.status === "running");
+    const awaitingApproval =
+        conversationMatchesRoute && conversation?.status === "awaiting_approval";
     const locked = isActive || awaitingApproval || creating;
-
     const outputs = useMemo(
-        () => workspaceOutputs(messages, workspaceResults, liveSteps),
-        [messages, workspaceResults, liveSteps],
+        () => workspaceOutputs(visibleMessages, visibleWorkspaceResults, visibleLiveSteps),
+        [visibleMessages, visibleWorkspaceResults, visibleLiveSteps],
     );
+    const blogTaskId =
+        conversationMatchesRoute &&
+        outputs.article?.taskId === requestedBlogTaskId
+            ? requestedBlogTaskId
+            : null;
+    const artifact = useAgentArtifact({
+        stayInWorkspace: true,
+        blogTaskId,
+        navigate,
+        searchParams,
+        setSearchParams,
+        t,
+        toast,
+    });
+
+    useEffect(() => {
+        if (routeConversationRef.current === conversationId) return;
+        routeConversationRef.current = conversationId;
+        setSearchParams((current) => {
+            if (
+                !current.has("blogTaskId") &&
+                !current.has("closedTaskId") &&
+                !current.has("draftPostId")
+            )
+                return current;
+            const next = new URLSearchParams(current);
+            next.delete("blogTaskId");
+            next.delete("closedTaskId");
+            next.delete("draftPostId");
+            return next;
+        }, { replace: true });
+    }, [conversationId, setSearchParams]);
     const contextFiles = useMemo(() => {
         const files = new Map();
         for (const file of [
-            ...messages.flatMap((message) => message.attachments || []),
+            ...visibleMessages.flatMap((message) => message.attachments || []),
             ...attachments,
         ]) {
             if (file?.url) files.set(file.url, file);
         }
         return [...files.values()];
-    }, [messages, attachments]);
+    }, [visibleMessages, attachments]);
 
     useEffect(() => {
         const taskId = outputs.article?.taskId;
@@ -183,10 +232,16 @@ const WorkspaceAgentChat = () => {
     };
 
     // 同一次工具调用的 start/progress/delta/end 先合成一条轨迹，收口后仍能展开回看。
-    const steps = useMemo(() => mergeLiveTraces(liveSteps), [liveSteps]);
+    const steps = useMemo(
+        () => mergeLiveTraces(visibleLiveSteps),
+        [visibleLiveSteps],
+    );
 
     /** 持久化消息同样先归并 tool_call / tool_result，刷新后细节不丢。 */
-    const timeline = useMemo(() => mergeToolTraces(messages), [messages]);
+    const timeline = useMemo(
+        () => mergeToolTraces(visibleMessages),
+        [visibleMessages],
+    );
 
     const streamingAnswer = useMemo(() => hasStreamingAnswer(steps), [steps]);
     const activeImageGeneration = useMemo(
@@ -195,8 +250,8 @@ const WorkspaceAgentChat = () => {
     );
 
     const historicalImageUrls = useMemo(
-        () => imageUrlsFromMessages(messages),
-        [messages],
+        () => imageUrlsFromMessages(visibleMessages),
+        [visibleMessages],
     );
 
     const liveImageUrls = useMemo(() => imageUrlsFromSteps(steps), [steps]);
@@ -207,7 +262,7 @@ const WorkspaceAgentChat = () => {
                 behavior: "auto",
                 block: "end",
             });
-    }, [approvals, messages, steps]);
+    }, [visibleApprovals, visibleMessages, steps]);
 
     const submitText = useCallback(
         async (text, selectedAttachments = []) => {
@@ -307,9 +362,9 @@ const WorkspaceAgentChat = () => {
     );
 
     const handleApprovalDecision = useCallback(
-        async (approvalId, approved) => {
+        async (approvalId, approved, reason, location) => {
             try {
-                await decideApproval(approvalId, approved);
+                await decideApproval(approvalId, approved, reason, location);
             } catch (error) {
                 toast.error(error.message || t("blog.agentChat.sendFailed"));
             }
@@ -379,7 +434,7 @@ const WorkspaceAgentChat = () => {
                             </button>
                         ) : null}
                         {outputs.publications.length ||
-                        approvals.some(
+                        visibleApprovals.some(
                             (approval) => approval.toolName === "publish_post",
                         ) ? (
                             <button
@@ -454,7 +509,7 @@ const WorkspaceAgentChat = () => {
                                     uploadingAttachments={uploadingAttachments}
                                     canSend={canSend}
                                     isActive={isActive}
-                                    isCancelling={cancelling}
+                                    isCancelling={visibleCancelling}
                                     fileInputRef={fileInputRef}
                                     textareaRef={textareaRef}
                                     alwaysExpanded
@@ -474,10 +529,10 @@ const WorkspaceAgentChat = () => {
                             </div>
                         </div>
                     </>
-                ) : messages.length === 0 &&
+                ) : visibleMessages.length === 0 &&
                   steps.length === 0 &&
-                  approvals.length === 0 &&
-                  !loading ? (
+                  visibleApprovals.length === 0 &&
+                  !pageLoading ? (
                     <WorkspaceAgentWelcome
                         displayName={displayName}
                         input={input}
@@ -486,7 +541,7 @@ const WorkspaceAgentChat = () => {
                         uploadingAttachments={uploadingAttachments}
                         canSend={canSend}
                         isActive={isActive}
-                        isCancelling={cancelling}
+                        isCancelling={visibleCancelling}
                         fileInputRef={fileInputRef}
                         textareaRef={textareaRef}
                         onInputChange={setInput}
@@ -508,13 +563,13 @@ const WorkspaceAgentChat = () => {
                             chatScrollRef={chatScrollRef}
                             stickToBottomRef={stickToBottomRef}
                             chatEndRef={chatEndRef}
-                            loading={loading}
+                            loading={pageLoading}
                             creating={creating}
-                            running={running}
+                            running={isActive}
                             steps={steps}
-                            messages={messages}
+                            messages={visibleMessages}
                             timeline={timeline}
-                            approvals={approvals}
+                            approvals={visibleApprovals}
                             decidingApprovalId={decidingApprovalId}
                             handleApprovalDecision={handleApprovalDecision}
                             handleQuizSubmit={handleQuizSubmit}
@@ -522,10 +577,14 @@ const WorkspaceAgentChat = () => {
                             liveImageUrls={liveImageUrls}
                             activeImageGeneration={activeImageGeneration}
                             isActive={isActive}
-                            cancelling={cancelling}
+                            cancelling={visibleCancelling}
                             streamingAnswer={streamingAnswer}
-                            reconnecting={reconnecting}
-                            errorMessage={errorMessage}
+                            articleOutput={outputs.article}
+                            onOpenArticle={reopenArticle}
+                            thoughtDurations={visibleThoughtDurations}
+                            thinkingStartedAt={visibleThinkingStartedAt}
+                            reconnecting={visibleReconnecting}
+                            errorMessage={visibleErrorMessage}
                             statusLine={t("blog.agentChat.reconnecting")}
                             t={t}
                             messageComponent={WorkspaceAgentConversationMessage}
@@ -544,7 +603,7 @@ const WorkspaceAgentChat = () => {
                                     uploadingAttachments={uploadingAttachments}
                                     canSend={canSend}
                                     isActive={isActive}
-                                    isCancelling={cancelling}
+                                    isCancelling={visibleCancelling}
                                     fileInputRef={fileInputRef}
                                     textareaRef={textareaRef}
                                     alwaysExpanded
@@ -723,7 +782,7 @@ const WorkspaceAgentChat = () => {
                     >
                         {t("workspace.agent.requestPublish")}
                     </button>
-                    {approvals
+                    {visibleApprovals
                         .filter(
                             (approval) => approval.toolName === "publish_post",
                         )

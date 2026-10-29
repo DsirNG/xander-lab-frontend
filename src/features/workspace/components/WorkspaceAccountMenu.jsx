@@ -133,7 +133,7 @@ const WorkspaceAccountMenu = ({
                     id={menuId}
                     role="menu"
                     aria-label={t("workspace.userMenu")}
-                    className={`absolute z-[80] w-72 max-w-[calc(100vw-1.5rem)] rounded-2xl border border-border bg-canvas p-2 shadow-xl shadow-ink/15 ${compact ? "right-0 top-full mt-2" : "bottom-full left-0 mb-2"}`}
+                    className={`absolute z-[80] w-72 max-w-[calc(100vw-1.5rem)] rounded-2xl border border-border bg-canvas p-2 shadow-md shadow-black/20 ${compact ? "right-0 top-full mt-2" : "bottom-full left-0 mb-2"}`}
                 >
                     <div className="flex items-center gap-3 rounded-xl px-2 py-2">
                         <span className="relative grid h-11 w-11 shrink-0 place-items-center overflow-hidden rounded-full bg-accent text-sm font-bold uppercase text-white">

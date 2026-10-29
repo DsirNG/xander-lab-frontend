@@ -14,6 +14,7 @@ import { useAgentConversation } from "../hooks/useAgentConversation";
 import useAgentArtifact from "../hooks/useAgentArtifact";
 import useAgentAttachments from "../hooks/useAgentAttachments";
 import useAgentQueryBootstrap from "../hooks/useAgentQueryBootstrap";
+import { workspaceOutputs } from "../utils/workspaceOutputs";
 import AgentSessionSearchModal from "../components/AgentSessionSearchModal";
 import AgentArtifactPanel from "../components/AgentArtifactPanel";
 import AgentChatSidebar from "../components/AgentChatSidebar";
@@ -47,6 +48,7 @@ import { useAuthSession } from "@features/auth";
  * 而流式期间相关的数组每个动画帧都在变，逐帧滚动会与渲染互相拖累。
  */
 const SCROLL_THROTTLE_INTERVAL_MS = 120;
+const EMPTY_ITEMS = [];
 
 // 仍然从这里导出，保持既有调用方与测试的导入路径不变。
 export { ImageToolResult };
@@ -64,7 +66,7 @@ const AgentChat = () => {
     const navigate = useNavigate();
     const { conversationId } = useParams();
     const [searchParams, setSearchParams] = useSearchParams();
-    const blogTaskId = searchParams.get("blogTaskId");
+    const requestedBlogTaskId = searchParams.get("blogTaskId");
     const queryParam = searchParams.get("q");
     const toast = useToast();
     const isMobile = useIsMobile(1024);
@@ -95,12 +97,14 @@ const AgentChat = () => {
     const chatEndRef = useRef(null);
     const chatScrollRef = useRef(null);
     const stickToBottomRef = useRef(true);
+    const routeConversationRef = useRef(conversationId);
 
     const {
         sessions,
         sessionsLoading,
         conversation,
         messages,
+        workspaceResults = [],
         loading,
         creating,
         running,
@@ -110,6 +114,8 @@ const AgentChat = () => {
         reconnecting,
         errorMessage,
         liveSteps,
+        thoughtDurations,
+        thinkingStartedAt,
         deepThinking,
         setDeepThinking,
         sendMessage,
@@ -118,6 +124,56 @@ const AgentChat = () => {
         createConversation,
         reset,
     } = useAgentConversation({ conversationId });
+
+    const conversationMatchesRoute = conversationId
+        ? String(conversation?.id ?? "") === String(conversationId)
+        : !conversation?.id;
+    const visibleMessages = conversationMatchesRoute ? messages : EMPTY_ITEMS;
+    const visibleWorkspaceResults = conversationMatchesRoute
+        ? workspaceResults
+        : EMPTY_ITEMS;
+    const visibleLiveSteps = conversationMatchesRoute ? liveSteps : EMPTY_ITEMS;
+    const visibleApprovals = conversationMatchesRoute ? approvals : EMPTY_ITEMS;
+    const pageLoading = loading || !conversationMatchesRoute;
+    const isActive =
+        conversationMatchesRoute &&
+        (running || conversation?.status === "running");
+    // 等待审批时这一轮并没有结束，只是卡在工具授权上：输入框和答题卡都要锁住，
+    // 否则用户可以再发一轮把待审批的那一轮顶掉。
+    const awaitingApproval =
+        conversationMatchesRoute &&
+        conversation?.status === "awaiting_approval";
+    const locked = isActive || awaitingApproval || creating;
+    const visibleThoughtDurations = conversationMatchesRoute
+        ? thoughtDurations
+        : EMPTY_ITEMS;
+    const visibleThinkingStartedAt = conversationMatchesRoute
+        ? thinkingStartedAt
+        : null;
+    const visibleReconnecting = conversationMatchesRoute && reconnecting;
+    const visibleErrorMessage = conversationMatchesRoute ? errorMessage : null;
+    const visibleCancelling = conversationMatchesRoute && cancelling;
+    const articleOutput = useMemo(
+        () =>
+            conversationMatchesRoute
+                ? workspaceOutputs(
+                      visibleMessages,
+                      visibleWorkspaceResults,
+                      visibleLiveSteps,
+                  ).article
+                : null,
+        [
+            conversationMatchesRoute,
+            visibleMessages,
+            visibleWorkspaceResults,
+            visibleLiveSteps,
+        ],
+    );
+    const blogTaskId =
+        conversationMatchesRoute &&
+        articleOutput?.taskId === requestedBlogTaskId
+            ? requestedBlogTaskId
+            : null;
 
     const {
         artifactData,
@@ -140,18 +196,46 @@ const AgentChat = () => {
         toast,
     });
 
-    const isActive = running || conversation?.status === "running";
-    // 等待审批时这一轮并没有结束，只是卡在工具授权上：输入框和答题卡都要锁住，
-    // 否则用户可以再发一轮把待审批的那一轮顶掉。
-    const awaitingApproval = conversation?.status === "awaiting_approval";
-    const locked = isActive || awaitingApproval || creating;
+    useEffect(() => {
+        if (routeConversationRef.current === conversationId) return;
+        routeConversationRef.current = conversationId;
+        setSearchParams((current) => {
+            if (
+                !current.has("blogTaskId") &&
+                !current.has("closedTaskId") &&
+                !current.has("draftPostId")
+            )
+                return current;
+            const next = new URLSearchParams(current);
+            next.delete("blogTaskId");
+            next.delete("closedTaskId");
+            next.delete("draftPostId");
+            return next;
+        }, { replace: true });
+    }, [conversationId, setSearchParams]);
+
+    const openArticle = () => {
+        if (!articleOutput?.taskId) return;
+        setSearchParams((current) => {
+            const next = new URLSearchParams(current);
+            next.set("blogTaskId", articleOutput.taskId);
+            next.delete("closedTaskId");
+            return next;
+        }, { replace: true });
+    };
 
     // 流式步骤先把同一次工具调用的 start/progress/delta/end 合成一条轨迹，
     // 否则收口时入参和输出会各自消失，用户看不到这一步到底做了什么。
-    const steps = useMemo(() => mergeLiveTraces(liveSteps), [liveSteps]);
+    const steps = useMemo(
+        () => mergeLiveTraces(visibleLiveSteps),
+        [visibleLiveSteps],
+    );
 
     /** 持久化消息同样先归并：刷新后仍要能展开回看每次工具调用。 */
-    const timeline = useMemo(() => mergeToolTraces(messages), [messages]);
+    const timeline = useMemo(
+        () => mergeToolTraces(visibleMessages),
+        [visibleMessages],
+    );
 
     const streamingAnswer = useMemo(() => hasStreamingAnswer(steps), [steps]);
     const activeImageGeneration = useMemo(
@@ -160,8 +244,8 @@ const AgentChat = () => {
     );
 
     const historicalImageUrls = useMemo(
-        () => imageUrlsFromMessages(messages),
-        [messages],
+        () => imageUrlsFromMessages(visibleMessages),
+        [visibleMessages],
     );
 
     const liveImageUrls = useMemo(() => imageUrlsFromSteps(steps), [steps]);
@@ -177,7 +261,7 @@ const AgentChat = () => {
             });
         }, SCROLL_THROTTLE_INTERVAL_MS);
         return () => clearTimeout(timer);
-    }, [messages, steps]);
+    }, [visibleMessages, steps]);
 
     const handleSubmit = async () => {
         if (locked || uploadingAttachments) return;
@@ -259,9 +343,9 @@ const AgentChat = () => {
     );
 
     const handleApprovalDecision = useCallback(
-        async (approvalId, approved) => {
+        async (approvalId, approved, reason, location) => {
             try {
-                await decideApproval(approvalId, approved);
+                await decideApproval(approvalId, approved, reason, location);
             } catch (error) {
                 toast.error(error.message || t("blog.agentChat.sendFailed"));
             }
@@ -324,13 +408,13 @@ const AgentChat = () => {
     const navigationLocked = loading || creating;
 
     const statusLine = useMemo(() => {
-        if (cancelling) return t("blog.agentChat.stopping");
-        if (reconnecting) return t("blog.agentChat.reconnecting");
+        if (visibleCancelling) return t("blog.agentChat.stopping");
+        if (visibleReconnecting) return t("blog.agentChat.reconnecting");
         if (isActive) return t("blog.agentChat.running");
-        if (conversation?.status === "failed")
+        if (conversationMatchesRoute && conversation?.status === "failed")
             return conversation.errorMessage || t("blog.agentChat.failed");
         return t("blog.agentChat.ready");
-    }, [cancelling, reconnecting, isActive, conversation, t]);
+    }, [visibleCancelling, visibleReconnecting, isActive, conversationMatchesRoute, conversation, t]);
 
     const showArtifact = Boolean(blogTaskId);
     const artifactPanel = (
@@ -411,22 +495,22 @@ const AgentChat = () => {
                                 onCopyShare={handleCopyShareLink}
                             />
 
-                            {loading && messages.length > 0 && (
+                            {pageLoading && visibleMessages.length > 0 && (
                                 <div className="absolute top-14 left-0 right-0 z-10 h-0.5 overflow-hidden bg-border">
                                     <div className="h-full w-1/3 animate-pulse rounded-full bg-accent" />
                                 </div>
                             )}
 
-                            {messages.length === 0 &&
+                            {visibleMessages.length === 0 &&
                             steps.length === 0 &&
-                            !loading ? (
+                            !pageLoading ? (
                                 <AgentChatEmptyState
                                     input={input}
                                     setInput={setInput}
                                     attachments={attachments}
                                     uploading={uploadingAttachments}
                                     isActive={isActive}
-                                    isCancelling={cancelling}
+                                    isCancelling={visibleCancelling}
                                     creating={creating}
                                     onFilesSelected={handleFilesSelected}
                                     onRemoveAttachment={handleRemoveAttachment}
@@ -443,13 +527,13 @@ const AgentChat = () => {
                                         chatScrollRef={chatScrollRef}
                                         stickToBottomRef={stickToBottomRef}
                                         chatEndRef={chatEndRef}
-                                        loading={loading}
+                                        loading={pageLoading}
                                         creating={creating}
-                                        running={running}
+                                        running={isActive}
                                         steps={steps}
-                                        messages={messages}
+                                        messages={visibleMessages}
                                         timeline={timeline}
-                                        approvals={approvals}
+                                        approvals={visibleApprovals}
                                         decidingApprovalId={decidingApprovalId}
                                         handleApprovalDecision={
                                             handleApprovalDecision
@@ -463,10 +547,14 @@ const AgentChat = () => {
                                             activeImageGeneration
                                         }
                                         isActive={isActive}
-                                        cancelling={cancelling}
+                                        cancelling={visibleCancelling}
                                         streamingAnswer={streamingAnswer}
-                                        reconnecting={reconnecting}
-                                        errorMessage={errorMessage}
+                                        articleOutput={articleOutput}
+                                        onOpenArticle={openArticle}
+                                        thoughtDurations={visibleThoughtDurations}
+                                        thinkingStartedAt={visibleThinkingStartedAt}
+                                        reconnecting={visibleReconnecting}
+                                        errorMessage={visibleErrorMessage}
                                         statusLine={statusLine}
                                         t={t}
                                     />
@@ -479,7 +567,7 @@ const AgentChat = () => {
                                             attachments={attachments}
                                             uploading={uploadingAttachments}
                                             isActive={isActive}
-                                            isCancelling={cancelling}
+                                            isCancelling={visibleCancelling}
                                             awaitingApproval={awaitingApproval}
                                             creating={creating}
                                             hasConversation={true}

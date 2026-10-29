@@ -1,7 +1,20 @@
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { toolTraceKey } from "../utils/conversationState";
 
 const LIVE_STEP_LIMIT = 100;
+
+const epochFrom = (...values) => {
+    for (const value of values) {
+        const epoch =
+            typeof value === "number"
+                ? value
+                : typeof value === "string"
+                  ? Date.parse(value)
+                  : NaN;
+        if (Number.isFinite(epoch)) return epoch;
+    }
+    return null;
+};
 
 /**
  * Owns the transient SSE/live timeline state for an Agent conversation.
@@ -21,6 +34,9 @@ export function useAgentConversationLive({
     const answerDeltaRef = useRef("");
     const toolDeltaRef = useRef(new Map());
     const streamFrameRef = useRef(null);
+    const runStartedAtRef = useRef(null);
+    const thinkingStartedAtRef = useRef(null);
+    const [thoughtDurations, setThoughtDurations] = useState([]);
 
     const flushBufferedDeltas = useCallback(() => {
         streamFrameRef.current = null;
@@ -74,6 +90,9 @@ export function useAgentConversationLive({
         }
         answerDeltaRef.current = "";
         toolDeltaRef.current.clear();
+        runStartedAtRef.current = null;
+        thinkingStartedAtRef.current = null;
+        setThoughtDurations([]);
         setLiveSteps([]);
     }, [setLiveSteps]);
 
@@ -105,8 +124,30 @@ export function useAgentConversationLive({
             )
                 return;
 
+            const receivedAt =
+                epochFrom(data?.eventAt, data?.startedAt) ?? Date.now();
+            if (event === "started") {
+                const startedAt = epochFrom(data?.runStartedAt) ?? receivedAt;
+                runStartedAtRef.current = startedAt;
+                thinkingStartedAtRef.current = startedAt;
+            } else if (event !== "thought") {
+                thinkingStartedAtRef.current = receivedAt;
+            }
+
             if (event === "thought") {
+                const startedAt =
+                    thinkingStartedAtRef.current ??
+                    runStartedAtRef.current;
                 pushStep({ type: "thought", content: String(data ?? "") });
+                setThoughtDurations((current) =>
+                    [
+                        ...current,
+                        startedAt == null
+                            ? null
+                            : Math.max(0, receivedAt - startedAt),
+                    ].slice(-LIVE_STEP_LIMIT),
+                );
+                thinkingStartedAtRef.current = receivedAt;
             } else if (event === "tool_start") {
                 // 入参要留住：它是"这一步到底做了什么"唯一的证据，收口后仍要能展开回看。
                 pushStep({
@@ -116,6 +157,7 @@ export function useAgentConversationLive({
                     invocationId: data?.invocationId,
                     phase: "start",
                     args: data?.args,
+                    startedAt: epochFrom(data?.startedAt, data?.eventAt) ?? receivedAt,
                 });
             } else if (event === "tool_progress") {
                 const rawMessage = String(data?.message ?? "");
@@ -126,6 +168,7 @@ export function useAgentConversationLive({
                     tool: data?.tool,
                     invocationId: data?.invocationId,
                     phase: "progress",
+                    receivedAt,
                     stage:
                         data?.stage ||
                         (separator >= 0
@@ -171,6 +214,8 @@ export function useAgentConversationLive({
                     phase: event === "tool_error" ? "error" : "end",
                     result: data?.result,
                     error: data?.error,
+                    cancelled: data?.cancelled,
+                    receivedAt,
                 });
             } else if (event === "approval_required") {
                 answerDeltaRef.current = "";
@@ -292,6 +337,8 @@ export function useAgentConversationLive({
             cursorRef.current = 0;
             runVersionRef.current = runVersion;
             if (clearLive) clearLiveState();
+            runStartedAtRef.current = Date.now();
+            thinkingStartedAtRef.current = runStartedAtRef.current;
             setErrorMessage(null);
         },
         [clearLiveState, setErrorMessage],
@@ -314,6 +361,9 @@ export function useAgentConversationLive({
         cursorRef,
         pushStep,
         runVersionRef,
+        runStartedAtRef,
+        thinkingStartedAtRef,
         streamEpochRef,
+        thoughtDurations,
     };
 }

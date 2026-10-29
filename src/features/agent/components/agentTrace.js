@@ -41,6 +41,8 @@ const traceEntry = (id, tool, invocationId = null) => ({
     stage: "",
     message: "",
     error: "",
+    startedAt: null,
+    durationMs: null,
     status: "running",
 });
 
@@ -127,12 +129,18 @@ const applyLiveStep = (base, step) => {
         return { ...base, output: step.content ?? "" };
     }
     if (step.phase === "start") {
-        return { ...base, args: step.args ?? base.args, status: "running" };
+        return {
+            ...base,
+            args: step.args ?? base.args,
+            startedAt: step.startedAt ?? base.startedAt,
+            status: "running",
+        };
     }
     if (step.phase === "progress") {
         return {
             ...base,
             status: "running",
+            startedAt: base.startedAt ?? step.receivedAt ?? null,
             stage: step.stage ?? "",
             message: step.message ?? "",
         };
@@ -141,6 +149,10 @@ const applyLiveStep = (base, step) => {
         return {
             ...base,
             result: step.result ?? null,
+            durationMs:
+                base.startedAt && step.receivedAt
+                    ? Math.max(0, step.receivedAt - base.startedAt)
+                    : base.durationMs,
             status: resultStatus(step.result),
         };
     }
@@ -148,6 +160,10 @@ const applyLiveStep = (base, step) => {
     return {
         ...base,
         error: step.error ?? "",
+        durationMs:
+            base.startedAt && step.receivedAt
+                ? Math.max(0, step.receivedAt - base.startedAt)
+                : base.durationMs,
         status: step.cancelled ? "cancelled" : "error",
     };
 };

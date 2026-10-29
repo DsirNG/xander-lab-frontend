@@ -8,8 +8,8 @@ import {
     ChevronRight,
     Loader2,
     ShieldAlert,
-    Wrench,
 } from "lucide-react";
+import AgentActivityDuration from "./AgentActivityDuration";
 import { formatTracePayload } from "./agentTrace";
 
 const STATUS_META = {
@@ -77,61 +77,98 @@ const CollapsibleCard = ({
 };
 
 /**
- * 一次工具调用的轨迹卡：默认收起，只占一行；展开后才是入参、输出和错误。
+ * 一次工具调用的活动行：默认只显示当前动作与耗时；展开后查看入参、输出和错误。
  *
  * 工具名和参数是内部细节，放在展开区而不是主时间线上，
  * 这样"做过什么"始终可回看，又不会把内部协议糊在用户脸上。
  */
 export const AgentTraceCard = ({ trace }) => {
     const { t } = useTranslation();
+    const [open, setOpen] = useState(false);
     if (!trace) return null;
     const status = STATUS_META[trace.status] || STATUS_META.running;
     const { Icon } = status;
-    const progress =
-        trace.status === "running" ? trace.message || trace.stage : "";
+    const active = trace.status === "running";
+    const tool = trace.tool || t("blog.agentChat.unknownTool");
+    const progress = active ? trace.message : "";
+    const toolLabel = active
+        ? t("blog.agentChat.toolUsing", { tool })
+        : trace.status === "done"
+          ? t("blog.agentChat.toolUsed", { tool })
+          : tool;
+    const accessibleLabel = active || trace.status === "done"
+        ? toolLabel
+        : `${tool} · ${t(`blog.agentChat.${status.label}`)}`;
+    const Chevron = open ? ChevronDown : ChevronRight;
 
     return (
-        <CollapsibleCard
-            HeaderIcon={Wrench}
-            headerTone="text-ink-faint"
-            summary={
-                <>
-                    <span>{t("blog.agentChat.toolCalled")}</span>{" "}
-                    <code className="rounded bg-surface-muted px-1 py-0.5 text-[11px] text-ink-secondary">
-                        {trace.tool || t("blog.agentChat.unknownTool")}
-                    </code>
-                    {progress ? (
-                        <span className="text-ink-faint">{` · ${progress}`}</span>
-                    ) : null}
-                </>
-            }
-            badge={
+        <div className="w-full min-w-0 text-xs leading-5 text-ink-muted">
+            <button
+                type="button"
+                onClick={() => setOpen((current) => !current)}
+                aria-expanded={open}
+                aria-label={accessibleLabel}
+                className="flex min-h-8 w-full min-w-0 items-center gap-2 rounded-md px-1 text-left transition-colors hover:bg-surface-muted/50 hover:text-ink-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+            >
+                <Icon
+                    className={`h-3.5 w-3.5 shrink-0 ${status.tone} ${status.spin ? "animate-spin" : ""}`}
+                    aria-hidden="true"
+                />
                 <span
-                    className={`flex shrink-0 items-center gap-1 ${status.tone}`}
+                    className={`min-w-0 flex-1 break-words ${progress ? "text-ink-secondary" : ""}`}
+                    aria-live={active ? "polite" : undefined}
                 >
-                    <Icon
-                        className={`h-3.5 w-3.5 ${status.spin ? "animate-spin" : ""}`}
-                        aria-hidden="true"
+                    {progress || toolLabel}
+                </span>
+                {progress ? (
+                    <span className="max-w-[40%] shrink-0 truncate text-[11px] text-ink-faint">
+                        {toolLabel}
+                    </span>
+                ) : null}
+                {active ? (
+                    <AgentActivityDuration
+                        startedAt={trace.startedAt}
+                        durationMs={trace.durationMs}
+                        active
                     />
-                    <span className="hidden sm:inline">
+                ) : (
+                    <span className={`shrink-0 ${status.tone}`}>
                         {t(`blog.agentChat.${status.label}`)}
                     </span>
+                )}
+                {!active ? (
+                    <AgentActivityDuration
+                        startedAt={trace.startedAt}
+                        durationMs={trace.durationMs}
+                    />
+                ) : null}
+                <Chevron
+                    className="h-3.5 w-3.5 shrink-0 text-ink-faint"
+                    aria-hidden="true"
+                />
+                <span className="sr-only">
+                    {open
+                        ? t("blog.agentChat.traceHide")
+                        : t("blog.agentChat.traceShow")}
                 </span>
-            }
-        >
-            <DetailSection
-                title={t("blog.agentChat.traceArgs")}
-                body={formatTracePayload(trace.args)}
-            />
-            <DetailSection
-                title={t("blog.agentChat.traceOutput")}
-                body={formatTracePayload(trace.output || trace.result)}
-            />
-            <DetailSection
-                title={t("blog.agentChat.traceError")}
-                body={formatTracePayload(trace.error)}
-            />
-        </CollapsibleCard>
+            </button>
+            {open ? (
+                <div className="ml-6 mt-1">
+                    <DetailSection
+                        title={t("blog.agentChat.traceArgs")}
+                        body={formatTracePayload(trace.args)}
+                    />
+                    <DetailSection
+                        title={t("blog.agentChat.traceOutput")}
+                        body={formatTracePayload(trace.output || trace.result)}
+                    />
+                    <DetailSection
+                        title={t("blog.agentChat.traceError")}
+                        body={formatTracePayload(trace.error)}
+                    />
+                </div>
+            ) : null}
+        </div>
     );
 };
 

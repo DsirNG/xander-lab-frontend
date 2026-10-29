@@ -139,7 +139,7 @@ const Modal = ({
                     aria-modal="true"
                     aria-labelledby={titleId}
                     tabIndex={-1}
-                    className={`relative w-full ${width} bg-canvas rounded-3xl shadow-2xl shadow-ink/30 flex flex-col overflow-hidden antialiased outline-none ${className}`}
+                    className={`relative w-full ${width} rounded-3xl border border-border bg-canvas shadow-lg shadow-black/20 flex flex-col overflow-hidden antialiased outline-none ${className}`}
                     style={{
                         height,
                         maxHeight: "calc(100dvh - 3rem)",
