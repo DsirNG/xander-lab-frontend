@@ -3,6 +3,21 @@ import { delete as deleteRequest, get, post } from "@api";
 const CSDN_AUTH = "/api/publishing/csdn/authorization";
 const JUEJIN_AUTH = "/api/publishing/juejin/authorization";
 
+/** Creates the same short-lived local-browser authorization flow for any registered platform. */
+export const createPlatformConnectionService = (platform) => {
+    const authorizationPath = `/api/publishing/${encodeURIComponent(platform)}/authorization`;
+    return {
+        startExtensionAuthorization: () => post(`${authorizationPath}/start`, undefined, { _sensitive: true, dedupe: false }),
+        cancelExtensionAuthorization: (taskId) => post(`${authorizationPath}/extension/${taskId}/cancel`, undefined, { _silent: true }),
+        getAuthorizationStatus: () => get(`${authorizationPath}/status`, undefined, { _silent: true, dedupe: false }),
+        disconnect: () => deleteRequest(authorizationPath),
+    };
+};
+
+/** Loads all connection states in one authenticated request when the settings panel opens. */
+export const getPlatformConnectionStatuses = () =>
+    get("/api/platform-connections", undefined, { _silent: true, dedupe: false });
+
 export const csdnService = {
     startAuthorization: () => post(`${CSDN_AUTH}/start`),
     startExtensionAuthorization: () => post(`${CSDN_AUTH}/start`, undefined, { _sensitive: true, dedupe: false }),
@@ -78,7 +93,7 @@ function requestConnector(payload) {
         const timeout = window.setTimeout(() => {
             window.removeEventListener("message", onMessage);
             reject(new Error("Browser connector is not available"));
-        }, 1200);
+        }, payload.type === "START" ? 10000 : 2500);
         const onMessage = (event) => {
             if (event.source !== window || event.origin !== window.location.origin
                 || event.data?.channel !== CONNECTOR_CHANNEL || event.data.requestId !== requestId) return;

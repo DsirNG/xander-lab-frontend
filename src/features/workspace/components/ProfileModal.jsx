@@ -6,6 +6,7 @@ import {
     KeyRound,
     Mail,
     Plug,
+    Share2,
     Settings2,
     Shield,
     SlidersHorizontal,
@@ -13,6 +14,7 @@ import {
 } from "lucide-react";
 import Modal from "@shared/ui/overlays/Modal";
 import { AccountInfoPanel, McpAuthorizationPanel } from "@features/profile";
+import { PlatformConnectionsPanel } from "@features/platformIntegrations";
 
 const TABS = [
     { id: "account", icon: UserRound },
@@ -22,10 +24,11 @@ const TABS = [
     { id: "history", icon: FileText },
     { id: "apiKeys", icon: KeyRound },
     { id: "mcp", icon: Plug },
+    { id: "platforms", icon: Share2 },
     { id: "preferences", icon: SlidersHorizontal },
 ];
 
-const ENABLED_TABS = ["account", "mcp"];
+const ENABLED_TABS = ["account", "mcp", "platforms"];
 
 const ProfileModal = ({ open, onClose, initialTab = "account" }) => {
     const { t } = useTranslation();
@@ -88,6 +91,8 @@ const ProfileModal = ({ open, onClose, initialTab = "account" }) => {
                         <AccountInfoPanel />
                     ) : activeTab === "mcp" ? (
                         <McpAuthorizationPanel />
+                    ) : activeTab === "platforms" ? (
+                        <PlatformConnectionsPanel />
                     ) : (
                         <div className="flex h-64 flex-col items-center justify-center gap-2 text-center">
                             <span className="grid h-12 w-12 place-items-center rounded-2xl bg-surface text-ink-faint">

@@ -18,18 +18,32 @@ import {
 } from "../services/publishingService";
 
 /** Lets the browser extension open the platform login page and submit its session to Workers. */
-const LocalPlatformAuthorizationPanel = ({ platform, service, extraActions }) => {
+const LocalPlatformAuthorizationPanel = ({
+    platform,
+    service,
+    extraActions,
+    displayName,
+    brand,
+    brandColor,
+    publishingEnabled = false,
+    formats = [],
+    compact = false,
+    commonCopy = false,
+    initialStatus,
+}) => {
     const { t } = useTranslation();
     const toast = useToast();
     const pollRef = useRef(null);
     const expiryRef = useRef(null);
     const taskRef = useRef(null);
     const cancelRequestedRef = useRef(false);
-    const [state, setState] = useState("loading");
+    const [state, setState] = useState(initialStatus || "loading");
     const [busy, setBusy] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const text = useCallback((key) => t(`profile.${platform}.${key}`), [platform, t]);
+    const text = useCallback((key) => t(commonCopy
+        ? `profile.platformConnections.card.${key}`
+        : `profile.${platform}.${key}`), [commonCopy, platform, t]);
     const stopPolling = useCallback(() => {
         if (pollRef.current) window.clearInterval(pollRef.current);
         if (expiryRef.current) window.clearTimeout(expiryRef.current);
@@ -74,12 +88,13 @@ const LocalPlatformAuthorizationPanel = ({ platform, service, extraActions }) =>
     }, [service, stopPolling, toast, text]);
 
     useEffect(() => {
-        void loadStatus();
+        if (initialStatus) setState(initialStatus);
+        else void loadStatus();
         return () => {
             stopPolling();
             void cancelTask();
         };
-    }, [cancelTask, loadStatus, stopPolling]);
+    }, [cancelTask, initialStatus, loadStatus, stopPolling]);
 
     const start = async () => {
         cancelRequestedRef.current = false;
@@ -148,22 +163,34 @@ const LocalPlatformAuthorizationPanel = ({ platform, service, extraActions }) =>
     const loading = state === "loading";
     const authorized = state === "AUTHORIZED";
     const expired = state === "EXPIRED";
+    const title = displayName || text("title");
     const titleNode = (
         <div className="flex items-center gap-2">
-            <ExternalLink className="h-5 w-5 text-accent" />
-            <div className="text-title font-black text-ink">{text("title")}</div>
+            <ExternalLink className="h-5 w-5 text-ink" />
+            <div className="text-title font-black text-ink">{title}</div>
         </div>
     );
 
     return (
-        <div className="mt-4 rounded-xl border border-border bg-surface p-5">
+        <div className={`${compact ? "min-w-0 rounded-xl border border-border bg-surface p-4" : "mt-4 rounded-xl border border-border bg-surface p-5"}`}>
             <div className="flex items-start gap-3">
-                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-accent-soft text-accent">
-                    <Link2 className="h-5 w-5" />
+                <span
+                    className="grid h-10 w-10 shrink-0 place-items-center overflow-hidden rounded-xl text-xs font-black text-white"
+                    style={{ backgroundColor: brandColor || "#475569" }}
+                    aria-hidden="true"
+                >
+                    {brand || <Link2 className="h-5 w-5" />}
                 </span>
                 <div className="min-w-0 flex-1">
-                    <div className="text-sm font-bold text-ink">{text("title")}</div>
-                    <div className="mt-1 text-caption text-ink-muted">{text("description")}</div>
+                    <div className="flex flex-wrap items-center gap-2">
+                        <div className="text-sm font-bold text-ink">{title}</div>
+                        <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${publishingEnabled ? "bg-success-soft text-success" : "bg-surface-muted text-ink-muted"}`}>
+                            {publishingEnabled ? t("profile.platformConnections.publishReady") : t("profile.platformConnections.bindingOnly")}
+                        </span>
+                    </div>
+                    <div className="mt-1 text-caption text-ink-muted">
+                        {commonCopy ? t("profile.platformConnections.platformDescription", { platform: title }) : text("description")}
+                    </div>
                 </div>
                 {loading ? <LoaderCircle className="h-5 w-5 animate-spin text-accent" />
                     : authorized ? <CheckCircle2 className="h-5 w-5 text-success" />
@@ -172,8 +199,12 @@ const LocalPlatformAuthorizationPanel = ({ platform, service, extraActions }) =>
             </div>
 
             {loading && <div className="mt-4 text-caption text-ink-muted">{text("checking")}</div>}
+            {!loading && authorized && <div className="mt-3 text-caption font-semibold text-success">{commonCopy ? text("connected") : text("authorized")}</div>}
             {!loading && expired && <div className="mt-4 text-caption font-semibold text-warning">{text("sessionExpired")}</div>}
             {!loading && state === "UNAVAILABLE" && <div className="mt-4 text-caption text-warning">{text("unavailable")}</div>}
+            {formats.length > 0 && <div className="mt-3 flex flex-wrap gap-1.5">
+                {formats.map((format) => <span key={format} className="rounded-md border border-border px-2 py-1 text-[10px] font-semibold text-ink-muted">{t(`profile.platformConnections.formats.${format}`)}</span>)}
+            </div>}
 
             {!loading && !authorized && state !== "UNAVAILABLE" && (
                 <button type="button" onClick={start} disabled={busy}
@@ -198,7 +229,7 @@ const LocalPlatformAuthorizationPanel = ({ platform, service, extraActions }) =>
                 <div className="flex min-h-52 flex-col items-center justify-center gap-4 py-6 text-center">
                     <ExternalLink className="h-12 w-12 text-accent" />
                     <div className="max-w-sm text-sm font-semibold text-ink-secondary">
-                        {state === "PENDING" ? t("profile.connector.waiting") : t("profile.connector.opening")}
+                        {state === "PENDING" ? t("profile.connector.waiting", { platform: title }) : t("profile.connector.opening", { platform: title })}
                     </div>
                     <div className="max-w-sm text-caption text-ink-muted">{t("profile.connector.hint")}</div>
                     {state === "PENDING" && <LoaderCircle className="h-5 w-5 animate-spin text-accent" />}
