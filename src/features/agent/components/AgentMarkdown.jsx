@@ -65,7 +65,16 @@ const normalizeSimpleMath = (text) =>
 const normalizeAnswer = (text) => {
     if (typeof text !== "string") return text;
 
-    return normalizeSimpleMath(unwrapBoxedExpressions(text))
+    // Keep code and URL-bearing Markdown outside the legacy math heuristics.
+    const protectedParts = [];
+    const protectedText = text.replace(/\\`/g, "`").replace(
+        /```[\s\S]*?(?:```|$)|`[^`\n]*`|!?\[[^\]\n]*\]\([^\n]*?\)|https?:\/\/[^\s<>]+/g,
+        (part) => {
+            const index = protectedParts.push(part) - 1;
+            return `\uE000PROTECTED${index}\uE001`;
+        },
+    );
+    return normalizeSimpleMath(unwrapBoxedExpressions(protectedText))
         .replace(/\\`/g, "`")
         .replace(
             /\\\[([\s\S]*?)\\\]/g,
@@ -79,7 +88,8 @@ const normalizeAnswer = (text) => {
         .replace(
             /\[([^\n]*\\[a-zA-Z]+[^\n]*)\]/g,
             (_, formula) => `$$${formula}$$`,
-        );
+        )
+        .replace(/\uE000PROTECTED(\d+)\uE001/g, (_, index) => protectedParts[Number(index)]);
 };
 
 /** 标题统一渲染为 div + 排版 token（display/heading/title → 800，body → 400/600/700），不使用 h1-h6 标签。 */

@@ -90,7 +90,7 @@ const AdminModelProvidersPage = () => {
             width: "20%",
             render: (provider) => (
                 <div className="min-w-0">
-                    <div className="truncate text-xs font-bold text-ink">
+                    <div className="truncate text-caption font-bold text-ink">
                         {provider.name}
                     </div>
                     <div className="mt-0.5 truncate text-micro text-ink-faint">
@@ -105,7 +105,7 @@ const AdminModelProvidersPage = () => {
             width: "26%",
             render: (provider) => (
                 <span
-                    className="block truncate text-xs font-medium text-ink-muted"
+                    className="block truncate text-caption font-medium text-ink-muted"
                     title={provider.baseUrl}
                 >
                     {provider.baseUrl}
@@ -154,7 +154,7 @@ const AdminModelProvidersPage = () => {
             title: t("admin.providers.priority"),
             width: "8%",
             render: (provider) => (
-                <span className="text-xs font-medium text-ink-muted">
+                <span className="text-caption font-medium text-ink-muted">
                     {provider.priority ?? 0}
                 </span>
             ),
@@ -199,23 +199,23 @@ const AdminModelProvidersPage = () => {
 
     return (
         <div className="mx-auto flex h-full min-h-0 w-full max-w-5xl flex-col overflow-hidden p-4 sm:p-6">
-            <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+            <div className="mb-4 flex shrink-0 flex-wrap items-center justify-between gap-3">
                 <div>
-                    <h1 className="flex items-center gap-2 text-base font-bold text-ink">
+                    <h1 className="flex items-center gap-2 text-title font-semibold text-ink">
                         <Server
-                            className="h-4 w-4 text-accent"
+                            className="h-4 w-4 text-ink"
                             aria-hidden="true"
                         />
                         {t("admin.providers.title")}
                     </h1>
-                    <p className="mt-1 text-xs text-ink-muted">
+                    <p className="mt-1 text-caption text-ink-muted">
                         {t("admin.providers.subtitle")}
                     </p>
                 </div>
                 <button
                     type="button"
                     onClick={openCreate}
-                    className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-ink px-4 text-xs font-bold text-white transition hover:bg-accent active:scale-95"
+                    className="inline-flex h-9 items-center gap-1.5 rounded-control bg-ink px-4 text-caption font-bold text-canvas transition hover:bg-ink-secondary active:scale-95"
                 >
                     <Plus className="h-3.5 w-3.5" aria-hidden="true" />
                     {t("admin.providers.add")}

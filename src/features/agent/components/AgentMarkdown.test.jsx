@@ -16,6 +16,20 @@ vi.mock("@shared/ui/data-display/CodeBlock", () => ({
 }));
 
 describe("AgentMarkdown", () => {
+    it("renders generated image URLs with numeric path segments without treating them as math", () => {
+        const url = "https://dinqor-content-automation.dinqor.workers.dev/api/public/blog/media/1/2026/11/a0ac0a92-ecbc-4c64-8a8f-809ec1b2ef60.png";
+        const { container } = render(<AgentMarkdown content={`![可爱的小狗](${url})`} />);
+        expect(screen.getByRole("img", { name: "可爱的小狗" })).toHaveAttribute("src", url);
+        expect(container.querySelector(".katex")).not.toBeInTheDocument();
+    });
+
+    it("preserves numeric URLs and code while normalizing actual fractions", () => {
+        const url = "https://example.test/media/1/2026/11/image.png";
+        const { container } = render(<AgentMarkdown content={`[image](${url})\n\n\`1/2026\`\n\n3/4`} />);
+        expect(screen.getByRole("link", { name: "image" })).toHaveAttribute("href", url);
+        expect(container.querySelector("code")).toHaveTextContent("1/2026");
+        expect(container.querySelectorAll(".katex")).toHaveLength(1);
+    });
     it("anchors the streaming cursor to the Markdown content instead of its container edge", () => {
         const { container } = render(
             <AgentMarkdown content="The answer ends here." isStreaming />,

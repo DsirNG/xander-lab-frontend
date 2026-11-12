@@ -37,20 +37,19 @@ const SQUARE_CLASSES = {
 };
 
 const VARIANT_CLASSES = {
-    primary:
-        "bg-accent text-white shadow-sm hover:bg-accent-700 focus-visible:ring-accent-200",
-    ink: "bg-ink text-white hover:bg-ink-secondary focus-visible:ring-accent-200",
+    primary: "bg-accent text-canvas hover:bg-accent-700",
+    ink: "bg-ink text-canvas hover:bg-ink-secondary",
     outline:
-        "border border-border bg-canvas text-ink-secondary hover:border-accent-600 hover:text-accent-600 focus-visible:ring-accent-200",
-    ghost: "text-ink-muted hover:bg-surface-muted hover:text-ink focus-visible:ring-accent-200",
-    danger: "bg-danger text-white shadow-sm hover:bg-danger-fg focus-visible:ring-danger/40",
+        "border border-border bg-canvas text-ink-secondary hover:border-border-strong hover:bg-surface hover:text-ink",
+    ghost: "text-ink-muted hover:bg-surface-muted hover:text-ink",
+    danger: "bg-danger text-white shadow-sm hover:bg-danger-fg",
     dangerOutline:
-        "border border-danger/40 bg-canvas text-danger hover:bg-danger-soft focus-visible:ring-danger/30",
-    link: "text-accent hover:underline underline-offset-4 focus-visible:ring-accent/40",
+        "border border-danger/40 bg-canvas text-danger hover:bg-danger-soft",
+    link: "text-accent hover:underline underline-offset-4",
 };
 
 const BASE =
-    "inline-flex shrink-0 select-none items-center justify-center whitespace-nowrap font-semibold transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50";
+    "inline-flex shrink-0 select-none items-center justify-center whitespace-nowrap font-semibold transition-[background-color,border-color,color,box-shadow,transform] duration-150 motion-reduce:transition-none focus:outline-none active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50";
 
 const Button = forwardRef(
     (

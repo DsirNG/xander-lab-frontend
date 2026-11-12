@@ -252,9 +252,11 @@ const WorkspaceConversationSearchModal = ({ open, onClose, onSelect }) => {
             title={t("workspace.agent.searchPlaceholder", "搜索对话")}
             width="max-w-lg"
             height={560}
+            bodyScrollable={false}
+            className="rounded-dialog"
         >
             <div className="flex h-full min-h-0 flex-col gap-3">
-                <div className="flex items-center gap-3 rounded-xl border border-border px-3.5 py-2.5">
+                <div className="flex items-center gap-3 rounded-card border border-border px-4 py-3">
                     <Search
                         className="h-4 w-4 shrink-0 text-ink-muted"
                         aria-hidden="true"
@@ -305,7 +307,7 @@ const WorkspaceConversationSearchModal = ({ open, onClose, onSelect }) => {
                             onClick={() =>
                                 setRetryKey((current) => current + 1)
                             }
-                            className="flex min-h-32 w-full items-center justify-center text-caption text-accent hover:underline"
+                            className="flex min-h-32 w-full items-center justify-center text-caption text-ink-secondary hover:underline"
                         >
                             {t(
                                 "workspace.agent.loadSessionsFailed",
@@ -360,7 +362,7 @@ const WorkspaceConversationSearchModal = ({ open, onClose, onSelect }) => {
                                     <button
                                         type="button"
                                         onClick={loadMore}
-                                        className="text-caption text-accent hover:underline"
+                                        className="text-caption text-ink-secondary hover:underline"
                                     >
                                         {t(
                                             "workspace.agent.loadSessionsFailed",
@@ -371,7 +373,7 @@ const WorkspaceConversationSearchModal = ({ open, onClose, onSelect }) => {
                                     <button
                                         type="button"
                                         onClick={loadMore}
-                                        className="text-caption text-ink-muted hover:text-accent"
+                                        className="text-caption text-ink-muted hover:text-ink"
                                     >
                                         {t(
                                             "workspace.agent.loadMoreSessions",

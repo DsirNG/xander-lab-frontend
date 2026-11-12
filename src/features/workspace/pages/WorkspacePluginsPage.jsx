@@ -320,11 +320,11 @@ const WorkspacePluginsPage = () => {
 
     return (
         <div className="flex h-full min-h-0 flex-col overflow-hidden bg-canvas">
-            <header className="flex shrink-0 flex-wrap items-start justify-between gap-4 border-b border-border px-6 py-6 sm:px-8 lg:px-10">
+            <header className="flex shrink-0 flex-wrap items-start justify-between gap-4 border-b border-border px-4 py-6 sm:px-8">
                 <div>
                     <div className="flex items-center gap-2 text-heading text-ink">
                         <Blocks
-                            className="h-5 w-5 text-accent"
+                            className="h-5 w-5 text-ink-secondary"
                             aria-hidden="true"
                         />
                         <span>{t("workspace.pluginsPage.title")}</span>
@@ -333,8 +333,8 @@ const WorkspacePluginsPage = () => {
                         {t("workspace.pluginsPage.subtitle")}
                     </div>
                 </div>
-                <div className="flex items-center gap-2">
-                    <label className="relative flex h-9 w-56 items-center">
+                <div className="flex w-full min-w-0 flex-wrap items-center gap-2 sm:w-auto">
+                    <label className="relative flex h-10 min-w-0 flex-1 items-center sm:w-56 sm:flex-none">
                         <Search
                             className="pointer-events-none absolute left-3 h-4 w-4 text-ink-faint"
                             aria-hidden="true"
@@ -344,7 +344,7 @@ const WorkspacePluginsPage = () => {
                             onChange={(event) => setQuery(event.target.value)}
                             placeholder={t("workspace.pluginsPage.search")}
                             aria-label={t("workspace.pluginsPage.search")}
-                            className="h-full w-full rounded-lg border border-border bg-canvas pl-9 pr-3 text-caption text-ink outline-none transition focus:border-accent focus:ring-2 focus:ring-accent-100"
+                            className="h-full w-full rounded-lg border border-border bg-canvas pl-9 pr-3 text-caption text-ink outline-none transition"
                         />
                     </label>
                     <button
@@ -370,17 +370,18 @@ const WorkspacePluginsPage = () => {
                                 setFormOpen(true);
                             }
                         }}
-                        className="flex h-9 items-center gap-1.5 rounded-lg bg-ink px-3 text-caption font-semibold text-white transition hover:bg-ink-secondary"
+                        className="flex h-9 items-center gap-2 rounded-lg bg-ink px-3 text-caption font-semibold text-canvas transition hover:bg-ink-secondary"
                     >
                         <Plus className="h-4 w-4" aria-hidden="true" />
                         <span>{t("workspace.pluginsPage.add")}</span>
                     </button>
                 </div>
             </header>
-            <div className="min-h-0 flex-1 overflow-y-auto px-6 py-6 sm:px-8 lg:px-10">
+            <div className="min-h-0 flex-1 overflow-y-auto px-4 py-6 sm:px-8">
                 {formOpen ? (
                     <Modal
                         isOpen={formOpen}
+                        className="rounded-dialog"
                         onClose={closeForm}
                         title={
                             editingServer
@@ -416,7 +417,7 @@ const WorkspacePluginsPage = () => {
                                 placeholder={t(
                                     "workspace.pluginsPage.serverKey",
                                 )}
-                                className="h-9 rounded-lg border border-border bg-canvas px-3 text-caption text-ink outline-none focus:border-accent disabled:opacity-60"
+                                className="h-9 rounded-lg border border-border bg-canvas px-3 text-caption text-ink outline-none disabled:opacity-60"
                             />
                             <input
                                 required
@@ -433,7 +434,7 @@ const WorkspacePluginsPage = () => {
                                 placeholder={t(
                                     "workspace.pluginsPage.displayName",
                                 )}
-                                className="h-9 rounded-lg border border-border bg-canvas px-3 text-caption text-ink outline-none focus:border-accent"
+                                className="h-9 rounded-lg border border-border bg-canvas px-3 text-caption text-ink outline-none"
                             />
                             <input
                                 required
@@ -451,7 +452,7 @@ const WorkspacePluginsPage = () => {
                                 placeholder={t(
                                     "workspace.pluginsPage.endpointUrl",
                                 )}
-                                className="h-9 rounded-lg border border-border bg-canvas px-3 text-caption text-ink outline-none focus:border-accent sm:col-span-2"
+                                className="h-9 rounded-lg border border-border bg-canvas px-3 text-caption text-ink outline-none sm:col-span-2"
                             />
                             <details className="sm:col-span-2">
                                 <summary className="cursor-pointer text-caption font-semibold text-ink-muted">
@@ -474,7 +475,7 @@ const WorkspacePluginsPage = () => {
                                         placeholder={
                                             '{"Authorization":"Bearer ..."}'
                                         }
-                                        className="w-full resize-y rounded-lg border border-border bg-canvas px-3 py-2 font-mono text-caption text-ink outline-none focus:border-accent"
+                                        className="w-full resize-y rounded-lg border border-border bg-canvas px-3 py-2 font-mono text-caption text-ink outline-none"
                                     />
                                     <span className="mt-1 block text-micro text-ink-muted">
                                         {t(
@@ -516,7 +517,7 @@ const WorkspacePluginsPage = () => {
                                 <button
                                     type="submit"
                                     disabled={saving}
-                                    className="flex h-9 items-center justify-center gap-1.5 rounded-lg bg-accent px-3 text-caption font-semibold text-white disabled:opacity-50"
+                                    className="flex h-9 items-center justify-center gap-2 rounded-lg bg-accent px-3 text-caption font-semibold text-white disabled:opacity-50"
                                 >
                                     {saving ? (
                                         <Loader2 className="h-4 w-4 animate-spin" />
@@ -550,7 +551,7 @@ const WorkspacePluginsPage = () => {
                             key={tab}
                             type="button"
                             onClick={() => setActiveTab(tab)}
-                            className={`rounded-full px-4 py-2 text-caption font-semibold transition-colors ${activeTab === tab ? "bg-ink text-white" : "bg-surface-muted text-ink-muted hover:text-ink"}`}
+                            className={`rounded-full px-4 py-2 text-caption font-semibold transition-colors ${activeTab === tab ? "bg-ink text-canvas" : "bg-surface-muted text-ink-muted hover:text-ink"}`}
                         >
                             {t(`workspace.pluginsPage.${tab}`)}
                         </button>
@@ -570,7 +571,7 @@ const WorkspacePluginsPage = () => {
                             <Loader2 className="h-5 w-5 animate-spin" />
                         </div>
                     ) : rows.length ? (
-                        <div className="grid gap-x-10 sm:grid-cols-2">
+                        <div className="grid grid-cols-1 gap-4 pt-4 xl:grid-cols-2">
                             {rows.map((plugin) => {
                                 const Icon = plugin.icon;
                                 const server =
@@ -615,17 +616,17 @@ const WorkspacePluginsPage = () => {
                                 return (
                                     <div
                                         key={plugin.id}
-                                        className="flex min-h-[96px] items-center gap-3 border-b border-border py-4"
+                                        className="flex min-h-28 min-w-0 flex-wrap items-center gap-4 rounded-card border border-border bg-surface p-4"
                                     >
-                                        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-surface-muted text-accent">
+                                        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-control bg-surface-muted text-ink-secondary">
                                             <Icon
                                                 className="h-5 w-5"
                                                 aria-hidden="true"
                                             />
                                         </span>
                                         <div className="min-w-0 flex-1">
-                                            <div className="flex items-center gap-2">
-                                                <span className="truncate text-body font-semibold text-ink">
+                                            <div className="flex min-w-0 flex-wrap items-center gap-2">
+                                                <span className="min-w-0 truncate text-body font-semibold text-ink">
                                                     {plugin.name}
                                                 </span>
                                                 <span className="rounded bg-surface-muted px-1.5 py-0.5 text-micro uppercase text-ink-faint">
@@ -686,7 +687,7 @@ const WorkspacePluginsPage = () => {
                                                         Boolean(testingId) ||
                                                         server?.enabled === false
                                                     }
-                                                    className="inline-flex h-8 items-center gap-1 rounded-md border border-border px-2 text-micro font-semibold text-ink-muted hover:border-accent hover:text-accent disabled:opacity-50"
+                                                    className="inline-flex h-8 items-center gap-1 rounded-md border border-border px-2 text-micro font-semibold text-ink-muted hover:border-border-strong hover:text-ink disabled:opacity-50"
                                                     title={t(
                                                         "workspace.pluginsPage.testConnection",
                                                         "测试连接",

@@ -43,12 +43,12 @@ const EnhancedDemoSection = ({
     };
 
     return (
-        <div className="mb-12">
+        <div className="mb-8">
             {/* 标题和操作按钮 */}
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-4">
                 <div className="flex items-center space-x-3 min-w-0">
-                    <div className="h-6 w-1 bg-blue-600 rounded-full flex-shrink-0" />
-                    <div className="text-lg font-bold text-slate-900 break-words">
+                    <div className="h-6 w-1 bg-accent rounded-full flex-shrink-0" />
+                    <div className="text-heading text-ink break-words">
                         {title}
                     </div>
                 </div>
@@ -80,18 +80,18 @@ const EnhancedDemoSection = ({
             </div>
 
             {/* 描述 */}
-            <div className="text-slate-500  text-sm mb-6 max-w-2xl">{desc}</div>
+            <div className="text-ink-muted text-body mb-6 max-w-2xl">{desc}</div>
 
             {/* 演示区域 */}
             {useBrowserWindow ? (
                 <BrowserWindow>
-                    <div className="bg-slate-50 /50 p-4 sm:p-8 lg:p-10 min-h-[300px] flex items-center justify-center relative overflow-hidden transition-all">
+                    <div className="bg-surface p-4 sm:p-6 lg:p-8 min-h-[300px] flex items-center justify-center relative overflow-hidden transition-all">
                         <div
                             className="absolute inset-0 opacity-[0.03] pointer-events-none"
                             style={{
                                 backgroundImage:
-                                    "radial-gradient(#000 1px, transparent 1px)",
-                                backgroundSize: "20px 20px",
+                                    "radial-gradient(var(--color-ink) 1px, transparent 1px)",
+                                backgroundSize: "24px 24px",
                             }}
                         />
                         <div key={resetKey} className="w-full relative z-10">
@@ -112,7 +112,7 @@ const EnhancedDemoSection = ({
                         exit={{ opacity: 0, height: 0 }}
                         className="overflow-hidden mt-4 w-full"
                     >
-                        <div className="relative group rounded-[2rem] overflow-hidden border border-slate-200  shadow-2xl w-full">
+                        <div className="relative group rounded-card overflow-hidden border border-border w-full">
                             {/* 复制按钮 */}
                             <Button
                                 onClick={handleCopy}
@@ -121,10 +121,10 @@ const EnhancedDemoSection = ({
                                 icon={copied ? Check : Copy}
                                 title={t("common.codeBlock.copy")}
                                 aria-label={t("common.codeBlock.copy")}
-                                className="absolute right-4 sm:right-6 top-4 sm:top-6 z-20 bg-slate-800/50 text-slate-400 hover:text-white hover:bg-slate-700 backdrop-blur-md border border-white/5 sm:opacity-0 sm:group-hover:opacity-100 shadow-xl"
+                                className="absolute right-4 top-4 z-20 rounded-control border border-border bg-canvas text-ink-muted hover:text-ink hover:bg-surface-muted"
                             />
 
-                            <div className="max-h-[500px] overflow-auto scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent w-full">
+                            <div className="max-h-[500px] overflow-auto custom-scrollbar w-full">
                                 <SyntaxHighlighter
                                     language="javascript"
                                     style={vscDarkPlus}
@@ -132,7 +132,7 @@ const EnhancedDemoSection = ({
                                         margin: 0,
                                         padding: "1.5rem",
                                         fontSize: "0.85rem",
-                                        background: "#0f172a",
+                                        background: vscDarkPlus['pre[class*="language-"]'].background,
                                         lineHeight: "1.6",
                                         width: "100%",
                                         maxWidth: "100%",

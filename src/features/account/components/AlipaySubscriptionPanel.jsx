@@ -76,7 +76,7 @@ export default function AlipaySubscriptionPanel() {
         return <LoadingSpinner fullScreen text={t("alipay.loading")} />;
     if (failed)
         return (
-            <div role="alert" className="space-y-3">
+            <div role="alert" className="space-y-3 rounded-card border border-danger/20 bg-danger-soft p-4 text-danger-fg">
                 <p>{t("alipay.loadFailed")}</p>
                 <Button
                     onClick={() => {
@@ -101,7 +101,7 @@ export default function AlipaySubscriptionPanel() {
             {catalog.environment === "sandbox" ? (
                 <p
                     role="status"
-                    className="rounded-xl bg-accent-soft p-3 text-caption text-ink"
+                    className="rounded-control bg-warning-soft p-3 text-caption text-warning-fg"
                 >
                     {t("alipay.sandbox")}
                 </p>
@@ -115,12 +115,12 @@ export default function AlipaySubscriptionPanel() {
                     {catalog.products.map((product) => (
                         <article
                             key={product.productId}
-                            className="min-w-0 space-y-3 rounded-xl border border-border bg-canvas p-4"
+                            className="min-w-0 space-y-3 rounded-card border border-border bg-canvas p-4"
                         >
                             <h3 className="font-semibold text-ink">
                                 {product.tier}
                             </h3>
-                            <p className="text-2xl font-bold text-ink">
+                            <p className="text-display text-ink">
                                 {new Intl.NumberFormat(i18n.language, {
                                     style: "currency",
                                     currency: "CNY",
@@ -145,7 +145,7 @@ export default function AlipaySubscriptionPanel() {
             )}
             <a
                 href="/payment/alipay/return"
-                className="inline-block text-caption text-accent underline"
+                className="inline-block text-caption text-ink underline"
             >
                 {t("alipay.checkResult")}
             </a>

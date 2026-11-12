@@ -99,8 +99,8 @@ const CodeBlock = memo(
             <div
                 className={`overflow-hidden ${
                     isConversation
-                        ? "rounded-3xl text-ink shadow-none"
-                        : "rounded-2xl border border-border bg-canvas shadow-sm"
+                        ? "rounded-panel text-ink shadow-none"
+                        : "rounded-card border border-border bg-canvas"
                 } ${className || ""}`}
                 style={
                     isConversation
@@ -114,7 +114,7 @@ const CodeBlock = memo(
                 <div
                     className={`flex items-center justify-between gap-3 ${
                         isConversation
-                            ? "px-5 pb-1 pt-3 sm:px-6 sm:pt-4"
+                            ? "px-4 pb-1 pt-3 sm:px-6 sm:pt-4"
                             : "border-b border-border bg-surface px-3 py-2"
                     }`}
                 >
@@ -132,7 +132,7 @@ const CodeBlock = memo(
                         <span
                             className={`truncate ${
                                 isConversation
-                                    ? "text-sm font-semibold"
+                                    ? "text-body font-semibold"
                                     : "text-caption font-bold tracking-wide"
                             }`}
                         >
@@ -140,7 +140,7 @@ const CodeBlock = memo(
                         </span>
                     </div>
 
-                    <div className="flex shrink-0 items-center gap-0.5">
+                    <div className="flex shrink-0 items-center gap-1">
                         <Button
                             onClick={() => setMode("code")}
                             variant="ghost"
@@ -151,9 +151,9 @@ const CodeBlock = memo(
                             aria-pressed={activeMode === "code"}
                             className={
                                 isConversation
-                                    ? "text-inherit hover:bg-black/10 hover:text-inherit"
+                                    ? "text-inherit hover:bg-surface-muted hover:text-inherit"
                                     : activeMode === "code"
-                                      ? "bg-border/70 text-ink hover:bg-border/70 hover:text-ink"
+                                      ? "bg-surface-muted text-ink hover:bg-surface-muted hover:text-ink"
                                       : ""
                             }
                         />
@@ -169,9 +169,9 @@ const CodeBlock = memo(
                                 aria-pressed={activeMode === "preview"}
                                 className={
                                     isConversation
-                                        ? "text-inherit hover:bg-black/10 hover:text-inherit"
+                                        ? "text-inherit hover:bg-surface-muted hover:text-inherit"
                                         : activeMode === "preview"
-                                          ? "bg-border/70 text-ink hover:bg-border/70 hover:text-ink"
+                                          ? "bg-surface-muted text-ink hover:bg-surface-muted hover:text-ink"
                                           : ""
                                 }
                             />
@@ -196,7 +196,7 @@ const CodeBlock = memo(
                                 isConversation
                                     ? copied
                                         ? "text-success"
-                                        : "text-inherit hover:bg-black/10 hover:text-inherit"
+                                        : "text-inherit hover:bg-surface-muted hover:text-inherit"
                                     : copied
                                       ? "text-success"
                                       : ""
@@ -239,8 +239,8 @@ const CodeBlock = memo(
                             customStyle={{
                                 margin: 0,
                                 padding: isConversation
-                                    ? "0.5rem 1.5rem 1.25rem"
-                                    : "1.25rem 1.5rem",
+                                    ? "0.5rem 1.5rem 1rem"
+                                    : "1rem 1.5rem",
                                 fontSize: "0.875rem",
                                 background: "transparent",
                                 lineHeight: "1.6",

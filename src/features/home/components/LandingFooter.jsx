@@ -13,7 +13,7 @@ const LandingFooter = ({ t }) => {
                     <div className="col-span-2">
                         <div className="flex items-center gap-2">
                             <img
-                                src="/assets/workspace/workspace-logo.svg"
+                                src="/assets/workspace/workspace-logo.png"
                                 alt="DinQor AI"
                                 className="h-7 w-7 object-contain"
                             />

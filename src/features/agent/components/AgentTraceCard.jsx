@@ -28,7 +28,7 @@ const DetailSection = ({ title, body }) =>
     body ? (
         <div className="mt-2 first:mt-1.5">
             <div className="font-semibold text-ink-secondary">{title}</div>
-            <pre className="mt-1 max-h-64 overflow-auto whitespace-pre-wrap break-all rounded-lg bg-surface-muted px-2 py-1.5 text-[11px] leading-4 text-ink-muted">
+            <pre className="mt-1 max-h-64 overflow-auto whitespace-pre-wrap break-all rounded-lg bg-surface-muted px-2 py-1.5 text-micro leading-4 text-ink-muted">
                 {body}
             </pre>
         </div>
@@ -47,7 +47,7 @@ const CollapsibleCard = ({
     const Chevron = open ? ChevronDown : ChevronRight;
     return (
         <div
-            className={`rounded-xl border bg-canvas px-3 py-2 text-xs leading-5 ${tone || "border-border"}`}
+            className={`rounded-xl border bg-canvas px-3 py-2 text-caption leading-5 ${tone || "border-border"}`}
         >
             <button
                 type="button"
@@ -102,13 +102,13 @@ export const AgentTraceCard = ({ trace }) => {
     const Chevron = open ? ChevronDown : ChevronRight;
 
     return (
-        <div className="w-full min-w-0 text-xs leading-5 text-ink-muted">
+        <div className="w-full min-w-0 text-caption leading-5 text-ink-muted">
             <button
                 type="button"
                 onClick={() => setOpen((current) => !current)}
                 aria-expanded={open}
                 aria-label={accessibleLabel}
-                className="flex min-h-8 w-full min-w-0 items-center gap-2 rounded-md px-1 text-left transition-colors hover:bg-surface-muted/50 hover:text-ink-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                className="flex min-h-8 w-full min-w-0 items-center gap-2 rounded-md px-1 text-left transition-colors hover:bg-surface-muted/50 hover:text-ink-secondary focus-visible:outline-none"
             >
                 <Icon
                     className={`h-3.5 w-3.5 shrink-0 ${status.tone} ${status.spin ? "animate-spin" : ""}`}
@@ -121,7 +121,7 @@ export const AgentTraceCard = ({ trace }) => {
                     {progress || toolLabel}
                 </span>
                 {progress ? (
-                    <span className="max-w-[40%] shrink-0 truncate text-[11px] text-ink-faint">
+                    <span className="max-w-[40%] shrink-0 truncate text-micro text-ink-faint">
                         {toolLabel}
                     </span>
                 ) : null}
@@ -182,11 +182,11 @@ export const SelfCheckCard = ({ content, round }) => {
     return (
         <CollapsibleCard
             HeaderIcon={ShieldAlert}
-            headerTone="text-orange-600"
-            tone="border-orange-500/25"
+            headerTone="text-warning-fg"
+            tone="border-warning/25"
             summary={
                 <>
-                    <span className="font-semibold text-orange-600">
+                    <span className="font-semibold text-warning-fg">
                         {round
                             ? t("blog.agentChat.reflectionRound", { round })
                             : t("blog.agentChat.reflectionTitle")}

@@ -13,7 +13,7 @@ const ToastContainer = () => {
             role="status"
             aria-live="polite"
             aria-atomic="false"
-            className="fixed top-8 left-1/2 -translate-x-1/2 z-[1100] flex flex-col items-center gap-3 pointer-events-none w-full max-w-md px-6"
+            className="fixed top-8 left-1/2 -translate-x-1/2 z-[1100] flex flex-col items-center gap-3 pointer-events-none w-full max-w-md px-4"
         >
             {toasts.map((toast) => (
                 <ToastItem

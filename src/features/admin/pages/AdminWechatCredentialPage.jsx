@@ -1,6 +1,9 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { KeyRound, Loader2, Trash2 } from "lucide-react";
+import Button from "@shared/ui/primitives/Button";
+import LoadingSpinner from "@shared/ui/feedback/LoadingSpinner";
+import { pointsCardSlots, pointsCardsPayload } from "../utils/pointsProducts";
 import FormField from "@shared/ui/forms/FormField";
 import ConfirmModal from "@shared/ui/overlays/ConfirmModal";
 import { formInputCls } from "@shared/ui/forms/formStyles";
@@ -15,7 +18,13 @@ import { adminService } from "../services/adminService";
 const AdminWechatCredentialPage = () => {
     const { t } = useTranslation();
     const toast = useToast();
+    const translationRef = useRef(t);
+    useEffect(() => {
+        translationRef.current = t;
+    }, [t]);
     const [loading, setLoading] = useState(true);
+    const [dataReady, setDataReady] = useState(false);
+    const virtualPaySaveLock = useRef(false);
     const [appId, setAppId] = useState("");
     const [appSecret, setAppSecret] = useState("");
     const [configured, setConfigured] = useState(false);
@@ -24,6 +33,7 @@ const AdminWechatCredentialPage = () => {
     const [clearing, setClearing] = useState(false);
     const [formError, setFormError] = useState("");
     const [virtualPay, setVirtualPay] = useState({
+        pointsProducts: pointsCardSlots(),
         enabled: false,
         offerId: "",
         appKey: "",
@@ -35,32 +45,40 @@ const AdminWechatCredentialPage = () => {
     const [virtualPaySaving, setVirtualPaySaving] = useState(false);
     const [virtualPayError, setVirtualPayError] = useState("");
 
-    const load = useCallback(async () => {
-        try {
-            setLoading(true);
-            const [data, payData] = await Promise.all([
-                adminService.getWechatCredential({ _silent: true }),
-                adminService.getVirtualPaySettings({ _silent: true }),
-            ]);
-            setAppId(data?.appId || "");
-            setConfigured(Boolean(data?.secretConfigured));
-            setVirtualPay((current) => ({
-                ...current,
-                ...payData,
-                appKey: "",
-                plus: payData?.plus || current.plus,
-                pro: payData?.pro || current.pro,
-                ultra: payData?.ultra || current.ultra,
-            }));
-        } catch (error) {
-            if (isRequestCancelled(error)) return;
-            toast.error(
-                error?.message || t("admin.wechatCredential.loadFailed"),
-            );
-        } finally {
-            setLoading(false);
-        }
-    }, [toast, t]);
+    const load = useCallback(
+        async (showLoading = true) => {
+            try {
+                if (showLoading) setLoading(true);
+                const [data, payData] = await Promise.all([
+                    adminService.getWechatCredential({ _silent: true }),
+                    adminService.getVirtualPaySettings({ _silent: true }),
+                ]);
+                setAppId(data?.appId || "");
+                setConfigured(Boolean(data?.secretConfigured));
+                setVirtualPay((current) => ({
+                    ...current,
+                    ...payData,
+                    appKey: "",
+                    pointsProducts: pointsCardSlots(payData?.pointsProducts),
+                    plus: payData?.plus || current.plus,
+                    pro: payData?.pro || current.pro,
+                    ultra: payData?.ultra || current.ultra,
+                }));
+                setDataReady(true);
+            } catch (error) {
+                if (isRequestCancelled(error)) return;
+                toast.error(
+                    error?.message ||
+                        translationRef.current(
+                            "admin.wechatCredential.loadFailed",
+                        ),
+                );
+            } finally {
+                setLoading(false);
+            }
+        },
+        [toast],
+    );
 
     useEffect(() => {
         load();
@@ -82,7 +100,7 @@ const AdminWechatCredentialPage = () => {
             toast.success(t("admin.wechatCredential.saved"));
             setAppSecret("");
             setFormError("");
-            await load();
+            await load(false);
         } catch (err) {
             setFormError(
                 err?.response?.data?.message ||
@@ -100,7 +118,7 @@ const AdminWechatCredentialPage = () => {
             toast.success(t("admin.wechatCredential.cleared"));
             setClearOpen(false);
             setAppSecret("");
-            await load();
+            await load(false);
         } catch {
             // HTTP 层已统一提示
         } finally {
@@ -115,32 +133,62 @@ const AdminWechatCredentialPage = () => {
         }));
 
     const handleVirtualPaySave = async () => {
+        if (virtualPaySaveLock.current || !dataReady) return;
+        const result = pointsCardsPayload(virtualPay.pointsProducts, [
+            virtualPay.plus,
+            virtualPay.pro,
+            virtualPay.ultra,
+        ]);
+        if (result.error) {
+            setVirtualPayError(t(`admin.wechatCredential.${result.error}`));
+            return;
+        }
+        virtualPaySaveLock.current = true;
         try {
             setVirtualPaySaving(true);
             setVirtualPayError("");
             const payload = {
                 ...virtualPay,
+                pointsProducts: result.products,
                 offerId: virtualPay.offerId.trim(),
                 appKey: virtualPay.appKey.trim(),
             };
             await adminService.saveVirtualPaySettings(payload);
             toast.success(t("admin.wechatCredential.virtualPaySaved"));
-            await load();
+            await load(false);
         } catch (err) {
             setVirtualPayError(
                 err?.response?.data?.message ||
                     t("admin.wechatCredential.virtualPaySaveFailed"),
             );
         } finally {
+            virtualPaySaveLock.current = false;
             setVirtualPaySaving(false);
         }
     };
 
+    const updatePointsCard = (index, field, value) =>
+        setVirtualPay((current) => ({
+            ...current,
+            pointsProducts: current.pointsProducts.map((card, i) =>
+                i === index ? { ...card, [field]: value } : card,
+            ),
+        }));
+
+    if (loading) return <LoadingSpinner fullScreen />;
+    if (!dataReady)
+        return (
+            <div className="space-y-4 p-6 text-body text-ink">
+                <div role="alert">{t("admin.wechatCredential.loadFailed")}</div>
+                <Button onClick={() => load()}>{t("admin.wechatCredential.pointsCardsRetry")}</Button>
+            </div>
+        );
+
     return (
-        <div className="mx-auto w-full max-w-2xl space-y-6 px-4 py-5 sm:px-6 sm:py-6">
+        <div className="mx-auto h-full min-h-0 w-full max-w-2xl space-y-6 overflow-y-auto overscroll-y-contain p-4 sm:p-6">
             <div>
                 <div className="flex items-center gap-2">
-                    <h2 className="text-lg font-bold text-ink">
+                    <h2 className="text-heading text-ink">
                         {t("admin.wechatCredential.title")}
                     </h2>
                     <span
@@ -156,24 +204,25 @@ const AdminWechatCredentialPage = () => {
                             : t("admin.wechatCredential.notConfigured")}
                     </span>
                 </div>
-                <p className="mt-1 text-xs text-ink-muted">
+                <p className="mt-1 text-caption text-ink-muted">
                     {t("admin.wechatCredential.subtitle")}
                 </p>
             </div>
 
-            <div className="rounded-2xl border border-border bg-canvas p-6">
-                <div className="mb-5 flex items-center justify-between gap-4">
+            <div className="rounded-panel border border-border bg-surface p-4 sm:p-6">
+                <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
                     <div>
                         <h3 className="font-bold text-ink">
                             {t("admin.wechatCredential.virtualPayTitle")}
                         </h3>
-                        <p className="mt-1 text-xs text-ink-muted">
+                        <p className="mt-1 text-caption text-ink-muted">
                             {t("admin.wechatCredential.virtualPayHint")}
                         </p>
                     </div>
                     <label className="flex items-center gap-2 text-caption font-medium">
                         <input
                             type="checkbox"
+                            className="h-4 w-4 rounded border-border accent-ink"
                             checked={virtualPay.enabled}
                             onChange={(e) =>
                                 setVirtualPay((current) => ({
@@ -185,7 +234,10 @@ const AdminWechatCredentialPage = () => {
                         {t("admin.wechatCredential.virtualPayEnabled")}
                     </label>
                 </div>
-                <div className="space-y-4">
+                <fieldset
+                    disabled={virtualPaySaving}
+                    className="min-w-0 space-y-4"
+                >
                     <FormField
                         label="OfferID"
                         htmlFor="admin-virtual-pay-offer-id"
@@ -229,10 +281,12 @@ const AdminWechatCredentialPage = () => {
                     {["plus", "pro", "ultra"].map((tier) => (
                         <div
                             key={tier}
-                            className="grid gap-3 rounded-xl border border-border p-4 md:grid-cols-3"
+                            className="grid gap-3 rounded-card border border-border bg-canvas p-4 md:grid-cols-3"
                         >
                             <FormField
-                                label={`${tier.toUpperCase()} Product ID`}
+                                label={t("admin.wechatCredential.productId", {
+                                    tier: tier.toUpperCase(),
+                                })}
                             >
                                 <input
                                     value={virtualPay[tier].productId}
@@ -282,26 +336,176 @@ const AdminWechatCredentialPage = () => {
                             </FormField>
                         </div>
                     ))}
+                    <fieldset
+                        disabled={virtualPaySaving}
+                        className="min-w-0 space-y-4 border-t border-border pt-5"
+                    >
+                        <legend className="text-title text-ink">
+                            {t("admin.wechatCredential.pointsCardsTitle")}
+                        </legend>
+                        <div className="text-caption text-ink-muted">
+                            {t("admin.wechatCredential.pointsCardsHint")}
+                        </div>
+                        {virtualPay.pointsProducts.map((card, index) => (
+                            <div
+                                key={index}
+                                className="space-y-3 rounded-card border border-border bg-canvas p-4"
+                            >
+                                <div className="flex flex-wrap items-center justify-between gap-3">
+                                    <div className="text-title text-ink">
+                                        {t(
+                                            "admin.wechatCredential.pointsCardNumber",
+                                            { number: index + 1 },
+                                        )}
+                                    </div>
+                                    <label className="flex items-center gap-2 text-caption text-ink">
+                                        <input
+                                            type="checkbox"
+                                            checked={card.enabled}
+                                            onChange={(e) =>
+                                                updatePointsCard(
+                                                    index,
+                                                    "enabled",
+                                                    e.target.checked,
+                                                )
+                                            }
+                                            className="h-4 w-4 accent-ink"
+                                        />
+                                        {t(
+                                            "admin.wechatCredential.pointsCardEnabled",
+                                            { number: index + 1 },
+                                        )}
+                                    </label>
+                                </div>
+                                <div className="grid min-w-0 gap-3 sm:grid-cols-2">
+                                    <FormField
+                                        label={t(
+                                            "admin.wechatCredential.pointsCardId",
+                                        )}
+                                        htmlFor={`points-id-${index}`}
+                                    >
+                                        <input
+                                            id={`points-id-${index}`}
+                                            value={card.productId}
+                                            maxLength={20}
+                                            autoComplete="off"
+                                            placeholder={`POINTS_${[10, 50, 100][index]}`}
+                                            onChange={(e) =>
+                                                updatePointsCard(
+                                                    index,
+                                                    "productId",
+                                                    e.target.value,
+                                                )
+                                            }
+                                            className={formInputCls}
+                                        />
+                                    </FormField>
+                                    <FormField
+                                        label={t(
+                                            "admin.wechatCredential.pointsCardName",
+                                        )}
+                                        htmlFor={`points-name-${index}`}
+                                    >
+                                        <input
+                                            id={`points-name-${index}`}
+                                            value={card.name}
+                                            maxLength={20}
+                                            onChange={(e) =>
+                                                updatePointsCard(
+                                                    index,
+                                                    "name",
+                                                    e.target.value,
+                                                )
+                                            }
+                                            className={formInputCls}
+                                        />
+                                    </FormField>
+                                    <FormField
+                                        label={t(
+                                            "admin.wechatCredential.pointsCardAmount",
+                                        )}
+                                        htmlFor={`points-amount-${index}`}
+                                    >
+                                        <input
+                                            id={`points-amount-${index}`}
+                                            type="number"
+                                            min="10"
+                                            max="10000"
+                                            step="10"
+                                            value={card.points}
+                                            onChange={(e) =>
+                                                updatePointsCard(
+                                                    index,
+                                                    "points",
+                                                    e.target.value === ""
+                                                        ? ""
+                                                        : Number(
+                                                              e.target.value,
+                                                          ),
+                                                )
+                                            }
+                                            className={formInputCls}
+                                        />
+                                    </FormField>
+                                    <FormField
+                                        label={t(
+                                            "admin.wechatCredential.pointsCardPrice",
+                                        )}
+                                        htmlFor={`points-price-${index}`}
+                                    >
+                                        <input
+                                            id={`points-price-${index}`}
+                                            value={
+                                                card.points === ""
+                                                    ? ""
+                                                    : card.points / 10
+                                            }
+                                            readOnly
+                                            className={formInputCls}
+                                        />
+                                    </FormField>
+                                </div>
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() =>
+                                        setVirtualPay((current) => ({
+                                            ...current,
+                                            pointsProducts:
+                                                current.pointsProducts.map(
+                                                    (item, i) =>
+                                                        i === index
+                                                            ? pointsCardSlots()[
+                                                                  index
+                                                              ]
+                                                            : item,
+                                                ),
+                                        }))
+                                    }
+                                >
+                                    {t(
+                                        "admin.wechatCredential.pointsCardClear",
+                                    )}
+                                </Button>
+                            </div>
+                        ))}
+                    </fieldset>
                     {virtualPayError && (
-                        <p className="text-xs font-medium text-danger">
+                        <p className="text-caption font-medium text-danger">
                             {virtualPayError}
                         </p>
                     )}
-                    <button
-                        type="button"
+                    <Button
+                        variant="ink"
                         onClick={handleVirtualPaySave}
-                        disabled={virtualPaySaving}
-                        className="inline-flex items-center gap-2 rounded-xl bg-ink px-6 py-2.5 text-caption font-bold text-white disabled:opacity-60"
+                        loading={virtualPaySaving}
                     >
-                        {virtualPaySaving && (
-                            <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                        )}
                         {t("common.save")}
-                    </button>
-                </div>
+                    </Button>
+                </fieldset>
             </div>
 
-            <div className="rounded-2xl border border-border bg-canvas p-6">
+            <div className="rounded-panel border border-border bg-surface p-4 sm:p-6">
                 {loading ? (
                     <div className="flex items-center justify-center py-10">
                         <Loader2 className="h-5 w-5 animate-spin text-ink-faint" />
@@ -347,7 +551,7 @@ const AdminWechatCredentialPage = () => {
                         </FormField>
 
                         {formError && (
-                            <p className="text-xs font-medium text-danger">
+                            <p className="text-caption font-medium text-danger">
                                 {formError}
                             </p>
                         )}
@@ -357,7 +561,7 @@ const AdminWechatCredentialPage = () => {
                                 type="button"
                                 onClick={handleSave}
                                 disabled={saving}
-                                className="inline-flex items-center gap-2 rounded-xl bg-ink px-6 py-2.5 text-caption font-bold text-white transition hover:bg-accent active:scale-95 disabled:opacity-60"
+                                className="inline-flex items-center gap-2 rounded-control bg-ink px-6 py-2.5 text-caption font-bold text-canvas transition hover:bg-ink-secondary active:scale-95 disabled:opacity-60"
                             >
                                 {saving ? (
                                     <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -369,7 +573,7 @@ const AdminWechatCredentialPage = () => {
                                     type="button"
                                     onClick={() => setClearOpen(true)}
                                     disabled={clearing}
-                                    className="inline-flex items-center gap-2 rounded-xl border border-border px-5 py-2.5 text-caption font-bold text-danger transition hover:bg-danger-soft disabled:opacity-60"
+                                    className="inline-flex items-center gap-2 rounded-control border border-border px-5 py-2.5 text-caption font-bold text-danger transition hover:bg-danger-soft disabled:opacity-60"
                                 >
                                     <Trash2 className="h-3.5 w-3.5" />
                                     {t("admin.wechatCredential.clear")}

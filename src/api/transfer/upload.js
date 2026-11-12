@@ -41,7 +41,7 @@ export const createUpload = (instance) =>
                       onProgress(percent, progressEvent);
                   }
                 : undefined,
-            timeout: 0,
+            timeout: restConfig.timeout ?? 0,
             dedupe: false,
         });
     };

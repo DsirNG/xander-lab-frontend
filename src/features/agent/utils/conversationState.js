@@ -115,21 +115,28 @@ export const hasStreamingAnswer = (steps = []) =>
 export const getActiveImageGeneration = (steps = []) => {
     let active = false;
     let message = "";
+    let progress;
+    let previewed = false;
 
     steps.forEach((step) => {
+        if (step.type === "error") { active = false; return; }
+        if (step.type === "image_preview") { previewed = true; active = false; return; }
         if (step.type !== "tool" || step.tool !== IMAGE_TOOL) return;
         if (step.phase === "start") {
             active = true;
+            previewed = false;
             message = "";
+            progress = undefined;
         } else if (step.phase === "progress") {
-            active = true;
+            active = !previewed;
             message = step.message || message;
+            if (Number.isFinite(step.progress)) progress = Math.max(progress ?? 0, Math.min(100, Math.max(0, step.progress)));
         } else if (step.phase === "end" || step.phase === "error") {
             active = false;
         }
     });
 
-    return active ? { message } : null;
+    return active ? { message, ...(progress === undefined ? {} : { progress }) } : null;
 };
 
 export const abortableDelay = (delay, signal) =>

@@ -14,6 +14,7 @@ import Button from "@shared/ui/primitives/Button";
 import FormField from "@shared/ui/forms/FormField";
 import { formInputCls } from "@shared/ui/forms/formStyles";
 import { twMerge } from "tailwind-merge";
+import styles from "./LoginPage.module.css";
 
 const GoogleMark = () => (
     <svg aria-hidden="true" viewBox="0 0 48 48" className="h-5 w-5">
@@ -269,13 +270,12 @@ const LoginPage = () => {
     const isCodeFlow = authMode === "register" || loginType === "code";
     const inputClassName = twMerge(
         formInputCls,
-        "h-12 rounded-none border-0 border-b border-border-strong bg-transparent px-0 text-body text-ink shadow-none placeholder:text-ink-faint focus:border-ink focus:ring-0",
+        "h-12 rounded-xl border border-border bg-surface px-3.5 text-body text-ink shadow-none placeholder:text-ink-faint transition-colors hover:border-border-strong",
     );
 
     return (
-        <main className="grid min-h-screen bg-white text-ink lg:grid-cols-2"
-        >
-            <section className="relative hidden min-h-screen overflow-hidden bg-gradient-to-br from-surface-muted via-white to-accent-soft lg:flex">
+        <main className={styles.page}>
+            <section className={styles.artwork}>
                 <svg
                     aria-hidden="true"
                     viewBox="0 0 900 1200"
@@ -330,19 +330,15 @@ const LoginPage = () => {
                 </svg>
             </section>
 
-            <section className="flex min-h-screen items-center justify-center px-6 py-10 sm:px-10 lg:px-12 xl:px-16">
-                <div className="w-full max-w-[420px]">
-                    <Link
-                        to="/"
-                        aria-label="DinQorAI"
-                        className="mb-10 flex w-fit items-center gap-3 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink lg:mb-12"
-                    >
+            <section className={styles.formSection}>
+                <div className={styles.formContainer}>
+                    <Link to="/" aria-label="DinQorAI" className={styles.brand}>
                         <img
-                            src="/assets/workspace/workspace-logo.svg"
+                            src="/assets/workspace/workspace-logo.png"
                             alt=""
                             className="h-10 w-10"
                         />
-                        <span className="text-xl font-bold tracking-tight text-ink">
+                        <span className="text-heading tracking-tight text-ink">
                             DinQor<span>AI</span>
                         </span>
                     </Link>
@@ -351,7 +347,7 @@ const LoginPage = () => {
                         <div
                             role="tablist"
                             aria-label={t("auth.login.identityGateway")}
-                            className="mb-8 flex gap-8 border-b border-border"
+                            className={styles.tabs}
                         >
                             {["login", "register"].map((mode) => (
                                 <button
@@ -360,10 +356,10 @@ const LoginPage = () => {
                                     role="tab"
                                     aria-selected={authMode === mode}
                                     onClick={() => selectAuthMode(mode)}
-                                    className={`relative -mb-px border-b-2 px-0.5 pb-3 text-body font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink ${
+                                    className={`flex min-h-11 flex-1 items-center justify-center rounded-lg px-4 text-body font-medium transition-colors focus-visible:outline-none ${
                                         authMode === mode
-                                            ? "border-ink text-ink"
-                                            : "border-transparent text-ink-muted hover:text-ink"
+                                            ? "bg-surface text-ink shadow-sm ring-1 ring-border"
+                                            : "text-ink-muted hover:bg-surface/60 hover:text-ink"
                                     }`}
                                 >
                                     {mode === "login"
@@ -374,28 +370,32 @@ const LoginPage = () => {
                         </div>
                     )}
 
-                    <h1 className="text-3xl font-bold tracking-tight text-ink">
+                    <div
+                        role="heading"
+                        aria-level={1}
+                        className="text-display tracking-tight text-ink"
+                    >
                         {showResetPassword
                             ? t("auth.login.resetPasswordTitle")
                             : authMode === "login"
                               ? t("auth.login.welcomeBack")
                               : t("auth.login.registerTitle")}
-                    </h1>
-                    <p className="mt-2 text-body leading-relaxed text-ink-muted">
+                    </div>
+                    <div className="mt-2 text-body leading-relaxed text-ink-muted">
                         {showResetPassword
                             ? t("auth.login.resetPasswordDescription")
                             : authMode === "login"
                               ? t("auth.login.loginSubtitle")
                               : t("auth.login.registerSubtitle")}
-                    </p>
+                    </div>
 
                     {showWechatQr ? (
-                        <div className="mt-8 flex flex-col items-center rounded-xl border border-border bg-white px-5 py-6 text-center">
+                        <div className="mt-6 flex min-w-0 flex-col items-center rounded-xl border border-border bg-surface-muted px-4 py-5 text-center sm:px-5">
                             <div className="mb-4 flex w-full items-center justify-between">
                                 <button
                                     type="button"
                                     onClick={closeWechatQr}
-                                    className="rounded-md text-caption text-ink-muted hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink"
+                                    className="rounded-md text-caption text-ink-muted hover:text-ink focus-visible:outline-none"
                                 >
                                     {t("auth.login.qrBack")}
                                 </button>
@@ -404,12 +404,12 @@ const LoginPage = () => {
                                 </span>
                                 <span className="w-10" aria-hidden="true" />
                             </div>
-                            <div className="rounded-xl border border-border bg-white p-2">
+                            <div className="max-w-full rounded-xl border border-border bg-white p-2">
                                 {qrState.image ? (
                                     <img
                                         src={qrState.image}
                                         alt={t("auth.login.qrAlt")}
-                                        className="h-52 w-52 rounded-lg"
+                                        className="aspect-square w-52 max-w-full rounded-lg"
                                     />
                                 ) : (
                                     <div
@@ -418,7 +418,7 @@ const LoginPage = () => {
                                     />
                                 )}
                             </div>
-                            <p
+                            <div
                                 role="status"
                                 className="mt-4 text-caption text-ink-muted"
                             >
@@ -429,7 +429,7 @@ const LoginPage = () => {
                                       : qrState.status === "error"
                                         ? t("auth.login.qrUnavailable")
                                         : t("auth.login.qrHint")}
-                            </p>
+                            </div>
                             {(qrState.status === "EXPIRED" ||
                                 qrState.status === "error") && (
                                 <Button
@@ -446,7 +446,7 @@ const LoginPage = () => {
                     ) : showResetPassword ? (
                         <form
                             onSubmit={handleResetPassword}
-                            className="mt-7 space-y-5"
+                            className="mt-6 space-y-5"
                         >
                             <div className="space-y-4">
                                 <FormField
@@ -461,16 +461,25 @@ const LoginPage = () => {
                                             required
                                             value={resetEmail}
                                             onChange={(event) =>
-                                                setResetEmail(event.target.value)
+                                                setResetEmail(
+                                                    event.target.value,
+                                                )
                                             }
-                                            className={twMerge(inputClassName, "pr-32")}
-                                            placeholder={t("auth.login.emailPlaceholder")}
+                                            className={twMerge(
+                                                inputClassName,
+                                                "pr-32",
+                                            )}
+                                            placeholder={t(
+                                                "auth.login.emailPlaceholder",
+                                            )}
                                         />
                                         <Button
                                             type="button"
                                             size="sm"
                                             variant="ghost"
-                                            disabled={countdown > 0 || sendingCode}
+                                            disabled={
+                                                countdown > 0 || sendingCode
+                                            }
                                             loading={sendingCode}
                                             onClick={handleSendResetCode}
                                             className="absolute right-0 top-1/2 -translate-y-1/2 px-2.5 text-ink hover:bg-surface-muted hover:text-ink-secondary"
@@ -502,7 +511,9 @@ const LoginPage = () => {
                                             )
                                         }
                                         className={inputClassName}
-                                        placeholder={t("auth.login.codePlaceholder")}
+                                        placeholder={t(
+                                            "auth.login.codePlaceholder",
+                                        )}
                                     />
                                 </FormField>
                                 <FormField
@@ -518,13 +529,15 @@ const LoginPage = () => {
                                         minLength={6}
                                         maxLength={72}
                                         value={resetNewPassword}
-                                            onChange={(event) =>
-                                                setResetNewPassword(
-                                                    event.target.value,
-                                                )
-                                            }
+                                        onChange={(event) =>
+                                            setResetNewPassword(
+                                                event.target.value,
+                                            )
+                                        }
                                         className={inputClassName}
-                                        placeholder={t("auth.login.newPasswordPlaceholder")}
+                                        placeholder={t(
+                                            "auth.login.newPasswordPlaceholder",
+                                        )}
                                     />
                                 </FormField>
                                 <FormField
@@ -539,13 +552,15 @@ const LoginPage = () => {
                                         minLength={6}
                                         maxLength={72}
                                         value={resetConfirmPassword}
-                                            onChange={(event) =>
-                                                setResetConfirmPassword(
-                                                    event.target.value,
-                                                )
-                                            }
+                                        onChange={(event) =>
+                                            setResetConfirmPassword(
+                                                event.target.value,
+                                            )
+                                        }
                                         className={inputClassName}
-                                        placeholder={t("auth.login.confirmPasswordPlaceholder")}
+                                        placeholder={t(
+                                            "auth.login.confirmPasswordPlaceholder",
+                                        )}
                                     />
                                 </FormField>
                             </div>
@@ -555,14 +570,14 @@ const LoginPage = () => {
                                 variant="ink"
                                 size="lg"
                                 block
-                                className="rounded-lg"
+                                className="min-h-12 rounded-xl"
                             >
                                 {t("auth.login.resetPasswordSubmit")}
                             </Button>
                             <button
                                 type="button"
                                 onClick={closePasswordReset}
-                                className="w-full text-center text-caption font-medium text-ink-muted hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink"
+                                className="w-full text-center text-caption font-medium text-ink-muted hover:text-ink focus-visible:outline-none"
                             >
                                 {t("auth.login.backToLogin")}
                             </button>
@@ -570,7 +585,7 @@ const LoginPage = () => {
                     ) : (
                         <form
                             onSubmit={handleSubmit}
-                            className="mt-7 space-y-5"
+                            className="mt-6 space-y-5"
                         >
                             <div className="space-y-4">
                                 <FormField
@@ -648,7 +663,9 @@ const LoginPage = () => {
                                             maxLength={6}
                                             value={formData.code}
                                             onChange={handleCodeChange}
-                                            aria-label={t("auth.login.codeLabel")}
+                                            aria-label={t(
+                                                "auth.login.codeLabel",
+                                            )}
                                             className={inputClassName}
                                         />
                                     </FormField>
@@ -686,7 +703,7 @@ const LoginPage = () => {
                                         <button
                                             type="button"
                                             onClick={openPasswordReset}
-                                            className="text-caption font-medium text-ink-muted hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink"
+                                            className="text-caption font-medium text-ink-muted hover:text-ink focus-visible:outline-none"
                                         >
                                             {t("auth.login.forgotPassword")}
                                         </button>
@@ -704,7 +721,7 @@ const LoginPage = () => {
                                                 : "password",
                                         )
                                     }
-                                    className="text-caption font-medium text-ink hover:text-ink-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink"
+                                    className="text-caption font-medium text-ink hover:text-ink-secondary focus-visible:outline-none"
                                 >
                                     {loginType === "password"
                                         ? t("auth.login.switchToCode")
@@ -720,7 +737,7 @@ const LoginPage = () => {
                                 block
                                 icon={ArrowRight}
                                 iconPosition="right"
-                                className="rounded-lg"
+                                className="min-h-12 rounded-xl"
                             >
                                 {authMode === "register"
                                     ? t("auth.login.registerSubmit")
@@ -728,18 +745,18 @@ const LoginPage = () => {
                             </Button>
 
                             {isCodeFlow && (
-                                <p className="text-center text-caption leading-relaxed text-ink-faint">
+                                <div className="text-center text-caption leading-relaxed text-ink-faint">
                                     {authMode === "register"
                                         ? t("auth.login.autoRegisterHint")
                                         : t("auth.login.codeLoginHint")}
-                                </p>
+                                </div>
                             )}
                         </form>
                     )}
 
                     {!showWechatQr && !showResetPassword && (
                         <>
-                            <div className="my-7 flex items-center gap-4">
+                            <div className="my-6 flex items-center gap-3">
                                 <span className="h-px flex-1 bg-border" />
                                 <span className="text-caption text-ink-faint">
                                     {t("auth.login.socialDivider")}
@@ -747,11 +764,11 @@ const LoginPage = () => {
                                 <span className="h-px flex-1 bg-border" />
                             </div>
 
-                            <div className="grid grid-cols-2 gap-3">
+                            <div className="grid grid-cols-1 gap-3 min-[360px]:grid-cols-2">
                                 <button
                                     type="button"
                                     onClick={openWechatQr}
-                                    className="flex h-11 items-center justify-center gap-2 rounded-lg border border-border bg-white text-caption font-medium text-ink transition-colors hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink"
+                                    className="flex min-h-12 min-w-0 items-center justify-center gap-2 rounded-xl border border-border bg-surface px-3 text-body font-medium text-ink transition-colors hover:border-border-strong hover:bg-surface-muted focus-visible:outline-none"
                                 >
                                     <MessageCircle
                                         aria-hidden="true"
@@ -766,7 +783,7 @@ const LoginPage = () => {
                                             t("auth.login.googleUnavailable"),
                                         )
                                     }
-                                    className="flex h-11 items-center justify-center gap-2 rounded-lg border border-border bg-white text-caption font-medium text-ink transition-colors hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink"
+                                    className="flex min-h-12 min-w-0 items-center justify-center gap-2 rounded-xl border border-border bg-surface px-3 text-body font-medium text-ink transition-colors hover:border-border-strong hover:bg-surface-muted focus-visible:outline-none"
                                     aria-label={t("auth.login.google")}
                                 >
                                     <GoogleMark />

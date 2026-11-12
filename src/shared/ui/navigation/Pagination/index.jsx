@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import CustomSelect from "@shared/ui/forms/CustomSelect";
 import Button from "@shared/ui/primitives/Button";
@@ -72,71 +72,69 @@ const Pagination = ({
 
     return (
         <div
-            className={`flex shrink-0 flex-col gap-2 px-3 py-2.5 sm:flex-row sm:items-center sm:justify-between sm:px-4 ${className}`}
+            className={`flex shrink-0 flex-col gap-3 border-t border-border px-3 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-4 ${className}`}
         >
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="flex flex-wrap items-center gap-3">
                 <div className="text-caption text-ink-muted">
                     {t("common.pagination.pageInfo", { from, to, total })}
                 </div>
-                <div className="w-[7.5rem]">
+                <div className="w-32">
                     <CustomSelect
-                        size="md"
+                        size="sm"
                         variant="outline"
                         options={sizeOptions}
                         value={String(pageSize)}
                         onChange={handlePageSizeChange}
-                        triggerClassName="!border-border !bg-canvas !text-ink-secondary hover:!border-accent-600 hover:!bg-surface-muted rounded-xl"
-                        dropdownClassName="!border-border !bg-canvas !shadow-md !shadow-black/20 rounded-xl"
+                        triggerClassName="!border-transparent !bg-transparent !text-caption hover:!bg-surface"
                     />
                 </div>
             </div>
-            <div className="flex flex-wrap items-center gap-1.5">
-                <Button
-                    onClick={() => onPageChange?.(Math.max(1, page - 1))}
-                    disabled={disabled || page <= 1}
-                    variant="outline"
-                    size="lg"
-                    icon={ArrowLeft}
-                    aria-label={t("common.pagination.prevPage")}
-                    className="!border-border !bg-canvas !text-ink-secondary hover:!border-accent-600 hover:!text-accent-600 hover:!bg-surface-muted rounded-xl"
-                />
-                {pageItems.map((item, index) =>
-                    item === "ellipsis" ? (
-                        <span
-                            key={`ellipsis-${index}`}
-                            className="px-1 text-micro text-[#8e94ad]"
-                        >
-                            …
-                        </span>
-                    ) : (
-                        <Button
-                            key={item}
-                            onClick={() => onPageChange?.(item)}
-                            disabled={disabled}
-                            variant="outline"
-                            size="lg"
-                            className={`!h-11 !w-11 !p-0 rounded-xl transition ${
-                                page === item
-                                    ? "bg-accent text-white border-accent hover:bg-accent-700 hover:text-white hover:border-accent shadow-2xs"
-                                    : "!border-border !bg-canvas !text-ink-secondary hover:!border-accent-600 hover:!text-accent-600 hover:!bg-surface-muted"
-                            }`}
-                        >
-                            {item}
-                        </Button>
-                    ),
-                )}
-                <Button
-                    onClick={() =>
-                        onPageChange?.(Math.min(totalPages, page + 1))
-                    }
-                    disabled={disabled || page >= totalPages}
-                    variant="outline"
-                    size="lg"
-                    icon={ArrowRight}
-                    aria-label={t("common.pagination.nextPage")}
-                    className="!border-border !bg-canvas !text-ink-secondary hover:!border-accent-600 hover:!text-accent-600 hover:!bg-surface-muted rounded-xl"
-                />
-            </div>
+            {totalPages > 1 && (
+                <div className="flex items-center gap-1">
+                    <Button
+                        onClick={() => onPageChange?.(Math.max(1, page - 1))}
+                        disabled={disabled || page <= 1}
+                        variant="ghost"
+                        size="sm"
+                        icon={ChevronLeft}
+                        aria-label={t("common.pagination.prevPage")}
+                    />
+                    {pageItems.map((item, index) =>
+                        item === "ellipsis" ? (
+                            <span
+                                key={`ellipsis-${index}`}
+                                className="grid h-9 w-6 place-items-center text-caption text-ink-faint"
+                            >
+                                …
+                            </span>
+                        ) : (
+                            <Button
+                                key={item}
+                                onClick={() => onPageChange?.(item)}
+                                disabled={disabled}
+                                variant="ghost"
+                                size="sm"
+                                aria-current={
+                                    page === item ? "page" : undefined
+                                }
+                                className={`w-9 px-0 tabular-nums ${page === item ? "bg-surface-muted text-ink" : ""}`}
+                            >
+                                {item}
+                            </Button>
+                        ),
+                    )}
+                    <Button
+                        onClick={() =>
+                            onPageChange?.(Math.min(totalPages, page + 1))
+                        }
+                        disabled={disabled || page >= totalPages}
+                        variant="ghost"
+                        size="sm"
+                        icon={ChevronRight}
+                        aria-label={t("common.pagination.nextPage")}
+                    />
+                </div>
+            )}
         </div>
     );
 };

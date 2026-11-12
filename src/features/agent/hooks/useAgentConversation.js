@@ -178,7 +178,7 @@ export const useAgentConversation = ({ conversationId }) => {
             ) {
                 setErrorMessage(null);
             }
-            if (clearLive && !runChanged) clearLiveState();
+            if (clearLive && !runChanged) clearLiveState({ preserveImagePreviews: status === "failed" });
             return { runChanged, runVersion: nextRunVersion, status };
         },
         [
@@ -292,7 +292,7 @@ export const useAgentConversation = ({ conversationId }) => {
                         snapshotResult.status === "ready" ||
                         snapshotResult.status === "failed"
                     ) {
-                        clearLiveState();
+                        clearLiveState({ preserveImagePreviews: snapshotResult.status === "failed" });
                         setReconnecting(false);
                         return;
                     }
@@ -327,7 +327,7 @@ export const useAgentConversation = ({ conversationId }) => {
                         latestSnapshot.status === "ready" ||
                         latestSnapshot.status === "failed"
                     ) {
-                        clearLiveState();
+                        clearLiveState({ preserveImagePreviews: latestSnapshot.status === "failed" });
                         setReconnecting(false);
                         return;
                     }

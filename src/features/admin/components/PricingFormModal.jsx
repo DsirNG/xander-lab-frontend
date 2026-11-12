@@ -139,7 +139,7 @@ const PricingFormModal = ({ isOpen, price, onClose, onSaved }) => {
     const priceField = (id, label, value, setter) => (
         <FormField label={label} htmlFor={id}>
             <div className="relative">
-                <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-xs font-medium text-ink-faint">
+                <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-caption font-medium text-ink-faint">
                     ¥
                 </span>
                 <input
@@ -166,6 +166,7 @@ const PricingFormModal = ({ isOpen, price, onClose, onSaved }) => {
                     : t("admin.pricing.createTitle")
             }
             width="max-w-xl"
+            className="rounded-dialog shadow-float!"
             footer={footer}
         >
             <div className="space-y-4">
@@ -228,18 +229,18 @@ const PricingFormModal = ({ isOpen, price, onClose, onSaved }) => {
                     />
                 </FormField>
 
-                <label className="flex cursor-pointer items-center gap-2 text-xs font-medium text-ink-muted">
+                <label className="flex cursor-pointer items-center gap-2 text-caption font-medium text-ink-muted">
                     <input
                         type="checkbox"
                         checked={enabled}
                         onChange={(e) => setEnabled(e.target.checked)}
-                        className="h-4 w-4 rounded border-border text-accent focus:ring-accent-200"
+                        className="h-4 w-4 rounded border-border accent-ink"
                     />
                     {t("admin.pricing.enabled")}
                 </label>
 
                 {formError && (
-                    <p className="text-xs font-medium text-danger">
+                    <p className="text-caption font-medium text-danger">
                         {formError}
                     </p>
                 )}

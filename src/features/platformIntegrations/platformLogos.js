@@ -22,7 +22,7 @@ const PLATFORM_FAVICONS = {
 };
 
 export const getPlatformLogoSrc = (platformId) => {
-    if (platformId === "local") return "/assets/workspace/workspace-logo.svg";
+    if (platformId === "local") return "/assets/workspace/workspace-logo.png";
 
     const logoFile = PLATFORM_LOGO_FILES[platformId];
     if (logoFile) return `/assets/platform-logos/${logoFile}.svg`;

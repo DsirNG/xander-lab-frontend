@@ -19,13 +19,13 @@ export { default as ImageToolResult } from "./ImageToolResult";
 const PLAN_STATUS = {
     DONE: {
         Icon: Check,
-        tone: "text-emerald-600",
+        tone: "text-success-fg",
         label: "planDone",
         strike: true,
     },
     IN_PROGRESS: {
         Icon: CircleDot,
-        tone: "text-orange-500",
+        tone: "text-warning-fg",
         label: "planInProgress",
         strike: false,
     },
@@ -48,7 +48,7 @@ export const PlanCard = ({ items = [] }) => {
     if (items.length === 0) return null;
 
     return (
-        <div className="rounded-xl border border-border bg-canvas px-3 py-2.5 text-xs leading-5">
+        <div className="rounded-xl border border-border bg-canvas px-3 py-2.5 text-caption leading-5">
             <div className="flex items-center gap-2 font-semibold text-ink-secondary">
                 <ListChecks
                     className="h-3.5 w-3.5 shrink-0"
@@ -93,11 +93,12 @@ export const PlanCard = ({ items = [] }) => {
     );
 };
 
-export const ImageToolProgressPanel = ({ message }) => {
+export const ImageToolProgressPanel = ({ message, progress = 5 }) => {
     const { t } = useTranslation();
+    const percentage = Number.isFinite(progress) ? Math.min(100, Math.max(0, Math.round(progress))) : 5;
     return (
         <div
-            className="relative flex h-64 w-64 flex-col overflow-hidden rounded-[2rem] bg-surface-muted p-5 sm:h-80 sm:w-80 sm:p-6"
+            className="relative flex h-64 w-64 flex-col overflow-hidden rounded-panel bg-surface-muted p-5 sm:h-80 sm:w-80 sm:p-6 motion-reduce:[&_*]:animate-none"
             role="status"
             aria-live="polite"
         >
@@ -111,7 +112,7 @@ export const ImageToolProgressPanel = ({ message }) => {
                 aria-hidden="true"
             />
             <div className="absolute left-1/2 top-1/2 h-32 w-32 -translate-x-1/2 -translate-y-1/2 animate-pulse rounded-full bg-ink/5 blur-3xl" />
-            <div className="relative z-10 flex items-center gap-1.5 text-sm font-semibold text-ink-secondary">
+            <div className="relative z-10 flex items-center gap-1.5 text-body font-semibold text-ink-secondary">
                 <Sparkles
                     className="h-4 w-4 animate-pulse text-ink-muted"
                     aria-hidden="true"
@@ -136,6 +137,12 @@ export const ImageToolProgressPanel = ({ message }) => {
                     aria-hidden="true"
                 />
             </div>
+            <span
+                className="absolute bottom-5 right-5 z-10 text-caption tabular-nums text-ink-secondary sm:bottom-6 sm:right-6"
+                aria-label={`${t("blog.agentChat.imageEstimatedProgress")} ${percentage}%`}
+            >
+                {percentage}%
+            </span>
         </div>
     );
 };
@@ -147,7 +154,7 @@ export const ThinkingIndicator = ({ label, startedAt }) => (
         aria-live="polite"
         aria-label={label}
     >
-        <div className="inline-flex min-h-8 items-center gap-2 px-1 text-xs text-ink-muted">
+        <div className="inline-flex min-h-8 items-center gap-2 px-1 text-caption text-ink-muted">
             <span className="inline-flex items-center gap-1" aria-hidden="true">
                 {[0, 1, 2].map((index) => (
                     <span

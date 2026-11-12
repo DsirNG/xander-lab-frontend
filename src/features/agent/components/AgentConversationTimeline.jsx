@@ -250,6 +250,10 @@ const AgentConversationTimeline = memo(
                                 />
                             );
                         }
+                        if (step.type === "image_preview") {
+                            return <ImageToolResult key={`live-${index}`} url={step.result.url}
+                                title={step.result.title} storageStatus={errorMessage ? "failed" : "saving"} />;
+                        }
                         if (step.type === "tool") {
                             const result = liveImageStepResult(step);
                             return result ? (
@@ -312,11 +316,13 @@ const AgentConversationTimeline = memo(
                     {activeImageGeneration ? (
                         <ImageToolProgressPanel
                             message={activeImageGeneration.message}
+                            progress={activeImageGeneration.progress}
                         />
                     ) : null}
                     {(isActive || creating || (loading && steps.length > 0)) &&
                         !streamingAnswer &&
                         !activeImageGeneration &&
+                        !steps.some((step) => step.type === "image_preview") &&
                         !steps.some(
                             (step) =>
                                 step.type === "trace" &&

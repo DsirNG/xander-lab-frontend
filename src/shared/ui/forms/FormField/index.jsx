@@ -18,7 +18,7 @@ const FormField = ({ label, htmlFor, hint, className, children }) => (
         ) : null}
         {children}
         {hint ? (
-            <div className="mt-1 text-xs text-ink-faint">{hint}</div>
+            <div className="mt-1 text-caption text-ink-muted">{hint}</div>
         ) : null}
     </div>
 );

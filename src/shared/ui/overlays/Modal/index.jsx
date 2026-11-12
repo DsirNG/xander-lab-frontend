@@ -139,7 +139,7 @@ const Modal = ({
                     aria-modal="true"
                     aria-labelledby={titleId}
                     tabIndex={-1}
-                    className={`relative w-full ${width} rounded-3xl border border-border bg-canvas shadow-lg shadow-black/20 flex flex-col overflow-hidden antialiased outline-none ${className}`}
+                    className={`relative w-full ${width} rounded-3xl border border-border bg-canvas shadow-dialog flex flex-col overflow-hidden antialiased outline-none ${className}`}
                     style={{
                         height,
                         maxHeight: "calc(100dvh - 3rem)",
@@ -153,7 +153,7 @@ const Modal = ({
                             {typeof title === "string" ? (
                                 <div
                                     id={titleId}
-                                    className="min-w-0 flex-1 break-words text-title font-black text-ink tracking-tight"
+                                    className="min-w-0 flex-1 break-words text-title font-semibold text-ink tracking-tight"
                                 >
                                     {title}
                                 </div>
@@ -170,7 +170,7 @@ const Modal = ({
                                     variant="ghost"
                                     size="md"
                                     icon={X}
-                                    className="-mr-2 rounded-full hover:text-danger hover:bg-danger-soft"
+                                    className="-mr-2"
                                 />
                             )}
                         </div>
@@ -185,7 +185,7 @@ const Modal = ({
 
                     {/* 底部按钮栏（若提供） */}
                     {footer && (
-                        <div className="flex-shrink-0 px-6 py-5 bg-surface/50 flex items-center justify-end gap-3 rounded-b-3xl flex-wrap">
+                        <div className="flex-shrink-0 border-t border-border px-6 py-4 bg-surface flex items-center justify-end gap-2 flex-wrap">
                             {footer}
                         </div>
                     )}

@@ -112,7 +112,7 @@ const CreatableMultiSelect = ({
     return (
         <div
             ref={containerRef}
-            className={`relative flex flex-wrap gap-2 p-3 bg-canvas border border-border rounded-[8px] focus-within:border-accent focus-within:ring-4 focus-within:ring-accent/10 transition-all shadow-sm ${className}`}
+            className={`relative flex min-h-10 min-w-0 flex-wrap gap-2 p-2 bg-canvas border border-border rounded-control ${className}`}
             onClick={() => inputRef.current?.focus()}
         >
             {value.map((item) => (
@@ -121,7 +121,7 @@ const CreatableMultiSelect = ({
                     variant="outline"
                     size="xs"
                     icon={X}
-                    className="h-auto px-3 py-1.5 text-micro rounded-xl hover:bg-danger-soft hover:text-danger hover:border-danger/30"
+                    className="h-auto max-w-full px-2 py-1 text-caption rounded-menu-item hover:bg-danger-soft hover:text-danger hover:border-danger/30"
                     aria-label={`移除 ${item}`}
                     onClick={(e) => {
                         e.stopPropagation();
@@ -144,14 +144,14 @@ const CreatableMultiSelect = ({
                     onFocus={() => setIsDropdownOpen(true)}
                     onKeyDown={handleKeyDown}
                     placeholder={value.length === 0 ? placeholder : ""}
-                    className="w-full bg-transparent border-none outline-none text-body px-2 py-1.5 text-ink"
+                    className="w-full bg-transparent border-none outline-none focus:ring-0 text-body px-2 py-1 text-ink placeholder:text-ink-faint"
                 />
 
                 {/* 自定义下拉选择器 */}
                 {isDropdownOpen && (inputValue || options.length > 0) && (
                     <div
                         role="listbox"
-                        className="absolute top-full left-0 mt-2 w-[240px] max-w-[calc(100vw-1rem)] max-h-48 overflow-y-auto custom-scrollbar bg-canvas border border-border rounded-xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.1)] z-50 py-1"
+                        className="absolute top-full left-0 mt-2 w-[240px] max-w-[calc(100vw-1rem)] max-h-48 overflow-y-auto custom-scrollbar bg-canvas border border-border rounded-menu shadow-float z-50 p-1"
                     >
                         {filteredOptions.map((item, index) => (
                             <Button
@@ -166,7 +166,7 @@ const CreatableMultiSelect = ({
                                     addItem(item);
                                 }}
                                 onMouseEnter={() => setHighlightedIndex(index)}
-                                className={`h-auto w-full justify-start px-4 py-2.5 text-left font-medium hover:bg-surface hover:text-accent ${index === highlightedIndex ? "bg-accent/10" : ""}`}
+                                className={`h-auto w-full justify-start rounded-menu-item px-3 py-2 text-left font-medium text-ink-secondary hover:bg-surface-muted hover:text-ink ${index === highlightedIndex ? "bg-surface-muted text-ink" : ""}`}
                             >
                                 {item}
                             </Button>
@@ -175,14 +175,14 @@ const CreatableMultiSelect = ({
                         {inputValue.trim() &&
                             !options.includes(inputValue.trim()) && (
                                 <div
-                                    className="px-4 py-2.5 text-caption font-medium text-ink-faint border-t border-border mt-1 first:border-0 first:mt-0 italic flex items-center justify-between cursor-pointer hover:bg-surface"
+                                    className="px-3 py-2 text-caption font-medium text-ink-faint border-t border-border mt-1 first:border-0 first:mt-0 italic flex items-center justify-between cursor-pointer hover:bg-surface-muted"
                                     onClick={(e) => {
                                         e.stopPropagation();
                                         addItem(inputValue.trim());
                                     }}
                                 >
                                     <span>创建项 &quot;{inputValue}&quot;</span>
-                                    <span className="text-micro uppercase tracking-wider bg-surface-muted px-1.5 py-0.5 rounded font-bold">
+                                    <span className="text-micro uppercase tracking-wider bg-surface-muted px-2 py-1 rounded-menu-item font-medium">
                                         Enter
                                     </span>
                                 </div>
@@ -191,7 +191,7 @@ const CreatableMultiSelect = ({
                         {!inputValue &&
                             options.filter((t) => !value.includes(t)).length ===
                                 0 && (
-                                <div className="px-4 py-3 text-micro text-center text-ink-faint italic">
+                                <div className="px-3 py-3 text-caption text-center text-ink-faint italic">
                                     暂无推荐项，输入按回车创建
                                 </div>
                             )}

@@ -253,7 +253,7 @@ const PublishEditor = forwardRef(
 
         const toolItemClass = useCallback(
             (isActive) =>
-                `flex h-8 w-8 shrink-0 items-center justify-center rounded-lg transition ${isActive ? "bg-accent/10 text-accent" : "text-ink-muted hover:bg-accent/10 hover:text-accent disabled:cursor-not-allowed disabled:opacity-40"}`,
+                `flex h-8 w-8 shrink-0 items-center justify-center rounded-lg transition ${isActive ? "bg-surface-muted text-ink-secondary" : "text-ink-muted hover:bg-surface-muted hover:text-ink-secondary disabled:cursor-not-allowed disabled:opacity-40"}`,
             [],
         );
 
@@ -343,7 +343,7 @@ const PublishEditor = forwardRef(
                         )
                     }
                     placeholder={t("blog.contentPlaceholder")}
-                    className="min-h-0 flex-1 resize-none border-none bg-canvas px-5 py-6 font-mono text-sm leading-7 text-ink outline-none placeholder:text-ink-faint sm:px-8"
+                    className="min-h-0 flex-1 resize-none border-none bg-canvas px-5 py-6 font-mono text-body leading-7 text-ink outline-none placeholder:text-ink-faint sm:px-8"
                 />
                 <div className="flex h-9 shrink-0 items-center justify-between border-t border-border bg-surface-muted/50 px-4 text-micro text-ink-faint">
                     <div className="flex items-center gap-5">
@@ -370,21 +370,21 @@ const PublishEditor = forwardRef(
                             onChange={(e) => onTitleChange(e.target.value)}
                             placeholder={t("blog.titlePlaceholder")}
                             rows={1}
-                            className="min-w-0 flex-1 resize-none overflow-hidden border-none bg-transparent text-xl font-semibold text-ink outline-none placeholder:text-ink-faint sm:text-2xl"
+                            className="min-w-0 flex-1 resize-none overflow-hidden border-none bg-transparent text-heading font-semibold text-ink outline-none placeholder:text-ink-faint sm:text-2xl"
                         />
                         {isMobile && (
                             <div className="flex shrink-0 bg-surface-muted p-1 rounded-lg border border-border">
                                 <button
                                     onClick={onEditMode}
                                     title={t("blog.edit", "Edit")}
-                                    className={`flex h-11 w-11 items-center justify-center rounded-md transition-colors ${!isPreview ? "bg-canvas text-accent shadow-sm" : "text-ink-muted"}`}
+                                    className={`flex h-11 w-11 items-center justify-center rounded-md transition-colors ${!isPreview ? "bg-canvas text-ink-secondary " : "text-ink-muted"}`}
                                 >
                                     <Edit3 className="w-5 h-5" />
                                 </button>
                                 <button
                                     onClick={onPreviewMode}
                                     title={t("blog.preview", "Preview")}
-                                    className={`flex h-11 w-11 items-center justify-center rounded-md transition-colors ${isPreview ? "bg-canvas text-accent shadow-sm" : "text-ink-muted"}`}
+                                    className={`flex h-11 w-11 items-center justify-center rounded-md transition-colors ${isPreview ? "bg-canvas text-ink-secondary " : "text-ink-muted"}`}
                                 >
                                     <Eye className="w-5 h-5" />
                                 </button>

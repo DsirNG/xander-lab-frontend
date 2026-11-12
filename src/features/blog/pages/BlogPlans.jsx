@@ -95,12 +95,12 @@ const BlogPlans = () => {
                     <div className="flex items-start gap-4 py-1">
                         <div className="min-w-0 flex-1">
                             <div
-                                className="truncate text-sm font-medium text-ink mb-1.5"
+                                className="truncate text-body font-medium text-ink mb-1.5"
                                 title={plan.topic}
                             >
                                 {plan.topic}
                             </div>
-                            <div className="flex flex-wrap items-center gap-2 text-xs font-medium">
+                            <div className="flex flex-wrap items-center gap-2 text-caption font-medium">
                                 <span className="px-2 py-0.5 rounded-md border border-border text-ink-muted">
                                     {mainTag}
                                 </span>
@@ -119,16 +119,16 @@ const BlogPlans = () => {
             width: "20%",
             render: (plan) => (
                 <div className="min-w-0">
-                    <span className="block truncate text-sm font-medium text-ink">
+                    <span className="block truncate text-body font-medium text-ink">
                         {plan.triggerTimes?.length > 0
                             ? plan.triggerTimes.join(" / ")
                             : plan.triggerTime}
                     </span>
-                    <span className="mt-1 block truncate text-xs text-ink-muted">
+                    <span className="mt-1 block truncate text-caption text-ink-muted">
                         {plan.timezone}
                     </span>
                     {plan.runOnce && (
-                        <span className="mt-1.5 inline-block rounded-full bg-surface-muted px-2 py-0.5 text-xs font-medium text-ink-muted">
+                        <span className="mt-1.5 inline-block rounded-full bg-surface-muted px-2 py-0.5 text-caption font-medium text-ink-muted">
                             {t("blogPlans.oneShot", "一次性")}
                         </span>
                     )}
@@ -142,7 +142,7 @@ const BlogPlans = () => {
             render: (plan) => (
                 <div className="min-w-0">
                     <span
-                        className="block truncate text-sm font-medium text-ink"
+                        className="block truncate text-body font-medium text-ink"
                         title={plan.nextRunAt}
                     >
                         {plan.nextRunAt
@@ -152,7 +152,7 @@ const BlogPlans = () => {
                               )
                             : "—"}
                     </span>
-                    <span className="mt-1 block truncate text-xs text-ink-muted">
+                    <span className="mt-1 block truncate text-caption text-ink-muted">
                         {plan.timezone || ""}
                     </span>
                 </div>
@@ -255,10 +255,10 @@ const BlogPlans = () => {
         <div className="flex h-full min-h-0 min-w-0 flex-col overflow-hidden bg-canvas">
             <header className="flex shrink-0 flex-wrap items-start justify-between gap-4 border-b border-border px-5 py-5 sm:px-8">
                 <div className="min-w-0">
-                    <h1 className="text-xl font-semibold text-ink">
+                    <h1 className="text-heading font-semibold text-ink">
                         {t("contentLibrary.plans")}
                     </h1>
-                    <p className="mt-1 text-sm text-ink-muted">
+                    <p className="mt-1 text-body text-ink-muted">
                         {t("blogPlans.subtitle")}
                     </p>
                 </div>

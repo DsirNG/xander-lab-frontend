@@ -24,6 +24,10 @@ export const adminService = {
     /* ---------- 模型供应商 ---------- */
     listProviders: (config) =>
         get("/api/admin/model-providers", undefined, config),
+    testProvider: (payload, config) =>
+        post("/api/admin/model-providers/test", payload, config),
+    testFeatureModel: (featureKey, payload, config) =>
+        post(`/api/admin/feature-model-configs/${featureKey}/test`, payload, config),
     createProvider: (payload, config) =>
         post("/api/admin/model-providers", payload, config),
     updateProvider: (id, payload, config) =>

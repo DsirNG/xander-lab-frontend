@@ -91,7 +91,7 @@ const AgentApprovalCard = ({ approval, deciding, onDecision }) => {
 
     return (
         <section
-            className="rounded-lg border border-warning/35 bg-warning-soft px-4 py-3 text-body text-ink"
+            className="rounded-card border border-warning/35 bg-warning-soft px-4 py-3 text-body text-ink"
             aria-live="polite"
         >
             <div className="flex items-start gap-3">
@@ -121,7 +121,7 @@ const AgentApprovalCard = ({ approval, deciding, onDecision }) => {
                             type="button"
                             onClick={approve}
                             disabled={busy}
-                            className="inline-flex h-9 items-center gap-2 rounded-md bg-success px-3 text-caption font-semibold text-white transition-colors hover:bg-success/90 disabled:cursor-not-allowed disabled:opacity-60"
+                            className="inline-flex h-9 items-center gap-2 rounded-lg bg-ink px-3 text-caption font-semibold text-canvas transition-colors hover:bg-ink-secondary disabled:cursor-not-allowed disabled:opacity-60"
                         >
                             {busy ? (
                                 <Loader2
@@ -139,7 +139,7 @@ const AgentApprovalCard = ({ approval, deciding, onDecision }) => {
                             type="button"
                             onClick={reject}
                             disabled={busy}
-                            className="inline-flex h-9 items-center gap-2 rounded-md border border-border bg-canvas px-3 text-caption font-semibold text-ink-secondary transition-colors hover:bg-surface-muted disabled:cursor-not-allowed disabled:opacity-60"
+                            className="inline-flex h-9 items-center gap-2 rounded-lg border border-border bg-canvas px-3 text-caption font-semibold text-ink-secondary transition-colors hover:bg-surface-muted disabled:cursor-not-allowed disabled:opacity-60"
                         >
                             <X className="h-4 w-4" aria-hidden="true" />
                             {locationApproval

@@ -20,7 +20,7 @@ const MessageAttachments = ({ attachments = [] }) =>
                         <img
                             src={attachment.url}
                             alt={attachment.name}
-                            className="h-20 w-20 rounded-2xl border border-border object-cover"
+                            className="h-20 w-20 rounded-control border border-border object-cover"
                         />
                     </a>
                 ) : (
@@ -29,7 +29,7 @@ const MessageAttachments = ({ attachments = [] }) =>
                         href={attachment.url}
                         target="_blank"
                         rel="noreferrer"
-                        className="flex max-w-64 items-center gap-2 rounded-2xl border border-border bg-surface px-3 py-2 text-caption text-ink hover:bg-surface-muted"
+                        className="flex max-w-64 items-center gap-2 rounded-control border border-border bg-surface px-3 py-2 text-caption text-ink hover:bg-surface-muted"
                     >
                         <FileText className="h-4 w-4 shrink-0 text-ink-muted" />
                         <span className="truncate">{attachment.name}</span>
@@ -52,8 +52,8 @@ const WorkspaceAgentConversationMessage = ({
         <div
             className={
                 role === "user"
-                    ? "max-w-[85%] rounded-3xl bg-surface-muted px-4 py-2.5 text-sm leading-6 text-black sm:max-w-[75%]"
-                    : "w-full min-w-0 py-1 text-sm leading-6 text-ink"
+                    ? "max-w-[85%] rounded-panel bg-surface-muted px-4 py-2.5 text-body leading-6 text-ink sm:max-w-[75%]"
+                    : "w-full min-w-0 py-1 text-body leading-6 text-ink"
             }
         >
             {role === "user" ? (

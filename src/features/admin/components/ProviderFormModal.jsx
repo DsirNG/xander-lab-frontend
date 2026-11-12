@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Loader2 } from "lucide-react";
+import ModelProbeButton from "./ModelProbeButton";
 import Modal from "@shared/ui/overlays/Modal";
 import FormField from "@shared/ui/forms/FormField";
 import { formInputCls } from "@shared/ui/forms/formStyles";
@@ -110,7 +111,7 @@ const ProviderFormModal = ({
                 type="button"
                 onClick={onClose}
                 disabled={saving}
-                className="rounded-xl px-5 py-2.5 text-caption font-bold text-ink-muted transition hover:bg-surface-muted disabled:opacity-50"
+                className="rounded-control px-5 py-2.5 text-caption font-bold text-ink-muted transition hover:bg-surface-muted disabled:opacity-50"
             >
                 {t("common.cancel")}
             </button>
@@ -118,7 +119,7 @@ const ProviderFormModal = ({
                 type="button"
                 onClick={handleSubmit}
                 disabled={saving}
-                className="inline-flex items-center gap-2 rounded-xl bg-ink px-6 py-2.5 text-caption font-bold text-white transition hover:bg-accent active:scale-95 disabled:opacity-60"
+                className="inline-flex items-center gap-2 rounded-control bg-ink px-6 py-2.5 text-caption font-bold text-canvas transition hover:bg-ink-secondary active:scale-95 disabled:opacity-60"
             >
                 {saving ? (
                     <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -138,9 +139,16 @@ const ProviderFormModal = ({
                     : t("admin.providers.createTitle")
             }
             width="max-w-xl"
+            className="rounded-dialog shadow-float!"
             footer={footer}
         >
             <div className="space-y-4">
+                <ModelProbeButton
+                    active={isOpen}
+                    label={t("admin.probe.provider")}
+                    disabled={saving || !baseUrl.trim() || (!apiKey.trim() && !provider?.apiKeyConfigured)}
+                    payload={{ providerId: provider?.id, baseUrl: baseUrl.trim(), apiKey: apiKey.trim() || undefined }}
+                />
                 <FormField
                     label={t("admin.providers.name")}
                     htmlFor="admin-provider-name"
@@ -214,29 +222,29 @@ const ProviderFormModal = ({
                 </FormField>
 
                 <div className="flex flex-wrap gap-4">
-                    <label className="flex cursor-pointer items-center gap-2 text-xs font-medium text-ink-muted">
+                    <label className="flex cursor-pointer items-center gap-2 text-caption font-medium text-ink-muted">
                         <input
                             type="checkbox"
                             checked={enabled}
                             onChange={(e) => setEnabled(e.target.checked)}
-                            className="h-4 w-4 rounded border-border text-accent focus:ring-accent-200"
+                            className="h-4 w-4 rounded border-border accent-ink"
                         />
                         {t("admin.providers.enabled")}
                     </label>
-                    <label className="flex items-center gap-2 text-xs font-medium text-ink-muted">
+                    <label className="flex items-center gap-2 text-caption font-medium text-ink-muted">
                         <span>{t("admin.providers.priority")}</span>
                         <input
                             type="number"
                             min="0"
                             value={priority}
                             onChange={(e) => setPriority(e.target.value)}
-                            className={`${formInputCls} w-24`}
+                            className={`${formInputCls} max-w-24`}
                         />
                     </label>
                 </div>
 
                 {formError && (
-                    <p className="text-xs font-medium text-danger">
+                    <p className="text-caption font-medium text-danger">
                         {formError}
                     </p>
                 )}

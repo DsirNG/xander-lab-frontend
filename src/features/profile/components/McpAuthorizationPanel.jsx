@@ -157,17 +157,17 @@ const McpAuthorizationPanel = () => {
             <div className="mx-auto w-full max-w-3xl">
                 <div className="mb-6 flex items-start justify-between gap-4">
                     <div className="min-w-0">
-                        <div className="mb-1 text-micro font-bold uppercase tracking-[0.2em] text-accent">
+                        <div className="mb-1 text-micro font-bold uppercase tracking-[0.2em] text-ink-secondary">
                             MCP
                         </div>
-                        <div className="text-title font-black text-ink">
+                        <div className="text-title font-semibold text-ink">
                             {t("profile.mcp.title")}
                         </div>
                         <div className="mt-2 max-w-xl text-body text-ink-muted">
                             {t("profile.mcp.description")}
                         </div>
                     </div>
-                    <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-accent-soft text-accent">
+                    <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-surface-muted text-ink">
                         <Plug className="h-5 w-5" />
                     </span>
                 </div>
@@ -175,7 +175,7 @@ const McpAuthorizationPanel = () => {
                 {oauthRequest && (
                     <div className="mb-4 rounded-xl border border-accent/30 bg-accent-soft/40 p-5">
                         <div className="flex items-start gap-3">
-                            <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-accent" />
+                            <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-ink-secondary" />
                             <div className="min-w-0 flex-1">
                                 <div className="text-body font-bold text-ink">
                                     {t("profile.mcp.consentTitle")}
@@ -199,7 +199,7 @@ const McpAuthorizationPanel = () => {
                                                 onChange={() =>
                                                     toggleScope(scope)
                                                 }
-                                                className="h-4 w-4 rounded border-border text-accent focus:ring-accent"
+                                                className="h-4 w-4 rounded border-border accent-ink outline-none"
                                             />
                                             <span className="font-mono text-micro">
                                                 {scope}
@@ -266,7 +266,7 @@ const McpAuthorizationPanel = () => {
                                     <button
                                         type="button"
                                         onClick={() => copyEndpoint(endpoint)}
-                                        className="grid h-9 w-9 shrink-0 place-items-center rounded-md text-ink-muted hover:bg-canvas hover:text-accent"
+                                        className="grid h-9 w-9 shrink-0 place-items-center rounded-md text-ink-muted hover:bg-canvas hover:text-ink-secondary"
                                         aria-label={t(
                                             "profile.mcp.copyEndpoint",
                                         )}

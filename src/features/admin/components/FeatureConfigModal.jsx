@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Loader2 } from "lucide-react";
+import ModelPlaygroundLink from "./ModelPlaygroundLink";
 import Modal from "@shared/ui/overlays/Modal";
 import FormField from "@shared/ui/forms/FormField";
 import CustomSelect from "@shared/ui/forms/CustomSelect";
@@ -8,11 +9,7 @@ import { formInputCls } from "@shared/ui/forms/formStyles";
 import { useToast } from "@shared/hooks/useToast";
 import { adminService } from "../services/adminService";
 
-/**
- * 鍔熻兘妯″瀷閰嶇疆寮圭獥锛氫负涓绘ā鍨?鍏滃簳妯″瀷鍚勯€夋嫨涓€涓緵搴斿晢 + 妯″瀷鍚?+ 鎺ュ彛椋庢牸銆?
- * 涓や釜妲戒綅鍧囩暀绌?= 璇ュ姛鑳芥湭鍚敤绠＄悊鍙拌矾鐢憋紝鍥為€€鐜鍙橀噺銆?
- * 鎺ュ彛椋庢牸鎸夊姛鑳借繃婊わ細鍥剧墖鍔熻兘鍙€夊浘鐗?瀵硅瘽鎺ュ彛锛屾枃鏈姛鑳藉彲閫夊璇?Responses 鎺ュ彛銆?
- */
+/** Edits primary and fallback provider, model, and API style for a feature. */
 const API_STYLE_IMAGES = "IMAGES_GENERATIONS";
 const API_STYLE_CHAT = "CHAT_COMPLETIONS";
 const API_STYLE_CHAT_PROMPT = "CHAT_PROMPT";
@@ -22,7 +19,7 @@ const API_STYLE_DASHSCOPE_ASR = "DASHSCOPE_ASR";
 const providerLabel = (provider) => {
     if (!provider.baseUrl) return provider.name;
     try {
-        return `${provider.name} 路 ${new URL(provider.baseUrl).hostname}`;
+        return `${provider.name} · ${new URL(provider.baseUrl).hostname}`;
     } catch {
         return provider.name;
     }
@@ -189,7 +186,7 @@ const FeatureConfigModal = ({
                 type="button"
                 onClick={onClose}
                 disabled={saving}
-                className="rounded-xl px-5 py-2.5 text-caption font-bold text-ink-muted transition hover:bg-surface-muted disabled:opacity-50"
+                className="rounded-control px-5 py-2.5 text-caption font-bold text-ink-muted transition hover:bg-surface-muted disabled:opacity-50"
             >
                 {t("common.cancel")}
             </button>
@@ -197,7 +194,7 @@ const FeatureConfigModal = ({
                 type="button"
                 onClick={handleSubmit}
                 disabled={saving}
-                className="inline-flex items-center gap-2 rounded-xl bg-ink px-6 py-2.5 text-caption font-bold text-white transition hover:bg-accent active:scale-95 disabled:opacity-60"
+                className="inline-flex items-center gap-2 rounded-control bg-ink px-6 py-2.5 text-caption font-bold text-canvas transition hover:bg-ink-secondary active:scale-95 disabled:opacity-60"
             >
                 {saving ? (
                     <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -215,15 +212,32 @@ const FeatureConfigModal = ({
                 feature: t(`admin.configs.feature.${config?.featureKey}`),
             })}
             width="max-w-2xl"
+            className="rounded-dialog shadow-float!"
             footer={footer}
         >
             <div className="space-y-5">
-                <label className="flex cursor-pointer items-center gap-2 text-xs font-medium text-ink">
+                <div className="flex flex-wrap gap-4">
+            <ModelPlaygroundLink
+                active={isOpen}
+                featureKey={config?.featureKey}
+                label={t("admin.probe.primary")}
+                disabled={saving || !primaryProviderId || !primaryModel.trim() || !primaryApiStyle}
+                payload={{ providerId: primaryProviderId, model: primaryModel.trim(), apiStyle: primaryApiStyle }}
+            />
+            <ModelPlaygroundLink
+                active={isOpen}
+                featureKey={config?.featureKey}
+                label={t("admin.probe.fallback")}
+                disabled={saving || !fallbackProviderId || !fallbackModel.trim() || !fallbackApiStyle}
+                payload={{ providerId: fallbackProviderId, model: fallbackModel.trim(), apiStyle: fallbackApiStyle }}
+            />
+                </div>
+                <label className="flex cursor-pointer items-center gap-2 text-caption font-medium text-ink">
                     <input
                         type="checkbox"
                         checked={enabled}
                         onChange={(e) => setEnabled(e.target.checked)}
-                        className="h-4 w-4 rounded border-border text-accent focus:ring-accent-200"
+                        className="h-4 w-4 rounded border-border accent-ink"
                     />
                     {t("admin.configs.formEnabled")}
                     <span className="text-micro font-normal text-ink-faint">
@@ -231,12 +245,12 @@ const FeatureConfigModal = ({
                     </span>
                 </label>
 
-                <p className="rounded-xl bg-surface-muted px-3 py-2.5 text-micro leading-relaxed text-ink-muted">
+                <p className="rounded-control bg-surface-muted px-3 py-2.5 text-micro leading-relaxed text-ink-muted">
                     {t("admin.configs.configHint")}
                 </p>
 
                 <div>
-                    <p className="mb-2 text-xs font-bold text-ink-secondary">
+                    <p className="mb-2 text-caption font-bold text-ink-secondary">
                         {t("admin.configs.primary")}
                     </p>
                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
@@ -283,7 +297,7 @@ const FeatureConfigModal = ({
                 </div>
 
                 <div>
-                    <p className="mb-2 text-xs font-bold text-ink-secondary">
+                    <p className="mb-2 text-caption font-bold text-ink-secondary">
                         {t("admin.configs.fallback")}
                     </p>
                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
@@ -348,7 +362,7 @@ const FeatureConfigModal = ({
                 </p>
 
                 {formError && (
-                    <p className="text-xs font-medium text-danger">
+                    <p className="text-caption font-medium text-danger">
                         {formError}
                     </p>
                 )}

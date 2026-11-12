@@ -48,7 +48,6 @@ const WorkspaceAgentWelcome = ({
                     isCancelling={isCancelling}
                     fileInputRef={fileInputRef}
                     textareaRef={textareaRef}
-                    alwaysExpanded
                     showQuickActions
                     plugins={plugins}
                     onPluginPreview={onPluginPreview}

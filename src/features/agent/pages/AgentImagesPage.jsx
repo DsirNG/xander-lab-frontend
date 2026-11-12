@@ -121,40 +121,40 @@ const AgentImagesPage = () => {
         >
             <div className="mx-auto w-full max-w-7xl px-4 py-5 sm:px-6 lg:px-8">
                 {loading ? (
-                    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+                    <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
                         {Array.from({ length: 12 }).map((_, index) => (
                             <div
                                 key={index}
-                                className="aspect-square w-full animate-pulse rounded-xl bg-surface-muted"
+                                className="aspect-square w-full animate-pulse rounded-card bg-surface-muted"
                             />
                         ))}
                     </div>
                 ) : images.length === 0 && loadError ? (
                     <div className="flex flex-col items-center justify-center gap-3 py-16 text-center">
-                        <p className="text-sm text-danger-fg">{loadError}</p>
+                        <p className="text-body text-danger-fg">{loadError}</p>
                         <button
                             type="button"
                             onClick={handleReload}
-                            className="rounded-full border border-border bg-canvas px-4 py-1.5 text-xs font-semibold text-ink transition hover:bg-surface-muted"
+                            className="rounded-full border border-border bg-canvas px-4 py-1.5 text-caption font-semibold text-ink transition hover:bg-surface-muted"
                         >
                             {t("blog.agentImages.retry", "重新加载")}
                         </button>
                     </div>
                 ) : images.length === 0 ? (
                     <div className="py-16 text-center">
-                        <p className="text-sm text-ink-muted">
+                        <p className="text-body text-ink-muted">
                             {t("blog.agentImages.emptyTitle")}
                         </p>
-                        <p className="mt-1 text-xs text-ink-muted/70">
+                        <p className="mt-1 text-caption text-ink-muted/70">
                             {t("blog.agentImages.emptyHint")}
                         </p>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+                    <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
                         {images.map((item) => (
                             <div
                                 key={item.id}
-                                className="group relative aspect-square w-full overflow-hidden rounded-xl border border-border/50 bg-surface-muted shadow-sm"
+                                className="group relative aspect-square w-full overflow-hidden rounded-card border border-border bg-surface-muted"
                             >
                                 <img
                                     src={item.url}
@@ -164,7 +164,7 @@ const AgentImagesPage = () => {
                                 />
                                 {item.title ? (
                                     <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/75 to-transparent p-2 pt-8 opacity-0 transition-opacity group-hover:opacity-100">
-                                        <div className="line-clamp-1 text-xs font-medium text-white">
+                                        <div className="line-clamp-1 text-caption font-medium text-white">
                                             {item.title}
                                         </div>
                                     </div>
@@ -180,7 +180,7 @@ const AgentImagesPage = () => {
                     aria-live="polite"
                 >
                     {loadError && images.length > 0 ? (
-                        <div className="flex items-center gap-3 text-xs text-danger-fg">
+                        <div className="flex items-center gap-3 text-caption text-danger-fg">
                             <span role="status">{loadError}</span>
                             <button
                                 type="button"

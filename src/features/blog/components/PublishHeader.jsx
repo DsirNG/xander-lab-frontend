@@ -1,5 +1,6 @@
 import React from "react";
-import { Send, Save, ChevronLeft, Loader2, Settings, X } from "lucide-react";
+import { Send, Save, ChevronLeft, Settings, X } from "lucide-react";
+import Button from "@shared/ui/primitives/Button";
 
 /**
  * 博客发布页顶栏：返回、保存草稿、设置开关、发布按钮
@@ -19,15 +20,15 @@ const PublishHeader = ({
     return (
         <header className="h-14 shrink-0 border-b border-border flex items-center justify-between gap-2 px-3 sm:px-5 bg-canvas z-20 relative">
             <div className="flex min-w-0 items-center gap-2 sm:gap-4">
-                <button
+                <Button
+                    variant="ghost"
+                    icon={ChevronLeft}
                     onClick={onBack}
-                    className="flex h-10 w-10 items-center justify-center text-ink-muted hover:bg-surface-muted rounded-lg transition-colors"
+                    aria-label={t("blog.backToManage")}
                     title={
                         t("blog.backToManage")
                     }
-                >
-                    <ChevronLeft className="w-5 h-5 transition-transform" />
-                </button>
+                />
                 <div className="hidden sm:block h-4 w-px bg-border"></div>
                 <span className="truncate text-sm font-semibold text-ink flex items-center gap-2">
                     {isEditMode ? t("blog.editTitle") : t("blog.publishTitle")}
@@ -43,44 +44,36 @@ const PublishHeader = ({
                         ? t("blog.draftRestored")
                         : t("blog.draftAutoSaved")}
                 </span>
-                <button
+                <Button
+                    variant="ghost"
+                    icon={Save}
                     onClick={onSaveDraft}
                     disabled={loading}
                     title={t("contentLibrary.saveToLibrary")}
-                    className="flex h-10 w-10 sm:w-auto sm:px-3 text-caption font-semibold text-ink-muted hover:text-ink transition-colors items-center justify-center gap-2 rounded-lg hover:bg-surface-muted disabled:opacity-50"
+                    aria-label={t("contentLibrary.saveToLibrary")}
+                    className="max-md:w-10 max-md:px-0"
                 >
-                    <Save className="w-4 h-4" />{" "}
                     <span className="hidden md:inline">
                         {t("contentLibrary.saveToLibrary")}
                     </span>
-                </button>
-                <button
+                </Button>
+                <Button
+                    variant="ghost"
+                    icon={isSettingsOpen ? X : Settings}
                     onClick={onToggleSettings}
-                    className={`flex h-10 w-10 items-center justify-center rounded-lg transition-colors ${isSettingsOpen ? "bg-accent-soft text-accent" : "text-ink-muted hover:bg-surface-muted hover:text-ink"}`}
+                    className={isSettingsOpen ? "bg-surface-muted text-ink" : ""}
+                    aria-pressed={isSettingsOpen}
+                    aria-label={t("blog.publishSettings", "Document Settings")}
                     title={t("blog.publishSettings", "Document Settings")}
-                >
-                    {isSettingsOpen ? (
-                        <X className="w-5 h-5" />
-                    ) : (
-                        <Settings className="w-5 h-5" />
-                    )}
-                </button>
-                <button
+                />
+                <Button
+                    variant="ink"
+                    icon={Send}
+                    loading={loading}
                     onClick={onPublish}
-                    disabled={loading}
-                    className="flex h-10 items-center gap-2 rounded-lg bg-ink px-2.5 sm:px-4 text-caption font-semibold text-white transition-colors hover:bg-accent disabled:opacity-50"
                 >
-                    {loading ? (
-                        <>
-                            <Loader2 className="w-4 h-4 animate-spin" />{" "}
-                            {t("blog.publishing")}
-                        </>
-                    ) : (
-                        <>
-                            <Send className="w-4 h-4" /> {t("blog.publishNow")}
-                        </>
-                    )}
-                </button>
+                    {loading ? t("blog.publishing") : t("blog.publishNow")}
+                </Button>
             </div>
         </header>
     );

@@ -3,6 +3,7 @@ import { NavLink, Outlet } from "react-router-dom";
 import {
     CircleDollarSign,
     KeyRound,
+    MessagesSquare,
     PanelsTopLeft,
     Server,
     SlidersHorizontal,
@@ -10,6 +11,7 @@ import {
 } from "lucide-react";
 
 const ADMIN_TABS = [
+    { to: "model-playground", label: "admin.playground.title", icon: MessagesSquare },
     { to: "users", label: "admin.users.title", icon: Users },
     {
         to: "model-providers",
@@ -42,8 +44,8 @@ const AdminLayout = () => {
     const { t } = useTranslation();
 
     return (
-        <div className="flex h-dvh min-h-0 min-w-0 flex-col overflow-hidden bg-surface md:flex-row">
-            <aside className="flex w-full shrink-0 flex-col border-b border-border bg-canvas md:h-full md:w-60 md:border-b-0 md:border-r">
+        <div className="flex h-dvh min-h-0 min-w-0 flex-col overflow-hidden bg-canvas md:flex-row">
+            <aside className="flex w-full shrink-0 flex-col border-b border-border bg-surface md:h-full md:w-60 md:border-b-0 md:border-r">
                 <div className="flex items-center justify-between px-5 py-4 lg:block lg:px-6 lg:py-6">
                     <div>
                         <div className="text-title font-bold text-ink">
@@ -53,7 +55,7 @@ const AdminLayout = () => {
                             ADMIN WORKSPACE
                         </div>
                     </div>
-                    <span className="rounded-full bg-accent-soft px-2.5 py-1 text-micro font-semibold tracking-wide text-accent-fg">
+                    <span className="rounded-full bg-surface-muted px-2.5 py-1 text-micro font-semibold tracking-wide text-ink">
                         ADMIN
                     </span>
                 </div>
@@ -67,9 +69,9 @@ const AdminLayout = () => {
                             key={to}
                             to={to}
                             className={({ isActive }) =>
-                                `flex shrink-0 items-center gap-3 rounded-xl px-3 py-2.5 text-body transition-colors md:w-full ${
+                                `flex shrink-0 items-center gap-3 rounded-control px-3 py-2.5 text-body transition-colors md:w-full ${
                                     isActive
-                                        ? "bg-accent-soft font-semibold text-accent-fg"
+                                        ? "bg-surface-muted font-semibold text-ink"
                                         : "text-ink-muted hover:bg-surface-muted hover:text-ink"
                                 }`
                             }
@@ -88,7 +90,7 @@ const AdminLayout = () => {
                 </div>
             </aside>
 
-            <main className="min-h-0 min-w-0 flex-1 overflow-y-auto overscroll-y-contain">
+            <main className="min-h-0 min-w-0 flex-1 overflow-hidden">
                 <Outlet />
             </main>
         </div>

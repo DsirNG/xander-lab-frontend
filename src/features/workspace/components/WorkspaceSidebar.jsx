@@ -62,7 +62,7 @@ const SessionRow = ({ session, active, onSelect, onTogglePin, t }) => {
             >
                 <span className="grid h-3 w-3 shrink-0 place-items-center">
                     {running || unread ? (
-                        <span className="h-1.5 w-1.5 rounded-full bg-ink" />
+                        <span className="h-2 w-2 rounded-full bg-ink" />
                     ) : null}
                 </span>
                 <span
@@ -79,7 +79,7 @@ const SessionRow = ({ session, active, onSelect, onTogglePin, t }) => {
             <button
                 type="button"
                 onClick={() => onTogglePin(session.id, !pinned)}
-                className="mr-1 hidden h-6 w-6 shrink-0 place-items-center rounded-md text-ink-faint hover:bg-canvas hover:text-ink group-hover:grid"
+                className="mr-1 grid h-8 w-8 shrink-0 place-items-center rounded-md text-ink-faint hover:bg-canvas hover:text-ink lg:opacity-0 lg:group-hover:opacity-100 lg:group-focus-within:opacity-100 focus-visible:opacity-100"
                 title={
                     pinned
                         ? t("workspace.agent.unpin", "取消置顶")
@@ -165,12 +165,12 @@ const WorkspaceSidebar = ({
             onClick={() => setCollapsed(true)}
             aria-label={t("workspace.agent.collapseSidebar")}
             title={t("workspace.agent.collapseSidebar")}
-            className="group/sidebar-toggle relative grid h-10 w-10 shrink-0 place-items-center rounded-xl text-ink-muted transition-colors hover:bg-surface-muted hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
+            className="group/sidebar-toggle relative grid h-10 w-10 shrink-0 place-items-center rounded-control text-ink-muted transition-colors hover:bg-surface-muted hover:text-ink"
         >
             <PanelLeftClose className="h-4 w-4" aria-hidden="true" />
             <span
                 aria-hidden="true"
-                className="pointer-events-none absolute left-full top-1/2 z-50 ml-2 -translate-y-1/2 whitespace-nowrap rounded-md bg-ink px-2.5 py-1.5 text-caption font-medium text-white opacity-0 shadow-sm transition-opacity group-hover/sidebar-toggle:opacity-100 group-focus-visible/sidebar-toggle:opacity-100"
+                className="pointer-events-none absolute left-full top-1/2 z-50 ml-2 -translate-y-1/2 whitespace-nowrap rounded-md bg-ink px-3 py-2 text-caption font-medium text-canvas opacity-0  transition-opacity group-hover/sidebar-toggle:opacity-100 group-focus-visible/sidebar-toggle:opacity-100"
             >
                 {t("workspace.agent.collapseSidebar")}
             </span>
@@ -182,10 +182,10 @@ const WorkspaceSidebar = ({
             onClick={() => setCollapsed(false)}
             aria-label={sidebarToggleLabel}
             title={sidebarToggleLabel}
-            className="group/logo relative grid h-8 w-8 shrink-0 place-items-center rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
+            className="group/logo relative grid h-8 w-8 shrink-0 place-items-center rounded-full"
         >
             <img
-                src="/assets/workspace/workspace-logo.svg"
+                src="/assets/workspace/workspace-logo.png"
                 alt="DinQor"
                 className="h-full w-full object-contain transition-opacity duration-150 group-hover/logo:opacity-0 group-focus-visible/logo:opacity-0"
             />
@@ -201,10 +201,10 @@ const WorkspaceSidebar = ({
         : "text-ink-secondary hover:bg-surface-muted hover:text-ink";
     const linkClass = (view) => {
         const active = isViewActive(view);
-        return `group/nav relative flex h-9 items-center text-body transition-colors duration-200 ${
+        return `group/nav relative flex h-11 items-center text-body transition-colors duration-200 ${
             collapsed
-                ? "h-11 w-11 justify-center rounded-xl"
-                : "w-full gap-3 rounded-lg px-3"
+                ? "h-11 w-11 justify-center rounded-control"
+                : "w-full gap-3 rounded-control px-3"
         } ${
             active
                 ? "bg-surface-muted font-semibold text-ink"
@@ -283,11 +283,11 @@ const WorkspaceSidebar = ({
     return (
         <>
         <aside
-            className={`hidden h-dvh shrink-0 flex-col border-r border-border bg-canvas transition-[width,padding] duration-200 lg:flex ${collapsed ? "w-[72px] px-1.5 py-3" : "w-[252px] px-3.5 py-5"}`}
+            className={`hidden h-full min-h-0 shrink-0 flex-col rounded-panel border border-border bg-canvas transition-[width,padding] duration-200 motion-reduce:transition-none lg:flex ${collapsed ? "w-16 px-2 py-2" : "w-64 px-2 py-2"}`}
             aria-label="DinQor Agent"
         >
             <div className={`flex items-center ${collapsed ? "justify-center" : "justify-between px-2"}`}>
-                <div className="flex min-w-0 items-center gap-2.5">
+                <div className="flex min-w-0 items-center gap-3">
                     {collapsed ? collapsedLogoButton : null}
                     {!collapsed ? (
                         <span className="min-w-0">
@@ -302,7 +302,7 @@ const WorkspaceSidebar = ({
                         <button
                             type="button"
                             onClick={openSearch}
-                            className="grid h-10 w-10 place-items-center rounded-xl text-ink-muted transition-colors hover:bg-surface-muted hover:text-ink"
+                            className="grid h-10 w-10 place-items-center rounded-control text-ink-muted transition-colors hover:bg-surface-muted hover:text-ink"
                             title={t("workspace.agent.searchPlaceholder", "搜索对话")}
                             aria-label={t("workspace.agent.searchPlaceholder", "搜索对话")}
                         >
@@ -318,7 +318,7 @@ const WorkspaceSidebar = ({
                     <button
                         type="button"
                         onClick={onNewConversation}
-                        className={`grid h-10 w-10 place-items-center rounded-xl transition-colors ${newConversationClass}`}
+                        className={`grid h-10 w-10 place-items-center rounded-control transition-colors ${newConversationClass}`}
                         title={t("workspace.agent.newConversation", "新建对话")}
                         aria-label={t("workspace.agent.newConversation", "新建对话")}
                     >
@@ -327,7 +327,7 @@ const WorkspaceSidebar = ({
                     <button
                         type="button"
                         onClick={openSearch}
-                        className="grid h-10 w-10 place-items-center rounded-xl text-ink-muted transition-colors hover:bg-surface-muted hover:text-ink"
+                        className="grid h-10 w-10 place-items-center rounded-control text-ink-muted transition-colors hover:bg-surface-muted hover:text-ink"
                         title={t("workspace.agent.searchPlaceholder", "搜索对话")}
                         aria-label={t("workspace.agent.searchPlaceholder", "搜索对话")}
                     >
@@ -336,14 +336,14 @@ const WorkspaceSidebar = ({
                 </div>
             ) : null}
 
-            <div className={`flex min-h-0 flex-1 flex-col ${collapsed ? "mt-2 items-center" : "mt-4"}`}>
+            <div className={`flex min-h-0 flex-1 flex-col overflow-y-auto ${collapsed ? "mt-2 items-center" : "mt-4"}`}>
                 {!collapsed ? (
                     <button
                         type="button"
                         onClick={onNewConversation}
                         aria-label={t("workspace.agent.newConversation", "新建对话")}
                         aria-current={chatIsActive ? "page" : undefined}
-                        className={`group/new-conversation flex h-10 w-full items-center gap-3 rounded-lg px-3 text-body transition-colors ${newConversationClass}`}
+                        className={`group/new-conversation flex h-11 w-full items-center gap-3 rounded-control px-3 text-body transition-colors ${newConversationClass}`}
                     >
                         <span className={`grid h-8 w-8 shrink-0 place-items-center rounded-lg transition-colors ${chatIsActive ? "" : "group-hover/new-conversation:bg-surface-muted"}`}>
                             <Plus className="h-4 w-4" aria-hidden="true" />
@@ -355,14 +355,14 @@ const WorkspaceSidebar = ({
                 ) : null}
 
                 <nav
-                    className={`flex w-full flex-col ${collapsed ? "mt-2 items-center gap-1" : "mt-3 gap-0"}`}
+                    className={`flex w-full shrink-0 flex-col ${collapsed ? "mt-2 items-center gap-1" : "mt-4 gap-1"}`}
                     aria-label={t("workspace.agent.tools")}
                 >
                     {!collapsed ? <div className="mb-1 px-3 pt-1 text-micro font-medium uppercase tracking-[0.12em] text-ink-faint">{t("workspace.agent.workspaceNav")}</div> : null}
                     {primaryItems.map(({ view, icon: Icon, label }) => (
                         <button key={view} type="button" onClick={() => onSelectView(view)} className={linkClass(view)} title={collapsed ? label : undefined} aria-label={label} aria-current={isViewActive(view) ? "page" : undefined}>
                             <span className={navIconClass(view)}>
-                                <Icon className={collapsed ? "h-5 w-5" : "h-[17px] w-[17px]"} aria-hidden="true" />
+                                <Icon className={collapsed ? "h-5 w-5" : "h-4 w-4"} aria-hidden="true" />
                             </span>
                             {!collapsed ? <span>{label}</span> : null}
                         </button>
@@ -372,7 +372,7 @@ const WorkspaceSidebar = ({
                     {utilityItems.map(({ view, icon: Icon, label }) => (
                         <button key={view} type="button" onClick={() => onSelectView(view)} className={linkClass(view)} title={collapsed ? label : undefined} aria-label={label} aria-current={isViewActive(view) ? "page" : undefined}>
                             <span className={navIconClass(view)}>
-                                <Icon className={collapsed ? "h-5 w-5" : "h-[17px] w-[17px]"} aria-hidden="true" />
+                                <Icon className={collapsed ? "h-5 w-5" : "h-4 w-4"} aria-hidden="true" />
                             </span>
                             {!collapsed ? <span>{label}</span> : null}
                         </button>
@@ -393,12 +393,12 @@ const WorkspaceSidebar = ({
                 <div
                     hidden={!historyOpen || collapsed}
                     ref={sessionListRef}
-                    className="mt-2 min-h-0 flex-1 overflow-y-auto"
+                    className="mt-2 min-h-24 flex-1 overflow-y-auto"
                 >
                     <div className="px-2 text-caption font-semibold text-ink-muted">
                         {t("workspace.agent.groups.pinned", "置顶")}
                     </div>
-                    <div className="mt-2 space-y-0.5">
+                    <div className="mt-2 space-y-1">
                         {pinnedSessions.length ? (
                             pinnedSessions.map((session) => (
                                 <SessionRow
@@ -426,7 +426,7 @@ const WorkspaceSidebar = ({
                             {t("workspace.agent.groups.recent", "最近")}
                         </span>
                     </div>
-                    <div className="mt-2 space-y-0.5">
+                    <div className="mt-2 space-y-1">
                         {recentSessions.length ? (
                             recentSessions.map((session) => (
                                 <SessionRow
@@ -531,7 +531,7 @@ const WorkspaceSidebar = ({
         <div className="flex shrink-0 flex-col border-b border-border bg-canvas px-3 py-2 lg:hidden">
             <div className="flex h-9 items-center justify-between">
                 <div className="flex min-w-0 items-center gap-2">
-                    <img src="/assets/workspace/workspace-logo.svg" alt="DinQor" className="h-8 w-8 object-contain" />
+                    <img src="/assets/workspace/workspace-logo.png" alt="DinQor" className="h-8 w-8 object-contain" />
                     <span className="truncate text-caption font-semibold text-ink">DinQor Agent</span>
                 </div>
                 <div className="flex items-center gap-1">

@@ -70,11 +70,12 @@ const ProfileModal = ({
             height={680}
             bodyScrollable={false}
             showBackdrop={false}
+            className="rounded-dialog"
         >
             <div className="flex h-full min-h-0 flex-col gap-4 lg:flex-row lg:gap-6">
                 {/* 设置分类导航：移动端横向滚动，桌面端左侧竖排 */}
                 <nav
-                    className="flex min-h-0 min-w-0 shrink-0 gap-1 overflow-x-auto overscroll-x-contain rounded-xl border border-border bg-surface p-1 custom-scrollbar lg:h-full lg:w-44 lg:flex-col lg:overflow-x-hidden lg:overflow-y-auto"
+                    className="flex min-h-0 min-w-0 shrink-0 gap-1 overflow-x-auto overscroll-x-contain rounded-panel border border-border bg-surface p-2 custom-scrollbar lg:h-full lg:w-48 lg:flex-col lg:overflow-x-hidden lg:overflow-y-auto"
                     aria-label={t("workspace.settings")}
                 >
                     {TABS.map((tab) => {
@@ -89,9 +90,9 @@ const ProfileModal = ({
                                 aria-selected={active}
                                 disabled={!enabled}
                                 onClick={() => enabled && setActiveTab(tab.id)}
-                                className={`flex min-h-11 shrink-0 items-center gap-2 rounded-lg px-3 py-2.5 text-left text-xs font-semibold transition lg:w-full lg:min-h-10 lg:py-2 ${
+                                className={`flex min-h-11 shrink-0 items-center gap-2 rounded-control px-3 py-3 text-left text-caption font-semibold transition lg:w-full lg:min-h-10 lg:py-2 ${
                                     active
-                                        ? "bg-ink text-white"
+                                        ? "bg-surface-muted text-ink"
                                         : enabled
                                           ? "text-ink-muted hover:bg-surface-muted hover:text-ink-secondary"
                                           : "cursor-not-allowed text-ink-faint opacity-50"
@@ -110,7 +111,7 @@ const ProfileModal = ({
                 </nav>
 
                 {/* 设置内容 */}
-                <div className="min-h-0 min-w-0 flex-1 overflow-y-auto overscroll-y-contain custom-scrollbar">
+                <div className="min-h-0 min-w-0 flex-1 overflow-y-auto overscroll-y-contain rounded-panel border border-border bg-canvas p-4 custom-scrollbar sm:p-6">
                     {activeTab === "account" ? (
                         <AccountInfoPanel />
                     ) : activeTab === "security" ? (
@@ -134,7 +135,7 @@ const ProfileModal = ({
                             <div
                                 role="group"
                                 aria-label={t("profile.appearance.title")}
-                                className="grid gap-3 sm:grid-cols-3"
+                                className="grid gap-4 sm:grid-cols-3"
                             >
                                 {[
                                     { id: "light", icon: Sun },
@@ -150,9 +151,9 @@ const ProfileModal = ({
                                             onClick={() =>
                                                 onThemeModeChange(id)
                                             }
-                                            className={`flex min-h-28 flex-col items-start justify-between rounded-2xl border p-4 text-left transition-all ${
+                                            className={`flex min-h-28 flex-col items-start justify-between rounded-card border p-4 text-left transition-colors ${
                                                 selected
-                                                    ? "border-ink bg-ink text-white shadow-sm"
+                                                    ? "border-ink bg-surface-muted text-ink"
                                                     : "border-border bg-canvas text-ink hover:border-border-strong hover:bg-surface-muted"
                                             }`}
                                         >
@@ -164,7 +165,7 @@ const ProfileModal = ({
                                     );
                                 })}
                             </div>
-                            <div className="rounded-xl bg-surface-muted px-4 py-3 text-caption leading-6 text-ink-secondary">
+                            <div className="rounded-card bg-surface-muted px-4 py-3 text-caption leading-6 text-ink-secondary">
                                 {themeMode === "system"
                                     ? t("profile.appearance.systemStatus", {
                                           mode: t(
@@ -176,10 +177,10 @@ const ProfileModal = ({
                         </section>
                     ) : (
                         <div className="flex h-64 flex-col items-center justify-center gap-2 text-center">
-                            <div className="text-sm font-bold text-ink-secondary">
+                            <div className="text-body font-semibold text-ink-secondary">
                                 {t("profile.comingSoon")}
                             </div>
-                            <div className="max-w-sm text-xs font-medium leading-5 text-ink-faint">
+                            <div className="max-w-sm text-caption font-medium leading-5 text-ink-faint">
                                 {t("profile.comingSoonHint")}
                             </div>
                         </div>

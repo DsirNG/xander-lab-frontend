@@ -1,3 +1,4 @@
+import Button from "@shared/ui/primitives/Button";
 import React, { useCallback, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -173,7 +174,7 @@ const AccountInfoPanel = () => {
                         type="button"
                         onClick={() => avatarInputRef.current?.click()}
                         disabled={avatarUploading || saving}
-                        className="group relative h-20 w-20 overflow-hidden rounded-xl bg-accent text-lg font-black uppercase text-white outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 disabled:cursor-wait"
+                        className="group relative h-20 w-20 overflow-hidden rounded-card bg-surface-muted text-title font-semibold uppercase text-ink outline-none disabled:cursor-wait"
                         title={t("profile.account.uploadAvatar")}
                         aria-label={t("profile.account.uploadAvatar")}
                     >
@@ -182,7 +183,7 @@ const AccountInfoPanel = () => {
                                 {avatarText}
                             </span>
                         )}
-                        <span className="absolute inset-0 grid place-items-center bg-ink/55 text-white opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
+                        <span className="absolute inset-0 grid place-items-center bg-ink/55 text-white opacity-0 transition-opacity group-hover:opacity-100">
                             {avatarUploading ? (
                                 <Loader2
                                     className="h-5 w-5 animate-spin"
@@ -239,30 +240,26 @@ const AccountInfoPanel = () => {
                         </div>
                     </FormField>
                     <div className="pt-1">
-                        <button
-                            type="button"
+                        <Button
                             onClick={handleSave}
-                            disabled={saving || avatarUploading}
-                            className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-lg bg-accent px-5 text-xs font-bold text-white shadow-sm shadow-accent/20 transition hover:brightness-105 disabled:opacity-60"
+                            variant="ink"
+                            icon={CheckCircle2}
+                            loading={saving}
+                            disabled={avatarUploading}
                         >
-                            {saving ? (
-                                <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                            ) : (
-                                <CheckCircle2 className="h-3.5 w-3.5" />
-                            )}
                             {t("profile.account.save")}
-                        </button>
+                        </Button>
                     </div>
                 </div>
             </div>
 
-            <div className="grid gap-2.5 sm:grid-cols-2">
+            <div className="grid gap-3 sm:grid-cols-2">
                 {readonlyFields.map((field) => {
                     const Icon = field.icon;
                     return (
                         <div
                             key={field.key}
-                            className="flex items-center gap-2.5 rounded-xl border border-border bg-canvas px-3 py-2.5"
+                            className="flex items-center gap-3 rounded-xl border border-border bg-canvas px-3 py-3"
                         >
                             <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-surface text-ink-faint">
                                 <Icon className="h-3.5 w-3.5" />
@@ -272,7 +269,7 @@ const AccountInfoPanel = () => {
                                     {field.label}
                                 </div>
                                 <div
-                                    className="truncate text-xs font-bold text-ink"
+                                    className="truncate text-caption font-bold text-ink"
                                     title={field.value}
                                 >
                                     {field.value}

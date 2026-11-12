@@ -62,9 +62,9 @@ export default function AlipayReturnPage() {
     if (sessionStatus === "checking" || checking)
         return <LoadingSpinner fullScreen text={t("alipay.confirming")} />;
     return (
-        <main className="flex min-h-screen items-center justify-center bg-canvas p-6">
-            <section className="w-full max-w-lg space-y-5 rounded-2xl border border-border bg-surface p-6 text-ink">
-                <h1 className="text-xl font-bold">{t("alipay.resultTitle")}</h1>
+        <main className="flex min-h-dvh items-center justify-center bg-canvas p-6">
+            <section className="w-full max-w-lg space-y-5 rounded-panel border border-border bg-surface p-6 text-ink">
+                <h1 className="text-heading">{t("alipay.resultTitle")}</h1>
                 <p role="status" className="leading-relaxed">
                     {message}
                 </p>
@@ -76,11 +76,11 @@ export default function AlipayReturnPage() {
                             {t("alipay.refresh")}
                         </Button>
                     ) : (
-                        <Link className="text-accent underline" to="/login">
+                        <Link className="text-ink underline" to="/login">
                             {t("alipay.signIn")}
                         </Link>
                     )}
-                    <Link className="text-accent underline" to="/app">
+                    <Link className="text-ink underline" to="/app">
                         {t("alipay.back")}
                     </Link>
                 </div>

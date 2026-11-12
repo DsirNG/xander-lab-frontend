@@ -62,7 +62,7 @@ const TourSpotlight = ({ targetConfig, onSkip }) => {
 
     if (!targetConfig || !rect || rect.width === 0) return null;
 
-    const pad = 10;
+    const pad = 8;
     const topHeight = Math.max(0, rect.top - pad);
     const bottomTop = rect.top + rect.height + pad;
     const isModalLevel = targetConfig.isModalLevel;
@@ -81,19 +81,19 @@ const TourSpotlight = ({ targetConfig, onSkip }) => {
 
     return createPortal(
         <div
-            className={`fixed inset-0 pointer-events-none transition-all duration-300 ${isModalLevel ? "z-[1200]" : "z-[900]"}`}
+            className={`fixed inset-0 pointer-events-none transition-all duration-300 motion-reduce:transition-none ${isModalLevel ? "z-[1200]" : "z-[900]"}`}
         >
             {/* 4 方向高斯模糊物理遮罩 */}
             <div
-                className="absolute top-0 left-0 right-0 bg-ink/40 backdrop-blur-[2px] transition-all duration-300 pointer-events-auto"
+                className="absolute top-0 left-0 right-0 bg-ink/40 backdrop-blur-[2px] transition-all duration-300 motion-reduce:transition-none pointer-events-auto"
                 style={{ height: topHeight }}
             />
             <div
-                className="absolute left-0 right-0 bottom-0 bg-ink/40 backdrop-blur-[2px] transition-all duration-300 pointer-events-auto"
+                className="absolute left-0 right-0 bottom-0 bg-ink/40 backdrop-blur-[2px] transition-all duration-300 motion-reduce:transition-none pointer-events-auto"
                 style={{ top: bottomTop }}
             />
             <div
-                className="absolute left-0 bg-ink/40 backdrop-blur-[2px] transition-all duration-300 pointer-events-auto"
+                className="absolute left-0 bg-ink/40 backdrop-blur-[2px] transition-all duration-300 motion-reduce:transition-none pointer-events-auto"
                 style={{
                     top: topHeight,
                     height: rect.height + pad * 2,
@@ -101,7 +101,7 @@ const TourSpotlight = ({ targetConfig, onSkip }) => {
                 }}
             />
             <div
-                className="absolute right-0 bg-ink/40 backdrop-blur-[2px] transition-all duration-300 pointer-events-auto"
+                className="absolute right-0 bg-ink/40 backdrop-blur-[2px] transition-all duration-300 motion-reduce:transition-none pointer-events-auto"
                 style={{
                     top: topHeight,
                     height: rect.height + pad * 2,
@@ -109,40 +109,20 @@ const TourSpotlight = ({ targetConfig, onSkip }) => {
                 }}
             />
 
-            {/* 炫酷的光晕洞口引导线 */}
-            <div
-                className="absolute rounded-xl pointer-events-none border-2 border-accent-400 animate-ping opacity-40"
-                style={{
-                    top: rect.top - pad,
-                    left: rect.left - pad,
-                    width: rect.width + pad * 2,
-                    height: rect.height + pad * 2,
-                }}
-            />
-            <div
-                className="absolute rounded-xl pointer-events-none border-2 border-canvas/60 shadow-[0_0_20px_rgba(255,255,255,0.6)] transition-all duration-300"
-                style={{
-                    top: rect.top - pad,
-                    left: rect.left - pad,
-                    width: rect.width + pad * 2,
-                    height: rect.height + pad * 2,
-                }}
-            />
-
             {/* AI 讲解提示框 */}
             <div
-                className="absolute flex flex-col pointer-events-auto transition-all duration-500"
+                className="absolute flex flex-col pointer-events-auto transition-all duration-300 motion-reduce:transition-none"
                 style={{
                     top: hintTop,
                     left: hintLeft,
                     width: hintWidth,
                 }}
             >
-                <div className="bg-accent text-white p-5 rounded-2xl shadow-[0_30px_60px_-15px_rgba(2,132,199,0.5)] border border-accent-400/30 overflow-y-auto">
-                    <div className="flex items-center justify-between mb-3">
+                <div className="bg-canvas text-ink p-4 rounded-card shadow-float border border-border max-h-[calc(100dvh-2rem)] overflow-y-auto">
+                    <div className="flex items-center justify-between gap-3 mb-3">
                         <div className="flex items-center gap-2 min-w-0">
-                            <Compass className="w-4 h-4 text-warning flex-shrink-0" />
-                            <div className="font-black text-body uppercase tracking-widest break-words">
+                            <Compass className="w-4 h-4 text-ink-muted flex-shrink-0" />
+                            <div className="font-semibold text-body uppercase tracking-widest break-words">
                                 {targetConfig.text}
                             </div>
                         </div>
@@ -150,12 +130,12 @@ const TourSpotlight = ({ targetConfig, onSkip }) => {
                             onClick={onSkip}
                             variant="link"
                             size="md"
-                            className="bg-accent-700/50 rounded-lg px-2 py-1 text-micro uppercase font-bold tracking-widest text-accent-200 hover:text-white hover:no-underline"
+                            className="shrink-0 bg-surface rounded-menu-item px-2 py-1 text-caption font-medium text-ink-muted hover:bg-surface-muted hover:text-ink hover:no-underline"
                         >
                             Skip // 退出
                         </Button>
                     </div>
-                    <div className="text-accent-50 text-caption font-medium leading-relaxed opacity-90 break-words">
+                    <div className="text-ink-muted text-caption leading-relaxed break-words">
                         {targetConfig.desc}
                     </div>
                 </div>

@@ -11,7 +11,7 @@ import {
     Loader2,
     PenLine,
     Plus,
-    Send,
+    ArrowUp,
     Square,
     Target,
     X,
@@ -24,22 +24,22 @@ const QUICK_ACTIONS = [
     {
         key: "generateImage",
         icon: ImageIcon,
-        iconClassName: "bg-emerald-50 text-emerald-500",
+        iconClassName: "bg-surface-muted text-ink-secondary",
     },
     {
         key: "searchWeb",
         icon: Globe,
-        iconClassName: "bg-orange-50 text-orange-500",
+        iconClassName: "bg-surface-muted text-ink-secondary",
     },
     {
         key: "generatePractice",
         icon: PenLine,
-        iconClassName: "bg-blue-50 text-blue-500",
+        iconClassName: "bg-surface-muted text-ink-secondary",
     },
     {
         key: "importKnowledge",
         icon: BookOpen,
-        iconClassName: "bg-purple-50 text-purple-500",
+        iconClassName: "bg-surface-muted text-ink-secondary",
     },
 ];
 
@@ -52,7 +52,7 @@ const AttachmentPreview = ({ attachment, onRemove }) => (
                 className="h-16 w-16 rounded-xl border border-border object-cover"
             />
         ) : (
-            <div className="flex h-10 items-center gap-2 rounded-xl border border-border px-3 text-xs text-ink">
+            <div className="flex h-10 items-center gap-2 rounded-xl border border-border px-3 text-caption text-ink">
                 <FileText className="h-4 w-4 text-ink-muted" />
                 <span className="max-w-40 truncate">{attachment.name}</span>
             </div>
@@ -60,7 +60,7 @@ const AttachmentPreview = ({ attachment, onRemove }) => (
         <button
             type="button"
             onClick={() => onRemove(attachment.url)}
-            className="absolute -right-1 -top-1 grid h-5 w-5 place-items-center rounded-full bg-ink text-white"
+            className="absolute -right-1 -top-1 grid h-6 w-6 place-items-center rounded-full bg-ink text-canvas"
         >
             <X className="h-3 w-3" />
         </button>
@@ -124,10 +124,10 @@ const AgentComposer = ({
             textarea.style.height = "auto";
             const naturalHeight = textarea.scrollHeight;
             const shouldExpand =
-                alwaysExpanded || naturalHeight > (multiline ? 48 : 40) + 1;
+                alwaysExpanded || naturalHeight > 41;
             textarea.style.height = `${Math.min(
-                Math.max(naturalHeight, shouldExpand ? 48 : 40),
-                120,
+                Math.max(naturalHeight, 40),
+                280,
             )}px`;
             setMultiline((current) =>
                 current === shouldExpand ? current : shouldExpand,
@@ -195,7 +195,7 @@ const AgentComposer = ({
         <>
             <div
                 data-multiline={multiline ? "true" : "false"}
-                className={`relative rounded-[1.75rem] border border-border bg-white shadow-sm transition-all focus-within:border-border-strong focus-within:ring-2 focus-within:ring-border-strong/20 ${
+                className={`agent-composer relative rounded-[1.75rem] border border-border bg-canvas transition-colors ${
                     multiline ? "min-h-[88px] p-2" : "min-h-[48px] p-1"
                 }`}
             >
@@ -213,7 +213,7 @@ const AgentComposer = ({
 
                 <div
                     ref={menuRef}
-                    className={`relative flex min-h-0 ${
+                    className={`agent-composer-layout relative flex min-h-0 ${
                         multiline ? "flex-col" : "flex-row items-center gap-2"
                     }`}
                 >
@@ -257,16 +257,16 @@ const AgentComposer = ({
                                     if (!locked && canSend) onSubmit();
                                 }
                             }}
-                            className={`block w-full min-w-0 resize-none bg-transparent px-2 py-2 text-sm text-ink outline-none placeholder:text-ink-faint disabled:opacity-60 ${
+                            className={`agent-composer-textarea block w-full min-w-0 resize-none bg-transparent px-2 py-2 text-body text-ink outline-none placeholder:text-ink-faint disabled:opacity-60 ${
                                 multiline
-                                    ? "min-h-[48px] max-h-[120px] overflow-y-auto"
-                                    : "min-h-[40px] max-h-[120px] flex-1"
+                                    ? "min-h-[40px] max-h-[280px] overflow-y-auto"
+                                    : "min-h-[40px] max-h-[280px] flex-1"
                             }`}
                         />
                     </div>
 
                     <div
-                        className={`shrink-0 items-center gap-2 ${
+                        className={`agent-composer-toolbar shrink-0 items-center gap-2 ${
                             multiline
                                 ? "order-2 mt-1 flex w-full justify-between"
                                 : "contents"
@@ -279,7 +279,7 @@ const AgentComposer = ({
                                 setMentionMenuOpen(false);
                             }}
                             disabled={uploadingAttachments}
-                            className={`grid h-9 w-9 shrink-0 cursor-pointer place-items-center rounded-full text-ink-muted transition-colors hover:bg-surface-muted hover:text-ink disabled:opacity-50 ${
+                            className={`agent-composer-add grid h-9 w-9 shrink-0 cursor-pointer place-items-center rounded-full text-ink-muted transition-colors hover:bg-surface-muted hover:text-ink disabled:opacity-50 ${
                                 multiline ? "" : "order-1"
                             }`}
                             title={t("blog.agentChat.addAttachment", "添加")}
@@ -292,7 +292,7 @@ const AgentComposer = ({
                         </button>
 
                         {addMenuOpen ? (
-                            <div className="absolute bottom-12 left-0 z-30 w-72 overflow-hidden rounded-xl border border-border bg-white p-1.5 text-left shadow-[0_12px_32px_rgba(17,20,38,0.12)]">
+                            <div className="absolute bottom-12 left-0 z-30 w-72 overflow-hidden rounded-menu border border-border bg-canvas p-1 text-left shadow-float">
                                 <div className="px-2 py-1.5 text-micro font-semibold uppercase tracking-[0.12em] text-ink-muted">
                                     {t("workspace.agent.addSection", "添加")}
                                 </div>
@@ -305,7 +305,7 @@ const AgentComposer = ({
                                     className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-caption text-ink hover:bg-surface-muted"
                                 >
                                     <span className="grid h-6 w-6 place-items-center rounded-md bg-surface-muted text-ink">
-                                        +
+                                        <Plus className="h-4 w-4" aria-hidden="true" />
                                     </span>
                                     <span>
                                         {t(
@@ -374,7 +374,7 @@ const AgentComposer = ({
                                         )}
                                     </span>
                                 </button>
-                                <div className="mt-1 border-t border-[#f0f0f5] pt-1">
+                                <div className="mt-1 border-t border-border pt-1">
                                     <div className="px-2 py-1.5 text-micro font-semibold uppercase tracking-[0.12em] text-ink-muted">
                                         {t("workspace.menu.plugins", "插件")}
                                     </div>
@@ -426,7 +426,7 @@ const AgentComposer = ({
                         ) : null}
 
                         {mentionMenuOpen ? (
-                            <div className="absolute bottom-12 left-10 z-30 w-72 overflow-hidden rounded-xl border border-border bg-white p-1.5 text-left shadow-[0_12px_32px_rgba(17,20,38,0.12)]">
+                            <div className="absolute bottom-12 left-10 z-30 w-72 overflow-hidden rounded-menu border border-border bg-canvas p-1 text-left shadow-float">
                                 <div className="px-2 py-1.5 text-micro text-ink-muted">
                                     {t(
                                         "workspace.agent.mentionHint",
@@ -493,7 +493,7 @@ const AgentComposer = ({
                                         ? t("blog.agentChat.stopping")
                                         : t("blog.agentChat.stop")
                                 }
-                                className={`grid h-9 w-9 shrink-0 place-items-center rounded-full bg-ink text-white transition-colors hover:bg-ink-secondary disabled:cursor-wait disabled:opacity-80 ${
+                                className={`agent-composer-submit grid h-9 w-9 shrink-0 place-items-center rounded-full bg-ink text-white transition-colors hover:bg-ink-secondary disabled:cursor-wait disabled:opacity-80 ${
                                     multiline ? "" : "order-4"
                                 }`}
                             >
@@ -513,11 +513,11 @@ const AgentComposer = ({
                                         ? t("common.cancel")
                                         : t("blog.agentChat.send")
                                 }
-                                className={`grid h-9 w-9 shrink-0 place-items-center rounded-full bg-ink text-white transition-colors hover:bg-ink-secondary disabled:opacity-40 ${
+                                className={`agent-composer-submit grid h-9 w-9 shrink-0 place-items-center rounded-full bg-ink text-white transition-colors hover:bg-ink-secondary disabled:opacity-40 ${
                                     multiline ? "" : "order-4"
                                 }`}
                             >
-                                <Send className="h-4 w-4" />
+                                <ArrowUp className="h-5 w-5" />
                             </button>
                         )}
                     </div>
@@ -536,7 +536,7 @@ const AgentComposer = ({
                                     t(`workspace.agent.actions.${key}`),
                                 )
                             }
-                            className="flex cursor-pointer items-center gap-2 rounded-xl border border-border bg-white px-3.5 py-2 text-xs font-semibold text-ink-secondary transition-all hover:border-border-strong hover:bg-surface-muted"
+                            className="flex cursor-pointer items-center gap-2 rounded-xl border border-border bg-white px-3.5 py-2 text-caption font-semibold text-ink-secondary transition-all hover:border-border-strong hover:bg-surface-muted"
                         >
                             <span
                                 className={`grid h-5 w-5 place-items-center rounded-md ${iconClassName}`}

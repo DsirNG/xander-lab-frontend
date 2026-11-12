@@ -2,7 +2,7 @@
  * 全局样式入口 + UI Design Tokens
  * Global Styles Entry Point & Design System
  *
- * Accent (#6765f6) is for accents only (avatar, CTA, focus, links).
+ * Accent is reserved for primary actions; neutral tokens define the UI.
  * Ink / surface / border carry the rest of the UI.
  */
 
@@ -17,53 +17,53 @@
     --breakpoint-3xl: 112rem;
     --container-8xl: 90rem;
 
-    /* ── Accent (theme accent, violet-600 family) ── */
-    --color-accent: #6765f6;
-    --color-accent-50: #faf9ff;
-    --color-accent-100: #f2f1fd;
-    --color-accent-200: #e5e3fc;
-    --color-accent-300: #c9c6fb;
-    --color-accent-400: #a7a3f8;
-    --color-accent-500: #827df5;
-    --color-accent-600: #6765f6;
-    --color-accent-700: #514dcc;
-    --color-accent-800: #403da3;
-    --color-accent-900: #2e2c73;
-    --color-accent-soft: #f2f1fd;
-    --color-accent-muted: #e5e3fc;
-    --color-accent-fg: #514dcc;
+    /* ── Neutral action colors; no new brand palette ── */
+    --color-accent: #000000;
+    --color-accent-50: #ffffff;
+    --color-accent-100: #fafafa;
+    --color-accent-200: #f0f0f0;
+    --color-accent-300: #e5e5e5;
+    --color-accent-400: #cccccc;
+    --color-accent-500: #666666;
+    --color-accent-600: #000000;
+    --color-accent-700: #222222;
+    --color-accent-800: #333333;
+    --color-accent-900: #444444;
+    --color-accent-soft: #f5f5f5;
+    --color-accent-muted: #eeeeee;
+    --color-accent-fg: #000000;
 
     /* primary = accent alias (legacy class names) */
-    --color-primary: #6765f6;
-    --color-primary-50: #f0f9ff;
-    --color-primary-100: #e0f2fe;
-    --color-primary-200: #bae6fd;
-    --color-primary-300: #7dd3fc;
-    --color-primary-400: #38bdf8;
-    --color-primary-500: #0ea5e9;
-    --color-primary-600: #0284c7;
-    --color-primary-700: #0369a1;
-    --color-primary-800: #075985;
-    --color-primary-900: #0c4a6e;
-    --color-primary-dark: #0369a1;
+    --color-primary: #000000;
+    --color-primary-50: #ffffff;
+    --color-primary-100: #fafafa;
+    --color-primary-200: #f0f0f0;
+    --color-primary-300: #e5e5e5;
+    --color-primary-400: #cccccc;
+    --color-primary-500: #666666;
+    --color-primary-600: #000000;
+    --color-primary-700: #222222;
+    --color-primary-800: #333333;
+    --color-primary-900: #444444;
+    --color-primary-dark: #222222;
 
     /* ── Ink (text hierarchy) ── */
-    --color-ink: #0f172a;
-    --color-ink-secondary: #334155;
-    --color-ink-muted: #64748b;
-    --color-ink-faint: #94a3b8;
+    --color-ink: #000000;
+    --color-ink-secondary: #333333;
+    --color-ink-muted: #666666;
+    --color-ink-faint: #737373;
 
     /* ── Surfaces ── */
     --color-canvas: #ffffff;
-    --color-surface: #f8fafc;
-    --color-surface-muted: #f1f5f9;
+    --color-surface: #f7f7f7;
+    --color-surface-muted: #efefef;
     --color-code-block-conversation: #f1f1f1;
     --color-background-light: #ffffff;
-    --color-surface-light: #f8fafc;
+    --color-surface-light: #f7f7f7;
 
     /* ── Borders ── */
-    --color-border: #e2e8f0;
-    --color-border-strong: #cbd5e1;
+    --color-border: #e8e8e8;
+    --color-border-strong: #d0d0d0;
 
     /* ── Status ── */
     --color-success: #059669;
@@ -75,16 +75,28 @@
     --color-danger: #e11d48;
     --color-danger-soft: #fff1f2;
     --color-danger-fg: #be123c;
-    --color-info: #6765f6;
-    --color-info-soft: #f2f1fd;
-    --color-info-fg: #514dcc;
+    --color-info: #64748b;
+    --color-info-soft: #f1f5f9;
+    --color-info-fg: #475569;
+
+    /* Geometry: 4px rhythm; 12px menu + 4px inset = 8px item. */
+    --radius-control: 0.75rem;
+    --radius-card: 1rem;
+    --radius-panel: 1.25rem;
+    --radius-dialog: 1.5rem;
+    --radius-menu: 0.75rem;
+    --radius-menu-item: 0.5rem;
+    --shadow-float: 0 6px 20px rgb(0 0 0 / 0.07), 0 1px 4px rgb(0 0 0 / 0.03);
+    --shadow-dialog: 0 24px 80px rgb(0 0 0 / 0.18);
 
     /* ── Typography ── */
     /* 全项目统一使用 Plus Jakarta Sans；仅代码块保留 JetBrains Mono 等宽字体。 */
     --font-sans:
-        "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+        "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI",
+        "PingFang SC", "Microsoft YaHei", sans-serif;
     --font-chat:
-        "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+        "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI",
+        "PingFang SC", "Microsoft YaHei", sans-serif;
     --font-mono:
         "JetBrains Mono", ui-monospace, "Cascadia Code", "SF Mono", monospace;
 
@@ -252,13 +264,13 @@ button {
     );
 }
 
-/* ── 字号基准：rem 流式缩放 ──
-   项目全部字号/间距/图标均以 rem 为单位（Tailwind 默认即 rem），
-   因此按视口宽度流式调整根字号，即可让不同设备的文字观感尽量一致：
-   320px 手机 ≈14px → 1080p 桌面 ≈16px → 4K/超宽屏封顶 17px。
-   不要再用固定 px 大字号写业务样式，随根字号缩放才稳定。 */
+/* Stable desktop density. rem still respects the browser font preference. */
 html {
-    font-size: clamp(14px, 14.7px + 0.16vw, 20px);
+    font-size: 100%;
+}
+
+@media (max-width: 767px) {
+    html { font-size: clamp(14px, 14.7px + 0.16vw, 20px); }
 }
 
 /* 超窄屏（≤360px 老款小屏机）：进一步收紧内边距 */
@@ -441,13 +453,13 @@ html {
     --color-ink: #000000;
     --color-ink-secondary: #333333;
     --color-ink-muted: #666666;
-    --color-ink-faint: #999999;
+    --color-ink-faint: #737373;
     --color-canvas: #ffffff;
-    --color-surface: #ffffff;
-    --color-surface-muted: #fafafa;
+    --color-surface: #f7f7f7;
+    --color-surface-muted: #efefef;
     --color-code-block-conversation: #f1f1f1;
     --color-background-light: #ffffff;
-    --color-surface-light: #ffffff;
+    --color-surface-light: #f7f7f7;
     --color-border: #e8e8e8;
     --color-border-strong: #d0d0d0;
     --color-success: #059669;
@@ -492,10 +504,10 @@ html {
     --color-ink: #ffffff;
     --color-ink-secondary: #dddddd;
     --color-ink-muted: #aaaaaa;
-    --color-ink-faint: #777777;
-    --color-canvas: #000000;
-    --color-surface: #0a0a0a;
-    --color-surface-muted: #141414;
+    --color-ink-faint: #a0a0a0;
+    --color-canvas: #111111;
+    --color-surface: #191919;
+    --color-surface-muted: #242424;
     --color-code-block-conversation: #4a4a4a;
     --color-background-light: #000000;
     --color-surface-light: #0a0a0a;
@@ -527,4 +539,57 @@ html {
 
 :root[data-theme="dark"] .text-black {
     color: var(--color-ink) !important;
+}
+
+/* Desktop composer: a single-line pill grows upward into a multiline surface. */
+@media (min-width: 768px) {
+    .agent-composer {
+        padding: 8px;
+        border-radius: 34px;
+        background: var(--color-surface-muted);
+        box-shadow: none;
+        transition: border-color 180ms ease, border-radius 260ms cubic-bezier(.22, 1, .36, 1);
+    }
+
+    .agent-composer[data-multiline="true"] {
+        padding: 12px;
+        border-radius: 28px;
+    }
+
+    .agent-composer-layout { gap: 8px; }
+    .agent-composer-textarea {
+        padding: 8px 12px;
+        font-size: 16px;
+        line-height: 24px;
+        text-align: left;
+    }
+
+    .agent-composer-add,
+    .agent-composer-submit {
+        width: 44px;
+        height: 44px;
+    }
+
+    .agent-composer button {
+        transition: background-color 180ms ease, color 180ms ease, transform 100ms ease;
+    }
+    .agent-composer button:enabled:active { transform: scale(.97); }
+    .agent-composer button:focus-visible {
+        outline: 2px solid var(--color-ink-muted);
+        outline-offset: 3px;
+    }
+    .agent-composer-toolbar { min-height: 44px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .agent-composer,
+    .agent-composer button { transition: none; }
+}
+
+/* Product preference: controls do not add visual rings on focus. */
+:where(button, input, textarea, select, a, [role="combobox"], [tabindex]):focus,
+:where(button, input, textarea, select, a, [role="combobox"], [tabindex]):focus-visible {
+    outline: none !important;
+    --tw-ring-shadow: 0 0 #0000 !important;
+    --tw-ring-offset-shadow: 0 0 #0000 !important;
 }

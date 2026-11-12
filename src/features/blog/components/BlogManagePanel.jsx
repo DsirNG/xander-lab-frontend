@@ -1,3 +1,4 @@
+import { formInputCls } from "@shared/ui/forms/formStyles";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -153,10 +154,10 @@ const BlogManagePanel = () => {
             {/* Header */}
             <div className="flex shrink-0 flex-wrap items-start justify-between gap-4 border-b border-border px-5 py-5 sm:px-8">
                 <div className="min-w-0">
-                    <h1 className="text-xl font-semibold text-ink">
+                    <h1 className="text-heading font-semibold text-ink">
                         {t("contentLibrary.articles")}
                     </h1>
-                    <p className="mt-1 text-sm text-ink-muted">
+                    <p className="mt-1 text-body text-ink-muted">
                         {t("contentLibrary.articleDescription")}
                     </p>
                 </div>
@@ -177,7 +178,7 @@ const BlogManagePanel = () => {
                                 "blogManage.searchPlaceholder",
                                 "搜索文章标题、内容或标签",
                             )}
-                            className="w-full h-10 pl-9 pr-4 rounded-lg bg-canvas border border-border text-sm text-ink outline-none focus:ring-2 focus:ring-border-strong"
+                            className={`${formInputCls} pl-10`}
                         />
                     </div>
                     <Button
@@ -191,7 +192,7 @@ const BlogManagePanel = () => {
             </div>
 
             <div
-                className="flex shrink-0 items-center gap-1 px-5 py-3 sm:px-8"
+                className="flex shrink-0 flex-wrap items-center gap-1 px-5 py-3 sm:px-8"
                 role="group"
                 aria-label={t("profile.blogManage.statusLabel")}
             >
@@ -216,7 +217,7 @@ const BlogManagePanel = () => {
             {/* Content Area */}
             <div className="flex flex-1 min-h-0 min-w-0 px-5 sm:px-8 pb-5">
                 {/* Left Table Area */}
-                <div className="flex flex-1 min-h-0 min-w-0 flex-col bg-canvas rounded-xl border border-border overflow-hidden">
+                <div className="flex flex-1 min-h-0 min-w-0 flex-col bg-canvas rounded-card border border-border overflow-hidden">
                     {/* Table */}
                     <div className="flex-1 min-h-0">
                         <BlogManageTable

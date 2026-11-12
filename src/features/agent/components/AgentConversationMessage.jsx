@@ -19,12 +19,12 @@ export const AgentThoughtCard = ({ content, durationMs }) => {
         : null;
 
     return (
-        <div className="w-full text-xs leading-5 text-ink-muted">
+        <div className="w-full text-caption leading-5 text-ink-muted">
             <button
                 type="button"
                 onClick={() => setOpen((current) => !current)}
                 aria-expanded={open}
-                className="flex min-h-8 max-w-full items-center gap-2 rounded-md px-1 text-left transition-colors hover:text-ink-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                className="flex min-h-8 max-w-full items-center gap-2 rounded-md px-1 text-left transition-colors hover:text-ink-secondary focus-visible:outline-none"
             >
                 <Sparkles
                     className="h-3.5 w-3.5 shrink-0 text-ink-faint"
@@ -69,7 +69,7 @@ const MessageAttachments = ({ attachments = [] }) =>
                         <img
                             src={attachment.url}
                             alt={attachment.name}
-                            className="h-24 w-24 rounded-2xl border border-border object-cover"
+                            className="h-24 w-24 rounded-control border border-border object-cover"
                         />
                     </a>
                 ) : (
@@ -78,7 +78,7 @@ const MessageAttachments = ({ attachments = [] }) =>
                         href={attachment.url}
                         target="_blank"
                         rel="noreferrer"
-                        className="flex max-w-64 items-center gap-2 rounded-2xl border border-border bg-surface px-3 py-2 text-caption text-ink hover:bg-surface-muted"
+                        className="flex max-w-64 items-center gap-2 rounded-control border border-border bg-surface px-3 py-2 text-caption text-ink hover:bg-surface-muted"
                     >
                         <FileText className="h-5 w-5 shrink-0 text-ink-muted" />
                         <span className="truncate">{attachment.name}</span>
@@ -102,8 +102,8 @@ export const AgentConversationMessage = memo(
             <div
                 className={
                     role === "user"
-                        ? "max-w-[85%] rounded-3xl bg-surface-muted px-4 py-2.5 text-sm leading-6 text-ink sm:max-w-[75%]"
-                        : "w-full min-w-0 py-1 text-sm leading-6 text-ink"
+                        ? "max-w-[85%] rounded-panel bg-surface-muted px-4 py-2.5 text-body leading-6 text-ink sm:max-w-[75%]"
+                        : "w-full min-w-0 py-1 text-body leading-6 text-ink"
                 }
             >
                 {role === "user" ? (

@@ -117,7 +117,7 @@ export const QuizCardStack = ({ payload, onSubmit }) => {
                 </div>
             </div>
 
-            <div className="relative min-h-[22rem] overflow-hidden rounded-2xl border border-border bg-surface p-5 shadow-sm sm:p-7">
+            <div className="relative min-h-[22rem] overflow-hidden rounded-2xl border border-border bg-canvas p-4 sm:p-6">
                 <div className="pointer-events-none absolute inset-x-5 top-0 h-1 rounded-b-full bg-accent/70" />
                 <div className="flex items-start gap-3">
                     <span className="grid h-8 w-8 shrink-0 place-items-center rounded-xl bg-accent-soft text-caption font-semibold text-accent-fg">
@@ -129,7 +129,7 @@ export const QuizCardStack = ({ payload, onSubmit }) => {
                 </div>
 
                 {question.options.length ? (
-                    <div className="mt-7 grid gap-2.5">
+                    <div className="mt-6 grid gap-3">
                         {question.options.map((option, index) => {
                             const selected = Array.isArray(answer)
                                 ? answer.includes(option.value)
@@ -144,10 +144,10 @@ export const QuizCardStack = ({ payload, onSubmit }) => {
                                             ? toggleMultiple(option.value)
                                             : updateAnswer(option.value)
                                     }
-                                    className={`flex min-h-12 items-center gap-3 rounded-xl border px-3 text-left text-body transition ${selected ? "border-accent bg-accent-soft text-accent-fg" : "border-border bg-canvas text-ink-secondary hover:border-border-strong hover:bg-surface-muted"} disabled:cursor-default`}
+                                    className={`flex min-h-12 items-center gap-3 rounded-xl border px-3 text-left text-body transition ${selected ? "border-border-strong bg-surface-muted text-ink" : "border-border bg-canvas text-ink-secondary hover:border-border-strong hover:bg-surface-muted"} disabled:cursor-default`}
                                 >
                                     <span
-                                        className={`grid h-7 w-7 shrink-0 place-items-center rounded-lg border text-caption font-semibold ${selected ? "border-accent bg-accent text-white" : "border-border-strong bg-surface text-ink-muted"}`}
+                                        className={`grid h-7 w-7 shrink-0 place-items-center rounded-lg border text-caption font-semibold ${selected ? "border-border-strong bg-ink text-canvas" : "border-border-strong bg-surface text-ink-muted"}`}
                                     >
                                         {selected ? (
                                             <Check className="h-4 w-4" />
@@ -168,7 +168,7 @@ export const QuizCardStack = ({ payload, onSubmit }) => {
                         disabled={submitted}
                         onChange={(event) => updateAnswer(event.target.value)}
                         placeholder={t("blog.agentChat.quizAnswerPlaceholder")}
-                        className="mt-7 min-h-28 w-full resize-y rounded-xl border border-border bg-canvas p-3 text-body text-ink outline-none focus:border-accent"
+                        className="mt-7 min-h-28 w-full resize-y rounded-xl border border-border bg-canvas p-3 text-body text-ink outline-none"
                     />
                 )}
 

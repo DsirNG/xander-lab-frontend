@@ -1,8 +1,10 @@
 import React from "react";
+import { MemoryRouter } from "react-router-dom";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import FeatureConfigModal from "./FeatureConfigModal";
 
+vi.mock("@api", () => ({ isRequestCancelled: () => false }));
 vi.mock("@shared/hooks/useToast", () => ({
     useToast: () => ({ success: vi.fn(), error: vi.fn() }),
 }));
@@ -22,13 +24,13 @@ const providers = [
 
 const renderModal = (config) =>
     render(
-        <FeatureConfigModal
+        <MemoryRouter><FeatureConfigModal
             isOpen
             config={config}
             providers={providers}
             onClose={vi.fn()}
             onSaved={vi.fn()}
-        />,
+        /></MemoryRouter>,
     );
 
 /**

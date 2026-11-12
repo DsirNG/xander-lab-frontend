@@ -57,7 +57,7 @@ export default function LanguagePreferencesPanel() {
                             onClick={() => void changeLocale(value)}
                             className={
                                 locale === value
-                                    ? "border-accent bg-accent-soft text-accent"
+                                    ? "border-border-strong bg-surface-muted text-ink"
                                     : ""
                             }
                         >
@@ -80,7 +80,7 @@ export default function LanguagePreferencesPanel() {
                             onClick={() => setReplyLanguage(value)}
                             className={
                                 replyLanguage === value
-                                    ? "border-accent bg-accent-soft text-accent"
+                                    ? "border-border-strong bg-surface-muted text-ink"
                                     : ""
                             }
                         >

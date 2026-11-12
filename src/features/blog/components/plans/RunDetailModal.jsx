@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next";
 import Modal from "@shared/ui/overlays/Modal";
 
 const Row = ({ label, children }) => (
-    <div className="flex items-start justify-between gap-6 py-2 text-sm">
+    <div className="flex items-start justify-between gap-6 py-2 text-body">
         <span className="shrink-0 text-ink-faint">{label}</span>
         <span className="break-all text-right text-ink-secondary">
             {children || "—"}
@@ -95,7 +95,7 @@ const RunDetailModal = ({ isOpen, run, onClose }) => {
                     <Row label={t("blogPlans.localPost")}>
                         <a
                             href="/app?view=articles"
-                            className="text-accent hover:underline"
+                            className="text-ink-secondary hover:underline"
                         >
                             #{run.localPostId}
                         </a>
@@ -107,7 +107,7 @@ const RunDetailModal = ({ isOpen, run, onClose }) => {
                             href={run.csdnUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-accent hover:underline"
+                            className="text-ink-secondary hover:underline"
                         >
                             CSDN
                         </a>
@@ -119,7 +119,7 @@ const RunDetailModal = ({ isOpen, run, onClose }) => {
                             href={run.juejinUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-accent hover:underline"
+                            className="text-ink-secondary hover:underline"
                         >
                             {t("blogPlans.juejin")}
                         </a>
@@ -127,7 +127,7 @@ const RunDetailModal = ({ isOpen, run, onClose }) => {
                 )}
                 {error && (
                     <Row label={t("blogPlans.error")}>
-                        <span className="text-red-600 dark:text-red-400">
+                        <span className="text-danger">
                             {error}
                         </span>
                     </Row>

@@ -1,0 +1,61 @@
+@reference "../../../styles/index.css";
+
+.page {
+    @apply grid min-h-screen min-w-0 bg-canvas text-ink;
+    min-height: 100dvh;
+}
+
+.artwork {
+    @apply relative hidden min-w-0 overflow-hidden border-r border-border bg-surface;
+}
+
+.formSection {
+    @apply flex min-w-0 items-center justify-center px-5 py-8 sm:px-10 sm:py-12 lg:px-12;
+}
+
+.formContainer {
+    @apply w-full min-w-0 max-w-[420px];
+}
+
+.brand {
+    @apply mb-8 flex w-fit items-center gap-3 rounded-xl outline-offset-4;
+}
+
+.tabs {
+    @apply mb-8 flex gap-1 rounded-xl border border-border bg-surface-muted p-1;
+}
+
+@media (min-width: 1024px) {
+    .page {
+        grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    }
+
+    .artwork {
+        display: block;
+    }
+
+    .formSection {
+        min-height: 100vh;
+        min-height: 100dvh;
+    }
+}
+
+@media (max-height: 760px) and (min-width: 1024px) {
+    .formSection {
+        @apply py-8;
+    }
+
+    .brand {
+        @apply mb-6;
+    }
+
+    .tabs {
+        @apply mb-6;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .page :is(button, input) {
+        transition: none;
+    }
+}

@@ -15,7 +15,7 @@
 ### 颜色原则
 
 - **中性为主**：页面底、卡片、边框、正文用 `canvas` / `surface` / `border` / `ink*`。
-- **主题色只做点缀**：`accent`（`#0284c7`）仅用于头像、徽标、主 CTA、链接、焦点环、选中细态；禁止大面积 `bg-accent` / `bg-primary` 铺底。
+- **主题色只做点缀**：`accent`（随明暗主题切换的中性强调色）仅用于头像、徽标、主 CTA、链接、焦点环、选中细态；禁止大面积 `bg-accent` / `bg-primary` 铺底。
 - **新代码优先 `accent`**；`primary` 是 accent 的兼容别名，勿再扩展新的 `primary-*` 用法。
 - **状态色**：`success` / `warning` / `danger` / `info`（可用 `*-soft` 底、`*-fg` 字）。
 
@@ -28,6 +28,16 @@
 | `success` / `warning` / `danger` / `info`           | 状态     |
 
 禁止：业务里随意写 `sky-*`、`#36f`、硬编码灰阶 hex（演示页故意多彩的样本除外）。
+
+### PC 端视觉与几何规范
+
+- 桌面根字号固定为 `100%`，尊重浏览器字号设置；不随屏幕宽度放大整套控件。中文显式回退 PingFang SC / Microsoft YaHei。
+- 颜色必须引用语义 token。`canvas` 是主内容面，`surface` 是侧栏/辅助面，`surface-muted` 是悬停/选中面；不再给普通下拉选项和表单写死紫色。
+- 按钮保持现有 32 / 36 / 40 / 44px 高度；普通输入框最小 40px（多行输入可增长），紧凑输入 36px。保持共享 Button / formStyles / CustomSelect 的尺寸一致。
+- 几何 token：`radius-control` 12px、`radius-card` 16px、`radius-panel` 20px、`radius-dialog` 24px；菜单外层 12px + 内边距 4px，对应菜单项 8px 圆角。同心规则用于紧贴嵌套，不强制套到卡片中的独立按钮。
+- 间距使用 4 / 8 / 12 / 16 / 24 / 32px；同组更紧、跨组更松。卡片以细边框区分，浮层和弹窗使用 `shadow-float` / `shadow-dialog`，不叠加多层重阴影。
+- 分页使用无边框 Chevron 前后翻页与中性浅底当前页（`aria-current="page"`），单页隐藏导航并保留条数/每页数量；避免把分页设计成主 CTA。
+- 保留明暗主题、键盘操作和 reduced-motion；按当前产品偏好，控件不显示额外聚焦光圈/描边；错误、警告、成功仍使用语义状态色。
 
 ### 字体原则
 
@@ -138,3 +148,7 @@ AgentComposer 支持可选 `quickActions`（`key` / `icon` / `iconClassName`）�
 
 - `Button` 支持 `debounceMs`（默认 0）：首次点击立即执行，指定间隔内拦截重复点击与表单默认提交；异步写入仍需业务级 pending 锁，并通过 `loading` 展示 spinner。
 - `Modal` 固定高度受动态视口限制；主体使用 `min-h-0 flex-1` 内部滚动。多弹框共享背景滚动锁，只有最上层处理 Escape / Tab。
+
+Agent 生图进度复用 `src/features/agent/components/AgentMessageParts.jsx` 的 `ImageToolProgressPanel`，接收 `message` 与 `progress`（0–100）展示预估进度；实时事件沿用 `tool_start` / `tool_progress` / `tool_result` / `tool_error`。
+
+`ImageToolResult`（`src/features/agent/components/ImageToolResult.jsx`）接收 `url`、`title`、可选 `storageStatus`（`saving` / `failed`）；支持受限光栅 Data URL 临时预览和正式素材地址，复用 Modal 放大。临时 `image_preview` 在 `tool_result` 到达时被替换；上传失败时保留当前页面预览。

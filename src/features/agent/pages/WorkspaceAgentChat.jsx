@@ -500,8 +500,11 @@ const WorkspaceAgentChat = () => {
                                 )
                             }
                         />
-                        <div className="shrink-0 border-t border-border/60 bg-canvas p-4">
+                        <div className="shrink-0 bg-canvas px-4 pb-5 pt-3">
                             <div className="mx-auto w-full max-w-3xl">
+                                <div className="mb-2.5 text-center text-caption text-ink-muted">
+                                    {t("blog.agentChat.multiTurnHint")}
+                                </div>
                                 <AgentComposer
                                     input={input}
                                     attachments={attachments}
@@ -512,7 +515,6 @@ const WorkspaceAgentChat = () => {
                                     isCancelling={visibleCancelling}
                                     fileInputRef={fileInputRef}
                                     textareaRef={textareaRef}
-                                    alwaysExpanded
                                     onInputChange={setInput}
                                     onFilesSelected={handleFilesSelected}
                                     onRemoveAttachment={handleRemoveAttachment}
@@ -594,8 +596,11 @@ const WorkspaceAgentChat = () => {
                         />
 
                         {/* Bottom Input Bar for Active Chat */}
-                        <div className="shrink-0 border-t border-border/60 bg-canvas p-4">
+                        <div className="shrink-0 bg-canvas px-4 pb-5 pt-3">
                             <div className="mx-auto w-full max-w-3xl">
+                                <div className="mb-2.5 text-center text-caption text-ink-muted">
+                                    {t("blog.agentChat.multiTurnHint")}
+                                </div>
                                 <AgentComposer
                                     input={input}
                                     attachments={attachments}
@@ -606,7 +611,6 @@ const WorkspaceAgentChat = () => {
                                     isCancelling={visibleCancelling}
                                     fileInputRef={fileInputRef}
                                     textareaRef={textareaRef}
-                                    alwaysExpanded
                                     onInputChange={setInput}
                                     onFilesSelected={handleFilesSelected}
                                     onRemoveAttachment={handleRemoveAttachment}
@@ -620,12 +624,6 @@ const WorkspaceAgentChat = () => {
                                     onPluginPreview={setPreviewPlugin}
                                     t={t}
                                 />
-                                <div className="mt-1.5 text-center text-micro text-ink-faint">
-                                    {t(
-                                        "blog.agentChat.multiTurnHint",
-                                        "DinQor 也会犯错，请注意甄别。",
-                                    )}
-                                </div>
                             </div>
                         </div>
                     </>

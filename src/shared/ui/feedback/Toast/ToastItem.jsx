@@ -11,10 +11,10 @@ const defaultIcons = {
 };
 
 const defaultStyles = {
-    success: "bg-canvas/95 border-success/20 shadow-success/10",
-    error: "bg-canvas/95 border-danger/20 shadow-danger/10",
-    info: "bg-canvas/95 border-info/20 shadow-info/10",
-    warning: "bg-canvas/95 border-warning/20 shadow-warning/10",
+    success: "bg-canvas border-success/20",
+    error: "bg-canvas border-danger/20",
+    info: "bg-canvas border-info/20",
+    warning: "bg-canvas border-warning/20",
 };
 
 const progressStyles = {
@@ -90,9 +90,9 @@ const ToastItem = ({ toast, onRemove }) => {
             onMouseLeave={() => setIsPaused(false)}
             onAnimationEnd={handleAnimationEnd}
             className={`
-                group relative flex items-center gap-3 w-fit min-w-[280px] max-w-[480px] px-5 py-3.5 rounded-[2rem] border backdrop-blur-2xl
-                shadow-[0_20px_40px_rgba(0,0,0,0.08)] pointer-events-auto transition-all duration-500
-                active:scale-95 cursor-default scale-fix
+                group relative flex items-center gap-3 w-fit min-w-0 max-w-full px-4 py-3 rounded-card border
+                shadow-float pointer-events-auto transition-colors duration-150
+                cursor-default scale-fix
                 ${defaultStyles[type]}
                 ${isExiting ? "animate-toast-out" : "animate-toast-in"}
                 ${className}
@@ -101,7 +101,7 @@ const ToastItem = ({ toast, onRemove }) => {
             <div className="flex-shrink-0">{icon || defaultIcons[type]}</div>
 
             <div className="flex-1 min-w-0">
-                <div className="text-body font-black text-ink px-1 leading-normal break-words">
+                <div className="text-body font-medium text-ink leading-normal break-words">
                     {message}
                 </div>
             </div>
@@ -116,13 +116,13 @@ const ToastItem = ({ toast, onRemove }) => {
                         "common.aria.closeNotification",
                         "Close notification",
                     )}
-                    className="opacity-0 group-hover:opacity-100 rounded-full"
+                    className="shrink-0 text-ink-muted hover:text-ink rounded-menu-item"
                 />
             )}
 
             {/* C-End Style Progress Bar */}
             {duration !== Infinity && !isExiting && showProgress && (
-                <div className="absolute bottom-1.5 left-1/2 -translate-x-1/2 h-[3px] w-12 bg-surface-muted rounded-full overflow-hidden opacity-40">
+                <div className="absolute bottom-1 left-1/2 -translate-x-1/2 h-[3px] w-12 bg-surface-muted rounded-full overflow-hidden opacity-40">
                     <div
                         className={`h-full animate-progress rounded-full origin-left ${progressStyles[type] || progressStyles.info}`}
                         style={{

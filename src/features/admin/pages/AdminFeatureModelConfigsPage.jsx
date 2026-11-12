@@ -64,7 +64,7 @@ const AdminFeatureModelConfigsPage = () => {
     const renderSlot = (providerId, model, apiStyle) => {
         if (!providerId || !model) {
             return (
-                <span className="text-xs text-ink-faint">
+                <span className="text-caption text-ink-faint">
                     {t("admin.configs.none")}
                 </span>
             );
@@ -74,9 +74,9 @@ const AdminFeatureModelConfigsPage = () => {
                 <span className="rounded-full bg-surface-muted px-2 py-0.5 text-micro font-medium text-ink-secondary">
                     {providerName(providerId)}
                 </span>
-                <span className="text-xs font-bold text-ink">{model}</span>
+                <span className="text-caption font-bold text-ink">{model}</span>
                 {apiStyle && (
-                    <span className="rounded-md bg-accent-soft px-1.5 py-0.5 text-micro font-medium text-accent">
+                    <span className="rounded-md bg-surface-muted px-1.5 py-0.5 text-micro font-medium text-ink">
                         {apiStyle}
                     </span>
                 )}
@@ -90,7 +90,7 @@ const AdminFeatureModelConfigsPage = () => {
             title: t("admin.configs.feature"),
             width: "22%",
             render: (config) => (
-                <span className="text-xs font-bold text-ink">
+                <span className="text-caption font-bold text-ink">
                     {t(`admin.configs.feature.${config.featureKey}`)}
                 </span>
             ),
@@ -157,15 +157,15 @@ const AdminFeatureModelConfigsPage = () => {
 
     return (
         <div className="mx-auto flex h-full min-h-0 w-full max-w-5xl flex-col overflow-hidden p-4 sm:p-6">
-            <div className="mb-4">
-                <h1 className="flex items-center gap-2 text-base font-bold text-ink">
+            <div className="mb-4 shrink-0">
+                <h1 className="flex items-center gap-2 text-title font-semibold text-ink">
                     <SlidersHorizontal
-                        className="h-4 w-4 text-accent"
+                        className="h-4 w-4 text-ink"
                         aria-hidden="true"
                     />
                     {t("admin.configs.title")}
                 </h1>
-                <p className="mt-1 text-xs text-ink-muted">
+                <p className="mt-1 text-caption text-ink-muted">
                     {t("admin.configs.subtitle")}
                 </p>
             </div>

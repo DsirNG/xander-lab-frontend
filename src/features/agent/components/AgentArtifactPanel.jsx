@@ -84,11 +84,11 @@ const AgentArtifactPanel = ({
         return (
             <div className="flex h-full flex-col items-center justify-center gap-4 bg-canvas px-6 text-center">
                 <AlertCircle className="h-8 w-8 text-danger" />
-                <div className="text-sm font-semibold text-danger">{error}</div>
+                <div className="text-body font-semibold text-danger">{error}</div>
                 <button
                     type="button"
                     onClick={onClose}
-                    className="rounded-xl border border-border px-4 py-2 text-sm font-bold text-ink-secondary"
+                    className="rounded-xl border border-border px-4 py-2 text-body font-bold text-ink-secondary"
                 >
                     {t("common.close")}
                 </button>

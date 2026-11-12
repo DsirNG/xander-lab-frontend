@@ -36,7 +36,7 @@ const PlanSeriesList = ({ t, series, onEdit, onChanged }) => {
     if (!series.length) return null;
     return (
         <section className="shrink-0 border-b border-border px-5 py-4 sm:px-8">
-            <h2 className="mb-3 text-sm font-semibold text-ink">
+            <h2 className="mb-3 text-body font-semibold text-ink">
                 {t("blogPlans.seriesDrafts")}
             </h2>
             <div className="grid max-h-56 grid-cols-1 gap-3 overflow-y-auto xl:grid-cols-2">
@@ -47,16 +47,16 @@ const PlanSeriesList = ({ t, series, onEdit, onChanged }) => {
                     >
                         <div className="flex items-start justify-between gap-3">
                             <div className="min-w-0">
-                                <h3 className="truncate text-sm font-semibold text-ink">
+                                <h3 className="truncate text-body font-semibold text-ink">
                                     {item.title}
                                 </h3>
-                                <p className="mt-1 truncate text-xs text-ink-muted">
+                                <p className="mt-1 truncate text-caption text-ink-muted">
                                     {item.topic}
                                 </p>
                             </div>
                             <PlanStatusBadge status={item.status} />
                         </div>
-                        <div className="mt-3 flex items-center justify-between gap-3 text-xs text-ink-muted">
+                        <div className="mt-3 flex items-center justify-between gap-3 text-caption text-ink-muted">
                             <span>
                                 {t("blogPlans.seriesProgress", {
                                     done: item.finishedItems || 0,

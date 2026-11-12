@@ -236,7 +236,7 @@ const McpServerFormModal = ({ isOpen, service, prefill, onClose, onSaved }) => {
                             onChange={(e) =>
                                 patch("clearHeaders", e.target.checked)
                             }
-                            className="h-4 w-4 shrink-0 rounded border-border text-accent focus:ring-accent-200"
+                            className="h-4 w-4 shrink-0 rounded border-border text-accent"
                         />
                         {t("blog.agentMcp.formClearHeaders")}
                     </label>
@@ -247,7 +247,7 @@ const McpServerFormModal = ({ isOpen, service, prefill, onClose, onSaved }) => {
                         type="checkbox"
                         checked={form.enabled}
                         onChange={(e) => patch("enabled", e.target.checked)}
-                        className="mt-0.5 h-4 w-4 shrink-0 rounded border-border text-accent focus:ring-accent-200"
+                        className="mt-0.5 h-4 w-4 shrink-0 rounded border-border text-accent"
                     />
                     <span>
                         <span className="block text-caption font-semibold text-ink">

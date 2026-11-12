@@ -20,22 +20,22 @@ const SidebarItem = React.memo(
         <Link
             to={item.path || String(item.id)}
             onClick={onClick}
-            className={`w-full text-left p-4 rounded-2xl flex items-center group mb-2
+            className={`w-full text-left p-3 rounded-control flex items-center group mb-2 focus:outline-none
             ${
                 active
-                    ? "bg-accent-soft text-accent-fg"
+                    ? "bg-surface-muted text-ink"
                     : "hover:bg-surface-muted text-ink-muted"
             }`}
         >
             <div
-                className={`p-2 rounded-xl mr-4 ${active ? "bg-accent/15" : "bg-surface-muted group-hover:bg-canvas"}`}
+                className={`p-2 rounded-menu-item mr-3 shrink-0 ${active ? "bg-canvas" : "bg-surface-muted group-hover:bg-canvas"}`}
             >
                 {item.icon}
             </div>
             <div className="flex-grow min-w-0">
-                <div className="font-bold text-body truncate">{item.title}</div>
+                <div className="font-semibold text-body truncate">{item.title}</div>
                 <div
-                    className={`text-micro uppercase tracking-widest opacity-60 truncate ${active ? "text-accent-fg" : "text-ink-faint"}`}
+                    className={`text-micro uppercase tracking-widest opacity-60 truncate ${active ? "text-ink-secondary" : "text-ink-faint"}`}
                 >
                     {item[subtitleKey] || item.id}
                 </div>
@@ -89,7 +89,7 @@ const SidebarLayout = ({
                 variant="ghost"
                 size="sm"
                 icon={ChevronRight}
-                className={`lg:hidden fixed top-20 left-0 z-40 bg-canvas rounded-r-lg shadow-md border border-l-0 border-border ${isMobileMenuOpen ? "hidden" : ""}`}
+                className={`lg:hidden fixed top-20 left-0 z-40 bg-canvas rounded-r-control shadow-float border border-l-0 border-border ${isMobileMenuOpen ? "hidden" : ""}`}
                 aria-label={t("common.aria.openMenu", "Open menu")}
             />
 
@@ -102,7 +102,7 @@ const SidebarLayout = ({
                 />
             )}
 
-            <div className="max-w-full sm:max-w-[640px] md:max-w-[768px] lg:max-w-[1024px] xl:max-w-[1280px] 2xl:max-w-[1536px] 3xl:max-w-[1792px] mx-auto flex h-[calc(100vh-64px)] overflow-hidden">
+            <div className="max-w-full sm:max-w-[640px] md:max-w-[768px] lg:max-w-[1024px] xl:max-w-[1280px] 2xl:max-w-[1536px] 3xl:max-w-[1792px] mx-auto flex min-h-0 h-[calc(100vh-64px)] supports-[height:100dvh]:h-[calc(100dvh-64px)] overflow-hidden">
                 {/* 左侧边栏 */}
                 <aside
                     className={`
@@ -111,14 +111,14 @@ const SidebarLayout = ({
                     w-[80vw] max-w-[300px] sm:w-[300px] md:w-[280px] lg:w-[260px] xl:w-[300px] 2xl:w-[320px]
                     flex-shrink-0
                     border-r border-border
-                    p-4 sm:p-5 lg:p-6
-                    flex flex-col h-[calc(100vh-64px)]
+                    p-4 lg:p-6
+                    flex min-h-0 flex-col h-[calc(100vh-64px)] supports-[height:100dvh]:h-[calc(100dvh-64px)]
                     bg-surface z-40
-                    ${isMobileMenuOpen ? "" : "hidden lg:block"}
+                    ${isMobileMenuOpen ? "" : "hidden lg:flex"}
                 `}
                 >
-                    <header className="mb-4 lg:mb-6">
-                        <div className="text-title sm:text-display font-black text-ink mb-1 hidden lg:block">
+                    <header className="shrink-0 mb-4 lg:mb-6">
+                        <div className="text-title text-ink mb-1 hidden lg:block">
                             {title}
                         </div>
                         <div className="text-caption text-ink-muted leading-relaxed hidden lg:block">
@@ -126,7 +126,7 @@ const SidebarLayout = ({
                         </div>
                     </header>
 
-                    <div className="flex-grow overflow-y-auto px-1 custom-scrollbar">
+                    <div className="flex-1 min-h-0 overflow-y-auto px-1 custom-scrollbar">
                         {items.map((item) => (
                             <SidebarItem
                                 key={item.id}
@@ -139,14 +139,14 @@ const SidebarLayout = ({
                     </div>
 
                     {bottomCard && (
-                        <div className="mt-auto pt-4 border-t border-border">
+                        <div className="shrink-0 mt-4 pt-4 border-t border-border">
                             {bottomCard}
                         </div>
                     )}
                 </aside>
 
                 {/* 右侧内容区 */}
-                <main className="flex-grow min-w-0 overflow-y-auto overflow-x-clip custom-scrollbar bg-canvas px-4 sm:px-6 lg:px-10 py-6 lg:py-8 relative w-full lg:w-auto">
+                <main className="flex-1 min-h-0 min-w-0 overflow-y-auto overflow-x-clip custom-scrollbar bg-canvas px-4 sm:px-6 lg:px-8 py-6 lg:py-8 relative w-full lg:w-auto">
                     <Outlet />
                 </main>
             </div>

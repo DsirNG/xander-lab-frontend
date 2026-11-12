@@ -32,6 +32,8 @@ export function useAgentConversationLive({
     const runVersionRef = useRef(null);
     const streamEpochRef = useRef(0);
     const answerDeltaRef = useRef("");
+    const durableAnswerLengthRef = useRef(0);
+    const firstAnswerFrameRef = useRef(false);
     const toolDeltaRef = useRef(new Map());
     const streamFrameRef = useRef(null);
     const runStartedAtRef = useRef(null);
@@ -53,6 +55,13 @@ export function useAgentConversationLive({
                 }
             };
             if (answer) {
+                if (!firstAnswerFrameRef.current) {
+                    firstAnswerFrameRef.current = true;
+                    performance.clearMarks?.("agent.answer.first-frame");
+                    performance.mark?.("agent.answer.first-frame", {
+                        detail: { elapsedMs: Math.max(0, Date.now() - (runStartedAtRef.current ?? Date.now())) },
+                    });
+                }
                 upsert((step) => step.type === "answer_delta", {
                     type: "answer_delta",
                     content: answer,
@@ -83,17 +92,20 @@ export function useAgentConversationLive({
         }
     }, [flushBufferedDeltas]);
 
-    const clearLiveState = useCallback(() => {
+    const clearLiveState = useCallback(({ preserveImagePreviews = false } = {}) => {
         if (streamFrameRef.current != null) {
             window.cancelAnimationFrame(streamFrameRef.current);
             streamFrameRef.current = null;
         }
         answerDeltaRef.current = "";
+        durableAnswerLengthRef.current = 0;
+        firstAnswerFrameRef.current = false;
         toolDeltaRef.current.clear();
         runStartedAtRef.current = null;
         thinkingStartedAtRef.current = null;
         setThoughtDurations([]);
-        setLiveSteps([]);
+        setLiveSteps((current) => preserveImagePreviews
+            ? current.filter((step) => step.type === "image_preview") : []);
     }, [setLiveSteps]);
 
     const pushStep = useCallback(
@@ -148,6 +160,10 @@ export function useAgentConversationLive({
                     ].slice(-LIVE_STEP_LIMIT),
                 );
                 thinkingStartedAtRef.current = receivedAt;
+            } else if (event === "image_preview") {
+                if (data?.tool !== "image_generate" || !data?.result?.url) return;
+                pushStep({ type: "image_preview", tool: data.tool, invocationId: data.invocationId,
+                    result: data.result });
             } else if (event === "tool_start") {
                 // 入参要留住：它是"这一步到底做了什么"唯一的证据，收口后仍要能展开回看。
                 pushStep({
@@ -168,6 +184,8 @@ export function useAgentConversationLive({
                     tool: data?.tool,
                     invocationId: data?.invocationId,
                     phase: "progress",
+                    progress: data?.progress,
+                    estimated: data?.estimated,
                     receivedAt,
                     stage:
                         data?.stage ||
@@ -200,6 +218,7 @@ export function useAgentConversationLive({
                 setLiveSteps((current) =>
                     current.filter(
                         (step) =>
+                            !(event !== "tool_error" && step.type === "image_preview" && step.invocationId === data?.invocationId) &&
                             !(
                                 step.type === "tool_delta" &&
                                 step.traceKey === key
@@ -219,6 +238,7 @@ export function useAgentConversationLive({
                 });
             } else if (event === "approval_required") {
                 answerDeltaRef.current = "";
+                durableAnswerLengthRef.current = 0;
                 updateRunning(false);
                 setConversation((current) =>
                     current
@@ -226,11 +246,21 @@ export function useAgentConversationLive({
                         : current,
                 );
                 pushStep({ type: "approval", approval: data });
-            } else if (event === "answer_delta") {
-                answerDeltaRef.current += String(data ?? "");
-                scheduleDeltaFlush();
+            } else if (event === "answer_preview" || event === "answer_delta") {
+                const preview = event === "answer_preview";
+                const text = preview ? data?.text : String(data ?? "");
+                const offset = preview ? data?.offset : durableAnswerLengthRef.current;
+                if (typeof text !== "string" || !Number.isSafeInteger(offset) || offset < 0) return;
+                if (!preview) durableAnswerLengthRef.current += text.length;
+                // A checkpoint may replay text already shown provisionally. Append only the unseen suffix.
+                const length = answerDeltaRef.current.length;
+                if (offset <= length && offset + text.length > length) {
+                    answerDeltaRef.current += text.slice(length - offset);
+                    scheduleDeltaFlush();
+                }
             } else if (event === "answer") {
                 answerDeltaRef.current = "";
+                durableAnswerLengthRef.current = 0;
                 setLiveSteps((current) =>
                     [
                         ...current.filter(
@@ -256,6 +286,7 @@ export function useAgentConversationLive({
             } else if (event === "reflection") {
                 // 自检驳回时用户已经看到了流式回复草稿；先撤掉它，否则会同时出现“已完成”和批评意见。
                 answerDeltaRef.current = "";
+                durableAnswerLengthRef.current = 0;
                 setLiveSteps((current) =>
                     [
                         ...current.filter(
@@ -337,6 +368,7 @@ export function useAgentConversationLive({
             cursorRef.current = 0;
             runVersionRef.current = runVersion;
             if (clearLive) clearLiveState();
+            firstAnswerFrameRef.current = false;
             runStartedAtRef.current = Date.now();
             thinkingStartedAtRef.current = runStartedAtRef.current;
             setErrorMessage(null);

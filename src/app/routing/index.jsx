@@ -31,6 +31,9 @@ const AdminUsersPage = React.lazy(
 const AdminModelProvidersPage = React.lazy(
     () => import("@features/admin/pages/AdminModelProvidersPage"),
 );
+const AdminModelPlaygroundPage = React.lazy(
+    () => import("@features/admin/pages/AdminModelPlaygroundPage"),
+);
 const AdminModelPricingPage = React.lazy(
     () => import("@features/admin/pages/AdminModelPricingPage"),
 );
@@ -92,6 +95,10 @@ export const createRouter = () =>
                         {
                             path: "model-providers",
                             element: <AdminModelProvidersPage />,
+                        },
+                        {
+                            path: "model-playground",
+                            element: <LazyPage><AdminModelPlaygroundPage /></LazyPage>,
                         },
                         {
                             path: "model-pricing",

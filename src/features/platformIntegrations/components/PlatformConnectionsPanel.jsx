@@ -1,3 +1,4 @@
+import Button from "@shared/ui/primitives/Button";
 import { useEffect, useState } from "react";
 import { LoaderCircle, RefreshCw } from "lucide-react";
 import { useTranslation } from "react-i18next";
@@ -55,11 +56,9 @@ const JuejinCatalogAction = () => {
     };
 
     return (
-        <button type="button" onClick={syncCatalog} disabled={syncing}
-            className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-border px-3 py-2 text-xs font-bold text-ink-muted hover:bg-canvas disabled:opacity-50">
-            {syncing ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
+        <Button variant="outline" size="sm" icon={RefreshCw} onClick={syncCatalog} loading={syncing}>
             {t("profile.juejin.syncCatalog")}
-        </button>
+        </Button>
     );
 };
 
@@ -91,7 +90,7 @@ const PlatformConnectionsPanel = () => {
                     <div className="flex flex-wrap items-center justify-end gap-2">
                         <span className="text-caption text-ink-muted">{t("profile.platformConnections.extensionRequired")}</span>
                         <details className="group">
-                            <summary className="cursor-pointer list-none text-caption font-semibold text-accent underline decoration-border-strong underline-offset-4">
+                            <summary className="cursor-pointer list-none text-caption font-semibold text-ink-secondary underline decoration-border-strong underline-offset-4">
                                 {t("profile.platformConnections.securityDetails")}
                             </summary>
                             <div className="mt-3 space-y-2 rounded-lg border border-border bg-surface-muted p-3 text-left text-caption leading-6 text-ink-muted">
@@ -107,7 +106,7 @@ const PlatformConnectionsPanel = () => {
                     <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
                     {t("profile.platformConnections.card.checking")}
                 </div>
-            ) : <div className="grid gap-2 sm:grid-cols-2">
+            ) : <div className="grid gap-4 xl:grid-cols-2">
                 {PLATFORM_DEFINITIONS.map((platform) => (
                     <LocalPlatformAuthorizationPanel
                         key={platform.id}

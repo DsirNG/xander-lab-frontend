@@ -79,7 +79,7 @@ const WorkspaceAccountMenu = ({
 
     const avatar = (
         <span
-            className={`relative grid shrink-0 place-items-center overflow-hidden rounded-full bg-accent font-bold uppercase text-white ${compact ? "h-8 w-8 text-xs" : "h-9 w-9 text-caption"}`}
+            className={`relative grid shrink-0 place-items-center overflow-hidden rounded-full bg-surface-muted font-semibold uppercase text-ink ${compact ? "h-8 w-8 text-xs" : "h-9 w-9 text-caption"}`}
         >
             {avatarText}
             {userInfo?.avatar ? (
@@ -106,7 +106,7 @@ const WorkspaceAccountMenu = ({
                 className={
                     compact
                         ? "grid h-9 w-9 place-items-center rounded-full bg-surface-muted text-ink transition-colors hover:bg-border"
-                        : `flex min-h-12 items-center rounded-xl border border-border bg-canvas text-left transition-colors hover:bg-surface-muted ${collapsed ? "w-10 justify-center border-0" : "w-full gap-3 px-3"}`
+                        : `flex min-h-12 items-center rounded-card border border-border bg-canvas text-left transition-colors hover:bg-surface-muted ${collapsed ? "w-10 justify-center border-0" : "w-full gap-3 px-3"}`
                 }
             >
                 {avatar}
@@ -133,10 +133,10 @@ const WorkspaceAccountMenu = ({
                     id={menuId}
                     role="menu"
                     aria-label={t("workspace.userMenu")}
-                    className={`absolute z-[80] w-72 max-w-[calc(100vw-1.5rem)] rounded-2xl border border-border bg-canvas p-2 shadow-md shadow-black/20 ${compact ? "right-0 top-full mt-2" : "bottom-full left-0 mb-2"}`}
+                    className={`absolute z-[80] w-72 max-w-[calc(100vw-1.5rem)] rounded-menu border border-border bg-canvas p-1 shadow-float ${compact ? "right-0 top-full mt-2" : "bottom-full left-0 mb-2"}`}
                 >
-                    <div className="flex items-center gap-3 rounded-xl px-2 py-2">
-                        <span className="relative grid h-11 w-11 shrink-0 place-items-center overflow-hidden rounded-full bg-accent text-sm font-bold uppercase text-white">
+                    <div className="flex items-center gap-3 rounded-control px-2 py-2">
+                        <span className="relative grid h-11 w-11 shrink-0 place-items-center overflow-hidden rounded-full bg-surface-muted text-body font-semibold uppercase text-ink">
                             {avatarText}
                             {userInfo?.avatar ? (
                                 <img
@@ -148,11 +148,11 @@ const WorkspaceAccountMenu = ({
                         </span>
                         <span className="min-w-0">
                             <span className="flex min-w-0 items-center gap-1.5">
-                                <span className="truncate text-sm font-semibold text-ink">
+                                <span className="truncate text-body font-semibold text-ink">
                                     {displayName}
                                 </span>
                                 {userInfo?.role ? (
-                                    <span className="shrink-0 rounded-md bg-accent-soft px-1.5 py-0.5 text-[10px] font-bold uppercase text-accent">
+                                    <span className="shrink-0 rounded-md bg-surface-muted px-2 py-1 text-micro font-medium uppercase text-ink-secondary">
                                         {userInfo.role}
                                     </span>
                                 ) : null}
@@ -163,8 +163,8 @@ const WorkspaceAccountMenu = ({
                         </span>
                     </div>
 
-                    <div className="my-1 flex items-center gap-2.5 rounded-xl bg-surface-muted px-3 py-2.5">
-                        <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-accent-soft text-accent">
+                    <div className="my-1 flex items-center gap-3 rounded-control bg-surface-muted px-3 py-3">
+                        <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-canvas text-ink-secondary">
                             <Sparkles className="h-4 w-4" aria-hidden="true" />
                         </span>
                         <span className="min-w-0 flex-1">
@@ -177,7 +177,7 @@ const WorkspaceAccountMenu = ({
                         </span>
                     </div>
 
-                    <div className="mb-1 flex items-center gap-2.5 rounded-xl px-3 py-2.5">
+                    <div className="mb-1 flex items-center gap-3 rounded-control px-3 py-3">
                         <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-surface-muted text-ink-muted">
                             <Coins className="h-4 w-4" aria-hidden="true" />
                         </span>
@@ -199,7 +199,7 @@ const WorkspaceAccountMenu = ({
                                 setMenuOpen(false);
                                 onOpenSettings();
                             }}
-                            className="flex min-h-10 w-full items-center gap-2.5 rounded-lg px-3 py-2 text-caption font-medium text-ink-secondary transition-colors hover:bg-surface-muted hover:text-ink"
+                            className="flex min-h-10 w-full items-center gap-3 rounded-menu-item px-3 py-2 text-caption font-medium text-ink-secondary transition-colors hover:bg-surface-muted hover:text-ink"
                         >
                             <Settings2 className="h-4 w-4" aria-hidden="true" />
                             {t("workspace.settings")}
@@ -209,7 +209,7 @@ const WorkspaceAccountMenu = ({
                             role="menuitem"
                             onClick={handleLogout}
                             disabled={loggingOut}
-                            className="flex min-h-10 w-full items-center gap-2.5 rounded-lg px-3 py-2 text-caption font-medium text-danger transition-colors hover:bg-danger-soft disabled:opacity-60"
+                            className="flex min-h-10 w-full items-center gap-3 rounded-menu-item px-3 py-2 text-caption font-medium text-danger transition-colors hover:bg-danger-soft disabled:opacity-60"
                         >
                             {loggingOut ? (
                                 <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />

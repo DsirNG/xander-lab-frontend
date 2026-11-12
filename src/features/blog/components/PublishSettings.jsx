@@ -1,6 +1,7 @@
 import React from "react";
 import { Layout, Tag as TagIcon, AlignLeft } from "lucide-react";
 import CustomSelect from "@shared/ui/forms/CustomSelect";
+import { formInputCls } from "@shared/ui/forms/formStyles";
 import CreatableMultiSelect from "@shared/ui/forms/CreatableMultiSelect";
 
 /**
@@ -19,26 +20,26 @@ const PublishSettings = ({
         <>
             {isSettingsOpen && (
                 <div
-                    className="fixed inset-x-0 bottom-0 top-14 bg-black/25 z-30 backdrop-blur-[1px]"
+                    className="absolute inset-0 bg-ink/20 z-30"
                     onClick={onToggleSettings}
                 />
             )}
 
             <aside
-                className={`fixed top-14 right-0 bottom-0 w-[min(22rem,100vw)] border-l border-border bg-surface flex flex-col z-40 transform shadow-2xl transition-transform duration-300 ease-in-out ${isSettingsOpen ? "translate-x-0" : "translate-x-full"}`}
+                className={`absolute top-0 right-0 bottom-0 w-[min(22rem,100vw)] border-l border-border bg-surface flex flex-col z-40 transform shadow-float transition-transform duration-300 ease-in-out ${isSettingsOpen ? "translate-x-0" : "translate-x-full"}`}
             >
-                <div className="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar p-4 sm:p-6 space-y-8 sm:space-y-10 pb-24">
+                <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar p-4 sm:p-6 space-y-6 pb-6">
                     <div>
-                        <span className="text-micro font-bold uppercase text-ink-faint mb-8 flex items-center gap-3">
+                        <span className="text-micro font-bold uppercase text-ink-faint mb-6 flex items-center gap-3">
                             <span className="h-px bg-border flex-1"></span>
                             {t("blog.publishSettings", "Document settings")}
                             <span className="h-px bg-border flex-1"></span>
                         </span>
 
-                        <section className="space-y-4 mb-10">
+                        <section className="space-y-4 mb-6">
                             <div className="flex items-center gap-2 text-ink-muted group">
-                                <Layout className="w-4 h-4 group-hover:text-accent transition-colors" />
-                                <span className="text-micro font-black uppercase tracking-widest">
+                                <Layout className="w-4 h-4 group-hover:text-ink-secondary transition-colors" />
+                                <span className="text-micro font-semibold uppercase tracking-widest">
                                     {t("blog.categoryLabel")}
                                 </span>
                             </div>
@@ -47,15 +48,15 @@ const PublishSettings = ({
                                 value={values.categoryId}
                                 onChange={(val) => onChange("categoryId", val)}
                                 placeholder={t("blog.categoryPlaceholder")}
-                                className="w-full shadow-sm bg-canvas rounded-2xl"
+                                className="w-full"
                             />
                         </section>
 
-                        <section className="space-y-4 mb-10 relative">
+                        <section className="space-y-4 mb-6 relative">
                             <div className="flex items-center justify-between group mb-2">
                                 <div className="flex items-center gap-2 text-ink-muted">
-                                    <TagIcon className="w-4 h-4 group-hover:text-accent transition-colors" />
-                                    <span className="text-micro font-black uppercase tracking-widest">
+                                    <TagIcon className="w-4 h-4 group-hover:text-ink-secondary transition-colors" />
+                                    <span className="text-micro font-semibold uppercase tracking-widest">
                                         {t("blog.tagLabel")}
                                     </span>
                                 </div>
@@ -75,8 +76,8 @@ const PublishSettings = ({
                         <section className="space-y-4">
                             <div className="flex items-center justify-between group">
                                 <div className="flex items-center gap-2 text-ink-muted">
-                                    <AlignLeft className="w-4 h-4 group-hover:text-accent transition-colors" />
-                                    <span className="text-micro font-black uppercase tracking-widest">
+                                    <AlignLeft className="w-4 h-4 group-hover:text-ink-secondary transition-colors" />
+                                    <span className="text-micro font-semibold uppercase tracking-widest">
                                         {t("blog.summaryLabel")}
                                     </span>
                                 </div>
@@ -92,7 +93,7 @@ const PublishSettings = ({
                                     onChange("summary", e.target.value)
                                 }
                                 placeholder={t("blog.summaryPlaceholder")}
-                                className="w-full bg-canvas border border-border/60 rounded-2xl px-5 py-4 text-sm leading-relaxed outline-none focus:border-accent focus:ring-4 focus:ring-accent/10 transition-all resize-none h-40 shadow-sm text-ink placeholder:text-ink-faint custom-scrollbar"
+                                className={`${formInputCls} h-40 resize-none leading-relaxed custom-scrollbar`}
                             />
                             <p className="text-micro text-ink-faint">
                                 {t("blog.summaryHint")}
@@ -100,7 +101,6 @@ const PublishSettings = ({
                         </section>
                     </div>
                 </div>
-                <div className="absolute bottom-0 left-0 w-full h-12 bg-gradient-to-t from-surface to-transparent pointer-events-none z-10"></div>
             </aside>
         </>
     );

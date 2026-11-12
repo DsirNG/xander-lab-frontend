@@ -213,7 +213,7 @@ const PlanAiGenerateModal = ({
                     disabled={generating}
                     className="space-y-4 disabled:opacity-60"
                 >
-                    <div className="text-xs text-ink-faint">
+                    <div className="text-caption text-ink-faint">
                         {t("blogPlans.aiGenerateDesc")}
                     </div>
 
@@ -327,7 +327,7 @@ const PlanAiGenerateModal = ({
                                     onClick={() =>
                                         setForm({ ...form, publishMode: mode })
                                     }
-                                    className={`rounded-xl border px-3 py-2 text-left text-caption ${form.publishMode === mode ? "border-accent bg-accent-soft text-accent" : "border-border text-ink-secondary"}`}
+                                    className={`rounded-xl border px-3 py-2 text-left text-caption ${form.publishMode === mode ? "border-border-strong bg-surface-muted text-ink" : "border-border text-ink-secondary"}`}
                                 >
                                     {t(
                                         `blogPlans.seriesMode${mode === "DRAFT" ? "Draft" : mode === "REVIEW" ? "Review" : "Auto"}`,
@@ -345,7 +345,7 @@ const PlanAiGenerateModal = ({
                 </fieldset>
                 {draft && (
                     <div className="space-y-3">
-                        <p className="text-sm text-ink-secondary">
+                        <p className="text-body text-ink-secondary">
                             {t("blogPlans.dailyDraftHint")}
                         </p>
                         <div className="max-h-72 space-y-2 overflow-y-auto">
@@ -391,7 +391,7 @@ const PlanAiGenerateModal = ({
 
                 {createdPlans.length > 0 && (
                     <div className="rounded-xl border border-border bg-surface p-4">
-                        <div className="text-xs font-bold text-ink">
+                        <div className="text-caption font-bold text-ink">
                             {t("blogPlans.generatedPlans", {
                                 count: createdPlans.length,
                             })}
@@ -400,29 +400,29 @@ const PlanAiGenerateModal = ({
                             {createdPlans.map((plan) => (
                                 <div
                                     key={plan.id}
-                                    className="flex min-w-0 items-center gap-2 text-sm"
+                                    className="flex min-w-0 items-center gap-2 text-body"
                                 >
                                     <CalendarDays className="h-4 w-4 shrink-0 text-ink-faint" />
-                                    <span className="shrink-0 rounded-md bg-accent/10 px-1.5 py-0.5 text-xs font-bold text-accent">
+                                    <span className="shrink-0 rounded-md bg-surface-muted px-1.5 py-0.5 text-caption font-bold text-ink-secondary">
                                         {formatFireTime(plan)}
                                     </span>
                                     <span className="min-w-0 truncate text-ink">
                                         {plan.topic}
                                     </span>
-                                    <span className="ml-auto shrink-0 rounded-full bg-indigo-100 px-2 py-0.5 text-xs font-medium text-indigo-600 dark:bg-indigo-900/40 dark:text-indigo-300">
+                                    <span className="ml-auto shrink-0 rounded-full bg-surface-muted px-2 py-0.5 text-caption font-medium text-ink-secondary">
                                         {t("blogPlans.oneShot")}
                                     </span>
                                 </div>
                             ))}
                         </div>
-                        <div className="mt-3 text-xs text-ink-faint">
+                        <div className="mt-3 text-caption text-ink-faint">
                             {t("blogPlans.oneShotHint")}
                         </div>
                     </div>
                 )}
 
                 {error && (
-                    <div className="text-xs text-red-600 dark:text-red-400">
+                    <div className="text-caption text-danger">
                         {error}
                     </div>
                 )}

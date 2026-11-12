@@ -1,6 +1,8 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Ban, RotateCcw, Search, Users } from "lucide-react";
+import { twMerge } from "tailwind-merge";
+import { formInputSmCls } from "@shared/ui/forms/formStyles";
 import DataTable from "@shared/ui/data-display/DataTable";
 import RowActionsMenu from "@shared/ui/overlays/RowActionsMenu";
 import ConfirmModal from "@shared/ui/overlays/ConfirmModal";
@@ -75,7 +77,7 @@ const AdminUsersPage = () => {
             width: "20%",
             render: (user) => (
                 <div className="min-w-0">
-                    <div className="truncate text-xs font-bold text-ink">
+                    <div className="truncate text-caption font-bold text-ink">
                         {user.username}
                     </div>
                     {user.nickname && (
@@ -92,7 +94,7 @@ const AdminUsersPage = () => {
             width: "24%",
             render: (user) => (
                 <span
-                    className="block truncate text-xs font-medium text-ink-muted"
+                    className="block truncate text-caption font-medium text-ink-muted"
                     title={user.email}
                 >
                     {user.email || "—"}
@@ -107,7 +109,7 @@ const AdminUsersPage = () => {
                 <span
                     className={`inline-flex rounded-full px-2 py-0.5 text-micro font-medium ${
                         user.role === "ADMIN"
-                            ? "bg-accent-soft text-accent-fg"
+                            ? "bg-surface-muted text-ink"
                             : "bg-surface-muted text-ink-muted"
                     }`}
                 >
@@ -143,7 +145,7 @@ const AdminUsersPage = () => {
             title: t("admin.users.createdAt"),
             width: "22%",
             render: (user) => (
-                <span className="block truncate text-xs font-medium text-ink-muted">
+                <span className="block truncate text-caption font-medium text-ink-muted">
                     {formatWhen(user.createdAt)}
                 </span>
             ),
@@ -185,20 +187,20 @@ const AdminUsersPage = () => {
 
     return (
         <div className="mx-auto flex h-full min-h-0 w-full max-w-5xl flex-col overflow-hidden p-4 sm:p-6">
-            <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+            <div className="mb-4 flex shrink-0 flex-wrap items-center justify-between gap-3">
                 <div>
-                    <h1 className="flex items-center gap-2 text-base font-bold text-ink">
+                    <h1 className="flex items-center gap-2 text-title font-semibold text-ink">
                         <Users
-                            className="h-4 w-4 text-accent"
+                            className="h-4 w-4 text-ink"
                             aria-hidden="true"
                         />
                         {t("admin.users.title")}
                     </h1>
-                    <p className="mt-1 text-xs text-ink-muted">
+                    <p className="mt-1 text-caption text-ink-muted">
                         {t("admin.users.subtitle")}
                     </p>
                 </div>
-                <div className="relative">
+                <div className="relative w-full sm:w-auto">
                     <Search
                         className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-ink-faint"
                         aria-hidden="true"
@@ -210,7 +212,7 @@ const AdminUsersPage = () => {
                             setPage(1);
                         }}
                         placeholder={t("admin.users.keywordPlaceholder")}
-                        className="h-9 w-64 rounded-lg border border-border bg-canvas pl-8 pr-3 text-xs text-ink placeholder:text-ink-faint focus:border-accent-200 focus:outline-none focus:ring-2 focus:ring-accent-200/40"
+                        className={twMerge(formInputSmCls, "w-full rounded-control pl-8 sm:w-64")}
                     />
                 </div>
             </div>

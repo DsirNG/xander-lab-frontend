@@ -16,7 +16,7 @@ export const agentConversationService = {
     uploadAttachment: (file, onProgress, config) =>
         upload(`${BASE}/attachments`, file, {
             onProgress,
-            config: { _silent: true, ...config },
+            config: { _silent: true, timeout: 90_000, ...config },
         }),
     /** 会话分页列表，可选按标题搜索。 */
     list: ({ page = 1, size = 30, search, ...config } = {}) => {

@@ -50,7 +50,7 @@ const ArticleSyncModal = ({ post, onClose, onSynced, onCompleted }) => {
                 <Button variant="ink" loading={busy} disabled={!pending.length} onClick={confirm}>{t("articleSync.confirm")}</Button>
             </div>
         }>
-            <p className="truncate text-sm font-medium text-ink" title={post.title}>{post.title}</p>
+            <p className="truncate text-body font-medium text-ink" title={post.title}>{post.title}</p>
             <p className="mt-2 text-caption text-ink-muted">{t("articleSync.hint")}</p>
             <div className="mt-5 space-y-3">
                 {PLATFORMS.map(({ id, name, labelKey }) => {
@@ -58,7 +58,7 @@ const ArticleSyncModal = ({ post, onClose, onSynced, onCompleted }) => {
                     return <div key={id}>
                         <label className={`flex items-center gap-3 rounded-xl border border-border p-4 ${synced ? "bg-surface-muted text-ink-faint" : "text-ink"}`}>
                             <input type="checkbox" checked={synced || selected.includes(id)} disabled={synced || busy} onChange={(event) => setSelected((current) => event.target.checked ? [...current, id] : current.filter((value) => value !== id))} className="h-4 w-4 accent-ink" />
-                            <span className="flex-1 text-sm font-medium">{name || t(labelKey)}</span>
+                            <span className="flex-1 text-body font-medium">{name || t(labelKey)}</span>
                             {synced ? <span className="text-caption">{t("articleSync.synced")}</span> : null}
                         </label>
                         {errors[id] ? <p role="alert" className="mt-2 text-caption text-danger">{errors[id]}</p> : null}

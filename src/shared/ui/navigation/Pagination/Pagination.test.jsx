@@ -39,30 +39,57 @@ describe("Pagination", () => {
                 onPageChange={vi.fn()}
             />,
         );
-        expect(screen.getByRole("button", { name: "3" })).toHaveClass(
-            "bg-accent",
+        expect(screen.getByRole("button", { name: "3" })).toHaveAttribute(
+            "aria-current",
+            "page",
+        );
+        expect(screen.getByRole("button", { name: "4" })).not.toHaveAttribute(
+            "aria-current",
         );
     });
 
-    it("uses full-size, theme-aware controls for pagination", () => {
+    it("hides navigation when all results fit on one page", () => {
+        render(
+            <Pagination
+                page={1}
+                pageSize={10}
+                total={2}
+                onPageChange={vi.fn()}
+            />,
+        );
+        expect(
+            screen.queryByRole("button", { name: /prevPage|上一页|prev/i }),
+        ).not.toBeInTheDocument();
+        expect(
+            screen.queryByRole("button", { name: /nextPage|下一页|next/i }),
+        ).not.toBeInTheDocument();
+        expect(
+            screen.queryByRole("button", { name: "1" }),
+        ).not.toBeInTheDocument();
+        expect(screen.getByRole("combobox")).toBeInTheDocument();
+        expect(
+            screen.getByText(/common\.pagination\.pageInfo/),
+        ).toBeInTheDocument();
+    });
+
+    it("blocks pagination while a request is pending", () => {
+        const onPageChange = vi.fn();
         render(
             <Pagination
                 page={2}
                 pageSize={10}
                 total={100}
-                onPageChange={vi.fn()}
+                disabled
+                onPageChange={onPageChange}
             />,
         );
-
-        const previous = screen.getByRole("button", {
-            name: /prevPage|上一页|prev/i,
+        const next = screen.getByRole("button", {
+            name: /nextPage|下一页|next/i,
         });
-        const currentPage = screen.getByRole("button", { name: "2" });
-
-        expect(previous).toHaveClass("h-11", "w-11", "!bg-canvas");
-        expect(previous.querySelector("svg")).toHaveClass("h-5", "w-5");
-        expect(currentPage).toHaveClass("!h-11", "!w-11", "bg-accent");
-        expect(currentPage).not.toHaveClass("md:h-7", "md:w-7");
+        fireEvent.click(next);
+        fireEvent.click(screen.getByRole("button", { name: "3" }));
+        expect(onPageChange).not.toHaveBeenCalled();
+        expect(next).toBeDisabled();
     });
 
     it("calls onPageChange with the target page when a number is clicked", () => {

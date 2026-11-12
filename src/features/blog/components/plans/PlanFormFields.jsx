@@ -73,13 +73,13 @@ export default function PlanFormFields({
                                 onClick={() =>
                                     updateForm("scheduleType", value)
                                 }
-                                className={`relative rounded-xl border px-4 py-3 text-left transition-colors ${selected ? "border-accent bg-accent-soft shadow-sm" : "border-border bg-canvas hover:border-border-strong"}`}
+                                className={`relative rounded-xl border px-4 py-3 text-left transition-colors ${selected ? "border-border-strong bg-surface-muted" : "border-border bg-canvas hover:border-border-strong"}`}
                             >
                                 {selected && (
-                                    <Check className="absolute right-3 top-3 h-4 w-4 text-accent" />
+                                    <Check className="absolute right-3 top-3 h-4 w-4 text-ink-secondary" />
                                 )}
                                 <div
-                                    className={`text-body font-semibold ${selected ? "text-accent" : "text-ink"}`}
+                                    className={`text-body font-semibold ${selected ? "text-ink-secondary" : "text-ink"}`}
                                 >
                                     {t(`blogPlans.${titleKey}`)}
                                 </div>
@@ -167,10 +167,10 @@ export default function PlanFormFields({
                                 className={`relative rounded-xl border p-3 text-left transition-colors ${selected ? "border-accent bg-accent-soft" : "border-border bg-canvas hover:border-border-strong"}`}
                             >
                                 {selected && (
-                                    <Check className="absolute right-2 top-2 h-3.5 w-3.5 text-accent" />
+                                    <Check className="absolute right-2 top-2 h-3.5 w-3.5 text-ink-secondary" />
                                 )}
                                 <div
-                                    className={`text-caption font-semibold ${selected ? "text-accent" : "text-ink"}`}
+                                    className={`text-caption font-semibold ${selected ? "text-ink-secondary" : "text-ink"}`}
                                 >
                                     {t(`blogPlans.${titleKey}`)}
                                 </div>
@@ -201,7 +201,7 @@ export default function PlanFormFields({
                     onChange={(event) =>
                         updateForm("autoPublish", event.target.checked)
                     }
-                    className="h-4 w-4 rounded border-border text-accent focus:ring-accent"
+                    className="h-4 w-4 rounded border-border accent-ink outline-none"
                 />
                 {t("blogPlans.autoPublish")}
             </label>

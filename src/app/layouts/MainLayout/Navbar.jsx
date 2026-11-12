@@ -88,7 +88,7 @@ const Navbar = () => {
                             onClick={() => setIsMobileMenuOpen(false)}
                         >
                             <img
-                                src="/assets/workspace/workspace-logo.svg"
+                                src="/assets/workspace/workspace-logo.png"
                                 alt=""
                                 className={styles.logoImage}
                             />

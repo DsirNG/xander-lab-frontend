@@ -51,7 +51,7 @@ const BlogPlanDetail = () => {
     const actions = usePlanActions({ onChanged: loadPlan, t });
 
     const infoRow = (label, value) => (
-        <div className="flex items-start justify-between gap-6 py-2 text-sm">
+        <div className="flex items-start justify-between gap-6 py-2 text-body">
             <span className="shrink-0 text-ink-faint">{label}</span>
             <span className="break-all text-right text-ink-secondary">
                 {value || "—"}
@@ -70,7 +70,7 @@ const BlogPlanDetail = () => {
     if (notFound || !plan) {
         return (
             <div className="mx-auto flex h-full w-full max-w-5xl flex-col items-center justify-center px-4 py-16 text-center">
-                <div className="text-sm font-medium text-ink-faint">
+                <div className="text-body font-medium text-ink-faint">
                     {t("blogPlans.notFound")}
                 </div>
                 <Button
@@ -99,10 +99,10 @@ const BlogPlanDetail = () => {
                 <div className="mt-3 rounded-xl border border-border bg-canvas p-5">
                     <div className="flex items-start justify-between gap-3">
                         <div className="min-w-0">
-                            <div className="truncate text-xl font-semibold text-ink">
+                            <div className="truncate text-heading font-semibold text-ink">
                                 {plan.topic}
                             </div>
-                            <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-ink-faint">
+                            <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-caption text-ink-faint">
                                 <span>
                                     {plan.triggerTimes?.length > 0
                                         ? plan.triggerTimes.join(" / ")
@@ -118,7 +118,7 @@ const BlogPlanDetail = () => {
                                         : t("blogPlans.no")}
                                 </span>
                                 {plan.runOnce && (
-                                    <span className="rounded-full bg-accent-soft px-2 py-0.5 text-xs font-medium text-accent-fg">
+                                    <span className="rounded-full bg-accent-soft px-2 py-0.5 text-caption font-medium text-ink-secondary-fg">
                                         {t("blogPlans.oneShot")}
                                     </span>
                                 )}
@@ -150,7 +150,7 @@ const BlogPlanDetail = () => {
                         </div>
                     </div>
                     {plan.errorMessage && (
-                        <div className="mt-3 rounded-xl bg-red-50 px-3 py-2 text-xs text-red-600 dark:bg-red-900/20 dark:text-red-400">
+                        <div className="mt-3 rounded-xl bg-danger-soft px-3 py-2 text-caption text-red-600 dark:text-red-400">
                             {t("blogPlans.lastError")}: {plan.errorMessage}
                         </div>
                     )}
@@ -235,10 +235,10 @@ const BlogPlanDetail = () => {
 
                 <div className="mt-6 flex flex-col gap-3">
                     <div className="flex items-center justify-between">
-                        <div className="text-sm font-semibold text-ink">
+                        <div className="text-body font-semibold text-ink">
                             {t("blogPlans.runHistory")}
                         </div>
-                        <span className="text-xs text-ink-faint">
+                        <span className="text-caption text-ink-faint">
                             {t("blogPlans.totalRuns", { count: runsTotal })}
                         </span>
                     </div>
@@ -248,15 +248,15 @@ const BlogPlanDetail = () => {
                             <Loader2 className="h-5 w-5 animate-spin text-ink-faint" />
                         </div>
                     ) : runs.length === 0 ? (
-                        <div className="rounded-2xl border border-dashed border-border py-12 text-center">
-                            <div className="text-sm text-ink-faint">
+                        <div className="rounded-card border border-dashed border-border py-12 text-center">
+                            <div className="text-body text-ink-faint">
                                 {t("blogPlans.noRuns")}
                             </div>
                         </div>
                     ) : (
-                        <div className="rounded-2xl border border-border">
+                        <div className="rounded-card border border-border">
                             <div className="overflow-x-auto">
-                                <table className="w-full text-xs">
+                                <table className="w-full text-caption">
                                     <thead>
                                         <tr className="bg-surface-muted text-left text-ink-faint">
                                             <th className="px-4 py-2.5 font-medium">
@@ -323,7 +323,7 @@ const BlogPlanDetail = () => {
                                                         {run.localPostId ? (
                                                             <a
                                                                 href="/app?view=articles"
-                                                                className="text-accent hover:underline"
+                                                                className="text-ink-secondary hover:underline"
                                                             >
                                                                 #
                                                                 {
@@ -332,7 +332,7 @@ const BlogPlanDetail = () => {
                                                             </a>
                                                         ) : error ? (
                                                             <span
-                                                                className="line-clamp-1 text-red-600 dark:text-red-400"
+                                                                className="line-clamp-1 text-danger"
                                                                 title={error}
                                                             >
                                                                 {error}
@@ -344,7 +344,7 @@ const BlogPlanDetail = () => {
                                                                 }
                                                                 target="_blank"
                                                                 rel="noopener noreferrer"
-                                                                className="text-accent hover:underline"
+                                                                className="text-ink-secondary hover:underline"
                                                             >
                                                                 CSDN
                                                             </a>
@@ -355,7 +355,7 @@ const BlogPlanDetail = () => {
                                                                 }
                                                                 target="_blank"
                                                                 rel="noopener noreferrer"
-                                                                className="text-accent hover:underline"
+                                                                className="text-ink-secondary hover:underline"
                                                             >
                                                                 {t(
                                                                     "blogPlans.juejin",

@@ -244,6 +244,10 @@ export default function AgentShowcaseConversation({
                             />
                         );
                     }
+                    if (step.type === "image_preview") {
+                        return <ImageToolResult key={`live-${index}`} url={step.result.url}
+                            title={step.result.title} storageStatus={errorMessage ? "failed" : "saving"} />;
+                    }
                     if (step.type === "tool") {
                         const result = liveImageStepResult(step);
                         return result ? (
@@ -288,12 +292,13 @@ export default function AgentShowcaseConversation({
                 {activeImageGeneration ? (
                     <ImageToolProgressPanel
                         message={activeImageGeneration.message}
+                        progress={activeImageGeneration.progress}
                     />
                 ) : null}
 
                 {(isActive || creating || (loading && steps.length > 0)) &&
                     !streamingAnswer &&
-                    !activeImageGeneration && (
+                    !activeImageGeneration && !steps.some((step) => step.type === "image_preview") && (
                         <ThinkingIndicator
                             label={t("blog.agentChat.thinking")}
                         />
@@ -331,7 +336,7 @@ AgentShowcaseConversation.propTypes = {
     steps: PropTypes.arrayOf(PropTypes.object).isRequired,
     historicalImageUrls: PropTypes.instanceOf(Set).isRequired,
     liveImageUrls: PropTypes.instanceOf(Set).isRequired,
-    activeImageGeneration: PropTypes.shape({ message: PropTypes.string }),
+    activeImageGeneration: PropTypes.shape({ message: PropTypes.string, progress: PropTypes.number }),
     isActive: PropTypes.bool.isRequired,
     cancelling: PropTypes.bool,
     creating: PropTypes.bool.isRequired,

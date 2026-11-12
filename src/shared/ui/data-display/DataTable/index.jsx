@@ -45,7 +45,7 @@ const DataTable = ({
 
     return (
         <section
-            className={`flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-xl bg-canvas ${className}`}
+            className={`flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-2xl border border-border bg-canvas ${className}`}
         >
             {header ? <div className="shrink-0">{header}</div> : null}
             <div className="min-h-[220px] min-w-0 flex-1 overflow-auto">
@@ -107,11 +107,11 @@ const DataTable = ({
                             ))}
                         </colgroup>
                         <thead className="sticky top-0 z-10 bg-surface/95 backdrop-blur-sm">
-                            <tr className="text-sm font-medium uppercase tracking-wide text-ink-faint">
+                            <tr className="text-caption font-medium text-ink-muted">
                                 {columns.map((column) => (
                                     <th
                                         key={column.key}
-                                        className={`px-3 py-2 sm:px-4 ${alignClass(column.align)} ${column.headerClassName || ""}`}
+                                        className={`border-b border-border px-3 py-3 sm:px-4 ${alignClass(column.align)} ${column.headerClassName || ""}`}
                                     >
                                         {column.title}
                                     </th>
@@ -122,7 +122,7 @@ const DataTable = ({
                             {rows.map((row) => (
                                 <tr
                                     key={rowKey(row)}
-                                    className={`even:bg-surface-muted/30 hover:bg-surface-muted/40 ${onRowClick ? "cursor-pointer" : ""}`}
+                                    className={`border-b border-border/60 last:border-b-0 transition-colors duration-150 hover:bg-surface ${onRowClick ? "cursor-pointer" : ""}`}
                                     onClick={() =>
                                         onRowClick && onRowClick(row)
                                     }
@@ -130,7 +130,7 @@ const DataTable = ({
                                     {columns.map((column) => (
                                         <td
                                             key={column.key}
-                                            className={`px-3 py-2.5 sm:px-4 ${alignClass(column.align)} ${column.className || ""}`}
+                                            className={`px-3 py-3 sm:px-4 ${alignClass(column.align)} ${column.className || ""}`}
                                         >
                                             {column.render
                                                 ? column.render(row)

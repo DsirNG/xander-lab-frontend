@@ -223,7 +223,7 @@ const SkillFormModal = ({ isOpen, tools, prefill, onClose, onSaved }) => {
                 </FormField>
 
                 <div>
-                    <div className="mb-1 text-xs font-medium text-ink-secondary">
+                    <div className="mb-1 text-caption font-medium text-ink-secondary">
                         {t("blog.agentSkills.fieldTools")}
                     </div>
                     <div className="mb-1.5 text-micro text-ink-faint">
@@ -244,7 +244,7 @@ const SkillFormModal = ({ isOpen, tools, prefill, onClose, onSaved }) => {
                                         type="checkbox"
                                         checked={selected.has(tool.name)}
                                         onChange={() => toggleTool(tool.name)}
-                                        className="mt-0.5 h-4 w-4 shrink-0 rounded border-border text-accent focus:ring-accent-200"
+                                        className="mt-0.5 h-4 w-4 shrink-0 rounded border-border text-accent"
                                     />
                                     <span className="min-w-0">
                                         <span className="block truncate font-mono text-caption font-semibold text-ink">

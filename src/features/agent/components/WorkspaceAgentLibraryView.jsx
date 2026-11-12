@@ -65,7 +65,7 @@ const WorkspaceAgentLibraryView = ({
                             key={key}
                             type="button"
                             onClick={() => onChoosePrompt(prompt)}
-                            className="group flex min-h-28 flex-col items-start justify-between rounded-2xl border border-border bg-canvas p-4 text-left transition-all hover:-translate-y-0.5 hover:border-border-strong hover:shadow-md"
+                            className="group flex min-h-28 flex-col items-start justify-between rounded-2xl border border-border bg-canvas p-4 text-left transition-colors hover:border-border-strong hover:bg-surface"
                         >
                             <Icon className="h-5 w-5 text-ink-muted transition-colors group-hover:text-ink" />
                             <span className="flex w-full items-center justify-between gap-2 text-body font-medium text-ink">

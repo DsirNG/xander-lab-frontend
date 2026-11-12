@@ -1,3 +1,5 @@
+import { formInputCls } from "@shared/ui/forms/formStyles";
+import Button from "@shared/ui/primitives/Button";
 import React, { useEffect, useRef, useState } from "react";
 import { Check, ImageIcon, Loader2, Search, Upload } from "lucide-react";
 import { useTranslation } from "react-i18next";
@@ -102,27 +104,25 @@ const BlogImageLibraryModal = ({ isOpen, onClose, onInsert }) => {
 
     const footer = (
         <div className="flex w-full flex-wrap items-center justify-between gap-x-4 gap-y-2">
-            <span className="text-sm font-medium text-ink-muted">
+            <span className="text-body font-medium text-ink-muted">
                 {selected
                     ? t("blog.media.selectedCount", { count: 1 })
                     : t("blog.media.selectedCount", { count: 0 })}
             </span>
             <div className="flex items-center gap-3">
-                <button
+                <Button variant="outline"
                     type="button"
                     onClick={onClose}
-                    className="rounded-xl border border-border bg-canvas px-5 py-2.5 text-sm font-bold text-ink-secondary transition hover:bg-surface"
                 >
                     {t("blog.media.cancel")}
-                </button>
-                <button
+                </Button>
+                <Button variant="ink"
                     type="button"
                     disabled={!selected}
                     onClick={() => onInsert(selected)}
-                    className="rounded-xl bg-accent px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-accent/20 transition hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-40"
                 >
                     {t("blog.media.insertAtCursor")}
-                </button>
+                </Button>
             </div>
         </div>
     );
@@ -144,24 +144,12 @@ const BlogImageLibraryModal = ({ isOpen, onClose, onInsert }) => {
                             value={keyword}
                             onChange={(event) => setKeyword(event.target.value)}
                             placeholder={t("blog.media.searchPlaceholder")}
-                            className="h-11 w-full rounded-xl border border-border bg-canvas pl-10 pr-4 text-sm font-medium text-ink-secondary outline-none transition focus:border-accent focus:ring-4 focus:ring-accent/10"
+                            className={`${formInputCls} pl-10`}
                         />
                     </label>
-                    <button
-                        type="button"
-                        disabled={uploading}
-                        onClick={() => fileInputRef.current?.click()}
-                        className="flex h-11 items-center justify-center gap-2 rounded-xl bg-accent px-5 text-sm font-bold text-white shadow-lg shadow-accent/20 transition hover:brightness-105 disabled:opacity-60"
-                    >
-                        {uploading ? (
-                            <Loader2 className="h-4 w-4 animate-spin" />
-                        ) : (
-                            <Upload className="h-4 w-4" />
-                        )}
-                        {uploading
-                            ? t("blog.media.uploadingImage")
-                            : t("blog.media.uploadImage")}
-                    </button>
+                    <Button variant="outline" loading={uploading} icon={Upload} onClick={() => fileInputRef.current?.click()}>
+                        {uploading ? t("blog.media.uploadingImage") : t("blog.media.uploadImage")}
+                    </Button>
                     <input
                         ref={fileInputRef}
                         type="file"
@@ -180,7 +168,7 @@ const BlogImageLibraryModal = ({ isOpen, onClose, onInsert }) => {
                             key={item}
                             type="button"
                             onClick={() => setScope(item)}
-                            className={`shrink-0 whitespace-nowrap border-b-2 px-4 py-2.5 text-sm font-bold transition ${scope === item ? "border-accent text-accent" : "border-transparent text-ink-muted hover:text-ink"}`}
+                            className={`shrink-0 whitespace-nowrap border-b-2 px-4 py-2.5 text-body font-bold transition ${scope === item ? "border-ink text-ink" : "border-transparent text-ink-muted hover:text-ink"}`}
                         >
                             {t(`blog.media.scopes.${item}`)}
                         </button>
@@ -190,7 +178,7 @@ const BlogImageLibraryModal = ({ isOpen, onClose, onInsert }) => {
                 <div className="grid min-h-0 flex-1 gap-5 lg:grid-cols-[minmax(0,1fr)_260px]">
                     <div className="min-h-[280px] overflow-y-auto pr-1">
                         {loading ? (
-                            <div className="flex h-full min-h-[280px] items-center justify-center text-accent">
+                            <div className="flex h-full min-h-[280px] items-center justify-center text-ink-secondary">
                                 <Loader2 className="h-7 w-7 animate-spin" />
                             </div>
                         ) : images.length ? (
@@ -202,7 +190,7 @@ const BlogImageLibraryModal = ({ isOpen, onClose, onInsert }) => {
                                             key={image.id}
                                             type="button"
                                             onClick={() => setSelected(image)}
-                                            className={`group relative overflow-hidden rounded-xl border-2 bg-surface text-left transition ${active ? "border-accent ring-4 ring-accent/10" : "border-transparent hover:border-border-strong"}`}
+                                            className={`group relative overflow-hidden rounded-xl border-2 bg-surface text-left transition ${active ? "border-ink" : "border-transparent hover:border-border-strong"}`}
                                         >
                                             <img
                                                 src={image.url}
@@ -210,11 +198,11 @@ const BlogImageLibraryModal = ({ isOpen, onClose, onInsert }) => {
                                                 loading="lazy"
                                                 className="aspect-[4/3] w-full object-cover"
                                             />
-                                            <span className="block truncate px-2.5 py-2 text-xs font-semibold text-ink-secondary">
+                                            <span className="block truncate px-2.5 py-2 text-caption font-semibold text-ink-secondary">
                                                 {image.originalName}
                                             </span>
                                             {active && (
-                                                <span className="absolute right-2 top-2 grid h-6 w-6 place-items-center rounded-full bg-accent text-white shadow">
+                                                <span className="absolute right-2 top-2 grid h-6 w-6 place-items-center rounded-full bg-accent text-white">
                                                     <Check className="h-4 w-4" />
                                                 </span>
                                             )}
@@ -223,19 +211,19 @@ const BlogImageLibraryModal = ({ isOpen, onClose, onInsert }) => {
                                 })}
                             </div>
                         ) : (
-                            <div className="flex h-full min-h-[280px] flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-surface text-center">
+                            <div className="flex h-full min-h-[280px] flex-col items-center justify-center rounded-card border border-dashed border-border bg-surface text-center">
                                 <ImageIcon className="mb-3 h-10 w-10 text-ink-faint" />
                                 <div className="font-bold text-ink-secondary">
                                     {t("blog.media.emptyTitle")}
                                 </div>
-                                <div className="mt-1 text-sm text-ink-faint">
+                                <div className="mt-1 text-body text-ink-faint">
                                     {t("blog.media.emptyHint")}
                                 </div>
                             </div>
                         )}
                     </div>
 
-                    <aside className="rounded-2xl border border-border bg-surface p-4">
+                    <aside className="rounded-card border border-border bg-surface p-4">
                         {selected ? (
                             <div className="space-y-4">
                                 <img
@@ -244,23 +232,23 @@ const BlogImageLibraryModal = ({ isOpen, onClose, onInsert }) => {
                                     className="aspect-[4/3] w-full rounded-xl bg-canvas object-contain"
                                 />
                                 <div>
-                                    <div className="break-all text-sm font-black text-ink">
+                                    <div className="break-all text-body font-semibold text-ink">
                                         {selected.originalName}
                                     </div>
-                                    <div className="mt-2 text-xs font-medium text-ink-muted">
+                                    <div className="mt-2 text-caption font-medium text-ink-muted">
                                         {selected.width && selected.height
                                             ? `${selected.width} × ${selected.height}`
                                             : "—"}
                                         <span className="px-2">·</span>
                                         {formatBytes(selected.size)}
                                     </div>
-                                    <div className="mt-1 text-xs text-ink-faint">
+                                    <div className="mt-1 text-caption text-ink-faint">
                                         {selected.contentType}
                                     </div>
                                 </div>
                             </div>
                         ) : (
-                            <div className="flex h-full min-h-[220px] items-center justify-center text-center text-sm font-medium text-ink-faint">
+                            <div className="flex h-full min-h-[220px] items-center justify-center text-center text-body font-medium text-ink-faint">
                                 {t("blog.media.selectHint")}
                             </div>
                         )}

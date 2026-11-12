@@ -28,7 +28,7 @@ const PlatformLogo = ({ platformId, name }) => {
     const logoSrc = getPlatformLogoSrc(platformId);
 
     return (
-        <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-white p-1.5">
+        <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-canvas p-1.5">
             {logoSrc && !failed ? (
                 <img
                     src={logoSrc}
@@ -41,7 +41,7 @@ const PlatformLogo = ({ platformId, name }) => {
             ) : (
                 <span
                     aria-hidden="true"
-                    className="text-sm font-bold text-ink-muted"
+                    className="text-body font-bold text-ink-muted"
                 >
                     {name.slice(0, 1)}
                 </span>
@@ -77,7 +77,7 @@ const PlanPlatformPicker = ({
                 return (
                     <label
                         key={id}
-                        className={`flex min-h-14 items-center gap-3 rounded-xl border px-3 py-2 text-caption ${checked ? "border-accent bg-accent-soft text-accent" : "border-border bg-canvas text-ink-secondary"} ${isDisabled && id !== "local" ? "cursor-not-allowed opacity-60" : "cursor-pointer"}`}
+                        className={`flex min-h-14 items-center gap-3 rounded-xl border px-3 py-2 text-caption ${checked ? "border-border-strong bg-surface-muted text-ink" : "border-border bg-canvas text-ink-secondary"} ${isDisabled && id !== "local" ? "cursor-not-allowed opacity-60" : "cursor-pointer"}`}
                         title={name}
                     >
                         <input
@@ -86,7 +86,7 @@ const PlanPlatformPicker = ({
                             disabled={isDisabled}
                             aria-label={name}
                             onChange={() => toggle(id)}
-                            className="h-4 w-4 rounded border-border text-accent focus:ring-accent"
+                            className="h-4 w-4 rounded border-border accent-ink outline-none"
                         />
                         <PlatformLogo platformId={id} name={name} />
                         <span className="min-w-0 flex-1 truncate">

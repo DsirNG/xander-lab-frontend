@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import { CalendarDays, Clock3, Sparkles } from "lucide-react";
 
 const PlanFormSummary = ({ t, form, nextRun, planTypes }) => (
-    <aside className="flex flex-col rounded-2xl border border-border bg-surface-muted p-5 text-ink-secondary">
+    <aside className="flex flex-col rounded-card border border-border bg-surface-muted p-5 text-ink-secondary">
         <div className="text-title text-ink">{t("blogPlans.title")}</div>
         <div className="mt-5 text-caption font-semibold text-ink">
             {t("blogPlans.nextRun")}
