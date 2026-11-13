@@ -67,6 +67,7 @@ export default {
     "admin.probe.not_found": "Endpoint or model not found. Check the URL, model and API style.",
     "admin.probe.upstream_error": "The provider returned an error.",
     "admin.probe.invalid_response": "Unexpected response. Model availability could not be verified.",
+    "admin.probe.rawResponse": "View raw provider response (redacted)",
     "admin.probe.response_too_large": "Response exceeded the test size limit.",
     "admin.probe.timeout": "Test timed out. Try again later.",
     "admin.probe.connection": "Request failed. Check the connection and retry.",

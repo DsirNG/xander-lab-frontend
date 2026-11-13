@@ -67,6 +67,7 @@ export default {
     "admin.probe.not_found": "接口或模型不存在；请检查地址、模型及接口风格",
     "admin.probe.upstream_error": "供应商返回错误",
     "admin.probe.invalid_response": "返回内容不符合预期，无法确认模型可用",
+    "admin.probe.rawResponse": "查看供应商原始响应（已脱敏）",
     "admin.probe.response_too_large": "返回内容超过测试大小限制",
     "admin.probe.timeout": "测试超时，请稍后重试",
     "admin.probe.connection": "请求失败，请检查连接后重试",

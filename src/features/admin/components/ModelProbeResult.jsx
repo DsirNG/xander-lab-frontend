@@ -21,5 +21,9 @@ export default function ModelProbeResult({ result }) {
         {result.endpoint && <div>{t("admin.playground.endpoint")}: {result.endpoint}</div>}
         {!result.ok && !result.error?.message && result.reason === "upstream_error" && <div>{t("admin.playground.noProviderMessage")}</div>}
         {result.output?.truncated && <div className="text-warning-fg">{t("admin.playground.truncated")}</div>}
+        {result.rawResponse ? <details className="rounded-control border border-border bg-surface p-2 text-ink-muted">
+            <summary className="cursor-pointer font-semibold">{t("admin.probe.rawResponse")}</summary>
+            <pre className="mt-2 max-h-96 overflow-auto whitespace-pre-wrap break-all rounded-control bg-surface-muted p-2 text-micro">{result.rawResponse}</pre>
+        </details> : null}
     </div>;
 }
