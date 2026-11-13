@@ -1,5 +1,7 @@
 # DinQorAI Frontend
 
+Web 生产部署：参见 [Cloudflare Pages 部署文档](docs/web-deployment.md)，使用 `pwsh -File ./scripts/deploy-web.ps1` 构建、上传并校验线上版本。
+
 一个现代化的 React 组件库和交互系统展示平台，采用企业级架构标准构建。
 
 ## 项目简介
