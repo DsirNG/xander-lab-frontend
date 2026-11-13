@@ -630,6 +630,8 @@ export default {
             thinking: "Thinking…",
             regenerate: "Regenerate",
             editMessage: "Edit message",
+            readAloud: "Read reply aloud",
+            stopReading: "Stop reading",
 
             callingTool: "Calling tool…",
             ready: "Ready for your next message",

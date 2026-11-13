@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Check, Copy, Pencil, RotateCcw } from "lucide-react";
+import { Check, Copy, Pencil, RotateCcw, Volume2, VolumeX } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import Button from "@shared/ui/primitives/Button";
 
@@ -12,6 +12,7 @@ export default function AgentMessageActions({
 }) {
     const { t } = useTranslation();
     const [status, setStatus] = useState("");
+    const [speaking, setSpeaking] = useState(false);
     const pending = useRef(false);
 
     useEffect(() => {
@@ -19,6 +20,10 @@ export default function AgentMessageActions({
         const timer = window.setTimeout(() => setStatus(""), 2000);
         return () => window.clearTimeout(timer);
     }, [status]);
+
+    useEffect(() => {
+        return () => window.speechSynthesis?.cancel();
+    }, []);
 
     if (!content || isStreaming) return null;
 
@@ -34,6 +39,22 @@ export default function AgentMessageActions({
         } finally {
             pending.current = false;
         }
+    };
+
+    const toggleSpeech = () => {
+        if (!window.speechSynthesis) return;
+        if (speaking) {
+            window.speechSynthesis.cancel();
+            setSpeaking(false);
+            return;
+        }
+        const utterance = new SpeechSynthesisUtterance(content);
+        utterance.lang = document.documentElement.lang || "zh-CN";
+        utterance.onend = () => setSpeaking(false);
+        utterance.onerror = () => setSpeaking(false);
+        window.speechSynthesis.cancel();
+        window.speechSynthesis.speak(utterance);
+        setSpeaking(true);
     };
 
     const label = t(status === "copied" ? "common.copied" : "common.copy");
@@ -58,6 +79,24 @@ export default function AgentMessageActions({
                     onClick={() => onRegenerate(content)}
                     aria-label={t("blog.agentChat.regenerate")}
                     title={t("blog.agentChat.regenerate")}
+                />
+            ) : null}
+            {role === "assistant" && window.speechSynthesis ? (
+                <Button
+                    variant="ghost"
+                    size="xs"
+                    icon={speaking ? VolumeX : Volume2}
+                    onClick={toggleSpeech}
+                    aria-label={t(
+                        speaking
+                            ? "blog.agentChat.stopReading"
+                            : "blog.agentChat.readAloud",
+                    )}
+                    title={t(
+                        speaking
+                            ? "blog.agentChat.stopReading"
+                            : "blog.agentChat.readAloud",
+                    )}
                 />
             ) : null}
             {role === "user" && onEdit ? (

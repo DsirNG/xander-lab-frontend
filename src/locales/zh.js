@@ -612,6 +612,8 @@ export default {
             thinking: "思考中…",
             regenerate: "重新生成",
             editMessage: "编辑消息",
+            readAloud: "朗读回复",
+            stopReading: "停止朗读",
 
             callingTool: "工具调用中…",
             ready: "可以继续对话",
