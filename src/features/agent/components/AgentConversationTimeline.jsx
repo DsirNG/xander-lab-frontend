@@ -52,6 +52,11 @@ const AgentConversationTimeline = memo(
         errorMessage,
         statusLine,
         onEditMessage,
+        editingMessageId,
+        editingText,
+        onEditingTextChange,
+        onCancelEdit,
+        onSubmitEdit,
         onRegenerateMessage,
         t,
         messageComponent: MessageComponent = AgentConversationMessage,
@@ -123,7 +128,12 @@ const AgentConversationTimeline = memo(
                                     content={message.content}
                                     attachments={message.attachments}
                                     createdAt={message.createdAt}
-                                    onEdit={onEditMessage}
+                                    onEdit={() => onEditMessage(message.id, message.content)}
+                                    editing={String(editingMessageId) === String(message.id)}
+                                    editValue={editingText}
+                                    onEditChange={onEditingTextChange}
+                                    onEditCancel={onCancelEdit}
+                                    onEditSubmit={onSubmitEdit}
                                 />
                             );
                         }

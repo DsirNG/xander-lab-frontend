@@ -106,7 +106,7 @@ const MessageAttachments = ({ attachments = [] }) =>
  * historical Markdown message to be parsed again on each render.
  */
 export const AgentConversationMessage = memo(
-    ({ role, content, attachments, imageUrls, isStreaming, createdAt, onEdit, onRegenerate }) => (
+    ({ role, content, attachments, imageUrls, isStreaming, createdAt, onEdit, onRegenerate, editing = false, editValue = "", onEditChange, onEditCancel, onEditSubmit }) => (
         <div
             className={`flex w-full ${role === "user" ? "justify-end" : "justify-start"}`}
         >
@@ -117,7 +117,24 @@ export const AgentConversationMessage = memo(
                         : "w-full min-w-0 py-1 text-body leading-6 text-ink"
                 }
             >
-                {role === "user" ? (
+                {role === "user" ? editing ? (
+                    <div className="rounded-panel bg-surface-muted p-4">
+                        <textarea
+                            autoFocus
+                            value={editValue}
+                            onChange={(event) => onEditChange?.(event.target.value)}
+                            onKeyDown={(event) => {
+                                if (event.key === "Escape") onEditCancel?.();
+                                if ((event.ctrlKey || event.metaKey) && event.key === "Enter") onEditSubmit?.();
+                            }}
+                            className="min-h-24 w-full resize-none bg-transparent text-body leading-6 text-ink outline-none"
+                        />
+                        <div className="mt-3 flex justify-end gap-2">
+                            <button type="button" onClick={onEditCancel} className="rounded-full border border-border px-4 py-2 text-caption text-ink-secondary">取消</button>
+                            <button type="button" onClick={onEditSubmit} className="rounded-full bg-ink px-4 py-2 text-caption text-canvas">发送</button>
+                        </div>
+                    </div>
+                ) : (
                     <div className="rounded-panel bg-surface-muted px-4 py-2.5">
                         <MessageAttachments attachments={attachments} />
                         <span className="whitespace-pre-wrap">{content}</span>

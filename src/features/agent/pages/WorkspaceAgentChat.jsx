@@ -73,6 +73,8 @@ const WorkspaceAgentChat = () => {
     const [publishPlatform, setPublishPlatform] = useState("csdn");
     const [filePreview, setFilePreview] = useState(null);
     const [draggingFile, setDraggingFile] = useState(false);
+    const [editingMessageId, setEditingMessageId] = useState(null);
+    const [editingText, setEditingText] = useState("");
 
     const {
         attachments,
@@ -239,8 +241,15 @@ const WorkspaceAgentChat = () => {
 
     /** 持久化消息同样先归并 tool_call / tool_result，刷新后细节不丢。 */
     const timeline = useMemo(
-        () => mergeToolTraces(visibleMessages),
-        [visibleMessages],
+        () => mergeToolTraces([
+            ...visibleMessages,
+            ...visibleWorkspaceResults.map((entry) => {
+                let payload = {};
+                try { payload = JSON.parse(entry.dataContent || "{}"); } catch { /* malformed workspace rows remain hidden */ }
+                return { id: `workspace-${entry.id}`, kind: "tool_result", toolName: payload.tool, invocationId: payload.invocationId, content: entry.dataContent };
+            }),
+        ]),
+        [visibleMessages, visibleWorkspaceResults],
     );
 
     const streamingAnswer = useMemo(() => hasStreamingAnswer(steps), [steps]);
@@ -324,9 +333,22 @@ const WorkspaceAgentChat = () => {
         ],
     );
 
-    const handleEditMessage = useCallback((content) => {
-        setInput(content || "");
-        requestAnimationFrame(() => document.querySelector("textarea")?.focus());
+    const handleEditMessage = useCallback((id, content) => {
+        setEditingMessageId(id);
+        setEditingText(content || "");
+    }, []);
+
+    const handleSubmitEdit = useCallback(async () => {
+        const text = editingText.trim();
+        if (!text || locked) return;
+        setEditingMessageId(null);
+        setEditingText("");
+        await submitText(text);
+    }, [editingText, locked, submitText]);
+
+    const handleCancelEdit = useCallback(() => {
+        setEditingMessageId(null);
+        setEditingText("");
     }, []);
 
     const handleRegenerateMessage = useCallback(
@@ -616,6 +638,11 @@ const WorkspaceAgentChat = () => {
                             reconnecting={visibleReconnecting}
                             errorMessage={visibleErrorMessage}
                             onEditMessage={handleEditMessage}
+                                    editingMessageId={editingMessageId}
+                                    editingText={editingText}
+                                    onEditingTextChange={setEditingText}
+                                    onCancelEdit={handleCancelEdit}
+                                    onSubmitEdit={handleSubmitEdit}
                             onRegenerateMessage={handleRegenerateMessage}
                             statusLine={t("blog.agentChat.reconnecting")}
                             t={t}
