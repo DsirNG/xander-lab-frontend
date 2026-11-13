@@ -298,6 +298,18 @@ const WorkspaceAgentChat = () => {
             }
             setInput("");
             clearAttachments();
+            // A new user turn owns a new result surface. Do not keep the previous
+            // generated-article panel visible while this turn is running.
+            setSearchParams((current) => {
+                if (!current.has("blogTaskId") && !current.has("draftPostId") && !current.has("closedTaskId")) {
+                    return current;
+                }
+                const next = new URLSearchParams(current);
+                next.delete("blogTaskId");
+                next.delete("draftPostId");
+                next.delete("closedTaskId");
+                return next;
+            }, { replace: true });
             await sendMessage(trimmed, { attachments: selectedAttachments });
         },
         [
@@ -306,6 +318,7 @@ const WorkspaceAgentChat = () => {
             createConversation,
             navigate,
             sendMessage,
+            setSearchParams,
             t,
             toast,
         ],
