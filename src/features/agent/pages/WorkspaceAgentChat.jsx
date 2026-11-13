@@ -311,6 +311,21 @@ const WorkspaceAgentChat = () => {
         ],
     );
 
+    const handleEditMessage = useCallback((content) => {
+        setInput(content || "");
+        requestAnimationFrame(() => document.querySelector("textarea")?.focus());
+    }, []);
+
+    const handleRegenerateMessage = useCallback(
+        () => {
+            const previousUser = [...visibleMessages]
+                .reverse()
+                .find((message) => message.role === "user");
+            if (previousUser?.content) void sendMessage(previousUser.content);
+        },
+        [sendMessage, visibleMessages],
+    );
+
     const handleSubmit = async () => {
         if (locked || uploadingAttachments) return;
         if (!input.trim() && attachments.length === 0) {
@@ -587,6 +602,8 @@ const WorkspaceAgentChat = () => {
                             thinkingStartedAt={visibleThinkingStartedAt}
                             reconnecting={visibleReconnecting}
                             errorMessage={visibleErrorMessage}
+                            onEditMessage={handleEditMessage}
+                            onRegenerateMessage={handleRegenerateMessage}
                             statusLine={t("blog.agentChat.reconnecting")}
                             t={t}
                             messageComponent={WorkspaceAgentConversationMessage}

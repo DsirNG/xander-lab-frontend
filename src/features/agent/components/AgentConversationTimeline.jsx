@@ -51,6 +51,8 @@ const AgentConversationTimeline = memo(
         reconnecting,
         errorMessage,
         statusLine,
+        onEditMessage,
+        onRegenerateMessage,
         t,
         messageComponent: MessageComponent = AgentConversationMessage,
         thoughtComponent: ThoughtComponent = AgentThoughtCard,
@@ -120,6 +122,8 @@ const AgentConversationTimeline = memo(
                                     role="user"
                                     content={message.content}
                                     attachments={message.attachments}
+                                    createdAt={message.createdAt}
+                                    onEdit={onEditMessage}
                                 />
                             );
                         }
@@ -174,6 +178,8 @@ const AgentConversationTimeline = memo(
                                     role="assistant"
                                     content={message.content}
                                     imageUrls={historicalImageUrls}
+                                    createdAt={message.createdAt}
+                                    onRegenerate={onRegenerateMessage}
                                 />
                             );
                         }
@@ -195,6 +201,7 @@ const AgentConversationTimeline = memo(
                                     role="user"
                                     content={step.content}
                                     attachments={step.attachments}
+                                    onEdit={onEditMessage}
                                 />
                             );
                         if (step.type === "thought") {
@@ -277,6 +284,7 @@ const AgentConversationTimeline = memo(
                                     content={step.content}
                                     imageUrls={liveImageUrls}
                                     isStreaming={step.type === "answer_delta"}
+                                    onRegenerate={onRegenerateMessage}
                                 />
                             );
                         }
@@ -335,9 +343,9 @@ const AgentConversationTimeline = memo(
                         )}
                     {(reconnecting || errorMessage || cancelling) && (
                         <div
-                            className={`flex items-center gap-2 rounded-xl border px-3 py-2 text-xs font-semibold ${
+                                    className={`flex w-full items-center gap-3 rounded-xl border px-4 py-3 text-body font-semibold ${
                                 errorMessage
-                                    ? "border-danger/20 bg-danger/5 text-danger"
+                                    ? "border-danger/30 bg-danger-soft text-danger"
                                     : "border-border bg-surface-muted text-ink-secondary"
                             }`}
                         >
@@ -346,7 +354,7 @@ const AgentConversationTimeline = memo(
                             ) : (
                                 <Loader2 className="h-3.5 w-3.5 shrink-0 animate-spin" />
                             )}
-                            <span className="truncate">
+                            <span className="min-w-0 whitespace-pre-wrap break-words">
                                 {errorMessage ||
                                     (cancelling
                                         ? t("blog.agentChat.stopping")

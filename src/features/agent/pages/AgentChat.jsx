@@ -320,6 +320,21 @@ const AgentChat = () => {
         ],
     );
 
+    const handleEditMessage = useCallback((content) => {
+        setInput(content || "");
+        requestAnimationFrame(() => document.querySelector("textarea")?.focus());
+    }, []);
+
+    const handleRegenerateMessage = useCallback(
+        () => {
+            const previousUser = [...visibleMessages]
+                .reverse()
+                .find((message) => message.role === "user");
+            if (previousUser?.content) void sendMessage(previousUser.content);
+        },
+        [sendMessage, visibleMessages],
+    );
+
     const handleNewConversation = () => {
         reset();
         setInput("");
@@ -556,6 +571,8 @@ const AgentChat = () => {
                                         reconnecting={visibleReconnecting}
                                         errorMessage={visibleErrorMessage}
                                         statusLine={statusLine}
+                                        onEditMessage={handleEditMessage}
+                                        onRegenerateMessage={handleRegenerateMessage}
                                         t={t}
                                     />
 

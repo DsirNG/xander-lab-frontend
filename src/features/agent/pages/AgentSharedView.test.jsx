@@ -60,7 +60,7 @@ describe("AgentSharedView 图片结果", () => {
         expect(screen.queryByText(IMAGE_URL)).not.toBeInTheDocument();
     });
 
-    it("回答里的图片 Markdown 只保留图片，不保留模型附带的链接文案", async () => {
+    it("没有图片工具结果的普通 Markdown 回答保留图片、说明与链接", async () => {
         getMock.mockResolvedValue(
             sharedPayload([
                 {
@@ -78,7 +78,11 @@ describe("AgentSharedView 图片结果", () => {
         expect(
             await screen.findByRole("img", { name: "可爱小猫" }),
         ).toHaveAttribute("src", IMAGE_URL);
-        expect(screen.queryByText(IMAGE_URL)).not.toBeInTheDocument();
+        expect(screen.getByText("已生成图片。")).toBeInTheDocument();
+        expect(screen.getByRole("link", { name: IMAGE_URL })).toHaveAttribute(
+            "href",
+            IMAGE_URL,
+        );
     });
 });
 

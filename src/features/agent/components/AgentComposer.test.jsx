@@ -30,6 +30,66 @@ const renderComposer = (overrides = {}) => {
 };
 
 describe("AgentComposer 回车发送", () => {
+    it("keeps the expanded draft stable when its text fits only at the wider expanded width", () => {
+        const scrollHeight = vi
+            .spyOn(HTMLTextAreaElement.prototype, "scrollHeight", "get")
+            .mockImplementation(function () {
+                return this.closest("[data-multiline]").dataset.multiline ===
+                    "true"
+                    ? 40
+                    : 64;
+            });
+        try {
+            renderComposer({ input: "临界宽度下刚好需要换行的消息" });
+            const textarea = screen.getByRole("textbox");
+            expect(textarea.closest("[data-multiline]")).toHaveAttribute(
+                "data-multiline",
+                "true",
+            );
+            expect(textarea.style.height).toBe("40px");
+            expect(scrollHeight.mock.calls.length).toBeLessThan(5);
+        } finally {
+            scrollHeight.mockRestore();
+        }
+    });
+
+    it("collapses an expanded draft after the input is cleared", () => {
+        const scrollHeight = vi
+            .spyOn(HTMLTextAreaElement.prototype, "scrollHeight", "get")
+            .mockImplementation(function () {
+                return this.value ? 64 : 40;
+            });
+        try {
+            const Harness = () => {
+                const [input, setInput] = React.useState("需要换行的消息");
+                const textareaRef = React.useRef(null);
+                return (
+                    <AgentComposer
+                        input={input}
+                        attachments={[]}
+                        textareaRef={textareaRef}
+                        fileInputRef={React.useRef(null)}
+                        onInputChange={setInput}
+                        t={(key) => key}
+                    />
+                );
+            };
+            render(<Harness />);
+            const textarea = screen.getByRole("textbox");
+            expect(textarea.closest("[data-multiline]")).toHaveAttribute(
+                "data-multiline",
+                "true",
+            );
+            fireEvent.change(textarea, { target: { value: "" } });
+            expect(textarea.closest("[data-multiline]")).toHaveAttribute(
+                "data-multiline",
+                "false",
+            );
+        } finally {
+            scrollHeight.mockRestore();
+        }
+    });
+
     it("sends on a plain Enter", () => {
         const { onSubmit } = renderComposer();
 

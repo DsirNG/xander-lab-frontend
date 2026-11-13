@@ -121,6 +121,20 @@ describe("流式半截地址", () => {
 });
 
 describe("cleanImageMarkdown", () => {
+    it("保留普通回答中的徽章代码示例和前后文", () => {
+        const text =
+            "这些徽章由作者配置。\n\n```markdown\n[![Stars](徽章图片地址)](项目地址)\n```\n\n查看 README 源码。";
+        expect(cleanImageMarkdown(text, new Set())).toBe(text);
+        expect(cleanImageMarkdown(text)).toBe(text);
+        expect(cleanImageMarkdown(text, new Set([URL]))).toBe(text);
+    });
+
+    it("普通正文中的图片不能截断整个回答", () => {
+        const text = `前文\n![参考图](${OTHER_URL})\n后文`;
+        expect(cleanImageMarkdown(text, new Set())).toBe(text);
+        expect(cleanImageMarkdown(text, new Set([URL]))).toBe(text);
+    });
+
     it("有 Markdown 图片时只保留那张图，丢掉模型附带的说明", () => {
         const text = `已生成图片。\n\n![小猫](${URL})\n\n尺寸 1024x1024`;
 

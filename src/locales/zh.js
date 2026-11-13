@@ -610,6 +610,9 @@ export default {
             stopFailed: "停止请求失败，请重试。",
             running: "执行中…",
             thinking: "思考中…",
+            regenerate: "重新生成",
+            editMessage: "编辑消息",
+
             callingTool: "工具调用中…",
             ready: "可以继续对话",
             failed: "本轮执行失败",
@@ -1060,6 +1063,7 @@ export default {
         rename: "重命名",
         copied: "已复制到剪贴板",
         copy: "复制",
+        copyFailed: "复制失败，请重试",
         confirm: "确认",
         cancel: "取消",
         delete: "删除",

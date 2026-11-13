@@ -123,8 +123,13 @@ const AgentComposer = ({
         const measureLines = () => {
             textarea.style.height = "auto";
             const naturalHeight = textarea.scrollHeight;
+            // The expanded layout gives the textarea more width. Collapsing as
+            // soon as that wider text fits would wrap it again in the compact
+            // row and synchronously toggle layouts forever. Keep the expanded
+            // layout for this draft; an empty draft returns to the compact row.
             const shouldExpand =
-                alwaysExpanded || naturalHeight > 41;
+                alwaysExpanded ||
+                (input.length > 0 && (multiline || naturalHeight > 41));
             textarea.style.height = `${Math.min(
                 Math.max(naturalHeight, 40),
                 280,
@@ -231,7 +236,13 @@ const AgentComposer = ({
                             onChange={(event) =>
                                 onInputChange(event.target.value)
                             }
-                            onPaste={(event) => pasteAttachments(event, { input, onInputChange, onFilesSelected })}
+                            onPaste={(event) =>
+                                pasteAttachments(event, {
+                                    input,
+                                    onInputChange,
+                                    onFilesSelected,
+                                })
+                            }
                             aria-label={t("workspace.agent.inputPlaceholder")}
                             placeholder={
                                 isActive
@@ -305,7 +316,10 @@ const AgentComposer = ({
                                     className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-caption text-ink hover:bg-surface-muted"
                                 >
                                     <span className="grid h-6 w-6 place-items-center rounded-md bg-surface-muted text-ink">
-                                        <Plus className="h-4 w-4" aria-hidden="true" />
+                                        <Plus
+                                            className="h-4 w-4"
+                                            aria-hidden="true"
+                                        />
                                     </span>
                                     <span>
                                         {t(

@@ -628,6 +628,9 @@ export default {
             stopFailed: "Could not stop the task. Please try again.",
             running: "Working…",
             thinking: "Thinking…",
+            regenerate: "Regenerate",
+            editMessage: "Edit message",
+
             callingTool: "Calling tool…",
             ready: "Ready for your next message",
             failed: "The agent failed this turn",
@@ -1097,6 +1100,7 @@ export default {
         rename: "Rename",
         copied: "Copied to clipboard",
         copy: "Copy",
+        copyFailed: "Copy failed. Please try again.",
         confirm: "Confirm",
         cancel: "Cancel",
         delete: "Delete",

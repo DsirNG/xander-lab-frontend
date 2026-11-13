@@ -83,7 +83,7 @@ export const containsResultUrl = (content, urls) => {
 };
 
 /** 模型写的 Markdown 图片；只取第一张，避免流式残留把整段正文都吞掉。 */
-const MARKDOWN_IMAGE = /!\[.*?\]\([^)]+\)/;
+const MARKDOWN_IMAGE = /!\[[^\]\n]*\]\(\s*([^\s)]+)(?:\s+[^)]*)?\)/g;
 
 const escapeRegExp = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
@@ -97,9 +97,16 @@ const escapeRegExp = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
  */
 export const cleanImageMarkdown = (text, urls) => {
     if (!text) return text;
-    const imageMatch = text.match(MARKDOWN_IMAGE);
-    if (imageMatch) return imageMatch[0];
     if (!urls || urls.size === 0) return text;
+
+    // Code examples belong to the answer, even when they contain image syntax.
+    const prose = text.replace(
+        /```[\s\S]*?(?:```|$)|~~~[\s\S]*?(?:~~~|$)|(`+)[\s\S]*?\1/g,
+        "",
+    );
+    for (const match of prose.matchAll(MARKDOWN_IMAGE)) {
+        if (urls.has(match[1])) return match[0];
+    }
 
     let next = text;
     for (const url of urls) {
