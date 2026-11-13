@@ -2,12 +2,15 @@ import React, { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import Button from "@shared/ui/primitives/Button";
 import Modal from "@shared/ui/overlays/Modal";
+import CustomSelect from "@shared/ui/forms/CustomSelect";
 import FormField from "@shared/ui/forms/FormField";
 import { formInputCls } from "@shared/ui/forms/formStyles";
 import { useToast } from "@shared/hooks/useToast";
 import { adminService } from "../services/adminService";
 import {
     milliPer1kToYuanPerM,
+    yuanToMilliPerRequest,
+    milliPerRequestToYuan,
     yuanPerMToMilliPer1k,
 } from "../utils/pricingUnits";
 
@@ -23,6 +26,8 @@ const toYuanPerM = (milli) => {
 const PricingFormModal = ({ isOpen, price, onClose, onSaved }) => {
     const { t } = useTranslation();
     const toast = useToast();
+    const [billingMode, setBillingMode] = useState("TOKEN");
+    const [requestPrice, setRequestPrice] = useState("");
     const [model, setModel] = useState("");
     const [inputPrice, setInputPrice] = useState("");
     const [outputPrice, setOutputPrice] = useState("");
@@ -42,6 +47,8 @@ const PricingFormModal = ({ isOpen, price, onClose, onSaved }) => {
 
     useEffect(() => {
         if (!isOpen) return;
+        setBillingMode(price?.billingMode ?? "TOKEN");
+        setRequestPrice(price ? String(milliPerRequestToYuan(price.milliPerRequest ?? 0)) : "");
         if (price) {
             setModel(price.model || "");
             setInputPrice(toYuanPerM(price.inputMilliPer1kToken));
@@ -75,19 +82,19 @@ const PricingFormModal = ({ isOpen, price, onClose, onSaved }) => {
     const handleSubmit = async () => {
         if (savingRef.current) return;
         const trimmedModel = model.trim();
-        const inputMilli = parsePrice(inputPrice);
-        const outputMilli = parsePrice(outputPrice);
-        const cachedReadMilli = parsePrice(cachedReadPrice) ?? 0;
-        const cachedWriteMilli = parsePrice(cachedWritePrice) ?? 0;
+        const perRequest = billingMode === "REQUEST";
+        const requestMilli = requestPrice.trim() === "" ? null : yuanToMilliPerRequest(requestPrice);
+        const inputMilli = perRequest ? 0 : parsePrice(inputPrice);
+        const outputMilli = perRequest ? 0 : parsePrice(outputPrice);
+        const cachedReadMilli = perRequest ? 0 : parsePrice(cachedReadPrice);
+        const cachedWriteMilli = perRequest ? 0 : parsePrice(cachedWritePrice);
         if (!trimmedModel || inputMilli === null || outputMilli === null) {
             setFormError(t("admin.pricing.formRequired"));
             return;
         }
         if (
-            inputMilli === null ||
-            outputMilli === null ||
-            cachedReadMilli === null ||
-            cachedWriteMilli === null
+            ![inputMilli, outputMilli, cachedReadMilli, cachedWriteMilli].every((value) => Number.isSafeInteger(value) && value >= 0) ||
+            (perRequest && (!Number.isSafeInteger(requestMilli) || requestMilli < 0))
         ) {
             setFormError(t("admin.pricing.invalidPrice"));
             return;
@@ -96,6 +103,8 @@ const PricingFormModal = ({ isOpen, price, onClose, onSaved }) => {
             savingRef.current = true;
             setSaving(true);
             await adminService.upsertModelPrice(trimmedModel, {
+                billingMode,
+                milliPerRequest: perRequest ? requestMilli : 0,
                 inputMilliPer1kToken: inputMilli,
                 outputMilliPer1kToken: outputMilli,
                 cachedMilliPer1kToken: cachedReadMilli,
@@ -185,6 +194,18 @@ const PricingFormModal = ({ isOpen, price, onClose, onSaved }) => {
                     />
                 </FormField>
 
+                <FormField label={t("admin.pricing.billingMode")}>
+                    <CustomSelect value={billingMode} onChange={setBillingMode} options={[
+                        { value: "TOKEN", label: t("admin.pricing.modeToken") },
+                        { value: "REQUEST", label: t("admin.pricing.modeRequest") },
+                    ]} />
+                </FormField>
+                {billingMode === "REQUEST" ? (
+                    <>
+                        <div className="text-micro text-ink-faint">{t("admin.pricing.requestHint")}</div>
+                        {priceField("admin-pricing-request", t("admin.pricing.requestPrice"), requestPrice, setRequestPrice)}
+                    </>
+                ) : (<>
                 <p className="text-micro font-medium text-ink-faint">
                     {t("admin.pricing.priceUnit")}
                 </p>
@@ -214,6 +235,8 @@ const PricingFormModal = ({ isOpen, price, onClose, onSaved }) => {
                         setCachedWritePrice,
                     )}
                 </div>
+
+                </>)}
 
                 <FormField
                     label={t("admin.pricing.remark")}

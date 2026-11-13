@@ -15,7 +15,7 @@ const asArtifact = (value) => {
               (file) =>
                   typeof file?.path === "string" &&
                   file.path.trim() &&
-                  typeof file?.content === "string",
+                  (typeof file?.content === "string" || typeof file?.url === "string"),
           )
         : [];
     if (!files.length) return null;

@@ -1,8 +1,9 @@
 import React, { useMemo, useState } from "react";
-import { Download, FileCode2, Play } from "lucide-react";
+import { CheckCircle2, Download, FileCode2, FileText, Play } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import CodeBlock from "@shared/ui/data-display/CodeBlock";
 import { HtmlSandboxPreview } from "@features/htmlPreview";
+import { artifactBytes } from "./fileArtifact";
 
 /**
  * 代码交付卡：文件树 + 完整源码，可逐个文件复制、下载，HTML 还能直接预览。
@@ -39,12 +40,23 @@ export const ArtifactCard = ({ payload }) => {
     const active = files.find((file) => file.path === selected) || files[0];
     const language = languageOf(active);
     const title = payload?.name?.trim() || t("blog.agentChat.artifactTitle");
+    const documentArtifact = payload?.kind === "document" || payload?.format === "document" || (files.length === 1 && /\.(docx|pdf)$/i.test(String(files[0]?.path || "")));
 
-    const download = (file) => {
+    const download = async (file) => {
         try {
-            const blob = new Blob([file.content], {
-                type: "text/plain;charset=utf-8",
-            });
+            const generated = file.url ? null : artifactBytes({ ...file, format: payload?.format });
+            const blob = generated ? new Blob([generated.bytes], { type: generated.type }) : null;
+            if (file.url) {
+                const anchor = document.createElement("a");
+                anchor.href = file.url;
+                anchor.download = fileLabel(file.path);
+                anchor.target = "_blank";
+                anchor.rel = "noopener noreferrer";
+                document.body.appendChild(anchor);
+                anchor.click();
+                anchor.remove();
+                return;
+            }
             const url = URL.createObjectURL(blob);
             const anchor = document.createElement("a");
             anchor.href = url;
@@ -55,6 +67,41 @@ export const ArtifactCard = ({ payload }) => {
             // 浏览器禁用了 Blob 下载时，用户仍可用复制按钮把源码拿走。
         }
     };
+
+    if (documentArtifact && files.length === 1) {
+        const file = files[0];
+        const filename = fileLabel(file.path);
+        const summary = payload?.summary?.trim();
+        return (
+            <section className="my-3 w-full max-w-2xl rounded-panel border border-border bg-surface p-3" aria-label={title}>
+                <div className="flex items-center gap-2 text-caption text-ink-muted">
+                    <CheckCircle2 className="h-4 w-4 text-success-fg" aria-hidden="true" />
+                    <span>{t("blog.agentChat.artifactReady")}</span>
+                </div>
+                <div className="mt-2 flex items-center gap-3 rounded-control border border-border-subtle bg-canvas px-3 py-2.5">
+                    <div className="grid h-9 w-9 shrink-0 place-items-center rounded-control bg-accent/10 text-accent">
+                        <span className={`grid h-7 w-7 place-items-center rounded text-xs font-bold ${String(filename).toLowerCase().endsWith('.pdf') ? 'bg-red-100 text-red-600' : 'bg-blue-100 text-blue-700'}`}>{String(filename).toLowerCase().endsWith('.pdf') ? 'P' : 'W'}</span>
+                    </div>
+                    <div className="min-w-0 flex-1">
+                        <div className="truncate text-body font-medium text-ink">{filename}</div>
+                        <div className="mt-0.5 text-caption text-ink-muted">
+                            {file.contentType || file.language || t("blog.agentChat.artifactDocument")}
+                        </div>
+                    </div>
+                    <button
+                        type="button"
+                        className="inline-flex min-h-8 shrink-0 items-center gap-1 rounded-control border border-border px-2.5 text-caption text-ink-secondary hover:bg-surface-muted"
+                        onClick={() => download(file)}
+                        aria-label={t("blog.agentChat.artifactDownloadFile", { name: filename })}
+                    >
+                        <Download className="h-3.5 w-3.5" aria-hidden="true" />
+                        {t("blog.agentChat.artifactDownload")}
+                    </button>
+                </div>
+                {summary ? <p className="mt-2 text-caption leading-5 text-ink-muted">{summary}</p> : null}
+            </section>
+        );
+    }
 
     return (
         <section className="my-2 w-full max-w-2xl" aria-label={title}>

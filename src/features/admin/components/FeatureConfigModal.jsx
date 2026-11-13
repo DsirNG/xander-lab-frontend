@@ -5,7 +5,7 @@ import ModelPlaygroundLink from "./ModelPlaygroundLink";
 import Modal from "@shared/ui/overlays/Modal";
 import FormField from "@shared/ui/forms/FormField";
 import CustomSelect from "@shared/ui/forms/CustomSelect";
-import { formInputCls } from "@shared/ui/forms/formStyles";
+import ProviderModelInput from "./ProviderModelInput";
 import { useToast } from "@shared/hooks/useToast";
 import { adminService } from "../services/adminService";
 
@@ -111,6 +111,8 @@ const FeatureConfigModal = ({
 
     const handlePrimaryProviderChange = (providerId) => {
         setPrimaryProviderId(providerId);
+        setPrimaryModel("");
+        setPrimaryApiStyle(styleOptions[0]?.value ?? "");
         if (providerId && config?.featureKey === "recitation_asr") {
             setPrimaryApiStyle(API_STYLE_DASHSCOPE_ASR);
         }
@@ -217,20 +219,38 @@ const FeatureConfigModal = ({
         >
             <div className="space-y-5">
                 <div className="flex flex-wrap gap-4">
-            <ModelPlaygroundLink
-                active={isOpen}
-                featureKey={config?.featureKey}
-                label={t("admin.probe.primary")}
-                disabled={saving || !primaryProviderId || !primaryModel.trim() || !primaryApiStyle}
-                payload={{ providerId: primaryProviderId, model: primaryModel.trim(), apiStyle: primaryApiStyle }}
-            />
-            <ModelPlaygroundLink
-                active={isOpen}
-                featureKey={config?.featureKey}
-                label={t("admin.probe.fallback")}
-                disabled={saving || !fallbackProviderId || !fallbackModel.trim() || !fallbackApiStyle}
-                payload={{ providerId: fallbackProviderId, model: fallbackModel.trim(), apiStyle: fallbackApiStyle }}
-            />
+                    <ModelPlaygroundLink
+                        active={isOpen}
+                        featureKey={config?.featureKey}
+                        label={t("admin.probe.primary")}
+                        disabled={
+                            saving ||
+                            !primaryProviderId ||
+                            !primaryModel.trim() ||
+                            !primaryApiStyle
+                        }
+                        payload={{
+                            providerId: primaryProviderId,
+                            model: primaryModel.trim(),
+                            apiStyle: primaryApiStyle,
+                        }}
+                    />
+                    <ModelPlaygroundLink
+                        active={isOpen}
+                        featureKey={config?.featureKey}
+                        label={t("admin.probe.fallback")}
+                        disabled={
+                            saving ||
+                            !fallbackProviderId ||
+                            !fallbackModel.trim() ||
+                            !fallbackApiStyle
+                        }
+                        payload={{
+                            providerId: fallbackProviderId,
+                            model: fallbackModel.trim(),
+                            apiStyle: fallbackApiStyle,
+                        }}
+                    />
                 </div>
                 <label className="flex cursor-pointer items-center gap-2 text-caption font-medium text-ink">
                     <input
@@ -267,19 +287,16 @@ const FeatureConfigModal = ({
                             label={t("admin.configs.primaryModel")}
                             htmlFor="admin-config-primary-model"
                         >
-                            <input
+                            <ProviderModelInput
+                                key={primaryProviderId ?? "none"}
                                 id="admin-config-primary-model"
+                                provider={providers.find(
+                                    (provider) =>
+                                        provider.id === primaryProviderId,
+                                )}
                                 value={primaryModel}
-                                onChange={(e) =>
-                                    setPrimaryModel(e.target.value)
-                                }
-                                placeholder={
-                                    config?.featureKey === "recitation_asr"
-                                        ? "paraformer-v2"
-                                        : "gpt-4o"
-                                }
-                                className={formInputCls}
-                                disabled={!primaryProviderId}
+                                onChange={setPrimaryModel}
+                                placeholder={t("admin.providers.manualModel")}
                             />
                         </FormField>
                         <FormField label={t("admin.configs.primaryApiStyle")}>
@@ -310,6 +327,10 @@ const FeatureConfigModal = ({
                                     setFallbackProviderId(
                                         value === "" ? null : value,
                                     );
+                                    setFallbackModel("");
+                                    setFallbackApiStyle(
+                                        styleOptions[0]?.value ?? "",
+                                    );
                                     if (value === "") {
                                         setFallbackModel("");
                                         setFallbackApiStyle("");
@@ -328,19 +349,16 @@ const FeatureConfigModal = ({
                             label={t("admin.configs.fallbackModel")}
                             htmlFor="admin-config-fallback-model"
                         >
-                            <input
+                            <ProviderModelInput
+                                key={fallbackProviderId ?? "none"}
                                 id="admin-config-fallback-model"
+                                provider={providers.find(
+                                    (provider) =>
+                                        provider.id === fallbackProviderId,
+                                )}
                                 value={fallbackModel}
-                                onChange={(e) =>
-                                    setFallbackModel(e.target.value)
-                                }
-                                placeholder={
-                                    config?.featureKey === "recitation_asr"
-                                        ? "paraformer-v2"
-                                        : "gpt-4o-mini"
-                                }
-                                className={formInputCls}
-                                disabled={!fallbackProviderId}
+                                onChange={setFallbackModel}
+                                placeholder={t("admin.providers.manualModel")}
                             />
                         </FormField>
                         <FormField label={t("admin.configs.fallbackApiStyle")}>

@@ -1,6 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Loader2 } from "lucide-react";
+import Button from "@shared/ui/primitives/Button";
+import ProviderModelsEditor from "./ProviderModelsEditor";
+import ProviderPresetPicker from "./ProviderPresetPicker";
 import ModelProbeButton from "./ModelProbeButton";
 import Modal from "@shared/ui/overlays/Modal";
 import FormField from "@shared/ui/forms/FormField";
@@ -31,10 +33,18 @@ const ProviderFormModal = ({
     const [saving, setSaving] = useState(false);
     const [formError, setFormError] = useState("");
 
+    const [models, setModels] = useState([]);
+    const [choosing, setChoosing] = useState(false);
+    const savingRef = useRef(false);
+    const close = () => {
+        if (!savingRef.current) onClose();
+    };
     const editing = Boolean(provider);
 
     useEffect(() => {
         if (!isOpen) return;
+        setChoosing(!provider);
+        setModels(provider?.models ?? []);
         if (provider) {
             setName(provider.name || "");
             setVendor(provider.vendor || "OPENAI_COMPATIBLE");
@@ -56,6 +66,7 @@ const ProviderFormModal = ({
     }, [isOpen, provider]);
 
     const handleSubmit = async () => {
+        if (savingRef.current) return;
         const trimmedName = name.trim();
         const trimmedBaseUrl = baseUrl.trim();
         const trimmedKey = apiKey.trim();
@@ -77,6 +88,7 @@ const ProviderFormModal = ({
             return;
         }
         const payload = {
+            models,
             name: trimmedName,
             vendor: vendor.trim() || "OPENAI_COMPATIBLE",
             baseUrl: trimmedBaseUrl.replace(/\/+$/, ""),
@@ -86,6 +98,7 @@ const ProviderFormModal = ({
             priority: Number(priority) || 0,
         };
         try {
+            savingRef.current = true;
             setSaving(true);
             if (editing) {
                 await adminService.updateProvider(provider.id, payload);
@@ -101,154 +114,212 @@ const ProviderFormModal = ({
                 err?.response?.data?.message || t("admin.providers.saveFailed"),
             );
         } finally {
+            savingRef.current = false;
             setSaving(false);
         }
     };
 
-    const footer = (
+    const footer = choosing ? (
+        <Button variant="ghost" onClick={close}>
+            {t("common.cancel")}
+        </Button>
+    ) : (
         <>
-            <button
-                type="button"
-                onClick={onClose}
-                disabled={saving}
-                className="rounded-control px-5 py-2.5 text-caption font-bold text-ink-muted transition hover:bg-surface-muted disabled:opacity-50"
-            >
+            <Button variant="ghost" onClick={close} disabled={saving}>
                 {t("common.cancel")}
-            </button>
-            <button
-                type="button"
-                onClick={handleSubmit}
-                disabled={saving}
-                className="inline-flex items-center gap-2 rounded-control bg-ink px-6 py-2.5 text-caption font-bold text-canvas transition hover:bg-ink-secondary active:scale-95 disabled:opacity-60"
-            >
-                {saving ? (
-                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                ) : null}
+            </Button>
+            <Button variant="ink" onClick={handleSubmit} loading={saving}>
                 {editing ? t("common.save") : t("admin.providers.create")}
-            </button>
+            </Button>
         </>
     );
 
     return (
         <Modal
             isOpen={isOpen}
-            onClose={onClose}
+            onClose={close}
             title={
                 editing
                     ? t("admin.providers.editTitle")
                     : t("admin.providers.createTitle")
             }
-            width="max-w-xl"
+            width="max-w-4xl"
+            height={760}
             className="rounded-dialog shadow-float!"
             footer={footer}
         >
-            <div className="space-y-4">
-                <ModelProbeButton
-                    active={isOpen}
-                    label={t("admin.probe.provider")}
-                    disabled={saving || !baseUrl.trim() || (!apiKey.trim() && !provider?.apiKeyConfigured)}
-                    payload={{ providerId: provider?.id, baseUrl: baseUrl.trim(), apiKey: apiKey.trim() || undefined }}
+            {choosing ? (
+                <ProviderPresetPicker
+                    onSelect={(preset) => {
+                        setName(preset.name);
+                        setBaseUrl(preset.baseUrl);
+                        setVendor("OPENAI_COMPATIBLE");
+                        setApiKey("");
+                        setModels([]);
+                        setChoosing(false);
+                    }}
                 />
-                <FormField
-                    label={t("admin.providers.name")}
-                    htmlFor="admin-provider-name"
-                >
-                    <input
-                        id="admin-provider-name"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        placeholder={t("admin.providers.namePlaceholder")}
-                        className={formInputCls}
-                    />
-                </FormField>
+            ) : (
+                <fieldset disabled={saving} className="min-w-0 space-y-4">
+                    {!editing && (
+                        <div className="flex items-center justify-between rounded-card bg-surface-muted p-4">
+                            <div className="text-body font-semibold">
+                                {name || t("admin.providers.custom")}
+                            </div>
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => setChoosing(true)}
+                            >
+                                {t("admin.providers.changePreset")}
+                            </Button>
+                        </div>
+                    )}
+                    <div className="text-caption text-ink-muted">
+                        {t("admin.providers.setupHint")}
+                    </div>
+                    <FormField
+                        label={t("admin.providers.name")}
+                        htmlFor="admin-provider-name"
+                    >
+                        <input
+                            id="admin-provider-name"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            placeholder={t("admin.providers.namePlaceholder")}
+                            className={formInputCls}
+                        />
+                    </FormField>
 
-                <FormField
-                    label={t("admin.providers.vendor")}
-                    htmlFor="admin-provider-vendor"
-                >
-                    <input
-                        id="admin-provider-vendor"
-                        value={vendor}
-                        onChange={(e) => setVendor(e.target.value)}
-                        placeholder="OPENAI_COMPATIBLE"
-                        className={formInputCls}
-                    />
-                </FormField>
+                    <FormField
+                        label={t("admin.providers.baseUrl")}
+                        htmlFor="admin-provider-base-url"
+                    >
+                        <input
+                            id="admin-provider-base-url"
+                            value={baseUrl}
+                            onChange={(e) => setBaseUrl(e.target.value)}
+                            placeholder="https://api.example.com/v1"
+                            className={formInputCls}
+                        />
+                    </FormField>
 
-                <FormField
-                    label={t("admin.providers.baseUrl")}
-                    htmlFor="admin-provider-base-url"
-                >
-                    <input
-                        id="admin-provider-base-url"
-                        value={baseUrl}
-                        onChange={(e) => setBaseUrl(e.target.value)}
-                        placeholder="https://api.example.com/v1"
-                        className={formInputCls}
-                    />
-                </FormField>
-
-                <FormField
-                    label={t("admin.providers.apiKey")}
-                    hint={editing ? t("admin.providers.apiKeyHint") : undefined}
-                    htmlFor="admin-provider-api-key"
-                >
-                    <input
-                        id="admin-provider-api-key"
-                        type="password"
-                        value={apiKey}
-                        onChange={(e) => setApiKey(e.target.value)}
-                        placeholder={
+                    <FormField
+                        label={t("admin.providers.apiKey")}
+                        hint={
                             editing
-                                ? t("admin.providers.apiKeyEditPlaceholder")
-                                : t("admin.providers.apiKeyPlaceholder")
+                                ? t("admin.providers.apiKeyHint")
+                                : undefined
                         }
-                        className={formInputCls}
-                        autoComplete="new-password"
-                    />
-                </FormField>
-
-                <FormField
-                    label={t("admin.providers.description")}
-                    htmlFor="admin-provider-description"
-                >
-                    <textarea
-                        id="admin-provider-description"
-                        value={description}
-                        onChange={(e) => setDescription(e.target.value)}
-                        rows={2}
-                        className={`${formInputCls} resize-none`}
-                    />
-                </FormField>
-
-                <div className="flex flex-wrap gap-4">
-                    <label className="flex cursor-pointer items-center gap-2 text-caption font-medium text-ink-muted">
+                        htmlFor="admin-provider-api-key"
+                    >
                         <input
-                            type="checkbox"
-                            checked={enabled}
-                            onChange={(e) => setEnabled(e.target.checked)}
-                            className="h-4 w-4 rounded border-border accent-ink"
+                            id="admin-provider-api-key"
+                            type="password"
+                            value={apiKey}
+                            onChange={(e) => setApiKey(e.target.value)}
+                            placeholder={
+                                editing
+                                    ? t("admin.providers.apiKeyEditPlaceholder")
+                                    : t("admin.providers.apiKeyPlaceholder")
+                            }
+                            className={formInputCls}
+                            autoComplete="new-password"
                         />
-                        {t("admin.providers.enabled")}
-                    </label>
-                    <label className="flex items-center gap-2 text-caption font-medium text-ink-muted">
-                        <span>{t("admin.providers.priority")}</span>
-                        <input
-                            type="number"
-                            min="0"
-                            value={priority}
-                            onChange={(e) => setPriority(e.target.value)}
-                            className={`${formInputCls} max-w-24`}
-                        />
-                    </label>
-                </div>
+                    </FormField>
 
-                {formError && (
-                    <p className="text-caption font-medium text-danger">
-                        {formError}
-                    </p>
-                )}
-            </div>
+                    <ModelProbeButton
+                        active={isOpen}
+                        label={t("admin.probe.provider")}
+                        disabled={
+                            saving ||
+                            !baseUrl.trim() ||
+                            (!apiKey.trim() && !provider?.apiKeyConfigured)
+                        }
+                        payload={{
+                            providerId: provider?.id,
+                            baseUrl: baseUrl.trim(),
+                            apiKey: apiKey.trim() || undefined,
+                        }}
+                    />
+                    <ProviderModelsEditor
+                        key={`${isOpen}:${provider?.id ?? "new"}:${baseUrl}:${apiKey}`}
+                        payload={{
+                            providerId: provider?.id,
+                            baseUrl: baseUrl.trim(),
+                            apiKey: apiKey.trim() || undefined,
+                        }}
+                        models={models}
+                        onChange={setModels}
+                        disabled={
+                            saving ||
+                            !baseUrl.trim() ||
+                            (!apiKey.trim() && !provider?.apiKeyConfigured)
+                        }
+                    />
+                    <FormField
+                        label={t("admin.providers.description")}
+                        htmlFor="admin-provider-description"
+                    >
+                        <textarea
+                            id="admin-provider-description"
+                            value={description}
+                            onChange={(e) => setDescription(e.target.value)}
+                            rows={2}
+                            className={`${formInputCls} resize-none`}
+                        />
+                    </FormField>
+
+                    <details className="rounded-card border border-border p-4">
+                        <summary className="cursor-pointer text-body font-semibold">
+                            {t("admin.providers.advanced")}
+                        </summary>
+                        <FormField
+                            label={t("admin.providers.vendor")}
+                            htmlFor="admin-provider-vendor"
+                        >
+                            <input
+                                id="admin-provider-vendor"
+                                value={vendor}
+                                onChange={(e) => setVendor(e.target.value)}
+                                placeholder="OPENAI_COMPATIBLE"
+                                className={formInputCls}
+                            />
+                        </FormField>
+
+                        <div className="mt-4 flex flex-wrap gap-4">
+                            <label className="flex cursor-pointer items-center gap-2 text-caption font-medium text-ink-muted">
+                                <input
+                                    type="checkbox"
+                                    checked={enabled}
+                                    onChange={(e) =>
+                                        setEnabled(e.target.checked)
+                                    }
+                                    className="h-4 w-4 rounded border-border accent-ink"
+                                />
+                                {t("admin.providers.enabled")}
+                            </label>
+                            <label className="flex items-center gap-2 text-caption font-medium text-ink-muted">
+                                <span>{t("admin.providers.priority")}</span>
+                                <input
+                                    type="number"
+                                    min="0"
+                                    value={priority}
+                                    onChange={(e) =>
+                                        setPriority(e.target.value)
+                                    }
+                                    className={`${formInputCls} max-w-24`}
+                                />
+                            </label>
+                        </div>
+                    </details>
+                    {formError && (
+                        <p className="text-caption font-medium text-danger">
+                            {formError}
+                        </p>
+                    )}
+                </fieldset>
+            )}
         </Modal>
     );
 };

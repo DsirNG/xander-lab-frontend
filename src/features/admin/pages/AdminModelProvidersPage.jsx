@@ -1,7 +1,10 @@
+import { Link } from "react-router-dom";
 import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { KeyRound, Pencil, Plus, Server, Trash2 } from "lucide-react";
-import DataTable from "@shared/ui/data-display/DataTable";
+import Button from "@shared/ui/primitives/Button";
+import LoadingSpinner from "@shared/ui/feedback/LoadingSpinner";
+import { formInputCls } from "@shared/ui/forms/formStyles";
 import RowActionsMenu from "@shared/ui/overlays/RowActionsMenu";
 import ConfirmModal from "@shared/ui/overlays/ConfirmModal";
 import { useToast } from "@shared/hooks/useToast";
@@ -16,6 +19,7 @@ import ProviderFormModal from "../components/ProviderFormModal";
 const AdminModelProvidersPage = () => {
     const { t } = useTranslation();
     const toast = useToast();
+    const [search, setSearch] = useState("");
     const [providers, setProviders] = useState([]);
     const [loading, setLoading] = useState(true);
     const [formOpen, setFormOpen] = useState(false);
@@ -83,119 +87,41 @@ const AdminModelProvidersPage = () => {
         }
     };
 
-    const columns = [
-        {
-            key: "name",
-            title: t("admin.providers.name"),
-            width: "20%",
-            render: (provider) => (
-                <div className="min-w-0">
-                    <div className="truncate text-caption font-bold text-ink">
-                        {provider.name}
-                    </div>
-                    <div className="mt-0.5 truncate text-micro text-ink-faint">
-                        {provider.vendor || "—"}
-                    </div>
-                </div>
-            ),
-        },
-        {
-            key: "baseUrl",
-            title: t("admin.providers.baseUrl"),
-            width: "26%",
-            render: (provider) => (
-                <span
-                    className="block truncate text-caption font-medium text-ink-muted"
-                    title={provider.baseUrl}
-                >
-                    {provider.baseUrl}
-                </span>
-            ),
-        },
-        {
-            key: "apiKey",
-            title: t("admin.providers.apiKey"),
-            width: "12%",
-            render: (provider) => (
-                <span
-                    className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-micro font-medium ${
-                        provider.apiKeyConfigured
-                            ? "bg-success-soft text-success-fg"
-                            : "bg-surface-muted text-ink-faint"
-                    }`}
-                >
-                    <KeyRound className="h-3 w-3" aria-hidden="true" />
-                    {provider.apiKeyConfigured
-                        ? t("admin.providers.keyConfigured")
-                        : t("admin.providers.keyMissing")}
-                </span>
-            ),
-        },
-        {
-            key: "enabled",
-            title: t("admin.providers.status"),
-            width: "10%",
-            render: (provider) => (
-                <span
-                    className={`inline-flex rounded-full px-2 py-0.5 text-micro font-medium ${
-                        provider.enabled
-                            ? "bg-success-soft text-success-fg"
-                            : "bg-danger-soft text-danger-fg"
-                    }`}
-                >
-                    {provider.enabled
-                        ? t("admin.providers.statusEnabled")
-                        : t("admin.providers.statusDisabled")}
-                </span>
-            ),
-        },
-        {
-            key: "priority",
-            title: t("admin.providers.priority"),
-            width: "8%",
-            render: (provider) => (
-                <span className="text-caption font-medium text-ink-muted">
-                    {provider.priority ?? 0}
-                </span>
-            ),
-        },
-        {
-            key: "actions",
-            title: t("admin.providers.actions"),
-            width: "24%",
-
-            render: (provider) => {
-                const items = [
-                    {
-                        key: "edit",
-                        label: t("admin.providers.edit"),
-                        icon: Pencil,
-                        disabled: busyId === provider.id,
-                        onClick: () => openEdit(provider),
-                    },
-                    {
-                        key: "toggle",
-                        label: provider.enabled
-                            ? t("admin.providers.disable")
-                            : t("admin.providers.enable"),
-                        loading:
-                            busyId === provider.id &&
-                            pendingDelete?.id !== provider.id,
-                        onClick: () => toggleEnabled(provider),
-                    },
-                    {
-                        key: "delete",
-                        label: t("admin.providers.delete"),
-                        icon: Trash2,
-                        danger: true,
-                        disabled: busyId === provider.id,
-                        onClick: () => setPendingDelete(provider),
-                    },
-                ];
-                return <RowActionsMenu actions={items} align="right" />;
+    const actions = (provider) => {
+        const items = [
+            {
+                key: "edit",
+                label: t("admin.providers.edit"),
+                icon: Pencil,
+                disabled: busyId === provider.id,
+                onClick: () => openEdit(provider),
             },
-        },
-    ];
+            {
+                key: "toggle",
+                label: provider.enabled
+                    ? t("admin.providers.disable")
+                    : t("admin.providers.enable"),
+                loading:
+                    busyId === provider.id && pendingDelete?.id !== provider.id,
+                onClick: () => toggleEnabled(provider),
+            },
+            {
+                key: "delete",
+                label: t("admin.providers.delete"),
+                icon: Trash2,
+                danger: true,
+                disabled: busyId === provider.id,
+                onClick: () => setPendingDelete(provider),
+            },
+        ];
+        return items;
+    };
+    const filtered = providers.filter((provider) =>
+        `${provider.name} ${provider.baseUrl}`
+            .toLowerCase()
+            .includes(search.toLowerCase()),
+    );
+    if (loading) return <LoadingSpinner fullScreen />;
 
     return (
         <div className="mx-auto flex h-full min-h-0 w-full max-w-5xl flex-col overflow-hidden p-4 sm:p-6">
@@ -212,26 +138,90 @@ const AdminModelProvidersPage = () => {
                         {t("admin.providers.subtitle")}
                     </p>
                 </div>
-                <button
-                    type="button"
-                    onClick={openCreate}
-                    className="inline-flex h-9 items-center gap-1.5 rounded-control bg-ink px-4 text-caption font-bold text-canvas transition hover:bg-ink-secondary active:scale-95"
-                >
-                    <Plus className="h-3.5 w-3.5" aria-hidden="true" />
+                <Button variant="ink" onClick={openCreate}>
+                    <Plus className="h-4 w-4" />
                     {t("admin.providers.add")}
-                </button>
+                </Button>
             </div>
 
-            <div className="flex min-h-0 flex-1 flex-col">
-                <DataTable
-                    columns={columns}
-                    rows={providers}
-                    loading={loading}
-                    emptyTitle={t("admin.providers.empty")}
-                    emptyHint={t("admin.providers.emptyHint")}
-                    emptyIcon={Server}
-                    minWidth="860px"
+            <Link to="/workspace/admin/feature-model-configs" className="mb-4 text-caption text-ink-muted underline underline-offset-4">{t("admin.configs.title")}</Link>
+            <div className="mb-4 shrink-0">
+                <input
+                    className={formInputCls}
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    placeholder={t("admin.providers.searchPresets")}
+                    aria-label={t("admin.providers.searchPresets")}
                 />
+            </div>
+            <div className="min-h-0 flex-1 space-y-3 overflow-y-auto">
+                {filtered.map((provider) => (
+                    <div
+                        key={provider.id}
+                        className="flex flex-wrap items-center gap-4 rounded-card border border-border bg-surface p-4 sm:p-5"
+                    >
+                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-control bg-surface-muted">
+                            <Server className="h-5 w-5 text-ink-muted" />
+                        </div>
+                        <button
+                            type="button"
+                            onClick={() => openEdit(provider)}
+                            className="min-w-0 flex-1 text-left"
+                        >
+                            <div className="flex flex-wrap items-center gap-2">
+                                <span className="text-body font-semibold">
+                                    {provider.name}
+                                </span>
+                                <span className="rounded-full bg-surface-muted px-2 py-0.5 text-micro text-ink-muted">
+                                    {t("admin.providers.modelsTitle", {
+                                        count: provider.models?.length ?? 0,
+                                    })}
+                                </span>
+                            </div>
+                            <div className="mt-1 truncate text-caption text-ink-muted">
+                                {provider.baseUrl}
+                            </div>
+                            {provider.description && (
+                                <div className="mt-1 truncate text-caption text-ink-faint">
+                                    {provider.description}
+                                </div>
+                            )}
+                        </button>
+                        <span
+                            className={`text-caption ${provider.enabled ? "text-success-fg" : "text-ink-faint"}`}
+                        >
+                            {t(
+                                provider.enabled
+                                    ? "admin.providers.statusEnabled"
+                                    : "admin.providers.statusDisabled",
+                            )}
+                        </span>
+                        <span
+                            title={t(
+                                provider.apiKeyConfigured
+                                    ? "admin.providers.keyConfigured"
+                                    : "admin.providers.keyMissing",
+                            )}
+                        >
+                            <KeyRound
+                                className={`h-4 w-4 ${provider.apiKeyConfigured ? "text-success-fg" : "text-ink-faint"}`}
+                            />
+                        </span>
+                        <RowActionsMenu
+                            actions={actions(provider)}
+                            align="right"
+                        />
+                    </div>
+                ))}
+                {!filtered.length && (
+                    <div className="rounded-card border border-dashed border-border p-10 text-center text-body text-ink-muted">
+                        {t(
+                            providers.length
+                                ? "admin.providers.noMatches"
+                                : "admin.providers.empty",
+                        )}
+                    </div>
+                )}
             </div>
 
             <ProviderFormModal

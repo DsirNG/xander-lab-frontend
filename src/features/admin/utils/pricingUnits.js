@@ -9,3 +9,6 @@ export const yuanPerMToMilliPer1k = (yuan) =>
 
 export const milliPer1kToYuanPerM = (milli) =>
     Number(milli) / YUAN_PER_M_TO_MILLI_PER_1K;
+
+export const yuanToMilliPerRequest = (yuan) => Math.round(Number(yuan) * 10_000);
+export const milliPerRequestToYuan = (milli) => Number(milli) / 10_000;

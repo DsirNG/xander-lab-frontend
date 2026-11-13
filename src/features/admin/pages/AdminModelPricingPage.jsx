@@ -8,7 +8,7 @@ import { useToast } from "@shared/hooks/useToast";
 import { isRequestCancelled } from "@api";
 import { adminService } from "../services/adminService";
 import PricingFormModal from "../components/PricingFormModal";
-import { milliPer1kToYuanPerM } from "../utils/pricingUnits";
+import { milliPer1kToYuanPerM, milliPerRequestToYuan } from "../utils/pricingUnits";
 
 const formatPrice = (milli) => {
     if (milli === null || milli === undefined) return "—";
@@ -17,7 +17,7 @@ const formatPrice = (milli) => {
 };
 
 /**
- * 管理台-模型定价：维护各模型 token 计费单价。
+ * 管理台-模型定价：维护各模型 Token / 按次计费单价。
  * 计费按 model 精确匹配；删除或停用后该模型回退服务端默认价。
  */
 const AdminModelPricingPage = () => {
@@ -29,6 +29,9 @@ const AdminModelPricingPage = () => {
     const [editingPrice, setEditingPrice] = useState(null);
     const [pendingDelete, setPendingDelete] = useState(null);
     const [busyModel, setBusyModel] = useState(null);
+    const [page, setPage] = useState(1);
+    const [pageSize, setPageSize] = useState(20);
+    const currentPage = Math.min(page, Math.max(1, Math.ceil(prices.length / pageSize)));
 
     const loadPrices = useCallback(async () => {
         try {
@@ -73,10 +76,12 @@ const AdminModelPricingPage = () => {
     const priceColumn = (key, titleKey) => ({
         key,
         title: t(titleKey),
-        width: "13%",
+        width: "120px",
+        headerClassName: "whitespace-nowrap",
+        className: "whitespace-nowrap",
         render: (row) => (
             <span className="text-caption font-medium text-ink-muted">
-                {formatPrice(row[key])}
+                {row.billingMode === "REQUEST" ? "—" : formatPrice(row[key])}
             </span>
         ),
     });
@@ -85,7 +90,7 @@ const AdminModelPricingPage = () => {
         {
             key: "model",
             title: t("admin.pricing.model"),
-            width: "22%",
+            width: "230px",
             render: (price) => (
                 <div className="min-w-0">
                     <div className="truncate text-caption font-bold text-ink">
@@ -102,6 +107,22 @@ const AdminModelPricingPage = () => {
                 </div>
             ),
         },
+        {
+            key: "billingMode",
+            title: t("admin.pricing.billingMode"),
+            width: "120px",
+            headerClassName: "whitespace-nowrap",
+            className: "whitespace-nowrap",
+            render: (row) => t(row.billingMode === "REQUEST" ? "admin.pricing.modeRequest" : "admin.pricing.modeToken"),
+        },
+        {
+            key: "milliPerRequest",
+            title: t("admin.pricing.requestPrice"),
+            width: "160px",
+            headerClassName: "whitespace-nowrap",
+            className: "whitespace-nowrap",
+            render: (row) => row.billingMode === "REQUEST" ? `¥${milliPerRequestToYuan(row.milliPerRequest ?? 0)}` : "—",
+        },
         priceColumn("inputMilliPer1kToken", "admin.pricing.inputPrice"),
         priceColumn("outputMilliPer1kToken", "admin.pricing.outputPrice"),
         priceColumn("cachedMilliPer1kToken", "admin.pricing.cachedReadPrice"),
@@ -112,7 +133,7 @@ const AdminModelPricingPage = () => {
         {
             key: "enabled",
             title: t("admin.pricing.status"),
-            width: "10%",
+            width: "100px",
             render: (price) => (
                 <span
                     className={`inline-flex rounded-full px-2 py-0.5 text-micro font-medium ${
@@ -130,7 +151,7 @@ const AdminModelPricingPage = () => {
         {
             key: "actions",
             title: t("admin.pricing.actions"),
-            width: "14%",
+            width: "80px",
             render: (price) => {
                 const items = [
                     {
@@ -155,7 +176,7 @@ const AdminModelPricingPage = () => {
     ];
 
     return (
-        <div className="mx-auto flex h-full min-h-0 w-full max-w-5xl flex-col overflow-hidden p-4 sm:p-6">
+        <div className="mx-auto flex h-full min-h-0 w-full max-w-7xl flex-col overflow-hidden p-4 sm:p-6">
             <div className="mb-4 flex shrink-0 flex-wrap items-center justify-between gap-3">
                 <div>
                     <h1 className="flex items-center gap-2 text-title font-semibold text-ink">
@@ -167,6 +188,9 @@ const AdminModelPricingPage = () => {
                     </h1>
                     <p className="mt-1 text-caption text-ink-muted">
                         {t("admin.pricing.subtitle")}
+                    </p>
+                    <p className="mt-1 text-micro text-ink-faint">
+                        {t("admin.pricing.priceUnit")}
                     </p>
                 </div>
                 <button
@@ -182,12 +206,18 @@ const AdminModelPricingPage = () => {
             <div className="flex min-h-0 flex-1 flex-col">
                 <DataTable
                     columns={columns}
-                    rows={prices}
+                    rows={prices.slice((currentPage - 1) * pageSize, currentPage * pageSize)}
+                    page={currentPage}
+                    pageSize={pageSize}
+                    total={prices.length}
+                    onPageChange={setPage}
+                    onPageSizeChange={(size) => { setPageSize(size); setPage(1); }}
                     loading={loading}
                     emptyTitle={t("admin.pricing.empty")}
                     emptyHint={t("admin.pricing.emptyHint")}
                     emptyIcon={Coins}
-                    minWidth="860px"
+                    minWidth="1170px"
+                    rowKey={(row) => row.model}
                 />
             </div>
 
